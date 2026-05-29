@@ -182,6 +182,24 @@ class ResponsesAgentServerHost(AgentServerHost):
                         get_server_version=self._build_server_version,
                     )
 
+        # (Spec 013 US1(c)) Operator/test override: when
+        # ``AGENTSERVER_RESPONSE_STORE_PATH`` is set and no explicit store was
+        # passed, use a file-backed store rooted at that directory. Enables
+        # cross-process recovery in local-dev / crash-harness tests without
+        # standing up Foundry.
+        if store is None:
+            import os as _os  # pylint: disable=import-outside-toplevel
+
+            _resp_store_path = _os.environ.get("AGENTSERVER_RESPONSE_STORE_PATH")
+            if _resp_store_path:
+                from pathlib import Path as _Path  # pylint: disable=import-outside-toplevel
+
+                from ..store._file import (
+                    FileResponseStore,
+                )  # pylint: disable=import-outside-toplevel
+
+                store = FileResponseStore(storage_dir=_Path(_resp_store_path))
+
         resolved_provider: ResponseProviderProtocol = (
             store if store is not None else InMemoryResponseProvider()
         )
@@ -194,6 +212,12 @@ class ResponsesAgentServerHost(AgentServerHost):
         # For durable_background mode, if the resolved stream provider does not
         # support incremental append (DurableStreamProviderProtocol), create a
         # file-based provider that does. This enables crash-recoverable streaming.
+        # Note: ``FileResponseStore`` deliberately implements only
+        # :class:`ResponseProviderProtocol`; the on-disk stream-events format
+        # lives in :class:`FileStreamProvider` alone (we don't want two
+        # implementations of the same JSONL layout to drift apart). This
+        # auto-compose path is what wires the two together for file-backed
+        # local-dev / crash-harness setups.
         from ..store._base import (
             DurableStreamProviderProtocol,
         )  # pylint: disable=import-outside-toplevel
@@ -201,6 +225,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         if runtime_options.durable_background and not isinstance(
             stream_provider, DurableStreamProviderProtocol
         ):
+            import os as _os  # pylint: disable=import-outside-toplevel
             import tempfile  # pylint: disable=import-outside-toplevel
             from pathlib import Path  # pylint: disable=import-outside-toplevel
 
@@ -208,9 +233,12 @@ class ResponsesAgentServerHost(AgentServerHost):
                 FileStreamProvider,
             )  # pylint: disable=import-outside-toplevel
 
-            # Use a temp directory for local development; production deployments
-            # should provide their own DurableStreamProviderProtocol implementation.
-            stream_dir = Path(tempfile.gettempdir()) / "agentserver_streams"
+            # (Spec 013 US1(c)) Operator/test override via env var; falls
+            # back to a temp directory for local development.
+            stream_dir = Path(
+                _os.environ.get("AGENTSERVER_STREAM_STORE_PATH")
+                or str(Path(tempfile.gettempdir()) / "agentserver_streams")
+            )
             stream_provider = FileStreamProvider(  # type: ignore[assignment]
                 storage_dir=stream_dir,
                 replay_event_ttl_seconds=runtime_options.replay_event_ttl_seconds,

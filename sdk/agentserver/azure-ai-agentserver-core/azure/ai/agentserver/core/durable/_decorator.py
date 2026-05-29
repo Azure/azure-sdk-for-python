@@ -205,6 +205,110 @@ def _is_stale(task_updated_at: str, timeout: float) -> bool:
     return (now - updated).total_seconds() > timeout
 
 
+# Spec 013 US2 — framework-reserved payload namespace for the input-precondition
+# primitive. Storage layout: ``payload["_framework"]["last_input_id"]: str``.
+# Callers do not read or write this slot directly — it is managed by the
+# framework on behalf of the ``input_id`` / ``if_last_input_id`` kwargs on
+# :meth:`Task.start`.
+_FRAMEWORK_NAMESPACE = "_framework"
+_LAST_INPUT_ID_KEY = "last_input_id"
+
+
+def _read_stored_last_input_id(task_info: Any) -> str | None:
+    """Read the stored ``last_input_id`` from a task's payload, or ``None``.
+
+    :param task_info: The persisted task record (or ``None`` for a fresh
+        task that does not exist yet).
+    :type task_info: TaskInfo | None
+    :returns: The stored value, or ``None`` if no chain has been recorded.
+    :rtype: str | None
+    """
+    if task_info is None or not task_info.payload:
+        return None
+    framework = task_info.payload.get(_FRAMEWORK_NAMESPACE)
+    if not isinstance(framework, dict):
+        return None
+    value = framework.get(_LAST_INPUT_ID_KEY)
+    return value if isinstance(value, str) else None
+
+
+def _check_input_precondition(
+    *,
+    existing: Any,
+    task_id: str,
+    input_id: str | None,
+    if_last_input_id: str | None,
+) -> None:
+    """Validate the ``if_last_input_id`` precondition before any accept path.
+
+    Spec 013 US2 semantic rules:
+
+    - Both ``input_id`` and ``if_last_input_id`` ``None``: no precondition.
+    - ``input_id`` set, ``if_last_input_id`` ``None``: caller asserts a fresh
+      chain. Succeeds iff no stored ``last_input_id`` exists.
+    - ``if_last_input_id`` set, stored ``last_input_id`` ``None``: the chain
+      task is brand new (e.g., a steerable conversation's second turn lands
+      on a freshly-created chain task). The precondition is vacuously
+      satisfied — the framework cannot locally verify the predecessor's
+      identity, but ``TaskConflictError`` on the create path protects
+      against double-create races. We accept and seed.
+    - Both set with stored: stored ``last_input_id`` must equal
+      ``if_last_input_id``.
+
+    :keyword existing: The persisted task record (or ``None`` for fresh).
+    :keyword task_id: The task identifier.
+    :keyword input_id: The new input's identity (caller-supplied).
+    :keyword if_last_input_id: The precondition value (caller-supplied).
+    :raises LastInputIdPreconditionFailed: If the precondition does not hold.
+    """
+    if input_id is None and if_last_input_id is None:
+        return
+    from ._exceptions import (  # pylint: disable=import-outside-toplevel
+        LastInputIdPreconditionFailed,
+    )
+
+    stored = _read_stored_last_input_id(existing)
+    if if_last_input_id is None:
+        # Caller asserts fresh chain. Must not already exist.
+        if stored is not None:
+            raise LastInputIdPreconditionFailed(
+                task_id,
+                expected_last_input_id=None,
+                actual_last_input_id=stored,
+            )
+        return
+    # if_last_input_id is set.
+    if stored is None:
+        # No prior chain recorded. The chain task is brand new — accept
+        # and let the seed write happen on the accept path.
+        return
+    # Both stored and if_last_input_id set — must match.
+    if stored != if_last_input_id:
+        raise LastInputIdPreconditionFailed(
+            task_id,
+            expected_last_input_id=if_last_input_id,
+            actual_last_input_id=stored,
+        )
+
+
+def _build_framework_extras(input_id: str | None) -> dict[str, Any] | None:
+    """Build the ``payload["_framework"]`` initial seed dict, or ``None``.
+
+    Used at fresh-create and at suspended-resume to advance the stored
+    ``last_input_id`` atomically with the input persist.
+
+    :param input_id: The new input's identity, or ``None`` for callers not
+        opting in to chain semantics.
+    :type input_id: str | None
+    :returns: ``{"_framework": {"last_input_id": input_id}}`` if ``input_id``
+        is set, else ``None``.
+    :rtype: dict[str, Any] | None
+    """
+    if input_id is None:
+        return None
+    return {_FRAMEWORK_NAMESPACE: {_LAST_INPUT_ID_KEY: input_id}}
+
+
 class TaskOptions:  # pylint: disable=too-many-instance-attributes
     """Options for a durable task.
 
@@ -446,6 +550,8 @@ class Task(Generic[Input, Output]):
         retry: RetryPolicy | None = None,
         stale_timeout: float = 300.0,
         stream_handler: StreamHandler | None = None,
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
     ) -> TaskRun[Output]:
         """Start a lifecycle-aware durable task and return a handle.
 
@@ -470,12 +576,36 @@ class Task(Generic[Input, Output]):
         :keyword stream_handler: Custom stream handler for pluggable streaming.
             If ``None``, a default :class:`QueueStreamHandler` is used.
         :paramtype stream_handler: ~azure.ai.agentserver.core.durable.StreamHandler | None
+        :keyword input_id: Optional identifier for the input being accepted. When
+            supplied, the framework records it as the task's most-recently-accepted
+            input id in a framework-reserved slot (``payload["_framework"]["last_input_id"]``).
+            Used together with ``if_last_input_id`` to implement HTTP If-Match-style
+            optimistic concurrency on the input queue.
+        :paramtype input_id: str | None
+        :keyword if_last_input_id: Optional precondition. When supplied, the framework
+            verifies that the task's currently-stored last input id equals this value
+            before accepting the new input. If the precondition does not hold (a
+            concurrent caller advanced the queue, or the caller's view is stale),
+            raises :class:`LastInputIdPreconditionFailed` before any state mutation.
+            Modelled on HTTP ``If-Match: <etag>`` semantics. Requires ``input_id``
+            to also be supplied (raises :class:`TypeError` otherwise — invalid
+            combination).
+        :paramtype if_last_input_id: str | None
         :return: A handle to the running task.
         :rtype: TaskRun[Output]
         :raises ~azure.ai.agentserver.core.durable.TaskConflictError: If the
             task is already in-progress or completed.
+        :raises ~azure.ai.agentserver.core.durable.LastInputIdPreconditionFailed: If
+            the ``if_last_input_id`` precondition does not match the stored
+            last input id.
+        :raises TypeError: If ``if_last_input_id`` is supplied without ``input_id``.
         """
         _validate_task_id(task_id)
+        if if_last_input_id is not None and input_id is None:
+            raise TypeError(
+                "if_last_input_id requires input_id (a precondition without an "
+                "advancing id is not meaningful)"
+            )
         return await self._lifecycle_start(
             task_id=task_id,
             input=input,
@@ -485,6 +615,8 @@ class Task(Generic[Input, Output]):
             retry=retry,
             stale_timeout=stale_timeout,
             stream_handler=stream_handler,
+            input_id=input_id,
+            if_last_input_id=if_last_input_id,
         )
 
     async def get(self, task_id: str) -> Any:
@@ -578,8 +710,28 @@ class Task(Generic[Input, Output]):
         task_id: str,
         input_val: Any,
         existing: Any,
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
     ) -> None:
-        """Append a steering input to the task's pending queue."""
+        """Append a steering input to the task's pending queue.
+
+        :param manager: The task manager instance.
+        :type manager: Any
+        :keyword task_id: Target task identifier.
+        :paramtype task_id: str
+        :keyword input_val: The new steering input value.
+        :paramtype input_val: Any
+        :keyword existing: The previously-fetched task record (used for the
+            first etag attempt; later attempts re-fetch internally).
+        :paramtype existing: Any
+        :keyword input_id: (Spec 013 US2) When set, the new input's identity.
+            Used to advance ``payload["_framework"]["last_input_id"]``
+            atomically with the queue append.
+        :paramtype input_id: str | None
+        :keyword if_last_input_id: (Spec 013 US2) When set, the precondition
+            value re-checked on each etag-conflict retry.
+        :paramtype if_last_input_id: str | None
+        """
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             SteeringQueueFull,
         )
@@ -599,6 +751,17 @@ class Task(Generic[Input, Output]):
                     f"Task {task_id!r} disappeared during steering append"
                 )
 
+            # (Spec 013 US2) Re-check the input precondition on each retry to
+            # catch a concurrent steer that may have advanced `last_input_id`
+            # since we last looked.
+            if _attempt > 0:
+                _check_input_precondition(
+                    existing=task_info,
+                    task_id=task_id,
+                    input_id=input_id,
+                    if_last_input_id=if_last_input_id,
+                )
+
             payload = dict(task_info.payload) if task_info.payload else {}
             steering = dict(payload.get("_steering", {}))
             pending: list[Any] = list(steering.get("pending_inputs", []))
@@ -612,6 +775,14 @@ class Task(Generic[Input, Output]):
             if "generation" not in steering:
                 steering["generation"] = 0
             payload["_steering"] = steering
+
+            # (Spec 013 US2) When the caller opted in via input_id, advance
+            # the framework-managed last_input_id slot atomically with the
+            # queue append.
+            if input_id is not None:
+                framework = dict(payload.get(_FRAMEWORK_NAMESPACE, {}))
+                framework[_LAST_INPUT_ID_KEY] = input_id
+                payload[_FRAMEWORK_NAMESPACE] = framework
 
             etag = getattr(task_info, "etag", None) or None
             try:
@@ -647,7 +818,7 @@ class Task(Generic[Input, Output]):
             result_future=future,
         )
 
-    async def _lifecycle_start(
+    async def _lifecycle_start(  # pylint: disable=too-many-locals
         self,
         *,
         task_id: str,
@@ -658,6 +829,8 @@ class Task(Generic[Input, Output]):
         retry: RetryPolicy | None,
         stale_timeout: float,
         stream_handler: StreamHandler | None = None,
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
     ) -> TaskRun[Output]:
         """Resolve lifecycle state and start/resume/recover accordingly.
 
@@ -678,6 +851,13 @@ class Task(Generic[Input, Output]):
         :keyword stream_handler: Custom stream handler. Defaults to
             :class:`QueueStreamHandler` when ``None``.
         :paramtype stream_handler: StreamHandler | None
+        :keyword input_id: (Spec 013 US2) When set, the new input's identity
+            recorded in the framework-reserved
+            ``payload["_framework"]["last_input_id"]`` slot.
+        :paramtype input_id: str | None
+        :keyword if_last_input_id: (Spec 013 US2) Precondition value checked
+            against the stored ``last_input_id`` before any accept path.
+        :paramtype if_last_input_id: str | None
         :return: A handle to the running task.
         :rtype: TaskRun[Output]
         """
@@ -692,6 +872,19 @@ class Task(Generic[Input, Output]):
         existing = await manager.provider.get(task_id)
 
         resolved_retry = retry or self._opts.retry
+
+        # (Spec 013 US2) Pre-acceptance check: if the caller supplied an
+        # ``if_last_input_id`` precondition, verify the stored last input id
+        # matches before proceeding to any accept path. The actual advance
+        # (storing ``input_id`` into ``_framework.last_input_id``) is bundled
+        # into the create/append/resume code paths below so it lands atomically
+        # with the input persist.
+        _check_input_precondition(
+            existing=existing,
+            task_id=task_id,
+            input_id=input_id,
+            if_last_input_id=if_last_input_id,
+        )
 
         if existing is None or existing.status == "pending":
             # Fresh start
@@ -723,6 +916,7 @@ class Task(Generic[Input, Output]):
                 retry=resolved_retry,
                 entry_mode="fresh",
                 stream_handler=stream_handler,
+                initial_payload_extras=_build_framework_extras(input_id),
             )
 
         if existing.status == "suspended":
@@ -730,6 +924,10 @@ class Task(Generic[Input, Output]):
             # (Spec 013 US4) Etag-protected retry loop so concurrent
             # suspended-resume POSTs race safely instead of silently
             # overwriting each other.
+            # (Spec 013 US2) On the same atomic patch, advance the
+            # framework's `_framework.last_input_id` slot when the caller
+            # opted in via `input_id`. The precondition check already ran
+            # at the top of `_lifecycle_start` against the read existing.
             serialized = _serialize_input(input)
             from ._models import (  # pylint: disable=import-outside-toplevel
                 TaskPatchRequest,
@@ -739,19 +937,40 @@ class Task(Generic[Input, Output]):
             current_info = existing
             for _attempt in range(max_resume_retries):
                 etag = getattr(current_info, "etag", None) or None
+                # Build the resume patch: input + (optionally) advance the
+                # framework-managed last_input_id slot.
+                resume_payload: dict[str, Any] = {"input": serialized}
+                if input_id is not None:
+                    existing_framework = (
+                        current_info.payload.get(_FRAMEWORK_NAMESPACE)
+                        if current_info.payload
+                        else None
+                    ) or {}
+                    new_framework = dict(existing_framework)
+                    new_framework[_LAST_INPUT_ID_KEY] = input_id
+                    resume_payload[_FRAMEWORK_NAMESPACE] = new_framework
                 try:
                     await manager.provider.update(
                         task_id,
-                        TaskPatchRequest(payload={"input": serialized}, if_match=etag),
+                        TaskPatchRequest(payload=resume_payload, if_match=etag),
                     )
                     break
-                except ValueError:
-                    # Etag conflict — re-fetch and retry.
+                except ValueError as exc:
+                    # Etag conflict — re-fetch, re-check precondition, retry.
                     refreshed = await manager.provider.get(task_id)
                     if refreshed is None:
                         raise RuntimeError(
                             f"Task {task_id!r} disappeared during suspended-resume retry"
-                        )
+                        ) from exc
+                    # Re-check the precondition against the now-refreshed view.
+                    # On a precondition failure here, the exception propagates
+                    # out (validation failure, not concurrency conflict).
+                    _check_input_precondition(
+                        existing=refreshed,
+                        task_id=task_id,
+                        input_id=input_id,
+                        if_last_input_id=if_last_input_id,
+                    )
                     current_info = refreshed
             else:
                 raise RuntimeError(
@@ -818,6 +1037,8 @@ class Task(Generic[Input, Output]):
                     task_id=task_id,
                     input_val=input,
                     existing=existing,
+                    input_id=input_id,
+                    if_last_input_id=if_last_input_id,
                 )
                 # Set cancel on in-memory context if task runs in this process
                 active = manager._active_tasks.get(

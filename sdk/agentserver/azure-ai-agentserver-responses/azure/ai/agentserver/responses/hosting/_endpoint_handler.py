@@ -24,7 +24,10 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     flush_spans,
 )
-from azure.ai.agentserver.core.durable import TaskConflictError
+from azure.ai.agentserver.core.durable import (
+    LastInputIdPreconditionFailed,
+    TaskConflictError,
+)
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     CHAT_ISOLATION_KEY,
     CLIENT_HEADER_PREFIX,
@@ -786,6 +789,29 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 snapshot.get("status"),
             )
             return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
+        except LastInputIdPreconditionFailed as exc:
+            # (Spec 013 US2) Steerable conversations enforce sequential
+            # `previous_response_id` (no forks). Surface as a succinct
+            # client-facing error.
+            logger.info(
+                "Conversation fork rejected for %s: expected previous=%r, actual=%r",
+                ctx.response_id,
+                exc.expected_last_input_id,
+                exc.actual_last_input_id,
+            )
+            err_body = {
+                "error": {
+                    "message": (
+                        "This agent does not support conversation forking. "
+                        "previous_response_id must reference the most recent "
+                        "response in the conversation."
+                    ),
+                    "type": "conflict",
+                    "code": "conversation_fork_not_supported",
+                    "param": "previous_response_id",
+                }
+            }
+            return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
         except TaskConflictError as exc:
             logger.info(
                 "Conversation lock conflict for %s: task %s is %s",
@@ -1598,7 +1624,39 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # Leave in current state — will be re-entered on restart.
                 continue
             # Non-durable or foreground: best-effort mark failed.
-            record.set_response_snapshot(
-                build_failed_response(record.response_id, record.agent_reference, record.model)
+            failed_payload = build_failed_response(
+                record.response_id, record.agent_reference, record.model
             )
+            record.set_response_snapshot(failed_payload)
             record.transition_to("failed")
+
+            # (Spec 014 FR-005b — close divergence 5) Persist the failed
+            # terminal to the response store before subprocess exit. Without
+            # this the response store still shows ``status="in_progress"``
+            # on next-lifetime GET, even though the in-memory record was
+            # marked failed. Only attempt for store=True responses (the
+            # store-disabled / ephemeral row 4 case has no store to persist
+            # to). Best-effort — log warning on failure rather than blocking
+            # shutdown.
+            if (
+                record.mode_flags.store
+                and self._provider is not None
+            ):
+                try:
+                    from ..models._generated import (  # pylint: disable=import-outside-toplevel
+                        ResponseObject,
+                    )
+
+                    isolation = None
+                    if record.response_context is not None:
+                        isolation = getattr(record.response_context, "isolation", None)
+                    await self._provider.update_response(
+                        ResponseObject(failed_payload), isolation=isolation
+                    )
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "Failed to persist Path-B failed terminal for %s during "
+                        "shutdown: %s",
+                        record.response_id,
+                        exc,
+                    )

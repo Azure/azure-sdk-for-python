@@ -46,6 +46,11 @@ def _is_conflict(exc: "FoundryBadRequestError") -> bool:
     ``error.code`` or message text. This helper applies the common heuristic
     so the create-side translation can return :class:`ResponseAlreadyExistsError`
     only for the duplicate-create case.
+
+    :param exc: The Foundry transport exception.
+    :type exc: FoundryBadRequestError
+    :returns: True if the exception body indicates a duplicate-create conflict.
+    :rtype: bool
     """
     body = exc.response_body or {}
     error = body.get("error") if isinstance(body, dict) else None

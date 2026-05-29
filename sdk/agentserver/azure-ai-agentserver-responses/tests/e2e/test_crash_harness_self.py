@@ -47,7 +47,7 @@ _ECHO_SERVER_SOURCE = textwrap.dedent(
 
 
     def main():
-        port = int(os.environ.get("AGENTSERVER_PORT", "0") or "0")
+        port = int(os.environ.get("PORT", "0") or "0")
         server = HTTPServer(("127.0.0.1", port), _EchoHandler)
         server.serve_forever()
 

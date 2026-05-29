@@ -126,6 +126,42 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._durability = value
 
     @property
+    def conversation_chain_id(self) -> str:
+        """Stable identifier for the multi-turn conversation chain.
+
+        Returns the framework-computed partition key shared by every response
+        that belongs to the same logical conversation. Priority order:
+
+        1. ``conversation_id`` if supplied on the request.
+        2. ``previous_response_id`` if supplied (sequential chain — every turn
+           inherits the same chain id from its parent).
+        3. ``response_id`` — the chain root for the first turn in a chain.
+
+        Handlers use this id as a key into application-side conversation state
+        (e.g., upstream SDK session ids, per-conversation rate limits,
+        application-side conversation indexes). The value is deterministic
+        across turns and stable across crash recovery, so storing it in a
+        durable side store and looking it up on recovery is sufficient to
+        re-attach to the prior session.
+
+        Note: this property assumes ``steerable_conversations=True`` semantics
+        (sequential chains share an id). For ``steerable_conversations=False``
+        each response forks into its own chain — in that mode every turn
+        receives a distinct chain id equal to its ``response_id``.
+
+        :rtype: str
+        """
+        # Local import to avoid a top-level cycle with hosting.
+        from .hosting._task_id import derive_chain_id  # pylint: disable=import-outside-toplevel
+
+        return derive_chain_id(
+            conversation_id=self.conversation_id,
+            previous_response_id=self._previous_response_id,
+            response_id=self.response_id,
+            steerable=True,
+        )
+
+    @property
     def is_shutdown_requested(self) -> bool:
         """Backward-compatible flag: True when cancellation is due to server shutdown.
 

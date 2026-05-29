@@ -21,7 +21,10 @@ import anyio
 from azure.ai.agentserver.core._platform_headers import (
     PLATFORM_ERROR_TAG,
 )  # pylint: disable=import-error,no-name-in-module
-from azure.ai.agentserver.core.durable import TaskConflictError
+from azure.ai.agentserver.core.durable import (
+    LastInputIdPreconditionFailed,
+    TaskConflictError,
+)
 
 from .._options import ResponsesServerOptions
 from ..models import _generated as generated_models
@@ -260,6 +263,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
     conversation_id: str | None = None,
     history_limit: int = 100,
     runtime_state: _RuntimeState | None = None,
+    runtime_options: ResponsesServerOptions | None = None,
 ) -> None:
     """Execute a non-stream handler in the background and update the execution record.
 
@@ -836,6 +840,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 create_fn=create_fn,
                 options=runtime_options,
                 provider=provider,
+                runtime_state=runtime_state,
             )
 
     # ------------------------------------------------------------------
@@ -2260,6 +2265,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         conversation_id=ctx.conversation_id,
                         history_limit=self._runtime_options.default_fetch_history_count,
                         runtime_state=self._runtime_state,
+                        runtime_options=self._runtime_options,
                     )
             except asyncio.CancelledError:
                 pass  # event-loop teardown; background work already done
@@ -2331,6 +2337,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 create_fn=self._create_fn,
                 options=self._runtime_options,
                 provider=self._provider,
+                runtime_state=self._runtime_state,
             )
 
         # Build execution params dict for the task input
@@ -2388,6 +2395,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 ctx.response_id,
             )
             record.execution_task = asyncio.create_task(fallback_runner())
+        except LastInputIdPreconditionFailed:
+            # (Spec 013 US2) Steerable conversations enforce sequential
+            # `previous_response_id`. Propagate so the endpoint layer
+            # surfaces HTTP 409 `conversation_fork_not_supported`.
+            raise
         except Exception:  # pylint: disable=broad-exception-caught
             # Durable start failed — fall back to non-durable execution
             logger.warning(

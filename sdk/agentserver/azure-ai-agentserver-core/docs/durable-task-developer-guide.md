@@ -979,6 +979,49 @@ each other; that has been fixed.)
 
 ---
 
+## Input Acceptance Preconditions
+
+`.start()` accepts two optional keyword arguments that let you reject inputs
+based on the task's most recently accepted input id. They model HTTP
+`If-Match: <etag>` semantics for a task's input queue.
+
+```python
+await my_task.start(
+    task_id="conv-42",
+    input=new_message,
+    input_id="msg-7",
+    if_last_input_id="msg-6",
+)
+```
+
+**Semantics:**
+
+| `input_id` | `if_last_input_id` | Behavior |
+|---|---|---|
+| `None` | `None` | No precondition. Accepted unconditionally (legacy). |
+| set | `None` | Caller asserts a *fresh chain*. Succeeds only if no `last_input_id` has been recorded yet. |
+| set | set | Stored `last_input_id` must equal `if_last_input_id`. On mismatch, raises [`LastInputIdPreconditionFailed`](#error-handling). |
+| `None` | set | `TypeError`. A precondition without an advancing id is not meaningful. |
+
+When `input_id` is supplied, the framework records it in a reserved namespace
+(`payload["_framework"]["last_input_id"]`) **atomically with the accept**. The
+write lands inside the same etag-protected patch that persists the input, so
+concurrent callers cannot lose the precondition. The slot is framework-owned
+— do not read or write it directly from handlers.
+
+**When to use this:**
+
+- Sequential conversation contract: every new turn must reference the most
+  recent prior turn. Forks (e.g., a client retrying with a stale
+  `previous_response_id`) are rejected at the framework boundary before any
+  handler work.
+- Idempotency: the same `input_id` retried by the same caller will fail the
+  precondition on the second attempt, surfacing the conflict explicitly
+  rather than silently double-queueing.
+- Optimistic concurrency in multi-writer scenarios.
+
+---
+
 ## The Invocation Store Pattern
 
 When building an HTTP API that fronts durable tasks (the 202 + poll pattern),
@@ -1248,6 +1291,91 @@ Cooperative cancel sets `ctx.cancel`. If the function checks this event and
 function decides its own outcome. `TaskCancelled` is only raised when the
 function does not handle the cancel and the asyncio task is cancelled.
 
+### Graceful Shutdown (`ctx.shutdown`)
+
+When the container receives a graceful-shutdown signal (typically SIGTERM
+from the orchestrator or ASGI lifespan teardown), the framework:
+
+1. Sets `ctx.shutdown` on every active task's context.
+2. Sets `ctx.cancel` on every active task as well (so the same
+   cooperative-cancel pattern works without code changes).
+3. Waits up to `shutdown_grace_seconds` for tasks to checkpoint.
+4. Force-expires every active task's lease (so the next process lifetime
+   can reclaim them).
+5. Cancels the asyncio tasks driving each handler.
+
+**The critical decision for your handler**: when `ctx.shutdown` fires
+mid-execution, what should your task function do?
+
+**Three options, three different outcomes:**
+
+| If your task function… | Task record ends up as… | Recoverable? |
+|---|---|---|
+| **Returns normally** (with or without checking shutdown) | `completed` with whatever you returned as output | ❌ Lost — recovery skips `completed` tasks |
+| `return await ctx.suspend(reason="...")` | `suspended` with the suspend reason | ✅ Resumed by calling `.start()` again with the same `task_id` |
+| `raise asyncio.CancelledError()` (cooperative branch) | Stays `in_progress` with expired lease | ✅ Re-invoked on next lifetime by the recovery scanner |
+
+**The gotcha**: a handler that wraps an upstream operation like:
+
+```python
+@task
+async def my_task(ctx: TaskContext[Input]) -> Output:
+    result = await upstream_call(ctx.input)
+    if ctx.cancel.is_set():
+        return None  # ← LOOKS LIKE cooperative cancel, but…
+    return result
+```
+
+…will be marked `completed` with `output=None` if shutdown fires
+mid-call. **The recovery scanner only picks up `in_progress` tasks**,
+so this task is NOT re-invoked on the next lifetime — even though the
+handler clearly didn't finish its work.
+
+**The fix**: distinguish "I'm done, no output" from "I'm not done, please
+recover me." Raise `CancelledError` for the latter:
+
+```python
+@task
+async def my_task(ctx: TaskContext[Input]) -> Output:
+    try:
+        result = await upstream_call(ctx.input)
+    except asyncio.CancelledError:
+        # Upstream got cancelled because shutdown fired. We didn't
+        # finish. Raise so the framework leaves the task in_progress
+        # for recovery on the next process lifetime.
+        raise
+
+    if ctx.shutdown.is_set():
+        # Upstream completed in time, but we still haven't done our
+        # post-processing. Leave for recovery.
+        raise asyncio.CancelledError()
+
+    return result
+```
+
+**Or use `ctx.suspend` if your work has natural checkpoints**:
+
+```python
+if ctx.shutdown.is_set():
+    return await ctx.suspend(reason="shutdown_mid_work")
+```
+
+…then the suspended task can be resumed later by calling `.start()`
+again with the same `task_id`. (Note: `suspend` is for tasks that need
+an external trigger to resume — like awaiting human input — and the
+caller is responsible for re-invoking `.start()` with the same
+`task_id` to resume. For automatic recovery on restart without any
+caller action, prefer the `CancelledError` route.)
+
+**Why does this differ from `run.cancel()`?** When you call
+`run.cancel()` (caller-initiated cooperative cancel), the convention is
+"the function decides its outcome" — return normally → success. This is
+the right semantics for caller-driven cancellation because the caller
+already knows the work is being abandoned. Graceful shutdown is
+different: nobody decided to abandon the work; the container is just
+ending its lifetime. The next lifetime should pick up where this one
+left off, and that requires the task to stay `in_progress`.
+
 ### Execution Timeout
 
 Set a `timeout` to automatically cancel tasks that run too long. When the
@@ -1287,11 +1415,14 @@ except TaskTerminated:
 
 ### Cancel vs Terminate Summary
 
-| Method | `ctx.cancel` set? | Hard cancel? | Outcome | Recoverable? |
-|--------|-------------------|--------------|---------|--------------|
-| `run.cancel()` | ✅ | ❌ | Success if function returns normally; `TaskCancelled` if unhandled | Yes (stays in_progress until function exits) |
-| `run.terminate()` | ✅ | ✅ | `TaskTerminated` | No (goes to failed) |
-| Timeout expired | ✅ then ✅ | After grace | `TaskTerminated` | No (goes to failed) |
+| Method | `ctx.cancel` set? | `ctx.shutdown` set? | Hard cancel? | Outcome | Recoverable? |
+|--------|-------------------|---------------------|--------------|---------|--------------|
+| `run.cancel()` | ✅ | ❌ | ❌ | Success if function returns normally; `TaskCancelled` if unhandled | Yes (stays in_progress until function exits) |
+| `run.terminate()` | ✅ | ❌ | ✅ | `TaskTerminated` | No (goes to failed) |
+| Timeout expired | ✅ then ✅ | ❌ | After grace | `TaskTerminated` | No (goes to failed) |
+| Graceful shutdown + return normally | ✅ | ✅ | ❌ | Task marked `completed` with whatever you returned | ❌ NO — recovery scanner skips `completed` tasks |
+| Graceful shutdown + raise `CancelledError` | ✅ | ✅ | ❌ | Task stays `in_progress`; result-future raises `TaskCancelled` | ✅ YES — recovery scanner finds it on next lifetime |
+| Graceful shutdown + `return await ctx.suspend(...)` | ✅ | ✅ | ❌ | Task marked `suspended` with the reason | ✅ YES — resumed by calling `.start()` again with the same `task_id` |
 
 ---
 
@@ -1514,3 +1645,43 @@ async def chat(ctx: TaskContext[dict]) -> dict:
     reply = await call_llm(ctx.input["message"])
     return await ctx.suspend(reason="awaiting_user_input", output={"reply": reply})
 ```
+
+### ❌ Returning normally on graceful shutdown when you need recovery
+
+```python
+# ❌ BAD — handler returns normally on shutdown.
+# Framework marks the task `completed` with output=None.
+# The recovery scanner only picks up `in_progress` tasks, so the next
+# process lifetime DOES NOT re-invoke this handler — the work is lost.
+@task
+async def my_task(ctx: TaskContext[Input]) -> Output:
+    result = await upstream_call(ctx.input)
+    if ctx.shutdown.is_set():
+        return None  # Wrong! Task marked completed; recovery never fires.
+    return result
+```
+
+```python
+# ✅ GOOD — raise CancelledError so the task stays in_progress
+# and the next process lifetime re-invokes the handler.
+@task
+async def my_task(ctx: TaskContext[Input]) -> Output:
+    try:
+        result = await upstream_call(ctx.input)
+    except asyncio.CancelledError:
+        # Upstream got cancelled because shutdown fired. We didn't
+        # finish — re-raise so the framework leaves the task in_progress
+        # and recovery re-invokes us on the next process lifetime.
+        raise
+    if ctx.shutdown.is_set():
+        # Upstream finished but we still have post-processing to do.
+        # Same convention: raise to opt into recovery.
+        raise asyncio.CancelledError()
+    return result
+```
+
+The core durable-task primitive treats "handler returned normally"
+identically to "handler completed its work successfully" — it has no way
+to distinguish "I'm done with no output" from "I bailed because shutdown
+fired." See § Graceful Shutdown (`ctx.shutdown`) above for the full
+convention table.

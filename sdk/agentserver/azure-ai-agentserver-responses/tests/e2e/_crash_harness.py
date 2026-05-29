@@ -60,7 +60,7 @@ class CrashHarness:
     :type tmp_path: ~pathlib.Path
     :param port: Optional explicit port. If ``None``, the harness binds an
         ephemeral port (bind 0, read assignment) and passes it to the
-        subprocess via ``AGENTSERVER_PORT`` env var.
+        subprocess via ``PORT`` env var.
     :type port: int | None
     :param readiness_timeout_seconds: How long to wait for the subprocess to
         respond to the ``/health/live`` probe. Default 10.
@@ -159,14 +159,14 @@ class CrashHarness:
     def _build_env(self) -> dict[str, str]:
         """Compose the subprocess environment.
 
-        Wires AGENTSERVER_PORT and the three durable storage paths so the
+        Wires PORT and the three durable storage paths so the
         sample can pick them up. Specific environment variable names are a
         convention the sample author honours.
 
         :rtype: dict[str, str]
         """
         env = dict(os.environ)
-        env["AGENTSERVER_PORT"] = str(self._port)
+        env["PORT"] = str(self._port)
         env["AGENTSERVER_DURABLE_TASKS_PATH"] = str(self._tmp_path / "tasks")
         env["AGENTSERVER_RESPONSE_STORE_PATH"] = str(self._tmp_path / "responses")
         env["AGENTSERVER_STREAM_STORE_PATH"] = str(self._tmp_path / "streams")
@@ -281,6 +281,53 @@ class CrashHarness:
             await self.kill()
             raise
         self._client = httpx.AsyncClient(base_url=self.base_url, timeout=30.0)
+
+    async def terminate(self, *, wait_seconds: float = 30.0) -> int | None:
+        """Send SIGTERM to the subprocess and wait for it to exit.
+
+        Unlike :meth:`kill` (SIGKILL), this gives the subprocess a chance
+        to run its graceful-shutdown handlers — the in-process shutdown
+        loop fires within ``shutdown_grace_period_seconds`` (which the
+        test controls via the ``AGENTSERVER_SHUTDOWN_GRACE_SECONDS`` env
+        var passed in ``env_extras``).
+
+        Use cases (per ``durability-contract.md`` §Termination paths):
+
+        - **Path A** — pass a long ``wait_seconds`` and configure a long
+          grace; the handler completes naturally before grace expires.
+        - **Path B** — pass a moderate ``wait_seconds`` and configure a
+          SHORT grace; the handler doesn't finish in time and the
+          in-process shutdown loop fires the per-row marker before
+          subprocess exit.
+
+        :keyword wait_seconds: How long to wait for clean exit before
+            falling back to SIGKILL. Should exceed the configured
+            ``shutdown_grace_period_seconds`` to give the in-process
+            shutdown loop time to run.
+        :paramtype wait_seconds: float
+        :returns: The exit code, or ``None`` if there was no live subprocess.
+        :rtype: int | None
+        """
+        if self._client is not None:
+            await self._client.aclose()
+            self._client = None
+        if self._process is None:
+            return None
+        if self._process.poll() is not None:
+            return self._process.returncode
+        try:
+            # SIGTERM the whole process group so children get it too.
+            os.killpg(os.getpgid(self._process.pid), signal.SIGTERM)
+        except (ProcessLookupError, PermissionError):
+            try:
+                self._process.terminate()
+            except ProcessLookupError:
+                pass
+        try:
+            return self._process.wait(timeout=wait_seconds)
+        except subprocess.TimeoutExpired:
+            # Grace exceeded — fall back to SIGKILL so the test can proceed.
+            return await self.kill()
 
     async def close(self) -> None:
         """Tear down the harness and any associated resources."""

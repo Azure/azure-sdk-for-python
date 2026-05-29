@@ -6,10 +6,16 @@
 
 - **Input data cleared at suspend for steerable tasks** (privacy / data minimization). The framework now clears `payload["input"]`, `_steering["active_input"]`, and `_steering["previous_input"]` at the suspend transition. These hold mirror copies of consumed user input that is no longer needed once the handler returns. Recovery transitions still preserve these slots because the handler will re-run with them; completion transitions are unaffected (terminal entries are deleted via `ephemeral=True` or retained via `ephemeral=False` by operator choice). See `docs/durable-task-developer-guide.md` §"Data Retention on Suspend".
 - **Suspended-resume input patch is now etag-protected**. Concurrent resumes of the same suspended task race safely under the standard etag retry loop instead of silently overwriting each other.
+- **TaskManager shutdown tolerates lifespan cancellation**. The graceful shutdown sleep and lease-expire steps are now wrapped to catch `asyncio.CancelledError` so that handlers always reach the `execution_task.cancel()` step and can wind down cleanly, even when the lifespan task is itself being cancelled by the host.
+- **LocalFileTaskProvider default storage path** now honors the `AGENTSERVER_DURABLE_TASKS_PATH` environment variable. Without an explicit path, the provider still defaults to `~/.durable-tasks`. Enables operator / crash-harness isolation of durable task state without code changes.
 
 ### Other Changes
 
 - **Removed dead `_steering["generation_results"]` write block in `_try_drain_steering`.** The field was added as forward-compat scaffolding for durable backup of superseded-result delivery but had no consumer anywhere in the codebase. The in-process superseded-result delivery via `TaskResult(output=…, status="superseded")` is unchanged. If durable replay of superseded results becomes a requirement in the future, restore the write here with a corresponding recovery-side read path.
+
+### Features Added
+
+- **Input acceptance preconditions on `Task.start(...)`**. New optional `input_id` and `if_last_input_id` keyword arguments model HTTP `If-Match: <etag>` semantics on a task's input queue. `input_id` records the new input's identity; `if_last_input_id` is the precondition value that the framework verifies against the task's stored last input id before any state mutation. Mismatch raises the new typed exception `LastInputIdPreconditionFailed` (subclass of new base `TaskPreconditionFailed`). The id is recorded in a framework-reserved namespace (`payload["_framework"]["last_input_id"]`) atomically with the input persist via etag protection, so concurrent callers cannot lose the precondition. Generic — usable by any package with sequential-input or optimistic-concurrency semantics. See `docs/durable-task-developer-guide.md` §"Input Acceptance Preconditions".
 
 ### Features Added
 

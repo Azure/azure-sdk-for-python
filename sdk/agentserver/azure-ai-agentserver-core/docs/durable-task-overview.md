@@ -319,6 +319,11 @@ For chat agents where a new user message should redirect the agent without waiti
 
 The framework atomically queues the new input, signals cancel, and re-enters with the next input. No manual orchestration needed.
 
+For applications that require strict sequential turn ordering (no forks),
+`.start()` accepts `input_id` + `if_last_input_id` keyword arguments that
+enforce HTTP `If-Match`-style preconditions on the input queue before the
+new input is accepted. See the developer guide for details.
+
 ### 4. Crash Recovery (Transparent)
 
 ```

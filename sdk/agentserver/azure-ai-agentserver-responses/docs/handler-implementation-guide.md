@@ -1263,6 +1263,7 @@ is the naive fallback (see below).
 - Surfaces `entry_mode`, `run_attempt`, `is_recovery` via `context.durability` (see [DurabilityContext API](durable-responses-developer-guide.md#durabilitycontext-api)). The library does NOT expose a snapshot of the prior attempt — handler must consult its upstream framework for resumption state.
 - Treats any `response.in_progress` event after the first one as a snapshot reset.
 - Replays persisted events to reconnecting clients on `starting_after=`. The reset `in_progress` is part of the replay; clients use it as the reconciliation signal.
+- **Translates the "return on shutdown" handler pattern into the right durable-task recovery behavior.** When your handler returns without emitting a terminal event AND the framework is in graceful shutdown (`cancellation_signal` is set due to SHUTTING_DOWN), the responses package detects this and signals the underlying durable-task primitive to leave the task `in_progress` so the next process lifetime re-invokes your handler with `entry_mode="recovered"`. You simply write `return` in your handler on shutdown — the framework handles the convention; you do not need to raise `CancelledError` yourself or know the durable-task primitive's internals.
 - For `background=false` responses: marks the response `failed` on crash and does NOT re-invoke the handler.
 - For `store=false` responses: best-effort `failed` marker during shutdown grace period; no recovery.
 

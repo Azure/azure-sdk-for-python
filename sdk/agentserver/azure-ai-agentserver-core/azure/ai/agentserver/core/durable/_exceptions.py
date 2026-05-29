@@ -160,3 +160,58 @@ class SteeringQueueFull(RuntimeError):
         super().__init__(
             f"Steering queue full for task '{task_id}' " f"(max_pending={max_pending})"
         )
+
+
+class TaskPreconditionFailed(RuntimeError):
+    """Base class for task primitive precondition failures.
+
+    Raised by :meth:`Task.start` (and possibly other primitives in future)
+    when a caller-supplied precondition is not met by the task's current
+    state. Subclasses identify which specific precondition failed; catch
+    this base class to handle any precondition failure uniformly.
+
+    :param task_id: The task identifier.
+    :type task_id: str
+    :param message: Human-readable description of the precondition failure.
+    :type message: str
+    """
+
+    __slots__ = ("task_id",)
+
+    def __init__(self, task_id: str, message: str) -> None:
+        self.task_id = task_id
+        super().__init__(message)
+
+
+class LastInputIdPreconditionFailed(TaskPreconditionFailed):
+    """Raised when :meth:`Task.start`'s ``if_last_input_id`` precondition is not met.
+
+    The task's most-recently-accepted input has a different id than the
+    caller expected. Typically caused by a concurrent caller advancing the
+    queue before this one's read-then-write completed, or by a programming
+    error in which the caller's view of the chain is stale.
+
+    :param task_id: The task identifier.
+    :type task_id: str
+    :param expected_last_input_id: What the caller passed as ``if_last_input_id``.
+    :type expected_last_input_id: str | None
+    :param actual_last_input_id: What the framework currently has stored.
+    :type actual_last_input_id: str | None
+    """
+
+    __slots__ = ("expected_last_input_id", "actual_last_input_id")
+
+    def __init__(
+        self,
+        task_id: str,
+        expected_last_input_id: str | None,
+        actual_last_input_id: str | None,
+    ) -> None:
+        self.expected_last_input_id = expected_last_input_id
+        self.actual_last_input_id = actual_last_input_id
+        super().__init__(
+            task_id,
+            f"Task {task_id!r}: if_last_input_id precondition failed — "
+            f"expected last_input_id={expected_last_input_id!r}, "
+            f"actual={actual_last_input_id!r}",
+        )

@@ -239,6 +239,13 @@ class TaskManager:
             LocalFileTaskProvider,
         )
 
+        # (Spec 013 US1(c)) Operator/test override: when
+        # ``AGENTSERVER_DURABLE_TASKS_PATH`` is set, root the local provider
+        # at that directory instead of the user's home. Enables the crash
+        # harness to point durable state at a per-test tmp_path.
+        base_dir_env = os.environ.get("AGENTSERVER_DURABLE_TASKS_PATH")
+        if base_dir_env:
+            return LocalFileTaskProvider(base_dir=Path(base_dir_env))
         return LocalFileTaskProvider(base_dir=Path.home() / ".durable-tasks")
 
     @property
@@ -351,33 +358,52 @@ class TaskManager:
         logger.info("TaskManager shutting down")
         self._shutdown_event.set()
 
-        # Signal shutdown on all active contexts
+        # Signal shutdown on all active contexts. Yield once so the bridge
+        # tasks (running in the event loop) get a chance to observe the
+        # shutdown event and notify their handlers before we proceed —
+        # otherwise on a fast lifespan teardown the shutdown grace sleep
+        # may be cancelled before the bridge has had a chance to fire.
         for active in self._active_tasks.values():
             active.context.shutdown.set()
-
-        # Wait for tasks to checkpoint before force-expiring leases
         if self._active_tasks:
-            await asyncio.sleep(self._shutdown_grace_seconds)
+            await asyncio.sleep(0)
 
-        # Force-expire all leases
-        for active in list(self._active_tasks.values()):
+        # Wait for tasks to checkpoint before force-expiring leases.
+        # On a forced lifespan teardown (e.g., HTTP test client closing) the
+        # sleep can be cancelled — that's fine, fall through to force-expire
+        # and execution_task.cancel() below so handlers wind down.
+        if self._active_tasks:
             try:
-                await self._provider.update(
-                    active.task_id,
-                    TaskPatchRequest(
-                        lease_owner=self._lease_owner,
-                        lease_instance_id=self._instance_id,
-                        lease_duration_seconds=0,
-                    ),
-                )
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Failed to force-expire lease for task %s",
-                    active.task_id,
-                    exc_info=True,
-                )
+                await asyncio.sleep(self._shutdown_grace_seconds)
+            except asyncio.CancelledError:
+                logger.info("TaskManager shutdown grace period interrupted")
 
-        # Cancel all renewal and execution tasks
+        # Force-expire all leases. Tolerate cancellation here too.
+        try:
+            for active in list(self._active_tasks.values()):
+                try:
+                    await self._provider.update(
+                        active.task_id,
+                        TaskPatchRequest(
+                            lease_owner=self._lease_owner,
+                            lease_instance_id=self._instance_id,
+                            lease_duration_seconds=0,
+                        ),
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "Failed to force-expire lease for task %s",
+                        active.task_id,
+                        exc_info=True,
+                    )
+        except asyncio.CancelledError:
+            logger.info(
+                "TaskManager shutdown lease-expire interrupted; "
+                "continuing to in-process task cancellation"
+            )
+
+        # Cancel all renewal and execution tasks. Always do this so handlers
+        # listening on the cancellation signal wake up and exit cleanly.
         for active in self._active_tasks.values():
             active.renewal_cancel.set()
             if active.renewal_task and not active.renewal_task.done():
@@ -463,6 +489,7 @@ class TaskManager:
         retry: RetryPolicy | None = None,
         entry_mode: EntryMode = "fresh",
         stream_handler: StreamHandler | None = None,
+        initial_payload_extras: dict[str, Any] | None = None,
     ) -> TaskRun[Any]:
         """Create a task, start the function, and return a handle.
 
@@ -496,6 +523,12 @@ class TaskManager:
         :keyword stream_handler: Custom stream handler. If ``None``,
             a default :class:`QueueStreamHandler` is created.
         :paramtype stream_handler: StreamHandler | None
+        :keyword initial_payload_extras: (Spec 013 US2) Framework-namespace
+            seeds (e.g., ``{"_framework": {"last_input_id": "msg-1"}}``)
+            merged into the initial payload alongside ``input`` and
+            ``metadata``. Reserved keys ``input`` and ``metadata`` cannot be
+            overridden via this channel.
+        :paramtype initial_payload_extras: dict[str, Any] | None
         :return: A ``TaskRun`` handle.
         :rtype: TaskRun
         """
@@ -507,6 +540,15 @@ class TaskManager:
         if opts.store_input:
             payload["input"] = _serialize_input(input_val)
         payload["metadata"] = {}
+
+        # (Spec 013 US2) Framework-namespace seeds (e.g., `_framework.last_input_id`)
+        # supplied by `Task.start(input_id=...)`. Merged shallowly so callers
+        # cannot clobber `input` or `metadata`.
+        if initial_payload_extras:
+            for k, v in initial_payload_extras.items():
+                if k in ("input", "metadata"):
+                    continue
+                payload[k] = v
 
         # Auto-stamp source provenance (framework-owned, not user-overridable)
         source = self._build_source(fn_name)

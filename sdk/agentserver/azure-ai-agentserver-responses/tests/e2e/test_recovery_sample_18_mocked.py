@@ -67,6 +67,9 @@ def _make_context(
     )
     context = MagicMock(spec=ResponseContext)
     context.response_id = response_id
+    # (Spec 013 US3) Stable chain id derived from the request. For mocked
+    # fresh-entry tests this is just the response_id (no prev / no conv).
+    context.conversation_chain_id = response_id
     context.durability = durability
     context.cancellation_reason = None
 
@@ -206,12 +209,15 @@ class TestSample18FreshEntry:
 
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
-            ctx = _make_context(response_id=IdGenerator.new_response_id())
+            response_id = IdGenerator.new_response_id()
+            ctx = _make_context(response_id=response_id)
             events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
         assert len(create_calls) == 1
-        new_uuid = create_calls[0].get("session_id")
-        assert isinstance(new_uuid, str) and len(new_uuid) == 36
+        # (Spec 013 US3) Sample 18 now uses ``context.conversation_chain_id``
+        # — for a first turn (no previous_response_id, no conversation_id)
+        # the chain id is the response_id itself.
+        assert create_calls[0].get("session_id") == response_id
         assert resume_calls == []
         assert send_calls == ["test prompt"]
         assert "response.completed" in [_event_type(e) for e in events]
@@ -228,17 +234,19 @@ class TestSample18RecoveryUsesResumeSession:
             history_events=history
         )
         with patch.object(mod, "CopilotClient", stub_client):
+            response_id = IdGenerator.new_response_id()
             ctx = _make_context(
-                response_id=IdGenerator.new_response_id(),
+                response_id=response_id,
                 entry_mode="recovered",
-                metadata={"copilot_session_id": "preserved-uuid"},
             )
             await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
         # Recovery used resume_session, not create_session.
         assert create_calls == []
         assert len(resume_calls) == 1
-        assert resume_calls[0]["session_id"] == "preserved-uuid"
+        # (Spec 013 US3) Stable chain id == response_id for first-turn chain;
+        # recovery resumes against the same id.
+        assert resume_calls[0]["session_id"] == response_id
         # And no send because history already has our input.
         assert send_calls == []
 
@@ -260,13 +268,136 @@ class TestSample18RecoveryWithMissingInput:
             ctx = _make_context(
                 response_id=IdGenerator.new_response_id(),
                 entry_mode="recovered",
-                metadata={"copilot_session_id": "preserved-uuid"},
             )
             await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
         assert create_calls == []
         assert len(resume_calls) == 1
         assert send_calls == ["test prompt"]
+
+
+@pytest.mark.asyncio
+class TestSample18LiveDeltas:
+    """Live delta streaming + recovery replay (Spec 013 feedback #3)."""
+
+    async def test_fresh_entry_emits_delta_live_not_batched(self) -> None:
+        """On a fresh send, the assistant content arrives as an
+        output_text.delta event (not silently accumulated and dumped at
+        the end)."""
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+
+        stub_client, send_calls, _create_calls, _resume_calls = _make_session_stub_classes(
+            reply_text="hello world"
+        )
+        with patch.object(mod, "CopilotClient", stub_client):
+            ctx = _make_context(response_id=IdGenerator.new_response_id())
+            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        assert send_calls == ["test prompt"]
+        # The delta event carries the reply text exactly once.
+        delta_events = [
+            e for e in events if _event_type(e) == "response.output_text.delta"
+        ]
+        assert delta_events, "expected at least one output_text.delta event"
+        deltas = [getattr(e, "delta", None) or e.get("delta") for e in delta_events]
+        assert "hello world" in "".join(d for d in deltas if d)
+
+    async def test_recovery_replays_accumulated_assistant_text_as_one_delta(
+        self,
+    ) -> None:
+        """On recovery with upstream assistant content already present
+        for the current turn, the handler emits a single replay delta
+        containing the accumulated text *before* any new live deltas."""
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+
+        # Upstream session already has: user "test prompt" → assistant "partial".
+        # On recovery the handler should replay "partial" as a single delta.
+        history = [
+            _make_user_event("test prompt"),
+            _make_assistant_event("partial accumulated reply"),
+        ]
+        stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes(
+            history_events=history,
+        )
+        with patch.object(mod, "CopilotClient", stub_client):
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                entry_mode="recovered",
+            )
+            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        # No fresh session, only resume — matches existing recovery contract.
+        assert create_calls == []
+        assert len(resume_calls) == 1
+        # No re-send because upstream already has our user message.
+        assert send_calls == []
+        # The accumulated assistant text was replayed as a single delta.
+        delta_events = [
+            e for e in events if _event_type(e) == "response.output_text.delta"
+        ]
+        assert delta_events, "expected at least one output_text.delta on recovery"
+        deltas = [getattr(e, "delta", None) or e.get("delta") for e in delta_events]
+        joined = "".join(d for d in deltas if d)
+        assert "partial accumulated reply" in joined
+
+    async def test_recovery_with_no_accumulated_text_emits_no_replay_delta(
+        self,
+    ) -> None:
+        """If the upstream session has no assistant content for the
+        current turn (e.g. crashed pre-response.in_progress), recovery
+        should NOT emit a spurious replay delta."""
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+
+        # Upstream has only the user message, no assistant content yet.
+        history = [_make_user_event("test prompt")]
+        stub_client, send_calls, _create_calls, resume_calls = _make_session_stub_classes(
+            history_events=history,
+        )
+        with patch.object(mod, "CopilotClient", stub_client):
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                entry_mode="recovered",
+            )
+            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        assert len(resume_calls) == 1
+        assert send_calls == []
+        delta_events = [
+            e for e in events if _event_type(e) == "response.output_text.delta"
+        ]
+        # No replay text, no live deltas (stub has no new events to deliver
+        # because we didn't call send).
+        deltas = [getattr(e, "delta", None) or e.get("delta") for e in delta_events]
+        assert all(not d for d in deltas), deltas
+
+    async def test_handler_uses_queue_for_live_streaming(self) -> None:
+        """Source-level guard: the handler uses an asyncio.Queue for
+        live delta forwarding rather than a batched list pattern."""
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        import inspect
+
+        src = inspect.getsource(mod.handler)
+        assert "asyncio.Queue" in src, (
+            "handler should drive live deltas through asyncio.Queue, not a "
+            "batched list emitted after idle"
+        )
+        # And no leftover batched-accumulation pattern from the prior design.
+        assert "reply_parts" not in src, (
+            "handler should not accumulate a list of parts and emit them "
+            "after idle; deltas should flow live as they arrive"
+        )
+
+    async def test_handler_recovery_replay_helper_is_invoked(self) -> None:
+        """Source-level guard: the handler invokes the dedicated
+        recovery-replay helper for upstream accumulated text."""
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        import inspect
+
+        src = inspect.getsource(mod.handler)
+        assert "_gather_accumulated_assistant_text" in src, (
+            "handler should invoke _gather_accumulated_assistant_text on "
+            "recovery to replay upstream-accumulated text as a single delta"
+        )
 
 
 @pytest.mark.asyncio

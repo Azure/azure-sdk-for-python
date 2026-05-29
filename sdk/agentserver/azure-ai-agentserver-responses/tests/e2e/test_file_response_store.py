@@ -116,7 +116,7 @@ async def test_history_item_ids_round_trip(tmp_path: Path) -> None:
     await store.create_response(
         response, input_items=None, history_item_ids=["item_a", "item_b", "item_c"]
     )
-    ids = await store.get_history_item_ids("resp_with_history", cursor=None, limit=10)
+    ids = await store.get_history_item_ids("resp_with_history", conversation_id=None, limit=10)
     assert ids == ["item_a", "item_b", "item_c"]
 
 

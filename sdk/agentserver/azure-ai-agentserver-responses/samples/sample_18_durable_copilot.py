@@ -9,11 +9,14 @@ bridge.
 
 Recovery model:
 
-- The Copilot session UUID is stamped into ``durability.metadata`` as
-  ``copilot_session_id``. The fresh-entry path uses
-  ``client.create_session(session_id=…)``; the recovery and follow-up
-  steerable-turn path uses ``client.resume_session(session_id, …)`` —
-  the SDK's documented reattach API.
+- The Copilot session id is the framework-computed
+  ``context.conversation_chain_id`` — a deterministic, crash-stable
+  identifier shared by every turn in the same conversation. No
+  per-handler allocation, no metadata round-trip on first use.
+  The fresh-entry path uses ``client.create_session(session_id=…)``;
+  the recovery and follow-up steerable-turn path uses
+  ``client.resume_session(session_id, …)`` — the SDK's documented
+  reattach API.
 - Before sending the user's input, the handler reads the session's
   persisted event history via ``session.get_messages()``, scans for
   ``UserMessageData`` events, and skips ``session.send`` if the most
@@ -28,13 +31,34 @@ Recovery model:
 - On crash recovery, we never start a fresh session. Recovery always
   reattaches via ``resume_session``.
 
+Streaming model (live deltas + recovery replay):
+
+- The Copilot SDK delivers assistant content incrementally via
+  ``AssistantMessageData`` events as the response is generated. The
+  handler forwards each event as an ``output_text.delta`` SSE event the
+  moment it arrives, so clients see characters appear live rather than
+  in one batched dump at the end of the turn.
+- On crash recovery, when the handler re-enters with
+  ``entry_mode == "recovered"``, it first reads the upstream session's
+  persisted assistant content for the current user turn via
+  ``session.get_messages()`` and emits the accumulated text as a single
+  ``output_text.delta`` event. The recovered client therefore sees:
+  ``response.in_progress`` (with zero output items) → one delta with the
+  accumulated text → live deltas continuing from where the upstream
+  Copilot session is. This is a deliberate simplification — the
+  original per-token delta sequence isn't preserved; we collapse the
+  pre-crash deltas into a single replay chunk and then resume live
+  streaming.
+
 Limitations:
 
-- Like Claude, the Copilot SDK does not checkpoint within an assistant
-  response. If we crash mid-stream the partial reply written so far is
-  lost. For workflows where within-turn progress matters, decompose
-  into smaller queries (see ``sample_19``) or use a framework with
-  native node-level checkpointing (see ``sample_21``).
+- The Copilot SDK does not checkpoint within an assistant response. If
+  Copilot finished a partial reply before the crash, we replay that
+  partial text on recovery; whether the upstream session continues to
+  emit more deltas after we re-attach depends on the Copilot SDK's
+  resume semantics. For workflows where strict per-token continuity
+  matters, decompose into smaller queries (see ``sample_19``) or use a
+  framework with native node-level checkpointing (see ``sample_21``).
 - If a prior turn's user input was identical to this turn's input AND
   that prior turn completed normally, the "last user matches input"
   heuristic will incorrectly skip the send. Rare in normal use; for
@@ -68,7 +92,6 @@ Usage::
 
 import asyncio
 import os
-import uuid
 from typing import Any
 
 from copilot import CopilotClient  # type: ignore[import-untyped]
@@ -97,15 +120,10 @@ app = ResponsesAgentServerHost(options=options)
 
 _SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
 
-
-def _ensure_copilot_session_id(durability) -> str:
-    """Return the persistent Copilot session UUID, allocating on first use."""
-    existing = durability.metadata.get("copilot_session_id")
-    if existing:
-        return existing
-    new_id = str(uuid.uuid4())
-    durability.metadata["copilot_session_id"] = new_id
-    return new_id
+# Allow operators / tests to pick the Copilot model via env var. Default is
+# a small, low-cost model that is generally available; operators with access
+# to a specific model can override at deploy time.
+_COPILOT_MODEL = os.environ.get("COPILOT_MODEL", "gpt-5-mini")
 
 
 async def _open_session(
@@ -115,30 +133,22 @@ async def _open_session(
 ) -> Any:
     """Open the Copilot session — ``resume_session`` if it pre-existed.
 
-    On a fresh-allocated session id we use ``create_session``. On any
-    subsequent attempt (including recovery and steerable follow-up turns)
-    we use ``resume_session``, the SDK's explicit reattach API. The
-    sentinel for "pre-existed" is whether the id existed in metadata
-    when this attempt started — if it did, we are reattaching.
+    On a fresh turn we use ``create_session``; on crash recovery and on every
+    subsequent steerable turn we use ``resume_session``, the SDK's explicit
+    reattach API. ``durability.is_recovery`` is True only when we are being
+    re-entered after a crash; ``durability.entry_mode == "resumed"`` is True
+    for steerable follow-up turns. Both routes reattach.
     """
-    # If this attempt allocated the id (i.e. it wasn't in metadata before
-    # ``_ensure_copilot_session_id`` ran), use create_session. Otherwise,
-    # resume_session. We detect this by storing a "newly allocated" marker
-    # transiently in metadata. Simpler check: if the id appears in the
-    # in-memory metadata AND we already allocated it on a prior attempt,
-    # there will have been a lifecycle-flush — recovery enters with the
-    # id already persisted. So: durability.is_recovery == True implies
-    # reattach; otherwise we just created it this attempt.
-    if durability.is_recovery:
+    if durability.is_recovery or durability.entry_mode == "resumed":
         return await client.resume_session(
             session_id,
             on_permission_request=PermissionHandler.approve_all,
-            model="gpt-5",
+            model=_COPILOT_MODEL,
         )
     return await client.create_session(
         session_id=session_id,
         on_permission_request=PermissionHandler.approve_all,
-        model="gpt-5",
+        model=_COPILOT_MODEL,
     )
 
 
@@ -185,6 +195,56 @@ async def _send_input_if_not_in_session(
     return True
 
 
+async def _gather_accumulated_assistant_text(
+    session: Any, user_input_text: str
+) -> str:
+    """Return the upstream assistant content already emitted for this turn.
+
+    Used on crash recovery to surface whatever Copilot had already sent
+    before the crash as a single replay delta. Looks for the last
+    ``UserMessageData`` event whose content matches ``user_input_text``
+    and concatenates every ``AssistantMessageData`` event that follows
+    it in the session's persisted event log.
+
+    :param session: An open Copilot session (post-``resume_session``).
+    :type session: Any
+    :param user_input_text: The current turn's user input text.
+    :type user_input_text: str
+    :returns: Concatenated assistant content, or an empty string if the
+        upstream session has not produced any assistant content for
+        this turn yet.
+    :rtype: str
+    """
+    try:
+        events = await session.get_messages()
+    except Exception:  # pylint: disable=broad-exception-caught
+        return ""
+
+    # Find the index of the last UserMessageData event whose content
+    # matches the current turn's input.
+    last_user_index: int | None = None
+    for i, ev in enumerate(events):
+        data = getattr(ev, "data", None)
+        if isinstance(data, UserMessageData):
+            content = getattr(data, "content", None)
+            if isinstance(content, str) and content == user_input_text:
+                last_user_index = i
+
+    if last_user_index is None:
+        return ""
+
+    # Concatenate all AssistantMessageData content emitted after that
+    # user message.
+    parts: list[str] = []
+    for ev in events[last_user_index + 1 :]:
+        data = getattr(ev, "data", None)
+        if isinstance(data, AssistantMessageData):
+            content = getattr(data, "content", None)
+            if isinstance(content, str):
+                parts.append(content)
+    return "".join(parts)
+
+
 def _build_resumption_response(
     context: ResponseContext, request: CreateResponse
 ) -> ResponseObject:
@@ -226,7 +286,7 @@ async def handler(
     # reasons we just return without touching the SDK.
     if cancellation_signal.is_set():
         if context.cancellation_reason == CancellationReason.STEERED:
-            session_id = _ensure_copilot_session_id(durability)
+            session_id = context.conversation_chain_id
             async with CopilotClient() as client:
                 async with await _open_session(client, session_id, durability) as session:
                     await _send_input_if_not_in_session(session, context)
@@ -244,49 +304,76 @@ async def handler(
     text = message.add_text_content()
     yield text.emit_added()
 
-    session_id = _ensure_copilot_session_id(durability)
-    reply_parts: list[str] = []
-    idle_event = asyncio.Event()
+    session_id = context.conversation_chain_id
+
+    # ── Live delta streaming via asyncio.Queue ──────────────────────
+    # Copilot's SDK delivers assistant content incrementally via
+    # ``AssistantMessageData`` callbacks. We push each chunk into a
+    # queue and forward it as an output_text.delta the moment it
+    # arrives, so clients see characters appear live.
+    _IDLE = object()
+    delta_queue: asyncio.Queue[Any] = asyncio.Queue()
 
     def on_event(event: Any) -> None:
-        if isinstance(event.data, AssistantMessageData):
-            content = event.data.content or ""
-            reply_parts.append(content)
-        elif isinstance(event.data, SessionIdleData):
-            idle_event.set()
+        data = getattr(event, "data", None)
+        if isinstance(data, AssistantMessageData):
+            content = getattr(data, "content", None) or ""
+            if content:
+                delta_queue.put_nowait(content)
+        elif isinstance(data, SessionIdleData):
+            delta_queue.put_nowait(_IDLE)
+
+    accumulated = ""
 
     async with CopilotClient() as client:
         # Reattach on recovery (resume_session), create on fresh (create_session).
         async with await _open_session(client, session_id, durability) as session:
             session.on(on_event)
 
-            # Upstream-history-gated send: skipped when Copilot's persisted
-            # event log already has our user message as its most recent user event.
+            # ── Recovery replay ─────────────────────────────────────
+            # On crash recovery / steerable reattach, the upstream
+            # session may already hold some accumulated assistant text
+            # for the current user turn (a partial or complete prior
+            # response). Emit it as a single delta so the recovered
+            # client sees the work that was already done before the
+            # crash. Live deltas continue from here.
+            if durability.entry_mode in ("recovered", "resumed"):
+                user_input_text = await context.get_input_text()
+                replay = await _gather_accumulated_assistant_text(
+                    session, user_input_text
+                )
+                if replay:
+                    accumulated += replay
+                    yield text.emit_delta(replay)
+
+            # Upstream-history-gated send: skipped when Copilot's
+            # persisted event log already has our user message as its
+            # most recent user event.
             sent_this_attempt = await _send_input_if_not_in_session(session, context)
 
-            # Only wait for idle if we actually sent something this attempt.
-            # On recovery-skip we have nothing to wait for; the session
-            # reattach has already given us whatever events the SDK
-            # chose to deliver synchronously.
-            if sent_this_attempt:
-                cancel_task = asyncio.create_task(cancellation_signal.wait())
-                idle_task = asyncio.create_task(idle_event.wait())
+            # Drain live events. If we sent input this attempt, wait
+            # for idle indefinitely (Copilot is generating). If we
+            # didn't send (recovery + already-in-session), the upstream
+            # session may still emit a few residual events on attach —
+            # poll with a short bounded timeout, then exit cleanly.
+            wait_timeout = None if sent_this_attempt else 2.0
+            while True:
+                if cancellation_signal.is_set():
+                    await session.abort()
+                    break
                 try:
-                    done, _pending = await asyncio.wait(
-                        {cancel_task, idle_task},
-                        return_when=asyncio.FIRST_COMPLETED,
+                    chunk = await asyncio.wait_for(
+                        delta_queue.get(),
+                        timeout=wait_timeout,
                     )
-                    if cancel_task in done and idle_task not in done:
-                        await session.abort()
-                finally:
-                    for t in (cancel_task, idle_task):
-                        if not t.done():
-                            t.cancel()
-
-    accumulated = ""
-    for part in reply_parts:
-        accumulated += part
-        yield text.emit_delta(part)
+                except asyncio.TimeoutError:
+                    # No new events within the recovery polling window;
+                    # presume the upstream is idle and exit.
+                    break
+                if chunk is _IDLE:
+                    break
+                accumulated += chunk
+                yield text.emit_delta(chunk)
 
     yield text.emit_text_done(accumulated.strip())
     yield text.emit_done()

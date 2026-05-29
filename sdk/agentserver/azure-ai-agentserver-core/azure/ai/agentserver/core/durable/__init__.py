@@ -47,11 +47,13 @@ from ._context import EntryMode, TaskContext
 from ._decorator import Task, TaskOptions, task
 from ._exceptions import (
     EtagConflict,
+    LastInputIdPreconditionFailed,
     SteeringQueueFull,
     TaskCancelled,
     TaskConflictError,
     TaskFailed,
     TaskNotFound,
+    TaskPreconditionFailed,
     TaskSuspended,
     TaskTerminated,
 )
@@ -83,7 +85,9 @@ __all__ = [
     "TaskConflictError",
     "TaskTerminated",
     "EtagConflict",
+    "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
+    "TaskPreconditionFailed",
     "EntryMode",
     "TaskInfo",
 ]
