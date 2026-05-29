@@ -14,10 +14,10 @@ import sys
 import tempfile
 
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.environ.get("AZSDK_REPO_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APIVIEW_REQS = os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt")
 AZURE_SDK_INDEX = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-EXPORT_SCRIPT = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
+EXPORT_SCRIPT = os.environ.get("AZSDK_EXPORT_SCRIPT") or os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
 
 
 def find_package_dir(package_name: str) -> str:
