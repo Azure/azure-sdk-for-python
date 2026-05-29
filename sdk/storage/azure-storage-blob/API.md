@@ -55,6 +55,7 @@ namespace azure.storage.blob
             content_type: Optional[str] = ..., 
             correlation_id: Optional[str] = ..., 
             encryption_scope: Optional[str] = ..., 
+            is_directory: Optional[bool] = ..., 
             protocol: Optional[str] = ..., 
             request_headers: Optional[Dict[str, str]] = ..., 
             request_query_params: Optional[Dict[str, str]] = ..., 
@@ -472,7 +473,7 @@ namespace azure.storage.blob
                 match_condition: Optional[MatchConditions] = ..., 
                 maxsize_condition: Optional[int] = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs: Any
             ) -> Dict[str, Union[str, datetime, int]]: ...
 
@@ -933,7 +934,7 @@ namespace azure.storage.blob
                 encryption_scope: Optional[str] = ..., 
                 lease: Union[BlobLeaseClient, str] = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs: Any
             ) -> Dict[str, Any]: ...
 
@@ -1024,7 +1025,7 @@ namespace azure.storage.blob
                 standard_blob_tier: Optional[StandardBlobTier] = ..., 
                 tags: dict(str, str) = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs: Any
             ) -> Dict[str, Any]: ...
 
@@ -1078,7 +1079,7 @@ namespace azure.storage.blob
                 lease: Union[BlobLeaseClient, str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs: Any
             ) -> Dict[str, Union[str, datetime]]: ...
 
@@ -1292,6 +1293,7 @@ namespace azure.storage.blob
         request_server_encrypted: Optional[bool]
         server_encrypted: bool
         size: int
+        smart_access_tier: Optional[str]
         snapshot: Optional[str]
         tag_count: Optional[int]
         tags: Optional[Dict[str, str]]
@@ -1651,10 +1653,8 @@ namespace azure.storage.blob
                 lease_duration: int = -1, 
                 lease_id: Optional[str] = None, 
                 *, 
-                etag: Optional[str] = ..., 
                 if_modified_since: Optional[datetime] = ..., 
                 if_unmodified_since: Optional[datetime] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> BlobLeaseClient: ...
@@ -1707,11 +1707,9 @@ namespace azure.storage.blob
         def delete_container(
                 self, 
                 *, 
-                etag: Optional[str] = ..., 
                 if_modified_since: Optional[datetime] = ..., 
                 if_unmodified_since: Optional[datetime] = ..., 
                 lease: Union[BlobLeaseClient, str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
@@ -1821,9 +1819,7 @@ namespace azure.storage.blob
                 self, 
                 metadata: Optional[Dict[str, str]] = None, 
                 *, 
-                etag: Optional[str] = ..., 
                 if_modified_since: Optional[datetime] = ..., 
-                if_unmodified_since: Optional[datetime] = ..., 
                 lease: Union[BlobLeaseClient, str] = ..., 
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
@@ -1879,7 +1875,7 @@ namespace azure.storage.blob
                 progress_hook: Callable[[int, Optional[int]], None] = ..., 
                 standard_blob_tier: Optional[StandardBlobTier] = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs
             ) -> BlobClient: ...
 
@@ -2876,6 +2872,7 @@ namespace azure.storage.blob
         COLD = "Cold"
         COOL = "Cool"
         HOT = "Hot"
+        SMART = "Smart"
 
 
     class azure.storage.blob.StaticWebsite(GeneratedStaticWebsite):
@@ -3117,7 +3114,7 @@ namespace azure.storage.blob
                 config: StorageConfiguration = None, 
                 start_range: Optional[int] = None, 
                 end_range: Optional[int] = None, 
-                validate_content: bool = None, 
+                validate_content: CV_TYPE_PARSED = None, 
                 encryption_options: Dict[str, Any] = None, 
                 max_concurrency: Optional[int] = None, 
                 name: str = None, 
@@ -3131,18 +3128,18 @@ namespace azure.storage.blob
 
         def chunks(self) -> Iterator[bytes]: ...
 
-        def content_as_bytes(self, max_concurrency: int = None) -> bytes: ...
+        def content_as_bytes(self, max_concurrency: Optional[int] = None) -> bytes: ...
 
         def content_as_text(
                 self, 
-                max_concurrency: int = None, 
+                max_concurrency: Optional[int] = None, 
                 encoding: str = "UTF-8"
             ) -> str: ...
 
         def download_to_stream(
                 self, 
                 stream: IO[T], 
-                max_concurrency: int = None
+                max_concurrency: Optional[int] = None
             ) -> Any: ...
 
         @overload
@@ -3301,7 +3298,7 @@ namespace azure.storage.blob.aio
                 match_condition: Optional[MatchConditions] = ..., 
                 maxsize_condition: Optional[int] = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs: Any
             ) -> Dict[str, Union[str, datetime, int]]: ...
 
@@ -3761,7 +3758,7 @@ namespace azure.storage.blob.aio
                 encryption_scope: Optional[str] = ..., 
                 lease: Union[BlobLeaseClient, str] = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs: Any
             ) -> Dict[str, Any]: ...
 
@@ -3853,7 +3850,7 @@ namespace azure.storage.blob.aio
                 standard_blob_tier: Optional[StandardBlobTier] = ..., 
                 tags: dict(str, str) = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs: Any
             ) -> Dict[str, Any]: ...
 
@@ -3907,7 +3904,7 @@ namespace azure.storage.blob.aio
                 lease: Union[BlobLeaseClient, str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs: Any
             ) -> Dict[str, Union[str, datetime]]: ...
 
@@ -4302,10 +4299,8 @@ namespace azure.storage.blob.aio
                 lease_duration: int = -1, 
                 lease_id: Optional[str] = None, 
                 *, 
-                etag: Optional[str] = ..., 
                 if_modified_since: Optional[datetime] = ..., 
                 if_unmodified_since: Optional[datetime] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> BlobLeaseClient: ...
@@ -4358,11 +4353,9 @@ namespace azure.storage.blob.aio
         async def delete_container(
                 self, 
                 *, 
-                etag: Optional[str] = ..., 
                 if_modified_since: Optional[datetime] = ..., 
                 if_unmodified_since: Optional[datetime] = ..., 
                 lease: Union[BlobLeaseClient, str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
@@ -4528,7 +4521,7 @@ namespace azure.storage.blob.aio
                 progress_hook: Callable[[int, Optional[int]], Awaitable[None]] = ..., 
                 standard_blob_tier: Optional[StandardBlobTier] = ..., 
                 timeout: Optional[int] = ..., 
-                validate_content: Optional[bool] = ..., 
+                validate_content: Union[bool, Literal[auto, crc64, md5]] = ..., 
                 **kwargs
             ) -> BlobClient: ...
 
@@ -4627,7 +4620,7 @@ namespace azure.storage.blob.aio
                 config: StorageConfiguration = None, 
                 start_range: Optional[int] = None, 
                 end_range: Optional[int] = None, 
-                validate_content: bool = None, 
+                validate_content: CV_TYPE_PARSED = None, 
                 encryption_options: Dict[str, Any] = None, 
                 max_concurrency: Optional[int] = None, 
                 name: str = None, 
@@ -4641,18 +4634,18 @@ namespace azure.storage.blob.aio
 
         def chunks(self) -> AsyncIterator[bytes]: ...
 
-        async def content_as_bytes(self, max_concurrency: int = None) -> bytes: ...
+        async def content_as_bytes(self, max_concurrency: Optional[int] = None) -> bytes: ...
 
         async def content_as_text(
                 self, 
-                max_concurrency: int = None, 
+                max_concurrency: Optional[int] = None, 
                 encoding: str = "UTF-8"
             ) -> str: ...
 
         async def download_to_stream(
                 self, 
                 stream: IO[T], 
-                max_concurrency: int = None
+                max_concurrency: Optional[int] = None
             ) -> Any: ...
 
         @overload
