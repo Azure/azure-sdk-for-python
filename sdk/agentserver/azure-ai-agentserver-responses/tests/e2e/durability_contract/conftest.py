@@ -97,6 +97,14 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
             "CONFORMANCE_STORE_DISABLED": "true" if store_disabled else "false",
             "CONFORMANCE_HANDLER_SLEEP_MS": str(handler_sleep_ms),
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(shutdown_grace_seconds),
+            # Force Hypercorn to cancel in-flight connections after the
+            # responses-layer grace so foreground responses (Row 3) get
+            # their cancellation_signal set BEFORE Hypercorn waits its
+            # default 30s for handler completion. Without this, a
+            # SIGTERM-short-grace test would always see the foreground
+            # handler complete naturally and ``GET`` returns
+            # ``status="completed"`` instead of the expected ``failed``.
+            "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS": str(shutdown_grace_seconds),
             # Quiet the responses package's own logging during conformance
             # runs so test output stays focused on failures.
             "LOGLEVEL": os.environ.get("LOGLEVEL", "WARNING"),

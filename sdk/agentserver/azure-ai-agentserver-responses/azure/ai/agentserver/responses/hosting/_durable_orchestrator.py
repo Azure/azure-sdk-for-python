@@ -746,9 +746,7 @@ class DurableResponseOrchestrator:
 
             # ctx.cancel or ctx.shutdown fired before completion. Proactively
             # mark the response failed via the idempotent
-            # _persist_crash_failed helper (skips overwrite if a terminal is
-            # already in the store) so the bookkeeping task can complete
-            # cleanly without blocking shutdown.
+            # _persist_crash_failed helper.
             await self._persist_crash_failed(response_id, ctx.input)
             return
         finally:

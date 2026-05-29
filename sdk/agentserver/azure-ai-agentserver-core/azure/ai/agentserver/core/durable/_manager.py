@@ -372,9 +372,31 @@ class TaskManager:
         # On a forced lifespan teardown (e.g., HTTP test client closing) the
         # sleep can be cancelled — that's fine, fall through to force-expire
         # and execution_task.cancel() below so handlers wind down.
+        #
+        # (Spec 014) Poll for ``_active_tasks`` becoming empty rather than
+        # an unconditional sleep so the shutdown returns promptly when
+        # all task bodies have checkpointed. The grace value is the
+        # MAXIMUM wait, not the minimum — without polling, a 25s default
+        # blocks every shutdown for the full window even when tasks are
+        # already done.
         if self._active_tasks:
+            deadline = (
+                asyncio.get_event_loop().time() + self._shutdown_grace_seconds
+            )
             try:
-                await asyncio.sleep(self._shutdown_grace_seconds)
+                while self._active_tasks:
+                    if asyncio.get_event_loop().time() >= deadline:
+                        break
+                    # Drop entries whose execution_task already completed
+                    # so we don't keep waiting for them.
+                    self._active_tasks = {
+                        task_id: active
+                        for task_id, active in self._active_tasks.items()
+                        if not active.execution_task.done()
+                    }
+                    if not self._active_tasks:
+                        break
+                    await asyncio.sleep(0.05)
             except asyncio.CancelledError:
                 logger.info("TaskManager shutdown grace period interrupted")
 

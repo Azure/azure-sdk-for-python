@@ -373,9 +373,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     cancellation_signal.set()
                     return
                 if await request.is_disconnected():
-                    # Client disconnect on foreground = client cancellation
+                    # Client disconnect on foreground. If shutdown is also
+                    # in progress, prefer SHUTTING_DOWN — the disconnect
+                    # is a side effect of server shutdown (Hypercorn
+                    # closing connections during graceful drain), not an
+                    # independent client action. (Spec 014 Row 3 Path B.)
                     if context is not None and context.cancellation_reason is None:
-                        context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+                        if self._shutdown_requested.is_set():
+                            context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                        else:
+                            context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
                     cancellation_signal.set()
                     return
                 # Race: either shutdown fires or we poll again for disconnect
@@ -725,10 +732,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         except (asyncio.CancelledError, GeneratorExit):
                             # B17: Hypercorn cancels the generator when client
                             # disconnects. Stamp CLIENT_CANCELLED and signal
-                            # the handler to exit gracefully.
+                            # the handler to exit gracefully — UNLESS the
+                            # server is shutting down, in which case the
+                            # cancellation is a side effect of server
+                            # shutdown and SHUTTING_DOWN is the correct
+                            # reason (Spec 014 Row 3 Path B).
                             if not ctx.cancellation_signal.is_set():
                                 if ctx.context and ctx.context.cancellation_reason is None:
-                                    ctx.context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+                                    if self._shutdown_requested.is_set():
+                                        ctx.context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                                    else:
+                                        ctx.context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
                                 ctx.cancellation_signal.set()
                             raise
                         finally:

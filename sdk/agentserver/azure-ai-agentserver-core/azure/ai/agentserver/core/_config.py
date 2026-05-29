@@ -209,18 +209,32 @@ def resolve_port(port: Optional[int]) -> int:
 
 
 _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT = 30
+_ENV_GRACEFUL_SHUTDOWN_TIMEOUT = "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS"
 
 
 def resolve_graceful_shutdown_timeout(timeout: Optional[int]) -> int:
-    """Resolve the graceful shutdown timeout from argument or default.
+    """Resolve the graceful shutdown timeout from argument, env var, or default.
+
+    Resolution order:
+    1. Explicit ``timeout`` argument (constructor / programmatic).
+    2. ``AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS`` env var.
+    3. Default of 30 seconds.
+
+    Lower values force Hypercorn to cancel in-flight connections sooner
+    on SIGTERM — useful for tests / operators that want shutdown handlers
+    (in-process markers, durable task checkpoints) to fire before
+    long-running requests complete naturally.
 
     :param timeout: Explicitly requested timeout or None.
     :type timeout: Optional[int]
-    :return: The resolved timeout in seconds (default 30).
+    :return: The resolved timeout in seconds.
     :rtype: int
     """
     if timeout is not None:
         return max(0, _require_int("graceful_shutdown_timeout", timeout))
+    env_val = _parse_int_env(_ENV_GRACEFUL_SHUTDOWN_TIMEOUT)
+    if env_val is not None:
+        return max(0, env_val)
     return _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
 
 

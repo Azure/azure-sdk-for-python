@@ -198,6 +198,14 @@ class AgentServerHost(Starlette):
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
+        # (Spec 014) Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
+        # SIGTERM signal handler — before Hypercorn's graceful drain
+        # begins. Used by responses to set ``_shutdown_requested`` early so
+        # foreground handlers' disconnect-poll loop sees the shutdown
+        # signal BEFORE Hypercorn waits for in-flight requests to complete.
+        # Callbacks must be non-blocking and thread-safe (they run in the
+        # signal handler, not on the event loop).
+        self._pre_shutdown_callbacks: list[Callable[[], None]] = []
 
         # Server version segments for the x-platform-server header.
         # Protocol packages call register_server_version() to add their
@@ -420,6 +428,31 @@ class AgentServerHost(Starlette):
         self._shutdown_fn = fn
         return fn
 
+    def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None:
+        """Register a synchronous callback to run on SIGTERM signal receipt.
+
+        (Spec 014) Callbacks run from inside the SIGTERM signal handler,
+        BEFORE Hypercorn begins its graceful drain. Use this to
+        set asyncio events that long-running request handlers observe via
+        their cancellation-polling loops, so they can return before
+        Hypercorn waits the full ``graceful_shutdown_timeout`` for the
+        request to complete.
+
+        Callbacks MUST be non-blocking and signal-safe — they execute
+        synchronously on the main thread inside the signal handler. The
+        typical pattern is::
+
+            shutdown_event = asyncio.Event()
+            app.register_pre_shutdown_callback(shutdown_event.set)
+
+        Note: ``asyncio.Event.set()`` is safe to call from a signal
+        handler when the event loop is running on the same thread.
+
+        :param fn: A synchronous, non-blocking callable.
+        :type fn: Callable[[], None]
+        """
+        self._pre_shutdown_callbacks.append(fn)
+
     async def _dispatch_shutdown(self) -> None:
         """Dispatch to the registered shutdown handler, or no-op."""
         if self._shutdown_fn is not None:
@@ -471,23 +504,45 @@ class AgentServerHost(Starlette):
         logger.info("AgentServerHost starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
 
-        # Register SIGTERM handler to log the signal and initiate
-        # Hypercorn's graceful shutdown.
-        original_sigterm = signal.getsignal(signal.SIGTERM)
+        async def _serve_with_shutdown_trigger() -> None:
+            """Wrap hypercorn.serve with a custom shutdown_trigger.
 
-        def _handle_sigterm(_signum: int, _frame: Any) -> None:
-            logger.info("SIGTERM received, initiating graceful shutdown")
-            # Restore the original handler so the re-raised signal is not
-            # caught by this handler again (avoids infinite recursion).
-            signal.signal(signal.SIGTERM, original_sigterm)
-            os.kill(os.getpid(), signal.SIGTERM)
+            (Spec 014) When Hypercorn's default ``shutdown_trigger=None``
+            is used, Hypercorn registers its own SIGTERM/SIGINT handler
+            via ``loop.add_signal_handler`` and our ``signal.signal``
+            handler is overridden. We register our own
+            ``loop.add_signal_handler`` here and pass the resulting wait
+            as ``shutdown_trigger`` so Hypercorn uses our event — and we
+            get to fire pre-shutdown callbacks synchronously on signal
+            receipt, before Hypercorn begins its graceful drain.
+            """
+            import asyncio as _asyncio  # pylint: disable=do-not-import-asyncio,import-outside-toplevel
+            import signal as _signal  # pylint: disable=import-outside-toplevel
 
-        signal.signal(signal.SIGTERM, _handle_sigterm)
+            loop = _asyncio.get_event_loop()
+            signal_event = _asyncio.Event()
 
-        try:
-            asyncio.run(_hypercorn_serve(self, config))  # type: ignore[arg-type]
-        finally:
-            signal.signal(signal.SIGTERM, original_sigterm)
+            def _on_signal() -> None:
+                # Run pre-shutdown callbacks BEFORE setting the event so
+                # they fire before Hypercorn begins draining connections.
+                for cb in self._pre_shutdown_callbacks:
+                    try:
+                        cb()
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning("Pre-shutdown callback raised", exc_info=True)
+                signal_event.set()
+
+            for signal_name in ("SIGINT", "SIGTERM", "SIGBREAK"):
+                if hasattr(_signal, signal_name):
+                    try:
+                        loop.add_signal_handler(getattr(_signal, signal_name), _on_signal)
+                    except NotImplementedError:
+                        # Windows fallback — install via signal.signal directly.
+                        _signal.signal(getattr(_signal, signal_name), lambda *_: _on_signal())
+
+            await _hypercorn_serve(self, config, shutdown_trigger=signal_event.wait)  # type: ignore[arg-type]
+
+        asyncio.run(_serve_with_shutdown_trigger())
 
     async def run_async(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
         """Start the server asynchronously (awaitable).

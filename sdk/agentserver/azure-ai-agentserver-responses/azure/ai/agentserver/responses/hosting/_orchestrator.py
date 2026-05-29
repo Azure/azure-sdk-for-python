@@ -1945,18 +1945,28 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # handles that case by creating the record itself.
         async def _finalize() -> None:
             await self._finalize_stream(ctx, state)
-            # (Spec 014 FR-003 / FR-004) Signal the bookkeeping task on every
-            # stream finalize so the durable task body returns cleanly. For
-            # a successful terminal it's a no-op (already signaled by
-            # _persist_and_resolve_terminal); for a stream-interrupted exit
-            # (B17 — client disconnect or server shutdown without terminal),
-            # this stops the bookkeeping body waiting indefinitely so the
-            # task completes. The recovery semantics still hold for true
-            # SIGKILL — the bookkeeping body never gets the chance to run
-            # _persist_crash_failed nor signal completion, so the task
-            # stays in_progress for next-lifetime recovery.
+            # (Spec 014 FR-003 / FR-004) Decide whether to signal the
+            # bookkeeping task complete based on WHY the stream ended:
+            #
+            # - terminal persisted successfully → already signaled by
+            #   ``_persist_and_resolve_terminal``; this is a no-op.
+            # - client disconnect (no server shutdown) → complete the
+            #   bookkeeping task so the response disappears (test_e12:
+            #   GET returns 404).
+            # - server shutdown in progress → DO NOT complete; leave the
+            #   task in_progress so its body's ``ctx.shutdown`` branch
+            #   fires ``_persist_crash_failed`` (Row 3 Path B: GET
+            #   returns failed).
+            #
+            # The distinguisher is ``ctx.context.cancellation_reason``:
+            # ``SHUTTING_DOWN`` indicates server shutdown; absent or
+            # ``CLIENT_CANCELLED`` indicates client disconnect.
             if bookkeeping_active:
-                await self._complete_bookkeeping_task(ctx.response_id)
+                reason = (
+                    ctx.context.cancellation_reason if ctx.context else None
+                )
+                if reason != CancellationReason.SHUTTING_DOWN:
+                    await self._complete_bookkeeping_task(ctx.response_id)
 
         # --- Fast path: no keep-alive ---
         if not self._runtime_options.sse_keep_alive_enabled:
@@ -2297,17 +2307,17 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         try:
             return await self._run_sync_inner(ctx, state)
         finally:
-            # Always signal the bookkeeping task on exit. The recovery
-            # scanner's idempotent _persist_crash_failed check reads the
-            # store first — if we succeeded in persisting (terminal status
-            # already present), recovery would skip overwrite anyway, but
-            # by completing here we avoid even the wakeup. For the
-            # client-disconnect path (response NOT persisted), we still
-            # want to skip recovery: a disconnected client doesn't need a
-            # ``server_error`` ghost in the store. Process-level crashes
-            # (SIGKILL) prevent this finally from running, leaving the
-            # task in_progress for the recovery scanner.
-            if bookkeeping_record is not None:
+            # (Spec 014 FR-004) Only signal the bookkeeping task on
+            # SUCCESSFUL terminal persistence — when ``state.provider_created``
+            # is True (the create_response in _run_sync_inner succeeded).
+            # If the request was cancelled mid-handler (client disconnect
+            # or graceful shutdown), no terminal was persisted and the
+            # bookkeeping task should remain in_progress so the
+            # next-lifetime recovery scanner marks the response failed.
+            if (
+                bookkeeping_record is not None
+                and state.provider_created
+            ):
                 await self._complete_bookkeeping_task(ctx.response_id)
 
     async def _run_sync_inner(
@@ -2412,6 +2422,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     _history_ids,
                     isolation=_isolation,
                 )
+                state.provider_created = True
                 # Bookkeeping signal is fired in run_sync's finally block
                 # — no need to repeat here.
             except Exception as persist_exc:  # pylint: disable=broad-exception-caught

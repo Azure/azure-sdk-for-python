@@ -308,13 +308,21 @@ class CrashHarness:
         :returns: The exit code, or ``None`` if there was no live subprocess.
         :rtype: int | None
         """
-        if self._client is not None:
-            await self._client.aclose()
-            self._client = None
         if self._process is None:
+            if self._client is not None:
+                await self._client.aclose()
+                self._client = None
             return None
         if self._process.poll() is not None:
+            if self._client is not None:
+                await self._client.aclose()
+                self._client = None
             return self._process.returncode
+        # (Spec 014) SIGTERM the subprocess BEFORE closing the client so
+        # the server sees the shutdown signal (and stamps SHUTTING_DOWN
+        # on in-flight foreground responses) BEFORE Hypercorn closes the
+        # client connection and the disconnect-poll loop stamps
+        # CLIENT_CANCELLED instead.
         try:
             # SIGTERM the whole process group so children get it too.
             os.killpg(os.getpgid(self._process.pid), signal.SIGTERM)
@@ -323,6 +331,17 @@ class CrashHarness:
                 self._process.terminate()
             except ProcessLookupError:
                 pass
+        # Give the subprocess a tick to receive the signal and run its
+        # pre-shutdown callback (set ``_shutdown_requested``) BEFORE the
+        # client connection closes — otherwise the server's
+        # disconnect-poll / iter-with-cleanup may race and stamp
+        # CLIENT_CANCELLED before the SHUTTING_DOWN flag is set.
+        await asyncio.sleep(0.1)
+        # Now close the client (server-side connection will close shortly
+        # via the shutdown sequence).
+        if self._client is not None:
+            await self._client.aclose()
+            self._client = None
         try:
             return self._process.wait(timeout=wait_seconds)
         except subprocess.TimeoutExpired:

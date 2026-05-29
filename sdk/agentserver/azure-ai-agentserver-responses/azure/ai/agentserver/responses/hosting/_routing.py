@@ -313,6 +313,17 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Register shutdown handler on self (inherited from AgentServerHost)
         self.shutdown_handler(endpoint.handle_shutdown)
 
+        # (Spec 014) Register a pre-shutdown callback that runs from the
+        # SIGTERM signal handler — BEFORE Hypercorn's graceful drain
+        # begins. This sets the endpoint's ``_shutdown_requested`` event
+        # immediately so foreground responses' disconnect-poll loop
+        # detects shutdown and signals the handler to exit cleanly,
+        # avoiding the case where Hypercorn waits a long
+        # ``graceful_shutdown_timeout`` for the handler to complete
+        # naturally — which would deliver the wrong terminal status
+        # (completed instead of failed) to a Row 3 Path B test scenario.
+        self.register_pre_shutdown_callback(endpoint._shutdown_requested.set)
+
         # Stash endpoint reference for request_shutdown() access.
         self._endpoint = endpoint
 
