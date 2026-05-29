@@ -164,21 +164,27 @@ See Foundry documentation:
 
 ## Examples
 
-The table below lists the operation groups supported by the client library, with links to Foundry documentation and relevant sample code.
+The table below lists the operation groups supported by the client library, with links to Foundry documentation and relevant [samples][samples] sub-folder. Additional documentation and samples may have been added after this package was release, to cover the empty cells below.
 
 | Topic | Foundry documentation | Samples folder |
 |---|---|---|
 | Agents (create, run, stream) | [Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview) | `samples/agents/` |
 | Hosted agents (preview) | [Hosted agents concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents), [Deploy your first hosted agent](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent) | `samples/hosted_agents/` |
 | Agents tools | [Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog) | `samples/agents/tools/` |
-| Evaluation | [Evaluate agents](https://learn.microsoft.com/azure/foundry/observability/how-to/evaluate-agent) | `samples/evaluations/` |
+| Connections | [Add a new connection to your project](https://learn.microsoft.com/azure/foundry/how-to/connections-add?tabs=foundry-portal)| `samples/connections/` |
+| Datasets | | `samples/datasets/` |
 | Deployments | [Deployment types](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/deployment-types) | `samples/deployments/` |
-| Connections | [Connections operations](https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?view=azure-python#connections-operations) | `samples/connections/` |
-| Datasets | [Dataset operations](https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?view=azure-python#dataset-operations) | `samples/datasets/` |
-| Models (preview) | Register local model weights as Foundry `ModelVersion` resources via `.beta.models` (`create`, `list`, `list_versions`, `get`, `update`, `delete`, `pending_upload`, `pending_create_version`, `get_credentials`). | `samples/models/` |
-| Indexes | [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search) | `samples/indexes/` |
+| Evaluation | [Evaluate agents](https://learn.microsoft.com/azure/foundry/observability/how-to/evaluate-agent) | `samples/evaluations/` |
 | Files (upload, retrieve, list, delete) | [OpenAI Files API](https://platform.openai.com/docs/api-reference/files) | `samples/files/` |
-| Fine-tuning | [Fine-Tuning in AI Foundry](https://github.com/microsoft-foundry/fine-tuning) | `samples/finetuning/` |
+| Fine-tuning | [When to use fine-tuning](https://learn.microsoft.com/azure/foundry/openai/concepts/fine-tuning-considerations), [Fine-Tuning in AI Foundry (GitHub repo)](https://github.com/microsoft-foundry/fine-tuning) | `samples/finetuning/` |
+| Indexes | [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search) | `samples/indexes/` |
+| Memory stores (preview) | | `samples/memories/` |
+| Models (preview) | | `samples/models/` |
+| Red teams (preview) | | `samples/red_team/` |
+| Responses | [Responses API](https://platform.openai.com/docs/api-reference/responses) | `samples/responses/` |
+| Routines (preview) | | |
+| Skills (preview) | | `samples/hosted_agents/` |
+| Toolboxes (preview) | | `samples/hosted_agents/` |
 
 
 ## Client-side tracing
