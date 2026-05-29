@@ -754,6 +754,7 @@ class _PipelineState:
         "stream_interrupted",
         "pending_terminal",
         "provider_created",
+        "pre_subject",
     )
 
     def __init__(self) -> None:
@@ -764,6 +765,12 @@ class _PipelineState:
         self.stream_interrupted: bool = False
         self.pending_terminal: generated_models.ResponseStreamEvent | None = None
         self.provider_created: bool = False
+        # (Spec 014 FR-002) Optional pre-allocated subject created by the
+        # durable-streaming caller. When set, ``_register_bg_execution`` uses
+        # this subject on the freshly created record instead of constructing
+        # a new one, so the wire iterator (which subscribed to this exact
+        # subject before the durable body started) receives every event.
+        self.pre_subject: "_ResponseEventSubject | None" = None
 
 
 class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
@@ -841,6 +848,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 options=runtime_options,
                 provider=provider,
                 runtime_state=runtime_state,
+                parent_orchestrator=self,
             )
 
     # ------------------------------------------------------------------
@@ -1202,6 +1210,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         received.  The record is seeded with ``first_normalized`` so that
         subscribers joining mid-stream receive the full history.
 
+        (Spec 014 FR-002 — close divergence 1) When the durable streaming
+        caller pre-allocated a ``_ResponseEventSubject`` (``state.pre_subject``
+        is set), this method installs THAT subject on the new record rather
+        than constructing a fresh one. The wire iterator in
+        :meth:`_live_stream` subscribes to the pre-allocated subject before
+        the durable body starts, so events published here must reach that
+        exact subject for the live wire to see them.
+
         :param ctx: Current execution context (immutable inputs).
         :type ctx: _ExecutionContext
         :param state: Mutable pipeline state for this invocation.
@@ -1238,10 +1254,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         execution.set_response_snapshot(
             generated_models.ResponseObject(initial_payload)
         )
-        execution.subject = _ResponseEventSubject()
+        # (Spec 014 FR-002) Honour a pre-allocated subject from the durable
+        # streaming caller so the live wire iterator sees published events.
+        execution.subject = state.pre_subject or _ResponseEventSubject()
         state.bg_record = execution
         assert state.bg_record.subject is not None
-        await state.bg_record.subject.publish(first_normalized)
         await self._runtime_state.add(execution)
         if ctx.store:
             _isolation = ctx.context.isolation if ctx.context else None
@@ -1286,6 +1303,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 )
                 execution.persistence_failed = True
                 execution.persistence_exception = persist_exc
+        # Publish the first event AFTER persistence has been attempted. This
+        # ensures replay subscribers (and the live wire iterator on the
+        # durable streaming path) never observe ``response.created`` when
+        # Phase 1 create_response failed — matching the contract requirement
+        # that no ``response.created`` precedes the standalone error event.
+        if not execution.persistence_failed:
+            await state.bg_record.subject.publish(first_normalized)
 
     async def _process_handler_events(  # pylint: disable=too-many-return-statements,too-many-branches
         self,
@@ -1343,6 +1367,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             )
             for event in fallback_events:
                 state.handler_events.append(event)
+                # (Spec 014 FR-002) When a pre-allocated subject is present
+                # (durable streaming path), publish fallback events to it so
+                # the live wire iterator subscribed on the other side sees
+                # them. Without this the synthesised lifecycle for an empty
+                # handler would never reach the wire.
+                if state.pre_subject is not None:
+                    try:
+                        await state.pre_subject.publish(event)
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        pass  # best effort — subject is for replay, not transport
                 if event.get("type") in self._TERMINAL_SSE_TYPES:
                     state.pending_terminal = event
                 else:
@@ -1477,7 +1511,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # Evict the in-memory record so GET/replay cannot observe an
                 # in-progress response when §3.3 requires no response.created.
                 await self._runtime_state.try_evict(ctx.response_id)
-                yield construct_event_model(
+                error_event = construct_event_model(
                     {
                         "type": "error",
                         "message": _STORAGE_ERROR_MESSAGE,
@@ -1486,6 +1520,18 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         "sequence_number": 0,
                     }
                 )
+                # (Spec 014 FR-002) Publish the storage_error event to
+                # state.pre_subject when set so the live wire iterator on the
+                # durable streaming path receives it. ``_register_bg_execution``
+                # deliberately did NOT publish ``response.created`` when
+                # persistence_failed is True, so this is the only event the
+                # wire will see for the failed phase-1 create.
+                if state.pre_subject is not None:
+                    try:
+                        await state.pre_subject.publish(error_event)
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        pass
+                yield error_event
                 return
 
         yield first_normalized
@@ -1918,6 +1964,113 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # all events are delivered.  Without this, _live_stream can be abandoned
             # mid-iteration by Starlette (the async-generator finalizer may not fire
             # promptly), leaving GET-replay subscribers blocked on await q.get() forever.
+            #
+            # (Spec 014 FR-002 — close divergence 1)
+            # When durable_background=True AND store=True AND background=True, route
+            # the handler execution through _start_durable_background so the durable
+            # task primitive wraps it (handler is re-invokable on crash). The wire
+            # iterator subscribes to record.subject (created lazily inside
+            # _process_handler_events as the durable body drives events through the
+            # streaming pipeline). On crash recovery, the durable scanner re-invokes
+            # the body; reconnecting clients see events via GET ?stream=true&starting_after=N.
+            if self._runtime_options.durable_background and ctx.store:
+                # (Spec 014 FR-002) Pre-allocate the subject the wire iterator
+                # will subscribe to. The durable body's _register_bg_execution
+                # will install this same subject on the freshly-created record
+                # (via state.pre_subject), so events published there are
+                # observed here in real time.
+                #
+                # We do NOT pre-register a record in runtime_state — that
+                # would conflict with _finalize_stream's record-replacement
+                # logic. Instead, we share only the subject; the record is
+                # created exactly once, by _register_bg_execution, when the
+                # first handler event arrives.
+                wire_subject = _ResponseEventSubject()
+                state.pre_subject = wire_subject
+
+                async def _durable_stream_fallback() -> None:
+                    # Non-durable fallback runner if _start_durable_background's
+                    # internal try/except falls through. Uses the same
+                    # _process_handler_events pipeline as the durable body so
+                    # the events written to state.pre_subject still reach the
+                    # live wire iterator on this side.
+                    try:
+                        async for _event in self._process_handler_events(
+                            ctx, state, handler_iterator
+                        ):
+                            pass
+                        if state.pending_terminal is not None:
+                            had_bg_record = state.bg_record is not None
+                            r = state.bg_record or _make_ephemeral_record(
+                                ctx, state
+                            )
+                            resolved = await self._persist_and_resolve_terminal(
+                                ctx, state, r
+                            )
+                            # Always publish the resolved terminal to the
+                            # pre-allocated wire subject. _persist_and_resolve_terminal
+                            # only publishes to state.bg_record.subject under
+                            # certain conditions (cancel-race short-circuit
+                            # skips it, and ephemeral records have no subject
+                            # at all). The live wire iterator subscribed to
+                            # ``wire_subject`` MUST receive the terminal
+                            # before subject.complete() fires.
+                            try:
+                                # Avoid double-publish if r.subject IS the
+                                # wire subject and _persist_and_resolve_terminal
+                                # already published.
+                                already_published = (
+                                    had_bg_record
+                                    and r.subject is wire_subject
+                                    and not (r.is_terminal and r.cancel_requested)
+                                )
+                                if not already_published:
+                                    await wire_subject.publish(resolved)
+                            except Exception:  # pylint: disable=broad-exception-caught
+                                pass
+                    finally:
+                        await self._finalize_stream(ctx, state)
+                        # The pre-allocated wire_subject is independent of
+                        # state.bg_record.subject. Always complete it so the
+                        # wire iterator exits.
+                        try:
+                            await wire_subject.complete()
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass  # best effort (idempotent if already completed)
+
+                # Construct a minimal record only for _start_durable_background's
+                # parameter shape. This record is NOT added to runtime_state —
+                # the durable body (or fallback) will create the canonical
+                # record via _register_bg_execution.
+                start_record = ResponseExecution(
+                    response_id=ctx.response_id,
+                    mode_flags=ResponseModeFlags(
+                        stream=True, store=True, background=True
+                    ),
+                    status="in_progress",
+                    input_items=deepcopy(ctx.input_items),
+                    previous_response_id=ctx.previous_response_id,
+                    cancel_signal=ctx.cancellation_signal,
+                    response_context=ctx.context,
+                    agent_session_id=ctx.agent_session_id,
+                    conversation_id=ctx.conversation_id,
+                    chat_isolation_key=ctx.chat_isolation_key,
+                    initial_model=ctx.model,
+                    initial_agent_reference=ctx.agent_reference,
+                )
+                start_record.subject = wire_subject
+
+                await self._start_durable_background(
+                    ctx, start_record, _durable_stream_fallback
+                )
+
+                try:
+                    async for event in wire_subject.subscribe(cursor=-1):
+                        yield encode_sse_any_event(event)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass  # wire dropped; durable body continues
+                return
+
             _SENTINEL_BG = object()
             bg_queue: asyncio.Queue[object] = asyncio.Queue()
 
@@ -2308,6 +2461,153 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         ctx.span.end(None)
         return _RuntimeState.to_snapshot(record)
 
+    async def _run_durable_stream_body(
+        self,
+        *,
+        parsed: "CreateResponse",
+        context: "ResponseContext",
+        cancellation_signal: asyncio.Event,
+        record: ResponseExecution,
+        response_id: str,
+        agent_reference: Any,
+        model: str | None,
+        store: bool,
+        agent_session_id: str | None,
+        conversation_id: str | None,
+    ) -> None:
+        """Durable task body for streaming responses (Spec 014 FR-002 — divergence 1).
+
+        Called from ``DurableResponseOrchestrator._execute_in_task`` when
+        ``params["stream"]`` is True. Drives the handler through the streaming
+        pipeline (``_process_handler_events``) which writes events to:
+
+        - ``record.subject`` — the in-memory pub/sub the live wire iterator
+          subscribes to.
+        - ``self._durable_stream_provider`` — the persisted store used by
+          GET ``/responses/{id}?stream=true&starting_after=N`` reconnect
+          (incl. crash recovery).
+
+        On fresh entry: a live wire connection exists; the wire iterator in
+        ``_live_stream``'s bg+store branch subscribes to ``record.subject``
+        and yields encoded SSE events as they arrive.
+
+        On recovered entry: no wire connection (prior lifetime is dead). The
+        handler still runs and events still get persisted; reconnecting
+        clients see the events via the GET reconnect endpoint.
+
+        :keyword parsed: The parsed ``CreateResponse`` for this request.
+        :keyword context: The handler's :class:`ResponseContext`.
+        :keyword cancellation_signal: Per-request cancellation event
+            (already bridged from ``ctx.cancel`` / ``ctx.shutdown`` by the
+            durable orchestrator).
+        :keyword record: The :class:`ResponseExecution` (already registered
+            with ``runtime_state`` by the orchestrator).
+        :keyword response_id: The response identifier.
+        :keyword agent_reference: Resolved agent reference for this request.
+        :keyword model: The model name (or ``None``).
+        :keyword store: Whether the response should be persisted (always
+            True for the durable streaming path — we wouldn't be here
+            otherwise).
+        :keyword agent_session_id: Resolved agent session id.
+        :keyword conversation_id: Optional conversation id.
+        """
+        # Build a minimal _ExecutionContext for the streaming pipeline. The
+        # pipeline only reads a handful of fields from ctx; we don't need
+        # the original span (which lived on the wire-request side and may
+        # already be ended by the time the durable body runs).
+        from ._observability import (  # pylint: disable=import-outside-toplevel
+            CreateSpan,
+        )
+
+        synthetic_span = CreateSpan(
+            name="responses.durable_stream_body",
+            tags={"response.id": response_id},
+        )
+        ctx = _ExecutionContext(
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+            store=store,
+            background=True,
+            stream=True,
+            input_items=list(record.input_items or []),
+            previous_response_id=record.previous_response_id,
+            conversation_id=conversation_id,
+            cancellation_signal=cancellation_signal,
+            span=synthetic_span,
+            parsed=parsed,
+            agent_session_id=agent_session_id,
+            context=context,
+        )
+
+        state = _PipelineState()
+        # (Spec 014 FR-002) The wire iterator on _live_stream's side
+        # subscribed to ``record.subject`` BEFORE this body started. Pass it
+        # through state.pre_subject so _register_bg_execution installs the
+        # SAME subject on the canonical record it creates.
+        state.pre_subject = record.subject
+        handler_iterator = self._create_fn(parsed, context, cancellation_signal)
+
+        # Drive the streaming pipeline. Events flow to record.subject (live
+        # wire iterator subscribes to it) and to self._durable_stream_provider
+        # (for GET reconnect). _process_handler_events handles terminal
+        # events, fallback events, error signalling.
+        try:
+            async for _event in self._process_handler_events(
+                ctx, state, handler_iterator
+            ):
+                # Events are published to subject + provider inside
+                # _process_handler_events; we only need to drain the
+                # generator. The wire iterator on _live_stream's side
+                # consumes from record.subject independently.
+                pass
+
+            # Persist-then-yield resolution for the terminal event.
+            if state.pending_terminal is not None:
+                had_bg_record = state.bg_record is not None
+                r = state.bg_record or _make_ephemeral_record(ctx, state)
+                resolved = await self._persist_and_resolve_terminal(ctx, state, r)
+                # Always publish the resolved terminal to the pre-allocated
+                # wire subject. _persist_and_resolve_terminal only publishes
+                # under specific conditions (skipped on cancel-race short
+                # circuit; ephemeral records have no subject). The live wire
+                # iterator on _live_stream's side MUST observe the terminal
+                # before subject.complete fires.
+                if record.subject is not None:
+                    try:
+                        already_published = (
+                            had_bg_record
+                            and r.subject is record.subject
+                            and not (r.is_terminal and r.cancel_requested)
+                        )
+                        if not already_published:
+                            await record.subject.publish(resolved)
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        pass
+        finally:
+            # Ensure finalization runs on every exit path (handler error,
+            # cancellation, normal completion). Same as _live_stream's
+            # finally for bg+store path.
+            try:
+                await self._finalize_stream(ctx, state)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning(
+                    "_finalize_stream failed for durable streaming body "
+                    "response_id=%s",
+                    response_id,
+                    exc_info=True,
+                )
+            # Always complete the pre-allocated wire subject so the live wire
+            # iterator on _live_stream's side exits cleanly. Idempotent if
+            # _finalize_stream already completed the same subject through
+            # state.bg_record.
+            pre_subject_ref = record.subject
+            if pre_subject_ref is not None:
+                try:
+                    await pre_subject_ref.complete()
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass  # best effort
+
     async def _start_durable_background(
         self,
         ctx: _ExecutionContext,
@@ -2338,6 +2638,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 options=self._runtime_options,
                 provider=self._provider,
                 runtime_state=self._runtime_state,
+                parent_orchestrator=self,
             )
 
         # Build execution params dict for the task input

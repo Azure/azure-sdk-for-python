@@ -42,6 +42,7 @@ if TYPE_CHECKING:
     from ..models._generated import CreateResponse
     from ..models.runtime import ResponseExecution
     from ..store._base import ResponseProviderProtocol
+    from ._orchestrator import _ResponseOrchestrator
     from ._runtime_state import _RuntimeState
 
 logger = logging.getLogger("azure.ai.agentserver.responses.durable")
@@ -283,11 +284,19 @@ class DurableResponseOrchestrator:
         options: ResponsesServerOptions,
         provider: "ResponseProviderProtocol",
         runtime_state: "_RuntimeState | None" = None,
+        parent_orchestrator: "_ResponseOrchestrator | None" = None,
     ) -> None:
         self._create_fn = create_fn
         self._options = options
         self._provider = provider
         self._runtime_state = runtime_state
+        # (Spec 014 FR-002 — close divergence 1)
+        # Back-reference to the parent _ResponseOrchestrator so the durable
+        # task body can call into the streaming pipeline
+        # (_process_handler_events, _finalize_stream) for stream=True paths.
+        # The non-stream path (_run_background_non_stream) is a module-level
+        # function and does not need this reference.
+        self._parent_orchestrator = parent_orchestrator
 
         # Create the internal task function
         self._task_fn: Task[dict[str, Any], None] = self._create_task_fn()
@@ -460,23 +469,47 @@ class DurableResponseOrchestrator:
             if parsed_ref is None:
                 # Cross-process recovery: re-parse the serialized payload.
                 parsed_ref = _reconstruct_parsed_from_params(params)
-            await _run_background_non_stream(
-                create_fn=self._create_fn,
-                parsed=parsed_ref,
-                context=context,
-                cancellation_signal=cancellation_signal,
-                record=record,
-                response_id=response_id,
-                agent_reference=params.get("agent_reference"),
-                model=params.get("model"),
-                provider=self._provider,
-                store=params.get("store", True),
-                agent_session_id=params.get("agent_session_id"),
-                conversation_id=params.get("conversation_id"),
-                history_limit=params.get("history_limit", 100),
-                runtime_state=_ref("_runtime_state_ref") or self._runtime_state,
-                runtime_options=self._options,
-            )
+
+            # (Spec 014 FR-002 — close divergence 1)
+            # Dispatch on params["stream"]: the streaming pipeline goes
+            # through the parent orchestrator's streaming runner so events
+            # flow to record.subject (live wire iterator subscribes to it)
+            # AND to the durable stream provider (for GET reconnect after
+            # crash). The non-stream path (existing, default) drives the
+            # response-snapshot-on-terminal pipeline.
+            if params.get("stream") and self._parent_orchestrator is not None:
+                assert record is not None  # reconstruction guarantees this
+                assert context is not None  # reconstruction guarantees this
+                await self._parent_orchestrator._run_durable_stream_body(
+                    parsed=parsed_ref,
+                    context=context,
+                    cancellation_signal=cancellation_signal,
+                    record=record,
+                    response_id=response_id,
+                    agent_reference=params.get("agent_reference"),
+                    model=params.get("model"),
+                    store=bool(params.get("store", True)),
+                    agent_session_id=params.get("agent_session_id"),
+                    conversation_id=params.get("conversation_id"),
+                )
+            else:
+                await _run_background_non_stream(
+                    create_fn=self._create_fn,
+                    parsed=parsed_ref,
+                    context=context,
+                    cancellation_signal=cancellation_signal,
+                    record=record,
+                    response_id=response_id,
+                    agent_reference=params.get("agent_reference"),
+                    model=params.get("model"),
+                    provider=self._provider,
+                    store=params.get("store", True),
+                    agent_session_id=params.get("agent_session_id"),
+                    conversation_id=params.get("conversation_id"),
+                    history_limit=params.get("history_limit", 100),
+                    runtime_state=_ref("_runtime_state_ref") or self._runtime_state,
+                    runtime_options=self._options,
+                )
 
             # (Spec 014 FR-005a — close divergence 4)
             # If the handler returned without emitting a terminal event AND
