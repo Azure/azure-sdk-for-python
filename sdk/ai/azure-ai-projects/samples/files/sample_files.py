@@ -39,7 +39,6 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
-    # [START files_sample]
     print("Uploading file")
     with open(file_path, "rb") as f:
         uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
@@ -64,4 +63,3 @@ with (
     print(f"Deleting file with ID: {processed_file.id}")
     deleted_file = openai_client.files.delete(processed_file.id)
     print(f"Successfully deleted file: {deleted_file.id}")
-    # [END files_sample]

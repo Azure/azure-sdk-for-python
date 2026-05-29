@@ -54,10 +54,15 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "enableEncryptionAtHost": bool,
                         "enableFIPS": bool,
                         "enableNodePublicIP": bool,
+                        "enableOSDiskFullCaching": bool,
                         "enableUltraSSD": bool,
                         "gatewayProfile": {"publicIPPrefixSize": 0},
                         "gpuInstanceProfile": "str",
-                        "gpuProfile": {"driver": "str"},
+                        "gpuProfile": {
+                            "driver": "str",
+                            "driverType": "str",
+                            "nvidia": {"managementMode": "str", "migStrategy": "str"},
+                        },
                         "hostGroupID": "str",
                         "kubeletConfig": {
                             "allowedUnsafeSysctls": ["str"],
@@ -67,9 +72,16 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                             "cpuCfsQuotaPeriod": "str",
                             "cpuManagerPolicy": "str",
                             "failSwapOn": bool,
+                            "hardEvictionThreshold": {
+                                "memoryAvailable": "str",
+                                "nodeFsAvailable": "str",
+                                "nodeFsInodesFree": "str",
+                            },
                             "imageGcHighThreshold": 0,
                             "imageGcLowThreshold": 0,
+                            "kubeReserved": {"cpuMillicores": 0, "memoryMB": 0},
                             "podMaxPids": 0,
+                            "seccompDefault": "str",
                             "topologyManagerPolicy": "str",
                         },
                         "kubeletDiskType": "str",
@@ -144,9 +156,14 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "networkProfile": {
                             "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                             "applicationSecurityGroups": ["str"],
+                            "nodePublicIPPrefixIDs": ["str"],
                             "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
+                            "secondaryNetworkInterfaces": [
+                                {"enableAcceleratedNetworking": bool, "type": "str", "vnetSubnetId": "str"}
+                            ],
                         },
                         "nodeImageVersion": "str",
+                        "nodeInitializationTaints": ["str"],
                         "nodeLabels": {"str": "str"},
                         "nodePublicIPPrefixID": "str",
                         "nodeTaints": ["str"],
@@ -158,6 +175,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "podIPAllocationMode": "str",
                         "podSubnetID": "str",
                         "powerState": {"code": "str"},
+                        "preparedImageSpecificationProfile": {"preparedImageSpecificationId": "str"},
                         "provisioningState": "str",
                         "proximityPlacementGroupID": "str",
                         "scaleDownMode": "str",
@@ -178,13 +196,26 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "type": "str",
                         "upgradeSettings": {
                             "drainTimeoutInMinutes": 0,
+                            "maxBlockedNodes": "str",
                             "maxSurge": "str",
                             "maxUnavailable": "str",
                             "nodeSoakDurationInMinutes": 0,
                             "undrainableNodeBehavior": "str",
                         },
+                        "upgradeSettingsBlueGreen": {
+                            "batchSoakDurationInMinutes": 0,
+                            "drainBatchSize": "str",
+                            "drainTimeoutInMinutes": 0,
+                            "finalSoakDurationInMinutes": 0,
+                        },
+                        "upgradeStrategy": "str",
                         "virtualMachineNodesStatus": [{"count": 0, "size": "str"}],
-                        "virtualMachinesProfile": {"scale": {"manual": [{"count": 0, "size": "str"}]}},
+                        "virtualMachinesProfile": {
+                            "scale": {
+                                "autoscale": [{"maxCount": 0, "minCount": 0, "size": "str"}],
+                                "manual": [{"count": 0, "size": "str"}],
+                            }
+                        },
                         "vmSize": "str",
                         "vnetSubnetID": "str",
                         "windowsProfile": {"disableOutboundNat": bool},
@@ -236,6 +267,20 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_agent_pools_begin_abort_latest_operation(self, resource_group):
         response = await (
             await self.client.agent_pools.begin_abort_latest_operation(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                agent_pool_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_agent_pools_begin_complete_upgrade(self, resource_group):
+        response = await (
+            await self.client.agent_pools.begin_complete_upgrade(
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 agent_pool_name="str",

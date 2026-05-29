@@ -44,6 +44,37 @@ class AvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WebSocket protocol, output the video frames over WebSocket."""
 
 
+class AzureRealtimeNativeVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Currently known voice names for the Azure realtime native voice type. This is an extensible
+    enum; additional voice names may be accepted by the service in the future.
+    """
+
+    AARTI = "aarti"
+    """Aarti voice."""
+    ANDREW = "andrew"
+    """Andrew voice."""
+    AVA = "ava"
+    """Ava voice."""
+    DENISE = "denise"
+    """Denise voice."""
+    DIYA = "diya"
+    """Diya voice."""
+    ELSA = "elsa"
+    """Elsa voice."""
+    FLORIAN = "florian"
+    """Florian voice."""
+    FRANCISCA = "francisca"
+    """Francisca voice."""
+    MEERA = "meera"
+    """Meera voice."""
+    XIAOXIAO = "xiaoxiao"
+    """Xiaoxiao voice."""
+    YUNXI = "yunxi"
+    """Yunxi voice."""
+    XIMENA = "ximena"
+    """Ximena voice."""
+
+
 class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Union of all supported Azure voice types."""
 
@@ -96,6 +127,12 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP_APPROVAL_RESPONSE."""
     OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
     """Client request to clear the avatar output buffer."""
+    RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
+    """Sent by the client to initiate a WebRTC session with an SDP offer."""
+    INPUT_TEXT_DELTA = "input_text.delta"
+    """Streamed delta of input text content being appended to an item."""
+    INPUT_TEXT_DONE = "input_text.done"
+    """Signals that the streamed input text content for an item is complete."""
 
 
 class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -111,6 +148,15 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TEXT."""
     AUDIO = "audio"
     """AUDIO."""
+
+
+class EchoCancellationReferenceSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source of the echo cancellation reference signal."""
+
+    SERVER = "server"
+    """EC uses the internal TTS loopback as the reference signal."""
+    CLIENT = "client"
+    """EC uses the client-supplied reference channel from the stereo input stream."""
 
 
 class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -245,6 +291,12 @@ class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cedar voice."""
 
 
+_LEGACY_OUTPUT_AUDIO_FORMAT_VALUES = {
+    "pcm16-8000hz": "pcm16_8000hz",
+    "pcm16-16000hz": "pcm16_16000hz",
+}
+
+
 class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output audio format types supported."""
 
@@ -258,6 +310,14 @@ class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """G.711 μ-law (mu-law) audio format at 8kHz sampling rate."""
     G711_ALAW = "g711_alaw"
     """G.711 A-law audio format at 8kHz sampling rate."""
+
+    @classmethod
+    def _missing_(cls, value):
+        if isinstance(value, str):
+            current_value = _LEGACY_OUTPUT_AUDIO_FORMAT_VALUES.get(value.lower())
+            if current_value is not None:
+                return cls(current_value)
+        return None
 
 
 class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -452,6 +512,16 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output audio buffer has been cleared."""
     RESPONSE_AUDIO_TRANSCRIPT_ANNOTATION_ADDED = "response.audio_transcript.annotation.added"
     """Audio transcript annotation added."""
+    RESPONSE_INVOCATION_DELTA = "response.invocation.delta"
+    """Invocation passthrough delta from hosted agent."""
+    RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
+    """Returned when the WebRTC SDP negotiation completes successfully."""
+    RTC_CALL_ERROR = "rtc.call.error"
+    """Returned when a WebRTC call operation fails."""
+    OUTPUT_AUDIO_BUFFER_STARTED = "output_audio_buffer.started"
+    """Output audio buffer playback started."""
+    OUTPUT_AUDIO_BUFFER_STOPPED = "output_audio_buffer.stopped"
+    """Output audio buffer playback stopped."""
 
 
 class SessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
