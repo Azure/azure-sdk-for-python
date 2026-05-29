@@ -386,11 +386,13 @@ def _parse_skill_frontmatter(content: str) -> tuple[dict, str]:
     fm_text = content[3:end].strip()
     body = content[end + 3 :].strip()
 
-    frontmatter: dict = {}
-    for line in fm_text.splitlines():
-        line = line.strip()
-        if ":" in line:
-            key, _, value = line.partition(":")
-            frontmatter[key.strip()] = value.strip()
+    try:
+        frontmatter = yaml.safe_load(fm_text) or {}
+    except yaml.YAMLError as exc:
+        logger.debug("Invalid YAML in skill frontmatter: %s", exc)
+        frontmatter = {}
+    if not isinstance(frontmatter, dict):
+        logger.debug("Skill frontmatter is not a mapping, ignoring")
+        frontmatter = {}
 
     return frontmatter, body

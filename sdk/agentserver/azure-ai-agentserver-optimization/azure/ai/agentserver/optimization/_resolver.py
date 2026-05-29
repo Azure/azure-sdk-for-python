@@ -25,6 +25,8 @@ import pathlib
 import shutil
 from typing import Any
 
+import yaml  # type: ignore[import-untyped]
+
 from azure.core import PipelineClient
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, RetryPolicy
@@ -201,16 +203,17 @@ def _persist_to_local_layout(
             skill_folder = skills_dir / skill_name
             skill_folder.mkdir(parents=True, exist_ok=True)
             # Build SKILL.md with YAML frontmatter
-            lines: list[str] = ["---"]
-            lines.append(f"name: {skill_name}")
+            fm: dict[str, str] = {"name": skill_name}
             if skill.get("description"):
-                lines.append(f"description: {skill['description']}")
-            lines.append("---")
+                fm["description"] = skill["description"]
+            fm_text = yaml.dump(
+                fm, default_flow_style=False, allow_unicode=True
+            ).rstrip("\n")
+            parts: list[str] = [f"---\n{fm_text}\n---"]
             if skill.get("body"):
-                lines.append("")
-                lines.append(skill["body"])
+                parts.append(skill["body"])
             skill_file = skill_folder / OptimizationConfig.SKILL_FILE
-            skill_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            skill_file.write_text("\n".join(parts) + "\n", encoding="utf-8")
         logger.info(
             "Persisted %d inline skill(s) to %s", len(inline_skills), skills_dir
         )

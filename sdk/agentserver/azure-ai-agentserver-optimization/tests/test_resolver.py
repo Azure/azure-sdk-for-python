@@ -302,6 +302,102 @@ class TestPersistToLocalLayout:
         _persist_to_local_layout(candidate_path, config)
         assert not (candidate_path / "skills").exists()
 
+    def test_skill_frontmatter_uses_yaml_format(self, tmp_path):
+        """SKILL.md frontmatter is valid YAML parseable by yaml.safe_load."""
+        import yaml
+
+        candidate_path = tmp_path / "cand-yaml-fm"
+        config = {
+            "skills": [{"name": "search", "description": "Find stuff"}],
+        }
+        _persist_to_local_layout(candidate_path, config)
+
+        content = (candidate_path / "skills" / "search" / "SKILL.md").read_text()
+        assert content.startswith("---\n")
+        fm_text = content.split("---")[1]
+        parsed = yaml.safe_load(fm_text)
+        assert parsed == {"name": "search", "description": "Find stuff"}
+
+    def test_skill_multiline_description_roundtrips(self, tmp_path):
+        """Multiline descriptions survive persist → parse round-trip."""
+        import yaml
+
+        candidate_path = tmp_path / "cand-multiline"
+        desc = "Line one.\nLine two.\nLine three."
+        config = {
+            "skills": [{"name": "multi", "description": desc, "body": "Body."}],
+        }
+        _persist_to_local_layout(candidate_path, config)
+
+        content = (candidate_path / "skills" / "multi" / "SKILL.md").read_text()
+        fm_text = content.split("---")[1]
+        parsed = yaml.safe_load(fm_text)
+        assert parsed["description"] == desc
+        assert parsed["name"] == "multi"
+
+    def test_skill_description_with_colons(self, tmp_path):
+        """Descriptions containing colons are properly quoted in YAML."""
+        import yaml
+
+        candidate_path = tmp_path / "cand-colon"
+        desc = "USE FOR: search, lookup. DO NOT USE FOR: delete."
+        config = {
+            "skills": [{"name": "colon", "description": desc}],
+        }
+        _persist_to_local_layout(candidate_path, config)
+
+        content = (candidate_path / "skills" / "colon" / "SKILL.md").read_text()
+        fm_text = content.split("---")[1]
+        parsed = yaml.safe_load(fm_text)
+        assert parsed["description"] == desc
+
+    def test_skill_description_with_special_chars(self, tmp_path):
+        """Descriptions with quotes, brackets, and hashes survive round-trip."""
+        import yaml
+
+        candidate_path = tmp_path / "cand-special"
+        desc = 'Handle "edge" cases: {x: 1}, [a, b], # comment'
+        config = {
+            "skills": [{"name": "special", "description": desc}],
+        }
+        _persist_to_local_layout(candidate_path, config)
+
+        content = (candidate_path / "skills" / "special" / "SKILL.md").read_text()
+        fm_text = content.split("---")[1]
+        parsed = yaml.safe_load(fm_text)
+        assert parsed["description"] == desc
+
+    def test_skill_without_description_has_name_only(self, tmp_path):
+        """Skill with no description produces frontmatter with only name."""
+        import yaml
+
+        candidate_path = tmp_path / "cand-no-desc"
+        config = {
+            "skills": [{"name": "bare", "body": "Just body."}],
+        }
+        _persist_to_local_layout(candidate_path, config)
+
+        content = (candidate_path / "skills" / "bare" / "SKILL.md").read_text()
+        fm_text = content.split("---")[1]
+        parsed = yaml.safe_load(fm_text)
+        assert parsed == {"name": "bare"}
+        assert "Just body." in content
+
+    def test_skill_without_body_has_frontmatter_only(self, tmp_path):
+        """Skill with no body produces file with frontmatter and no trailing content."""
+        candidate_path = tmp_path / "cand-no-body"
+        config = {
+            "skills": [{"name": "headless", "description": "No body"}],
+        }
+        _persist_to_local_layout(candidate_path, config)
+
+        content = (candidate_path / "skills" / "headless" / "SKILL.md").read_text()
+        # Should be just frontmatter block and trailing newline
+        parts = content.strip().split("---")
+        # parts[0] is empty (before first ---), parts[1] is frontmatter
+        assert len(parts) == 3
+        assert parts[2].strip() == ""
+
 
 # ── _persist + resolve round-trip ────────────────────────────────────
 

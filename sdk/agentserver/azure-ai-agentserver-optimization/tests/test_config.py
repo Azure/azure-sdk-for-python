@@ -886,6 +886,68 @@ class TestSkillFrontmatter:
         assert fm == {}
         assert body == "Body."
 
+    def test_block_scalar_literal(self):
+        """Block scalar with '|' preserves newlines (issue #5586)."""
+        content = (
+            "---\n"
+            "name: my-skill\n"
+            "description: |\n"
+            "  This is a multiline\n"
+            "  description for the skill.\n"
+            "---\n"
+            "Body text."
+        )
+        fm, body = _parse_skill_frontmatter(content)
+        assert fm["name"] == "my-skill"
+        assert "This is a multiline\n" in fm["description"]
+        assert "description for the skill." in fm["description"]
+        assert body == "Body text."
+
+    def test_block_scalar_folded(self):
+        """Block scalar with '>' folds into single line."""
+        content = (
+            "---\n"
+            "name: folded-skill\n"
+            "description: >\n"
+            "  This is a folded\n"
+            "  description.\n"
+            "---\n"
+            "Body."
+        )
+        fm, body = _parse_skill_frontmatter(content)
+        assert fm["name"] == "folded-skill"
+        assert "This is a folded" in fm["description"]
+        assert "description." in fm["description"]
+        assert body == "Body."
+
+    def test_quoted_value_with_colon(self):
+        """Quoted values containing colons are parsed correctly."""
+        content = (
+            "---\n"
+            'name: "my:skill"\n'
+            'description: "Has a colon: inside"\n'
+            "---\n"
+            "Body."
+        )
+        fm, body = _parse_skill_frontmatter(content)
+        assert fm["name"] == "my:skill"
+        assert fm["description"] == "Has a colon: inside"
+        assert body == "Body."
+
+    def test_invalid_yaml_returns_empty(self):
+        """Malformed YAML in frontmatter returns empty dict."""
+        content = "---\n: invalid\n  bad indent\n---\nBody."
+        fm, body = _parse_skill_frontmatter(content)
+        assert fm == {}
+        assert body == "Body."
+
+    def test_non_dict_frontmatter_returns_empty(self):
+        """Frontmatter that parses to a non-dict returns empty dict."""
+        content = "---\n- item1\n- item2\n---\nBody."
+        fm, body = _parse_skill_frontmatter(content)
+        assert fm == {}
+        assert body == "Body."
+
 
 # ── apply_tool_descriptions ──────────────────────────────────────────
 
