@@ -23,10 +23,15 @@ def _to_reporting_endpoint(endpoint: str) -> str:
     all other operations use the base subdomain
     (e.g. https://{region}.api.playwright.microsoft.com).
 
+    The transformation is idempotent: if ``endpoint`` already targets the
+    reporting subdomain, it is returned unchanged.
+
     :param str endpoint: The base API endpoint URL.
     :returns: The reporting API endpoint URL.
     :rtype: str
     """
+    if ".reporting.api.playwright." in endpoint:
+        return endpoint
     return endpoint.replace(".api.playwright.", ".reporting.api.playwright.")
 
 

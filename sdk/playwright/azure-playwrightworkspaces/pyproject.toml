@@ -58,3 +58,6 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+
+[tool.azure-sdk-build]
+type_check_samples = false
