@@ -13,7 +13,8 @@ Scenario:
 2. POST a streaming Row 1 request (``store=true, bg=true,
    durable_bg=True, stream=true``).
 3. Read the wire stream until the pre-sleep deltas have all landed
-   (we know their content prefix is ``"d0"``, ``"d1"``, …).
+   (we know their content prefix is ``L0_pre_d0``, ``L0_pre_d1``, …
+   per the per-lifetime tagging in :mod:`_test_handler_markers`).
 4. SIGKILL the subprocess (Path C).
 5. Restart the subprocess. The durable framework re-invokes the handler.
 6. ``GET /responses/{id}?stream=true&starting_after=0`` and collect
@@ -21,7 +22,7 @@ Scenario:
 
 Assertions:
 
-- All pre-crash deltas (the ``"d0"``..``"dN-1"`` content) are still
+- All pre-crash deltas (``L0_pre_d0`` … ``L0_pre_d{N-1}``) are still
   present in the persisted stream — they must NOT have been erased
   by the recovered attempt's terminal-time bookkeeping.
 - The persisted stream's sequence numbers are strictly monotonically
@@ -30,6 +31,9 @@ Assertions:
 - The recovered attempt's events include at least one
   ``response.in_progress`` reset (the snapshot-reconciliation marker)
   AND a ``response.completed`` terminal.
+- The recovered attempt's deltas (``L1_pre_d{i}`` and ``L1_post_d{j}``)
+  appear with sequence numbers strictly greater than the last pre-crash
+  event.
 
 This test was RED before the Spec 014 Phase 9 follow-up fix that
 
@@ -54,6 +58,10 @@ import httpx
 import pytest
 
 from tests.e2e._crash_harness import CrashHarness
+from tests.e2e.durability_contract._test_handler_markers import (
+    PHASE_PRE,
+    delta_content,
+)
 from tests.e2e.durability_contract.conftest import (
     LONG_GRACE_S,
     LONG_TIME_SECS,
@@ -186,8 +194,10 @@ async def test_pre_crash_deltas_survive_recovery(
         # Now read the full persisted event stream and assert continuity.
         events = await _get_full_stream(harness.client, response_id)
 
-        # Find the deltas with our pre-crash content prefix ("d0", "d1", ...).
-        pre_crash_delta_contents = {f"d{i}" for i in range(_PRE_DELTAS)}
+        # Find the deltas with our pre-crash content (lifetime 0 pre-sleep).
+        pre_crash_delta_contents = {
+            delta_content(0, PHASE_PRE, i) for i in range(_PRE_DELTAS)
+        }
         seen_pre_crash = []
         for ev in events:
             if ev.get("type") == "response.output_text.delta":
@@ -232,6 +242,24 @@ async def test_pre_crash_deltas_survive_recovery(
                 for e in events
             )
         )
+
+        # Recovered deltas (lifetime 1) must also be present with seq > max
+        # pre-crash seq — the per-lifetime tagging makes this verifiable.
+        recovered_deltas = [
+            (e.get("sequence_number"), e.get("delta", ""))
+            for e in events
+            if e.get("type") == "response.output_text.delta"
+            and (e.get("delta") or "").startswith("L1_")
+        ]
+        assert recovered_deltas, (
+            "Recovered handler must emit at least one L1_ delta (its own "
+            f"pre-sleep or post-sleep content). Got events: "
+            f"{[e.get('type') for e in events]}"
+        )
+        for seq, _ in recovered_deltas:
+            assert isinstance(seq, int) and seq > max_pre_crash_seq, (
+                f"Recovered delta seq must be > {max_pre_crash_seq}, got {seq}"
+            )
 
         # Final assertion: the response.completed terminal must also have
         # seq > max_pre_crash_seq (otherwise we'd be looking at a leftover
