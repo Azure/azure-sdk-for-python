@@ -1,8 +1,11 @@
 # Release History
 
-## 1.42.0 (Unreleased)
+## 1.41.0 (2026-05-07)
 
 ### Features Added
+
+- `AioHttpTransport` now supports the `ssl` and `server_hostname` per-request keyword arguments. #46365
+- `AZURE_LOG_LEVEL` now accepts `VERBOSE` (case-insensitive) as an alias for `DEBUG`. #46668
 
 ### Breaking Changes
 
@@ -11,13 +14,8 @@
 
 ### Bugs Fixed
 
-### Other Changes
-
-## 1.41.0 (2026-05-07)
-
-### Features Added
-
-- `AZURE_LOG_LEVEL` now accepts `VERBOSE` (case-insensitive) as an alias for `DEBUG`. #46668
+- `AioHttpTransport` now preserves a caller-provided per-request `ssl` value instead of replacing it
+  with the transport's generated SSL configuration. #46365
 
 ### Other Changes
 
