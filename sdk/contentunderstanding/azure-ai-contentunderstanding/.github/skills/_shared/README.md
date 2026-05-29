@@ -18,4 +18,4 @@ Current modules:
 
 - [`schema_validator.py`](schema_validator.py) — validates analyzer schema
   JSON before any service call (catches `baseAnalyzerId` typos, missing
-  `fieldSchema`, missing `content_categories` analyzer routes, etc.).
+  `fieldSchema`, missing `contentCategories` analyzer routes, etc.).

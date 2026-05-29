@@ -1,7 +1,7 @@
 """Pure-Python validator for Content Understanding analyzer schema JSON.
 
 Catches structural mistakes (missing keys, unknown ``baseAnalyzerId`` values,
-malformed ``content_categories`` routes) **before** any call to the Content
+malformed ``contentCategories`` routes) **before** any call to the Content
 Understanding service. Failing fast here gives users an actionable error
 message and avoids a wasted service round-trip.
 
@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, List, Mapping, Tuple, Union
+from typing import Any, List, Mapping, Optional, Tuple, Union
 
 #: Known ``baseAnalyzerId`` values shipped by the service. Sourced from the
 #: Content Understanding documentation; update when the service adds new
@@ -89,7 +89,11 @@ def validate_schema(
     config = schema.get("config")
     if config is not None and not isinstance(config, Mapping):
         errors.append("config, if present, must be an object")
-        config = None
+        # Bail out: without a well-typed config we can't tell whether this is
+        # a single-type or classify-and-route schema, and falling through
+        # would emit a confusing cascade of "missing fieldSchema" errors
+        # rooted in the same problem.
+        return False, errors
 
     is_classify_route = (
         isinstance(config, Mapping) and "contentCategories" in config
@@ -168,9 +172,11 @@ def _validate_single_type(schema: Mapping[str, Any]) -> List[str]:
     return errors
 
 
-def _validate_field_definition(name: str, definition: Any) -> List[str]:
+def _validate_field_definition(
+    name: str, definition: Any, *, path: Optional[str] = None
+) -> List[str]:
     errors: List[str] = []
-    prefix = f"fieldSchema.fields[{name!r}]"
+    prefix = path or f"fieldSchema.fields[{name!r}]"
 
     if not isinstance(definition, Mapping):
         return [f"{prefix} must be an object"]
@@ -192,6 +198,32 @@ def _validate_field_definition(name: str, definition: Any) -> List[str]:
     description = definition.get("description")
     if description is not None and not isinstance(description, str):
         errors.append(f"{prefix}.description must be a string")
+
+    # Recurse into nested object/array shapes so typos in child fields are
+    # caught here instead of at the service round-trip.
+    if ftype == "object":
+        props = definition.get("properties")
+        if props is not None:
+            if not isinstance(props, Mapping):
+                errors.append(f"{prefix}.properties must be an object")
+            else:
+                for child, cdef in props.items():
+                    errors.extend(
+                        _validate_field_definition(
+                            child, cdef, path=f"{prefix}.properties[{child!r}]"
+                        )
+                    )
+    elif ftype == "array":
+        items = definition.get("items")
+        if items is not None:
+            if not isinstance(items, Mapping):
+                errors.append(f"{prefix}.items must be an object")
+            else:
+                errors.extend(
+                    _validate_field_definition(
+                        "items", items, path=f"{prefix}.items"
+                    )
+                )
 
     return errors
 

@@ -4,7 +4,7 @@
 This is **Stage 2** of the analyzer-authoring loop:
 
 1. Validate the schema locally (catches typos in ``baseAnalyzerId``, missing
-   ``fieldSchema``, malformed ``content_categories`` routes — see
+   ``fieldSchema``, malformed ``contentCategories`` routes — see
    ``_shared/schema_validator.py``).
 2. Create the analyzer via ``begin_create_analyzer`` and wait for it to be
    ready.

@@ -10,12 +10,12 @@ Flow
 ----
 
 1. Validate every inner schema and the outer classifier schema locally
-   (catches typos in ``baseAnalyzerId``, missing ``content_categories``,
+   (catches typos in ``baseAnalyzerId``, missing ``contentCategories``,
    etc.).
 2. Verify every category in the outer schema that declares an ``analyzerId``
    placeholder has a matching ``--inner-schema`` entry.
 3. Create each inner analyzer.
-4. Patch the outer schema's ``content_categories[*].analyzerId`` with the
+4. Patch the outer schema's ``contentCategories[*].analyzerId`` with the
    real inner analyzer IDs.
 5. Create the outer (classifier) analyzer.
 6. Batch-analyze each input file; dump per-doc result JSON.
@@ -49,11 +49,10 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
-import os
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 try:  # pragma: no cover
     from dotenv import load_dotenv
@@ -93,7 +92,6 @@ _create_and_test = _load_module(
 _iter_inputs = _create_and_test._iter_inputs
 _result_to_dict = _create_and_test._result_to_dict
 _field_value = _create_and_test._field_value
-_iter_fields = _create_and_test._iter_fields
 _build_client = _create_and_test._build_client
 _schema_hash = _create_and_test.schema_hash
 _ensure_analyzer = _create_and_test.ensure_analyzer
@@ -208,7 +206,7 @@ def _validate_all(
 def _wire_inner_ids(
     outer_schema: Dict[str, Any], alias_to_real_id: Mapping[str, str]
 ) -> Tuple[Dict[str, Any], List[str]]:
-    """Patch outer ``content_categories[*].analyzerId`` placeholders.
+    """Patch outer ``contentCategories[*].analyzerId`` placeholders.
 
     Returns ``(patched_outer_schema, errors)``. An empty ``errors`` list
     means every referenced alias resolved.
@@ -485,7 +483,7 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         help=(
             "Inner extractor schema, given as alias=path. The alias must "
             "match the analyzerId placeholder used in the outer schema's "
-            "content_categories. Repeat for each inner extractor. "
+            "contentCategories. Repeat for each inner extractor. "
             "Mutually exclusive with --schema-dir."
         ),
     )
