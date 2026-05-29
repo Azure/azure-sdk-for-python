@@ -853,6 +853,11 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert fetched.properties.external_key.id == external_id
         assert fetched.key_type is not None
 
+        # Delete the external key registration.
+        deleted_key = await client.delete_key(key_name)
+        assert deleted_key is not None
+        assert deleted_key.name == key_name
+
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
     @AsyncKeysClientPreparer()

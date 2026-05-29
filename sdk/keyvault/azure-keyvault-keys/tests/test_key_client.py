@@ -835,6 +835,11 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert fetched.properties.external_key.id == external_id
         assert fetched.key_type is not None
 
+        # Delete the external key registration.
+        deleted_key = client.begin_delete_key(key_name).result()
+        assert deleted_key is not None
+        assert deleted_key.name == key_name
+
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
     @KeysClientPreparer()
     @recorded_by_proxy
