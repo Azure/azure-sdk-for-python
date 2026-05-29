@@ -68,14 +68,7 @@ TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 with (
     DefaultAzureCredential() as credential,
-    # `allow_preview` and `api_version` are required for the evaluator
-    # generation endpoints in this preview.
-    AIProjectClient(
-        endpoint=endpoint,
-        credential=credential,
-        allow_preview=True,
-        api_version="2025-11-15-preview",
-    ) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
     job = project_client.beta.evaluators.create_generation_job(

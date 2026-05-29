@@ -81,14 +81,7 @@ TERMINAL_RUN_STATUSES = {"completed", "failed", "canceled"}
 
 with (
     DefaultAzureCredential() as credential,
-    # `allow_preview` and `api_version` are required for the evaluator
-    # generation endpoints in this preview.
-    AIProjectClient(
-        endpoint=endpoint,
-        credential=credential,
-        allow_preview=True,
-        api_version="2025-11-15-preview",
-    ) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
