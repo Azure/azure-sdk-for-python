@@ -33,11 +33,15 @@ Recovery model:
 
 Streaming model (live deltas + recovery replay):
 
-- The Copilot SDK delivers assistant content incrementally via
-  ``AssistantMessageData`` events as the response is generated. The
-  handler forwards each event as an ``output_text.delta`` SSE event the
-  moment it arrives, so clients see characters appear live rather than
-  in one batched dump at the end of the turn.
+- The Copilot SDK emits incremental tokens via
+  ``AssistantMessageDeltaData`` events as the model generates the
+  response. The handler forwards each event's ``delta_content`` as an
+  ``output_text.delta`` SSE event the moment it arrives, so clients see
+  characters appear live rather than in one batched dump at the end of
+  the turn. ``AssistantMessageData`` (the assembled-final-message event
+  delivered once generation completes) is used only as a fallback for
+  the rare case the SDK emits the final message without any prior
+  deltas.
 - On crash recovery, when the handler re-enters with
   ``entry_mode == "recovered"``, it first reads the upstream session's
   persisted assistant content for the current user turn via
@@ -97,6 +101,7 @@ from typing import Any
 from copilot import CopilotClient  # type: ignore[import-untyped]
 from copilot.generated.session_events import (  # type: ignore[import-untyped]
     AssistantMessageData,
+    AssistantMessageDeltaData,
     SessionIdleData,
     UserMessageData,
 )
@@ -138,17 +143,26 @@ async def _open_session(
     reattach API. ``durability.is_recovery`` is True only when we are being
     re-entered after a crash; ``durability.entry_mode == "resumed"`` is True
     for steerable follow-up turns. Both routes reattach.
+
+    Both paths pass ``streaming=True`` so the SDK emits
+    ``AssistantMessageDeltaData`` events with incremental ``delta_content``
+    as the model generates the response — without this the SDK only delivers
+    the final ``AssistantMessageData`` event once generation completes, and
+    the SSE client sees the whole answer in a single delta dump instead of
+    live characters.
     """
     if durability.is_recovery or durability.entry_mode == "resumed":
         return await client.resume_session(
             session_id,
             on_permission_request=PermissionHandler.approve_all,
             model=_COPILOT_MODEL,
+            streaming=True,
         )
     return await client.create_session(
         session_id=session_id,
         on_permission_request=PermissionHandler.approve_all,
         model=_COPILOT_MODEL,
+        streaming=True,
     )
 
 
@@ -307,19 +321,36 @@ async def handler(
     session_id = context.conversation_chain_id
 
     # ── Live delta streaming via asyncio.Queue ──────────────────────
-    # Copilot's SDK delivers assistant content incrementally via
-    # ``AssistantMessageData`` callbacks. We push each chunk into a
-    # queue and forward it as an output_text.delta the moment it
-    # arrives, so clients see characters appear live.
+    # Copilot's SDK emits incremental tokens via ``AssistantMessageDeltaData``
+    # events as the model generates the response. We push each delta's
+    # ``delta_content`` into a queue and forward it as an
+    # ``output_text.delta`` SSE event the moment it arrives, so clients
+    # see characters appear live rather than in a single batched dump.
+    # ``AssistantMessageData`` is the FINAL assembled message (delivered
+    # once the response is complete); we ignore it on the delta path —
+    # the deltas have already accumulated to the same content — but use
+    # it as a fallback if the SDK emits the assembled message WITHOUT
+    # prior deltas (older versions / certain Copilot models).
     _IDLE = object()
     delta_queue: asyncio.Queue[Any] = asyncio.Queue()
+    _saw_delta = False
 
     def on_event(event: Any) -> None:
+        nonlocal _saw_delta
         data = getattr(event, "data", None)
-        if isinstance(data, AssistantMessageData):
-            content = getattr(data, "content", None) or ""
-            if content:
-                delta_queue.put_nowait(content)
+        if isinstance(data, AssistantMessageDeltaData):
+            chunk = getattr(data, "delta_content", None) or ""
+            if chunk:
+                _saw_delta = True
+                delta_queue.put_nowait(chunk)
+        elif isinstance(data, AssistantMessageData):
+            # Fallback: if the SDK delivered the full message without
+            # any prior deltas, forward it as a single delta so the
+            # client still receives the content.
+            if not _saw_delta:
+                content = getattr(data, "content", None) or ""
+                if content:
+                    delta_queue.put_nowait(content)
         elif isinstance(data, SessionIdleData):
             delta_queue.put_nowait(_IDLE)
 
