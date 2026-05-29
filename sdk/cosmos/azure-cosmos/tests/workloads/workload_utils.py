@@ -289,7 +289,7 @@ class WorkloadLoggerFilter(logging.Filter):
 # Feed-range query operations
 # ---------------------------------------------------------------------------
 
-_FEEDRANGE_COUNT_QUERY = "SELECT VALUE COUNT(1) FROM c"
+_FEEDRANGE_QUERY = "SELECT * FROM c"
 
 
 def query_items_by_feed_ranges(container, excluded_locations, stats=None):
@@ -301,7 +301,7 @@ def query_items_by_feed_ranges(container, excluded_locations, stats=None):
     for fr in feed_ranges:
         def _do_query(fr=fr):
             results = container.query_items(
-                query=_FEEDRANGE_COUNT_QUERY, feed_range=fr, **extra,
+                query=_FEEDRANGE_QUERY, feed_range=fr, **extra,
             )
             return [item for item in results]
         _timed_call("FeedRangeQuery", stats, _do_query)
@@ -316,7 +316,7 @@ async def query_items_by_feed_ranges_concurrently(container, excluded_locations,
 
     async def _do_query(fr):
         results = container.query_items(
-            query=_FEEDRANGE_COUNT_QUERY, feed_range=fr, **extra,
+            query=_FEEDRANGE_QUERY, feed_range=fr, **extra,
         )
         return [item async for item in results]
 
