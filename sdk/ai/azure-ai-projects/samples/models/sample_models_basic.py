@@ -112,7 +112,7 @@ with (
     updated = project_client.beta.models.update(
         name=model_name,
         version=model_version,
-        body=UpdateModelVersionRequest(
+        model_version_update=UpdateModelVersionRequest(
             description="Updated description",
             tags={"source": "sample_models_basic.py", "updated": "true"},
         ),

@@ -32,5 +32,6 @@
         "azure.ai.translation.text.aio.TextTranslationClient.translate": "TextTranslation.translate",
         "azure.ai.translation.text.TextTranslationClient.transliterate": "TextTranslation.transliterate",
         "azure.ai.translation.text.aio.TextTranslationClient.transliterate": "TextTranslation.transliterate"
-    }
+    },
+    "CrossLanguageVersion": "83074cc6cb65"
 }
