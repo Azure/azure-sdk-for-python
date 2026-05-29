@@ -76,23 +76,16 @@ class TestQueryResponseHeaders(unittest.TestCase):
             # Verify response headers were captured
             response_headers = query_iterable.get_response_headers()
             self.assertIsNotNone(response_headers)
-            self.assertGreater(len(response_headers), 0)
 
             # Verify headers contain expected fields
-            first_page_headers = response_headers[0]
-            self.assertIn("x-ms-request-charge", first_page_headers)
-            self.assertIn("x-ms-activity-id", first_page_headers)
-
-            # Verify get_last_response_headers works
-            last_headers = query_iterable.get_last_response_headers()
-            self.assertIsNotNone(last_headers)
-            self.assertIn("x-ms-request-charge", last_headers)
+            self.assertIn("x-ms-request-charge", response_headers)
+            self.assertIn("x-ms-activity-id", response_headers)
 
         finally:
             self._delete_container_for_test(container_id)
 
     def test_query_response_headers_multiple_pages(self):
-        """Test that response headers are captured for each page in a paginated query."""
+        """Test that response headers reflect the last page in a paginated query."""
         container_id = "test_headers_multi_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
@@ -118,21 +111,11 @@ class TestQueryResponseHeaders(unittest.TestCase):
             # Verify all items were returned
             self.assertEqual(len(items), num_items)
 
-            # Verify response headers were captured for multiple pages
+            # Verify response headers contain the last page's headers
             response_headers = query_iterable.get_response_headers()
             self.assertIsNotNone(response_headers)
-            # With 15 items and max_item_count=5, we expect at least 3 pages
-            self.assertGreaterEqual(len(response_headers), 3)
-
-            # Verify each page has headers
-            for i, headers in enumerate(response_headers):
-                self.assertIn("x-ms-request-charge", headers, f"Page {i} missing request charge header")
-                self.assertIn("x-ms-activity-id", headers, f"Page {i} missing activity id header")
-
-            # Each page should have a different activity ID
-            activity_ids = [h.get("x-ms-activity-id") for h in response_headers]
-            # Note: Activity IDs might be the same for some edge cases, but generally should differ
-            self.assertEqual(len(activity_ids), len(response_headers))
+            self.assertIn("x-ms-request-charge", response_headers)
+            self.assertIn("x-ms-activity-id", response_headers)
 
         finally:
             self._delete_container_for_test(container_id)
@@ -160,15 +143,10 @@ class TestQueryResponseHeaders(unittest.TestCase):
             # Verify no items were returned
             self.assertEqual(len(items), 0)
 
-            # Response headers may or may not be captured depending on implementation
             # The key is that the method doesn't throw an error
+            # and the headers are populated since an HTTP request was made
             response_headers = query_iterable.get_response_headers()
-            self.assertIsNotNone(response_headers)
-
-            # get_last_response_headers should return None or headers depending on if a request was made
-            last_headers = query_iterable.get_last_response_headers()
-            # This can be None if no request was made, or headers if at least one request was made
-            # Both are valid behaviors
+            self.assertIn("x-ms-request-charge", response_headers)
 
         finally:
             self._delete_container_for_test(container_id)
@@ -199,15 +177,14 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
             # Verify response headers contain query metrics
             response_headers = query_iterable.get_response_headers()
-            self.assertGreater(len(response_headers), 0)
+            self.assertIsNotNone(response_headers)
 
             # Check for query metrics header
             metrics_header_name = "x-ms-documentdb-query-metrics"
-            first_page_headers = response_headers[0]
-            self.assertIn(metrics_header_name, first_page_headers)
+            self.assertIn(metrics_header_name, response_headers)
 
             # Validate metrics header is well-formed
-            metrics_header = first_page_headers[metrics_header_name]
+            metrics_header = response_headers[metrics_header_name]
             metrics = metrics_header.split(";")
             self.assertGreater(len(metrics), 1)
             self.assertTrue(all("=" in x for x in metrics))
@@ -216,12 +193,12 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self._delete_container_for_test(container_id)
 
     def test_query_response_headers_by_page_iteration(self):
-        """Test response headers when using by_page() iteration."""
+        """Test response headers update per page, verified via x-ms-item-count."""
         container_id = "test_headers_by_page_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
-            # Create items
-            num_items = 10
+            # 7 items with max_item_count=3 gives pages of 3, 3, 1
+            num_items = 7
             for i in range(num_items):
                 created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
 
@@ -230,28 +207,30 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 query=query,
                 parameters=[{"name": "@pk", "value": "test"}],
                 partition_key="test",
-                max_item_count=3  # Force multiple pages
+                max_item_count=3
             )
 
-            # Iterate by page
+            # Iterate by page, tracking item counts from headers
             all_items = []
-            page_count = 0
+            item_counts = []
             for page in query_iterable.by_page():
                 page_items = list(page)
                 all_items.extend(page_items)
-                page_count += 1
 
-                # After each page, we can check the last response headers
-                last_headers = query_iterable.get_last_response_headers()
-                self.assertIsNotNone(last_headers)
-                self.assertIn("x-ms-request-charge", last_headers)
+                headers = query_iterable.get_response_headers()
+                self.assertIsNotNone(headers)
+                self.assertIn("x-ms-item-count", headers)
+                item_counts.append(int(headers["x-ms-item-count"]))
 
             # Verify all items retrieved
             self.assertEqual(len(all_items), num_items)
 
-            # Verify we got headers for each page (at least as many as page_count)
-            response_headers = query_iterable.get_response_headers()
-            self.assertGreaterEqual(len(response_headers), page_count)
+            # The last page should have fewer items than the page size,
+            # proving headers are overwritten per page.
+            # max_item_count is a hint, so pages may have fewer items than requested.
+            self.assertGreater(len(item_counts), 1)
+            self.assertEqual(sum(item_counts), num_items)
+            self.assertLess(item_counts[-1], item_counts[0])
 
         finally:
             self._delete_container_for_test(container_id)
@@ -277,12 +256,12 @@ class TestQueryResponseHeaders(unittest.TestCase):
             headers1 = query_iterable.get_response_headers()
             headers2 = query_iterable.get_response_headers()
 
-            # They should be equal but not the same object
-            self.assertEqual(len(headers1), len(headers2))
-            if len(headers1) > 0:
-                # Modifying one should not affect the other
-                headers1[0]["test-key"] = "test-value"
-                self.assertNotIn("test-key", headers2[0])
+            # They should be distinct objects
+            self.assertIsNot(headers1, headers2)
+
+            # Modifying one should not affect the other
+            headers1["test-key"] = "test-value"
+            self.assertNotIn("test-key", headers2)
 
         finally:
             self._delete_container_for_test(container_id)
@@ -330,7 +309,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
                         results[thread_id] = {
                             "partition_key": partition_key,
                             "item_count": len(items),
-                            "header_count": len(headers),
                             "headers": headers
                         }
                 except Exception as e:
@@ -359,25 +337,14 @@ class TestQueryResponseHeaders(unittest.TestCase):
             for thread_id, result in results.items():
                 self.assertEqual(result["item_count"], items_per_partition,
                     f"Thread {thread_id} got wrong item count")
-                self.assertGreater(result["header_count"], 0,
-                    f"Thread {thread_id} should have captured headers")
-                
-                # Verify headers contain expected keys (basic sanity check)
-                for header_dict in result["headers"]:
-                    self.assertIn("x-ms-request-charge", header_dict,
-                        f"Thread {thread_id} headers missing x-ms-request-charge")
+                self.assertIn("x-ms-request-charge", result["headers"],
+                    f"Thread {thread_id} headers missing x-ms-request-charge")
 
-            # Verify that different threads have independent header lists
-            # (modifying one doesn't affect others)
-            if len(results) >= 2:
-                thread_ids = list(results.keys())
-                headers_0 = results[thread_ids[0]]["headers"]
-                headers_1 = results[thread_ids[1]]["headers"]
-                
-                # They should be different objects
-                self.assertIsNot(headers_0, headers_1)
-                if len(headers_0) > 0 and len(headers_1) > 0:
-                    self.assertIsNot(headers_0[0], headers_1[0])
+            # Verify that different threads have independent header dicts
+            thread_ids = list(results.keys())
+            if len(thread_ids) >= 2:
+                self.assertIsNot(results[thread_ids[0]]["headers"],
+                    results[thread_ids[1]]["headers"])
 
         finally:
             self._delete_container_for_test(container_id)
@@ -419,10 +386,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 with lock:
                     results[thread_id] = {
                         "item_count": len(items),
-                        "header_count": len(headers),
-                        "request_charges": [
-                            float(h.get("x-ms-request-charge", 0)) for h in headers
-                        ]
+                        "request_charge": float(headers.get("x-ms-request-charge", 0))
                     }
 
             threads = []
@@ -439,12 +403,8 @@ class TestQueryResponseHeaders(unittest.TestCase):
             for thread_id, result in results.items():
                 self.assertEqual(result["item_count"], 50,
                     f"Thread {thread_id} should have gotten all 50 items")
-                self.assertGreater(result["header_count"], 0,
-                    f"Thread {thread_id} should have captured headers")
-                # Each request should have a positive request charge
-                for charge in result["request_charges"]:
-                    self.assertGreater(charge, 0,
-                        f"Thread {thread_id} should have positive request charges")
+                self.assertGreater(result["request_charge"], 0,
+                    f"Thread {thread_id} should have positive request charge")
 
         finally:
             self._delete_container_for_test(container_id)

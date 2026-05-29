@@ -24,6 +24,7 @@ USAGE:
         2) AZURE_TEXT_TRANSLATION_APIKEY - the API key to your Text Translation resource.
         3) AZURE_TEXT_TRANSLATION_REGION - the Azure Region of your Text Translation resource.
 """
+
 from azure.core.exceptions import HttpResponseError
 
 # -------------------------------------------------------------------------

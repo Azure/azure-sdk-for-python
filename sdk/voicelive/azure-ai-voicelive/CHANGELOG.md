@@ -1,5 +1,40 @@
 # Release History
 
+## 1.3.0b1 (2026-05-28)
+
+### Features Added
+
+- **Azure Realtime Native Voice Support**: Added `AzureRealtimeNativeVoice` and
+  `AzureRealtimeNativeVoiceName`, and expanded `voice` fields to accept Azure realtime native voices.
+- **WebRTC Call Negotiation Support**: Added `ClientEventRtcCallSdpCreate`, `ServerEventRtcCallSdpCreated`,
+  `ServerEventRtcCallError`, and `RtcCallErrorDetails` for SDP-based WebRTC call setup.
+- **Input Text Streaming Support**: Added `ClientEventInputTextDelta` and `ClientEventInputTextDone`
+  for incrementally streaming text input into existing conversation items.
+- **Hosted Agent Invocation Input**: Added `invoke_input` to `ResponseCreateParams` and
+  `ServerEventResponseInvocationDelta` for hosted agent invocation passthrough data.
+- **Audio Playback Lifecycle Events**: Added `ServerEventOutputAudioBufferStarted` and
+  `ServerEventOutputAudioBufferStopped` to track model audio playback start and stop.
+- **Echo Cancellation Configuration**: Added `EchoCancellationReferenceSource` and new
+  `reference_source` / `channels` options on `AudioEchoCancellation` to support both the default
+  server loopback reference path and client-provided stereo echo reference input.
+- **Smart End-of-Turn Detection**: Added `SmartEndOfTurnDetection` as an audio-based end-of-turn
+  detection option.
+- **Parallel Tool Call Control**: Added `parallel_tool_calls` to session models so callers can
+  control whether tool calls may run in parallel.
+
+### Breaking Changes
+
+- **Image Input Field Rename**: Renamed `RequestImageContentPart.url` to `image_url`. Update
+  image input construction to use `image_url=` instead of `url=`.
+- **Default API Version Update**: Changed the SDK default API version from `2026-04-10` to
+  `2026-06-01-preview`. Pass `api_version="2026-04-10"` explicitly to keep the previous default
+  behavior.
+
+### Bug Fixes
+
+- **Deserialization Improvements**: Improved XML model deserialization and common scalar header
+  deserialization paths for better compatibility and lower overhead.
+
 ## 1.2.0 (2026-05-22)
 
 ### Features Added

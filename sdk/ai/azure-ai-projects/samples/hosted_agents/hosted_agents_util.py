@@ -1,12 +1,44 @@
 import asyncio
-import logging
+import hashlib
 import time
-from contextlib import asynccontextmanager, contextmanager
-from typing import AsyncGenerator, Optional
+from pathlib import Path
+from typing import Tuple
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-from azure.ai.projects.models import HostedAgentDefinition, ProtocolVersionRecord, VersionRefIndicator
+from azure.ai.projects.models import (
+    AgentVersionDetails,
+    CodeDependencyResolution,
+)
+
+_ASSETS_DIR = Path(__file__).parent / "assets"
+
+
+def select_echo_agent_code_zip(
+    use_remote_build: bool,
+) -> Tuple[CodeDependencyResolution, str, bytes, str]:
+    """Pick the dependency-resolution mode and matching echo-agent zip, and load it.
+
+    When ``use_remote_build`` is ``True``, returns REMOTE_BUILD with
+    ``assets/echo-agent.zip``; otherwise BUNDLED with
+    ``assets/echo-agent-prebuilt.zip``.
+
+    Reads the zip bytes, computes its SHA-256, and prints a one-line summary.
+
+    Returns ``(dependency_resolution, zip_filename, zip_bytes, zip_sha256)``.
+    """
+    dependency_resolution = (
+        CodeDependencyResolution.REMOTE_BUILD if use_remote_build else CodeDependencyResolution.BUNDLED
+    )
+    zip_filename = "echo-agent.zip" if use_remote_build else "echo-agent-prebuilt.zip"
+    zip_path = _ASSETS_DIR / zip_filename
+    zip_bytes = zip_path.read_bytes()
+    zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
+    print(
+        f"Loaded code zip from {zip_path} (dependency_resolution={dependency_resolution.value}): "
+        f"{len(zip_bytes)} bytes, sha256={zip_sha256}"
+    )
+    return dependency_resolution, zip_filename, zip_bytes, zip_sha256
 
 
 def wait_for_agent_version_active(
@@ -14,34 +46,26 @@ def wait_for_agent_version_active(
     agent_name: str,
     agent_version: str,
     *,
-    logger: Optional[logging.Logger] = None,
     max_attempts: int = 60,
     poll_interval_seconds: int = 10,
 ) -> None:
-    if logger:
-        logger.info("Waiting for agent version to become active...")
+    """Poll until the version becomes ``active``; raise on ``failed`` or timeout."""
+    print("Waiting for agent version to become active...")
 
     for attempt in range(max_attempts):
         time.sleep(poll_interval_seconds)
         version_details = project_client.agents.get_version(agent_name=agent_name, agent_version=agent_version)
-        status = version_details.status
+        status = version_details["status"]
 
-        if logger:
-            logger.debug(f"Agent version status: {status} (attempt {attempt + 1}/{max_attempts})")
-        print(f"Agent version status: {status} (attempt {attempt + 1})")
+        print(f"Agent version status: {status} (attempt {attempt + 1}/{max_attempts})")
 
         if status == "active":
-            if logger:
-                logger.info("Agent version is now active")
+            print("Agent version is now active")
             return
 
         if status == "failed":
-            if logger:
-                logger.error(f"Agent version provisioning failed: {dict(version_details)}")
             raise RuntimeError(f"Agent version provisioning failed: {dict(version_details)}")
 
-    if logger:
-        logger.error("Timed out waiting for agent version to become active")
     raise RuntimeError("Timed out waiting for agent version to become active")
 
 
@@ -50,128 +74,52 @@ async def wait_for_agent_version_active_async(
     agent_name: str,
     agent_version: str,
     *,
-    logger: Optional[logging.Logger] = None,
     max_attempts: int = 60,
     poll_interval_seconds: int = 10,
 ) -> None:
-    if logger:
-        logger.info("Waiting for agent version to become active...")
+    """Async variant of :func:`wait_for_agent_version_active`."""
+    print("Waiting for agent version to become active...")
 
     for attempt in range(max_attempts):
         await asyncio.sleep(poll_interval_seconds)
         version_details = await project_client.agents.get_version(agent_name=agent_name, agent_version=agent_version)
         status = version_details["status"]
 
-        if logger:
-            logger.debug(f"Agent version status: {status} (attempt {attempt + 1}/{max_attempts})")
-        print(f"Agent version status: {status} (attempt {attempt + 1})")
+        print(f"Agent version status: {status} (attempt {attempt + 1}/{max_attempts})")
 
         if status == "active":
-            if logger:
-                logger.info("Agent version is now active")
+            print("Agent version is now active")
             return
 
         if status == "failed":
-            if logger:
-                logger.error(f"Agent version provisioning failed: {dict(version_details)}")
             raise RuntimeError(f"Agent version provisioning failed: {dict(version_details)}")
 
-    if logger:
-        logger.error("Timed out waiting for agent version to become active")
     raise RuntimeError("Timed out waiting for agent version to become active")
 
 
-@contextmanager
-def create_agent_and_session(
+def get_latest_active_agent_version(
     project_client: AIProjectClient,
     agent_name: str,
-    image: str,
-    isolation_key: str = "sample-isolation-key",
-):
-    agent = project_client.agents.create_version(
-        agent_name=agent_name,
-        definition=HostedAgentDefinition(
-            cpu="0.5",
-            memory="1Gi",
-            image=image,
-            container_protocol_versions=[
-                ProtocolVersionRecord(protocol="responses", version="1.0.0"),
-            ],
-        ),
-        metadata={"enableVnextExperience": "true"},
-    )
-    print(f"Agent created (name: {agent.name}, version: {agent.version})")
+) -> AgentVersionDetails:
+    for version in project_client.agents.list_versions(agent_name=agent_name, order="desc"):
+        if version.status == "active":
+            return version
 
-    wait_for_agent_version_active(
-        project_client=project_client,
-        agent_name=agent_name,
-        agent_version=agent.version,
+    raise RuntimeError(
+        f"No active version found for hosted agent '{agent_name}'. "
+        "Create or activate a version before running this sample."
     )
 
-    session = project_client.beta.agents.create_session(
-        agent_name=agent_name,
-        isolation_key=isolation_key,
-        version_indicator=VersionRefIndicator(agent_version=agent.version),
-    )
-    print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
 
-    try:
-        yield agent, session
-    finally:
-        project_client.beta.agents.delete_session(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-            isolation_key=isolation_key,
-        )
-        print(f"Session with id: {session.agent_session_id} deleted.")
-
-        project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
-        print(f"Agent version {agent.version} deleted.")
-
-
-@asynccontextmanager
-async def create_agent_and_session_async(
+async def get_latest_active_agent_version_async(
     project_client: AsyncAIProjectClient,
     agent_name: str,
-    image: str,
-    isolation_key: str = "sample-isolation-key",
-) -> AsyncGenerator[tuple[str, str], None]:
-    agent = await project_client.agents.create_version(
-        agent_name=agent_name,
-        definition=HostedAgentDefinition(
-            cpu="0.5",
-            memory="1Gi",
-            image=image,
-            container_protocol_versions=[
-                ProtocolVersionRecord(protocol="responses", version="1.0.0"),
-            ],
-        ),
-        metadata={"enableVnextExperience": "true"},
+) -> AgentVersionDetails:
+    async for version in project_client.agents.list_versions(agent_name=agent_name, order="desc"):
+        if version.status == "active":
+            return version
+
+    raise RuntimeError(
+        f"No active version found for hosted agent '{agent_name}'. "
+        "Create or activate a version before running this sample."
     )
-    print(f"Agent created (name: {agent.name}, version: {agent.version})")
-
-    await wait_for_agent_version_active_async(
-        project_client=project_client,
-        agent_name=agent_name,
-        agent_version=agent.version,
-    )
-
-    session = await project_client.beta.agents.create_session(
-        agent_name=agent_name,
-        isolation_key=isolation_key,
-        version_indicator=VersionRefIndicator(agent_version=agent.version),
-    )
-    print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
-
-    try:
-        yield agent.version, session.agent_session_id
-    finally:
-        await project_client.beta.agents.delete_session(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-            isolation_key=isolation_key,
-        )
-        print(f"Session with id: {session.agent_session_id} deleted.")
-
-        await project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
-        print(f"Agent version {agent.version} deleted.")

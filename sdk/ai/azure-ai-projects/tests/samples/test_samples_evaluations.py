@@ -22,6 +22,7 @@ evaluationsPreparer = functools.partial(
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     foundry_model_name="sanitized-model-deployment-name",
     foundry_agent_name="sanitized-agent-name",
+    foundry_instant_model_name="sanitized-instant-model-name",
 )
 
 
@@ -78,6 +79,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     Main evaluation samples (13):
     - sample_agent_evaluation.py
     - sample_model_evaluation.py
+    - sample_model_evaluation_instant_model.py
     - sample_agent_response_evaluation.py
     - sample_agent_response_evaluation_with_function_tool.py
     - sample_evaluations_builtin_with_inline_data.py
@@ -125,6 +127,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
       uses azure-monitor-query to fetch traces.
     - sample_scheduled_evaluations.py: Requires Azure RBAC assignment via
       azure-mgmt-authorization and azure-mgmt-resource, AND uploads Dataset.
+    - sample_human_evaluations.py: Requires Azure Application Insights (fetches
+      the connection string from the Foundry project and emits OTel events via
+      `azure-monitor-opentelemetry`); not meaningful to record/replay.
 
     Complex prerequisites (require manual portal setup):
     - sample_continuous_evaluation_rule.py: Requires manual RBAC assignment in Azure
@@ -153,6 +158,18 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
+                "sample_human_evaluations.py",  # Requires real Foundry App Insights connection string + emits OTel events; not suitable for recorded playback
+                "sample_multiturn_conversation_evaluation.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_conversation_simulation.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_trace_evaluation_agent_filter.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_trace_evaluation_by_id.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_rubric_evaluator_generation_all_sources.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_lifecycle.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_basic.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_manual.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_iterate.py",  # PR #47057: recording not yet available
+                "sample_agent_trace_evaluation_smart_filter.py",  # PR #47217: recording not yet available
+                "sample_scheduled_agent_traces_evaluation_smart_filter.py",  # PR #47217: recording not yet available
             ],
         ),
     )
