@@ -1,5 +1,5 @@
 {
-  "_comment": "Starter template for a classify-and-route outer classifier. Copy to schemas/<name>_classifier_v1.json and edit. See SKILL.md Step 3 for the rules. Each contentCategories entry's analyzerId is an alias resolved by --inner-schema alias=path at runtime; values starting with 'prebuilt-' are used as-is.",
+  "_comment": "Starter template for a classify-and-route outer classifier. Copy to .local_only/schemas/<name>_classifier_v1.json and edit. See SKILL.md Step 3 for the rules. Each contentCategories entry's analyzerId is an alias resolved by --inner-schema alias=path at runtime; values starting with 'prebuilt-' are used as-is.",
   "baseAnalyzerId": "prebuilt-document",
   "description": "REPLACE: one-line description of what this packet contains.",
   "config": {

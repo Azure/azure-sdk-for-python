@@ -36,12 +36,12 @@ Usage
 ::
 
     create_and_test_router.py \\
-        --outer-schema schemas/classifier.json \\
-        --inner-schema invoice=schemas/invoice.json \\
-        --inner-schema bank_statement=schemas/bank_statement.json \\
-        --inner-schema loan_application=schemas/loan_application.json \\
+        --outer-schema .local_only/schemas/classifier.json \\
+        --inner-schema invoice=.local_only/schemas/invoice.json \\
+        --inner-schema bank_statement=.local_only/schemas/bank_statement.json \\
+        --inner-schema loan_application=.local_only/schemas/loan_application.json \\
         --input samples/sample_files/mixed_financial_docs.pdf \\
-        --output test_results/v1
+        --output .local_only/test_results/v1
 """
 
 from __future__ import annotations

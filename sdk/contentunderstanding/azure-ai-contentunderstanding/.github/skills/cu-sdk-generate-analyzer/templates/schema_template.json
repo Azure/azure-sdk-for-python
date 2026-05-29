@@ -1,5 +1,5 @@
 {
-  "_comment": "Starter template for a single-doc-type custom analyzer. Copy to schemas/<name>_v1.json, replace placeholders, then run create_and_test.py. See SKILL.md Step 2 for the baseAnalyzerId table and field-description rules.",
+  "_comment": "Starter template for a single-doc-type custom analyzer. Copy to .local_only/schemas/<name>_v1.json, replace placeholders, then run create_and_test.py. See SKILL.md Step 2 for the baseAnalyzerId table and field-description rules.",
   "baseAnalyzerId": "prebuilt-document",
   "description": "REPLACE: one-line description of what this analyzer extracts.",
   "config": {

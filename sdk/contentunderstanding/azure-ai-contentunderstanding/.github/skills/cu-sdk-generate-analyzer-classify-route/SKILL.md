@@ -96,10 +96,10 @@ packet to see the section headings:
 ```bash
 python .github/skills/cu-sdk-generate-analyzer/scripts/extract_layout.py \
     --input <packet.pdf> \
-    --output layout/
+    --output .local_only/layout/
 ```
 
-> **[ASK USER]** "Looking at `layout/<packet>.layout.md`, what discrete
+> **[ASK USER]** "Looking at `.local_only/layout/<packet>.layout.md`, what discrete
 > document types do you see? List them in plain English (e.g. invoice, bank
 > statement, loan application)."
 
@@ -121,9 +121,9 @@ The outer schema has **no** `fieldSchema`. Its job is classification + routing.
 Start from the template:
 
 ```bash
-mkdir -p schemas
+mkdir -p .local_only/schemas
 cp .github/skills/cu-sdk-generate-analyzer-classify-route/templates/classifier_template.json \
-   schemas/<name>_classifier_v1.json
+   .local_only/schemas/<name>_classifier_v1.json
 ```
 
 Example after editing:
@@ -179,18 +179,18 @@ pass. Two exceptions skip alias resolution:
 
 ```bash
 python .github/skills/cu-sdk-generate-analyzer-classify-route/scripts/create_and_test_router.py \
-    --outer-schema schemas/classifier.json \
-    --inner-schema invoice=schemas/invoice.json \
-    --inner-schema bank_statement=schemas/bank_statement.json \
-    --inner-schema loan_application=schemas/loan_application.json \
+    --outer-schema .local_only/schemas/classifier.json \
+    --inner-schema invoice=.local_only/schemas/invoice.json \
+    --inner-schema bank_statement=.local_only/schemas/bank_statement.json \
+    --inner-schema loan_application=.local_only/schemas/loan_application.json \
     --input samples/sample_files/mixed_financial_docs.pdf \
-    --output test_results/v1
+    --output .local_only/test_results/v1
 ```
 
 > **Shortcut — `--schema-dir`:** if your inner schema filenames match the
-> outer-schema category aliases (e.g. `schemas/invoice_v1.json` for category
+> outer-schema category aliases (e.g. `.local_only/schemas/invoice_v1.json` for category
 > `invoice`), replace every `--inner-schema alias=path` with a single
-> `--schema-dir schemas/`. The script picks the newest matching file per
+> `--schema-dir .local_only/schemas/`. The script picks the newest matching file per
 > alias (alphabetical sort, so `invoice_v2.json` wins over `invoice_v1.json`).
 
 > **Iteration helper — `--reuse`:** add `--reuse` to name analyzers by a

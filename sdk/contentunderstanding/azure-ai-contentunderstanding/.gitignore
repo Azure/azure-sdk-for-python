@@ -2,11 +2,6 @@
 **/test_output*/
 **/sample_output*/
 
-# cu-sdk-generate-analyzer skill workflow output (per-user scratch, never committed)
-/layout/
-/schemas/
-/test_results/
-
 # Virtual environment
 .venv/
 
@@ -34,5 +29,5 @@ tests/recordings/
 *.log
 logs/
 
-# Local files
+# Local files (per-user scratch — also used by cu-sdk-generate-analyzer skill workflow)
 .local_only/

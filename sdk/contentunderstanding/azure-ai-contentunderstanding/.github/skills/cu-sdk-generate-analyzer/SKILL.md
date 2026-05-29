@@ -76,7 +76,7 @@ Run:
 ```bash
 python .github/skills/cu-sdk-generate-analyzer/scripts/extract_layout.py \
     --input <path-to-folder-or-file> \
-    --output layout/
+    --output .local_only/layout/
 ```
 
 This produces one `<doc>.layout.md` and one `<doc>.layout.json` per input.
@@ -93,12 +93,12 @@ want to extract from — labels (`"Invoice #:"`), section headings
 Start from the template instead of writing from scratch:
 
 ```bash
-mkdir -p schemas
+mkdir -p .local_only/schemas
 cp .github/skills/cu-sdk-generate-analyzer/templates/schema_template.json \
-   schemas/<name>_v1.json
+   .local_only/schemas/<name>_v1.json
 ```
 
-Then edit `schemas/<name>_v1.json`: set `baseAnalyzerId`, replace every
+Then edit `.local_only/schemas/<name>_v1.json`: set `baseAnalyzerId`, replace every
 `REPLACE:` placeholder, and add/remove fields. The schema is a JSON object
 with two required top-level keys:
 
@@ -171,9 +171,9 @@ with two required top-level keys:
 
 ```bash
 python .github/skills/cu-sdk-generate-analyzer/scripts/create_and_test.py \
-    --schema schemas/invoice_v1.json \
+    --schema .local_only/schemas/invoice_v1.json \
     --input samples/sample_files/sample_invoice.pdf \
-    --output test_results/v1
+    --output .local_only/test_results/v1
 ```
 
 The script runs the local validator first. If anything is wrong (unknown
@@ -207,9 +207,9 @@ By default the analyzer is kept in your resource so you can re-use it. Pass
 
 ```bash
 python .github/skills/cu-sdk-generate-analyzer/scripts/create_and_test.py \
-    --schema schemas/invoice_v1.json \
+    --schema .local_only/schemas/invoice_v1.json \
     --input samples/sample_files/sample_invoice.pdf \
-    --output test_results/v1 \
+    --output .local_only/test_results/v1 \
     --ephemeral
 ```
 

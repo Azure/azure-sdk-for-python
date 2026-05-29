@@ -35,9 +35,9 @@ Usage
 -----
 
     create_and_test.py \\
-        --schema schemas/invoice_v1.json \\
+        --schema .local_only/schemas/invoice_v1.json \\
         --input samples/sample_files/mixed_financial_docs.pdf \\
-        --output test_results/v1
+        --output .local_only/test_results/v1
 """
 
 from __future__ import annotations

@@ -14,13 +14,13 @@ full guided workflow.
 ```bash
 python extract_layout.py \
     --input samples/sample_files/mixed_financial_docs.pdf \
-    --output layout/
+    --output .local_only/layout/
 ```
 
 Outputs:
 
 ```
-layout/
+.local_only/layout/
 ├── mixed_financial_docs.layout.json   # raw AnalysisResult dump
 └── mixed_financial_docs.layout.md     # markdown rendering for VS Code
 ```
@@ -33,15 +33,15 @@ walks you through this).
 
 ```bash
 python create_and_test.py \
-    --schema schemas/invoice_v1.json \
+    --schema .local_only/schemas/invoice_v1.json \
     --input samples/sample_files/mixed_financial_docs.pdf \
-    --output test_results/v1
+    --output .local_only/test_results/v1
 ```
 
 Outputs:
 
 ```
-test_results/v1/
+.local_only/test_results/v1/
 ├── mixed_financial_docs.json
 └── ... one JSON per input document
 ```
