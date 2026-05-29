@@ -1,7 +1,7 @@
 # Azure AI Projects client library for Python
 
 The AI Projects client library is part of the Microsoft Foundry SDK, and provides easy access to
-resources in your Microsoft Foundry Project. Use it to:
+resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
@@ -31,6 +31,9 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using `.evaluation_rules`,
 `.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
+* **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
+* **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
+* **Create and version toolboxes (preview)** that bundle collections of tools and skills for your agents, using `.beta.toolboxes` operations.
 * **Fine tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
