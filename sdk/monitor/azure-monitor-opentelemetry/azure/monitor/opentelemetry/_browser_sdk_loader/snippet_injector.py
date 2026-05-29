@@ -64,7 +64,10 @@ def _bounded_decompress(data: bytes, encoding: str) -> bytes:
         # zlib's decompressobj supports a native max_length parameter.
         decompressor = _ZLIB_MODULE.decompressobj()
         out = decompressor.decompress(data, cap + 1)
-        if decompressor.unconsumed_tail:
+        if decompressor.unconsumed_tail or len(out) > cap:
+            raise ValueError("deflate-decompressed body exceeds cap")
+        out += decompressor.flush()
+        if len(out) > cap:
             raise ValueError("deflate-decompressed body exceeds cap")
         return out
     elif encoding == "br":
@@ -192,8 +195,14 @@ class WebSnippetInjector:
                 len(content),
             )
             return False
-        # Get decompressed content once and cache it for reuse
-        decompressed_content = self._get_decompressed_content(content, content_encoding)
+        # Get decompressed content once and cache it for reuse. If decompression
+        # fails (e.g., size cap exceeded or malformed body), skip injection rather
+        # than risk modifying a body we cannot safely decode.
+        try:
+            decompressed_content = self._get_decompressed_content(content, content_encoding)
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            _logger.debug("Skipping snippet injection; decompression failed: %s", ex)
+            return False
         # Check if Web SDK is already present using cached decompressed content
         if self._has_existing_web_sdk_from_decompressed(decompressed_content):
             _logger.debug("Web SDK already detected in HTML, skipping injection")
@@ -445,7 +454,11 @@ class WebSnippetInjector:
                 else:
                     result = _bounded_decompress(content, "deflate")
         except Exception as ex:  # pylint: disable=broad-exception-caught
+            # Re-raise so callers (e.g., inject_with_compression / should_inject) can
+            # fall back to returning the original response untouched instead of
+            # treating still-compressed bytes as HTML and double-compressing them.
             _logger.warning("Failed to decompress content with encoding %s: %s", encoding, ex)
+            raise
         return result
 
     def _compress_content(self, content: bytes, encoding: str) -> bytes:

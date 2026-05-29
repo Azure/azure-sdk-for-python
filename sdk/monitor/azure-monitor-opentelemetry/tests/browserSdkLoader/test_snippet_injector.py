@@ -402,8 +402,10 @@ class TestSizeCaps(unittest.TestCase):
 
     def test_should_inject_accepts_body_at_cap(self):
         """A body exactly at the cap should still be processed."""
-        body = b"<html><head></head><body>" + b"a" * 100 + b"</body></html>"
-        self.assertLessEqual(len(body), _MAX_COMPRESSED_BYTES)
+        prefix = b"<html><head></head><body>"
+        suffix = b"</body></html>"
+        body = prefix + (b"a" * (_MAX_COMPRESSED_BYTES - len(prefix) - len(suffix))) + suffix
+        self.assertEqual(len(body), _MAX_COMPRESSED_BYTES)
         self.assertTrue(self.injector.should_inject("GET", "text/html", body))
 
     def test_bounded_decompress_gzip_under_cap(self):
@@ -444,10 +446,9 @@ class TestSizeCaps(unittest.TestCase):
         """A gzip bomb must not be expanded into memory by inject_with_compression."""
         bomb = gzip.compress(b"a" * (_MAX_DECOMPRESSED_BYTES + 1024))
         modified, encoding = self.injector.inject_with_compression(bomb, "gzip")
-        # The decompression cap must prevent the output from approaching the
-        # bomb's expanded size; output should remain small (bounded by the
-        # compressed input plus a constant overhead for the failed-injection path).
-        self.assertLess(len(modified), 10 * len(bomb))
+        # On decompression cap / failure, injection must be skipped and the
+        # original body returned unchanged (no double-compression).
+        self.assertEqual(modified, bomb)
         self.assertEqual(encoding, "gzip")
 
 
