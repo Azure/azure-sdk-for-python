@@ -6,11 +6,16 @@
 
 import gzip
 import importlib
+import io
 import re
 from logging import getLogger
 from typing import Any, Dict, Optional, Tuple
 
 from ._config import BrowserSDKConfig
+from .._constants import (
+    _BROWSER_SDK_MAX_COMPRESSED_BYTES as _MAX_COMPRESSED_BYTES,
+    _BROWSER_SDK_MAX_DECOMPRESSED_BYTES as _MAX_DECOMPRESSED_BYTES,
+)
 
 # Optional compression libraries
 _BROTLI_MODULE: Optional[Any]
@@ -32,6 +37,55 @@ except ImportError:
     HAS_ZLIB = False
 
 _logger = getLogger(__name__)
+
+
+def _bounded_decompress(data: bytes, encoding: str) -> bytes:
+    """Decompress ``data`` with the given encoding, raising if output exceeds the cap.
+
+    Supports ``gzip``, ``deflate`` (zlib), and ``br`` (brotli). Returns the
+    decompressed bytes or raises ``ValueError`` if the output would exceed
+    ``_MAX_DECOMPRESSED_BYTES`` (defense against decompression bombs).
+
+    :param data: Compressed input bytes.
+    :type data: bytes
+    :param encoding: One of ``gzip``, ``deflate``, ``br``.
+    :type encoding: str
+    :return: Decompressed bytes (at most ``_MAX_DECOMPRESSED_BYTES``).
+    :rtype: bytes
+    """
+    cap = _MAX_DECOMPRESSED_BYTES
+    if encoding == "gzip":
+        # GzipFile.read(N) reads at most N bytes; ask for cap+1 to detect overflow.
+        with gzip.GzipFile(fileobj=io.BytesIO(data)) as gz:
+            out = gz.read(cap + 1)
+    elif encoding == "deflate":
+        if _ZLIB_MODULE is None:
+            raise RuntimeError("zlib module not available")
+        # zlib's decompressobj supports a native max_length parameter.
+        decompressor = _ZLIB_MODULE.decompressobj()
+        out = decompressor.decompress(data, cap + 1)
+        if decompressor.unconsumed_tail:
+            raise ValueError("deflate-decompressed body exceeds cap")
+        return out
+    elif encoding == "br":
+        if _BROTLI_MODULE is None:
+            raise RuntimeError("brotli module not available")
+        # Brotli has no built-in size limit; feed chunks and tally bytes.
+        decompressor = _BROTLI_MODULE.Decompressor()
+        chunk = 64 * 1024
+        pieces, total = [], 0
+        for start in range(0, len(data), chunk):
+            piece = decompressor.process(data[start : start + chunk])
+            total += len(piece)
+            if total > cap:
+                raise ValueError("brotli-decompressed body exceeds cap")
+            pieces.append(piece)
+        return b"".join(pieces)
+    else:
+        raise ValueError(f"unsupported encoding: {encoding}")
+    if len(out) > cap:
+        raise ValueError(f"{encoding}-decompressed body exceeds cap")
+    return out
 
 
 def _mark_browser_loader_feature(is_enabled: bool) -> None:
@@ -130,6 +184,13 @@ class WebSnippetInjector:
             return False
         # Check content type for HTML
         if not content_type or "html" not in content_type.lower():
+            return False
+        # Bail out on oversized bodies; never decompress/scan/recompress them.
+        if len(content) > _MAX_COMPRESSED_BYTES:
+            _logger.debug(
+                "Response body %d bytes exceeds injection cap; skipping snippet injection",
+                len(content),
+            )
             return False
         # Get decompressed content once and cache it for reuse
         decompressed_content = self._get_decompressed_content(content, content_encoding)
@@ -372,17 +433,17 @@ class WebSnippetInjector:
         try:
             normalized = encoding.lower()
             if normalized == "gzip":
-                result = gzip.decompress(content)
+                result = _bounded_decompress(content, "gzip")
             elif normalized == "br":
                 if not HAS_BROTLI or _BROTLI_MODULE is None:
                     _logger.warning("brotli library not available for decompression")
                 else:
-                    result = _BROTLI_MODULE.decompress(content)
+                    result = _bounded_decompress(content, "br")
             elif normalized == "deflate":
                 if not HAS_ZLIB or _ZLIB_MODULE is None:
                     _logger.warning("zlib library not available for decompression")
                 else:
-                    result = _ZLIB_MODULE.decompress(content)
+                    result = _bounded_decompress(content, "deflate")
         except Exception as ex:  # pylint: disable=broad-exception-caught
             _logger.warning("Failed to decompress content with encoding %s: %s", encoding, ex)
         return result
