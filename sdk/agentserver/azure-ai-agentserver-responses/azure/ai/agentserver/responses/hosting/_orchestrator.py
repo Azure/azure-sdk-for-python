@@ -2784,6 +2784,18 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 parent_orchestrator=self,
             )
 
+        # (Spec 014 follow-up) Pre-register the bookkeeping completion
+        # event BEFORE start_durable schedules the body. Without this,
+        # a fast handler that completes its terminal and calls
+        # _complete_bookkeeping_task before the body's first await
+        # would have its signal silently dropped (the body would only
+        # populate the event registry after its own initial scheduling
+        # tick). Idempotent for the re-invoke disposition — it just
+        # leaves an unused event in the registry that the recovery
+        # body's finally will pop. No-op when this branch isn't taken.
+        if disposition == "mark-failed":
+            self._durable_orchestrator.ensure_bookkeeping_event(ctx.response_id)
+
         # Build execution params dict for the task input
         ctx_params: dict[str, Any] = {
             "response_id": ctx.response_id,

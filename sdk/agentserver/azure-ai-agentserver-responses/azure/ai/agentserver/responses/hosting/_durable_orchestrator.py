@@ -720,8 +720,7 @@ class DurableResponseOrchestrator:
         :param response_id: The response identifier (key into the
             module-level completion event registry).
         """
-        completion_event = asyncio.Event()
-        _BOOKKEEPING_EVENTS[response_id] = completion_event
+        completion_event = self.ensure_bookkeeping_event(response_id)
         try:
             completion_task = asyncio.create_task(completion_event.wait())
             cancel_task = asyncio.create_task(ctx.cancel.wait())
@@ -751,6 +750,28 @@ class DurableResponseOrchestrator:
             return
         finally:
             _BOOKKEEPING_EVENTS.pop(response_id, None)
+
+    def ensure_bookkeeping_event(self, response_id: str) -> asyncio.Event:
+        """Idempotently register the bookkeeping completion event.
+
+        Returns the existing :class:`asyncio.Event` for ``response_id``
+        from ``_BOOKKEEPING_EVENTS`` or creates one if absent. Callers
+        invoke this BEFORE starting a ``mark-failed`` disposition
+        durable task so that a fast handler which completes its
+        terminal before the task body's first await still observes a
+        registered event when it calls
+        :meth:`complete_bookkeeping_task` — the signal is never
+        dropped.
+
+        :param response_id: The response identifier (key into the
+            module-level completion event registry).
+        :returns: The (possibly newly created) completion event.
+        """
+        event = _BOOKKEEPING_EVENTS.get(response_id)
+        if event is None:
+            event = asyncio.Event()
+            _BOOKKEEPING_EVENTS[response_id] = event
+        return event
 
     def complete_bookkeeping_task(self, response_id: str) -> None:
         """Signal the bookkeeping task body for ``response_id`` to complete.
