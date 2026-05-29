@@ -248,6 +248,40 @@ def _reconstruct_from_params(
 _FW_RESPONSE_ID = f"{_FW_PREFIX}response_id"
 _FW_LAST_SEQ = f"{_FW_PREFIX}last_sequence_number"
 _FW_BACKGROUND = f"{_FW_PREFIX}background"
+# (Spec 014 FR-003 / FR-004 — Phase 4) Per-task disposition tells the recovery
+# scanner what to do on the next-lifetime recovered entry:
+#   - "re-invoke": re-run the handler (Row 1: durable_background+bg+store).
+#   - "mark-failed": persist a server_error terminal to the response store and
+#     complete the task without re-invoking (Rows 2, 3: bg+store with
+#     durable_background=False, and fg+store).
+_FW_DISPOSITION = f"{_FW_PREFIX}disposition"
+DISPOSITION_REINVOKE = "re-invoke"
+DISPOSITION_MARK_FAILED = "mark-failed"
+
+# Per-process registry of pending bookkeeping-task completion events.
+# Keyed by response_id. Set by ``DurableResponseOrchestrator.complete_bookkeeping_task``
+# from the orchestrator's terminal-persist hook so the bookkeeping task body
+# (which is awaiting this event) exits cleanly and the task is marked completed.
+# In-memory only — survives only for the current process. On crash before the
+# event fires, the task stays in_progress and the next-lifetime recovery
+# scanner reclaims it (mark-failed disposition then runs).
+_BOOKKEEPING_EVENTS: dict[str, asyncio.Event] = {}
+
+
+def _read_disposition(metadata: "_FilteredMetadata | dict[str, Any]") -> str:
+    """Read the task disposition from framework metadata.
+
+    Defaults to ``DISPOSITION_REINVOKE`` for backward compatibility with
+    Phase 3 (Row 1) tasks created before this metadata key existed.
+
+    :param metadata: The task's framework metadata dict.
+    :returns: One of ``DISPOSITION_REINVOKE`` or ``DISPOSITION_MARK_FAILED``.
+    :rtype: str
+    """
+    raw = metadata.get(_FW_DISPOSITION) if metadata else None
+    if raw in (DISPOSITION_REINVOKE, DISPOSITION_MARK_FAILED):
+        return raw
+    return DISPOSITION_REINVOKE
 
 
 def _map_entry_mode(task_entry_mode: str) -> DurabilityEntryMode:
@@ -369,18 +403,62 @@ class DurableResponseOrchestrator:
         if _FW_BACKGROUND not in ctx.metadata:
             ctx.metadata[_FW_BACKGROUND] = params.get("background", True)
 
-        # Non-background recovery: persist as failed without re-invoking handler.
-        # Non-background responses are tied to the HTTP connection lifetime —
-        # if the server crashes, the client is already disconnected, so
-        # re-invocation is pointless. Mark failed and suspend.
+        # (Spec 014 FR-003 / FR-004) Stamp the disposition on first entry so
+        # next-lifetime recovery can dispatch correctly without needing to
+        # reconstruct the routing decisions from input params.
+        if _FW_DISPOSITION not in ctx.metadata:
+            ctx.metadata[_FW_DISPOSITION] = params.get(
+                "disposition", DISPOSITION_REINVOKE
+            )
+            # Force-flush so the disposition is durable BEFORE the body
+            # could be killed (the default 5s debounce window is too long
+            # to rely on for crash-recovery correctness — without an
+            # explicit flush the recovered task would default to
+            # ``re-invoke`` and skip the mark-failed branch).
+            try:
+                await ctx.metadata.flush()
+            except (AttributeError, Exception):  # noqa: BLE001
+                pass  # best-effort — backend may not support explicit flush
+        disposition = _read_disposition(ctx.metadata)
+
+        # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition.
+        # mark-failed: handler doesn't re-run; persist server_error to the
+        # response store and complete the task. Covers Rows 2 (bg+store with
+        # durable_background=False) and 3 (fg+store).
+        if is_recovery and disposition == DISPOSITION_MARK_FAILED:
+            logger.info(
+                "Bookkeeping task recovered (response_id=%s, disposition=mark-failed) — marking failed",
+                response_id,
+            )
+            await self._persist_crash_failed(response_id, params)
+            if self._options.steerable_conversations:
+                return await ctx.suspend(reason="crash_failed")
+            return
+
+        # Backward-compat: the pre-disposition non-background recovery branch.
+        # Tasks created before the disposition key existed default to
+        # DISPOSITION_REINVOKE; for those, preserve the prior behaviour of
+        # marking foreground responses failed on recovery without re-invoking.
         if is_recovery and not ctx.metadata.get(_FW_BACKGROUND, True):
             logger.info(
                 "Non-background task recovered (response_id=%s) — marking failed",
                 response_id,
             )
-            await self._persist_non_bg_crash_failed(response_id, params)
+            await self._persist_crash_failed(response_id, params)
             if self._options.steerable_conversations:
                 return await ctx.suspend(reason="non_bg_crash_failed")
+            return
+
+        # (Spec 014 FR-003 / FR-004) Fresh-entry bookkeeping mode. The
+        # handler is running externally (Row 2: asyncio.create_task in
+        # run_background; Row 3: synchronously in run_sync / _live_stream).
+        # This task body just keeps the task in_progress until the
+        # orchestrator signals completion via complete_bookkeeping_task.
+        # On crash / shutdown before signal, the task stays in_progress and
+        # the next-lifetime recovery scanner reclaims it (mark-failed branch
+        # above runs).
+        if not is_recovery and disposition == DISPOSITION_MARK_FAILED:
+            await self._run_bookkeeping_body(ctx, response_id)
             return
 
         # Build DurabilityContext for the handler.
@@ -613,38 +691,188 @@ class DurableResponseOrchestrator:
             )
             return False  # Input queued on existing task
 
-    async def _persist_non_bg_crash_failed(
+    async def _run_bookkeeping_body(
+        self,
+        ctx: "TaskContext[dict[str, Any]]",
+        response_id: str,
+    ) -> None:
+        """Run the fresh-entry bookkeeping body for Row 2 / Row 3 tasks.
+
+        The handler is running externally (Row 2: ``asyncio.create_task`` in
+        ``run_background``; Row 3: synchronously inside ``run_sync`` /
+        ``_live_stream``). This body just keeps the durable task in the
+        ``in_progress`` state until one of:
+
+        - ``complete_bookkeeping_task(response_id)`` is called after the
+          handler emits its terminal and the response store write
+          completes — the task body returns cleanly and the task is
+          marked ``completed``.
+        - ``ctx.shutdown`` fires (graceful shutdown) — the body proactively
+          calls ``_persist_crash_failed`` (idempotent — skips overwrite if
+          terminal already persisted) then returns, marking the task
+          ``completed`` so it doesn't block shutdown.
+        - The process is SIGKILL'd — no chance to clean up. Task stays
+          ``in_progress`` and the next-lifetime recovery scanner reclaims
+          it (the ``mark-failed`` branch of ``_execute_in_task`` runs).
+
+        :param ctx: The durable task context (provides ``cancel`` /
+            ``shutdown`` events).
+        :param response_id: The response identifier (key into the
+            module-level completion event registry).
+        """
+        completion_event = asyncio.Event()
+        _BOOKKEEPING_EVENTS[response_id] = completion_event
+        try:
+            completion_task = asyncio.create_task(completion_event.wait())
+            cancel_task = asyncio.create_task(ctx.cancel.wait())
+            shutdown_task = asyncio.create_task(ctx.shutdown.wait())
+            try:
+                done, pending = await asyncio.wait(
+                    {completion_task, cancel_task, shutdown_task},
+                    return_when=asyncio.FIRST_COMPLETED,
+                )
+                for task in pending:
+                    task.cancel()
+            except asyncio.CancelledError:
+                completion_task.cancel()
+                cancel_task.cancel()
+                shutdown_task.cancel()
+                raise
+
+            if completion_task in done:
+                # Handler emitted terminal + store write completed.
+                # Return cleanly; task marked completed.
+                return
+
+            # ctx.cancel or ctx.shutdown fired before completion. Proactively
+            # mark the response failed via the idempotent
+            # _persist_crash_failed helper (skips overwrite if a terminal is
+            # already in the store) so the bookkeeping task can complete
+            # cleanly without blocking shutdown.
+            await self._persist_crash_failed(response_id, ctx.input)
+            return
+        finally:
+            _BOOKKEEPING_EVENTS.pop(response_id, None)
+
+    def complete_bookkeeping_task(self, response_id: str) -> None:
+        """Signal the bookkeeping task body for ``response_id`` to complete.
+
+        Called by the orchestrator from the handler's terminal-persist hook
+        once the response is durably written to the response store. If no
+        bookkeeping task is registered for this response_id (e.g. Row 1
+        which uses the re-invoke disposition, or any non-store path), this
+        is a no-op.
+
+        :param response_id: The response identifier.
+        """
+        event = _BOOKKEEPING_EVENTS.get(response_id)
+        if event is not None:
+            event.set()
+
+    async def _persist_crash_failed(
         self,
         response_id: str,
         params: dict[str, Any],
     ) -> None:
-        """Persist a non-background response as failed after crash recovery.
+        """Persist a response as ``failed`` after crash recovery.
 
-        Non-background responses cannot be re-invoked (client disconnected),
-        so we mark them as failed via the generic ``server_error`` code
-        (Path-C cause in ``message``, per ``durability-contract.md`` § Glossary).
+        Used by the next-lifetime recovery path for tasks with
+        ``disposition="mark-failed"`` (Rows 2 and 3 of the durability
+        matrix). Both rows cannot be re-invoked on recovery —
+        Row 2 (bg+store, durable_background=False) opted out of crash
+        recovery; Row 3 (fg+store) has no live HTTP request to stream
+        events back to. The recovered task body marks the response
+        ``failed`` via the generic ``server_error`` code (path-specific
+        cause in ``message``, per ``durability-contract.md`` § Glossary).
+
+        Idempotent against a completed-response race (T-066): if the
+        response already exists in the store with a terminal status, the
+        crash happened AFTER terminal persistence and BEFORE the
+        bookkeeping task could be marked complete. In that case the
+        ``server_error`` marker would corrupt a valid completed response,
+        so we skip the overwrite and return cleanly. The next-lifetime
+        recovery scanner still marks the bookkeeping task as completed
+        when the body returns, removing it from future recovery scans.
+
+        Handles both create (response was never persisted — handler
+        crashed before terminal) and update (response was persisted at
+        ``response.created`` for bg+stream but the terminal never landed)
+        cases.
+
+        :param response_id: The response identifier.
+        :param params: The task input params (used to extract
+            isolation context for storage routing).
         """
         from ..models._generated import (
             ResponseObject,
         )  # pylint: disable=import-outside-toplevel
 
+        _TERMINAL_STATUSES = {"completed", "failed", "cancelled", "incomplete"}
+
+        isolation = None
+        context = params.get("_context_ref")
+        if context is not None:
+            isolation = getattr(context, "isolation", None)
+
+        # (Spec 014 T-066) Race-safe idempotent check. If the store already
+        # holds a terminal response for this id, leave it alone — the crash
+        # happened after terminal persistence, and overwriting would corrupt
+        # the result.
+        try:
+            existing = await self._provider.get_response(
+                response_id, isolation=isolation
+            )
+            existing_status = getattr(existing, "status", None) or (
+                existing.get("status") if isinstance(existing, dict) else None
+            )
+            if (
+                isinstance(existing_status, str)
+                and existing_status in _TERMINAL_STATUSES
+            ):
+                logger.info(
+                    "_persist_crash_failed: response %s already terminal "
+                    "(status=%s) — skipping overwrite (race avoidance)",
+                    response_id,
+                    existing_status,
+                )
+                return
+        except KeyError:
+            # Response not yet in store (handler crashed before terminal).
+            pass
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Other store errors — swallow and try the write below; the
+            # write will report its own error.
+            pass
+
         failed_response = _build_server_error_payload(
             response_id,
             shutdown_reason="crash_recovery",
-            message="Server crashed during non-background response execution",
+            message="Server crashed during response execution",
         )
 
         try:
-            isolation = None
-            context = params.get("_context_ref")
-            if context is not None:
-                isolation = getattr(context, "isolation", None)
             await self._provider.update_response(
                 ResponseObject(failed_response), isolation=isolation
             )
+        except KeyError:
+            # Response was never persisted at response.created — try
+            # create instead so the failed terminal still lands.
+            try:
+                await self._provider.create_response(
+                    ResponseObject(failed_response),
+                    input_items=[],
+                    history_item_ids=None,
+                    isolation=isolation,
+                )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "_persist_crash_failed: create after update-not-found failed for %s: %s",
+                    response_id,
+                    exc,
+                )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
-                "Failed to persist non-bg crash failure for %s: %s",
+                "_persist_crash_failed: failed to persist crash-failure for %s: %s",
                 response_id,
                 exc,
             )

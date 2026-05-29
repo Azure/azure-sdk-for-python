@@ -702,6 +702,20 @@ class _HandlerError(Exception):
         super().__init__(str(original))
 
 
+async def _bookkeeping_noop_runner() -> None:
+    """Fallback runner for the bookkeeping-task path (Rows 2 + 3 — Spec 014 FR-003/FR-004).
+
+    Used when ``_start_durable_background`` falls back to ``asyncio.create_task``
+    (e.g. TaskManager not initialised in TestClient-style tests). The
+    handler is already running via its own execution path (Row 2:
+    ``asyncio.create_task`` in ``run_background``; Row 3: synchronously in
+    ``run_sync`` / ``_live_stream``), so this fallback has nothing to do —
+    crash recovery is naturally unavailable without a real durable task,
+    matching the pre-Phase-4 behavior for these rows.
+    """
+    return None
+
+
 def _make_ephemeral_record(
     ctx: "_ExecutionContext", state: "_PipelineState"
 ) -> "ResponseExecution":
@@ -838,18 +852,21 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # is registered in _REGISTERED_DESCRIPTORS before TaskManager.startup()
         # runs recovery. Without this, stale tasks from a previous crash would
         # not be recovered until the first HTTP request triggers lazy creation.
-        if runtime_options.durable_background:
-            from ._durable_orchestrator import (
-                DurableResponseOrchestrator,
-            )  # pylint: disable=import-outside-toplevel
+        # (Spec 014 FR-003 / FR-004) Eager creation is unconditional: Rows 2/3
+        # also need recovery dispatch even when ``durable_background=False``
+        # — they use the same @task function with a ``disposition="mark-failed"``
+        # payload that the recovery body honours.
+        from ._durable_orchestrator import (
+            DurableResponseOrchestrator,
+        )  # pylint: disable=import-outside-toplevel
 
-            self._durable_orchestrator = DurableResponseOrchestrator(
-                create_fn=create_fn,
-                options=runtime_options,
-                provider=provider,
-                runtime_state=runtime_state,
-                parent_orchestrator=self,
-            )
+        self._durable_orchestrator = DurableResponseOrchestrator(
+            create_fn=create_fn,
+            options=runtime_options,
+            provider=provider,
+            runtime_state=runtime_state,
+            parent_orchestrator=self,
+        )
 
     # ------------------------------------------------------------------
     # Internal helpers (stream path)
@@ -1195,6 +1212,15 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             and state.pending_terminal is not None
         ):
             await state.bg_record.subject.publish(state.pending_terminal)
+
+        # (Spec 014 T-066) Signal the bookkeeping task to complete AFTER
+        # successful terminal persistence. Strict ordering: if a crash
+        # happens before this signal, the recovery scanner reclaims the
+        # task and the idempotent _persist_crash_failed check sees the
+        # terminal already in store and skips overwrite. Safe to call
+        # even for re-invoke disposition (Row 1) — it's a no-op there.
+        if ctx.store and not record.persistence_failed:
+            await self._complete_bookkeeping_task(ctx.response_id)
 
         return state.pending_terminal
 
@@ -1731,52 +1757,15 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # was created (empty handler fallback, pre-creation errors, first-event
         # contract violations).
 
-        # B17: Non-bg streaming cancelled by client disconnect.
-        # Per container spec Rule B17: if store=true, the cancelled response
-        # becomes retrievable once the cancellation completes. Build a cancelled
-        # response and persist it directly.
+        # B17: Non-bg streaming cancelled by client disconnect (no terminal
+        # was emitted). For ``store=true`` the response is intentionally NOT
+        # persisted — the client disconnected mid-stream, the response is
+        # gone, GET returns 404. Server-side shutdown (Row 3 Path B/C) is
+        # handled by the Phase 4 bookkeeping task: the in-process record is
+        # absent here, so the next-lifetime recovery scanner sees the
+        # bookkeeping task still in_progress and writes the ``server_error``
+        # terminal via ``_persist_crash_failed``.
         if not ctx.background and state.stream_interrupted:
-            if not ctx.store:
-                # store=false: nothing to persist, GET returns 404 per B17.
-                ctx.span.end(state.captured_error)
-                return
-            # store=true: build and persist a cancelled response directly.
-            response_payload: dict[str, Any] = {
-                "id": ctx.response_id,
-                "status": "cancelled",
-                "output": [],
-                "background": ctx.background,
-            }
-            if ctx.model:
-                response_payload["model"] = ctx.model
-            if ctx.conversation_id:
-                response_payload["conversation_id"] = ctx.conversation_id
-            if ctx.agent_session_id:
-                response_payload["agent_session_id"] = ctx.agent_session_id
-
-            # Persist via provider
-            _isolation = ctx.context.isolation if ctx.context else None
-            try:
-                await self._provider.create_response(
-                    response_payload,
-                    input_items=ctx.parsed.input if isinstance(ctx.parsed.input, list) else [],
-                    history_ids=None,
-                    isolation=_isolation,
-                )
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "B17: Failed to persist cancelled foreground response (response_id=%s)",
-                    ctx.response_id,
-                    exc_info=True,
-                )
-                # Register in runtime state as fallback so GET returns correct status
-                record = _make_ephemeral_record(ctx, state)
-                record.transition_to("cancelled")
-                record.set_response_snapshot(response_payload)
-                await self._runtime_state.register_execution(ctx.response_id, record)
-                ctx.span.end(state.captured_error)
-                return
-
             ctx.span.end(state.captured_error)
             return
 
@@ -1909,6 +1898,42 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         logger.info(
             "Invoking handler %s for response %s", _handler_name, ctx.response_id
         )
+
+        # (Spec 014 FR-003 / FR-004) For Row 2 stream=T (bg+store+!durable_bg)
+        # and Row 3 stream=T (fg+store), start a bookkeeping durable task at
+        # accept time so the next-lifetime recovery scanner can mark the
+        # response failed on crash. Row 1 (bg+store+durable_bg) is handled
+        # separately below — its branch engages durable execution directly
+        # via _start_durable_background.
+        bookkeeping_active = False
+        needs_bookkeeping = ctx.store and not (
+            ctx.background and self._runtime_options.durable_background
+        )
+        if needs_bookkeeping:
+            bookkeeping_record = ResponseExecution(
+                response_id=ctx.response_id,
+                mode_flags=ResponseModeFlags(
+                    stream=True, store=True, background=ctx.background
+                ),
+                status="in_progress",
+                input_items=deepcopy(ctx.input_items),
+                previous_response_id=ctx.previous_response_id,
+                cancel_signal=ctx.cancellation_signal,
+                response_context=ctx.context,
+                agent_session_id=ctx.agent_session_id,
+                conversation_id=ctx.conversation_id,
+                chat_isolation_key=ctx.chat_isolation_key,
+                initial_model=ctx.model,
+                initial_agent_reference=ctx.agent_reference,
+            )
+            await self._start_durable_background(
+                ctx,
+                bookkeeping_record,
+                _bookkeeping_noop_runner,
+                disposition="mark-failed",
+            )
+            bookkeeping_active = True
+
         handler_iterator = self._create_fn(
             ctx.parsed, ctx.context, ctx.cancellation_signal
         )
@@ -1920,6 +1945,18 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # handles that case by creating the record itself.
         async def _finalize() -> None:
             await self._finalize_stream(ctx, state)
+            # (Spec 014 FR-003 / FR-004) Signal the bookkeeping task on every
+            # stream finalize so the durable task body returns cleanly. For
+            # a successful terminal it's a no-op (already signaled by
+            # _persist_and_resolve_terminal); for a stream-interrupted exit
+            # (B17 — client disconnect or server shutdown without terminal),
+            # this stops the bookkeeping body waiting indefinitely so the
+            # task completes. The recovery semantics still hold for true
+            # SIGKILL — the bookkeeping body never gets the chance to run
+            # _persist_crash_failed nor signal completion, so the task
+            # stays in_progress for next-lifetime recovery.
+            if bookkeeping_active:
+                await self._complete_bookkeeping_task(ctx.response_id)
 
         # --- Fast path: no keep-alive ---
         if not self._runtime_options.sse_keep_alive_enabled:
@@ -2224,6 +2261,65 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         logger.info(
             "Invoking handler %s for response %s", _handler_name, ctx.response_id
         )
+
+        # (Spec 014 FR-004 — close divergence 3) For Row 3 (fg + store),
+        # start a bookkeeping durable task at accept time. The task body
+        # waits in the background; if this process crashes before terminal
+        # persistence, the next-lifetime recovery scanner reclaims the task
+        # and marks the response failed. On every clean exit from run_sync
+        # (success, _HandlerError, CancelledError from client disconnect)
+        # we signal the bookkeeping task to complete — only true
+        # process-level crashes (SIGKILL / OS crash) leave it in_progress.
+        bookkeeping_record: ResponseExecution | None = None
+        if ctx.store:
+            bookkeeping_record = ResponseExecution(
+                response_id=ctx.response_id,
+                mode_flags=ResponseModeFlags(
+                    stream=False, store=True, background=False
+                ),
+                status="in_progress",
+                input_items=deepcopy(ctx.input_items),
+                previous_response_id=ctx.previous_response_id,
+                response_context=ctx.context,
+                agent_session_id=ctx.agent_session_id,
+                conversation_id=ctx.conversation_id,
+                chat_isolation_key=ctx.chat_isolation_key,
+                initial_model=ctx.model,
+                initial_agent_reference=ctx.agent_reference,
+            )
+            await self._start_durable_background(
+                ctx,
+                bookkeeping_record,
+                _bookkeeping_noop_runner,
+                disposition="mark-failed",
+            )
+
+        try:
+            return await self._run_sync_inner(ctx, state)
+        finally:
+            # Always signal the bookkeeping task on exit. The recovery
+            # scanner's idempotent _persist_crash_failed check reads the
+            # store first — if we succeeded in persisting (terminal status
+            # already present), recovery would skip overwrite anyway, but
+            # by completing here we avoid even the wakeup. For the
+            # client-disconnect path (response NOT persisted), we still
+            # want to skip recovery: a disconnected client doesn't need a
+            # ``server_error`` ghost in the store. Process-level crashes
+            # (SIGKILL) prevent this finally from running, leaving the
+            # task in_progress for the recovery scanner.
+            if bookkeeping_record is not None:
+                await self._complete_bookkeeping_task(ctx.response_id)
+
+    async def _run_sync_inner(
+        self, ctx: _ExecutionContext, state: _PipelineState
+    ) -> dict[str, Any]:
+        """Inner body of :meth:`run_sync` — extracted so the bookkeeping
+        task can be signalled in a ``try/finally`` wrapper in the caller.
+
+        :param ctx: Current execution context.
+        :param state: Pipeline state (populated by handler events).
+        :return: Response snapshot dictionary.
+        """
         handler_iterator = self._create_fn(
             ctx.parsed, ctx.context, ctx.cancellation_signal
         )
@@ -2316,6 +2412,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     _history_ids,
                     isolation=_isolation,
                 )
+                # Bookkeeping signal is fired in run_sync's finally block
+                # — no need to repeat here.
             except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                 logger.error(
                     "Persistence failed in sync path (response_id=%s): %s",
@@ -2424,12 +2522,20 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 pass  # event-loop teardown; background work already done
 
         if self._runtime_options.durable_background and ctx.store:
-            # Durable path: wrap execution in a task primitive for crash recovery.
-            # The task body calls _run_background_non_stream with the same params.
+            # Row 1: durable_background + bg + store → handler runs inside the
+            # durable task body; recovery re-invokes the handler.
             await self._start_durable_background(ctx, record, _shielded_runner)
         else:
-            # Non-durable path: plain asyncio task (existing behavior)
+            # Row 2 or non-store: handler runs as a plain asyncio task. For
+            # Row 2 (bg + store but durable_background=False), ALSO start a
+            # bookkeeping durable task so the next-lifetime recovery scanner
+            # can mark the response failed if this process crashes mid-handler.
+            # (Spec 014 FR-003 — close divergence 2)
             record.execution_task = asyncio.create_task(_shielded_runner())
+            if ctx.store:
+                await self._start_durable_background(
+                    ctx, record, _shielded_runner, disposition="mark-failed"
+                )
 
         # Wait for handler to emit response.created (or fail).
         await record.response_created_signal.wait()
@@ -2608,11 +2714,30 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # best effort
 
+    async def _complete_bookkeeping_task(self, response_id: str) -> None:
+        """Signal the bookkeeping durable task to mark itself complete.
+
+        (Spec 014 FR-003 / FR-004) Called from the orchestrator's
+        terminal-persist callsite after the response has been durably
+        written to the response store. If a bookkeeping task is registered
+        for this ``response_id`` (Rows 2/3 — Spec 014 Phase 4), this signals
+        its body to return cleanly so the durable task is marked
+        ``completed``. No-op for any response_id without a registered
+        bookkeeping task (Row 1 — handler runs inside the task body
+        directly).
+
+        :param response_id: The response identifier.
+        """
+        if hasattr(self, "_durable_orchestrator"):
+            self._durable_orchestrator.complete_bookkeeping_task(response_id)
+
     async def _start_durable_background(
         self,
         ctx: _ExecutionContext,
         record: ResponseExecution,
         fallback_runner: Any,
+        *,
+        disposition: str = "re-invoke",
     ) -> None:
         """Start the durable task-backed background execution.
 
@@ -2627,6 +2752,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :param record: The mutable execution record.
         :param fallback_runner: The shielded runner coroutine function to use
             as fallback if durable start fails.
+        :keyword disposition: One of ``"re-invoke"`` (Row 1: durable_bg+bg+store
+            — task body re-runs handler on recovery) or ``"mark-failed"``
+            (Rows 2/3: bg+store with durable_bg=False, or fg+store — task body
+            is bookkeeping-only on fresh entry and marks the response failed on
+            recovery). Stamped into task framework metadata so recovery dispatch
+            can route without re-deriving the gate from request params.
+        :paramtype disposition: str
         """
         from ._durable_orchestrator import (
             DurableResponseOrchestrator,
@@ -2644,6 +2776,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # Build execution params dict for the task input
         ctx_params: dict[str, Any] = {
             "response_id": ctx.response_id,
+            # (Spec 014 FR-003 / FR-004) Disposition stamped into params
+            # at start so _execute_in_task can copy it into framework
+            # metadata on first entry; recovery dispatch reads from
+            # metadata thereafter (survives cross-process recovery).
+            "disposition": disposition,
             # Object references (not serialized — only valid in same process)
             "_record_ref": record,
             "_context_ref": ctx.context,

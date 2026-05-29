@@ -37,6 +37,30 @@ _HEALTHY_BODY = b'{"status":"healthy"}'
 _NOT_SET = "(not set)"
 
 
+def _read_task_manager_shutdown_grace() -> float:
+    """Return TaskManager shutdown grace in seconds (env-driven, default 25.0).
+
+    Reads ``AGENTSERVER_TASK_MANAGER_SHUTDOWN_GRACE_SECONDS`` if set,
+    falling back to ``AGENTSERVER_SHUTDOWN_GRACE_SECONDS`` (used by the
+    responses layer for in-process draining). Defaults to 25.0 when
+    neither is set, matching the original behaviour. Allows tests
+    (and operators) to keep shutdown fast when no long-running durable
+    handlers need to checkpoint — for example the conformance suite
+    runs with a 1s grace so the in-process shutdown marker fires
+    before the handler completes naturally.
+    """
+    raw = (
+        os.environ.get("AGENTSERVER_TASK_MANAGER_SHUTDOWN_GRACE_SECONDS")
+        or os.environ.get("AGENTSERVER_SHUTDOWN_GRACE_SECONDS")
+    )
+    if raw is None:
+        return 25.0
+    try:
+        return max(0.0, float(raw))
+    except ValueError:
+        return 25.0
+
+
 def _mask_uri(uri: str) -> str:
     """Return only the scheme and host of a URI, hiding path/query/credentials.
 
@@ -255,6 +279,7 @@ class AgentServerHost(Starlette):
                 task_manager = TaskManager(
                     config=cfg,
                     shutdown_event=asyncio.Event(),
+                    shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
                 )
                 set_task_manager(task_manager)
                 await task_manager.startup()
