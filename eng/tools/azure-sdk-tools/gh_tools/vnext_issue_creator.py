@@ -91,10 +91,10 @@ def is_auto_fix_eligible(
 
     Reads the ``vnext_copilot_fix`` setting from ``[tool.azure-sdk-build]``
     in the package's ``pyproject.toml`` via :class:`ParsedSetup`.  The
-    setting defaults to ``True`` (eligible) when absent.
+    setting defaults to ``False`` (not eligible) when absent.
     """
     parsed = ParsedSetup.from_path(package_dir)
-    return bool(parsed.get_config_setting("vnext_copilot_fix", default=True))
+    return bool(parsed.get_config_setting("vnext_copilot_fix", default=False))
 
 
 def _references_issue(text: str, issue_number: int) -> bool:
