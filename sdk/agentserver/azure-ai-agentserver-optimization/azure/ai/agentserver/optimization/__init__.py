@@ -19,7 +19,11 @@ Resolution order (first match wins):
     4. No config found → returns ``None``.
 """
 
-from azure.ai.agentserver.optimization._config import load_config, load_skills_from_dir
+from azure.ai.agentserver.optimization._config import (
+    OPTIMIZATION_CANDIDATE_HEADER,
+    load_config,
+    load_skills_from_dir,
+)
 from azure.ai.agentserver.optimization._models import (
     CandidateConfig,
     OptimizationConfig,
@@ -29,6 +33,7 @@ from azure.ai.agentserver.optimization._version import VERSION
 
 __all__ = [
     "CandidateConfig",
+    "OPTIMIZATION_CANDIDATE_HEADER",
     "OptimizationConfig",
     "Skill",
     "load_config",

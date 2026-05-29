@@ -49,10 +49,15 @@ from azure.ai.agentserver.optimization._resolver import resolve_candidate
 
 logger = logging.getLogger(__name__)
 
+# Header name used by the optimization service to pass candidate ID per request.
+# Agents should extract this from their incoming request and pass it to load_config().
+OPTIMIZATION_CANDIDATE_HEADER = "x-foundry-optimization-candidate-id"
+
 
 def load_config(
     *,
     config_dir: str | Path | None = None,
+    candidate_id: str | None = None,
     credential: TokenCredential | None = None,
 ) -> OptimizationConfig | None:
     """Load optimization config with graceful fallback.
@@ -62,11 +67,10 @@ def load_config(
     1. **Inline JSON** — ``OPTIMIZATION_CONFIG`` env var contains the
        full config as a JSON string.  Used by temporary agent versions
        during evaluation; this path is being deprecated.
-    2. **Resolver API** — ``OPTIMIZATION_CANDIDATE_ID`` and
-       ``OPTIMIZATION_RESOLVE_ENDPOINT`` are both set.  The endpoint
-       should be the full job-scoped URL.  Fetches the candidate
-       config from the remote optimization service and persists it
-       to the local directory.
+    2. **Resolver API** — candidate ID is resolved from the explicit
+       *candidate_id* parameter or the ``OPTIMIZATION_CANDIDATE_ID``
+       env var.  Combined with ``OPTIMIZATION_RESOLVE_ENDPOINT`` to
+       fetch the candidate config from the optimization service.
     3. **Local directory** — reads from
        ``<config_dir>/<candidate_id>/`` (or ``<config_dir>/baseline/``
        as fallback).  Defaults to ``.agent_configs/`` relative to the
@@ -77,6 +81,11 @@ def load_config(
         falls back to the ``OPTIMIZATION_LOCAL_DIR`` env var, then
         to ``.agent_configs/`` next to the main script.
     :paramtype config_dir: str | Path | None
+    :keyword candidate_id: Candidate identifier.  When ``None``,
+        falls back to the ``OPTIMIZATION_CANDIDATE_ID`` env var.
+        Agents should extract the ``x-foundry-optimization-candidate-id``
+        request header and pass it here.
+    :paramtype candidate_id: str | None
     :keyword credential: Optional credential for resolver API authentication.
         If omitted, resolver will not use authentication.
     :paramtype credential: ~azure.core.credentials.TokenCredential | None
@@ -110,20 +119,24 @@ def load_config(
             raise ValueError(f"Bad {env_var} env var: {exc}") from exc
 
     # ── Priority 2: Candidate ID → resolver API ──────────────────────
-    candidate_id = os.environ.get(OptimizationConfig.ENV_CANDIDATE_ID, "").strip()
+    # Resolution: explicit param > env var.
+    resolved_candidate_id = (
+        (candidate_id or "").strip()
+        or os.environ.get(OptimizationConfig.ENV_CANDIDATE_ID, "").strip()
+    )
     endpoint = (
         os.environ.get(OptimizationConfig.ENV_RESOLVE_ENDPOINT, "").strip().rstrip("/")
     )
-    if candidate_id and endpoint:
+    if resolved_candidate_id and endpoint:
         local_dir = _resolve_local_dir(config_dir)
         resolved = resolve_candidate(
-            candidate_id, endpoint=endpoint, local_dir=local_dir, credential=credential
+            resolved_candidate_id, endpoint=endpoint, local_dir=local_dir, credential=credential
         )
         if resolved is not None:
             candidate = CandidateConfig.from_dict(resolved)
             logger.warning(
                 "Loaded optimization config from resolver API for candidate %s",
-                candidate_id,
+                resolved_candidate_id,
             )
             return OptimizationConfig(
                 instructions=candidate.instructions,
@@ -132,16 +145,16 @@ def load_config(
                 skills=candidate.skills,
                 skills_dir=resolved.get("skills_dir"),
                 tool_definitions=candidate.tool_definitions,
-                source=f"api:candidate:{candidate_id}",
-                candidate_id=candidate_id,
+                source=f"api:candidate:{resolved_candidate_id}",
+                candidate_id=resolved_candidate_id,
             )
         logger.warning(
             "Failed to resolve candidate %s — falling through to local/defaults",
-            candidate_id,
+            resolved_candidate_id,
         )
 
     # ── Priority 3: Local directory (.agent_configs/) ──────────
-    local_config = _load_local_dir(candidate_id or None, config_dir)
+    local_config = _load_local_dir(resolved_candidate_id or None, config_dir)
     if local_config is not None:
         logger.warning(
             "Loaded optimization config from local directory: %s (candidate_id=%s)",

@@ -1370,3 +1370,34 @@ class TestConfigDirParam:
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "my-cand")
         config = load_config(config_dir=tmp_path)
         assert config.instructions == "Candidate instructions."
+
+
+class TestCandidateIdParam:
+    """Tests for the candidate_id parameter."""
+
+    def test_explicit_candidate_id_overrides_env(self, monkeypatch):
+        """Explicit candidate_id param takes priority over env var."""
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "env-id")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None, credential=None: {
+                "instructions": f"resolved-{cid}",
+            },
+        )
+        config = load_config(candidate_id="explicit-id")
+        assert config.candidate_id == "explicit-id"
+        assert config.source == "api:candidate:explicit-id"
+
+    def test_env_var_fallback_when_no_explicit_id(self, monkeypatch):
+        """Falls back to OPTIMIZATION_CANDIDATE_ID env var when no explicit param."""
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "env-cand")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None, credential=None: {
+                "instructions": f"resolved-{cid}",
+            },
+        )
+        config = load_config()
+        assert config.candidate_id == "env-cand"
