@@ -8,6 +8,7 @@
 
 - Fixed cross-tenant registry endpoint resolution for deployment template operations by using the registry discovery API instead of ARM calls.
 - Fixed deployment template update failing with immutable field errors by ensuring `allowedInstanceType` and `allowedEnvironmentVariableOverrides` are properly round-tripped during serialization.
+- Added delete to _job_operations.py to support job deletion through the SDK operations layer.
 
 ### Other Changes
 
