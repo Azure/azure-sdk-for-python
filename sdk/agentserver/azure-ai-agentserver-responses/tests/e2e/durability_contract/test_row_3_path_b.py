@@ -3,12 +3,17 @@
 """Row 3 × Path B — ``(store=true, bg=false)`` × ``stream=F/T``.
 
 Path B: SIGTERM with short grace; foreground handler still running at
-grace expiry. The in-process shutdown loop marks the response
-``failed`` (``code=server_error``) before subprocess exit. The original
-client connection is severed; a subsequent ``GET /responses/{saved_id}``
-returns the failed terminal.
+grace expiry.
 
-EXPECTED today: GREEN — in-process marker covers this. Regression guard.
+EXPECTED today: RED — divergence 3. The in-process shutdown loop only
+covers responses currently in ``runtime_state``. Foreground responses
+are not added to ``runtime_state`` until ``_finalize_stream`` runs at
+terminal, so a foreground handler still mid-sleep at grace expiry has
+no in-memory record for the shutdown loop to mark failed. The
+``server_error`` terminal is never persisted. Phase 4 (T-060 onwards)
+closes this gap by creating a bookkeeping durable record at request
+accept time for every ``store=true`` row, with a next-lifetime
+recovery dispatch that marks orphan records ``failed``.
 
 Contract source: ``durability-contract.md`` § Per-row contracts → Row 3.
 """

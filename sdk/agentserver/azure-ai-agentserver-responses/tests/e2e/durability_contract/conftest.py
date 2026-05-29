@@ -347,29 +347,28 @@ async def post_foreground_and_discover_id(
             ) from exc
         return response_id, task
 
-    # Non-streaming foreground — fire and discover via store.
+    # Non-streaming foreground — pre-allocate the id and pass it in the body
+    # so the test can poll on the known id immediately. The foreground
+    # non-stream pipeline does NOT persist the response object until the
+    # handler emits the terminal event (via _persist_and_resolve_terminal),
+    # so polling the store directory for a new file would race against the
+    # handler's sleep + the SIGTERM in Path B / C — the file never appears
+    # before crash. Pre-allocating the id sidesteps that race entirely.
+    from azure.ai.agentserver.responses._id_generator import (  # pylint: disable=import-outside-toplevel
+        IdGenerator,
+    )
+
+    response_id = IdGenerator.new_response_id()
+    body_with_id = {**body, "response_id": response_id}
+
     async def _runner_polled() -> None:
         try:
-            await client.post("/responses", json=body, timeout=120.0)
+            await client.post("/responses", json=body_with_id, timeout=120.0)
         except Exception:  # pylint: disable=broad-exception-caught
             pass  # Crash / disconnect is expected in Path B/C tests.
 
     task = asyncio.create_task(_runner_polled())
-    # Poll the on-disk response store until we see a new file.
-    resp_dir = tmp_path / "responses" / "responses"
-    deadline = asyncio.get_event_loop().time() + 5.0
-    seen_at_start: set[str] = (
-        {p.stem for p in resp_dir.glob("*.json")} if resp_dir.exists() else set()
-    )
-    while asyncio.get_event_loop().time() < deadline:
-        if resp_dir.exists():
-            current = {p.stem for p in resp_dir.glob("*.json")}
-            new = current - seen_at_start
-            if new:
-                # Return the first new id.
-                return next(iter(new)), task
-        await asyncio.sleep(0.05)
-    task.cancel()
-    raise RuntimeError(
-        "Foreground POST did not produce a response file in tmp_path within 5s"
-    )
+    # Give the server a tick to start the handler before returning so the
+    # caller's subsequent SIGTERM lands while the handler is mid-sleep.
+    await asyncio.sleep(0.1)
+    return response_id, task
