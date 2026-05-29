@@ -306,14 +306,14 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ContainerMemoryLimit."""
 
-    MEMORY1_GB = "1g"
-    """MEMORY1_GB."""
-    MEMORY4_GB = "4g"
-    """MEMORY4_GB."""
-    MEMORY16_GB = "16g"
-    """MEMORY16_GB."""
-    MEMORY64_GB = "64g"
-    """MEMORY64_GB."""
+    MEMORY_1GB = "1g"
+    """MEMORY_1GB."""
+    MEMORY_4GB = "4g"
+    """MEMORY_4GB."""
+    MEMORY_16GB = "16g"
+    """MEMORY_16GB."""
+    MEMORY_64GB = "64g"
+    """MEMORY_64GB."""
 
 
 class ContainerNetworkPolicyParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

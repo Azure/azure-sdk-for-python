@@ -29,6 +29,13 @@ REM Rename `A2_A` to `A2A` in enum class AgentEndpointProtocol and ToolType
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'A2_A', 'A2A' | Set-Content azure\ai\projects\models\_enums.py"
 powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'A2_A', 'A2A' | Set-Content azure\ai\projects\models\_models.py"
 
+REM Rename MEMORY1_GB/MEMORY4_GB/MEMORY16_GB/MEMORY64_GB to MEMORY_1GB/MEMORY_4GB/MEMORY_16GB/MEMORY_64GB in enum class ContainerMemoryLimit
+REM For some reason these TypeSpec decorators stopped working. Need to understand why: @@clientName(OpenAI.ContainerMemoryLimit.`1g`, "MEMORY_1GB", "python");
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY1_GB', 'MEMORY_1GB' | Set-Content azure\ai\projects\models\_enums.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY4_GB', 'MEMORY_4GB' | Set-Content azure\ai\projects\models\_enums.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY16_GB', 'MEMORY_16GB' | Set-Content azure\ai\projects\models\_enums.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY64_GB', 'MEMORY_64GB' | Set-Content azure\ai\projects\models\_enums.py"
+
 REM Edit both _operations.py files to fix missing Foundry-Features HTTP request header in continued list paging calls. Add:
 REM   headers=_headers
 REM to the end of each of these lines in the BetaXxxOperations classes (do not do this in GA operations classes!)
