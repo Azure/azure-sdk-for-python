@@ -24,6 +24,8 @@ from azure.monitor.opentelemetry.exporter._utils import Singleton
 
 logger = logging.getLogger(__name__)
 
+_STATSBEAT_INITIAL_EXPORT_WARMUP_SECONDS = 15  # 15 second warmup delay
+
 
 class StatsbeatConfig:
     """Configuration class for Statsbeat metrics collection."""
@@ -154,6 +156,7 @@ class StatsbeatManager(metaclass=Singleton):
         self._initialized: bool = False  # type: ignore
         self._metrics: Optional[_StatsbeatMetrics] = None  # type: ignore
         self._meter_provider: Optional[MeterProvider] = None  # type: ignore
+        self._warmup_timer: Optional[threading.Timer] = None
 
         # Set during first initialization, preserved in shutdown for potential re-initialization
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
@@ -241,8 +244,8 @@ class StatsbeatManager(metaclass=Singleton):
                 config.distro_version,
             )
 
-            # Force initial flush and initialize non-initial metrics
-            self._meter_provider.force_flush()
+            # Schedule initial statsbeat flush after warmup delay to allow feature bits to settle.
+            self._schedule_initial_export_flush()
             self._metrics.init_non_initial_metrics()
 
             self._config = config
@@ -258,8 +261,28 @@ class StatsbeatManager(metaclass=Singleton):
             self._cleanup()
             return False
 
+    def _schedule_initial_export_flush(self) -> None:
+        def _flush() -> None:
+            meter_provider = self._meter_provider
+            if not self._initialized or meter_provider is None:
+                return
+            try:
+                meter_provider.force_flush()
+            except Exception as e:  # pylint: disable=broad-except
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to force flush statsbeat after warmup: %s", e
+                )
+
+        timer = threading.Timer(_STATSBEAT_INITIAL_EXPORT_WARMUP_SECONDS, _flush)
+        timer.daemon = True
+        self._warmup_timer = timer
+        timer.start()
+
     def _cleanup(self, shutdown_meter_provider: bool = True) -> None:
         # Clean up resources with optional meter provider shutdown
+        if hasattr(self, "_warmup_timer") and self._warmup_timer:
+            self._warmup_timer.cancel()
+            self._warmup_timer = None
         if shutdown_meter_provider and self._meter_provider:
             try:
                 self._meter_provider.shutdown()

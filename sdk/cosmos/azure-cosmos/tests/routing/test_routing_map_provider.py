@@ -9,11 +9,23 @@ from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.routing_map_provider import CollectionRoutingMap
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
+from azure.cosmos._routing._routing_map_provider_common import (
+    _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+)
 from azure.cosmos import http_constants
 
 from typing import Optional, Mapping, Any
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+import gc
 import threading
+from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos._routing.routing_map_provider import (
+    _shared_routing_map_cache,
+    _shared_collection_locks,
+    _shared_locks_locks,
+    _shared_cache_refcounts,
+    _shared_cache_lock,
+)
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
@@ -35,9 +47,18 @@ class TestRoutingMapProvider(unittest.TestCase):
             return self.partition_key_ranges
 
     def tearDown(self):
-        from azure.cosmos._routing.routing_map_provider import _shared_routing_map_cache, _shared_cache_lock
+        # Release first, then collect cycles, then clear all shared dicts
+        # together so no partial shared-cache state leaks across tests.
+        provider = getattr(self, 'smart_routing_map_provider', None)
+        if provider is not None:
+            provider.release()
+            self.smart_routing_map_provider = None
+        gc.collect()
         with _shared_cache_lock:
             _shared_routing_map_cache.clear()
+            _shared_collection_locks.clear()
+            _shared_locks_locks.clear()
+            _shared_cache_refcounts.clear()
 
     def setUp(self):
         self.partition_key_ranges = [{u'id': u'0', u'minInclusive': u'', u'maxExclusive': u'05C1C9CD673398'},
@@ -336,14 +357,18 @@ class TestRoutingMapProvider(unittest.TestCase):
         mock_map2.change_feed_etag = cached_map.change_feed_etag
         self.assertFalse(provider._is_cache_stale(collection_id, mock_map2))
 
-    def test_fetch_routing_map_full_load_with_incomplete_ranges_returns_none(self):
-        """When a full load (previous_routing_map=None) returns gapped ranges, returns None immediately."""
+    def test_fetch_routing_map_full_load_with_incomplete_ranges_surfaces_503(self):
+        """When a full load (previous_routing_map=None) repeatedly returns
+        gapped ranges, the retry budget should be exhausted and the provider
+        should surface a retryable HTTP 503."""
         incomplete_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '80'}  # Gap from 80 to FF
         ]
+        call_count = {'count': 0}
 
         class IncompleteClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
                 TestRoutingMapProvider._capture_internal_headers(kwargs, '"incomplete-etag"')
                 return incomplete_ranges
 
@@ -352,13 +377,18 @@ class TestRoutingMapProvider(unittest.TestCase):
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        result = provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=None,
-            feed_options={},
-        )
-        self.assertIsNone(result, "Should return None when full load produces incomplete ranges")
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                provider._fetch_routing_map(
+                    collection_link=collection_link,
+                    collection_id=collection_id,
+                    previous_routing_map=None,
+                    feed_options={},
+                )
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+        # Source the expected attempt count from the production constant so a
+        # future tuning change updates both sides in lockstep.
+        self.assertEqual(call_count['count'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS)
 
     def test_fetch_routing_map_incremental_with_parents(self):
         """Incremental update correctly merges child ranges that reference a parent."""

@@ -7,9 +7,11 @@
 from azure.ai.voicelive.models import (
     AnimationOutputType,
     AudioTimestampType,
+    AzureRealtimeNativeVoiceName,
     AzureVoiceType,
     ClientEventType,
     ContentPartType,
+    EchoCancellationReferenceSource,
     SessionIncludeOption,
     InputAudioFormat,
     ItemParamStatus,
@@ -73,6 +75,24 @@ class TestAzureVoiceType:
         assert AzureVoiceType.AZURE_STANDARD.value == "azure-standard"
 
 
+class TestAzureRealtimeNativeVoiceName:
+    """Test AzureRealtimeNativeVoiceName enum."""
+
+    def test_all_values(self):
+        """Test representative realtime native voice values are accessible."""
+        assert AzureRealtimeNativeVoiceName.AVA == "ava"
+        assert AzureRealtimeNativeVoiceName.XIAOXIAO == "xiaoxiao"
+
+
+class TestEchoCancellationReferenceSource:
+    """Test EchoCancellationReferenceSource enum."""
+
+    def test_all_values(self):
+        """Test all echo cancellation reference source values are accessible."""
+        assert EchoCancellationReferenceSource.SERVER == "server"
+        assert EchoCancellationReferenceSource.CLIENT == "client"
+
+
 class TestClientEventType:
     """Test ClientEventType enum."""
 
@@ -98,6 +118,15 @@ class TestClientEventType:
         """Test response events."""
         assert ClientEventType.RESPONSE_CREATE == "response.create"
         assert ClientEventType.RESPONSE_CANCEL == "response.cancel"
+
+    def test_rtc_call_events(self):
+        """Test RTC call events."""
+        assert ClientEventType.RTC_CALL_SDP_CREATE == "rtc.call.sdp.create"
+
+    def test_input_text_events(self):
+        """Test input text streaming events."""
+        assert ClientEventType.INPUT_TEXT_DELTA == "input_text.delta"
+        assert ClientEventType.INPUT_TEXT_DONE == "input_text.done"
 
 
 class TestContentPartType:
@@ -282,6 +311,15 @@ class TestServerEventTypeNew:
 
     def test_output_audio_buffer_cleared(self):
         assert ServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED == "output_audio_buffer.cleared"
+
+    def test_output_audio_buffer_lifecycle(self):
+        assert ServerEventType.OUTPUT_AUDIO_BUFFER_STARTED == "output_audio_buffer.started"
+        assert ServerEventType.OUTPUT_AUDIO_BUFFER_STOPPED == "output_audio_buffer.stopped"
+
+    def test_invocation_and_rtc_events(self):
+        assert ServerEventType.RESPONSE_INVOCATION_DELTA == "response.invocation.delta"
+        assert ServerEventType.RTC_CALL_SDP_CREATED == "rtc.call.sdp.created"
+        assert ServerEventType.RTC_CALL_ERROR == "rtc.call.error"
 
     def test_audio_transcript_annotation(self):
         assert (
