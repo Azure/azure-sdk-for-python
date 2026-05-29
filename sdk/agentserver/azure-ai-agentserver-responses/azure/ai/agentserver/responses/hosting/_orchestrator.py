@@ -769,6 +769,7 @@ class _PipelineState:
         "pending_terminal",
         "provider_created",
         "pre_subject",
+        "next_seq",
     )
 
     def __init__(self) -> None:
@@ -785,6 +786,13 @@ class _PipelineState:
         # a new one, so the wire iterator (which subscribed to this exact
         # subject before the durable body started) receives every event.
         self.pre_subject: "_ResponseEventSubject | None" = None
+        # (Spec 014 Phase 9 follow-up) Next sequence number to stamp on the
+        # outgoing event. Seeded from the prior persisted event count on
+        # recovered entry so the recovered attempt's events have seq
+        # numbers strictly succeeding the pre-crash events — keeps the
+        # assembled (cross-attempt) stream monotonic. On fresh entry this
+        # stays 0 and the first event lands at seq=0.
+        self.next_seq: int = 0
 
 
 class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
@@ -904,11 +912,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             response_id=ctx.response_id,
             agent_reference=ctx.agent_reference,
             model=ctx.model,
-            sequence_number=len(state.handler_events),
+            sequence_number=state.next_seq,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
         state.handler_events.append(normalized)
+        state.next_seq += 1
         state.validator.validate_next(normalized)
         if state.bg_record is not None:
             state.bg_record.apply_event(normalized, state.handler_events)
@@ -1036,10 +1045,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         }
 
         # Determine the sequence_number: reuse the original pending terminal's
-        # sequence_number (in-place replacement) to avoid gaps.
+        # sequence_number (in-place replacement) to avoid gaps. Falls back
+        # to ``state.next_seq`` (the next monotonic seq for this attempt —
+        # accounts for prior persisted events on recovered entry).
         original_pending = state.pending_terminal
         replacement_index = -1
-        replacement_seq = len(state.handler_events)
+        replacement_seq = state.next_seq
         if original_pending is not None:
             for idx, evt in enumerate(state.handler_events):
                 if evt is original_pending:
@@ -1061,6 +1072,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             state.handler_events[replacement_index] = replacement_normalized
         else:
             state.handler_events.append(replacement_normalized)
+            state.next_seq += 1
         state.pending_terminal = replacement_normalized
         record.set_response_snapshot(storage_error_response)
         # Force status to failed — bypass transition_to since the record may
@@ -1392,7 +1404,15 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 model=ctx.model,
             )
             for event in fallback_events:
+                # (Spec 014 Phase 9 follow-up) Re-stamp with the monotonic
+                # ``state.next_seq`` — _build_events stamps seq=0 for
+                # every event by default, which breaks the streaming
+                # contract that seq must monotonically increase. The
+                # ResponseStreamEvent model supports item assignment so
+                # we mutate in-place without breaking model identity.
+                event["sequence_number"] = state.next_seq
                 state.handler_events.append(event)
+                state.next_seq += 1
                 # (Spec 014 FR-002) When a pre-allocated subject is present
                 # (durable streaming path), publish fallback events to it so
                 # the live wire iterator subscribed on the other side sees
@@ -1403,6 +1423,33 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         await state.pre_subject.publish(event)
                     except Exception:  # pylint: disable=broad-exception-caught
                         pass  # best effort — subject is for replay, not transport
+                # (Spec 014 Phase 9 follow-up) Mirror the incremental
+                # persist that ``_normalize_and_append`` performs for
+                # real handler events — so the durable stream provider
+                # has the fallback lifecycle events available for
+                # ``GET ?stream=true`` replay. Without this the no-event
+                # handler path produced an empty persisted stream once
+                # the truncating ``save_stream_events`` fallback was
+                # dropped. Gated on bg+store to match the rest of the
+                # streaming-persistence call sites.
+                if (
+                    ctx.background
+                    and ctx.store
+                    and self._durable_stream_provider is not None
+                ):
+                    try:
+                        _isolation = ctx.context.isolation if ctx.context else None
+                        await self._durable_stream_provider.append_stream_event(
+                            ctx.response_id, event, isolation=_isolation
+                        )
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.debug(
+                            "Incremental fallback persist failed "
+                            "(response_id=%s, seq=%s)",
+                            ctx.response_id,
+                            event.get("sequence_number"),
+                            exc_info=True,
+                        )
                 if event.get("type") in self._TERMINAL_SSE_TYPES:
                     state.pending_terminal = event
                 else:
@@ -1473,7 +1520,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             response_id=ctx.response_id,
             agent_reference=ctx.agent_reference,
             model=ctx.model,
-            sequence_number=len(state.handler_events),
+            sequence_number=state.next_seq,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
@@ -1502,7 +1549,40 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             return
 
         state.handler_events.append(first_normalized)
+        state.next_seq += 1
         state.validator.validate_next(first_normalized)
+
+        # (Spec 014 Phase 9 follow-up) Mirror the incremental persist that
+        # ``_normalize_and_append`` performs for subsequent events — so the
+        # ``response.created`` first event lands in the durable stream
+        # provider too. Previously this was provided by the truncating
+        # ``save_stream_events`` call at terminal time; with that call
+        # removed for the durable case, the first event needs its own
+        # incremental persist or it would be missing from
+        # ``GET ?stream=true`` replay.
+        #
+        # Gated on ``ctx.background and ctx.store`` to match the bg+store
+        # branch below — non-bg / ephemeral requests must NOT leave
+        # replay events in the durable store (those tests assert
+        # ``GET ?stream=true`` returns 400/404).
+        if (
+            ctx.background
+            and ctx.store
+            and self._durable_stream_provider is not None
+        ):
+            try:
+                _isolation_first = ctx.context.isolation if ctx.context else None
+                await self._durable_stream_provider.append_stream_event(
+                    ctx.response_id, first_normalized, isolation=_isolation_first
+                )
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Incremental first-event persist failed "
+                    "(response_id=%s, seq=%s)",
+                    ctx.response_id,
+                    first_normalized.get("sequence_number"),
+                    exc_info=True,
+                )
 
         # FR-008a: output manipulation detection on response.created.
         # If the handler directly added items to response.output instead of
@@ -1697,16 +1777,31 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 and state.handler_events
             ):
                 _isolation = ctx.context.isolation if ctx.context else None
-                try:
-                    await self._stream_provider.save_stream_events(
-                        ctx.response_id, state.handler_events, isolation=_isolation
-                    )
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning(
-                        "Best-effort stream event persistence failed (response_id=%s)",
-                        ctx.response_id,
-                        exc_info=True,
-                    )
+                # (Spec 014 Phase 9 follow-up) Only call save_stream_events
+                # when there is no DurableStreamProviderProtocol-capable
+                # provider. The durable provider has been receiving each
+                # event incrementally via ``append_stream_event`` in
+                # ``_process_handler_events`` since the response started —
+                # calling ``save_stream_events`` (which TRUNCATES the file)
+                # on top of that would wipe lifetime-1's pre-crash events
+                # when the recovered handler reaches terminal. For non-
+                # durable providers (in-memory) ``append_stream_event``
+                # writes to a different store than ``get_stream_events``
+                # reads from, so the save call is the only thing that
+                # populates the read-side and must remain.
+                if self._durable_stream_provider is None:
+                    try:
+                        await self._stream_provider.save_stream_events(
+                            ctx.response_id,
+                            state.handler_events,
+                            isolation=_isolation,
+                        )
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning(
+                            "Best-effort stream event persistence failed (response_id=%s)",
+                            ctx.response_id,
+                            exc_info=True,
+                        )
                 # Mark terminal on the durable stream provider — starts TTL countdown
                 if self._durable_stream_provider is not None:
                     try:
@@ -1829,11 +1924,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         await self._runtime_state.add(execution)
 
         # Persist SSE events for replay after eager eviction (bg+stream only).
+        # (Spec 014 Phase 9 follow-up) Same conditional as the corresponding
+        # call in ``_persist_and_resolve_terminal``: skip ``save_stream_events``
+        # when a durable provider has been receiving incremental appends —
+        # the truncate-on-write would wipe pre-crash events on recovery.
         if (
             ctx.background
             and ctx.store
             and self._stream_provider is not None
             and events
+            and self._durable_stream_provider is None
         ):
             _isolation = ctx.context.isolation if ctx.context else None
             try:
@@ -2663,6 +2763,29 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # through state.pre_subject so _register_bg_execution installs the
         # SAME subject on the canonical record it creates.
         state.pre_subject = record.subject
+        # (Spec 014 Phase 9 follow-up) Seed the per-attempt sequence
+        # counter from the prior persisted event count. On fresh entry the
+        # persisted log is empty → next_seq=0 (no behaviour change). On
+        # recovered entry the persisted log already has lifetime-1's
+        # events → next_seq=N so the recovered handler's events have seq
+        # numbers strictly succeeding the pre-crash events, keeping the
+        # assembled (cross-attempt) stream monotonic. Best-effort: any
+        # provider error falls back to 0 rather than blocking the body.
+        if self._durable_stream_provider is not None:
+            try:
+                _iso = ctx.context.isolation if ctx.context else None
+                prior = await self._durable_stream_provider.get_stream_events(
+                    response_id, isolation=_iso
+                )
+                state.next_seq = len(prior) if prior else 0
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Could not load prior persisted event count for "
+                    "response_id=%s — seeding next_seq=0",
+                    response_id,
+                    exc_info=True,
+                )
+                state.next_seq = 0
         handler_iterator = self._create_fn(parsed, context, cancellation_signal)
 
         # Drive the streaming pipeline. Events flow to record.subject (live

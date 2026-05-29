@@ -89,6 +89,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
         durable_background: bool = True,
         store_disabled: bool = False,
         handler_sleep_ms: int = 50,
+        pre_sleep_deltas: int = 0,
         shutdown_grace_seconds: int = LONG_GRACE_S,
         readiness_timeout: float = 15.0,
     ) -> CrashHarness:
@@ -96,6 +97,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
             "CONFORMANCE_DURABLE_BACKGROUND": "true" if durable_background else "false",
             "CONFORMANCE_STORE_DISABLED": "true" if store_disabled else "false",
             "CONFORMANCE_HANDLER_SLEEP_MS": str(handler_sleep_ms),
+            "CONFORMANCE_PRE_SLEEP_DELTAS": str(pre_sleep_deltas),
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(shutdown_grace_seconds),
             # Force Hypercorn to cancel in-flight connections after the
             # responses-layer grace so foreground responses (Row 3) get

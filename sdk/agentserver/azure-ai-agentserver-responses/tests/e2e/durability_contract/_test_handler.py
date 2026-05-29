@@ -64,6 +64,11 @@ _DURABLE_BG = _env_bool("CONFORMANCE_DURABLE_BACKGROUND", True)
 _STORE_DISABLED = _env_bool("CONFORMANCE_STORE_DISABLED", False)
 _SLEEP_MS = _env_int("CONFORMANCE_HANDLER_SLEEP_MS", 50)
 _SHUTDOWN_GRACE_S = max(1, _env_int("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", 10))
+# Optional: emit this many ``output_text.delta`` events BEFORE the
+# interruptible sleep, so tests can land content on the wire before
+# the SIGKILL / SIGTERM that exercises the streaming recovery path.
+# Default 0 keeps the historical (sleep-then-single-"ok"-delta) shape.
+_PRE_SLEEP_DELTAS = max(0, _env_int("CONFORMANCE_PRE_SLEEP_DELTAS", 0))
 
 
 options = ResponsesServerOptions(
@@ -110,6 +115,23 @@ async def handle_create(
         # ``output_items`` here (sample 19 demonstrates the watermark
         # pattern); the conformance suite handler is minimal.
         yield stream.emit_in_progress()
+
+    # Optional pre-sleep delta burst — used by streaming-recovery
+    # continuity tests so content lands on the wire BEFORE the SIGKILL /
+    # SIGTERM. On fresh entry only; the recovered attempt skips so the
+    # test can assert the recovered events are strictly the post-reset
+    # continuation. Each delta carries its index so tests can verify
+    # which deltas landed pre-crash.
+    if _PRE_SLEEP_DELTAS > 0 and not durability.is_recovery:
+        pre_message = stream.add_output_item_message()
+        yield pre_message.emit_added()
+        pre_text = pre_message.add_text_content()
+        yield pre_text.emit_added()
+        for i in range(_PRE_SLEEP_DELTAS):
+            yield pre_text.emit_delta(f"d{i}")
+            # Yield to the event loop so each delta lands on the wire
+            # individually rather than being batched.
+            await asyncio.sleep(0)
 
     # Interruptible sleep — either we wake naturally, or shutdown /
     # client-cancel sets the signal.
