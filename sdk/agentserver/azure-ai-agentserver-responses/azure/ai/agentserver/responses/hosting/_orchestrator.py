@@ -2469,7 +2469,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         cancellation_signal: asyncio.Event,
         record: ResponseExecution,
         response_id: str,
-        agent_reference: Any,
+        agent_reference: "AgentReference | dict[str, Any]",
         model: str | None,
         store: bool,
         agent_session_id: str | None,
