@@ -97,6 +97,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 agent_name: str, 
                 *, 
+                blueprint_reference: Optional[AgentBlueprintReference] = ..., 
                 content_type: str = "application/json", 
                 definition: AgentDefinition, 
                 description: Optional[str] = ..., 
@@ -161,6 +162,8 @@ namespace azure.ai.projects.aio.operations
         async def delete(
                 self, 
                 agent_name: str, 
+                *, 
+                force: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> DeleteAgentResponse: ...
 
@@ -169,6 +172,8 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 agent_name: str, 
                 agent_version: str, 
+                *, 
+                force: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> DeleteAgentVersionResponse: ...
 
@@ -218,6 +223,43 @@ namespace azure.ai.projects.aio.operations
                 **kwargs
             ) -> None: ...
 
+        @distributed_trace_async
+        async def cancel_optimization_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
+
+        @overload
+        async def create_optimization_job(
+                self, 
+                inputs: OptimizationJobInputs, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
+
+        @overload
+        async def create_optimization_job(
+                self, 
+                inputs: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
+
+        @overload
+        async def create_optimization_job(
+                self, 
+                inputs: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
+
         @overload
         async def create_session(
                 self, 
@@ -225,7 +267,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 agent_session_id: Optional[str] = ..., 
                 content_type: str = "application/json", 
-                isolation_key: str, 
+                user_isolation_key: Optional[str] = ..., 
                 version_indicator: VersionIndicator, 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
@@ -237,7 +279,7 @@ namespace azure.ai.projects.aio.operations
                 body: JSON, 
                 *, 
                 content_type: str = "application/json", 
-                isolation_key: str, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
@@ -248,9 +290,38 @@ namespace azure.ai.projects.aio.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
-                isolation_key: str, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
+
+        @overload
+        async def create_version_from_code(
+                self, 
+                agent_name: str, 
+                content: CreateAgentVersionFromCodeContent, 
+                *, 
+                code_zip_sha256: str, 
+                **kwargs: Any
+            ) -> AgentVersionDetails: ...
+
+        @overload
+        async def create_version_from_code(
+                self, 
+                agent_name: str, 
+                content: JSON, 
+                *, 
+                code_zip_sha256: str, 
+                **kwargs: Any
+            ) -> AgentVersionDetails: ...
+
+        @distributed_trace_async
+        async def delete_optimization_job(
+                self, 
+                job_id: str, 
+                *, 
+                force: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> None: ...
 
         @distributed_trace_async
         async def delete_session(
@@ -258,7 +329,7 @@ namespace azure.ai.projects.aio.operations
                 agent_name: str, 
                 session_id: str, 
                 *, 
-                isolation_key: str, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -270,8 +341,18 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 path: str, 
                 recursive: Optional[bool] = ..., 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
+
+        @distributed_trace_async
+        async def download_code(
+                self, 
+                agent_name: str, 
+                *, 
+                agent_version: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def download_session_file(
@@ -280,26 +361,60 @@ namespace azure.ai.projects.aio.operations
                 agent_session_id: str, 
                 *, 
                 path: str, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get_candidate_file(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                *, 
+                path: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get_optimization_candidate(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                **kwargs: Any
+            ) -> CandidateMetadata: ...
+
+        @distributed_trace_async
+        async def get_optimization_candidate_config(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                **kwargs: Any
+            ) -> CandidateDeployConfig: ...
+
+        @distributed_trace_async
+        async def get_optimization_candidate_results(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                **kwargs: Any
+            ) -> CandidateResults: ...
+
+        @distributed_trace_async
+        async def get_optimization_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
 
         @distributed_trace_async
         async def get_session(
                 self, 
                 agent_name: str, 
                 session_id: str, 
+                *, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
-
-        @distributed_trace_async
-        async def get_session_files(
-                self, 
-                agent_name: str, 
-                agent_session_id: str, 
-                *, 
-                path: str, 
-                **kwargs: Any
-            ) -> SessionDirectoryListResponse: ...
 
         @distributed_trace_async
         async def get_session_log_stream(
@@ -310,6 +425,44 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> SessionLogEvent: ...
 
+        @distributed_trace_async
+        async def list_optimization_candidates(
+                self, 
+                job_id: str, 
+                *, 
+                after: Optional[str] = ..., 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AgentsPagedResultOptimizationCandidate: ...
+
+        @distributed_trace
+        def list_optimization_jobs(
+                self, 
+                *, 
+                agent_name: Optional[str] = ..., 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                status: Optional[Union[str, JobStatus]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[OptimizationJob]: ...
+
+        @distributed_trace
+        def list_session_files(
+                self, 
+                agent_name: str, 
+                agent_session_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                path: Optional[str] = ..., 
+                user_isolation_key: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[SessionDirectoryEntry]: ...
+
         @distributed_trace
         def list_sessions(
                 self, 
@@ -318,6 +471,7 @@ namespace azure.ai.projects.aio.operations
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentSessionResource]: ...
 
@@ -327,7 +481,7 @@ namespace azure.ai.projects.aio.operations
                 agent_name: str, 
                 *, 
                 agent_card: Optional[AgentCard] = ..., 
-                agent_endpoint: Optional[AgentEndpoint] = ..., 
+                agent_endpoint: Optional[AgentEndpointConfig] = ..., 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
             ) -> AgentDetails: ...
@@ -352,6 +506,47 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
+        @overload
+        async def promote_candidate(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                candidate_request: PromoteCandidateRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PromoteCandidateResponse: ...
+
+        @overload
+        async def promote_candidate(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                candidate_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PromoteCandidateResponse: ...
+
+        @overload
+        async def promote_candidate(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                candidate_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PromoteCandidateResponse: ...
+
+        @distributed_trace_async
+        async def stop_session(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
         @distributed_trace_async
         async def upload_session_file(
                 self, 
@@ -361,7 +556,77 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 path: str, 
                 **kwargs: Any
-            ) -> SessionFileWriteResponse: ...
+            ) -> SessionFileWriteResult: ...
+
+
+    class azure.ai.projects.aio.operations.BetaDatasetsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def cancel_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @overload
+        async def create_generation_job(
+                self, 
+                job: DataGenerationJob, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @overload
+        async def create_generation_job(
+                self, 
+                job: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @overload
+        async def create_generation_job(
+                self, 
+                job: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @distributed_trace_async
+        async def delete_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @distributed_trace
+        def list_generation_jobs(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[DataGenerationJob]: ...
 
 
     class azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations:
@@ -376,7 +641,7 @@ namespace azure.ai.projects.aio.operations
         async def create(
                 self, 
                 name: str, 
-                body: EvaluationTaxonomy, 
+                taxonomy: EvaluationTaxonomy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -386,7 +651,7 @@ namespace azure.ai.projects.aio.operations
         async def create(
                 self, 
                 name: str, 
-                body: JSON, 
+                taxonomy: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -396,7 +661,7 @@ namespace azure.ai.projects.aio.operations
         async def create(
                 self, 
                 name: str, 
-                body: IO[bytes], 
+                taxonomy: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -429,7 +694,7 @@ namespace azure.ai.projects.aio.operations
         async def update(
                 self, 
                 name: str, 
-                body: EvaluationTaxonomy, 
+                taxonomy: EvaluationTaxonomy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -439,7 +704,7 @@ namespace azure.ai.projects.aio.operations
         async def update(
                 self, 
                 name: str, 
-                body: JSON, 
+                taxonomy: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -449,7 +714,7 @@ namespace azure.ai.projects.aio.operations
         async def update(
                 self, 
                 name: str, 
-                body: IO[bytes], 
+                taxonomy: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -463,6 +728,43 @@ namespace azure.ai.projects.aio.operations
                 *args, 
                 **kwargs
             ) -> None: ...
+
+        @distributed_trace_async
+        async def cancel_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @overload
+        async def create_generation_job(
+                self, 
+                job: EvaluatorGenerationJob, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @overload
+        async def create_generation_job(
+                self, 
+                job: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @overload
+        async def create_generation_job(
+                self, 
+                job: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
 
         @overload
         async def create_version(
@@ -495,12 +797,59 @@ namespace azure.ai.projects.aio.operations
             ) -> EvaluatorVersion: ...
 
         @distributed_trace_async
+        async def delete_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
         async def delete_version(
                 self, 
                 name: str, 
                 version: str, 
                 **kwargs: Any
             ) -> None: ...
+
+        @overload
+        async def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: EvaluatorCredentialRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @overload
+        async def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @overload
+        async def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @distributed_trace_async
+        async def get_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
 
         @distributed_trace_async
         async def get_version(
@@ -520,6 +869,16 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[EvaluatorVersion]: ...
 
         @distributed_trace
+        def list_generation_jobs(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EvaluatorGenerationJob]: ...
+
+        @distributed_trace
         def list_versions(
                 self, 
                 name: str, 
@@ -528,6 +887,39 @@ namespace azure.ai.projects.aio.operations
                 type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[EvaluatorVersion]: ...
+
+        @overload
+        async def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: PendingUploadRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PendingUploadResponse: ...
+
+        @overload
+        async def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PendingUploadResponse: ...
+
+        @overload
+        async def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PendingUploadResponse: ...
 
         @overload
         async def update_version(
@@ -691,12 +1083,52 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
+        @overload
+        async def create_memory(
+                self, 
+                name: str, 
+                *, 
+                content: str, 
+                content_type: str = "application/json", 
+                kind: Union[str, MemoryItemKind], 
+                scope: str, 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @overload
+        async def create_memory(
+                self, 
+                name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @overload
+        async def create_memory(
+                self, 
+                name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
         @distributed_trace_async
         async def delete(
                 self, 
                 name: str, 
                 **kwargs: Any
             ) -> DeleteMemoryStoreResult: ...
+
+        @distributed_trace_async
+        async def delete_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                **kwargs: Any
+            ) -> DeleteMemoryResult: ...
 
         @overload
         async def delete_scope(
@@ -735,6 +1167,14 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
+        @distributed_trace_async
+        async def get_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
         @distributed_trace
         def list(
                 self, 
@@ -744,6 +1184,48 @@ namespace azure.ai.projects.aio.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[MemoryStoreDetails]: ...
+
+        @overload
+        def list_memories(
+                self, 
+                name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                kind: Optional[Union[str, MemoryItemKind]] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                scope: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[MemoryItem]: ...
+
+        @overload
+        def list_memories(
+                self, 
+                name: str, 
+                body: JSON, 
+                *, 
+                before: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                kind: Optional[Union[str, MemoryItemKind]] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[MemoryItem]: ...
+
+        @overload
+        def list_memories(
+                self, 
+                name: str, 
+                body: IO[bytes], 
+                *, 
+                before: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                kind: Optional[Union[str, MemoryItemKind]] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[MemoryItem]: ...
 
         @overload
         async def search_memories(
@@ -809,14 +1291,251 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
+        @overload
+        async def update_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                *, 
+                content: str, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @overload
+        async def update_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @overload
+        async def update_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+
+    class azure.ai.projects.aio.operations.BetaModelsOperations(BetaModelsOperationsGenerated):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create(
+                self, 
+                *, 
+                base_model: Optional[str] = ..., 
+                description: Optional[str] = ..., 
+                name: str, 
+                polling_interval: float = 2.0, 
+                polling_timeout: float = 300.0, 
+                source: Union[str, PathLike[str]], 
+                tags: Optional[dict[str, str]] = ..., 
+                version: str, 
+                wait_for_commit: Literal[True] = True, 
+                weight_type: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
+        @overload
+        async def create(
+                self, 
+                *, 
+                base_model: Optional[str] = ..., 
+                description: Optional[str] = ..., 
+                name: str, 
+                polling_interval: float = 2.0, 
+                polling_timeout: float = 300.0, 
+                source: Union[str, PathLike[str]], 
+                tags: Optional[dict[str, str]] = ..., 
+                version: str, 
+                wait_for_commit: Literal[False], 
+                weight_type: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def delete(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
+        @overload
+        async def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: ModelCredentialRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @overload
+        async def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @overload
+        async def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @distributed_trace
+        def list(self, **kwargs: Any) -> AsyncItemPaged[ModelVersion]: ...
+
+        @distributed_trace
+        def list_versions(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ModelVersion]: ...
+
+        @overload
+        async def pending_create_version(
+                self, 
+                name: str, 
+                version: str, 
+                model_version: ModelVersion, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CreateAsyncResponse: ...
+
+        @overload
+        async def pending_create_version(
+                self, 
+                name: str, 
+                version: str, 
+                model_version: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CreateAsyncResponse: ...
+
+        @overload
+        async def pending_create_version(
+                self, 
+                name: str, 
+                version: str, 
+                model_version: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CreateAsyncResponse: ...
+
+        @overload
+        async def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: ModelPendingUploadRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ModelPendingUploadResponse: ...
+
+        @overload
+        async def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ModelPendingUploadResponse: ...
+
+        @overload
+        async def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ModelPendingUploadResponse: ...
+
+        @overload
+        async def update(
+                self, 
+                name: str, 
+                version: str, 
+                body: UpdateModelVersionRequest, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
+        @overload
+        async def update(
+                self, 
+                name: str, 
+                version: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
+        @overload
+        async def update(
+                self, 
+                name: str, 
+                version: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
 
     class azure.ai.projects.aio.operations.BetaOperations(GeneratedBetaOperations):
         agents: BetaAgentsOperations
+        datasets: BetaDatasetsOperations
         evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
         evaluators: BetaEvaluatorsOperations
         insights: BetaInsightsOperations
         memory_stores: BetaMemoryStoresOperations
+        models: BetaModelsOperations
         red_teams: BetaRedTeamsOperations
+        routines: BetaRoutinesOperations
         schedules: BetaSchedulesOperations
         skills: BetaSkillsOperations
         toolboxes: BetaToolboxesOperations
@@ -872,6 +1591,128 @@ namespace azure.ai.projects.aio.operations
 
         @distributed_trace
         def list(self, **kwargs: Any) -> AsyncItemPaged[RedTeam]: ...
+
+
+    class azure.ai.projects.aio.operations.BetaRoutinesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                routine_name: str, 
+                *, 
+                action: Optional[RoutineAction] = ..., 
+                content_type: str = "application/json", 
+                description: Optional[str] = ..., 
+                enabled: Optional[bool] = ..., 
+                triggers: Optional[dict[str, RoutineTrigger]] = ..., 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                routine_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                routine_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @distributed_trace_async
+        async def delete(
+                self, 
+                routine_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def disable(
+                self, 
+                routine_name: str, 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @overload
+        async def dispatch(
+                self, 
+                routine_name: str, 
+                *, 
+                content_type: str = "application/json", 
+                payload: Optional[RoutineDispatchPayload] = ..., 
+                **kwargs: Any
+            ) -> DispatchRoutineResult: ...
+
+        @overload
+        async def dispatch(
+                self, 
+                routine_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DispatchRoutineResult: ...
+
+        @overload
+        async def dispatch(
+                self, 
+                routine_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DispatchRoutineResult: ...
+
+        @distributed_trace_async
+        async def enable(
+                self, 
+                routine_name: str, 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                routine_name: str, 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[Routine]: ...
+
+        @distributed_trace
+        def list_runs(
+                self, 
+                routine_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                filter: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RoutineRun]: ...
 
 
     class azure.ai.projects.aio.operations.BetaSchedulesOperations:
@@ -965,46 +1806,64 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def create(
                 self, 
+                name: str, 
                 *, 
                 content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                instructions: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                name: str, 
+                default: Optional[bool] = ..., 
+                inline_content: Optional[SkillInlineContent] = ..., 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillVersion: ...
 
         @overload
         async def create(
                 self, 
+                name: str, 
                 body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillVersion: ...
 
         @overload
         async def create(
                 self, 
+                name: str, 
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillVersion: ...
 
-        @distributed_trace_async
-        async def create_from_package(
+        @overload
+        async def create_from_files(
                 self, 
-                body: bytes, 
+                name: str, 
+                content: CreateSkillVersionFromFilesBody, 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillVersion: ...
+
+        @overload
+        async def create_from_files(
+                self, 
+                name: str, 
+                content: JSON, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
 
         @distributed_trace_async
         async def delete(
                 self, 
                 name: str, 
                 **kwargs: Any
-            ) -> DeleteSkillResponse: ...
+            ) -> DeleteSkillResult: ...
+
+        @distributed_trace_async
+        async def delete_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> DeleteSkillVersionResponse: ...
 
         @distributed_trace_async
         async def download(
@@ -1014,11 +1873,27 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
+        async def download_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
         async def get(
                 self, 
                 name: str, 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillDetails: ...
+
+        @distributed_trace_async
+        async def get_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
 
         @distributed_trace
         def list(
@@ -1028,7 +1903,18 @@ namespace azure.ai.projects.aio.operations
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
-            ) -> AsyncItemPaged[SkillObject]: ...
+            ) -> AsyncItemPaged[SkillDetails]: ...
+
+        @distributed_trace
+        def list_versions(
+                self, 
+                name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[SkillVersion]: ...
 
         @overload
         async def update(
@@ -1036,11 +1922,9 @@ namespace azure.ai.projects.aio.operations
                 name: str, 
                 *, 
                 content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                instructions: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                default_version: str, 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillDetails: ...
 
         @overload
         async def update(
@@ -1050,7 +1934,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillDetails: ...
 
         @overload
         async def update(
@@ -1060,7 +1944,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillDetails: ...
 
 
     class azure.ai.projects.aio.operations.BetaToolboxesOperations:
@@ -1080,6 +1964,7 @@ namespace azure.ai.projects.aio.operations
                 description: Optional[str] = ..., 
                 metadata: Optional[dict[str, str]] = ..., 
                 policies: Optional[ToolboxPolicies] = ..., 
+                skills: Optional[List[ToolboxSkill]] = ..., 
                 tools: List[Tool], 
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
@@ -1524,7 +2409,10 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.A2APreviewTool(Tool, discriminator='a2a_preview'):
         agent_card_path: Optional[str]
         base_url: Optional[str]
+        description: Optional[str]
+        name: Optional[str]
         project_connection_id: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.A2A_PREVIEW]
 
         @overload
@@ -1533,7 +2421,10 @@ namespace azure.ai.projects.models
                 *, 
                 agent_card_path: Optional[str] = ..., 
                 base_url: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ...
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                project_connection_id: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -1654,6 +2545,25 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.AgentDataGenerationJobSource(DataGenerationJobSource, discriminator='agent'):
+        agent_name: str
+        agent_version: Optional[str]
+        description: str
+        type: Literal[DataGenerationJobSourceType.AGENT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_version: Optional[str] = ..., 
+                description: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.AgentDefinition(_Model):
         kind: str
         rai_config: Optional[RaiConfig]
@@ -1672,7 +2582,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.AgentDetails(_Model):
         agent_card: Optional[AgentCard]
-        agent_endpoint: Optional[AgentEndpoint]
+        agent_endpoint: Optional[AgentEndpointConfig]
         blueprint: Optional[AgentIdentity]
         blueprint_reference: Optional[AgentBlueprintReference]
         id: str
@@ -1686,29 +2596,11 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 agent_card: Optional[AgentCard] = ..., 
-                agent_endpoint: Optional[AgentEndpoint] = ..., 
+                agent_endpoint: Optional[AgentEndpointConfig] = ..., 
                 id: str, 
                 name: str, 
                 object: Literal[AgentObjectType.AGENT], 
                 versions: AgentObjectVersions
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.AgentEndpoint(_Model):
-        authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]]
-        protocols: Optional[list[Union[str, AgentEndpointProtocol]]]
-        version_selector: Optional[VersionSelector]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]] = ..., 
-                protocols: Optional[list[Union[str, AgentEndpointProtocol]]] = ..., 
-                version_selector: Optional[VersionSelector] = ...
             ) -> None: ...
 
         @overload
@@ -1735,11 +2627,66 @@ namespace azure.ai.projects.models
         ENTRA = "Entra"
 
 
+    class azure.ai.projects.models.AgentEndpointConfig(_Model):
+        authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]]
+        protocols: Optional[list[Union[str, AgentEndpointProtocol]]]
+        version_selector: Optional[VersionSelector]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]] = ..., 
+                protocols: Optional[list[Union[str, AgentEndpointProtocol]]] = ..., 
+                version_selector: Optional[VersionSelector] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         A2A = "a2a"
         ACTIVITY = "activity"
         INVOCATIONS = "invocations"
+        INVOCATIONS_WS = "invocations_ws"
+        MCP = "mcp"
         RESPONSES = "responses"
+
+
+    class azure.ai.projects.models.AgentEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator='agent'):
+        agent_name: str
+        agent_version: Optional[str]
+        description: Optional[str]
+        type: Literal[EvaluatorGenerationJobSourceType.AGENT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_version: Optional[str] = ..., 
+                description: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentIdentifier(_Model):
+        agent_name: str
+        agent_version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.AgentIdentity(_Model):
@@ -1759,6 +2706,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EXTERNAL = "external"
         HOSTED = "hosted"
         PROMPT = "prompt"
         WORKFLOW = "workflow"
@@ -1789,6 +2737,8 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ACTIVITY_PROTOCOL = "activity_protocol"
         INVOCATIONS = "invocations"
+        INVOCATIONS_WS = "invocations_ws"
+        MCP = "mcp"
         RESPONSES = "responses"
 
 
@@ -1826,7 +2776,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator='agent'):
         risk_categories: list[Union[str, RiskCategory]]
-        target: Target
+        target: EvaluationTarget
         type: Literal[EvaluationTaxonomyInputType.AGENT]
 
         @overload
@@ -1834,7 +2784,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 risk_categories: list[Union[str, RiskCategory]], 
-                target: Target
+                target: EvaluationTarget
             ) -> None: ...
 
         @overload
@@ -1888,6 +2838,26 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentsPagedResultOptimizationCandidate(_Model):
+        data: list[OptimizationCandidate]
+        first_id: Optional[str]
+        has_more: bool
+        last_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data: list[OptimizationCandidate], 
+                first_id: Optional[str] = ..., 
+                has_more: bool, 
+                last_id: Optional[str] = ...
+            ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -1975,6 +2945,22 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ArtifactProfile(_Model):
+        category: Union[str, FoundryModelArtifactProfileCategory]
+        signals: Optional[list[Union[str, FoundryModelArtifactProfileSignal]]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                category: Union[str, FoundryModelArtifactProfileCategory], 
+                signals: Optional[list[Union[str, FoundryModelArtifactProfileSignal]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
         property superseded_by: Optional[str]    # Read-only
         property update_id: str    # Read-only
@@ -2038,9 +3024,10 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.AzureAIAgentTarget(Target, discriminator='azure_ai_agent'):
+    class azure.ai.projects.models.AzureAIAgentTarget(EvaluationTarget, discriminator='azure_ai_agent'):
         name: str
         tool_descriptions: Optional[list[ToolDescription]]
+        tools: Optional[list[Tool]]
         type: Literal["azure_ai_agent"]
         version: Optional[str]
 
@@ -2050,6 +3037,7 @@ namespace azure.ai.projects.models
                 *, 
                 name: str, 
                 tool_descriptions: Optional[list[ToolDescription]] = ..., 
+                tools: Optional[list[Tool]] = ..., 
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -2075,7 +3063,7 @@ namespace azure.ai.projects.models
         key "type": Required[Literal["azure_ai_source"]]
 
 
-    class azure.ai.projects.models.AzureAIModelTarget(Target, discriminator='azure_ai_model'):
+    class azure.ai.projects.models.AzureAIModelTarget(EvaluationTarget, discriminator='azure_ai_model'):
         model: Optional[str]
         sampling_params: Optional[ModelSamplingParams]
         type: Literal["azure_ai_model"]
@@ -2141,13 +3129,19 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.AzureAISearchTool(Tool, discriminator='azure_ai_search'):
         azure_ai_search: AzureAISearchToolResource
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.AZURE_AI_SEARCH]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                azure_ai_search: AzureAISearchToolResource
+                azure_ai_search: AzureAISearchToolResource, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -2237,20 +3231,22 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.AzureFunctionTool(Tool, discriminator='azure_function'):
         azure_function: AzureFunctionDefinition
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.AZURE_FUNCTION]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                azure_function: AzureFunctionDefinition
+                azure_function: AzureFunctionDefinition, 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.AzureOpenAIModelConfiguration(TargetConfig, discriminator='AzureOpenAIModel'):
+    class azure.ai.projects.models.AzureOpenAIModelConfiguration(RedTeamTargetConfig, discriminator='AzureOpenAIModel'):
         model_deployment_name: str
         type: Literal["AzureOpenAIModel"]
 
@@ -2305,13 +3301,19 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.BingCustomSearchPreviewTool(Tool, discriminator='bing_custom_search_preview'):
         bing_custom_search_preview: BingCustomSearchToolParameters
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                bing_custom_search_preview: BingCustomSearchToolParameters
+                bing_custom_search_preview: BingCustomSearchToolParameters, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -2370,13 +3372,19 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.BingGroundingTool(Tool, discriminator='bing_grounding'):
         bing_grounding: BingGroundingSearchToolParameters
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.BING_GROUNDING]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                bing_grounding: BingGroundingSearchToolParameters
+                bing_grounding: BingGroundingSearchToolParameters, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -2434,13 +3442,19 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.BrowserAutomationPreviewTool(Tool, discriminator='browser_automation_preview'):
         browser_automation_preview: BrowserAutomationToolParameters
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.BROWSER_AUTOMATION_PREVIEW]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                browser_automation_preview: BrowserAutomationToolParameters
+                browser_automation_preview: BrowserAutomationToolParameters, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -2475,10 +3489,99 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CandidateDeployConfig(_Model):
+        instructions: Optional[str]
+        model: Optional[str]
+        skills: Optional[list[dict[str, Any]]]
+        temperature: Optional[float]
+        tools: Optional[list[dict[str, Any]]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                instructions: Optional[str] = ..., 
+                model: Optional[str] = ..., 
+                skills: Optional[list[dict[str, Any]]] = ..., 
+                temperature: Optional[float] = ..., 
+                tools: Optional[list[dict[str, Any]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CandidateFileInfo(_Model):
+        path: str
+        size_bytes: int
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                path: str, 
+                size_bytes: int, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CandidateMetadata(_Model):
+        candidate_id: str
+        candidate_name: str
+        created_at: datetime
+        files: list[CandidateFileInfo]
+        has_results: bool
+        job_id: str
+        promotion: Optional[PromotionInfo]
+        score: Optional[float]
+        status: str
+        updated_at: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                candidate_id: str, 
+                candidate_name: str, 
+                created_at: datetime, 
+                files: list[CandidateFileInfo], 
+                has_results: bool, 
+                job_id: str, 
+                promotion: Optional[PromotionInfo] = ..., 
+                score: Optional[float] = ..., 
+                status: str, 
+                updated_at: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CandidateResults(_Model):
+        candidate_id: str
+        results: list[OptimizationTaskResult]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                candidate_id: str, 
+                results: list[OptimizationTaskResult]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.CaptureStructuredOutputsTool(Tool, discriminator='capture_structured_outputs'):
         description: Optional[str]
         name: Optional[str]
         outputs: StructuredOutputDefinition
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS]
 
         @overload
@@ -2487,7 +3590,8 @@ namespace azure.ai.projects.models
                 *, 
                 description: Optional[str] = ..., 
                 name: Optional[str] = ..., 
-                outputs: StructuredOutputDefinition
+                outputs: StructuredOutputDefinition, 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -2597,6 +3701,8 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.CodeConfiguration(_Model):
+        content_hash: Optional[str]
+        dependency_resolution: Union[str, CodeDependencyResolution]
         entry_point: list[str]
         runtime: str
 
@@ -2604,6 +3710,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                dependency_resolution: Union[str, CodeDependencyResolution], 
                 entry_point: list[str], 
                 runtime: str
             ) -> None: ...
@@ -2612,10 +3719,16 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CodeDependencyResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BUNDLED = "bundled"
+        REMOTE_BUILD = "remote_build"
+
+
     class azure.ai.projects.models.CodeInterpreterTool(Tool, discriminator='code_interpreter'):
         container: Optional[Union[str, AutoCodeInterpreterToolParam]]
         description: Optional[str]
         name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.CODE_INTERPRETER]
 
         @overload
@@ -2624,7 +3737,8 @@ namespace azure.ai.projects.models
                 *, 
                 container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
                 description: Optional[str] = ..., 
-                name: Optional[str] = ...
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -2887,6 +4001,72 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CreateAgentVersionFromCodeContent(_Model):
+        code: Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]
+        metadata: CreateAgentVersionFromCodeMetadata
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: FileType, 
+                metadata: CreateAgentVersionFromCodeMetadata
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateAgentVersionFromCodeMetadata(_Model):
+        definition: HostedAgentDefinition
+        description: Optional[str]
+        metadata: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                definition: HostedAgentDefinition, 
+                description: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateAsyncResponse(_Model):
+        location: Optional[str]
+        operation_result: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: Optional[str] = ..., 
+                operation_result: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CreateSkillVersionFromFilesBody(_Model):
+        default: Optional[bool]
+        files: list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                default: Optional[bool] = ..., 
+                files: list[FileType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AGENTIC_IDENTITY_PREVIEW = "AgenticIdentityToken_Preview"
         API_KEY = "ApiKey"
@@ -2939,6 +4119,25 @@ namespace azure.ai.projects.models
                 *, 
                 definition: str, 
                 syntax: Union[str, GrammarSyntax1]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CustomRoutineTrigger(RoutineTrigger, discriminator='custom'):
+        event_name: Optional[str]
+        parameters: dict[str, Any]
+        provider: str
+        type: Literal[RoutineTriggerType.CUSTOM]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_name: Optional[str] = ..., 
+                parameters: dict[str, Any], 
+                provider: str
             ) -> None: ...
 
         @overload
@@ -3008,6 +4207,178 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.DataGenerationJob(_Model):
+        created_at: datetime
+        error: Optional[ApiError]
+        finished_at: Optional[datetime]
+        id: str
+        inputs: Optional[DataGenerationJobInputs]
+        result: Optional[DataGenerationJobResult]
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inputs: Optional[DataGenerationJobInputs] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationJobInputs(_Model):
+        name: str
+        options: DataGenerationJobOptions
+        output_options: Optional[DataGenerationJobOutputOptions]
+        scenario: Union[str, DataGenerationJobScenario]
+        sources: list[DataGenerationJobSource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                options: DataGenerationJobOptions, 
+                output_options: Optional[DataGenerationJobOutputOptions] = ..., 
+                scenario: Union[str, DataGenerationJobScenario], 
+                sources: list[DataGenerationJobSource]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationJobOptions(_Model):
+        max_samples: int
+        model_options: Optional[DataGenerationModelOptions]
+        train_split: Optional[float]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_samples: int, 
+                model_options: Optional[DataGenerationModelOptions] = ..., 
+                train_split: Optional[float] = ..., 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationJobOutput(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationJobOutputOptions(_Model):
+        description: Optional[str]
+        name: Optional[str]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationJobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DATASET = "dataset"
+        FILE = "file"
+
+
+    class azure.ai.projects.models.DataGenerationJobResult(_Model):
+        generated_samples: int
+        outputs: Optional[list[DataGenerationJobOutput]]
+        token_usage: Optional[DataGenerationTokenUsage]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                generated_samples: int, 
+                outputs: Optional[list[DataGenerationJobOutput]] = ..., 
+                token_usage: Optional[DataGenerationTokenUsage] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EVALUATION = "evaluation"
+        REINFORCEMENT_FINETUNING = "reinforcement_finetuning"
+        SUPERVISED_FINETUNING = "supervised_finetuning"
+
+
+    class azure.ai.projects.models.DataGenerationJobSource(_Model):
+        description: Optional[str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT = "agent"
+        FILE = "file"
+        PROMPT = "prompt"
+        TRACES = "traces"
+
+
+    class azure.ai.projects.models.DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SIMPLE_QNA = "simple_qna"
+        TOOL_USE = "tool_use"
+        TRACES = "traces"
+
+
+    class azure.ai.projects.models.DataGenerationModelOptions(_Model):
+        model: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                model: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DataGenerationTokenUsage(_Model):
+        completion_tokens: int
+        prompt_tokens: int
+        total_tokens: int
+
+
     class azure.ai.projects.models.DatasetCredential(_Model):
         blob_reference: BlobReference
 
@@ -3016,6 +4387,92 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 blob_reference: BlobReference
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DatasetDataGenerationJobOutput(DataGenerationJobOutput, discriminator='dataset'):
+        description: Optional[str]
+        id: Optional[str]
+        name: Optional[str]
+        tags: Optional[dict[str, str]]
+        type: Literal[DataGenerationJobOutputType.DATASET]
+        version: Optional[str]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DatasetEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator='dataset'):
+        description: Optional[str]
+        name: str
+        type: Literal[EvaluatorGenerationJobSourceType.DATASET]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: str, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DatasetInfo(_Model):
+        is_inline: bool
+        name: Optional[str]
+        task_count: int
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                is_inline: bool, 
+                name: Optional[str] = ..., 
+                task_count: int, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DatasetRef(_Model):
+        name: str
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DatasetReference(_Model):
+        name: str
+        version: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                version: str
             ) -> None: ...
 
         @overload
@@ -3101,6 +4558,24 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.DeleteMemoryResult(_Model):
+        deleted: bool
+        memory_id: str
+        object: Literal[MemoryStoreObjectType.MEMORY_DELETED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deleted: bool, 
+                memory_id: str, 
+                object: Literal[MemoryStoreObjectType.MEMORY_DELETED]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.DeleteMemoryStoreResult(_Model):
         deleted: bool
         name: str
@@ -3119,8 +4594,9 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.DeleteSkillResponse(_Model):
+    class azure.ai.projects.models.DeleteSkillResult(_Model):
         deleted: bool
+        id: str
         name: str
 
         @overload
@@ -3128,7 +4604,28 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 deleted: bool, 
+                id: str, 
                 name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DeleteSkillVersionResponse(_Model):
+        deleted: bool
+        id: str
+        name: str
+        version: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deleted: bool, 
+                id: str, 
+                name: str, 
+                version: str
             ) -> None: ...
 
         @overload
@@ -3154,6 +4651,44 @@ namespace azure.ai.projects.models
         MODEL_DEPLOYMENT = "ModelDeployment"
 
 
+    class azure.ai.projects.models.Dimension(_Model):
+        always_applicable: Optional[bool]
+        description: str
+        id: str
+        weight: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                always_applicable: Optional[bool] = ..., 
+                description: str, 
+                id: str, 
+                weight: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.DispatchRoutineResult(_Model):
+        action_correlation_id: Optional[str]
+        dispatch_id: Optional[str]
+        task_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action_correlation_id: Optional[str] = ..., 
+                dispatch_id: Optional[str] = ..., 
+                task_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.EmbeddingConfiguration(_Model):
         embedding_field: str
         model_deployment_name: str
@@ -3171,14 +4706,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.EntraAuthorizationScheme(AgentEndpointAuthorizationScheme, discriminator='Entra'):
-        isolation_key_source: IsolationKeySource
+        isolation_key_source: Optional[IsolationKeySource]
         type: Literal[AgentEndpointAuthorizationSchemeType.ENTRA]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                isolation_key_source: IsolationKeySource
+                isolation_key_source: Optional[IsolationKeySource] = ...
             ) -> None: ...
 
         @overload
@@ -3335,6 +4870,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.EvaluationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONVERSATION = "conversation"
+        TURN = "turn"
+
+
     class azure.ai.projects.models.EvaluationResultSample(InsightSample, discriminator='EvaluationResultSample'):
         correlation_info: dict[str, any]
         evaluation_result: EvalResult
@@ -3473,6 +5013,20 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.EvaluationTarget(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.EvaluationTaxonomy(_Model):
         description: Optional[str]
         id: Optional[str]
@@ -3523,6 +5077,20 @@ namespace azure.ai.projects.models
         SAFETY = "safety"
 
 
+    class azure.ai.projects.models.EvaluatorCredentialRequest(_Model):
+        blob_uri: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_uri: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.EvaluatorDefinition(_Model):
         data_schema: Optional[dict[str, Any]]
         init_parameters: Optional[dict[str, Any]]
@@ -3548,7 +5116,106 @@ namespace azure.ai.projects.models
         OPENAI_GRADERS = "openai_graders"
         PROMPT = "prompt"
         PROMPT_AND_CODE = "prompt_and_code"
+        RUBRIC = "rubric"
         SERVICE = "service"
+
+
+    class azure.ai.projects.models.EvaluatorGenerationArtifacts(_Model):
+        dataset: DatasetReference
+        kinds: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                dataset: DatasetReference, 
+                kinds: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.EvaluatorGenerationInputs(_Model):
+        evaluator_description: Optional[str]
+        evaluator_display_name: Optional[str]
+        evaluator_name: str
+        model: str
+        sources: list[EvaluatorGenerationJobSource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                evaluator_description: Optional[str] = ..., 
+                evaluator_display_name: Optional[str] = ..., 
+                evaluator_name: str, 
+                model: str, 
+                sources: list[EvaluatorGenerationJobSource]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.EvaluatorGenerationJob(_Model):
+        created_at: datetime
+        error: Optional[ApiError]
+        finished_at: Optional[datetime]
+        id: str
+        inputs: Optional[EvaluatorGenerationInputs]
+        result: Optional[EvaluatorVersion]
+        status: Union[str, JobStatus]
+        usage: Optional[EvaluatorGenerationTokenUsage]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inputs: Optional[EvaluatorGenerationInputs] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.EvaluatorGenerationJobSource(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.EvaluatorGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT = "agent"
+        DATASET = "dataset"
+        PROMPT = "prompt"
+        TRACES = "traces"
+
+
+    class azure.ai.projects.models.EvaluatorGenerationTokenUsage(_Model):
+        input_tokens: int
+        output_tokens: int
+        total_tokens: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input_tokens: int, 
+                output_tokens: int, 
+                total_tokens: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.EvaluatorMetric(_Model):
@@ -3600,6 +5267,7 @@ namespace azure.ai.projects.models
         description: Optional[str]
         display_name: Optional[str]
         evaluator_type: Union[str, EvaluatorType]
+        generation_artifacts: Optional[EvaluatorGenerationArtifacts]
         id: Optional[str]
         metadata: Optional[dict[str, str]]
         modified_at: datetime
@@ -3624,6 +5292,23 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ExternalAgentDefinition(AgentDefinition, discriminator='external'):
+        kind: Literal[AgentKind.EXTERNAL]
+        otel_agent_id: Optional[str]
+        rai_config: RaiConfig
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                otel_agent_id: Optional[str] = ..., 
+                rai_config: Optional[RaiConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.FabricDataAgentToolParameters(_Model):
         project_connections: Optional[list[ToolProjectConnection]]
 
@@ -3632,6 +5317,33 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 project_connections: Optional[list[ToolProjectConnection]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.FabricIQPreviewTool(Tool, discriminator='fabric_iq_preview'):
+        description: Optional[str]
+        name: Optional[str]
+        project_connection_id: str
+        require_approval: Optional[Union[MCPToolRequireApproval, str]]
+        server_label: Optional[str]
+        server_url: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.FABRIC_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                project_connection_id: str, 
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                server_label: Optional[str] = ..., 
+                server_url: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -3656,6 +5368,35 @@ namespace azure.ai.projects.models
                 title_field: Optional[str] = ..., 
                 url_field: Optional[str] = ..., 
                 vector_fields: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.FileDataGenerationJobOutput(DataGenerationJobOutput, discriminator='file'):
+        filename: str
+        id: str
+        type: Literal[DataGenerationJobOutputType.FILE]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.FileDataGenerationJobSource(DataGenerationJobSource, discriminator='file'):
+        description: str
+        id: str
+        type: Literal[DataGenerationJobSourceType.FILE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                id: str
             ) -> None: ...
 
         @overload
@@ -3693,6 +5434,7 @@ namespace azure.ai.projects.models
         max_num_results: Optional[int]
         name: Optional[str]
         ranking_options: Optional[RankingOptions]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.FILE_SEARCH]
         vector_store_ids: list[str]
 
@@ -3705,6 +5447,7 @@ namespace azure.ai.projects.models
                 max_num_results: Optional[int] = ..., 
                 name: Optional[str] = ..., 
                 ranking_options: Optional[RankingOptions] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
                 vector_store_ids: list[str]
             ) -> None: ...
 
@@ -3754,10 +5497,57 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.FoundryModelArtifactProfileCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DATA_ONLY = "DataOnly"
+        RUNTIME_DEPENDENT = "RuntimeDependent"
+        UNKNOWN = "Unknown"
+
+
+    class azure.ai.projects.models.FoundryModelArtifactProfileSignal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM_PYTHON_CODE = "CustomPythonCode"
+        DYNAMIC_OPS = "DynamicOps"
+        NATIVE_BINARY = "NativeBinary"
+        PICKLE_DESERIALIZATION = "PickleDeserialization"
+        UNKNOWN_FORMAT = "UnknownFormat"
+
+
+    class azure.ai.projects.models.FoundryModelSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LOCAL_UPLOAD = "LocalUpload"
+        TRAINING_JOB = "TrainingJob"
+
+
+    class azure.ai.projects.models.FoundryModelWarning(_Model):
+        code: Optional[Union[str, FoundryModelWarningCode]]
+        message: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: Optional[Union[str, FoundryModelWarningCode]] = ..., 
+                message: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.FoundryModelWarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        RUNTIME_DEPENDENT_ARTIFACT = "RuntimeDependentArtifact"
+        UNCLASSIFIED_ARTIFACT = "UnclassifiedArtifact"
+
+
+    class azure.ai.projects.models.FoundryModelWeightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DRAFT_MODEL = "DraftModel"
+        FULL_WEIGHT = "FullWeight"
+        LO_RA = "LoRA"
+
+
     class azure.ai.projects.models.FunctionShellToolParam(Tool, discriminator='shell'):
         description: Optional[str]
         environment: Optional[FunctionShellToolParamEnvironment]
         name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.SHELL]
 
         @overload
@@ -3766,7 +5556,8 @@ namespace azure.ai.projects.models
                 *, 
                 description: Optional[str] = ..., 
                 environment: Optional[FunctionShellToolParamEnvironment] = ..., 
-                name: Optional[str] = ...
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -3844,23 +5635,42 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.GitHubIssueEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLOSED = "closed"
+        OPENED = "opened"
+
+
+    class azure.ai.projects.models.GitHubIssueRoutineTrigger(RoutineTrigger, discriminator='github_issue'):
+        connection_id: str
+        issue_event: Union[str, GitHubIssueEvent]
+        owner: str
+        repository: str
+        type: Literal[RoutineTriggerType.GITHUB_ISSUE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_id: str, 
+                issue_event: Union[str, GitHubIssueEvent], 
+                owner: str, 
+                repository: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         LARK = "lark"
         REGEX = "regex"
 
 
     class azure.ai.projects.models.HeaderIsolationKeySource(IsolationKeySource, discriminator='Header'):
-        chat_isolation_key: str
         kind: Literal[IsolationKeySourceKind.HEADER]
-        user_isolation_key: str
 
         @overload
-        def __init__(
-                self, 
-                *, 
-                chat_isolation_key: str, 
-                user_isolation_key: str
-            ) -> None: ...
+        def __init__(self) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -3888,10 +5698,8 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.HostedAgentDefinition(AgentDefinition, discriminator='hosted'):
         code_configuration: Optional[CodeConfiguration]
         container_configuration: Optional[ContainerConfiguration]
-        container_protocol_versions: Optional[list[ProtocolVersionRecord]]
         cpu: str
         environment_variables: Optional[dict[str, str]]
-        image: Optional[str]
         kind: Literal[AgentKind.HOSTED]
         memory: str
         protocol_versions: Optional[list[ProtocolVersionRecord]]
@@ -3905,10 +5713,8 @@ namespace azure.ai.projects.models
                 *, 
                 code_configuration: Optional[CodeConfiguration] = ..., 
                 container_configuration: Optional[ContainerConfiguration] = ..., 
-                container_protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
                 cpu: str, 
                 environment_variables: Optional[dict[str, str]] = ..., 
-                image: Optional[str] = ..., 
                 memory: str, 
                 protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
@@ -3981,6 +5787,7 @@ namespace azure.ai.projects.models
         partial_images: Optional[int]
         quality: Optional[Literal["low", "medium", "high", "auto"]]
         size: Optional[Literal["1024x1024", "1024x1536", "1536x1024", "auto"]]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.IMAGE_GENERATION]
 
         @overload
@@ -3999,7 +5806,8 @@ namespace azure.ai.projects.models
                 output_format: Optional[Literal[png, webp, jpeg]] = ..., 
                 partial_images: Optional[int] = ..., 
                 quality: Optional[Literal[low, medium, high, auto]] = ..., 
-                size: Optional[Literal[1024x1024, 1024x1536, 1536x1024, auto]] = ...
+                size: Optional[Literal[1024x1024, 1024x1536, 1536x1024, auto]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -4260,6 +6068,78 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.InvokeAgentInvocationsApiDispatchPayload(RoutineDispatchPayload, discriminator='invoke_agent_invocations_api'):
+        input: Any
+        type: Literal[RoutineDispatchPayloadType.INVOKE_AGENT_INVOCATIONS_API]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input: Any
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.InvokeAgentInvocationsApiRoutineAction(RoutineAction, discriminator='invoke_agent_invocations_api'):
+        agent_endpoint_id: Optional[str]
+        agent_name: Optional[str]
+        input: Optional[Any]
+        session_id: Optional[str]
+        type: Literal[RoutineActionType.INVOKE_AGENT_INVOCATIONS_API]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_endpoint_id: Optional[str] = ..., 
+                agent_name: Optional[str] = ..., 
+                input: Optional[Any] = ..., 
+                session_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.InvokeAgentResponsesApiDispatchPayload(RoutineDispatchPayload, discriminator='invoke_agent_responses_api'):
+        input: Any
+        type: Literal[RoutineDispatchPayloadType.INVOKE_AGENT_RESPONSES_API]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input: Any
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.InvokeAgentResponsesApiRoutineAction(RoutineAction, discriminator='invoke_agent_responses_api'):
+        agent_endpoint_id: Optional[str]
+        agent_name: Optional[str]
+        conversation: Optional[str]
+        input: Optional[Any]
+        type: Literal[RoutineActionType.INVOKE_AGENT_RESPONSES_API]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_endpoint_id: Optional[str] = ..., 
+                agent_name: Optional[str] = ..., 
+                conversation: Optional[str] = ..., 
+                input: Optional[Any] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.IsolationKeySource(_Model):
         kind: str
 
@@ -4279,9 +6159,18 @@ namespace azure.ai.projects.models
         HEADER = "Header"
 
 
+    class azure.ai.projects.models.JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELLED = "cancelled"
+        FAILED = "failed"
+        IN_PROGRESS = "in_progress"
+        QUEUED = "queued"
+        SUCCEEDED = "succeeded"
+
+
     class azure.ai.projects.models.LocalShellToolParam(Tool, discriminator='local_shell'):
         description: Optional[str]
         name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.LOCAL_SHELL]
 
         @overload
@@ -4289,7 +6178,8 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 description: Optional[str] = ..., 
-                name: Optional[str] = ...
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -4314,6 +6204,26 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LoraConfig(_Model):
+        alpha: Optional[int]
+        dropout: Optional[float]
+        rank: Optional[int]
+        target_modules: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                alpha: Optional[int] = ..., 
+                dropout: Optional[float] = ..., 
+                rank: Optional[int] = ..., 
+                target_modules: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.MCPTool(Tool, discriminator='mcp'):
         allowed_tools: Optional[Union[list[str], MCPToolFilter]]
         authorization: Optional[str]
@@ -4324,6 +6234,7 @@ namespace azure.ai.projects.models
         server_description: Optional[str]
         server_label: str
         server_url: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.MCP]
 
         @overload
@@ -4338,7 +6249,8 @@ namespace azure.ai.projects.models
                 require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
                 server_description: Optional[str] = ..., 
                 server_label: str, 
-                server_url: Optional[str] = ...
+                server_url: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -4438,6 +6350,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CHAT_SUMMARY = "chat_summary"
+        PROCEDURAL = "procedural"
         USER_PROFILE = "user_profile"
 
 
@@ -4492,9 +6405,12 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.MemorySearchPreviewTool(Tool, discriminator='memory_search_preview'):
+        description: Optional[str]
         memory_store_name: str
+        name: Optional[str]
         scope: str
         search_options: Optional[MemorySearchOptions]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.MEMORY_SEARCH_PREVIEW]
         update_delay: Optional[int]
 
@@ -4502,9 +6418,12 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                description: Optional[str] = ..., 
                 memory_store_name: str, 
+                name: Optional[str] = ..., 
                 scope: str, 
                 search_options: Optional[MemorySearchOptions] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
                 update_delay: Optional[int] = ...
             ) -> None: ...
 
@@ -4533,6 +6452,8 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.MemoryStoreDefaultOptions(_Model):
         chat_summary_enabled: bool
+        default_ttl_seconds: Optional[int]
+        procedural_memory_enabled: Optional[bool]
         user_profile_details: Optional[str]
         user_profile_enabled: bool
 
@@ -4541,6 +6462,8 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 chat_summary_enabled: bool, 
+                default_ttl_seconds: Optional[int] = ..., 
+                procedural_memory_enabled: Optional[bool] = ..., 
                 user_profile_details: Optional[str] = ..., 
                 user_profile_enabled: bool
             ) -> None: ...
@@ -4616,6 +6539,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.MemoryStoreObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MEMORY_DELETED = "memory_store.item.deleted"
         MEMORY_STORE = "memory_store"
         MEMORY_STORE_DELETED = "memory_store.deleted"
         MEMORY_STORE_SCOPE_DELETED = "memory_store.scope.deleted"
@@ -4710,14 +6634,34 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.MicrosoftFabricPreviewTool(Tool, discriminator='fabric_dataagent_preview'):
+        description: Optional[str]
         fabric_dataagent_preview: FabricDataAgentToolParameters
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                fabric_dataagent_preview: FabricDataAgentToolParameters
+                description: Optional[str] = ..., 
+                fabric_dataagent_preview: FabricDataAgentToolParameters, 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ModelCredentialRequest(_Model):
+        blob_uri: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_uri: str
             ) -> None: ...
 
         @overload
@@ -4763,6 +6707,44 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ModelPendingUploadRequest(_Model):
+        connection_name: Optional[str]
+        pending_upload_id: Optional[str]
+        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_name: Optional[str] = ..., 
+                pending_upload_id: Optional[str] = ..., 
+                pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ModelPendingUploadResponse(_Model):
+        blob_reference: BlobReference
+        pending_upload_id: str
+        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_reference: BlobReference, 
+                pending_upload_id: str, 
+                pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE], 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ModelSamplingConfigParam(TypedDict, total=False):
         key "max_completion_tokens": int
         key "seed": int
@@ -4771,19 +6753,67 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ModelSamplingParams(_Model):
-        max_completion_tokens: int
-        seed: int
-        temperature: float
-        top_p: float
+        max_completion_tokens: Optional[int]
+        seed: Optional[int]
+        temperature: Optional[float]
+        top_p: Optional[float]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                max_completion_tokens: int, 
-                seed: int, 
-                temperature: float, 
-                top_p: float
+                max_completion_tokens: Optional[int] = ..., 
+                seed: Optional[int] = ..., 
+                temperature: Optional[float] = ..., 
+                top_p: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ModelSourceData(_Model):
+        job_id: Optional[str]
+        source_type: Optional[Union[str, FoundryModelSourceType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                job_id: Optional[str] = ..., 
+                source_type: Optional[Union[str, FoundryModelSourceType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ModelVersion(_Model):
+        artifact_profile: Optional[ArtifactProfile]
+        base_model: Optional[str]
+        blob_uri: str
+        description: Optional[str]
+        id: Optional[str]
+        lora_config: Optional[LoraConfig]
+        name: str
+        source: Optional[ModelSourceData]
+        system_data: Optional[SystemDataV3]
+        tags: Optional[dict[str, str]]
+        version: str
+        warnings: Optional[list[FoundryModelWarning]]
+        weight_type: Optional[Union[str, FoundryModelWeightType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                base_model: Optional[str] = ..., 
+                blob_uri: str, 
+                description: Optional[str] = ..., 
+                lora_config: Optional[LoraConfig] = ..., 
+                source: Optional[ModelSourceData] = ..., 
+                tags: Optional[dict[str, str]] = ..., 
+                weight_type: Optional[Union[str, FoundryModelWeightType]] = ...
             ) -> None: ...
 
         @overload
@@ -4963,13 +6993,15 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.OpenApiTool(Tool, discriminator='openapi'):
         openapi: OpenApiFunctionDefinition
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.OPENAPI]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                openapi: OpenApiFunctionDefinition
+                openapi: OpenApiFunctionDefinition, 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -4982,6 +7014,208 @@ namespace azure.ai.projects.models
         NOT_STARTED = "NotStarted"
         RUNNING = "Running"
         SUCCEEDED = "Succeeded"
+
+
+    class azure.ai.projects.models.OptimizationAgentDefinition(_Model):
+        agent_name: Optional[str]
+        agent_version: Optional[str]
+        model: Optional[str]
+        skills: Optional[list[dict[str, Any]]]
+        system_prompt: Optional[str]
+        tools: Optional[list[dict[str, Any]]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: Optional[str] = ..., 
+                agent_version: Optional[str] = ..., 
+                model: Optional[str] = ..., 
+                skills: Optional[list[dict[str, Any]]] = ..., 
+                system_prompt: Optional[str] = ..., 
+                tools: Optional[list[dict[str, Any]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OptimizationCandidate(_Model):
+        avg_score: float
+        avg_tokens: float
+        candidate_id: Optional[str]
+        config: OptimizationAgentDefinition
+        eval_id: Optional[str]
+        eval_run_id: Optional[str]
+        is_pareto_optimal: bool
+        mutations: dict[str, Any]
+        name: str
+        pass_rate: float
+        promotion: Optional[PromotionInfo]
+        task_scores: list[OptimizationTaskResult]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                avg_score: float, 
+                avg_tokens: float, 
+                candidate_id: Optional[str] = ..., 
+                config: OptimizationAgentDefinition, 
+                eval_id: Optional[str] = ..., 
+                eval_run_id: Optional[str] = ..., 
+                is_pareto_optimal: bool, 
+                mutations: dict[str, Any], 
+                name: str, 
+                pass_rate: float, 
+                promotion: Optional[PromotionInfo] = ..., 
+                task_scores: list[OptimizationTaskResult]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OptimizationJob(_Model):
+        created_at: datetime
+        dataset: Optional[DatasetInfo]
+        error: Optional[ApiError]
+        id: str
+        inputs: Optional[OptimizationJobInputs]
+        progress: Optional[OptimizationJobProgress]
+        result: Optional[OptimizationJobResult]
+        status: Union[str, JobStatus]
+        updated_at: Optional[datetime]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inputs: Optional[OptimizationJobInputs] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OptimizationJobInputs(_Model):
+        agent: AgentIdentifier
+        evaluators: Optional[list[str]]
+        options: Optional[OptimizationOptions]
+        train_dataset_reference: DatasetRef
+        validation_dataset_reference: Optional[DatasetRef]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent: AgentIdentifier, 
+                evaluators: Optional[list[str]] = ..., 
+                options: Optional[OptimizationOptions] = ..., 
+                train_dataset_reference: DatasetRef, 
+                validation_dataset_reference: Optional[DatasetRef] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OptimizationJobProgress(_Model):
+        best_score: float
+        current_iteration: int
+        elapsed_seconds: float
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                best_score: float, 
+                current_iteration: int, 
+                elapsed_seconds: float
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OptimizationJobResult(_Model):
+        all_target_attributes_failed: Optional[bool]
+        baseline: Optional[OptimizationCandidate]
+        best: Optional[OptimizationCandidate]
+        candidates: Optional[list[OptimizationCandidate]]
+        options: Optional[OptimizationOptions]
+        warnings: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                all_target_attributes_failed: Optional[bool] = ..., 
+                baseline: Optional[OptimizationCandidate] = ..., 
+                best: Optional[OptimizationCandidate] = ..., 
+                candidates: Optional[list[OptimizationCandidate]] = ..., 
+                options: Optional[OptimizationOptions] = ..., 
+                warnings: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OptimizationOptions(_Model):
+        eval_model: Optional[str]
+        evaluation_level: Optional[Union[str, EvaluationLevel]]
+        max_iterations: Optional[int]
+        optimization_config: Optional[dict[str, Any]]
+        optimization_model: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                eval_model: Optional[str] = ..., 
+                evaluation_level: Optional[Union[str, EvaluationLevel]] = ..., 
+                max_iterations: Optional[int] = ..., 
+                optimization_config: Optional[dict[str, Any]] = ..., 
+                optimization_model: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OptimizationTaskResult(_Model):
+        composite_score: float
+        duration_seconds: float
+        error_message: Optional[str]
+        passed: bool
+        query: Optional[str]
+        rationales: Optional[dict[str, str]]
+        response: Optional[str]
+        run_id: Optional[str]
+        scores: dict[str, float]
+        task_name: str
+        tokens: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                composite_score: float, 
+                duration_seconds: float, 
+                error_message: Optional[str] = ..., 
+                passed: bool, 
+                query: Optional[str] = ..., 
+                rationales: Optional[dict[str, str]] = ..., 
+                response: Optional[str] = ..., 
+                run_id: Optional[str] = ..., 
+                scores: dict[str, float], 
+                task_name: str, 
+                tokens: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.OtlpTelemetryEndpoint(TelemetryEndpoint, discriminator='OTLP'):
@@ -5051,6 +7285,84 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         BLOB_REFERENCE = "BlobReference"
         NONE = "None"
+        TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
+
+
+    class azure.ai.projects.models.ProceduralMemoryItem(MemoryItem, discriminator='procedural'):
+        content: str
+        kind: Literal[MemoryItemKind.PROCEDURAL]
+        memory_id: str
+        scope: str
+        updated_at: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: str, 
+                memory_id: str, 
+                scope: str, 
+                updated_at: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.PromoteCandidateRequest(_Model):
+        agent_name: str
+        agent_version: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_version: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.PromoteCandidateResponse(_Model):
+        agent_name: str
+        agent_version: str
+        candidate_id: str
+        promoted_at: datetime
+        status: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_version: str, 
+                candidate_id: str, 
+                promoted_at: datetime, 
+                status: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.PromotionInfo(_Model):
+        agent_name: str
+        agent_version: str
+        promoted_at: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_version: str, 
+                promoted_at: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.PromptAgentDefinition(AgentDefinition, discriminator='prompt'):
@@ -5115,6 +7427,40 @@ namespace azure.ai.projects.models
                 init_parameters: Optional[dict[str, Any]] = ..., 
                 metrics: Optional[dict[str, EvaluatorMetric]] = ..., 
                 prompt_text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.PromptDataGenerationJobSource(DataGenerationJobSource, discriminator='prompt'):
+        description: str
+        prompt: str
+        type: Literal[DataGenerationJobSourceType.PROMPT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                prompt: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.PromptEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator='prompt'):
+        description: Optional[str]
+        prompt: str
+        type: Literal[EvaluatorGenerationJobSourceType.PROMPT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                prompt: str
             ) -> None: ...
 
         @overload
@@ -5247,7 +7593,7 @@ namespace azure.ai.projects.models
         simulation_only: Optional[bool]
         status: Optional[str]
         tags: Optional[dict[str, str]]
-        target: TargetConfig
+        target: RedTeamTargetConfig
 
         @overload
         def __init__(
@@ -5261,7 +7607,7 @@ namespace azure.ai.projects.models
                 risk_categories: Optional[list[Union[str, RiskCategory]]] = ..., 
                 simulation_only: Optional[bool] = ..., 
                 tags: Optional[dict[str, str]] = ..., 
-                target: TargetConfig
+                target: RedTeamTargetConfig
             ) -> None: ...
 
         @overload
@@ -5272,6 +7618,20 @@ namespace azure.ai.projects.models
         key "item_generation_params": Required[Any]
         key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
         key "type": Required[Literal["azure_ai_red_team"]]
+
+
+    class azure.ai.projects.models.RedTeamTargetConfig(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.ResponseRetrievalItemGenerationParams(TypedDict, total=False):
@@ -5320,6 +7680,184 @@ namespace azure.ai.projects.models
         TASK_ADHERENCE = "TaskAdherence"
         UNGROUNDED_ATTRIBUTES = "UngroundedAttributes"
         VIOLENCE = "Violence"
+
+
+    class azure.ai.projects.models.Routine(_Model):
+        action: Optional[RoutineAction]
+        created_at: Optional[datetime]
+        description: Optional[str]
+        enabled: bool
+        name: Optional[str]
+        triggers: Optional[dict[str, RoutineTrigger]]
+        updated_at: Optional[datetime]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Optional[RoutineAction] = ..., 
+                created_at: Optional[datetime] = ..., 
+                description: Optional[str] = ..., 
+                enabled: bool, 
+                name: Optional[str] = ..., 
+                triggers: Optional[dict[str, RoutineTrigger]] = ..., 
+                updated_at: Optional[datetime] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RoutineAction(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RoutineActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INVOKE_AGENT_INVOCATIONS_API = "invoke_agent_invocations_api"
+        INVOKE_AGENT_RESPONSES_API = "invoke_agent_responses_api"
+
+
+    class azure.ai.projects.models.RoutineAttemptSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EVENT_FIRE = "event_fire"
+        MANUAL_DISPATCH = "manual_dispatch"
+        QUEUED_DISPATCH = "queued_dispatch"
+        SCHEDULE_DELIVERY = "schedule_delivery"
+        TIMER_DELIVERY = "timer_delivery"
+
+
+    class azure.ai.projects.models.RoutineDispatchPayload(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RoutineDispatchPayloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INVOKE_AGENT_INVOCATIONS_API = "invoke_agent_invocations_api"
+        INVOKE_AGENT_RESPONSES_API = "invoke_agent_responses_api"
+
+
+    class azure.ai.projects.models.RoutineRun(_Model):
+        action_correlation_id: Optional[str]
+        action_type: Optional[Union[str, RoutineActionType]]
+        agent_endpoint_id: Optional[str]
+        agent_id: Optional[str]
+        attempt_source: Optional[Union[str, RoutineAttemptSource]]
+        conversation_id: Optional[str]
+        dispatch_id: Optional[str]
+        ended_at: Optional[datetime]
+        error_message: Optional[str]
+        error_status_code: Optional[int]
+        error_type: Optional[str]
+        id: str
+        phase: Optional[Union[str, RoutineRunPhase]]
+        response_id: Optional[str]
+        scheduled_fire_at: Optional[datetime]
+        session_id: Optional[str]
+        started_at: Optional[datetime]
+        status: Optional[str]
+        task_id: Optional[str]
+        trigger_name: Optional[str]
+        trigger_type: Optional[Union[str, RoutineTriggerType]]
+        triggered_at: Optional[datetime]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action_correlation_id: Optional[str] = ..., 
+                action_type: Optional[Union[str, RoutineActionType]] = ..., 
+                agent_endpoint_id: Optional[str] = ..., 
+                agent_id: Optional[str] = ..., 
+                attempt_source: Optional[Union[str, RoutineAttemptSource]] = ..., 
+                conversation_id: Optional[str] = ..., 
+                dispatch_id: Optional[str] = ..., 
+                ended_at: Optional[datetime] = ..., 
+                error_message: Optional[str] = ..., 
+                error_status_code: Optional[int] = ..., 
+                error_type: Optional[str] = ..., 
+                phase: Optional[Union[str, RoutineRunPhase]] = ..., 
+                response_id: Optional[str] = ..., 
+                scheduled_fire_at: Optional[datetime] = ..., 
+                session_id: Optional[str] = ..., 
+                started_at: Optional[datetime] = ..., 
+                status: Optional[str] = ..., 
+                task_id: Optional[str] = ..., 
+                trigger_name: Optional[str] = ..., 
+                trigger_type: Optional[Union[str, RoutineTriggerType]] = ..., 
+                triggered_at: Optional[datetime] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RoutineRunPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COMPLETED = "completed"
+        DISPATCHING = "dispatching"
+        FAILED = "failed"
+        QUEUED = "queued"
+
+
+    class azure.ai.projects.models.RoutineTrigger(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RoutineTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM = "custom"
+        GITHUB_ISSUE = "github_issue"
+        SCHEDULE = "schedule"
+        TIMER = "timer"
+
+
+    class azure.ai.projects.models.RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator='rubric'):
+        data_schema: dict[str, any]
+        dimensions: list[Dimension]
+        init_parameters: dict[str, any]
+        metrics: dict[str, EvaluatorMetric]
+        pass_threshold: Optional[float]
+        type: Literal[EvaluatorDefinitionType.RUBRIC]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data_schema: Optional[dict[str, Any]] = ..., 
+                dimensions: list[Dimension], 
+                init_parameters: Optional[dict[str, Any]] = ..., 
+                metrics: Optional[dict[str, EvaluatorMetric]] = ..., 
+                pass_threshold: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.SASCredentials(BaseCredentials, discriminator='SAS'):
@@ -5372,6 +7910,23 @@ namespace azure.ai.projects.models
         FAILED = "Failed"
         SUCCEEDED = "Succeeded"
         UPDATING = "Updating"
+
+
+    class azure.ai.projects.models.ScheduleRoutineTrigger(RoutineTrigger, discriminator='schedule'):
+        cron_expression: str
+        time_zone: str
+        type: Literal[RoutineTriggerType.SCHEDULE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cron_expression: str, 
+                time_zone: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.ScheduleRun(_Model):
@@ -5441,23 +7996,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.SessionDirectoryListResponse(_Model):
-        entries: list[SessionDirectoryEntry]
-        path: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                entries: list[SessionDirectoryEntry], 
-                path: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.SessionFileWriteResponse(_Model):
+    class azure.ai.projects.models.SessionFileWriteResult(_Model):
         bytes_written: int
         path: str
 
@@ -5508,36 +8047,94 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.SharepointPreviewTool(Tool, discriminator='sharepoint_grounding_preview'):
+        description: Optional[str]
+        name: Optional[str]
         sharepoint_grounding_preview: SharepointGroundingToolParameters
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                sharepoint_grounding_preview: SharepointGroundingToolParameters
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                sharepoint_grounding_preview: SharepointGroundingToolParameters, 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.SkillObject(_Model):
-        description: Optional[str]
-        has_blob: bool
-        metadata: Optional[dict[str, str]]
-        name: str
-        skill_id: str
+    class azure.ai.projects.models.SimpleQnADataGenerationJobOptions(DataGenerationJobOptions, discriminator='simple_qna'):
+        max_samples: int
+        model_options: DataGenerationModelOptions
+        question_types: Optional[list[Union[str, SimpleQnAFineTuningQuestionType]]]
+        train_split: float
+        type: Literal[DataGenerationJobType.SIMPLE_QNA]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ..., 
-                has_blob: bool, 
-                metadata: Optional[dict[str, str]] = ..., 
-                name: str, 
-                skill_id: str
+                max_samples: int, 
+                model_options: Optional[DataGenerationModelOptions] = ..., 
+                question_types: Optional[list[Union[str, SimpleQnAFineTuningQuestionType]]] = ..., 
+                train_split: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.SimpleQnAFineTuningQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LONG_ANSWER = "long_answer"
+        SHORT_ANSWER = "short_answer"
+
+
+    class azure.ai.projects.models.SkillDetails(_Model):
+        created_at: datetime
+        default_version: str
+        description: str
+        id: str
+        latest_version: str
+        name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                created_at: datetime, 
+                default_version: str, 
+                description: str, 
+                id: str, 
+                latest_version: str, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.SkillInlineContent(_Model):
+        allowed_tools: Optional[list[str]]
+        compatibility: Optional[str]
+        description: str
+        instructions: str
+        license: Optional[str]
+        metadata: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_tools: Optional[list[str]] = ..., 
+                compatibility: Optional[str] = ..., 
+                description: str, 
+                instructions: str, 
+                license: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
@@ -5555,6 +8152,30 @@ namespace azure.ai.projects.models
                 *, 
                 skill_id: str, 
                 version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.SkillVersion(_Model):
+        created_at: datetime
+        description: str
+        id: str
+        name: str
+        skill_id: str
+        version: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                created_at: datetime, 
+                description: str, 
+                id: str, 
+                name: str, 
+                skill_id: str, 
+                version: str
             ) -> None: ...
 
         @overload
@@ -5621,14 +8242,20 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.Target(_Model):
-        type: str
+    class azure.ai.projects.models.SystemDataV3(_Model):
+        created_at: Optional[datetime]
+        created_by: Optional[str]
+        created_by_type: Optional[str]
+        last_modified_at: Optional[datetime]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                type: str
+                created_at: Optional[datetime] = ..., 
+                created_by: Optional[str] = ..., 
+                created_by_type: Optional[str] = ..., 
+                last_modified_at: Optional[datetime] = ...
             ) -> None: ...
 
         @overload
@@ -5640,20 +8267,6 @@ namespace azure.ai.projects.models
         key "source": Required[Union[SourceFileContent, SourceFileID]]
         key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
         key "type": Required[Literal["azure_ai_target_completions"]]
-
-
-    class azure.ai.projects.models.TargetConfig(_Model):
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                type: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.TaxonomyCategory(_Model):
@@ -5837,6 +8450,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.TimerRoutineTrigger(RoutineTrigger, discriminator='timer'):
+        at: Optional[datetime]
+        type: Literal[RoutineTriggerType.TIMER]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                at: Optional[datetime] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.Tool(_Model):
         type: str
 
@@ -6004,6 +8632,22 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolConfig(_Model):
+        additional_search_text: Optional[str]
+        pin: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                additional_search_text: Optional[str] = ..., 
+                pin: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolDescription(_Model):
         description: Optional[str]
         name: Optional[str]
@@ -6052,6 +8696,7 @@ namespace azure.ai.projects.models
         COMPUTER_USE_PREVIEW = "computer_use_preview"
         CUSTOM = "custom"
         FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
+        FABRIC_IQ_PREVIEW = "fabric_iq_preview"
         FILE_SEARCH = "file_search"
         FUNCTION = "function"
         IMAGE_GENERATION = "image_generation"
@@ -6061,9 +8706,29 @@ namespace azure.ai.projects.models
         OPENAPI = "openapi"
         SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
         SHELL = "shell"
+        TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
         WEB_SEARCH = "web_search"
         WEB_SEARCH_PREVIEW = "web_search_preview"
         WORK_IQ_PREVIEW = "work_iq_preview"
+
+
+    class azure.ai.projects.models.ToolUseFineTuningDataGenerationJobOptions(DataGenerationJobOptions, discriminator='tool_use'):
+        max_samples: int
+        model_options: DataGenerationModelOptions
+        train_split: float
+        type: Literal[DataGenerationJobType.TOOL_USE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_samples: int, 
+                model_options: Optional[DataGenerationModelOptions] = ..., 
+                train_split: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.ToolboxObject(_Model):
@@ -6098,6 +8763,56 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolboxSearchPreviewTool(Tool, discriminator='toolbox_search_preview'):
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.TOOLBOX_SEARCH_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxSkill(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxSkillReference(ToolboxSkill, discriminator='skill_reference'):
+        name: str
+        type: Literal["skill_reference"]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolboxVersionObject(_Model):
         created_at: datetime
         description: Optional[str]
@@ -6105,6 +8820,7 @@ namespace azure.ai.projects.models
         metadata: dict[str, str]
         name: str
         policies: Optional[ToolboxPolicies]
+        skills: Optional[list[ToolboxSkill]]
         tools: list[Tool]
         version: str
 
@@ -6118,8 +8834,78 @@ namespace azure.ai.projects.models
                 metadata: dict[str, str], 
                 name: str, 
                 policies: Optional[ToolboxPolicies] = ..., 
+                skills: Optional[list[ToolboxSkill]] = ..., 
                 tools: list[Tool], 
                 version: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator='traces'):
+        max_samples: int
+        model_options: DataGenerationModelOptions
+        train_split: float
+        type: Literal[DataGenerationJobType.TRACES]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_samples: int, 
+                model_options: Optional[DataGenerationModelOptions] = ..., 
+                train_split: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TracesDataGenerationJobSource(DataGenerationJobSource, discriminator='traces'):
+        agent_id: Optional[str]
+        agent_name: Optional[str]
+        agent_version: Optional[str]
+        description: str
+        end_time: Optional[datetime]
+        start_time: datetime
+        type: Literal[DataGenerationJobSourceType.TRACES]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_id: Optional[str] = ..., 
+                agent_name: Optional[str] = ..., 
+                agent_version: Optional[str] = ..., 
+                description: Optional[str] = ..., 
+                end_time: Optional[datetime] = ..., 
+                start_time: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TracesEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator='traces'):
+        agent_id: Optional[str]
+        agent_name: Optional[str]
+        agent_version: Optional[str]
+        description: Optional[str]
+        end_time: Optional[datetime]
+        start_time: datetime
+        type: Literal[EvaluatorGenerationJobSourceType.TRACES]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_id: Optional[str] = ..., 
+                agent_name: Optional[str] = ..., 
+                agent_version: Optional[str] = ..., 
+                description: Optional[str] = ..., 
+                end_time: Optional[datetime] = ..., 
+                start_time: datetime
             ) -> None: ...
 
         @overload
@@ -6176,6 +8962,22 @@ namespace azure.ai.projects.models
                 continuation_token: str, 
                 **kwargs: Any
             ) -> UpdateMemoriesLROPoller: ...
+
+
+    class azure.ai.projects.models.UpdateModelVersionRequest(_Model):
+        description: Optional[str]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.UpdateToolboxRequest(_Model):
@@ -6340,6 +9142,7 @@ namespace azure.ai.projects.models
         filters: Optional[WebSearchToolFilters]
         name: Optional[str]
         search_context_size: Optional[Literal["low", "medium", "high"]]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.WEB_SEARCH]
         user_location: Optional[WebSearchApproximateLocation]
 
@@ -6352,6 +9155,7 @@ namespace azure.ai.projects.models
                 filters: Optional[WebSearchToolFilters] = ..., 
                 name: Optional[str] = ..., 
                 search_context_size: Optional[Literal[low, medium, high]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
                 user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
@@ -6391,8 +9195,9 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.WorkIQPreviewTool(Tool, discriminator='work_iq_preview'):
         description: Optional[str]
         name: Optional[str]
+        project_connection_id: str
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.WORK_IQ_PREVIEW]
-        work_iq_preview: WorkIQPreviewToolParameters
 
         @overload
         def __init__(
@@ -6400,21 +9205,8 @@ namespace azure.ai.projects.models
                 *, 
                 description: Optional[str] = ..., 
                 name: Optional[str] = ..., 
-                work_iq_preview: WorkIQPreviewToolParameters
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.WorkIQPreviewToolParameters(_Model):
-        project_connection_id: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                project_connection_id: str
+                project_connection_id: str, 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -6453,6 +9245,7 @@ namespace azure.ai.projects.operations
                 self, 
                 agent_name: str, 
                 *, 
+                blueprint_reference: Optional[AgentBlueprintReference] = ..., 
                 content_type: str = "application/json", 
                 definition: AgentDefinition, 
                 description: Optional[str] = ..., 
@@ -6517,6 +9310,8 @@ namespace azure.ai.projects.operations
         def delete(
                 self, 
                 agent_name: str, 
+                *, 
+                force: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> DeleteAgentResponse: ...
 
@@ -6525,6 +9320,8 @@ namespace azure.ai.projects.operations
                 self, 
                 agent_name: str, 
                 agent_version: str, 
+                *, 
+                force: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> DeleteAgentVersionResponse: ...
 
@@ -6574,6 +9371,43 @@ namespace azure.ai.projects.operations
                 **kwargs
             ) -> None: ...
 
+        @distributed_trace
+        def cancel_optimization_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
+
+        @overload
+        def create_optimization_job(
+                self, 
+                inputs: OptimizationJobInputs, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
+
+        @overload
+        def create_optimization_job(
+                self, 
+                inputs: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
+
+        @overload
+        def create_optimization_job(
+                self, 
+                inputs: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
+
         @overload
         def create_session(
                 self, 
@@ -6581,7 +9415,7 @@ namespace azure.ai.projects.operations
                 *, 
                 agent_session_id: Optional[str] = ..., 
                 content_type: str = "application/json", 
-                isolation_key: str, 
+                user_isolation_key: Optional[str] = ..., 
                 version_indicator: VersionIndicator, 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
@@ -6593,7 +9427,7 @@ namespace azure.ai.projects.operations
                 body: JSON, 
                 *, 
                 content_type: str = "application/json", 
-                isolation_key: str, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
@@ -6604,9 +9438,38 @@ namespace azure.ai.projects.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
-                isolation_key: str, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
+
+        @overload
+        def create_version_from_code(
+                self, 
+                agent_name: str, 
+                content: CreateAgentVersionFromCodeContent, 
+                *, 
+                code_zip_sha256: str, 
+                **kwargs: Any
+            ) -> AgentVersionDetails: ...
+
+        @overload
+        def create_version_from_code(
+                self, 
+                agent_name: str, 
+                content: JSON, 
+                *, 
+                code_zip_sha256: str, 
+                **kwargs: Any
+            ) -> AgentVersionDetails: ...
+
+        @distributed_trace
+        def delete_optimization_job(
+                self, 
+                job_id: str, 
+                *, 
+                force: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> None: ...
 
         @distributed_trace
         def delete_session(
@@ -6614,7 +9477,7 @@ namespace azure.ai.projects.operations
                 agent_name: str, 
                 session_id: str, 
                 *, 
-                isolation_key: str, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -6626,8 +9489,18 @@ namespace azure.ai.projects.operations
                 *, 
                 path: str, 
                 recursive: Optional[bool] = ..., 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
+
+        @distributed_trace
+        def download_code(
+                self, 
+                agent_name: str, 
+                *, 
+                agent_version: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def download_session_file(
@@ -6636,26 +9509,60 @@ namespace azure.ai.projects.operations
                 agent_session_id: str, 
                 *, 
                 path: str, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get_candidate_file(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                *, 
+                path: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get_optimization_candidate(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                **kwargs: Any
+            ) -> CandidateMetadata: ...
+
+        @distributed_trace
+        def get_optimization_candidate_config(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                **kwargs: Any
+            ) -> CandidateDeployConfig: ...
+
+        @distributed_trace
+        def get_optimization_candidate_results(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                **kwargs: Any
+            ) -> CandidateResults: ...
+
+        @distributed_trace
+        def get_optimization_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> OptimizationJob: ...
 
         @distributed_trace
         def get_session(
                 self, 
                 agent_name: str, 
                 session_id: str, 
+                *, 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
-
-        @distributed_trace
-        def get_session_files(
-                self, 
-                agent_name: str, 
-                agent_session_id: str, 
-                *, 
-                path: str, 
-                **kwargs: Any
-            ) -> SessionDirectoryListResponse: ...
 
         @distributed_trace
         def get_session_log_stream(
@@ -6667,6 +9574,44 @@ namespace azure.ai.projects.operations
             ) -> SessionLogEvent: ...
 
         @distributed_trace
+        def list_optimization_candidates(
+                self, 
+                job_id: str, 
+                *, 
+                after: Optional[str] = ..., 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AgentsPagedResultOptimizationCandidate: ...
+
+        @distributed_trace
+        def list_optimization_jobs(
+                self, 
+                *, 
+                agent_name: Optional[str] = ..., 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                status: Optional[Union[str, JobStatus]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[OptimizationJob]: ...
+
+        @distributed_trace
+        def list_session_files(
+                self, 
+                agent_name: str, 
+                agent_session_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                path: Optional[str] = ..., 
+                user_isolation_key: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[SessionDirectoryEntry]: ...
+
+        @distributed_trace
         def list_sessions(
                 self, 
                 agent_name: str, 
@@ -6674,6 +9619,7 @@ namespace azure.ai.projects.operations
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
+                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[AgentSessionResource]: ...
 
@@ -6683,7 +9629,7 @@ namespace azure.ai.projects.operations
                 agent_name: str, 
                 *, 
                 agent_card: Optional[AgentCard] = ..., 
-                agent_endpoint: Optional[AgentEndpoint] = ..., 
+                agent_endpoint: Optional[AgentEndpointConfig] = ..., 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
             ) -> AgentDetails: ...
@@ -6708,6 +9654,47 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
+        @overload
+        def promote_candidate(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                candidate_request: PromoteCandidateRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PromoteCandidateResponse: ...
+
+        @overload
+        def promote_candidate(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                candidate_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PromoteCandidateResponse: ...
+
+        @overload
+        def promote_candidate(
+                self, 
+                job_id: str, 
+                candidate_id: str, 
+                candidate_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PromoteCandidateResponse: ...
+
+        @distributed_trace
+        def stop_session(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
         @distributed_trace
         def upload_session_file(
                 self, 
@@ -6717,7 +9704,77 @@ namespace azure.ai.projects.operations
                 *, 
                 path: str, 
                 **kwargs: Any
-            ) -> SessionFileWriteResponse: ...
+            ) -> SessionFileWriteResult: ...
+
+
+    class azure.ai.projects.operations.BetaDatasetsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def cancel_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @overload
+        def create_generation_job(
+                self, 
+                job: DataGenerationJob, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @overload
+        def create_generation_job(
+                self, 
+                job: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @overload
+        def create_generation_job(
+                self, 
+                job: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @distributed_trace
+        def delete_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> DataGenerationJob: ...
+
+        @distributed_trace
+        def list_generation_jobs(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[DataGenerationJob]: ...
 
 
     class azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations:
@@ -6732,7 +9789,7 @@ namespace azure.ai.projects.operations
         def create(
                 self, 
                 name: str, 
-                body: EvaluationTaxonomy, 
+                taxonomy: EvaluationTaxonomy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6742,7 +9799,7 @@ namespace azure.ai.projects.operations
         def create(
                 self, 
                 name: str, 
-                body: JSON, 
+                taxonomy: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6752,7 +9809,7 @@ namespace azure.ai.projects.operations
         def create(
                 self, 
                 name: str, 
-                body: IO[bytes], 
+                taxonomy: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6785,7 +9842,7 @@ namespace azure.ai.projects.operations
         def update(
                 self, 
                 name: str, 
-                body: EvaluationTaxonomy, 
+                taxonomy: EvaluationTaxonomy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6795,7 +9852,7 @@ namespace azure.ai.projects.operations
         def update(
                 self, 
                 name: str, 
-                body: JSON, 
+                taxonomy: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6805,7 +9862,7 @@ namespace azure.ai.projects.operations
         def update(
                 self, 
                 name: str, 
-                body: IO[bytes], 
+                taxonomy: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6819,6 +9876,43 @@ namespace azure.ai.projects.operations
                 *args, 
                 **kwargs
             ) -> None: ...
+
+        @distributed_trace
+        def cancel_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @overload
+        def create_generation_job(
+                self, 
+                job: EvaluatorGenerationJob, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @overload
+        def create_generation_job(
+                self, 
+                job: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
+
+        @overload
+        def create_generation_job(
+                self, 
+                job: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
 
         @overload
         def create_version(
@@ -6851,12 +9945,59 @@ namespace azure.ai.projects.operations
             ) -> EvaluatorVersion: ...
 
         @distributed_trace
+        def delete_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
         def delete_version(
                 self, 
                 name: str, 
                 version: str, 
                 **kwargs: Any
             ) -> None: ...
+
+        @overload
+        def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: EvaluatorCredentialRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @overload
+        def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @overload
+        def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @distributed_trace
+        def get_generation_job(
+                self, 
+                job_id: str, 
+                **kwargs: Any
+            ) -> EvaluatorGenerationJob: ...
 
         @distributed_trace
         def get_version(
@@ -6876,6 +10017,16 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[EvaluatorVersion]: ...
 
         @distributed_trace
+        def list_generation_jobs(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[EvaluatorGenerationJob]: ...
+
+        @distributed_trace
         def list_versions(
                 self, 
                 name: str, 
@@ -6884,6 +10035,39 @@ namespace azure.ai.projects.operations
                 type: Optional[Union[Literal[builtin], Literal[custom], Literal[all], str]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[EvaluatorVersion]: ...
+
+        @overload
+        def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: PendingUploadRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PendingUploadResponse: ...
+
+        @overload
+        def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PendingUploadResponse: ...
+
+        @overload
+        def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> PendingUploadResponse: ...
 
         @overload
         def update_version(
@@ -7047,12 +10231,52 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
+        @overload
+        def create_memory(
+                self, 
+                name: str, 
+                *, 
+                content: str, 
+                content_type: str = "application/json", 
+                kind: Union[str, MemoryItemKind], 
+                scope: str, 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @overload
+        def create_memory(
+                self, 
+                name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @overload
+        def create_memory(
+                self, 
+                name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
         @distributed_trace
         def delete(
                 self, 
                 name: str, 
                 **kwargs: Any
             ) -> DeleteMemoryStoreResult: ...
+
+        @distributed_trace
+        def delete_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                **kwargs: Any
+            ) -> DeleteMemoryResult: ...
 
         @overload
         def delete_scope(
@@ -7092,6 +10316,14 @@ namespace azure.ai.projects.operations
             ) -> MemoryStoreDetails: ...
 
         @distributed_trace
+        def get_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @distributed_trace
         def list(
                 self, 
                 *, 
@@ -7100,6 +10332,48 @@ namespace azure.ai.projects.operations
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[MemoryStoreDetails]: ...
+
+        @overload
+        def list_memories(
+                self, 
+                name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                kind: Optional[Union[str, MemoryItemKind]] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                scope: str, 
+                **kwargs: Any
+            ) -> ItemPaged[MemoryItem]: ...
+
+        @overload
+        def list_memories(
+                self, 
+                name: str, 
+                body: JSON, 
+                *, 
+                before: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                kind: Optional[Union[str, MemoryItemKind]] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[MemoryItem]: ...
+
+        @overload
+        def list_memories(
+                self, 
+                name: str, 
+                body: IO[bytes], 
+                *, 
+                before: Optional[str] = ..., 
+                content_type: str = "application/json", 
+                kind: Optional[Union[str, MemoryItemKind]] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[MemoryItem]: ...
 
         @overload
         def search_memories(
@@ -7165,14 +10439,253 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> MemoryStoreDetails: ...
 
+        @overload
+        def update_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                *, 
+                content: str, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @overload
+        def update_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+        @overload
+        def update_memory(
+                self, 
+                name: str, 
+                memory_id: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MemoryItem: ...
+
+
+    class azure.ai.projects.operations.BetaModelsOperations(BetaModelsOperationsGenerated):
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create(
+                self, 
+                *, 
+                azcopy_path: Optional[str] = ..., 
+                base_model: Optional[str] = ..., 
+                description: Optional[str] = ..., 
+                name: str, 
+                polling_interval: float = 2.0, 
+                polling_timeout: float = 300.0, 
+                source: Union[str, PathLike[str]], 
+                tags: Optional[dict[str, str]] = ..., 
+                version: str, 
+                wait_for_commit: Literal[True] = True, 
+                weight_type: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
+        @overload
+        def create(
+                self, 
+                *, 
+                azcopy_path: Optional[str] = ..., 
+                base_model: Optional[str] = ..., 
+                description: Optional[str] = ..., 
+                name: str, 
+                polling_interval: float = 2.0, 
+                polling_timeout: float = 300.0, 
+                source: Union[str, PathLike[str]], 
+                tags: Optional[dict[str, str]] = ..., 
+                version: str, 
+                wait_for_commit: Literal[False], 
+                weight_type: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def delete(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
+        @overload
+        def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: ModelCredentialRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @overload
+        def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @overload
+        def get_credentials(
+                self, 
+                name: str, 
+                version: str, 
+                credential_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DatasetCredential: ...
+
+        @distributed_trace
+        def list(self, **kwargs: Any) -> ItemPaged[ModelVersion]: ...
+
+        @distributed_trace
+        def list_versions(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ModelVersion]: ...
+
+        @overload
+        def pending_create_version(
+                self, 
+                name: str, 
+                version: str, 
+                model_version: ModelVersion, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CreateAsyncResponse: ...
+
+        @overload
+        def pending_create_version(
+                self, 
+                name: str, 
+                version: str, 
+                model_version: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CreateAsyncResponse: ...
+
+        @overload
+        def pending_create_version(
+                self, 
+                name: str, 
+                version: str, 
+                model_version: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CreateAsyncResponse: ...
+
+        @overload
+        def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: ModelPendingUploadRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ModelPendingUploadResponse: ...
+
+        @overload
+        def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ModelPendingUploadResponse: ...
+
+        @overload
+        def pending_upload(
+                self, 
+                name: str, 
+                version: str, 
+                pending_upload_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ModelPendingUploadResponse: ...
+
+        @overload
+        def update(
+                self, 
+                name: str, 
+                version: str, 
+                body: UpdateModelVersionRequest, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
+        @overload
+        def update(
+                self, 
+                name: str, 
+                version: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
+        @overload
+        def update(
+                self, 
+                name: str, 
+                version: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/merge-patch+json", 
+                **kwargs: Any
+            ) -> ModelVersion: ...
+
 
     class azure.ai.projects.operations.BetaOperations(GeneratedBetaOperations):
         agents: BetaAgentsOperations
+        datasets: BetaDatasetsOperations
         evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
         evaluators: BetaEvaluatorsOperations
         insights: BetaInsightsOperations
         memory_stores: BetaMemoryStoresOperations
+        models: BetaModelsOperations
         red_teams: BetaRedTeamsOperations
+        routines: BetaRoutinesOperations
         schedules: BetaSchedulesOperations
         skills: BetaSkillsOperations
         toolboxes: BetaToolboxesOperations
@@ -7228,6 +10741,128 @@ namespace azure.ai.projects.operations
 
         @distributed_trace
         def list(self, **kwargs: Any) -> ItemPaged[RedTeam]: ...
+
+
+    class azure.ai.projects.operations.BetaRoutinesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                routine_name: str, 
+                *, 
+                action: Optional[RoutineAction] = ..., 
+                content_type: str = "application/json", 
+                description: Optional[str] = ..., 
+                enabled: Optional[bool] = ..., 
+                triggers: Optional[dict[str, RoutineTrigger]] = ..., 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                routine_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                routine_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @distributed_trace
+        def delete(
+                self, 
+                routine_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def disable(
+                self, 
+                routine_name: str, 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @overload
+        def dispatch(
+                self, 
+                routine_name: str, 
+                *, 
+                content_type: str = "application/json", 
+                payload: Optional[RoutineDispatchPayload] = ..., 
+                **kwargs: Any
+            ) -> DispatchRoutineResult: ...
+
+        @overload
+        def dispatch(
+                self, 
+                routine_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DispatchRoutineResult: ...
+
+        @overload
+        def dispatch(
+                self, 
+                routine_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DispatchRoutineResult: ...
+
+        @distributed_trace
+        def enable(
+                self, 
+                routine_name: str, 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                routine_name: str, 
+                **kwargs: Any
+            ) -> Routine: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[Routine]: ...
+
+        @distributed_trace
+        def list_runs(
+                self, 
+                routine_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                filter: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RoutineRun]: ...
 
 
     class azure.ai.projects.operations.BetaSchedulesOperations:
@@ -7321,46 +10956,64 @@ namespace azure.ai.projects.operations
         @overload
         def create(
                 self, 
+                name: str, 
                 *, 
                 content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                instructions: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                name: str, 
+                default: Optional[bool] = ..., 
+                inline_content: Optional[SkillInlineContent] = ..., 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillVersion: ...
 
         @overload
         def create(
                 self, 
+                name: str, 
                 body: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillVersion: ...
 
         @overload
         def create(
                 self, 
+                name: str, 
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillVersion: ...
 
-        @distributed_trace
-        def create_from_package(
+        @overload
+        def create_from_files(
                 self, 
-                body: bytes, 
+                name: str, 
+                content: CreateSkillVersionFromFilesBody, 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillVersion: ...
+
+        @overload
+        def create_from_files(
+                self, 
+                name: str, 
+                content: JSON, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
 
         @distributed_trace
         def delete(
                 self, 
                 name: str, 
                 **kwargs: Any
-            ) -> DeleteSkillResponse: ...
+            ) -> DeleteSkillResult: ...
+
+        @distributed_trace
+        def delete_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> DeleteSkillVersionResponse: ...
 
         @distributed_trace
         def download(
@@ -7370,11 +11023,27 @@ namespace azure.ai.projects.operations
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
+        def download_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
         def get(
                 self, 
                 name: str, 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillDetails: ...
+
+        @distributed_trace
+        def get_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> SkillVersion: ...
 
         @distributed_trace
         def list(
@@ -7384,7 +11053,18 @@ namespace azure.ai.projects.operations
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[SkillObject]: ...
+            ) -> ItemPaged[SkillDetails]: ...
+
+        @distributed_trace
+        def list_versions(
+                self, 
+                name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[SkillVersion]: ...
 
         @overload
         def update(
@@ -7392,11 +11072,9 @@ namespace azure.ai.projects.operations
                 name: str, 
                 *, 
                 content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                instructions: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                default_version: str, 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillDetails: ...
 
         @overload
         def update(
@@ -7406,7 +11084,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillDetails: ...
 
         @overload
         def update(
@@ -7416,7 +11094,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SkillObject: ...
+            ) -> SkillDetails: ...
 
 
     class azure.ai.projects.operations.BetaToolboxesOperations:
@@ -7436,6 +11114,7 @@ namespace azure.ai.projects.operations
                 description: Optional[str] = ..., 
                 metadata: Optional[dict[str, str]] = ..., 
                 policies: Optional[ToolboxPolicies] = ..., 
+                skills: Optional[List[ToolboxSkill]] = ..., 
                 tools: List[Tool], 
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
