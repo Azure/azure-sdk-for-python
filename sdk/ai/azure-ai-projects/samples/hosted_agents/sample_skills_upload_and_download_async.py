@@ -66,8 +66,28 @@ async def main() -> None:
         except ResourceNotFoundError:
             pass
 
+        skill_path = Path(skill_file_path)
+        # The ``files`` field accepts any variant of the SDK's ``FileType`` union.
+        # All four forms below produce an equivalent multipart request body; pick
+        # whichever fits your call site. The 3-tuple form (used here) is the most
+        # explicit — it pins both the filename and the content type.
+        #
+        #   # 1) bare IO[bytes] — filename derived from the file handle's `.name`
+        #   files=[skill_path.open("rb")]
+        #
+        #   # 2) (filename, bytes)
+        #   files=[(skill_path.name, skill_path.read_bytes())]
+        #
+        #   # 3) (filename, IO[bytes])
+        #   files=[(skill_path.name, skill_path.open("rb"))]
+        #
+        #   # 4) (filename, bytes, content_type)
+        #   files=[(skill_path.name, skill_path.read_bytes(), "application/zip")]
         imported = await project_client.beta.skills.create_from_files(
-            skill_name, content=CreateSkillVersionFromFilesBody(files=[Path(skill_file_path).read_bytes()])
+            skill_name,
+            content=CreateSkillVersionFromFilesBody(
+                files=[(skill_path.name, skill_path.read_bytes(), "application/zip")]
+            ),
         )
         imported_skill_name = imported.name
         print(f"Imported skill from package: {imported.name} ({imported.skill_id}) version={imported.version}")

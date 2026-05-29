@@ -1,0 +1,15 @@
+# This file configures spell checking for sdk/translation packages.
+# For more information, see: https://aka.ms/ci-fix#spell-check
+version: "0.2"
+import:
+  - ../../.vscode/cspell.json
+ignorePaths:
+  - azure-ai-translation-document/samples/assets/**
+  - azure-ai-translation-document/doc/**
+  - azure-ai-translation-document/tests/glossaries-valid.csv
+  - azure-ai-translation-text/azure/ai/translation/text/_serialization.py
+  - azure-ai-translation-text/azure/ai/translation/text/_utils/**
+  - azure-ai-translation-text/tests/test_break_sentence*.py
+  - azure-ai-translation-text/tests/test_translation*.py
+  - azure-ai-translation-text/tests/test_transliteration*.py
+  - test-resources.json
