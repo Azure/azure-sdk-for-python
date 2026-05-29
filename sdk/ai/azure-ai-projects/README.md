@@ -3,8 +3,7 @@
 The AI Projects client library is part of the Microsoft Foundry SDK, and provides easy access to
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
-* **Create and run Agents** using methods on the `.agents` client property.
-* This includes **Hosted Agents** (Preview), which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
+* **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents** (Preview), which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
 * **Enhance Agents with specialized tools**:
   * Agent-to-Agent (A2A) (Preview)
   * Azure AI Search
@@ -18,7 +17,6 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
   * File Search
   * Function Tool
   * Image Generation
-  
   * Memory Search (Preview)
   * Microsoft Fabric (Preview)
   * Microsoft SharePoint (Preview)
@@ -29,7 +27,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
   * Web Search (Preview)
   * Work IQ (Preview)
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
-* **Fine tune** AI Models on your data.
+* **Fine-tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
 * **Upload documents and create Datasets** to reference them using `.datasets` operations.
@@ -37,7 +35,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using `.evaluation_rules`,
 `.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
 * **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.
-* **Register and manage local AI model weights (preview)** using `.beta.models` operation.
+* **Register and manage local AI model weights (preview)** using `.beta.models` operations.
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
 * **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
 * **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
@@ -86,7 +84,7 @@ pip show azure-ai-projects
 
 ### Create and authenticate the client with Entra ID
 
-Entra ID is the only authentication method supported at the moment by the client.
+Entra ID is the only authentication method currently supported by the client.
 
 To construct a synchronous client using a context manager:
 
@@ -164,7 +162,7 @@ See Foundry documentation:
 
 ## Examples
 
-The table below lists the operation groups supported by the client library, with links to Foundry documentation and relevant [samples][samples] sub-folder. Additional documentation and samples may have been added after this package was release, to cover the empty cells below.
+The table below lists the operation groups supported by the client library, with links to Foundry documentation and relevant [samples][samples] sub-folder. Additional documentation and samples may have been added after this package was released to cover the empty cells below.
 
 | Topic | Foundry documentation | Samples folder |
 |---|---|---|
@@ -237,7 +235,7 @@ import sys
 import logging
 
 # Acquire the logger for this client library. Use 'azure' to affect both
-# 'azure.core` and `azure.ai.inference' libraries.
+# `azure.core` and `azure.ai.projects' libraries.
 logger = logging.getLogger("azure")
 
 # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
@@ -266,7 +264,7 @@ project_client = AIProjectClient(
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
 
-Be sure to protect non redacted logs to avoid compromising security.
+Be sure to protect non-redacted logs to avoid compromising security.
 
 For more information, see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
 
