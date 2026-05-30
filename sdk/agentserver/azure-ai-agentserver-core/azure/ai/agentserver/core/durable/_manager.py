@@ -40,6 +40,11 @@ _SOURCE_TYPE = "agentserver.task"
 #: Reserved tag key for task name filtering via the LIST API.
 _TAG_TASK_NAME = "_task_name"
 
+#: Spec 015 Phase 3 (FR-006) — default lease TTL. The per-task
+#: ``lease_duration_seconds`` knob was demoted (no developer use case justified
+#: exposing it on ``@task``). This constant is the framework's choice.
+_DEFAULT_LEASE_SECONDS = 60
+
 #: Pre-computed server version segment for source stamps.
 _SOURCE_SERVER_VERSION = _build_server_version(
     "azure-ai-agentserver-core", _CORE_VERSION
@@ -478,7 +483,6 @@ class TaskManager:
         :returns: The function's return value.
         :rtype: Any
         :raises TaskFailed: On unhandled exception.
-        :raises TaskSuspended: If the function suspends.
         """
         handle = await self.create_and_start(
             fn=fn,
@@ -506,7 +510,6 @@ class TaskManager:
         session_id: str | None,
         title: str,
         tags: dict[str, str],
-        description: str | None = None,
         opts: TaskOptions,
         retry: RetryPolicy | None = None,
         entry_mode: EntryMode = "fresh",
@@ -534,8 +537,6 @@ class TaskManager:
         :paramtype title: str
         :keyword tags: Merged decorator + call-site tags.
         :paramtype tags: dict[str, str]
-        :keyword description: Optional task description.
-        :paramtype description: str | None
         :keyword opts: Task options.
         :paramtype opts: TaskOptions
         :keyword retry: Retry policy.
@@ -557,10 +558,9 @@ class TaskManager:
         resolved_session = session_id or self._config.session_id or "local"
         agent_name = self._config.agent_name or "default"
 
-        # Build payload
-        payload: dict[str, Any] = {}
-        if opts.store_input:
-            payload["input"] = _serialize_input(input_val)
+        # Build payload — input is always persisted (Spec 015 Phase 3 FR-006:
+        # the per-task `store_input` knob is dropped).
+        payload: dict[str, Any] = {"input": _serialize_input(input_val)}
         payload["metadata"] = {}
 
         # (Spec 013 US2) Framework-namespace seeds (e.g., `_framework.last_input_id`)
@@ -588,13 +588,12 @@ class TaskManager:
                 session_id=resolved_session,
                 status="in_progress",
                 title=title,
-                description=description,
                 payload=payload,
                 tags=tags or None,
                 source=source,
                 lease_owner=self._lease_owner,
                 lease_instance_id=self._instance_id,
-                lease_duration_seconds=opts.lease_duration_seconds,
+                lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
             )
         )
 
@@ -622,20 +621,16 @@ class TaskManager:
 
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
-            title=title,
-            description=description,
             session_id=resolved_session,
-            agent_name=agent_name,
-            tags=tags,
             input=input_val,
             metadata=metadata,
-            run_attempt=0,
-            lease_generation=lease_gen,
+            retry_attempt=0,
+            recovery_count=lease_gen,
             cancel=cancel_event,
             shutdown=self._shutdown_event,
             stream_handler=handler,
             entry_mode=entry_mode,
-            generation=0,
+            steering_generation=0,
         )
         loop = asyncio.get_event_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
@@ -666,7 +661,7 @@ class TaskManager:
                 task_id,
                 lease_owner=self._lease_owner,
                 lease_instance_id=self._instance_id,
-                lease_duration_seconds=opts.lease_duration_seconds,
+                lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
                 cancel_event=renewal_cancel,
                 on_cancel_callback=cancel_event,
                 steering_poll_callback=steering_poll_cb_cs,
@@ -822,7 +817,7 @@ class TaskManager:
         """
         task_id = task_info.id
         resolved_opts = opts or TaskOptions(name=fn_name, ephemeral=False)
-        lease_duration = resolved_opts.lease_duration_seconds
+        lease_duration = _DEFAULT_LEASE_SECONDS
 
         # Transition to in_progress with new lease
         await self._provider.update(
@@ -894,14 +889,11 @@ class TaskManager:
             else:
                 resolved_input = raw_active
 
-        prev_input_raw = steering.get("previous_input")
-        previous_input = None
-        if prev_input_raw is not None and input_type is not None:
-            previous_input = _deserialize_input(prev_input_raw, input_type)
-        elif prev_input_raw is not None:
-            previous_input = prev_input_raw
+        # Spec 015 Phase 3 FR-006: `previous_input` storage + field removed.
+        # The legacy `_steering["previous_input"]` write is gone, so there is
+        # nothing to recover here.
         pending_snapshot = tuple(steering.get("pending_inputs", ()))
-        generation = steering.get("generation", 0)
+        steering_gen = steering.get("generation", 0)
 
         # Pre-set cancel if cancel_requested is True (steering short-circuit)
         if steering.get("cancel_requested"):
@@ -909,22 +901,18 @@ class TaskManager:
 
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
-            title=task_info.title or "",
-            description=task_info.description,
             session_id=task_info.session_id,
-            agent_name=task_info.agent_name,
-            tags=task_info.tags or {},
             input=resolved_input,
             metadata=metadata,
-            run_attempt=0,
-            lease_generation=lease_gen,
+            retry_attempt=0,
+            recovery_count=lease_gen,
             cancel=cancel_event,
             shutdown=self._shutdown_event,
             stream_handler=handler,
             entry_mode=entry_mode,
             was_steered=was_steered,
             pending_inputs=pending_snapshot,
-            generation=generation,
+            steering_generation=steering_gen,
         )
 
         loop = asyncio.get_event_loop()
@@ -1145,7 +1133,7 @@ class TaskManager:
         # Mutable ref: steering drain may swap the active result_future
         current_result_future = result_future
         while True:
-            ctx.run_attempt = attempt
+            ctx.retry_attempt = attempt
             try:
                 result = await fn(ctx)
 
@@ -1404,12 +1392,11 @@ class TaskManager:
 
         # Pop the next input from the queue
         next_input_raw = pending.pop(0)
-        previous_input_raw = steering.get("active_input")
 
-        # Update steering state
+        # Update steering state. (Spec 015 Phase 3 FR-006: previous_input is
+        # no longer mirrored into _steering; only the active input + queue
+        # state need to survive a crash mid-drain.)
         steering["active_input"] = next_input_raw
-        if previous_input_raw is not None:
-            steering["previous_input"] = previous_input_raw
         steering["pending_inputs"] = pending
         old_generation = steering.get("generation", 0)
         steering["generation"] = old_generation + 1
@@ -1473,13 +1460,6 @@ class TaskManager:
         else:
             resolved_input = next_input_raw
 
-        # Deserialize previous input
-        previous_input = None
-        if previous_input_raw is not None and input_type is not None:
-            previous_input = _deserialize_input(previous_input_raw, input_type)
-        elif previous_input_raw is not None:
-            previous_input = previous_input_raw
-
         # Build new context, reusing metadata and shutdown event
         cancel_event = asyncio.Event()
         if steering["cancel_requested"]:
@@ -1487,23 +1467,18 @@ class TaskManager:
 
         new_ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
-            title=ctx.title,
-            description=ctx.description,
             session_id=ctx.session_id,
-            agent_name=ctx.agent_name,
-            tags=ctx.tags,
             input=resolved_input,
             metadata=ctx.metadata,
-            run_attempt=0,
-            lease_generation=ctx.lease_generation,
+            retry_attempt=0,
+            recovery_count=ctx.recovery_count,
             cancel=cancel_event,
             shutdown=ctx.shutdown,
             stream_handler=ctx._stream_handler,  # pylint: disable=protected-access
             entry_mode="resumed",
             was_steered=True,
-            previous_input=previous_input,
             pending_inputs=tuple(pending),
-            generation=old_generation + 1,
+            steering_generation=old_generation + 1,
         )
 
         # Update active task tracking
@@ -1669,17 +1644,17 @@ class TaskManager:
     ) -> None:
         """Handle task suspension.
 
-        Per spec 013 US4: clears the three input-bearing payload slots at the
-        suspend transition — ``payload["input"]``, ``_steering["active_input"]``,
-        and ``_steering["previous_input"]``. These hold mirror copies of the
-        consumed input that are no longer needed once the handler returns.
-        ``_steering`` mechanism state (``generation``, ``cancel_requested``,
+        Per spec 013 US4 + spec 015 Phase 3: clears the input-bearing payload
+        slots at the suspend transition — ``payload["input"]`` and
+        ``_steering["active_input"]``. These hold mirror copies of the consumed
+        input that are no longer needed once the handler returns. ``_steering``
+        mechanism state (``generation``, ``cancel_requested``,
         ``drain_in_progress``, ``pending_inputs``) is preserved.
 
         Safe with respect to the race-recovery contract: that contract only
-        consumes ``active_input``/``previous_input`` when ``drain_in_progress``
-        is True, which is impossible at suspend by construction (drain check
-        runs first; if pending was non-empty the task would drain, not suspend).
+        consumes ``active_input`` when ``drain_in_progress`` is True, which is
+        impossible at suspend by construction (drain check runs first; if
+        pending was non-empty the task would drain, not suspend).
 
         :keyword task_id: The task identifier.
         :paramtype task_id: str
@@ -1701,7 +1676,6 @@ class TaskManager:
             if existing_steering:
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
-                steering_patch["previous_input"] = None
 
         payload_patch: dict[str, Any] = {
             "metadata": metadata.to_dict(),
@@ -1754,7 +1728,7 @@ class TaskManager:
                     TaskPatchRequest(
                         lease_owner=self._lease_owner,
                         lease_instance_id=self._instance_id,
-                        lease_duration_seconds=60,
+                        lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
                     ),
                 )
                 logger.info(

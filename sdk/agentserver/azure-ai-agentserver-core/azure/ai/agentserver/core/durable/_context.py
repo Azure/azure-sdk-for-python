@@ -30,7 +30,7 @@ EntryMode = Literal["fresh", "resumed", "recovered"]
 - ``"recovered"`` — Re-entered after stale task detection. The previous execution
   crashed or timed out. ``ctx.input`` contains the task's persisted input.
   If a steerable task crashed mid-drain, ``ctx.was_steered`` will be ``True``
-  and steering context (``previous_input``, ``generation``) is meaningful.
+  and steering context (``steering_generation``) is meaningful.
 """
 
 
@@ -57,24 +57,18 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
 
     :param task_id: Unique task identifier.
     :type task_id: str
-    :param title: Human-readable task title.
-    :type title: str
-    :param description: Optional task description.
-    :type description: str | None
     :param session_id: Session scope identifier.
     :type session_id: str
-    :param agent_name: Agent name from config.
-    :type agent_name: str
-    :param tags: Merged decorator + call-site tags.
-    :type tags: dict[str, str]
     :param input: Typed, validated input value.
     :type input: Input
     :param metadata: Mutable progress metadata.
     :type metadata: TaskMetadata
-    :param run_attempt: Framework retry attempt counter.
-    :type run_attempt: int
-    :param lease_generation: Lease re-acquisition counter.
-    :type lease_generation: int
+    :param retry_attempt: Durable retry attempt counter. Survives crashes;
+        increments only on failure-retries, never on crash recovery.
+    :type retry_attempt: int
+    :param recovery_count: Crash-recovery counter. Increments each time the
+        framework re-enters this task after a lease loss or stale detection.
+    :type recovery_count: int
     :param cancel: Request-level cancellation event.
     :type cancel: asyncio.Event
     :param shutdown: Container-level shutdown event.
@@ -83,69 +77,54 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
 
     __slots__ = (
         "task_id",
-        "title",
-        "description",
         "session_id",
-        "agent_name",
-        "tags",
         "input",
         "metadata",
-        "run_attempt",
-        "lease_generation",
+        "retry_attempt",
+        "recovery_count",
         "cancel",
         "shutdown",
         "_suspend_callback",
         "_stream_handler",
         "entry_mode",
         "was_steered",
-        "previous_input",
         "pending_inputs",
-        "generation",
+        "steering_generation",
     )
 
     def __init__(
         self,
         *,
         task_id: str,
-        title: str,
-        description: str | None = None,
         session_id: str,
-        agent_name: str,
-        tags: dict[str, str],
         input: Input,  # noqa: A002 — mirrors the spec naming
         metadata: TaskMetadata,
-        run_attempt: int = 0,
-        lease_generation: int = 0,
+        retry_attempt: int = 0,
+        recovery_count: int = 0,
         cancel: asyncio.Event | None = None,
         shutdown: asyncio.Event | None = None,
         stream_handler: StreamHandler | None = None,
         entry_mode: EntryMode = "fresh",
         was_steered: bool = False,
-        previous_input: Input | None = None,
         pending_inputs: Sequence[Any] | None = None,
-        generation: int = 0,
+        steering_generation: int = 0,
     ) -> None:
         self.task_id = task_id
-        self.title = title
-        self.description = description
         self.session_id = session_id
-        self.agent_name = agent_name
-        self.tags = tags
         self.input = input
         self.metadata = metadata
-        self.run_attempt = run_attempt
-        self.lease_generation = lease_generation
+        self.retry_attempt = retry_attempt
+        self.recovery_count = recovery_count
         self.cancel = cancel or asyncio.Event()
         self.shutdown = shutdown or asyncio.Event()
         self._suspend_callback: Any = None
         self._stream_handler: StreamHandler | None = stream_handler
         self.entry_mode: EntryMode = entry_mode
         self.was_steered: bool = was_steered
-        self.previous_input: Input | None = previous_input
         self.pending_inputs: Sequence[Any] = (
             pending_inputs if pending_inputs is not None else ()
         )
-        self.generation: int = generation
+        self.steering_generation: int = steering_generation
 
     async def suspend(
         self,

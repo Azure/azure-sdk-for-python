@@ -33,18 +33,16 @@ Public API::
         Suspended,
         TaskStatus,
         TaskFailed,
-        TaskSuspended,
         TaskCancelled,
         TaskNotFound,
         TaskConflictError,
         TaskTerminated,
         EntryMode,
-        TaskInfo,
     )
 """
 
 from ._context import EntryMode, TaskContext
-from ._decorator import Task, TaskOptions, task
+from ._decorator import Task, task
 from ._exceptions import (
     EtagConflict,
     LastInputIdPreconditionFailed,
@@ -54,11 +52,10 @@ from ._exceptions import (
     TaskFailed,
     TaskNotFound,
     TaskPreconditionFailed,
-    TaskSuspended,
     TaskTerminated,
 )
 from ._metadata import TaskMetadata
-from ._models import TaskInfo, TaskStatus
+from ._models import TaskStatus
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
@@ -67,7 +64,6 @@ from ._stream import QueueStreamHandler, StreamHandler, StreamHandlerFactory
 __all__ = [
     "task",
     "Task",
-    "TaskOptions",
     "QueueStreamHandler",
     "RetryPolicy",
     "StreamHandler",
@@ -79,7 +75,6 @@ __all__ = [
     "Suspended",
     "TaskStatus",
     "TaskFailed",
-    "TaskSuspended",
     "TaskCancelled",
     "TaskNotFound",
     "TaskConflictError",
@@ -89,5 +84,4 @@ __all__ = [
     "SteeringQueueFull",
     "TaskPreconditionFailed",
     "EntryMode",
-    "TaskInfo",
 ]

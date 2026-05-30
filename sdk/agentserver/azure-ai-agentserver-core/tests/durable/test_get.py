@@ -59,7 +59,7 @@ class TestGet:
             result = await my_task.run(task_id="get-1", input="data")
             assert result.is_suspended
 
-            info = await my_task.get("get-1")
+            info = await my_task._get("get-1")
             assert info is not None
             assert info.id == "get-1"
             assert info.status == "suspended"
@@ -76,7 +76,7 @@ class TestGet:
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
-            info = await my_task.get("does-not-exist")
+            info = await my_task._get("does-not-exist")
             assert info is None
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -125,15 +125,15 @@ class TestGet:
                 )
             )
 
-            suspended = await my_task.get("state-suspended")
+            suspended = await my_task._get("state-suspended")
             assert suspended is not None
             assert suspended.status == "suspended"
 
-            completed = await my_task.get("state-completed")
+            completed = await my_task._get("state-completed")
             assert completed is not None
             assert completed.status == "completed"
 
-            in_progress = await my_task.get("state-in-progress")
+            in_progress = await my_task._get("state-in-progress")
             assert in_progress is not None
             assert in_progress.status == "in_progress"
         finally:

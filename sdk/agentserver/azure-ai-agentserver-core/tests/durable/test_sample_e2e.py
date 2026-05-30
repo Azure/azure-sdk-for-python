@@ -123,9 +123,9 @@ class TestRetrySampleE2E:
             async def flaky_task(ctx: TaskContext[Any]) -> str:
                 nonlocal call_count
                 call_count += 1
-                if ctx.run_attempt < 2:
-                    raise ConnectionError(f"Attempt {ctx.run_attempt}")
-                return f"Success after {ctx.run_attempt + 1} attempts"
+                if ctx.retry_attempt < 2:
+                    raise ConnectionError(f"Attempt {ctx.retry_attempt}")
+                return f"Success after {ctx.retry_attempt + 1} attempts"
 
             result = await flaky_task.run(task_id=uuid.uuid4().hex, input=None)
             assert result.output == "Success after 3 attempts"
@@ -150,9 +150,9 @@ class TestRetrySampleE2E:
                 ),
             )
             async def selective_task(ctx: TaskContext[Any]) -> str:
-                if ctx.run_attempt == 0:
+                if ctx.retry_attempt == 0:
                     raise ConnectionError("transient")
-                return f"Recovered on attempt {ctx.run_attempt}"
+                return f"Recovered on attempt {ctx.retry_attempt}"
 
             result = await selective_task.run(task_id=uuid.uuid4().hex, input=None)
             assert result.output == "Recovered on attempt 1"
@@ -242,14 +242,14 @@ class TestListE2E:
             assert b1.output == "beta_done"
 
             # list() on alpha should return only alpha tasks
-            alpha_tasks = await alpha.list()
+            alpha_tasks = await alpha._list()
             alpha_ids = {t.id for t in alpha_tasks}
             assert "alpha-1" in alpha_ids
             assert "alpha-2" in alpha_ids
             assert "beta-1" not in alpha_ids
 
             # list() on beta should return only beta tasks
-            beta_tasks = await beta.list()
+            beta_tasks = await beta._list()
             beta_ids = {t.id for t in beta_tasks}
             assert "beta-1" in beta_ids
             assert "alpha-1" not in beta_ids
@@ -282,12 +282,12 @@ class TestListE2E:
             assert result2.output == "done"
 
             # list with status filter
-            suspended = await suspendable.list(status="suspended")
+            suspended = await suspendable._list(status="suspended")
             suspended_ids = {t.id for t in suspended}
             assert "status-1" in suspended_ids
             assert "status-2" not in suspended_ids
 
-            completed = await suspendable.list(status="completed")
+            completed = await suspendable._list(status="completed")
             completed_ids = {t.id for t in completed}
             assert "status-2" in completed_ids
             assert "status-1" not in completed_ids
@@ -304,7 +304,7 @@ class TestListE2E:
             async def no_tasks(ctx: TaskContext[Any]) -> str:
                 return "never called"
 
-            tasks = await no_tasks.list()
+            tasks = await no_tasks._list()
             assert tasks == []
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -492,7 +492,7 @@ class TestMultiturnSampleE2E:
                     break
             assert task_record.status == "suspended"
             assert task_record.payload["output"]["turn"] == 2
-            assert "Continue" in task.payload["output"]["reply"]
+            assert "Continue" in task_record.payload["output"]["reply"]
 
             # Verify checkpoint updated
             saved2 = _json.loads((checkpoint_dir / "s1.json").read_text())
@@ -683,7 +683,7 @@ class TestLangGraphSampleE2E:
                     break
             assert task_record.status == "suspended"
             assert task_record.payload["output"]["turn"] == 2
-            assert "Tell me more" in task.payload["output"]["reply"]
+            assert "Tell me more" in task_record.payload["output"]["reply"]
 
             # --- Turn 3: end session ---
             await manager._provider.update(
@@ -769,7 +769,7 @@ class TestLifecycleE2E:
             assert result1.is_suspended
 
             # Verify .get() returns suspended task
-            info = await lifecycle_session.get(task_id)
+            info = await lifecycle_session._get(task_id)
             assert info is not None
             assert info.status == "suspended"
 
@@ -835,7 +835,7 @@ class TestLifecycleE2E:
             # Wait for it to run
             for _ in range(50):
                 await asyncio.sleep(0.02)
-                info = await recoverable_task.get(task_id)
+                info = await recoverable_task._get(task_id)
                 if info and info.status == "completed":
                     break
 
@@ -847,7 +847,7 @@ class TestLifecycleE2E:
             await recoverable_task.start(task_id=task_id2, input="crash-sim")
             for _ in range(50):
                 await asyncio.sleep(0.02)
-                info = await recoverable_task.get(task_id2)
+                info = await recoverable_task._get(task_id2)
                 if info and info.status == "completed":
                     break
 
@@ -867,7 +867,7 @@ class TestLifecycleE2E:
             async def some_task(ctx: TaskContext[Any]) -> str:
                 return "ok"
 
-            info = await some_task.get("nonexistent-task-id")
+            info = await some_task._get("nonexistent-task-id")
             assert info is None
 
         finally:
@@ -1584,7 +1584,7 @@ class TestLangGraphSteeringSampleE2E:
                 reply = f"[graph] Processed: {message}"
 
                 # Save checkpoint
-                cp_id = f"cp-{ctx.generation}"
+                cp_id = f"cp-{ctx.steering_generation}"
                 checkpoints.append(cp_id)
                 ctx.metadata.set("stable_checkpoint_id", cp_id)
 
@@ -1650,7 +1650,7 @@ class TestLangGraphSteeringSampleE2E:
                     store[invocation_id] = {"status": "cancelled", "reason": "steered"}
                     return await ctx.suspend(reason="steered")
 
-                reply = f"[graph] {message} (gen={ctx.generation})"
+                reply = f"[graph] {message} (gen={ctx.steering_generation})"
                 output = {"invocation_id": invocation_id, "reply": reply}
                 store[invocation_id] = {"status": "completed", "output": output}
                 return await ctx.suspend(reason="awaiting_user_input", output=output)

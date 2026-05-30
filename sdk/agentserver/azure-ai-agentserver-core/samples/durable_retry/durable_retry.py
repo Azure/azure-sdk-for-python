@@ -48,7 +48,7 @@ async def flaky_task(ctx: TaskContext[None]) -> str:
     """
     global _call_count  # noqa: PLW0603
     _call_count += 1
-    attempt = ctx.run_attempt
+    attempt = ctx.retry_attempt
 
     logger.info("Attempt %d (call count=%d)", attempt, _call_count)
 
@@ -71,7 +71,7 @@ async def flaky_task(ctx: TaskContext[None]) -> str:
 )
 async def selective_retry_task(ctx: TaskContext[None]) -> str:
     """Only retries ConnectionError and TimeoutError — not ValueError."""
-    attempt = ctx.run_attempt
+    attempt = ctx.retry_attempt
     if attempt == 0:
         raise ConnectionError("transient")
     return f"Recovered on attempt {attempt}"

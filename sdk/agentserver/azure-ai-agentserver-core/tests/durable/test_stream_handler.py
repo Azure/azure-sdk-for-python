@@ -215,7 +215,7 @@ class TestSteeringCarryOver:
 
             @task(name="t013_steerable", steerable=True)
             async def steerable_task(ctx: TaskContext[dict]) -> dict:
-                gen = ctx.generation
+                gen = ctx.steering_generation
                 await ctx.stream({"gen": gen, "event": "start"})
 
                 if gen == 0:

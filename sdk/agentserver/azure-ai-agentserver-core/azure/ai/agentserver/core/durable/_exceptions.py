@@ -22,30 +22,6 @@ class TaskFailed(Exception):
         super().__init__(f"Task {task_id!r} failed: {message}")
 
 
-class TaskSuspended(Exception):
-    """Raised when awaiting the result of a suspended task.
-
-    :param task_id: The identifier of the suspended task.
-    :type task_id: str
-    :param reason: Human-readable suspension reason, if provided.
-    :type reason: str | None
-    :param output: Optional output snapshot set at suspension time.
-    :type output: Any | None
-    """
-
-    def __init__(
-        self,
-        task_id: str,
-        reason: str | None = None,
-        output: Any | None = None,
-    ) -> None:
-        self.task_id = task_id
-        self.reason = reason
-        self.output = output
-        suffix = f": {reason}" if reason else ""
-        super().__init__(f"Task {task_id!r} is suspended{suffix}")
-
-
 class TaskCancelled(Exception):
     """Raised when a durable task is cancelled.
 

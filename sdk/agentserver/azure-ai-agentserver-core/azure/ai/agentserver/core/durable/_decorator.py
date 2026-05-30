@@ -213,6 +213,14 @@ def _is_stale(task_updated_at: str, timeout: float) -> bool:
 _FRAMEWORK_NAMESPACE = "_framework"
 _LAST_INPUT_ID_KEY = "last_input_id"
 
+# Spec 015 Phase 3 (FR-006) — these were previously developer-visible
+# @task kwargs (lease_duration_seconds, max_pending) but had no real
+# end-user knob value. Demoted to module-level internal constants. If a
+# future need arises to tune them per-task, re-introduce a Sec-Privileged
+# API rather than restoring the public surface.
+_DEFAULT_LEASE_SECONDS = 60
+_DEFAULT_MAX_PENDING_STEERING = 10
+
 
 def _read_stored_last_input_id(task_info: Any) -> str | None:
     """Read the stored ``last_input_id`` from a task's payload, or ``None``.
@@ -310,7 +318,12 @@ def _build_framework_extras(input_id: str | None) -> dict[str, Any] | None:
 
 
 class TaskOptions:  # pylint: disable=too-many-instance-attributes
-    """Options for a durable task.
+    """Internal task options bag.
+
+    *Internal*: not part of the public ``durable`` surface as of Spec 015 Phase 3.
+    Constructed by the ``@task`` decorator (and ``Task.options()``) from a small
+    public kwarg set: ``name``, ``title``, ``tags``, ``timeout``, ``ephemeral``,
+    ``retry``, ``steerable``, ``stream_handler_factory``.
 
     :param name: **Stable identity anchor.** Used for recovery routing and
         source stamping.  If you rename the Python function later, existing
@@ -321,14 +334,8 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
     :type title: str | Callable[[Any, str], str] | None
     :param tags: Default tags (static dict or callable factory).
     :type tags: dict[str, str] | Callable[[Any, str], dict[str, str]]
-    :param description: Task description (static string or callable factory).
-    :type description: str | Callable[[Any, str], str] | None
     :param timeout: Execution timeout.
     :type timeout: timedelta | None
-    :param lease_duration_seconds: Lease TTL.
-    :type lease_duration_seconds: int
-    :param store_input: Whether to persist input on the task record.
-    :type store_input: bool
     :param ephemeral: Whether to delete on terminal exit.
     :type ephemeral: bool
     :param stream_handler_factory: Optional factory callable that receives a
@@ -342,14 +349,10 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         "name",
         "title",
         "tags",
-        "description",
         "timeout",
-        "lease_duration_seconds",
-        "store_input",
         "ephemeral",
         "retry",
         "steerable",
-        "max_pending",
         "stream_handler_factory",
     )
 
@@ -358,35 +361,26 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         name: str,
         title: str | Callable[[Any, str], str] | None = None,
         tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None = None,
-        description: str | Callable[[Any, str], str | None] | None = None,
         timeout: timedelta | None = None,
-        lease_duration_seconds: int = 60,
-        store_input: bool = True,
         ephemeral: bool = True,
         retry: RetryPolicy | None = None,
         steerable: bool = False,
-        max_pending: int = 10,
         stream_handler_factory: StreamHandlerFactory | None = None,
     ) -> None:
         self.name = name
         self.title = title
         self.tags = tags if tags is not None else {}
-        self.description = description
         self.timeout = timeout
-        self.lease_duration_seconds = lease_duration_seconds
-        self.store_input = store_input
         self.ephemeral = ephemeral
         self.retry = retry
         self.steerable = steerable
-        self.max_pending = max_pending
         self.stream_handler_factory = stream_handler_factory
 
     def __repr__(self) -> str:
         return (
-            f"TaskOptions(name={self.name!r}, lease_duration_seconds={self.lease_duration_seconds}, "
-            f"store_input={self.store_input}, ephemeral={self.ephemeral}, retry={self.retry!r}, "
-            f"timeout={self.timeout!r}, "
-            f"steerable={self.steerable}, max_pending={self.max_pending})"
+            f"TaskOptions(name={self.name!r}, "
+            f"ephemeral={self.ephemeral}, retry={self.retry!r}, "
+            f"timeout={self.timeout!r}, steerable={self.steerable})"
         )
 
 
@@ -449,27 +443,6 @@ class Task(Generic[Input, Output]):
                 )
             return _strip_reserved_tags(result)
         return _strip_reserved_tags(dict(tags) if tags else {})
-
-    def _resolve_description(self, input_val: Input, task_id: str) -> str | None:
-        """Resolve decorator-level description (static or callable).
-
-        :param input_val: The task input value.
-        :type input_val: Input
-        :param task_id: The task identifier.
-        :type task_id: str
-        :return: Resolved description string or None.
-        :rtype: str | None
-        """
-        desc = self._opts.description
-        if callable(desc):
-            result = desc(input_val, task_id)
-            if result is not None and not isinstance(result, str):
-                raise TypeError(
-                    f"description callable must return str or None, "
-                    f"got {type(result).__name__}"
-                )
-            return result
-        return desc
 
     def _merge_tags(
         self, input_val: Input, task_id: str, call_tags: dict[str, str] | None
@@ -619,8 +592,12 @@ class Task(Generic[Input, Output]):
             if_last_input_id=if_last_input_id,
         )
 
-    async def get(self, task_id: str) -> Any:
-        """Return the full persisted task information.
+    async def _get(self, task_id: str) -> Any:
+        """Return the full persisted task information (internal).
+
+        .. note::
+            *Internal* as of Spec 015 Phase 3 — public consumers should use
+            ``manager.provider.get(task_id)`` directly.
 
         Works for any task state — running, suspended, completed, etc.
         Returns whatever is persisted. Returns ``None`` if no task exists.
@@ -628,7 +605,7 @@ class Task(Generic[Input, Output]):
         :param task_id: The task identifier.
         :type task_id: str
         :return: Task info or ``None`` if no task exists.
-        :rtype: ~azure.ai.agentserver.core.durable.TaskInfo | None
+        :rtype: TaskInfo | None
         """
         from ._manager import (  # pylint: disable=import-outside-toplevel
             get_task_manager,
@@ -665,13 +642,17 @@ class Task(Generic[Input, Output]):
         manager = get_task_manager()
         return manager.get_active_run(task_id)
 
-    async def list(
+    async def _list(
         self,
         *,
         session_id: str | None = None,
         status: TaskStatus | None = None,
     ) -> list[Any]:
-        """List tasks created by this durable task function.
+        """List tasks created by this durable task function (internal).
+
+        .. note::
+            *Internal* as of Spec 015 Phase 3 — public consumers should use
+            ``manager.list_tasks(fn_name=...)`` directly.
 
         Automatically scoped to this function's ``name`` via the
         ``_task_name`` tag (server-side) and ``source.type``
@@ -682,15 +663,9 @@ class Task(Generic[Input, Output]):
         :paramtype session_id: str | None
         :keyword status: Filter by task status (e.g., ``"in_progress"``,
             ``"suspended"``, ``"completed"``).
-        :paramtype status: ~azure.ai.agentserver.core.durable.TaskStatus | None
+        :paramtype status: TaskStatus | None
         :return: Matching task records.
-        :rtype: list[~azure.ai.agentserver.core.durable.TaskInfo]
-
-        Example::
-
-            tasks = await my_task.list(status="suspended")
-            for t in tasks:
-                print(t.id, t.status)
+        :rtype: list[TaskInfo]
         """
         from ._manager import (  # pylint: disable=import-outside-toplevel
             get_task_manager,
@@ -766,8 +741,8 @@ class Task(Generic[Input, Output]):
             steering = dict(payload.get("_steering", {}))
             pending: list[Any] = list(steering.get("pending_inputs", []))
 
-            if len(pending) >= self._opts.max_pending:
-                raise SteeringQueueFull(task_id, self._opts.max_pending)
+            if len(pending) >= _DEFAULT_MAX_PENDING_STEERING:
+                raise SteeringQueueFull(task_id, _DEFAULT_MAX_PENDING_STEERING)
 
             pending.append(serialized)
             steering["pending_inputs"] = pending
@@ -911,7 +886,6 @@ class Task(Generic[Input, Output]):
                 session_id=session_id,
                 title=title or self._resolve_title(input, task_id),
                 tags=self._merge_tags(input, task_id, tags),
-                description=self._resolve_description(input, task_id),
                 opts=self._opts,
                 retry=resolved_retry,
                 entry_mode="fresh",
@@ -1057,39 +1031,27 @@ class Task(Generic[Input, Output]):
         *,
         title: str | Callable[[Any, str], str] | None = None,
         tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None = None,
-        description: str | Callable[[Any, str], str | None] | None = None,
         timeout: timedelta | None = None,
-        lease_duration_seconds: int | None = None,
-        store_input: bool | None = None,
         ephemeral: bool | None = None,
         retry: RetryPolicy | None = None,
         steerable: bool | None = None,
-        max_pending: int | None = None,
     ) -> Task[Input, Output]:
         """Return a new Task with merged options.
 
         The original is unchanged.
 
+        :keyword title: Title override.
+        :paramtype title: str | Callable[[Any, str], str] | None
+        :keyword tags: Tag overrides.
+        :paramtype tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None
         :keyword timeout: Execution timeout override.
         :paramtype timeout: timedelta | None
         :keyword ephemeral: Whether to delete task on terminal exit.
         :paramtype ephemeral: bool | None
-        :keyword tags: Tag overrides.
-        :paramtype tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None
-        :keyword store_input: Whether to persist input.
-        :paramtype store_input: bool | None
         :keyword retry: Retry policy override.
         :paramtype retry: RetryPolicy | None
-        :keyword title: Title override.
-        :paramtype title: str | Callable[[Any, str], str] | None
-        :keyword description: Description override.
-        :paramtype description: str | Callable[[Any, str], str | None] | None
-        :keyword lease_duration_seconds: Lease TTL override.
-        :paramtype lease_duration_seconds: int | None
         :keyword steerable: Whether this task accepts steering inputs.
         :paramtype steerable: bool | None
-        :keyword max_pending: Maximum queued steering inputs.
-        :paramtype max_pending: int | None
         :return: A new Task with overridden options.
         :rtype: Task[Input, Output]
         """
@@ -1114,24 +1076,11 @@ class Task(Generic[Input, Output]):
             name=self._opts.name,
             title=title if title is not None else self._opts.title,
             tags=resolved_tags,
-            description=(
-                description if description is not None else self._opts.description
-            ),
             timeout=timeout if timeout is not None else self._opts.timeout,
-            lease_duration_seconds=(
-                lease_duration_seconds
-                if lease_duration_seconds is not None
-                else self._opts.lease_duration_seconds
-            ),
-            store_input=(
-                store_input if store_input is not None else self._opts.store_input
-            ),
             ephemeral=(ephemeral if ephemeral is not None else self._opts.ephemeral),
             retry=retry if retry is not None else self._opts.retry,
             steerable=(steerable if steerable is not None else self._opts.steerable),
-            max_pending=(
-                max_pending if max_pending is not None else self._opts.max_pending
-            ),
+            stream_handler_factory=self._opts.stream_handler_factory,
         )
         return Task(
             fn=self._fn,
@@ -1153,14 +1102,10 @@ def task(
     name: str | None = ...,
     title: str | Callable[[Any, str], str] | None = ...,
     tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None = ...,
-    description: str | Callable[[Any, str], str | None] | None = ...,
     timeout: timedelta | None = ...,
-    lease_duration_seconds: int = ...,
-    store_input: bool = ...,
     ephemeral: bool = ...,
     retry: RetryPolicy | None = ...,
     steerable: bool = ...,
-    max_pending: int = ...,
     stream_handler_factory: StreamHandlerFactory | None = ...,
 ) -> Callable[
     [Callable[[TaskContext[Input]], Awaitable[Output]]],
@@ -1174,14 +1119,10 @@ def task(
     name: str | None = None,
     title: str | Callable[[Any, str], str] | None = None,
     tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None = None,
-    description: str | Callable[[Any, str], str | None] | None = None,
     timeout: timedelta | None = None,
-    lease_duration_seconds: int = 60,
-    store_input: bool = True,
     ephemeral: bool = True,
     retry: RetryPolicy | None = None,
     steerable: bool = False,
-    max_pending: int = 10,
     stream_handler_factory: StreamHandlerFactory | None = None,
 ) -> Any:
     """Turn an async function into a crash-resilient durable task.
@@ -1204,19 +1145,14 @@ def task(
     :keyword title: Human-readable title (string or callable).
     :keyword tags: Default tags (static dict or callable factory receiving
         ``(input, task_id)``). Merged with per-call ``tags=`` overrides.
-    :keyword description: Task description (static string or callable factory
-        receiving ``(input, task_id)``).
     :keyword timeout: Execution timeout. When elapsed, ``ctx.cancel`` is set
         cooperatively. If the function does not exit, the lease eventually
         expires and the task is recovered.
-    :keyword lease_duration_seconds: Lease TTL (default 60).
-    :keyword store_input: Whether to persist input on the task record.
     :keyword ephemeral: Delete task on terminal exit (default True).
     :keyword retry: Default retry policy for this task.
     :keyword steerable: Whether this task accepts steering inputs. When True,
         calling ``start()`` on an ``in_progress`` task queues the input and
         signals cancel instead of raising ``TaskConflictError``. Default False.
-    :keyword max_pending: Maximum number of queued steering inputs. Default 10.
     :keyword stream_handler_factory: Optional factory callable that receives a
         ``task_id`` and returns a :class:`StreamHandler`. When set, crash-recovery
         and resume paths use this factory instead of defaulting to
@@ -1235,14 +1171,6 @@ def task(
                 f"got {func.__qualname__!r}"
             )
 
-        if lease_duration_seconds < 1:
-            raise ValueError(
-                f"lease_duration_seconds must be >= 1, got {lease_duration_seconds}"
-            )
-
-        if max_pending < 1:
-            raise ValueError(f"max_pending must be >= 1, got {max_pending}")
-
         input_type, output_type = _extract_generic_args(func)
 
         # Preserve callable tags as-is (stripped at resolve time); strip static dicts now
@@ -1254,14 +1182,10 @@ def task(
             name=name or func.__qualname__,
             title=title,
             tags=resolved_tags,
-            description=description,
             timeout=timeout,
-            lease_duration_seconds=lease_duration_seconds,
-            store_input=store_input,
             ephemeral=ephemeral,
             retry=retry,
             steerable=steerable,
-            max_pending=max_pending,
             stream_handler_factory=stream_handler_factory,
         )
 

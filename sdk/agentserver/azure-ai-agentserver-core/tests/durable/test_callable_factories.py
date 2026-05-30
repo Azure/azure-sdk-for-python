@@ -144,70 +144,14 @@ class TestCallableTags:
 
 
 class TestCallableDescription:
-    """Tests for callable description factory on @task."""
+    """Tests for callable description factory on @task.
 
-    @pytest.mark.asyncio
-    async def test_static_description(self, tmp_path):
-        """Static string description is stored on the task record."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @task(
-                name="static_desc", description="A static description", ephemeral=False
-            )
-            async def my_task(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            task_id = uuid.uuid4().hex
-            await my_task.run(task_id=task_id, input=None)
-
-            task_record = await manager.provider.get(task_id)
-            assert task_record.description == "A static description"
-
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_callable_description_factory(self, tmp_path):
-        """Callable description factory receives (input, task_id)."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @task(
-                name="callable_desc",
-                description=lambda inp, tid: f"Processing {inp['doc']}",
-                ephemeral=False,
-            )
-            async def my_task(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            task_id = uuid.uuid4().hex
-            await my_task.run(task_id=task_id, input={"doc": "report.pdf"})
-
-            task_record = await manager.provider.get(task_id)
-            assert task_record.description == "Processing report.pdf"
-
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_no_description_backward_compat(self, tmp_path):
-        """Without description, the task record has no description."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @task(name="no_desc", ephemeral=False)
-            async def my_task(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            task_id = uuid.uuid4().hex
-            await my_task.run(task_id=task_id, input=None)
-
-            task_record = await manager.provider.get(task_id)
-            assert task_record.description is None
-
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
+    Spec 015 Phase 3 FR-006: the per-task ``description`` knob (static + callable)
+    has been removed from ``@task``. These tests are kept as a tombstone (the
+    class is empty; pytest will skip the no-method case) so the historical
+    intent is preserved alongside ``test_public_api_surface.py``'s coverage
+    that ``description`` is no longer accepted.
+    """
 
 
 class TestFactoryValidation:
@@ -227,25 +171,6 @@ class TestFactoryValidation:
                 return "done"
 
             with pytest.raises(TypeError, match="tags callable must return dict"):
-                await my_task.run(task_id=uuid.uuid4().hex, input=None)
-
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_description_callable_bad_return_type(self, tmp_path):
-        """Description callable returning non-str raises TypeError."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @task(
-                name="bad_desc_type",
-                description=lambda inp, tid: 12345,  # type: ignore[return-value]
-            )
-            async def my_task(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            with pytest.raises(TypeError, match="description callable must return str"):
                 await my_task.run(task_id=uuid.uuid4().hex, input=None)
 
         finally:

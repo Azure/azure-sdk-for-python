@@ -15,10 +15,7 @@ from azure.ai.agentserver.core.durable._stream import QueueStreamHandler
 def _make_ctx(stream_handler=None, **overrides):
     defaults = dict(
         task_id="t1",
-        title="test",
         session_id="s1",
-        agent_name="a1",
-        tags={},
         input=None,
         metadata=TaskMetadata(),
         stream_handler=stream_handler,

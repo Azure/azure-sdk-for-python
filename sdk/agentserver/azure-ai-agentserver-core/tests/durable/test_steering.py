@@ -128,27 +128,37 @@ class TestSteering:
 
     @pytest.mark.asyncio
     async def test_steering_queue_full(self, tmp_path):
-        """start() raises SteeringQueueFull when queue is at capacity."""
+        """start() raises SteeringQueueFull when queue is at capacity.
+
+        Spec 015 Phase 3 FR-006: the per-task ``max_pending`` knob was
+        demoted; the framework-wide default
+        ``_DEFAULT_MAX_PENDING_STEERING`` (10) applies. This test fills the
+        queue at that default to verify the exception still surfaces.
+        """
+        from azure.ai.agentserver.core.durable._decorator import (
+            _DEFAULT_MAX_PENDING_STEERING,
+        )
+
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             gate = asyncio.Event()
 
-            @task(name="chat", steerable=True, max_pending=2)
+            @task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 await gate.wait()
                 return {"msg": "done"}
 
             run1 = await chat.start(task_id="t1", input={"msg": "A"})
 
-            # Fill the queue
-            await chat.start(task_id="t1", input={"msg": "B"})
-            await chat.start(task_id="t1", input={"msg": "C"})
+            # Fill the queue to the framework default
+            for i in range(_DEFAULT_MAX_PENDING_STEERING):
+                await chat.start(task_id="t1", input={"msg": f"fill-{i}"})
 
             # Queue is full — should raise
             with pytest.raises(SteeringQueueFull) as exc_info:
-                await chat.start(task_id="t1", input={"msg": "D"})
+                await chat.start(task_id="t1", input={"msg": "overflow"})
 
-            assert exc_info.value.max_pending == 2
+            assert exc_info.value.max_pending == _DEFAULT_MAX_PENDING_STEERING
 
             gate.set()
             await asyncio.wait_for(run1.result(), timeout=5.0)
@@ -317,7 +327,7 @@ class TestSteering:
             steered = [c for c in contexts if c["was_steered"] is True]
             assert len(steered) >= 1
             assert steered[0]["entry_mode"] == "resumed"
-            assert steered[0]["generation"] > 0
+            assert steered[0]["steering_generation"] > 0
 
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -411,15 +421,11 @@ class TestSteering:
     # ------------------------------------------------------------------
     # TaskOptions validation
     # ------------------------------------------------------------------
-
-    @pytest.mark.asyncio
-    async def test_max_pending_validation(self):
-        """max_pending < 1 raises ValueError at decoration time."""
-        with pytest.raises(ValueError, match="max_pending"):
-
-            @task(name="bad", max_pending=0)
-            async def bad(ctx: TaskContext[dict]) -> dict:
-                return {}
+    # Spec 015 Phase 3 FR-006: ``max_pending`` is no longer a configurable
+    # kwarg on ``@task``; the framework default applies. The previous
+    # ``test_max_pending_validation`` (which asserted ``max_pending=0`` raised
+    # at decoration time) has been removed because the kwarg itself is gone —
+    # ``test_public_api_surface.py`` enforces its absence.
 
     # ------------------------------------------------------------------
     # Exceptions

@@ -280,9 +280,9 @@ class TestRetryIntegration:
 
         @task(title="retry-test")
         async def flaky(ctx: TaskContext[str]) -> str:
-            call_log.append(ctx.run_attempt)
-            if ctx.run_attempt < 2:
-                raise ConnectionError(f"fail attempt {ctx.run_attempt}")
+            call_log.append(ctx.retry_attempt)
+            if ctx.retry_attempt < 2:
+                raise ConnectionError(f"fail attempt {ctx.retry_attempt}")
             return "success"
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
@@ -304,7 +304,7 @@ class TestRetryIntegration:
 
         @task(title="always-fail")
         async def always_fail(ctx: TaskContext[str]) -> str:
-            raise ValueError(f"boom on attempt {ctx.run_attempt}")
+            raise ValueError(f"boom on attempt {ctx.retry_attempt}")
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
@@ -332,7 +332,7 @@ class TestRetryIntegration:
 
         @task(title="wrong-exc")
         async def wrong_exc(ctx: TaskContext[str]) -> str:
-            attempts.append(ctx.run_attempt)
+            attempts.append(ctx.retry_attempt)
             raise TypeError("not retryable")
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
