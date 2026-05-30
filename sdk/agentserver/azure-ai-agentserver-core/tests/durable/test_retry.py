@@ -351,3 +351,311 @@ class TestRetryIntegration:
             assert attempts == [0]
         finally:
             await self._teardown_manager(manager, mgr_mod)
+
+
+# ---------------------------------------------------------------------------
+# Spec 015 Phase 4 (FR-001 / FR-002 / FR-003) — retry_attempt durability
+# ---------------------------------------------------------------------------
+#
+# These tests pin the cross-lifetime contract for ``ctx.retry_attempt`` and
+# ``RetryPolicy.max_attempts``:
+#
+#   FR-001  ``ctx.retry_attempt`` MUST persist across in-process boundaries
+#           via ``payload["_retry_attempt"]`` and MUST be restored verbatim
+#           on recovery.
+#   FR-002  ``RetryPolicy.max_attempts`` MUST count failure-retries across
+#           ALL lifetimes — one durable budget, not a per-lifetime quota.
+#   FR-003  Crash recovery MUST NOT consume any of the retry budget; only
+#           a handler-raised exception consumes it.
+#
+# The tests below use the local file provider + a manually-created stale
+# ``in_progress`` task to simulate a "prior lifetime" without spawning a
+# subprocess. This is the same simulation pattern used by
+# ``test_entry_mode.py::TestEntryMode::test_recovered_entry_mode``.
+
+
+class TestRetryAttemptDurability:
+    """FR-001 / FR-002 / FR-003 cross-lifetime retry contract."""
+
+    async def _setup_manager(self, tmp_path):
+        from azure.ai.agentserver.core.durable._local_provider import (
+            LocalFileTaskProvider,
+        )
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        await manager.startup()
+        return manager, mgr_mod
+
+    async def _teardown_manager(self, manager, mgr_mod):
+        await manager.shutdown()
+        mgr_mod._manager = None
+
+    async def _seed_stale_task(
+        self,
+        manager,
+        tmp_path,
+        *,
+        task_id: str,
+        retry_attempt: int,
+        input_value: str = "carry-over",
+    ) -> None:
+        """Create a stale ``in_progress`` task that simulates a prior lifetime.
+
+        ``payload["_retry_attempt"]`` is the durable counter that FR-001
+        promises to restore on recovery.
+        """
+        import json
+
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        await manager.provider.create(
+            TaskCreateRequest(
+                id=task_id,
+                agent_name="test-agent",
+                session_id="test-session",
+                status="in_progress",
+                title="retry-durable-test",
+                payload={
+                    "input": input_value,
+                    "_retry_attempt": retry_attempt,
+                },
+            )
+        )
+        task_file = (
+            Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
+        )
+        assert task_file.exists(), (
+            "expected provider to materialize a JSON file for the stale task; "
+            "this test relies on LocalFileTaskProvider's on-disk layout"
+        )
+        data = json.loads(task_file.read_text())
+        data["updated_at"] = "2020-01-01T00:00:00+00:00"
+        task_file.write_text(json.dumps(data))
+
+    @pytest.mark.asyncio
+    async def test_retry_attempt_cross_lifetime_durability(self, tmp_path) -> None:
+        """FR-001: a recovered task's handler MUST see the persisted retry_attempt.
+
+        Setup simulates a prior lifetime that already burned 2 failure-retries
+        (``payload["_retry_attempt"] == 2``). On recovery the handler MUST
+        observe ``ctx.retry_attempt == 2`` on its very first invocation —
+        not the hardcoded 0 the current implementation supplies.
+        """
+        observed: list[int] = []
+
+        @task(title="recovered-retry-aware", ephemeral=False)
+        async def handler(ctx: TaskContext[str]) -> str:
+            observed.append(ctx.retry_attempt)
+            return "ok"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            await self._seed_stale_task(
+                manager, tmp_path, task_id="durable-1", retry_attempt=2
+            )
+            result = await handler.run(
+                task_id="durable-1",
+                input="ignored-by-recovery",
+                stale_timeout=1.0,
+            )
+            assert result.output == "ok"
+            assert observed == [2], (
+                "FR-001 violated: handler MUST observe the persisted "
+                "retry_attempt (2) on the first invocation after recovery; "
+                f"got {observed!r}. The manager is still hardcoding "
+                "retry_attempt=0 on every recovered entry."
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_retry_attempt_budget_exhausts_across_crash(self, tmp_path) -> None:
+        """FR-002: max_attempts is a single durable budget across lifetimes.
+
+        With ``max_attempts=3`` and 2 retries already consumed in a prior
+        lifetime (``payload["_retry_attempt"] == 2``), recovery has exactly
+        ONE retry remaining. If the handler always fails, it must be
+        invoked at most once before the budget exhausts; today the
+        implementation resets the counter and lets the handler fail 3
+        more times.
+        """
+        from unittest.mock import AsyncMock, patch as _patch
+
+        invocations: list[int] = []
+
+        @task(title="always-fail-recovered", ephemeral=False)
+        async def always_fail(ctx: TaskContext[str]) -> str:
+            invocations.append(ctx.retry_attempt)
+            raise ValueError(f"boom at retry_attempt={ctx.retry_attempt}")
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            await self._seed_stale_task(
+                manager, tmp_path, task_id="budget-1", retry_attempt=2
+            )
+            with _patch("asyncio.sleep", new_callable=AsyncMock):
+                with pytest.raises(TaskFailed):
+                    await always_fail.run(
+                        task_id="budget-1",
+                        input="ignored",
+                        stale_timeout=1.0,
+                        retry=RetryPolicy(
+                            max_attempts=3,
+                            retry_on=(ValueError,),
+                            jitter=False,
+                        ),
+                    )
+            assert invocations == [2], (
+                "FR-002 violated: with max_attempts=3 and 2 retries already "
+                "consumed across a crash, recovery has exactly ONE attempt "
+                "remaining (the retry that the prior lifetime did not get "
+                "to make). Handler MUST be invoked exactly once at "
+                f"retry_attempt=2; got {invocations!r}."
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_crash_recovery_does_not_consume_retry_budget(
+        self, tmp_path
+    ) -> None:
+        """FR-003: surviving a crash MUST NOT consume any retry budget.
+
+        Setup: a prior lifetime persisted ``_retry_attempt == 2`` and crashed
+        BEFORE the handler returned. On recovery the handler succeeds on its
+        first invocation. The persisted retry_attempt MUST remain at 2
+        (the count of failure-retries the developer's handler raised) —
+        the act of recovering itself does not bump the counter.
+        """
+        observed: list[int] = []
+
+        @task(title="recover-then-succeed", ephemeral=False)
+        async def succeed_now(ctx: TaskContext[str]) -> str:
+            observed.append(ctx.retry_attempt)
+            return f"done@{ctx.retry_attempt}"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            await self._seed_stale_task(
+                manager, tmp_path, task_id="no-consume-1", retry_attempt=2
+            )
+            result = await succeed_now.run(
+                task_id="no-consume-1",
+                input="ignored",
+                stale_timeout=1.0,
+                retry=RetryPolicy(
+                    max_attempts=3,
+                    retry_on=(ValueError,),
+                    jitter=False,
+                ),
+            )
+            assert result.output == "done@2"
+            assert observed == [2], (
+                "FR-003 violated: handler must observe persisted "
+                f"retry_attempt=2, got {observed!r}."
+            )
+
+            # And the persisted counter must still be 2 — recovery did NOT
+            # consume the budget. (Re-fetch via provider to read the on-disk
+            # state, not the in-memory cache.)
+            info = await manager.provider.get("no-consume-1")
+            assert info is not None
+            persisted = (info.payload or {}).get("_retry_attempt", 0)
+            assert persisted == 2, (
+                "FR-003 violated: payload['_retry_attempt'] must NOT be "
+                "bumped by recovery — the act of recovering is not a "
+                f"failure-retry. Expected 2, found {persisted!r}."
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_steering_drain_resets_retry_attempt_to_zero(
+        self, tmp_path
+    ) -> None:
+        """FR-001: steering drain MUST reset both ``ctx.retry_attempt`` AND
+        ``payload["_retry_attempt"]`` to 0.
+
+        Rationale: a steering input is a new logical request from the
+        developer; carrying a stale retry count across it would silently
+        eat budget. The in-process loop already resets the local
+        ``attempt`` variable on drain (see ``_execute_task_loop``
+        steering-drain branches); the missing piece is persisting the
+        reset so a *subsequent* crash-and-recover does not resurrect the
+        old counter.
+        """
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        observed: list[int] = []
+
+        @task(title="steerable-retry-aware", ephemeral=False, steerable=True)
+        async def steer_handler(ctx: TaskContext[str]) -> str:
+            observed.append(ctx.retry_attempt)
+            # Single-shot: just record and return — no Suspended dance needed
+            # for this assertion. The reset happens at the drain transition,
+            # which is exercised by seeding the steering state below.
+            return f"observed@{ctx.retry_attempt}"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            # Seed a stale task that has BOTH _retry_attempt > 0 AND pending
+            # steering inputs. On recovery, the steering-drain branch must
+            # fire, which is the moment the reset semantics apply.
+            import json
+
+            await manager.provider.create(
+                TaskCreateRequest(
+                    id="steer-reset-1",
+                    agent_name="test-agent",
+                    session_id="test-session",
+                    status="in_progress",
+                    title="steer-reset",
+                    payload={
+                        "input": "first",
+                        "_retry_attempt": 2,
+                        "_steering": {
+                            "pending_inputs": ["second"],
+                            "generation": 1,
+                        },
+                    },
+                )
+            )
+            task_file = (
+                Path(str(tmp_path)) / "test-agent" / "test-session" / "steer-reset-1.json"
+            )
+            data = json.loads(task_file.read_text())
+            data["updated_at"] = "2020-01-01T00:00:00+00:00"
+            task_file.write_text(json.dumps(data))
+
+            await steer_handler.run(
+                task_id="steer-reset-1",
+                input="ignored",
+                stale_timeout=1.0,
+            )
+
+            info = await manager.provider.get("steer-reset-1")
+            assert info is not None
+            persisted = (info.payload or {}).get("_retry_attempt", 0)
+            assert persisted == 0, (
+                "FR-001 violated: steering drain MUST persist "
+                "payload['_retry_attempt'] = 0 so that a subsequent crash "
+                "does not resurrect a stale counter. Expected 0, found "
+                f"{persisted!r}."
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)

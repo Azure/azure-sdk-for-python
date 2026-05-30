@@ -213,3 +213,139 @@ class TestContextFieldsSpec015:
         assert "lease_generation" not in TaskContext.__slots__, (
             "Old field name 'lease_generation' must be removed (no deprecation alias)."
         )
+
+
+# ---------------------------------------------------------------------------
+# Spec 015 Phase 4 (FR-001 / FR-003) — recovery x retry_attempt interaction
+# ---------------------------------------------------------------------------
+
+
+class TestRecoveryRetryAttempt:
+    """FR-001 / FR-003 — the recovery code path MUST surface (not consume)
+    the persisted retry_attempt on the first handler invocation.
+
+    This sits next to TestEntryMode because the assertion is about the
+    intersection of ``entry_mode == 'recovered'`` and ``ctx.retry_attempt``;
+    the deeper budget arithmetic lives in
+    ``test_retry.py::TestRetryAttemptDurability``.
+    """
+
+    async def _setup_manager(self, tmp_path):
+        from azure.ai.agentserver.core.durable._local_provider import (
+            LocalFileTaskProvider,
+        )
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        await manager.startup()
+        return manager, mgr_mod
+
+    async def _teardown_manager(self, manager, mgr_mod):
+        await manager.shutdown()
+        mgr_mod._manager = None
+
+    async def _seed_stale(self, manager, tmp_path, task_id, retry_attempt):
+        import json
+
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        await manager.provider.create(
+            TaskCreateRequest(
+                id=task_id,
+                agent_name="test-agent",
+                session_id="test-session",
+                status="in_progress",
+                title="recovered-retry",
+                payload={"input": "x", "_retry_attempt": retry_attempt},
+            )
+        )
+        task_file = (
+            Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
+        )
+        data = json.loads(task_file.read_text())
+        data["updated_at"] = "2020-01-01T00:00:00+00:00"
+        task_file.write_text(json.dumps(data))
+
+    @pytest.mark.asyncio
+    async def test_recovered_handler_sees_persisted_retry_attempt(
+        self, tmp_path
+    ) -> None:
+        """FR-001: a handler entering via ``entry_mode='recovered'`` MUST
+        see ``ctx.retry_attempt`` populated from ``payload["_retry_attempt"]``.
+
+        Equivalent to the test in ``test_retry.py`` but asserts the
+        entry-mode invariant alongside the counter value, since both must
+        be true *at the same time* on the first handler invocation of a
+        recovered lifetime.
+        """
+        observed: list[tuple[str, int]] = []
+
+        @task(title="rec-attempt", ephemeral=False)
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed.append((ctx.entry_mode, ctx.retry_attempt))
+            return "done"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            await self._seed_stale(manager, tmp_path, "rec-attempt-1", retry_attempt=3)
+            result = await my_task.run(
+                task_id="rec-attempt-1",
+                input="ignored",
+                stale_timeout=1.0,
+            )
+            assert result.output == "done"
+            assert observed == [("recovered", 3)], (
+                "FR-001 violated: recovered handler must see entry_mode="
+                "'recovered' AND retry_attempt=3 (the persisted value) on "
+                f"the first invocation; got {observed!r}."
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_recovery_entry_mode_does_not_increment_retry_attempt(
+        self, tmp_path
+    ) -> None:
+        """FR-003: entering with ``entry_mode='recovered'`` MUST NOT bump
+        the counter — the persisted value is observed verbatim.
+
+        Pairs with ``test_crash_recovery_does_not_consume_retry_budget`` but
+        asserts the per-invocation behavior at the entry boundary, before
+        any handler-raised exception is observed.
+        """
+        observed: list[int] = []
+
+        @task(title="rec-no-bump", ephemeral=False)
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed.append(ctx.retry_attempt)
+            return "ok"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            await self._seed_stale(manager, tmp_path, "rec-no-bump-1", retry_attempt=1)
+            await my_task.run(
+                task_id="rec-no-bump-1",
+                input="ignored",
+                stale_timeout=1.0,
+            )
+            assert observed == [1], (
+                "FR-003 violated: recovery entry MUST surface "
+                f"retry_attempt=1 verbatim; got {observed!r}. "
+                "(Recovery is not a failure-retry.)"
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
