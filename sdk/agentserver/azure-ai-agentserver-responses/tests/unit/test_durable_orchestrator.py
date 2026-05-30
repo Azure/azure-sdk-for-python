@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any
+from typing import Any, Optional
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -14,6 +14,33 @@ from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
     DurableResponseOrchestrator,
     _map_entry_mode,
 )
+
+
+class _FakeTaskMetadata(dict):
+    """Test fixture mimicking the TaskMetadata callable+dict-like shape.
+
+    Real TaskMetadata is callable for named namespaces; plain dicts are
+    not. The orchestrator now uses ``ctx.metadata(_RESPONSES_NS)`` to
+    reach the framework namespace, so unit-test fixtures must provide
+    something that responds to ``__call__`` (returning an isolated
+    sub-store) as well as ``__getitem__/__setitem__/get/in``.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._namespaces: dict[str, "_FakeTaskMetadata"] = {}
+
+    def __call__(self, name: Optional[str] = None) -> "_FakeTaskMetadata":
+        if name is None:
+            return self
+        ns = self._namespaces.get(name)
+        if ns is None:
+            ns = _FakeTaskMetadata()
+            self._namespaces[name] = ns
+        return ns
+
+    async def flush(self) -> None:  # no-op for tests
+        return None
 
 
 class TestEntryModeMapping:
@@ -46,10 +73,12 @@ class TestDurableOrchestratorTaskCreation:
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
-            options=MagicMock(steerable_conversations=True, max_pending=5),
+            options=MagicMock(steerable_conversations=True),
         )
         assert orch.task_fn._opts.steerable is True
-        assert orch.task_fn._opts.max_pending == 5
+        # Per spec 015 FR-006, ``max_pending`` is no longer carried on
+        # TaskOptions — server-side back-pressure lives at a different layer.
+        assert not hasattr(orch.task_fn._opts, "max_pending")
 
     def test_orchestrator_non_steerable_by_default(self) -> None:
         orch = DurableResponseOrchestrator(
@@ -101,7 +130,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.retry_attempt = 0
         ctx.was_steered = False
         ctx.pending_inputs = []
-        ctx.metadata = {}
+        ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.suspend = AsyncMock()
@@ -147,7 +176,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.retry_attempt = 1
         ctx.was_steered = False
         ctx.pending_inputs = ["a", "b"]
-        ctx.metadata = {}
+        ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.suspend = AsyncMock()
@@ -187,7 +216,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.retry_attempt = 0
         ctx.was_steered = False
         ctx.pending_inputs = []
-        ctx.metadata = {}
+        ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.suspend = AsyncMock()
@@ -223,7 +252,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.retry_attempt = 0
         ctx.was_steered = False
         ctx.pending_inputs = []
-        ctx.metadata = {}
+        ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.suspend = AsyncMock()
@@ -263,7 +292,7 @@ class TestDurableOrchestratorCancellationBridge:
         ctx.retry_attempt = 0
         ctx.was_steered = False
         ctx.pending_inputs = []
-        ctx.metadata = {}
+        ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.suspend = AsyncMock()

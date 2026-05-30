@@ -102,7 +102,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         # transient in-memory instance (metadata writes silently lost on restart).
         self._durability: DurabilityContext = DurabilityContext(
             entry_mode="fresh",
-            run_attempt=0,
+            retry_attempt=0,
             was_steered=False,
             pending_inputs=0,
             metadata={},

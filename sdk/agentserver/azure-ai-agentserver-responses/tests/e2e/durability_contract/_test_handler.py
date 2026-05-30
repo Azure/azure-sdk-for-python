@@ -7,7 +7,7 @@ a deterministic, controllable handler whose timing AND emitted content are
 configurable via env vars so individual tests can drive Path A (handler
 completes within grace), Path B (grace exhausted), and Path C (SIGKILL).
 
-Every emitted SSE event carries content tagged with the run_attempt
+Every emitted SSE event carries content tagged with the retry_attempt
 (``L{lifetime}_pre_d{i}`` for pre-sleep deltas, ``L{lifetime}_post_d{i}``
 for post-sleep deltas, composite ``L{lifetime}_done|pre=…|post=…|chain=…``
 for the terminal text). Tests rely on these tags to verify:
@@ -47,7 +47,7 @@ Env vars consumed:
   ``"ok"``-delta behaviour at the structural level (count and ordering
   match; only the content tags changed).
 - ``CONFORMANCE_EMIT_METADATA_WATERMARK`` — when ``"true"``, the handler
-  appends ``context.durability.run_attempt`` to a metadata-stored
+  appends ``context.durability.retry_attempt`` to a metadata-stored
   watermark list and ``flush()``es before emitting deltas. The final
   text includes ``visited=[…]`` so tests can verify the watermark
   survives crash + recovery. Default ``"false"``.
@@ -124,7 +124,7 @@ async def handle_create(
        SECOND ``response.in_progress`` is emitted as the snapshot reset
        marker per ``durability-contract.md`` § Streaming sub-contract.
     4. Optional metadata watermark write — when enabled, append the
-       current ``run_attempt`` to the metadata-stored visited list and
+       current ``retry_attempt`` to the metadata-stored visited list and
        ``flush()``. The final text echoes the visited list so tests can
        verify the watermark survives recovery.
     5. ``output_item.added`` + ``content_part.added`` at index 0.
@@ -146,7 +146,7 @@ async def handle_create(
     """
     durability = context.durability
     # Lifetime tag: 0 for fresh entry, 1 for any recovered / resumed entry.
-    # ``durability.run_attempt`` is an in-process counter that resets to 0
+    # ``durability.retry_attempt`` is an in-process counter that resets to 0
     # on a new process lifetime (i.e. after crash + restart), so it's not
     # a reliable cross-lifetime marker for conformance tests. ``entry_mode``
     # IS preserved across lifetimes — the framework computes it from the
@@ -170,7 +170,7 @@ async def handle_create(
     if durability.is_recovery:
         yield stream.emit_in_progress()
 
-    # Optional metadata watermark — append this lifetime's run_attempt
+    # Optional metadata watermark — append this lifetime's retry_attempt
     # to the visited list and flush so the marker survives crash. Tests
     # that enable this knob assert the final text's visited list
     # contains every lifetime that contributed to the response.

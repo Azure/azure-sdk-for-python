@@ -33,7 +33,6 @@ from azure.ai.agentserver.responses import (
 )
 from azure.ai.agentserver.responses._durability_context import (
     DurabilityContext,
-    _FilteredMetadata,
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 
@@ -52,10 +51,10 @@ def _make_context(
     """Build a synthetic ResponseContext for driving the handler directly."""
     durability = DurabilityContext(
         entry_mode=entry_mode,  # type: ignore[arg-type]
-        run_attempt=0 if entry_mode == "fresh" else 1,
+        retry_attempt=0 if entry_mode == "fresh" else 1,
         was_steered=False,
         pending_inputs=0,
-        metadata=_FilteredMetadata(metadata or {}),
+        metadata=metadata or {},
     )
 
     # Build a minimal ResponseContext mock with the attrs the sample uses.

@@ -168,17 +168,16 @@ def _build_resumption_response(
 
 
 def _make_durability_context(
-    *, entry_mode: str = "fresh", run_attempt: int = 0
+    *, entry_mode: str = "fresh", retry_attempt: int = 0
 ) -> DurabilityContext:
     """Synthesize a DurabilityContext for test handlers."""
-    from azure.ai.agentserver.responses._durability_context import _FilteredMetadata
 
     return DurabilityContext(
         entry_mode=entry_mode,  # type: ignore[arg-type]
-        run_attempt=run_attempt,
+        retry_attempt=retry_attempt,
         was_steered=False,
         pending_inputs=0,
-        metadata=_FilteredMetadata({}),
+        metadata={},
     )
 
 

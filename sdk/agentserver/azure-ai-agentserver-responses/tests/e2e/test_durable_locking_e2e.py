@@ -138,7 +138,7 @@ class TestDurableOptOut:
         dur = captured.get("durability")
         assert dur is not None
         assert dur.entry_mode == "fresh"
-        assert dur.run_attempt == 0
+        assert dur.retry_attempt == 0
 
     def test_non_durable_store_false_still_works(self) -> None:
         """store=false + background=false → non-durable foreground path."""

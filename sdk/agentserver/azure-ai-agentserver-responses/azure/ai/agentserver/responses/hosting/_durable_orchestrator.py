@@ -31,7 +31,6 @@ from azure.ai.agentserver.core.durable import (
 from .._durability_context import (
     DurabilityContext,
     DurabilityEntryMode,
-    _FilteredMetadata,
 )
 from .._options import ResponsesServerOptions
 from ..models.runtime import CancellationReason
@@ -47,8 +46,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("azure.ai.agentserver.responses.durable")
 
-# Framework-internal metadata key prefix
-_FW_PREFIX = "_framework."
+# Framework-internal metadata namespace (spec 015 FR-005)
+_RESPONSES_NS = "_responses"
 
 
 def _build_server_error_payload(
@@ -245,16 +244,16 @@ def _reconstruct_from_params(
     )
     record.response_context = context
     return record, context
-_FW_RESPONSE_ID = f"{_FW_PREFIX}response_id"
-_FW_LAST_SEQ = f"{_FW_PREFIX}last_sequence_number"
-_FW_BACKGROUND = f"{_FW_PREFIX}background"
+_RESP_RESPONSE_ID = "response_id"
+_RESP_LAST_SEQ = "last_sequence_number"
+_RESP_BACKGROUND = "background"
 # (Spec 014 FR-003 / FR-004 — Phase 4) Per-task disposition tells the recovery
 # scanner what to do on the next-lifetime recovered entry:
 #   - "re-invoke": re-run the handler (Row 1: durable_background+bg+store).
 #   - "mark-failed": persist a server_error terminal to the response store and
 #     complete the task without re-invoking (Rows 2, 3: bg+store with
 #     durable_background=False, and fg+store).
-_FW_DISPOSITION = f"{_FW_PREFIX}disposition"
+_RESP_DISPOSITION = "disposition"
 DISPOSITION_REINVOKE = "re-invoke"
 DISPOSITION_MARK_FAILED = "mark-failed"
 
@@ -268,17 +267,18 @@ DISPOSITION_MARK_FAILED = "mark-failed"
 _BOOKKEEPING_EVENTS: dict[str, asyncio.Event] = {}
 
 
-def _read_disposition(metadata: "_FilteredMetadata | dict[str, Any]") -> str:
-    """Read the task disposition from framework metadata.
+def _read_disposition(responses_ns: Any) -> str:
+    """Read the task disposition from the ``_responses`` framework namespace.
 
     Defaults to ``DISPOSITION_REINVOKE`` for backward compatibility with
     Phase 3 (Row 1) tasks created before this metadata key existed.
 
-    :param metadata: The task's framework metadata dict.
+    :param responses_ns: The ``_responses`` namespace (a TaskMetadata
+        namespace facade or a plain dict).
     :returns: One of ``DISPOSITION_REINVOKE`` or ``DISPOSITION_MARK_FAILED``.
     :rtype: str
     """
-    raw = metadata.get(_FW_DISPOSITION) if metadata else None
+    raw = responses_ns.get(_RESP_DISPOSITION) if responses_ns else None
     if raw in (DISPOSITION_REINVOKE, DISPOSITION_MARK_FAILED):
         return raw
     return DISPOSITION_REINVOKE
@@ -307,7 +307,7 @@ class DurableResponseOrchestrator:
     - DurabilityContext populated before handler invocation
 
     :param create_fn: The handler factory (bound ``create_fn`` method).
-    :param options: Server options (steerable, max_pending, etc.).
+    :param options: Server options (steerable, etc.).
     :param provider: Response persistence provider.
     """
 
@@ -347,9 +347,7 @@ class DurableResponseOrchestrator:
         @task(
             name="responses_durable_background",
             steerable=self._options.steerable_conversations,
-            max_pending=self._options.max_pending,
             ephemeral=False,  # Task lives for conversation lifetime
-            store_input=True,
         )
         async def _durable_response_task(ctx: TaskContext[dict[str, Any]]) -> None:
             """Task body: executes the response pipeline with durability context.
@@ -381,10 +379,19 @@ class DurableResponseOrchestrator:
         entry_mode = _map_entry_mode(ctx.entry_mode)
         is_recovery = entry_mode == "recovered"
 
+        # The _responses namespace holds all framework-internal state for
+        # this conversation (response_id, background, disposition, etc.).
+        # Per spec 015 FR-005, this namespace is reserved (the `_` prefix
+        # indicates framework-only). The handler-facing DurabilityContext
+        # rejects access to it; framework code (this orchestrator) uses
+        # the underlying TaskContext.metadata directly which has no such
+        # restriction.
+        responses_ns = ctx.metadata(_RESPONSES_NS)
+
         # Track response_id in framework metadata
         response_id = params["response_id"]
-        if ctx.metadata.get(_FW_RESPONSE_ID) is None:
-            ctx.metadata[_FW_RESPONSE_ID] = response_id
+        if responses_ns.get(_RESP_RESPONSE_ID) is None:
+            responses_ns[_RESP_RESPONSE_ID] = response_id
 
         # (Spec 013 US1(c)) Look up in-memory refs cached at start_durable
         # time. Present for same-process execution; absent on cross-process
@@ -400,26 +407,25 @@ class DurableResponseOrchestrator:
             return value
 
         # Store background flag on first entry for recovery decisions
-        if _FW_BACKGROUND not in ctx.metadata:
-            ctx.metadata[_FW_BACKGROUND] = params.get("background", True)
+        if _RESP_BACKGROUND not in responses_ns:
+            responses_ns[_RESP_BACKGROUND] = params.get("background", True)
 
         # (Spec 014 FR-003 / FR-004) Stamp the disposition on first entry so
         # next-lifetime recovery can dispatch correctly without needing to
         # reconstruct the routing decisions from input params.
-        if _FW_DISPOSITION not in ctx.metadata:
-            ctx.metadata[_FW_DISPOSITION] = params.get(
+        if _RESP_DISPOSITION not in responses_ns:
+            responses_ns[_RESP_DISPOSITION] = params.get(
                 "disposition", DISPOSITION_REINVOKE
             )
             # Force-flush so the disposition is durable BEFORE the body
-            # could be killed (the default 5s debounce window is too long
-            # to rely on for crash-recovery correctness — without an
-            # explicit flush the recovered task would default to
-            # ``re-invoke`` and skip the mark-failed branch).
+            # could be killed — without an explicit flush the recovered
+            # task would default to ``re-invoke`` and skip the mark-failed
+            # branch.
             try:
-                await ctx.metadata.flush()
+                await responses_ns.flush()
             except (AttributeError, Exception):  # noqa: BLE001
                 pass  # best-effort — backend may not support explicit flush
-        disposition = _read_disposition(ctx.metadata)
+        disposition = _read_disposition(responses_ns)
 
         # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition.
         # mark-failed: handler doesn't re-run; persist server_error to the
@@ -439,7 +445,7 @@ class DurableResponseOrchestrator:
         # Tasks created before the disposition key existed default to
         # DISPOSITION_REINVOKE; for those, preserve the prior behaviour of
         # marking foreground responses failed on recovery without re-invoking.
-        if is_recovery and not ctx.metadata.get(_FW_BACKGROUND, True):
+        if is_recovery and not responses_ns.get(_RESP_BACKGROUND, True):
             logger.info(
                 "Non-background task recovered (response_id=%s) — marking failed",
                 response_id,
@@ -468,7 +474,7 @@ class DurableResponseOrchestrator:
         # resumption response from upstream framework state.
         durability_ctx = DurabilityContext(
             entry_mode=entry_mode,
-            run_attempt=ctx.run_attempt,
+            retry_attempt=ctx.retry_attempt,
             was_steered=ctx.was_steered,
             pending_inputs=len(ctx.pending_inputs),
             metadata=ctx.metadata,

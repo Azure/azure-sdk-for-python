@@ -20,9 +20,29 @@ from azure.ai.agentserver.core.durable import TaskConflictError
 
 from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
     DurableResponseOrchestrator,
-    _FW_PREFIX,
+    _RESPONSES_NS,
+    _RESP_BACKGROUND,
     _map_entry_mode,
 )
+
+
+# Mimics callable TaskMetadata for fixtures (see test_durable_orchestrator.py).
+class _FakeTaskMetadata(dict):
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        super().__init__(*args, **kwargs)
+        self._namespaces: dict[str, "_FakeTaskMetadata"] = {}
+
+    def __call__(self, name: str | None = None) -> "_FakeTaskMetadata":
+        if name is None:
+            return self
+        ns = self._namespaces.get(name)
+        if ns is None:
+            ns = _FakeTaskMetadata()
+            self._namespaces[name] = ns
+        return ns
+
+    async def flush(self) -> None:
+        return None
 
 
 class TestConflictHandling:
@@ -111,14 +131,15 @@ class TestNonBackgroundRecovery:
 
         ctx = MagicMock()
         ctx.entry_mode = "recovered"
-        ctx.run_attempt = 1
+        ctx.retry_attempt = 1
         ctx.was_steered = False
         ctx.pending_inputs = []
         ctx.cancel = asyncio.Event()
         ctx.task_id = "non-bg-task-1"
         ctx.suspend = AsyncMock()
-        # Mark as non-background in framework metadata
-        ctx.metadata = {f"{_FW_PREFIX}background": False}
+        # Mark as non-background in the responses framework namespace.
+        ctx.metadata = _FakeTaskMetadata()
+        ctx.metadata(_RESPONSES_NS)[_RESP_BACKGROUND] = False
         ctx.input = {
             "response_id": "resp_nonbg",
             "_record_ref": None,

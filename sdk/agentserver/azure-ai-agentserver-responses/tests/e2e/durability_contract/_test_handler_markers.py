@@ -35,7 +35,7 @@ def delta_content(lifetime: int, phase: str, index: int) -> str:
     Examples: ``L0_pre_d0``, ``L0_pre_d2``, ``L1_post_d0``.
 
     :param lifetime: ``0`` for fresh entry, ``1`` for any recovered /
-        resumed entry. Note this is NOT ``durability.run_attempt`` —
+        resumed entry. Note this is NOT ``durability.retry_attempt`` —
         that counter is per-process and resets on restart, so it
         doesn't distinguish lifetimes across crash + recovery. The
         conformance handler derives ``lifetime`` from
@@ -72,7 +72,7 @@ def final_text(
       recovered handler (``visited=[0, 1]`` means lifetime 1 saw
       lifetime 0's marker survive the crash).
 
-    :param lifetime: ``context.durability.run_attempt`` for the emitting handler.
+    :param lifetime: ``context.durability.retry_attempt`` for the emitting handler.
     :param pre_count: Number of pre-sleep deltas the handler emitted.
     :param post_count: Number of post-sleep deltas the handler emitted.
     :param chain_id: ``context.conversation_chain_id``.
