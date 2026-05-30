@@ -451,6 +451,9 @@ class SubStatusCodes:
     # 503: Service Unavailable due to region being out of capacity for bindable partitions
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
 
+    # 503: Client-side SDK-internal substatus codes (mirrors Java 210xx exhaustion family)
+    ROUTING_MAP_DRAIN_LIMIT_EXCEEDED = 21015
+
     # Client Side substatus codes
     THROUGHPUT_OFFER_NOT_FOUND = 10004
 

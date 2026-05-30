@@ -11,14 +11,18 @@ mock ``_ReadPartitionKeyRanges`` so a single ``_fetch_routing_map`` call
 emits multiple pages, each with its own ETag, and assert on:
 
   * ETag propagation across pages (per-page ``If-None-Match`` advances).
-  * ``304 Not Modified`` on the first fetch preserves the previous map.
+  * Real-wire ``304 Not Modified`` (empty page + unchanged ETag) on the first
+    fetch preserves the previous map.
   * Empty page terminates the drain cleanly.
   * ETag-didn't-advance-with-items terminates the drain and logs a warning.
   * Safety-bound exhaustion raises HTTP 503 and does NOT poison the cache.
   * Mid-drain non-304 errors propagate without poisoning the cache.
 """
 
+# pylint: disable=protected-access
+
 import logging
+import sys
 import unittest
 from unittest.mock import MagicMock
 
@@ -73,7 +77,15 @@ class _PageScript:
 
     Each entry is one of:
       * ``('page', ranges_list, etag_value)`` -- emit a page + ETag header.
-      * ``('raise_304',)`` -- raise ``CosmosHttpResponseError(304)``.
+        The wire status is inferred to match production: empty ``ranges_list``
+        is treated as the real-wire 304 Not Modified (empty body + unchanged
+        ETag header), non-empty as 200. Production never surfaces 304 as an
+        exception (see ``_synchronized_request.py`` -- only ``>= 400`` raises)
+        so this is the only shape the drain loop ever sees on the wire.
+      * ``('page', ranges_list, etag_value, status_code)`` -- same, but with
+        an explicit wire status. Use this to model server bugs (e.g. 304 with
+        a non-empty body, or 200 with an empty body) when exercising the
+        drain loop's defensive branches.
       * ``('raise', status_code, message)`` -- raise another HTTP error.
 
     The script records the ``If-None-Match`` header it saw on each call so
@@ -84,11 +96,15 @@ class _PageScript:
         self.script = list(script)
         self.calls = 0
         self.if_none_match_seen = []
+        self.a_im_seen = []
 
     def __call__(self, collection_link, options, response_hook=None, **kwargs):  # noqa: ARG002
         in_headers = kwargs.get("headers", {}) or {}
         self.if_none_match_seen.append(
             in_headers.get(http_constants.HttpHeaders.IfNoneMatch)
+        )
+        self.a_im_seen.append(
+            in_headers.get(http_constants.HttpHeaders.AIM)
         )
 
         if self.calls >= len(self.script):
@@ -101,16 +117,27 @@ class _PageScript:
         self.calls += 1
 
         kind = entry[0]
-        if kind == "raise_304":
-            raise CosmosHttpResponseError(status_code=304, message="Not Modified")
         if kind == "raise":
             _, status_code, message = entry
             raise CosmosHttpResponseError(status_code=status_code, message=message)
         if kind == "page":
-            _, ranges_list, etag_value = entry
+            if len(entry) == 4:
+                _, ranges_list, etag_value, status_code = entry
+            else:
+                _, ranges_list, etag_value = entry
+                # Mirror the real wire: empty page == 304 Not Modified,
+                # populated page == 200 OK.
+                status_code = (
+                    http_constants.StatusCodes.NOT_MODIFIED
+                    if not ranges_list
+                    else http_constants.StatusCodes.OK
+                )
             capture = kwargs.get("_internal_response_headers_capture")
             if capture is not None and etag_value is not None:
                 capture[http_constants.HttpHeaders.ETag] = etag_value
+            status_capture = kwargs.get("_internal_response_status_capture")
+            if status_capture is not None:
+                status_capture[0] = status_code
             return iter(ranges_list)
         raise AssertionError("Unknown _PageScript entry: {!r}".format(entry))
 
@@ -145,7 +172,8 @@ class TestPkRangeDrainSync(unittest.TestCase):
             ("page", page1, '"etag-1"'),
             ("page", page2, '"etag-2"'),
             ("page", page3, '"etag-3"'),
-            ("raise_304",),
+            # Real-wire 304 terminator: empty body + unchanged ETag header.
+            ("page", [], '"etag-3"'),
         ])
 
         cache = PartitionKeyRangeCache(client)
@@ -164,13 +192,34 @@ class TestPkRangeDrainSync(unittest.TestCase):
             script.if_none_match_seen,
             [None, '"etag-1"', '"etag-2"', '"etag-3"'],
         )
+        # Wire-protocol pin: every outgoing /pkranges call must carry the
+        # canonical capital-F ``A-IM: Incremental Feed`` literal. The gateway
+        # accepts case-insensitive variants per RFC 3229, but the canonical
+        # wire form is what every peer SDK ships -- a future cast change or
+        # constant rename that flipped the case would silently alter
+        # change-feed behavior server-side without this assertion.
+        self.assertEqual(
+            script.a_im_seen,
+            [http_constants.HttpHeaders.IncrementalFeedHeaderValue] * 4,
+        )
 
-    def test_first_fetch_304_preserves_previous_map(self):
-        """A 304 on the first drain call returns the previous map untouched."""
+    def test_real_wire_304_via_empty_page_preserves_previous_map(self):
+        """Production shape of a 304 first-fetch preserves the previous map.
+
+        Real-wire 304s never surface as exceptions in production -- the HTTP
+        client only raises for ``status >= 400`` (see
+        ``_synchronized_request.py:205``). The change-feed read pipeline
+        treats 304 as a success-path empty body + unchanged ETag header (see
+        ``change_feed_fetcher.py:155-194`` for the canonical pattern). That
+        empty page + matching ETag lands on the identity fast-path in
+        ``_routing_map_provider_common.py:476-477`` and returns the previous
+        map untouched.
+        """
         previous_map = _make_complete_routing_map(etag='"etag-prev"')
 
         client, script = _make_scripted_client([
-            ("raise_304",),
+            # Real-wire 304: empty body + unchanged ETag header.
+            ("page", [], '"etag-prev"'),
         ])
 
         cache = PartitionKeyRangeCache(client)
@@ -184,6 +233,35 @@ class TestPkRangeDrainSync(unittest.TestCase):
         self.assertIs(routing_map, previous_map)
         self.assertEqual(script.calls, 1)
         self.assertEqual(script.if_none_match_seen, ['"etag-prev"'])
+
+    @unittest.skipIf(
+        sys.version_info < (3, 10),
+        "assertNoLogs is only available on Python 3.10+",
+    )
+    def test_real_wire_304_does_not_emit_routing_map_warnings(self):
+        """Regression pin: real-wire 304 must not emit any WARNING from the
+        routing-map module. The defensive ``except status_code == 304`` branch
+        that previously existed left ``seen_any_etag=False`` and tripped the
+        'no ETag observed' warning. If anyone reintroduces that branch (or any
+        equivalent path that bypasses ``evaluate_drain_page``), this test
+        catches it before it lands.
+        """
+        previous_map = _make_complete_routing_map(etag='"etag-prev"')
+
+        client, _ = _make_scripted_client([
+            ("page", [], '"etag-prev"'),
+        ])
+
+        cache = PartitionKeyRangeCache(client)
+        with self.assertNoLogs(
+            "azure.cosmos._routing", level=logging.WARNING
+        ):
+            cache._fetch_routing_map(
+                collection_link="dbs/db1/colls/coll1",
+                collection_id="coll1",
+                previous_routing_map=previous_map,
+                feed_options={},
+            )
 
     def test_empty_page_terminates_drain(self):
         """An empty page (no ranges, no new etag) ends the drain cleanly."""
@@ -206,6 +284,107 @@ class TestPkRangeDrainSync(unittest.TestCase):
         self.assertEqual(routing_map.change_feed_etag, '"etag-1"')
         self.assertEqual(script.calls, 2)
 
+    def test_evaluate_drain_page_literal_304_terminates(self):
+        """Unit-pin the literal HTTP 304 termination predicate.
+
+        ``evaluate_drain_page`` is the pure-function termination oracle for
+        the drain loop. Peer SDKs (.NET/Java/Go) end the drain on a literal
+        ``304 Not Modified`` status. Pin that the predicate ends the drain
+        on status 304 even when the page payload is non-empty -- i.e.
+        status wins over content, matching peer SDKs literally.
+        """
+        from azure.cosmos._routing._routing_map_provider_common import (
+            evaluate_drain_page,
+            _DrainPageDecision,
+        )
+
+        decision, new_etag, _next_inm, _seen = evaluate_drain_page(
+            page_ranges=[_full_range("0", "", "FF")],  # non-empty body
+            page_new_etag='"etag-1"',
+            current_if_none_match='"etag-0"',
+            new_etag='"etag-0"',
+            seen_any_etag=True,
+            collection_link="dbs/db1/colls/coll1",
+            status_code=http_constants.StatusCodes.NOT_MODIFIED,
+        )
+
+        self.assertEqual(decision, _DrainPageDecision.STOP_DRAINED)
+        # New etag from the 304 response is still adopted.
+        self.assertEqual(new_etag, '"etag-1"')
+
+    def test_literal_304_on_first_page_terminates_without_ranges(self):
+        """Status 304 on the very first page short-circuits the drain.
+
+        Models the steady-state case where a refresh is triggered but the
+        routing map has not actually changed: gateway returns 304 on the
+        first request and we must terminate cleanly without trying to
+        build a routing map from zero ranges.
+        """
+        # Seed a previous map so the fetch path has something to preserve
+        # when the 304 short-circuits before any ranges arrive.
+        seed_page = _split_full_range_into(3)
+        client, _ = _make_scripted_client([
+            ("page", seed_page, '"etag-seed"'),
+            ("page", [], None),
+        ])
+        cache = PartitionKeyRangeCache(client)
+        previous_map = cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="coll1",
+            previous_routing_map=None,
+            feed_options={},
+        )
+
+        # Now a refresh that gets an immediate 304.
+        client, script = _make_scripted_client([
+            ("page", [], '"etag-seed"', 304),
+        ])
+        cache = PartitionKeyRangeCache(client)
+        routing_map = cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="coll1",
+            previous_routing_map=previous_map,
+            feed_options={},
+        )
+
+        # Previous map is preserved on a no-op refresh.
+        self.assertEqual(script.calls, 1)
+        self.assertIsNotNone(routing_map)
+
+    def test_empty_page_with_advanced_etag_terminates_and_bumps_etag(self):
+        """Empty page with advanced etag still terminates and persists the new etag.
+
+        The drain loop's termination decision combines two signals -- content
+        emptiness and etag advancement. ``test_empty_page_terminates_drain``
+        above pins the (a) "both signals say stop" path. This test pins the
+        adjacent corner case (b) "etag advanced but page is empty": the loop
+        must still terminate cleanly *and* persist the new etag for the next
+        drain. That contract isn't obvious from reading the loop alone, and
+        it's exactly the kind of predicate a future cleanup might accidentally
+        invert.
+        """
+        page1 = _split_full_range_into(2)
+
+        client, script = _make_scripted_client([
+            ("page", page1, '"etag-1"'),
+            ("page", [], '"etag-new"'),
+        ])
+
+        cache = PartitionKeyRangeCache(client)
+        routing_map = cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="coll1",
+            previous_routing_map=None,
+            feed_options={},
+        )
+
+        self.assertIsNotNone(routing_map)
+        # New etag is persisted even though the terminating page was empty.
+        self.assertEqual(routing_map.change_feed_etag, '"etag-new"')
+        self.assertEqual(script.calls, 2)
+        # Second request carried the prior etag as If-None-Match.
+        self.assertEqual(script.if_none_match_seen, [None, '"etag-1"'])
+
     def test_etag_did_not_advance_with_items_warns_and_terminates(self):
         """Server returning the same etag twice with non-empty page logs a
         warning and terminates the drain to avoid an infinite loop."""
@@ -221,7 +400,7 @@ class TestPkRangeDrainSync(unittest.TestCase):
         cache = PartitionKeyRangeCache(client)
 
         with self.assertLogs(
-            "azure.cosmos._routing.routing_map_provider", level="WARNING"
+            "azure.cosmos._routing", level="WARNING"
         ) as logs:
             routing_map = cache._fetch_routing_map(
                 collection_link="dbs/db1/colls/coll1",
@@ -252,7 +431,7 @@ class TestPkRangeDrainSync(unittest.TestCase):
         cache = PartitionKeyRangeCache(client)
 
         with self.assertLogs(
-            "azure.cosmos._routing.routing_map_provider", level="WARNING"
+            "azure.cosmos._routing", level="WARNING"
         ) as logs:
             with self.assertRaises(CosmosHttpResponseError) as ctx:
                 cache._fetch_routing_map(

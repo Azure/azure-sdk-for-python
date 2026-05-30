@@ -41,6 +41,10 @@ from ._routing_map_provider_common import (
     _OverlapDetected,
     _GapDetected,
     _handle_transient_snapshot_retry_decision,
+    _ROUTING_MAP_DRAIN_MAX_PAGES,
+    _DrainPageDecision,
+    evaluate_drain_page,
+    raise_drain_safety_bound_exceeded,
 )
 
 if TYPE_CHECKING:
@@ -300,7 +304,7 @@ class PartitionKeyRangeCache(object):
             return self._collection_routing_map_by_item.get(collection_id)
 
 
-    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-statements,too-many-locals
     def _fetch_routing_map(
             self,
             collection_link: str,
@@ -344,11 +348,6 @@ class PartitionKeyRangeCache(object):
         incomplete_attempt_count = 0
         inconsistency_attempt_count = 0
 
-        # Bounded safety stop for the change-feed drain. A page is currently
-        # service-capped at ~8K ranges, so 100 pages covers up to ~800K ranges,
-        # well beyond any realistic container size.
-        _drain_max_pages = 100
-
         while True:
             ranges: List[Dict[str, Any]] = []
             # Start the change-feed drain at the previous map's etag (if any).
@@ -367,10 +366,15 @@ class PartitionKeyRangeCache(object):
             # silently treating ``current_if_none_match`` as the fresh etag.
             seen_any_etag = False
 
-            for _drain_page in range(_drain_max_pages):
+            for _drain_page in range(_ROUTING_MAP_DRAIN_MAX_PAGES):
                 request_kwargs = dict(kwargs)
                 response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 request_kwargs['_internal_response_headers_capture'] = response_headers
+                # Sidecar list -- populated by _Request with the raw wire
+                # status. Lets us terminate on literal 304 (matching peer
+                # SDKs) instead of inferring it from an empty ItemPaged page.
+                status_capture: List[Optional[int]] = [None]
+                request_kwargs['_internal_response_status_capture'] = status_capture
 
                 # Prepare sanitised options and headers for the PK-range fetch.
                 change_feed_options = prepare_fetch_options_and_headers(
@@ -396,64 +400,42 @@ class PartitionKeyRangeCache(object):
                     )
                     page_ranges.extend(list(pk_range_generator))
                 except CosmosHttpResponseError as e:
-                    if getattr(e, 'status_code', None) == 304:
-                        drained_normally = True
-                        break
                     logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
                         "Failed to read partition key ranges for collection '%s': %s",
                         collection_link, e)
                     raise
 
-                page_new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
-                if page_new_etag:
-                    seen_any_etag = True
-
-                if not page_ranges:
-                    # Service returned an empty page -- nothing more to drain.
-                    if page_new_etag:
-                        new_etag = page_new_etag
-                    drained_normally = True
-                    break
-
                 ranges.extend(page_ranges)
 
-                if not page_new_etag or page_new_etag == current_if_none_match:
-                    if page_new_etag == current_if_none_match and page_ranges:
-                        # Etag didn't advance but the service still returned
-                        # ranges -- this is a change-feed protocol anomaly. We
-                        # terminate to avoid an infinite loop, but log loudly
-                        # so live-site triage can spot the server-side bug.
-                        logger.warning(
-                            "Routing-map change-feed drain: server returned %d ranges but "
-                            "ETag did not advance ('%s') for collection '%s'. "
-                            "Terminating drain to avoid infinite loop; routing map may be incomplete.",
-                            len(page_ranges), current_if_none_match, collection_link,
-                        )
+                decision, new_etag, current_if_none_match, seen_any_etag = evaluate_drain_page(
+                    page_ranges=page_ranges,
+                    page_new_etag=response_headers.get(http_constants.HttpHeaders.ETag),
+                    current_if_none_match=current_if_none_match,
+                    new_etag=new_etag,
+                    seen_any_etag=seen_any_etag,
+                    collection_link=collection_link,
+                    status_code=status_capture[0],
+                )
+                if decision == _DrainPageDecision.STOP_DRAINED:
                     drained_normally = True
                     break
-
-                current_if_none_match = page_new_etag
-                new_etag = page_new_etag
 
             if not drained_normally:
                 # Safety bound exhausted. Do NOT feed the partially-accumulated
                 # ranges into ``process_fetched_ranges`` -- they would form a
                 # structurally-valid-but-incomplete map and poison the cache.
-                # Surface 503 so the upstream retry policy can re-attempt.
-                logger.warning(
-                    "Routing-map change-feed drain hit safety bound of %d pages for "
-                    "collection '%s' (accumulated %d ranges). Surfacing 503 so the "
-                    "retry policy can re-attempt instead of caching an incomplete map.",
-                    _drain_max_pages, collection_link, len(ranges),
-                )
-                raise CosmosHttpResponseError(
-                    status_code=http_constants.StatusCodes.SERVICE_UNAVAILABLE,
-                    message=(
-                        "Partition key range refresh exceeded the %d-page drain safety bound "
-                        "for collection '%s'. The cache was left untouched to avoid serving an "
-                        "incomplete routing map." % (_drain_max_pages, collection_link)
-                    ),
-                )
+                # Raise 503 (sub_status=ROUTING_MAP_DRAIN_LIMIT_EXCEEDED for
+                # diagnostics) so the routing-map provider returns an actionable
+                # error rather than a partial map. Retry behavior is caller-
+                # dependent: query and change-feed paths are wrapped by
+                # _retry_utility.Execute, so _ServiceUnavailableRetryPolicy
+                # will retry across preferred regions before surfacing; direct
+                # callers (_read_items_helper, _session, circuit-breaker,
+                # container, change-feed-continuation) are not wrapped and the
+                # 503 surfaces immediately to the customer. The sub_status lets
+                # SREs distinguish this synthesized error from a real
+                # server-side 503 in either path.
+                raise_drain_safety_bound_exceeded(collection_link, len(ranges))
 
             try:
                 effective_new_etag = new_etag if seen_any_etag else None
