@@ -68,14 +68,20 @@ class TestDurableOrchestratorTaskCreation:
         )
         assert orch.task_fn._opts.ephemeral is False
 
-    def test_task_stores_input(self) -> None:
-        """Input is persisted for recovery."""
+    def test_task_input_is_not_stored_via_decorator_option(self) -> None:
+        """Per spec 015 FR-006: ``store_input`` option is removed from @task.
+
+        Storage is automatic. This test asserts the option is no longer
+        passed (or accepted) by the orchestrator's task descriptor.
+        """
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=MagicMock(steerable_conversations=False, max_pending=10),
         )
-        assert orch.task_fn._opts.store_input is True
+        # The TaskOptions dataclass no longer carries store_input — accessing
+        # the attribute should raise (or the orchestrator must not pass it).
+        assert not hasattr(orch.task_fn._opts, "store_input")
 
 
 class TestDurableOrchestratorExecuteInTask:
@@ -92,7 +98,7 @@ class TestDurableOrchestratorExecuteInTask:
 
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
-        ctx.run_attempt = 0
+        ctx.retry_attempt = 0
         ctx.was_steered = False
         ctx.pending_inputs = []
         ctx.metadata = {}
@@ -138,7 +144,7 @@ class TestDurableOrchestratorExecuteInTask:
         mock_context = MagicMock()
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
-        ctx.run_attempt = 1
+        ctx.retry_attempt = 1
         ctx.was_steered = False
         ctx.pending_inputs = ["a", "b"]
         ctx.metadata = {}
@@ -164,7 +170,7 @@ class TestDurableOrchestratorExecuteInTask:
         mock_context._durability = mock_context._durability  # was set
         dc = mock_context._durability
         assert dc.entry_mode == "fresh"
-        assert dc.run_attempt == 1
+        assert dc.retry_attempt == 1
         assert dc.pending_inputs == 2
 
     @pytest.mark.asyncio
@@ -178,7 +184,7 @@ class TestDurableOrchestratorExecuteInTask:
 
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
-        ctx.run_attempt = 0
+        ctx.retry_attempt = 0
         ctx.was_steered = False
         ctx.pending_inputs = []
         ctx.metadata = {}
@@ -214,7 +220,7 @@ class TestDurableOrchestratorExecuteInTask:
 
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
-        ctx.run_attempt = 0
+        ctx.retry_attempt = 0
         ctx.was_steered = False
         ctx.pending_inputs = []
         ctx.metadata = {}
@@ -254,7 +260,7 @@ class TestDurableOrchestratorCancellationBridge:
         cancel_signal = asyncio.Event()
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
-        ctx.run_attempt = 0
+        ctx.retry_attempt = 0
         ctx.was_steered = False
         ctx.pending_inputs = []
         ctx.metadata = {}

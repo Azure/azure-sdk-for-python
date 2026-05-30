@@ -17,7 +17,7 @@ class TestDurabilityContextShape:
     def test_entry_mode_fresh(self) -> None:
         ctx = DurabilityContext(
             entry_mode="fresh",
-            run_attempt=0,
+            retry_attempt=0,
             was_steered=False,
             pending_inputs=0,
             metadata={},
@@ -27,7 +27,7 @@ class TestDurabilityContextShape:
     def test_entry_mode_recovered(self) -> None:
         ctx = DurabilityContext(
             entry_mode="recovered",
-            run_attempt=1,
+            retry_attempt=1,
             was_steered=False,
             pending_inputs=0,
             metadata={},
@@ -39,7 +39,7 @@ class TestDurabilityContextShape:
         # This is a type-level constraint; at runtime we verify via construction
         ctx = DurabilityContext(
             entry_mode="fresh",
-            run_attempt=0,
+            retry_attempt=0,
             was_steered=False,
             pending_inputs=0,
             metadata={},
@@ -48,20 +48,20 @@ class TestDurabilityContextShape:
         valid_modes: set[Literal["fresh", "recovered"]] = {"fresh", "recovered"}
         assert ctx.entry_mode in valid_modes
 
-    def test_run_attempt_property(self) -> None:
+    def test_retry_attempt_property(self) -> None:
         ctx = DurabilityContext(
             entry_mode="recovered",
-            run_attempt=3,
+            retry_attempt=3,
             was_steered=False,
             pending_inputs=0,
             metadata={},
         )
-        assert ctx.run_attempt == 3
+        assert ctx.retry_attempt == 3
 
     def test_was_steered_property(self) -> None:
         ctx = DurabilityContext(
             entry_mode="fresh",
-            run_attempt=0,
+            retry_attempt=0,
             was_steered=True,
             pending_inputs=2,
             metadata={},
@@ -71,7 +71,7 @@ class TestDurabilityContextShape:
     def test_pending_inputs_is_int(self) -> None:
         ctx = DurabilityContext(
             entry_mode="fresh",
-            run_attempt=0,
+            retry_attempt=0,
             was_steered=True,
             pending_inputs=5,
             metadata={},
@@ -83,7 +83,7 @@ class TestDurabilityContextShape:
         metadata = {"step": 3, "cached": True}
         ctx = DurabilityContext(
             entry_mode="fresh",
-            run_attempt=0,
+            retry_attempt=0,
             was_steered=False,
             pending_inputs=0,
             metadata=metadata,
@@ -94,41 +94,58 @@ class TestDurabilityContextShape:
         ctx.metadata["new_key"] = "value"
         assert ctx.metadata["new_key"] == "value"
 
-    def test_metadata_hides_framework_keys(self) -> None:
-        """Developer-facing metadata must NOT expose _framework.* keys."""
-        raw_metadata = {
-            "user_key": "visible",
-            "_framework.last_sequence_number": 42,
-            "_framework.background": True,
-        }
+    def test_metadata_rejects_underscore_prefixed_keys(self) -> None:
+        """Per spec 015 FR-005: handler-facing metadata MUST reject any key
+        starting with ``_``. This protects developers from accidentally
+        colliding with framework-reserved namespaces (e.g. ``_responses``)
+        stored alongside their own data.
+        """
         ctx = DurabilityContext(
             entry_mode="fresh",
-            run_attempt=0,
-            was_steered=False,
-            pending_inputs=0,
-            metadata=raw_metadata,
-        )
-        # User keys visible
-        assert "user_key" in ctx.metadata
-        assert ctx.metadata["user_key"] == "visible"
-        # Framework keys hidden
-        assert "_framework.last_sequence_number" not in ctx.metadata
-        assert "_framework.background" not in ctx.metadata
-        # Iteration excludes framework keys
-        keys = list(ctx.metadata.keys())
-        assert all(not k.startswith("_framework.") for k in keys)
-
-    def test_metadata_write_does_not_pollute_framework_namespace(self) -> None:
-        """Writing _framework.* keys via metadata should be blocked or ignored."""
-        ctx = DurabilityContext(
-            entry_mode="fresh",
-            run_attempt=0,
+            retry_attempt=0,
             was_steered=False,
             pending_inputs=0,
             metadata={},
         )
-        with pytest.raises((KeyError, ValueError)):
-            ctx.metadata["_framework.hack"] = "bad"
+        with pytest.raises(ValueError):
+            ctx.metadata["_anything"] = "bad"
+        with pytest.raises(ValueError):
+            ctx.metadata["_responses"] = "still bad"
+
+    def test_metadata_is_callable_for_named_namespace(self) -> None:
+        """Per spec 015 FR-003: ``ctx.metadata(name)`` returns a sibling
+        namespace facade with isolated storage."""
+        ctx = DurabilityContext(
+            entry_mode="fresh",
+            retry_attempt=0,
+            was_steered=False,
+            pending_inputs=0,
+            metadata={},
+        )
+        scoped = ctx.metadata("user_workflow")
+        scoped["step"] = 1
+        # Isolated from default namespace
+        assert "step" not in ctx.metadata
+        # And readable back from the same name
+        assert ctx.metadata("user_workflow")["step"] == 1
+
+    def test_named_namespace_also_rejects_underscore_prefix(self) -> None:
+        """Handler-facing wrapper enforces the convention symmetrically:
+        ``ctx.metadata("_responses")`` must raise — handlers cannot reach
+        into framework-reserved namespaces via the wrapper. Framework
+        layers reach those namespaces via the underlying ``TaskContext``
+        directly (asymmetric enforcement)."""
+        ctx = DurabilityContext(
+            entry_mode="fresh",
+            retry_attempt=0,
+            was_steered=False,
+            pending_inputs=0,
+            metadata={},
+        )
+        with pytest.raises(ValueError):
+            ctx.metadata("_responses")
+        with pytest.raises(ValueError):
+            ctx.metadata("_anything")
 
     def test_last_snapshot_property_was_removed_per_spec_012(self) -> None:
         """Spec 012: `last_snapshot` is removed. Property should not exist.
@@ -140,7 +157,7 @@ class TestDurabilityContextShape:
         """
         ctx = DurabilityContext(
             entry_mode="recovered",
-            run_attempt=1,
+            retry_attempt=1,
             was_steered=False,
             pending_inputs=0,
             metadata={},
@@ -151,7 +168,7 @@ class TestDurabilityContextShape:
         """All properties except metadata should be read-only."""
         ctx = DurabilityContext(
             entry_mode="fresh",
-            run_attempt=0,
+            retry_attempt=0,
             was_steered=False,
             pending_inputs=0,
             metadata={},
@@ -159,7 +176,7 @@ class TestDurabilityContextShape:
         with pytest.raises(AttributeError):
             ctx.entry_mode = "recovered"  # type: ignore[misc]
         with pytest.raises(AttributeError):
-            ctx.run_attempt = 5  # type: ignore[misc]
+            ctx.retry_attempt = 5  # type: ignore[misc]
         with pytest.raises(AttributeError):
             ctx.was_steered = True  # type: ignore[misc]
         with pytest.raises(AttributeError):
