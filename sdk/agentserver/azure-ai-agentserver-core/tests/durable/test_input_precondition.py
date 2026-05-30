@@ -4,14 +4,14 @@
 
 Covers:
 - TypeError when `if_last_input_id` is supplied without `input_id`.
-- Fresh chain (input_id only) succeeds when no `_framework.last_input_id` stored.
+- Fresh chain (input_id only) succeeds when no `_last_input_id` stored.
 - Fresh chain (input_id only) rejected when chain already exists.
 - Precondition match succeeds and advances `last_input_id`.
 - Precondition mismatch raises `LastInputIdPreconditionFailed`.
 - Suspended-resume path enforces the same precondition.
 - Steering-append path enforces the same precondition.
 - Legacy callers (no input_id / no if_last_input_id) unaffected.
-- `_framework` slot lands atomically with input persist on fresh-create.
+- `_last_input_id` slot lands atomically with input persist on fresh-create.
 """
 
 from __future__ import annotations
@@ -126,7 +126,7 @@ async def test_fresh_chain_input_id_only_succeeds(tmp_path: Path) -> None:
         await run.result()
         info = await manager.provider.get("t-fresh-1")
         assert info is not None
-        assert info.payload["_framework"]["last_input_id"] == "msg-A"
+        assert info.payload["_last_input_id"] == "msg-A"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -145,7 +145,7 @@ async def test_precondition_match_advances_last_input_id_on_resume(tmp_path: Pat
         info = await manager.provider.get("t-precond-match")
         assert info is not None
         assert info.status == "suspended"
-        assert info.payload["_framework"]["last_input_id"] == "msg-1"
+        assert info.payload["_last_input_id"] == "msg-1"
 
         run2 = await _steerable_suspending.start(
             task_id="t-precond-match",
@@ -156,7 +156,7 @@ async def test_precondition_match_advances_last_input_id_on_resume(tmp_path: Pat
         await asyncio.sleep(0.2)
         info = await manager.provider.get("t-precond-match")
         assert info is not None
-        assert info.payload["_framework"]["last_input_id"] == "msg-2"
+        assert info.payload["_last_input_id"] == "msg-2"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -189,7 +189,7 @@ async def test_precondition_mismatch_raises_on_resume(tmp_path: Path) -> None:
         # State must be untouched.
         info = await manager.provider.get("t-precond-mismatch")
         assert info is not None
-        assert info.payload["_framework"]["last_input_id"] == "msg-1"
+        assert info.payload["_last_input_id"] == "msg-1"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -233,9 +233,8 @@ async def test_legacy_callers_unaffected(tmp_path: Path) -> None:
         await run.result()
         info = await manager.provider.get("t-legacy")
         assert info is not None
-        framework_ns = info.payload.get("_framework")
-        # Legacy path doesn't seed the namespace at all.
-        assert framework_ns is None or "last_input_id" not in framework_ns
+        # Legacy path doesn't seed the slot at all.
+        assert "_last_input_id" not in info.payload
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -264,7 +263,7 @@ async def test_precondition_match_on_steering_append(tmp_path: Path) -> None:
         await asyncio.sleep(0.3)
         info = await manager.provider.get("t-steer-precond")
         assert info is not None
-        assert info.payload["_framework"]["last_input_id"] == "msg-2"
+        assert info.payload["_last_input_id"] == "msg-2"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -295,30 +294,30 @@ async def test_precondition_mismatch_on_steering_append(tmp_path: Path) -> None:
         # Slot should still hold the original.
         info = await manager.provider.get("t-steer-mismatch")
         assert info is not None
-        assert info.payload["_framework"]["last_input_id"] == "msg-1"
+        assert info.payload["_last_input_id"] == "msg-1"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
 
 @pytest.mark.asyncio
 async def test_framework_namespace_isolated_from_user_payload(tmp_path: Path) -> None:
-    """User cannot write `_framework` via initial_payload_extras meddling."""
-    # We verify the namespace key lives in payload but not under user-controlled
+    """User cannot write `_last_input_id` via input meddling."""
+    # We verify the slot lives in payload but not under user-controlled
     # keys like `input` or `metadata`.
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
         await _fast_completing.start(
             task_id="t-ns-iso",
-            input={"_framework": {"last_input_id": "USER-INJECTED"}},
+            input={"_last_input_id": "USER-INJECTED"},
             input_id="msg-A",
         )
         info = await manager.provider.get("t-ns-iso")
         assert info is not None
         # The framework slot should reflect the framework-supplied id,
         # NOT the user-injected value (which lives under payload["input"]).
-        assert info.payload["_framework"]["last_input_id"] == "msg-A"
+        assert info.payload["_last_input_id"] == "msg-A"
         # And the user input is preserved as-is under `input`.
-        assert info.payload["input"] == {"_framework": {"last_input_id": "USER-INJECTED"}}
+        assert info.payload["input"] == {"_last_input_id": "USER-INJECTED"}
     finally:
         await _teardown_manager(manager, mgr_mod)
 

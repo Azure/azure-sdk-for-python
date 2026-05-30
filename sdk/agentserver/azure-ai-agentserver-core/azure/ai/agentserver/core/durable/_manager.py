@@ -15,7 +15,7 @@ import logging
 import traceback
 from collections.abc import Awaitable, Callable
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, Optional, TypeVar
 
 from .._config import AgentConfig
 from ._context import EntryMode, TaskContext
@@ -546,11 +546,12 @@ class TaskManager:
         :keyword stream_handler: Custom stream handler. If ``None``,
             a default :class:`QueueStreamHandler` is created.
         :paramtype stream_handler: StreamHandler | None
-        :keyword initial_payload_extras: (Spec 013 US2) Framework-namespace
-            seeds (e.g., ``{"_framework": {"last_input_id": "msg-1"}}``)
-            merged into the initial payload alongside ``input`` and
-            ``metadata``. Reserved keys ``input`` and ``metadata`` cannot be
-            overridden via this channel.
+        :keyword initial_payload_extras: (Spec 013 US2 / Spec 015 FR-004)
+            Framework-reserved top-level payload slots (e.g.,
+            ``{"_last_input_id": "msg-1"}``) merged into the initial
+            payload alongside ``input`` and ``metadata``. Reserved keys
+            ``input`` and ``metadata`` cannot be overridden via this
+            channel.
         :paramtype initial_payload_extras: dict[str, Any] | None
         :return: A ``TaskRun`` handle.
         :rtype: TaskRun
@@ -563,9 +564,9 @@ class TaskManager:
         payload: dict[str, Any] = {"input": _serialize_input(input_val)}
         payload["metadata"] = {}
 
-        # (Spec 013 US2) Framework-namespace seeds (e.g., `_framework.last_input_id`)
-        # supplied by `Task.start(input_id=...)`. Merged shallowly so callers
-        # cannot clobber `input` or `metadata`.
+        # (Spec 013 US2 / Spec 015 FR-004) Framework-reserved top-level slots
+        # (e.g., `_last_input_id`) supplied by `Task.start(input_id=...)`.
+        # Merged shallowly so callers cannot clobber `input` or `metadata`.
         if initial_payload_extras:
             for k, v in initial_payload_extras.items():
                 if k in ("input", "metadata"):
@@ -614,7 +615,6 @@ class TaskManager:
             handler = QueueStreamHandler()
         metadata = TaskMetadata(
             flush_callback=self._make_metadata_flush(task_id),
-            flush_interval=5.0,
         )
 
         lease_gen = task_info.lease.generation if task_info.lease else 0
@@ -702,8 +702,9 @@ class TaskManager:
         )
         self._active_tasks[task_id] = active
 
-        # Start metadata auto-flush
-        metadata.start_auto_flush()
+        # Spec 015 Phase 5 (FR-003): metadata is flushed explicitly at
+        # lifecycle boundaries via ``flush_all()``. There is no auto-
+        # flush loop.
 
         return TaskRun(
             task_id=task_id,
@@ -857,13 +858,14 @@ class TaskManager:
             handler = resolved_opts.stream_handler_factory(task_id)
         else:
             handler = QueueStreamHandler()
-        existing_metadata = (
-            task_info.payload.get("metadata", {}) if task_info.payload else {}
-        )
-        metadata = TaskMetadata(
-            initial=existing_metadata,
+        # Spec 015 Phase 5 (FR-003): restore ALL namespaces, not just default.
+        # ``from_payload`` decodes ``payload["metadata"]`` into the default
+        # namespace and every ``payload["metadata:<name>"]`` into its named
+        # sibling, all sharing the same flush_callback so the framework can
+        # flush_all() at lifecycle boundaries.
+        metadata = TaskMetadata.from_payload(
+            task_info.payload,
             flush_callback=self._make_metadata_flush(task_id),
-            flush_interval=5.0,
         )
 
         lease_gen = task_info.lease.generation if task_info.lease else 0
@@ -992,7 +994,6 @@ class TaskManager:
             retry=retry,
         )
         self._active_tasks[task_id] = active
-        metadata.start_auto_flush()
 
         return TaskRun(
             task_id=task_id,
@@ -1175,7 +1176,7 @@ class TaskManager:
 
                     # No pending steering — normal suspend flow
                     renewal_cancel.set()
-                    await ctx.metadata.stop_auto_flush()
+                    await ctx.metadata.flush_all()
                     await self._handle_suspend(
                         task_id=task_id,
                         reason=result.reason,
@@ -1223,7 +1224,7 @@ class TaskManager:
 
                     # Success flow
                     renewal_cancel.set()
-                    await ctx.metadata.stop_auto_flush()
+                    await ctx.metadata.flush_all()
                     completed = await self._handle_success(
                         task_id=task_id,
                         result=result,
@@ -1264,7 +1265,7 @@ class TaskManager:
 
             except asyncio.CancelledError:
                 renewal_cancel.set()
-                await ctx.metadata.stop_auto_flush()
+                await ctx.metadata.flush_all()
                 if resolved_terminate.is_set():
                     # Forced termination (timeout or explicit terminate())
                     from ._exceptions import (  # pylint: disable=import-outside-toplevel
@@ -1329,7 +1330,7 @@ class TaskManager:
 
                 # Exhausted or non-retryable — terminal failure
                 renewal_cancel.set()
-                await ctx.metadata.stop_auto_flush()
+                await ctx.metadata.flush_all()
 
                 if retry and attempt > 0:
                     # Retries were attempted but exhausted
@@ -1814,19 +1815,26 @@ class TaskManager:
 
     def _make_metadata_flush(
         self, task_id: str
-    ) -> Callable[[dict[str, Any]], Awaitable[None]]:
-        """Create a flush callback for metadata persistence.
+    ) -> Callable[[Optional[str], dict[str, Any]], Awaitable[None]]:
+        """Create a per-namespace flush callback for metadata persistence.
+
+        The callback persists each namespace into its dedicated payload
+        slot (Spec 015 FR-003 layout): ``payload["metadata"]`` for the
+        default namespace and ``payload["metadata:<name>"]`` for named
+        namespaces. Patches are shallow-merged by the provider so
+        flushing one namespace does NOT clobber another.
 
         :param task_id: The task identifier.
         :type task_id: str
-        :return: An async callback that flushes metadata.
-        :rtype: Callable[[dict[str, Any]], Awaitable[None]]
+        :return: An async callback that flushes one namespace.
+        :rtype: Callable[[Optional[str], dict[str, Any]], Awaitable[None]]
         """
 
-        async def _flush(data: dict[str, Any]) -> None:
+        async def _flush(namespace: Optional[str], data: dict[str, Any]) -> None:
+            slot = "metadata" if namespace is None else f"metadata:{namespace}"
             await self._provider.update(
                 task_id,
-                TaskPatchRequest(payload={"metadata": data}),
+                TaskPatchRequest(payload={slot: data}),
             )
 
         return _flush

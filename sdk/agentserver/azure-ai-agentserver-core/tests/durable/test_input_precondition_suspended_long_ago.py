@@ -3,7 +3,7 @@
 """Spec 013 US2 scenario 5: suspended-long-ago precondition contract.
 
 A task is suspended with all input slots cleared (US4 effect) but
-`_framework.last_input_id` persisted across the suspend. Resume with a
+`_last_input_id` persisted across the suspend. Resume with a
 matching predecessor succeeds; resume with a stale predecessor fails.
 
 This is the cross-phase composition test of US4 (input clearing) and US2
@@ -60,7 +60,7 @@ async def _teardown_manager(manager, mgr_mod):
 async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
     tmp_path: Path,
 ) -> None:
-    """After a long-suspend, `_framework.last_input_id` survives input clearing."""
+    """After a long-suspend, `_last_input_id` survives input clearing."""
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
         await _suspend_long_ago.start(
@@ -70,7 +70,7 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
         )
         await asyncio.sleep(0.2)
         # Verify task is suspended and input slots are cleared (US4),
-        # but _framework slot survives.
+        # but _last_input_id slot survives.
         info = await manager.provider.get("t-suspend-long")
         assert info is not None
         assert info.status == "suspended"
@@ -78,8 +78,8 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
         steering = info.payload.get("_steering", {})
         assert steering.get("active_input") is None
         assert steering.get("previous_input") is None
-        # _framework slot persists.
-        assert info.payload["_framework"]["last_input_id"] == "msg-1"
+        # _last_input_id slot persists.
+        assert info.payload["_last_input_id"] == "msg-1"
 
         # Resume with matching predecessor succeeds.
         await _suspend_long_ago.start(
@@ -91,7 +91,7 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
         await asyncio.sleep(0.2)
         info = await manager.provider.get("t-suspend-long")
         assert info is not None
-        assert info.payload["_framework"]["last_input_id"] == "msg-2"
+        assert info.payload["_last_input_id"] == "msg-2"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -124,6 +124,6 @@ async def test_suspended_long_ago_resume_with_stale_predecessor_fails(
         info = await manager.provider.get("t-suspend-long-stale")
         assert info is not None
         assert info.status == "suspended"
-        assert info.payload["_framework"]["last_input_id"] == "msg-1"
+        assert info.payload["_last_input_id"] == "msg-1"
     finally:
         await _teardown_manager(manager, mgr_mod)

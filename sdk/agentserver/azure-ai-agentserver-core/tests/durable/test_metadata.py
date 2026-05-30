@@ -77,24 +77,26 @@ class TestTaskMetadataFlush:
 
     @pytest.mark.asyncio
     async def test_flush_calls_callback(self) -> None:
-        """flush() calls the flush_callback with current data."""
-        captured: list[dict[str, Any]] = []
+        """flush() calls the flush_callback with (namespace, data)."""
+        captured: list[tuple[Any, dict[str, Any]]] = []
 
-        async def callback(data: dict[str, Any]) -> None:
-            captured.append(data)
+        async def callback(namespace: Any, data: dict[str, Any]) -> None:
+            captured.append((namespace, data))
 
         meta = TaskMetadata(flush_callback=callback)
         meta.set("key", "value")
         await meta.flush()
 
         assert len(captured) == 1
-        assert captured[0]["key"] == "value"
+        ns, data = captured[0]
+        assert ns is None  # default namespace
+        assert data["key"] == "value"
 
     @pytest.mark.asyncio
     async def test_flush_clears_dirty(self) -> None:
         """flush() clears the dirty flag after success."""
 
-        async def callback(data: dict[str, Any]) -> None:
+        async def callback(namespace: Any, data: dict[str, Any]) -> None:
             pass
 
         meta = TaskMetadata(flush_callback=callback)
@@ -108,7 +110,7 @@ class TestTaskMetadataFlush:
         """flush() is a no-op when metadata is not dirty."""
         call_count = 0
 
-        async def callback(data: dict[str, Any]) -> None:
+        async def callback(namespace: Any, data: dict[str, Any]) -> None:
             nonlocal call_count
             call_count += 1
 
@@ -123,22 +125,6 @@ class TestTaskMetadataFlush:
         meta.set("key", "value")
         # Should not raise
         await meta.flush()
-
-    @pytest.mark.asyncio
-    async def test_stop_auto_flush_final_flush(self) -> None:
-        """stop_auto_flush() does a final flush before stopping."""
-        captured: list[dict[str, Any]] = []
-
-        async def callback(data: dict[str, Any]) -> None:
-            captured.append(data)
-
-        meta = TaskMetadata(flush_callback=callback, flush_interval=100)
-        meta.start_auto_flush()
-        meta.set("key", "value")
-        await meta.stop_auto_flush()
-
-        assert len(captured) == 1
-        assert captured[0]["key"] == "value"
 
 
 class TestTaskMetadataDictProtocol:
@@ -235,16 +221,18 @@ class TestTaskMetadataDictProtocol:
     @pytest.mark.asyncio
     async def test_setitem_triggers_auto_flush(self) -> None:
         """[] assignment triggers flush via dirty-tracking."""
-        captured: list[dict[str, Any]] = []
+        captured: list[tuple[Any, dict[str, Any]]] = []
 
-        async def callback(data: dict[str, Any]) -> None:
-            captured.append(data)
+        async def callback(namespace: Any, data: dict[str, Any]) -> None:
+            captured.append((namespace, data))
 
         meta = TaskMetadata(flush_callback=callback)
         meta["key"] = "value"
         await meta.flush()
         assert len(captured) == 1
-        assert captured[0]["key"] == "value"
+        ns, data = captured[0]
+        assert ns is None
+        assert data["key"] == "value"
 
 
 # --------------------------------------------------------------------- #

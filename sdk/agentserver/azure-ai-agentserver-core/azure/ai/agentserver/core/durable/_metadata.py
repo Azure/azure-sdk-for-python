@@ -3,54 +3,161 @@
 # ---------------------------------------------------------
 """Mutable progress metadata for durable tasks.
 
-Provides a dict-like interface with typed mutation methods and
-debounced persistence to the task storage backend.
+Provides a dict-like interface with typed mutation methods plus a
+**named-namespace** facility:
+
+    ctx.metadata["key"] = "value"          # default namespace
+    ctx.metadata("custom")["k"] = 1        # named namespace facade
+    ctx.metadata("_responses")["seq"] = 5  # framework-layer convention
+
+Each namespace persists to a distinct payload slot:
+
+* ``payload["metadata"]``           — default namespace
+* ``payload["metadata:<name>"]``    — named namespaces
+
+There is **no auto-flush loop**. Flushes are explicit:
+
+* :meth:`TaskMetadata.flush` — flush THIS namespace only.
+* :meth:`TaskMetadata.flush_all` — flush every dirty namespace
+  (called by the framework at lifecycle boundaries: suspend,
+  complete, fail, steering drain).
+
+The CORE primitive does NOT enforce namespace-name conventions.
+Wrapper layers (e.g., responses) may reject ``_*`` names in their
+:class:`DurabilityContext` facade — that is wrapper-layer policy
+(Spec 015 FR-005).
 """
 
 from __future__ import annotations
 
-import asyncio  # pylint: disable=do-not-import-asyncio
 import collections.abc
 import logging
 from collections.abc import Iterator
-from typing import Any
+from typing import Any, Awaitable, Callable, Optional
 
 logger = logging.getLogger("azure.ai.agentserver.durable")
 
 # Sentinel to distinguish "not set" from None
 _NOT_SET = object()
 
+# Type alias for the per-namespace flush callback (Spec 015 FR-003).
+# The framework supplies a callback that knows how to persist data for
+# a given namespace into the underlying task payload.
+NamespaceFlushCallback = Callable[[Optional[str], dict[str, Any]], Awaitable[None]]
 
-class TaskMetadata:
+
+class TaskMetadata(collections.abc.MutableMapping):
     """Mutable progress dict persisted to the task record's payload.
 
-    Changes are batched and flushed on a configurable interval, or
-    immediately on explicit :meth:`flush`, suspension, or completion.
+    The default namespace exposes a ``MutableMapping`` interface
+    directly. Named namespaces are accessed via the **callable**
+    protocol — ``meta(name)`` returns a sibling namespace facade.
 
-    :param initial: Initial metadata values (from a recovered task).
+    :param initial: Initial values for the **default** namespace.
     :type initial: dict[str, Any] | None
-    :param flush_callback: Async callable that persists dirty metadata.
-    :type flush_callback: Callable[[dict[str, Any]], Awaitable[None]] | None
-    :param flush_interval: Seconds between automatic flushes (0 = disabled).
-    :type flush_interval: float
+    :param flush_callback: Async callable invoked by :meth:`flush` to
+        persist dirty data. Signature: ``(namespace, data)`` where
+        ``namespace`` is ``None`` for the default namespace and a
+        ``str`` for named namespaces.
+    :type flush_callback: NamespaceFlushCallback | None
     """
 
     def __init__(
         self,
         initial: dict[str, Any] | None = None,
         *,
-        flush_callback: Any = None,
-        flush_interval: float = 5.0,
+        flush_callback: NamespaceFlushCallback | None = None,
+        _namespace_name: Optional[str] = None,
+        _registry: dict[Optional[str], "TaskMetadata"] | None = None,
     ) -> None:
         self._data: dict[str, Any] = dict(initial) if initial else {}
         self._dirty = False
-        self._flush_callback = flush_callback
-        self._flush_interval = flush_interval
-        self._flush_task: asyncio.Task[None] | None = None
-        self._lock = asyncio.Lock()
+        self._flush_callback: NamespaceFlushCallback | None = flush_callback
+        self._namespace_name: Optional[str] = _namespace_name
+        # Registry of namespaces, keyed by namespace name. ``None`` is
+        # the default namespace. Child instances created via
+        # :meth:`__call__` share the SAME registry so namespace lookups
+        # are stable from any facade.
+        if _registry is None:
+            self._registry: dict[Optional[str], "TaskMetadata"] = {None: self}
+        else:
+            self._registry = _registry
+
+    # -- Namespace callable protocol (Spec 015 FR-003/FR-004) -------------- #
+
+    def __call__(self, name: Optional[str] = None) -> "TaskMetadata":
+        """Return a namespace facade.
+
+        ``meta()`` returns the default namespace; ``meta("custom")``
+        returns the named-namespace facade (auto-vivified). The
+        primitive does NOT enforce conventions on ``name`` — wrapper
+        layers may reject ``_*`` names (Spec 015 FR-005).
+
+        :param name: Namespace name. ``None`` returns the default
+            namespace; a string returns the named namespace.
+        :type name: str | None
+        :return: A namespace facade.
+        :rtype: TaskMetadata
+        """
+        if name is None:
+            return self._registry[None]
+        if name in self._registry:
+            return self._registry[name]
+        # Auto-vivify a new namespace; share the registry and inherit
+        # the parent's per-namespace flush callback.
+        child = TaskMetadata(
+            flush_callback=self._flush_callback,
+            _namespace_name=name,
+            _registry=self._registry,
+        )
+        self._registry[name] = child
+        return child
+
+    @classmethod
+    def from_payload(
+        cls,
+        payload: dict[str, Any] | None,
+        *,
+        flush_callback: NamespaceFlushCallback | None = None,
+    ) -> "TaskMetadata":
+        """Construct a fresh :class:`TaskMetadata` from a recovered payload.
+
+        Decodes the per-namespace persistence layout (Spec 015 FR-003):
+
+        * ``payload["metadata"]`` → default namespace.
+        * ``payload["metadata:<name>"]`` → named namespace ``<name>``.
+
+        :param payload: The task's payload dict (or ``None``).
+        :type payload: dict[str, Any] | None
+        :param flush_callback: Per-namespace flush callback to wire into
+            every restored namespace.
+        :type flush_callback: NamespaceFlushCallback | None
+        :return: A fully populated :class:`TaskMetadata` with all named
+            namespaces pre-vivified to their recovered state.
+        :rtype: TaskMetadata
+        """
+        payload = payload or {}
+        default_data = payload.get("metadata") or {}
+        if not isinstance(default_data, dict):
+            default_data = {}
+
+        root = cls(initial=default_data, flush_callback=flush_callback)
+        for key, value in payload.items():
+            if not isinstance(key, str) or not key.startswith("metadata:"):
+                continue
+            name = key[len("metadata:"):]
+            if not name or not isinstance(value, dict):
+                continue
+            # Auto-vivify and seed
+            ns = root(name)
+            ns._data = dict(value)
+            ns._dirty = False
+        return root
+
+    # -- Typed mutation methods (operate on THIS namespace) ---------------- #
 
     def set(self, key: str, value: Any) -> None:
-        """Set a key-value pair.
+        """Set a key-value pair in this namespace.
 
         :param key: Metadata key (must be a string).
         :type key: str
@@ -119,14 +226,14 @@ class TaskMetadata:
         self._mark_dirty()
 
     def to_dict(self) -> dict[str, Any]:
-        """Return a snapshot of all metadata.
+        """Return a snapshot of this namespace's data.
 
-        :return: A shallow copy of the metadata dict.
+        :return: A shallow copy of the namespace's dict.
         :rtype: dict[str, Any]
         """
         return dict(self._data)
 
-    # -- Dict protocol (MutableMapping) ------------------------------------
+    # -- Dict protocol (MutableMapping) ------------------------------------ #
 
     def __setitem__(self, key: str, value: Any) -> None:
         if not isinstance(key, str):
@@ -174,62 +281,38 @@ class TaskMetadata:
         """
         return self._data.items()
 
+    # -- Flush API (explicit; no auto-flush loop) -------------------------- #
+
     async def flush(self) -> None:
-        """Force-flush pending metadata changes to the store.
+        """Force-flush this namespace's pending changes to storage.
 
-        No-op if there are no pending changes or no flush callback.
+        No-op if there are no pending changes in THIS namespace or no
+        flush callback. Sibling namespaces are NOT touched.
         """
-        async with self._lock:
-            await self._do_flush()
+        await self._do_flush_one()
 
-    def start_auto_flush(self) -> None:
-        """Start the background auto-flush loop.
+    async def flush_all(self) -> None:
+        """Flush every dirty namespace (default + all named).
 
-        Called by the framework when the task starts executing. Should
-        not be called by user code.
+        Called by the framework at lifecycle boundaries (suspend,
+        complete, fail, steering drain) to guarantee all in-memory
+        mutations land in the task payload before the task transitions.
         """
-        if (
-            self._flush_interval > 0
-            and self._flush_callback is not None
-            and self._flush_task is None
-        ):
-            self._flush_task = asyncio.get_event_loop().create_task(
-                self._auto_flush_loop()
-            )
-
-    async def stop_auto_flush(self) -> None:
-        """Stop the auto-flush loop and perform a final flush."""
-        if self._flush_task is not None:
-            self._flush_task.cancel()
-            try:
-                await self._flush_task
-            except asyncio.CancelledError:
-                pass
-            self._flush_task = None
-        # Final flush
-        async with self._lock:
-            await self._do_flush()
+        for ns in list(self._registry.values()):
+            await ns._do_flush_one()
 
     def _mark_dirty(self) -> None:
         self._dirty = True
 
-    async def _do_flush(self) -> None:
+    async def _do_flush_one(self) -> None:
         if not self._dirty or self._flush_callback is None:
             return
         try:
-            await self._flush_callback(dict(self._data))
+            await self._flush_callback(self._namespace_name, dict(self._data))
             self._dirty = False
         except Exception:  # pylint: disable=broad-exception-caught
-            logger.warning("Failed to flush metadata", exc_info=True)
-
-    async def _auto_flush_loop(self) -> None:
-        """Periodically flush dirty metadata."""
-        while True:
-            await asyncio.sleep(self._flush_interval)
-            async with self._lock:
-                await self._do_flush()
-
-
-# Register as a virtual subclass so isinstance checks work
-# without inheriting (preserves custom increment/append/flush).
-collections.abc.MutableMapping.register(TaskMetadata)
+            logger.warning(
+                "Failed to flush metadata namespace %r",
+                self._namespace_name,
+                exc_info=True,
+            )

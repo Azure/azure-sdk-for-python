@@ -95,7 +95,7 @@ async def test_concurrent_resume_with_same_predecessor_one_wins(tmp_path: Path) 
         # Whichever id won is now persisted.
         info = await manager.provider.get("t-race")
         assert info is not None
-        winner = info.payload["_framework"]["last_input_id"]
+        winner = info.payload["_last_input_id"]
         assert winner in ("msg-2a", "msg-2b")
     finally:
         await _teardown_manager(manager, mgr_mod)

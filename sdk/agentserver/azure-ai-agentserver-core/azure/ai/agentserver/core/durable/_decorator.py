@@ -205,13 +205,15 @@ def _is_stale(task_updated_at: str, timeout: float) -> bool:
     return (now - updated).total_seconds() > timeout
 
 
-# Spec 013 US2 — framework-reserved payload namespace for the input-precondition
-# primitive. Storage layout: ``payload["_framework"]["last_input_id"]: str``.
+# Spec 015 Phase 5 (FR-004) — framework-reserved payload slot for the
+# input-precondition primitive. Storage layout: top-level
+# ``payload["_last_input_id"]: str`` (the ``_`` prefix is the framework-
+# reserved convention; flat layout replaces the prior nested
+# ``payload["_last_input_id"]`` namespace).
 # Callers do not read or write this slot directly — it is managed by the
 # framework on behalf of the ``input_id`` / ``if_last_input_id`` kwargs on
 # :meth:`Task.start`.
-_FRAMEWORK_NAMESPACE = "_framework"
-_LAST_INPUT_ID_KEY = "last_input_id"
+_LAST_INPUT_ID_PAYLOAD_KEY = "_last_input_id"
 
 # Spec 015 Phase 3 (FR-006) — these were previously developer-visible
 # @task kwargs (lease_duration_seconds, max_pending) but had no real
@@ -233,10 +235,7 @@ def _read_stored_last_input_id(task_info: Any) -> str | None:
     """
     if task_info is None or not task_info.payload:
         return None
-    framework = task_info.payload.get(_FRAMEWORK_NAMESPACE)
-    if not isinstance(framework, dict):
-        return None
-    value = framework.get(_LAST_INPUT_ID_KEY)
+    value = task_info.payload.get(_LAST_INPUT_ID_PAYLOAD_KEY)
     return value if isinstance(value, str) else None
 
 
@@ -300,7 +299,7 @@ def _check_input_precondition(
 
 
 def _build_framework_extras(input_id: str | None) -> dict[str, Any] | None:
-    """Build the ``payload["_framework"]`` initial seed dict, or ``None``.
+    """Build the top-level ``payload["_last_input_id"]`` seed dict, or ``None``.
 
     Used at fresh-create and at suspended-resume to advance the stored
     ``last_input_id`` atomically with the input persist.
@@ -308,13 +307,13 @@ def _build_framework_extras(input_id: str | None) -> dict[str, Any] | None:
     :param input_id: The new input's identity, or ``None`` for callers not
         opting in to chain semantics.
     :type input_id: str | None
-    :returns: ``{"_framework": {"last_input_id": input_id}}`` if ``input_id``
-        is set, else ``None``.
+    :returns: ``{"_last_input_id": input_id}`` if ``input_id`` is set,
+        else ``None``.
     :rtype: dict[str, Any] | None
     """
     if input_id is None:
         return None
-    return {_FRAMEWORK_NAMESPACE: {_LAST_INPUT_ID_KEY: input_id}}
+    return {_LAST_INPUT_ID_PAYLOAD_KEY: input_id}
 
 
 class TaskOptions:  # pylint: disable=too-many-instance-attributes
@@ -551,7 +550,7 @@ class Task(Generic[Input, Output]):
         :paramtype stream_handler: ~azure.ai.agentserver.core.durable.StreamHandler | None
         :keyword input_id: Optional identifier for the input being accepted. When
             supplied, the framework records it as the task's most-recently-accepted
-            input id in a framework-reserved slot (``payload["_framework"]["last_input_id"]``).
+            input id in a framework-reserved slot (``payload["_last_input_id"]``).
             Used together with ``if_last_input_id`` to implement HTTP If-Match-style
             optimistic concurrency on the input queue.
         :paramtype input_id: str | None
@@ -700,7 +699,7 @@ class Task(Generic[Input, Output]):
             first etag attempt; later attempts re-fetch internally).
         :paramtype existing: Any
         :keyword input_id: (Spec 013 US2) When set, the new input's identity.
-            Used to advance ``payload["_framework"]["last_input_id"]``
+            Used to advance ``payload["_last_input_id"]``
             atomically with the queue append.
         :paramtype input_id: str | None
         :keyword if_last_input_id: (Spec 013 US2) When set, the precondition
@@ -751,13 +750,12 @@ class Task(Generic[Input, Output]):
                 steering["generation"] = 0
             payload["_steering"] = steering
 
-            # (Spec 013 US2) When the caller opted in via input_id, advance
-            # the framework-managed last_input_id slot atomically with the
-            # queue append.
+            # (Spec 013 US2 / Spec 015 FR-004) When the caller opted in via
+            # input_id, advance the framework-managed last_input_id slot
+            # atomically with the queue append. The slot is a top-level
+            # `_`-prefixed payload key (Spec 015: flat layout).
             if input_id is not None:
-                framework = dict(payload.get(_FRAMEWORK_NAMESPACE, {}))
-                framework[_LAST_INPUT_ID_KEY] = input_id
-                payload[_FRAMEWORK_NAMESPACE] = framework
+                payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
 
             etag = getattr(task_info, "etag", None) or None
             try:
@@ -828,7 +826,7 @@ class Task(Generic[Input, Output]):
         :paramtype stream_handler: StreamHandler | None
         :keyword input_id: (Spec 013 US2) When set, the new input's identity
             recorded in the framework-reserved
-            ``payload["_framework"]["last_input_id"]`` slot.
+            ``payload["_last_input_id"]`` slot.
         :paramtype input_id: str | None
         :keyword if_last_input_id: (Spec 013 US2) Precondition value checked
             against the stored ``last_input_id`` before any accept path.
@@ -851,7 +849,7 @@ class Task(Generic[Input, Output]):
         # (Spec 013 US2) Pre-acceptance check: if the caller supplied an
         # ``if_last_input_id`` precondition, verify the stored last input id
         # matches before proceeding to any accept path. The actual advance
-        # (storing ``input_id`` into ``_framework.last_input_id``) is bundled
+        # (storing ``input_id`` into ``payload["_last_input_id"]``) is bundled
         # into the create/append/resume code paths below so it lands atomically
         # with the input persist.
         _check_input_precondition(
@@ -899,7 +897,7 @@ class Task(Generic[Input, Output]):
             # suspended-resume POSTs race safely instead of silently
             # overwriting each other.
             # (Spec 013 US2) On the same atomic patch, advance the
-            # framework's `_framework.last_input_id` slot when the caller
+            # framework's `payload["_last_input_id"]` slot when the caller
             # opted in via `input_id`. The precondition check already ran
             # at the top of `_lifecycle_start` against the read existing.
             serialized = _serialize_input(input)
@@ -912,17 +910,10 @@ class Task(Generic[Input, Output]):
             for _attempt in range(max_resume_retries):
                 etag = getattr(current_info, "etag", None) or None
                 # Build the resume patch: input + (optionally) advance the
-                # framework-managed last_input_id slot.
+                # framework-managed last_input_id slot (Spec 015 flat layout).
                 resume_payload: dict[str, Any] = {"input": serialized}
                 if input_id is not None:
-                    existing_framework = (
-                        current_info.payload.get(_FRAMEWORK_NAMESPACE)
-                        if current_info.payload
-                        else None
-                    ) or {}
-                    new_framework = dict(existing_framework)
-                    new_framework[_LAST_INPUT_ID_KEY] = input_id
-                    resume_payload[_FRAMEWORK_NAMESPACE] = new_framework
+                    resume_payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
                 try:
                     await manager.provider.update(
                         task_id,
