@@ -1,7 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for @task decorator and Task class."""
+"""Tests for @task decorator and Task class.
+
+Spec 015 Phase 3 (FR-006): the developer-facing `@task` decorator surface
+no longer accepts ``description``, ``store_input``, ``lease_duration_seconds``,
+or ``max_pending``. ``stream_handler_factory`` remains supported. ``TaskOptions``
+is no longer in the public ``__all__`` (it is an internal implementation
+detail; the ``_opts`` attribute is still observable for asserts).
+"""
 
 import asyncio
 
@@ -9,7 +16,6 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     Task,
-    TaskOptions,
     TaskContext,
     task,
 )
@@ -39,14 +45,12 @@ class TestTaskDecorator:
         assert my_task.name == "custom_name"
 
     def test_decorator_with_all_options(self) -> None:
-        """All decorator options are forwarded to TaskOptions."""
+        """All currently-supported decorator options are forwarded to TaskOptions."""
         from datetime import timedelta
 
         @task(
             name="full",
             ephemeral=False,
-            lease_duration_seconds=120,
-            store_input=True,
             title="My Title",
             tags={"env": "test"},
             timeout=timedelta(minutes=5),
@@ -56,8 +60,6 @@ class TestTaskDecorator:
 
         assert my_task.name == "full"
         assert my_task._opts.ephemeral is False
-        assert my_task._opts.lease_duration_seconds == 120
-        assert my_task._opts.store_input is True
         assert my_task._opts.title == "My Title"
         assert my_task._opts.tags == {"env": "test"}
         assert my_task._opts.timeout == timedelta(minutes=5)
@@ -75,9 +77,39 @@ class TestTaskDecorator:
         with pytest.raises((TypeError, AttributeError)):
             task(42)  # type: ignore[arg-type]
 
+    def test_stream_handler_factory_still_accepted(self) -> None:
+        """FR-006: ``stream_handler_factory=`` remains a supported @task kwarg."""
+        from azure.ai.agentserver.core.durable import QueueStreamHandler
 
-class TestTaskOptions:
-    """Tests for TaskOptions merge via .options()."""
+        @task(stream_handler_factory=lambda task_id: QueueStreamHandler())
+        async def my_task(ctx: TaskContext[str]) -> int:
+            return 1
+
+        assert my_task._opts.stream_handler_factory is not None
+
+    @pytest.mark.parametrize(
+        "kwarg",
+        [
+            "description",
+            "store_input",
+            "lease_duration_seconds",
+            "max_pending",
+        ],
+    )
+    def test_task_decorator_rejects_retired_args(self, kwarg: str) -> None:
+        """FR-006: ``@task`` rejects the four retired decorator options.
+
+        These were removed in Spec 015 Phase 3 because zero developer code
+        relied on them; their behavior is now fixed at internal defaults
+        (lease=60s, max_pending=10, input is always persisted, description
+        is no longer modeled on the public surface).
+        """
+        with pytest.raises(TypeError):
+            task(**{kwarg: 1})  # type: ignore[arg-type]
+
+
+class TestTaskOptionsMerge:
+    """Tests for option merge via ``Task.options()``."""
 
     def test_options_returns_new_instance(self) -> None:
         """options() returns a new Task, original unchanged."""
@@ -120,8 +152,6 @@ class TestTaskOptions:
 
         opts = my_task._opts
         assert opts.ephemeral is True
-        assert opts.lease_duration_seconds == 60
-        assert opts.store_input is True  # default is True
         assert opts.tags == {}
         assert opts.timeout is None
 

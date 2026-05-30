@@ -277,7 +277,7 @@ class TestSteering:
 
     @pytest.mark.asyncio
     async def test_steered_context_fields(self, tmp_path):
-        """Steered generation has was_steered=True, previous_input set."""
+        """Steered generation has was_steered=True; steering_generation incremented."""
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             contexts: list[dict[str, Any]] = []
@@ -288,8 +288,7 @@ class TestSteering:
                     {
                         "entry_mode": ctx.entry_mode,
                         "was_steered": ctx.was_steered,
-                        "previous_input": ctx.previous_input,
-                        "generation": ctx.generation,
+                        "steering_generation": ctx.steering_generation,
                         "msg": ctx.input.get("msg", "?"),
                     }
                 )
@@ -312,7 +311,7 @@ class TestSteering:
             # First entry: fresh, not steered
             assert contexts[0]["entry_mode"] == "fresh"
             assert contexts[0]["was_steered"] is False
-            assert contexts[0]["generation"] == 0
+            assert contexts[0]["steering_generation"] == 0
 
             # Second entry: steered (entry_mode="resumed" with was_steered=True)
             steered = [c for c in contexts if c["was_steered"] is True]
@@ -553,7 +552,6 @@ class TestSteeringRecovery:
                     "_steering": {
                         "generation": 1,
                         "active_input": {"msg": "B"},
-                        "previous_input": {"msg": "A"},
                         "pending_inputs": [],
                         "cancel_requested": False,
                         "drain_in_progress": True,
@@ -677,3 +675,37 @@ class TestSteeringRecovery:
 
         await manager2.shutdown()
         mgr_mod._manager = None
+
+
+class TestContextFieldsSpec015:
+    """Spec 015 Phase 3 surface contract for steering-related TaskContext fields."""
+
+    def test_task_context_previous_input_removed(self) -> None:
+        """FR-006: ``ctx.previous_input`` is removed from TaskContext.
+
+        The field, the storage population, and the steering-payload mirror
+        are all retired. Developers needing the prior input snapshot must
+        capture it in ``ctx.metadata`` themselves.
+        """
+        from azure.ai.agentserver.core.durable._context import TaskContext
+
+        assert "previous_input" not in TaskContext.__slots__, (
+            "previous_input must not be a TaskContext slot after Spec 015 "
+            "Phase 3 (FR-006)."
+        )
+
+    def test_task_context_steering_generation_field_present(self) -> None:
+        """FR-007: ``ctx.generation`` is renamed to ``ctx.steering_generation``.
+
+        The new name is permanent (no deprecation alias). The old name must
+        raise AttributeError when read.
+        """
+        from azure.ai.agentserver.core.durable._context import TaskContext
+
+        assert "steering_generation" in TaskContext.__slots__, (
+            "steering_generation must be a TaskContext slot after Spec 015 "
+            "Phase 3 (FR-007 rename)."
+        )
+        assert "generation" not in TaskContext.__slots__, (
+            "Old field name 'generation' must be removed (no deprecation alias)."
+        )

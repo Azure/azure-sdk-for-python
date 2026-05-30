@@ -1,7 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for data models and exceptions."""
+"""Tests for data models and exceptions.
+
+Spec 015 Phase 3 (FR-006): ``TaskSuspended`` is deleted entirely — the
+suspension lifecycle does not raise into developer code; ``Suspended`` is
+the return-shape sentinel from ``ctx.suspend()`` and ``TaskRun.is_suspended``
+is the inspection surface.
+"""
 
 import pytest
 
@@ -14,7 +20,6 @@ from azure.ai.agentserver.core.durable._exceptions import (
     TaskCancelled,
     TaskFailed,
     TaskNotFound,
-    TaskSuspended,
 )
 
 
@@ -89,12 +94,6 @@ class TestExceptions:
         assert "boom" in str(exc)
         assert exc.error["type"] == "ValueError"
 
-    def test_task_suspended_reason(self) -> None:
-        """TaskSuspended stores task_id and reason."""
-        exc = TaskSuspended("task-2", reason="waiting for approval")
-        assert exc.task_id == "task-2"
-        assert "waiting for approval" in str(exc)
-
     def test_task_cancelled(self) -> None:
         """TaskCancelled stores task_id."""
         exc = TaskCancelled("task-3")
@@ -110,6 +109,15 @@ class TestExceptions:
     def test_exception_hierarchy(self) -> None:
         """All exceptions inherit from Exception."""
         assert issubclass(TaskFailed, Exception)
-        assert issubclass(TaskSuspended, Exception)
         assert issubclass(TaskCancelled, Exception)
         assert issubclass(TaskNotFound, Exception)
+
+    def test_task_suspended_class_deleted(self) -> None:
+        """FR-006: ``TaskSuspended`` is removed entirely from the exceptions module."""
+        from azure.ai.agentserver.core.durable import _exceptions
+
+        assert not hasattr(_exceptions, "TaskSuspended"), (
+            "TaskSuspended was deleted in Spec 015 Phase 3 — suspension is a "
+            "return-shape sentinel, not an exception. Use Suspended or "
+            "TaskRun.is_suspended instead."
+        )

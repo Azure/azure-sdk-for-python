@@ -179,3 +179,37 @@ class TestEntryMode:
             assert result.output == "processed: data"
         finally:
             await self._teardown_manager(manager, mgr_mod)
+
+
+class TestContextFieldsSpec015:
+    """Spec 015 Phase 3 (FR-007) surface contract for renamed TaskContext fields."""
+
+    def test_task_context_retry_attempt_field_present(self) -> None:
+        """FR-007: ``ctx.run_attempt`` is renamed to ``ctx.retry_attempt``.
+
+        Permanent rename — no deprecation alias.
+        """
+        from azure.ai.agentserver.core.durable._context import TaskContext
+
+        assert "retry_attempt" in TaskContext.__slots__, (
+            "retry_attempt must be a TaskContext slot after Spec 015 "
+            "Phase 3 (FR-007 rename)."
+        )
+        assert "run_attempt" not in TaskContext.__slots__, (
+            "Old field name 'run_attempt' must be removed (no deprecation alias)."
+        )
+
+    def test_task_context_recovery_count_field_present(self) -> None:
+        """FR-007: ``ctx.lease_generation`` is renamed to ``ctx.recovery_count``.
+
+        Permanent rename — no deprecation alias.
+        """
+        from azure.ai.agentserver.core.durable._context import TaskContext
+
+        assert "recovery_count" in TaskContext.__slots__, (
+            "recovery_count must be a TaskContext slot after Spec 015 "
+            "Phase 3 (FR-007 rename)."
+        )
+        assert "lease_generation" not in TaskContext.__slots__, (
+            "Old field name 'lease_generation' must be removed (no deprecation alias)."
+        )
