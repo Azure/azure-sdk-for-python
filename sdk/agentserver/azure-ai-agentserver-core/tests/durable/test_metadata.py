@@ -245,3 +245,281 @@ class TestTaskMetadataDictProtocol:
         await meta.flush()
         assert len(captured) == 1
         assert captured[0]["key"] == "value"
+
+
+# --------------------------------------------------------------------- #
+# Spec 015 Phase 5 — Named-namespace metadata (FR-003, FR-004, FR-005)
+# --------------------------------------------------------------------- #
+# Contract clauses pinned by tests/durable/test_contract_completeness.py:
+#   - test_default_namespace_callable_and_dict       (FR-004)
+#   - test_named_namespace_isolation                 (FR-003)
+#   - test_flush_per_namespace_only                  (FR-003)
+#   - test_underscore_namespace_not_enforced_by_primitive  (FR-005)
+#
+# Plus the spec-driven supplementary tests for the named-namespace
+# facility (T035): auto-vivification, independent dirty tracking,
+# lifecycle boundary snapshots, no cross-namespace pollution, source-
+# scan for autoflush removal, default-namespace has no framework keys.
+# --------------------------------------------------------------------- #
+
+
+class TestTaskMetadataNamedNamespaces:
+    """Phase 5 (FR-003/004/005) — `ctx.metadata(name)` namespaces.
+
+    A bare ``ctx.metadata`` is the default namespace (dict-protocol).
+    Calling it like a function — ``ctx.metadata("name")`` — returns a
+    sibling namespace facade with its own data and dirty tracking. Each
+    namespace persists independently to ``payload["metadata"]`` (default)
+    or ``payload["metadata:<name>"]`` (named).
+    """
+
+    def test_default_namespace_callable_and_dict(self) -> None:
+        """`ctx.metadata` supports BOTH dict-protocol AND being called.
+
+        The default namespace exposes the MutableMapping protocol
+        directly (``meta["k"] = v``). It is ALSO callable: ``meta()``
+        with no arg returns the default namespace (self), and
+        ``meta("name")`` returns a named-namespace facade.
+        """
+        meta = TaskMetadata()
+
+        meta["k"] = 1
+        assert meta["k"] == 1
+
+        default_via_call = meta()
+        assert default_via_call["k"] == 1
+        assert default_via_call is meta or dict(default_via_call) == dict(meta)
+
+        named = meta("custom")
+        assert isinstance(named, TaskMetadata)
+        assert "k" not in named
+
+    def test_named_namespace_isolation(self) -> None:
+        """Setting in one namespace does NOT leak into siblings or default."""
+        meta = TaskMetadata()
+        meta["default_key"] = "D"
+        meta("a")["x"] = 1
+        meta("b")["y"] = 2
+
+        assert meta["default_key"] == "D"
+        assert "default_key" not in meta("a")
+        assert "default_key" not in meta("b")
+        assert "x" not in meta
+        assert "x" not in meta("b")
+        assert "y" not in meta
+        assert "y" not in meta("a")
+        assert meta("a")["x"] == 1
+        assert meta("b")["y"] == 2
+
+    def test_named_namespace_auto_vivifies(self) -> None:
+        """First reference to a named namespace creates an empty facade."""
+        meta = TaskMetadata()
+        fresh = meta("never_seen_before")
+        assert isinstance(fresh, TaskMetadata)
+        assert len(fresh) == 0
+
+    def test_namespaces_have_independent_dirty_tracking(self) -> None:
+        """Marking one namespace dirty leaves siblings clean."""
+        meta = TaskMetadata()
+        a = meta("a")
+        b = meta("b")
+        assert not a._dirty
+        assert not b._dirty
+        assert not meta._dirty
+
+        a["touched"] = 1
+        assert a._dirty
+        assert not b._dirty
+        assert not meta._dirty
+
+    @pytest.mark.asyncio
+    async def test_flush_per_namespace_only(self) -> None:
+        """`meta("a").flush()` flushes ONLY namespace a, not default nor b.
+
+        The flush_callback wired up by the framework is per-namespace; a
+        named-namespace flush MUST NOT write to ``payload["metadata"]``
+        or to any other namespace's storage slot.
+        """
+        captured: list[tuple[str | None, dict[str, Any]]] = []
+
+        async def callback(namespace: str | None, data: dict[str, Any]) -> None:
+            captured.append((namespace, dict(data)))
+
+        meta = TaskMetadata(flush_callback=callback)
+        meta["default"] = "D"
+        meta("a")["x"] = 1
+        meta("b")["y"] = 2
+
+        # Flush only "a"
+        await meta("a").flush()
+        assert len(captured) == 1
+        assert captured[0] == ("a", {"x": 1})
+
+        # Default and b are still dirty
+        assert meta._dirty
+        assert meta("b")._dirty
+        assert not meta("a")._dirty
+
+    @pytest.mark.asyncio
+    async def test_lifecycle_boundary_snapshots_all_touched_namespaces(self) -> None:
+        """A `flush_all()` (lifecycle boundary) MUST flush every dirty namespace."""
+        captured: list[tuple[str | None, dict[str, Any]]] = []
+
+        async def callback(namespace: str | None, data: dict[str, Any]) -> None:
+            captured.append((namespace, dict(data)))
+
+        meta = TaskMetadata(flush_callback=callback)
+        meta["d"] = 0
+        meta("a")["x"] = 1
+        meta("b")["y"] = 2
+        # c is auto-vivified but never written -> not dirty -> should NOT flush
+        _ = meta("c")
+
+        await meta.flush_all()
+
+        seen = {ns for ns, _ in captured}
+        assert None in seen, "default namespace must be flushed"
+        assert "a" in seen
+        assert "b" in seen
+        assert "c" not in seen, "clean namespaces must not be flushed"
+
+    def test_no_cross_namespace_pollution_after_delete(self) -> None:
+        """Deleting a key in one namespace does not affect siblings."""
+        meta = TaskMetadata()
+        meta("a")["shared_name"] = "from_a"
+        meta("b")["shared_name"] = "from_b"
+
+        del meta("a")["shared_name"]
+
+        assert "shared_name" not in meta("a")
+        assert meta("b")["shared_name"] == "from_b"
+
+    def test_underscore_namespace_not_enforced_by_primitive(self) -> None:
+        """The CORE primitive accepts `_*` namespace names without raising.
+
+        Per FR-005, ``_`` prefix is a convention for framework layers
+        (e.g., responses-layer ``_responses``). Enforcement (raising
+        ``ValueError`` on ``_*`` names) is wrapper-only — primitive
+        consumers (invocations sample developers) must be able to use
+        any name they like without the core layer rejecting it.
+        """
+        meta = TaskMetadata()
+        # Must NOT raise
+        ns_underscore = meta("_responses")
+        ns_double = meta("__internal__")
+        ns_normal = meta("regular")
+
+        ns_underscore["a"] = 1
+        ns_double["b"] = 2
+        ns_normal["c"] = 3
+
+        assert ns_underscore["a"] == 1
+        assert ns_double["b"] == 2
+        assert ns_normal["c"] == 3
+
+    def test_metadata_module_has_no_autoflush_symbols(self) -> None:
+        """Source-scan: ``start_auto_flush`` / ``stop_auto_flush`` etc. are gone.
+
+        Spec 015 FR-003 retires the auto-flush loop entirely; flushes
+        are explicit (per-write debounce + lifecycle boundary). Source
+        text must not mention the old API names.
+        """
+        from pathlib import Path
+
+        from azure.ai.agentserver.core.durable import _metadata as _meta_mod
+
+        source = Path(_meta_mod.__file__).read_text(encoding="utf-8")
+        forbidden = (
+            "start_auto_flush",
+            "stop_auto_flush",
+            "_auto_flush_loop",
+            "_flush_task",
+            "_flush_interval",
+        )
+        offenders = [name for name in forbidden if name in source]
+        assert not offenders, (
+            f"_metadata.py must not mention retired auto-flush symbols: "
+            f"{offenders}"
+        )
+
+    def test_default_namespace_has_no_framework_keys(self) -> None:
+        """Default namespace must not carry `_framework`-style keys.
+
+        Spec 015 FR-004: framework-internal scopes live in NAMED
+        namespaces (e.g., ``meta("_responses")``) or top-level payload
+        slots (``payload["_last_input_id"]``). The default namespace
+        is owned by the application/handler — there should never be a
+        ``_framework`` (or similar) leaking into ``meta.keys()``.
+        """
+        meta = TaskMetadata()
+        # Default is empty on fresh construction
+        assert list(meta.keys()) == []
+        # After framework use of a NAMED namespace, default still empty
+        meta("_responses")["resp_id"] = "abc"
+        meta("a")["x"] = 1
+        forbidden_in_default = [
+            k for k in meta.keys() if k.startswith("_framework")
+        ]
+        assert forbidden_in_default == []
+
+
+class TestTaskMetadataRecoveryDurability:
+    """Phase 5 T036 — named-namespace persistence survives crash/recovery.
+
+    Real-crash variant requires a ``_crash_harness`` subprocess fixture
+    (Phase 0 Q3 design). In its absence (it is a Phase 8 deliverable),
+    this test simulates the same guarantee in-process by manually
+    persisting per-namespace slots and replaying the recovery decode
+    path, which exercises the same payload contract.
+    """
+
+    @pytest.mark.asyncio
+    async def test_named_namespace_survives_recovery_with_independent_state(
+        self,
+    ) -> None:
+        """Each `payload["metadata:<name>"]` is restored to its own facade.
+
+        Simulates a crash by:
+        1. Producing the post-flush payload shape (per FR-003 layout).
+        2. Constructing a fresh TaskMetadata from that "recovered" data.
+        3. Asserting each namespace's data is intact AND siblings remain
+           isolated (no cross-namespace bleed during decode).
+        """
+        # Step 1: write into multiple namespaces and capture per-namespace
+        # flushes (simulates the manager's per-namespace persist).
+        persisted: dict[str | None, dict[str, Any]] = {}
+
+        async def callback(namespace: str | None, data: dict[str, Any]) -> None:
+            persisted[namespace] = dict(data)
+
+        live = TaskMetadata(flush_callback=callback)
+        live["d_key"] = "default-data"
+        live("a")["x"] = 1
+        live("a")["counter"] = 42
+        live("b")["nested"] = {"k": "v"}
+
+        await live.flush_all()
+
+        # Mimic the payload that the manager would write — default goes
+        # into payload["metadata"], named goes into payload["metadata:<name>"].
+        payload: dict[str, Any] = {"metadata": persisted[None]}
+        for ns_name, data in persisted.items():
+            if ns_name is None:
+                continue
+            payload[f"metadata:{ns_name}"] = data
+
+        # Step 2: simulate "fresh process after crash" — decode payload.
+        # The decode helper lives on TaskMetadata so the manager and
+        # tests share one definition.
+        restored = TaskMetadata.from_payload(payload, flush_callback=callback)
+
+        # Step 3: verify per-namespace integrity + isolation
+        assert restored["d_key"] == "default-data"
+        assert restored("a")["x"] == 1
+        assert restored("a")["counter"] == 42
+        assert restored("b")["nested"] == {"k": "v"}
+
+        # Isolation preserved through recovery
+        assert "x" not in restored
+        assert "x" not in restored("b")
+        assert "nested" not in restored("a")
