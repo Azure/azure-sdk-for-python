@@ -41,7 +41,7 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver.core.durable import TaskConflictError
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import invocation_store, session_workflow
+from .agent import session_workflow
 
 app = InvocationAgentServerHost()
 
@@ -84,16 +84,32 @@ async def handle_invoke(request: Request) -> Response:
 async def poll_invocation(request: Request) -> Response:
     """Poll a specific invocation's result.
 
-    Reads from the file-based invocation store — works after restarts.
-    Returns the output of **this invocation only** — not the whole session.
+    Reads the per-invocation result out of ``ctx.metadata`` for the
+    current session-level durable task — it was written by the durable
+    handler itself inside the execution boundary, so it survives
+    crashes.
     """
     invocation_id: str = request.state.invocation_id
+    session_id: str = request.state.session_id
+    task_id = f"session-{session_id}"
 
-    result = invocation_store.load(invocation_id)
-    if result is None:
+    info = await session_workflow.get(task_id)  # type: ignore[attr-defined]
+    if info is None:
         return JSONResponse({"error": "Invocation not found"}, status_code=404)
 
-    return JSONResponse({"invocation_id": invocation_id, **result})
+    payload = info.payload or {}
+    if payload.get("invocation_id") != invocation_id:
+        return JSONResponse(
+            {"error": "Invocation not found for this session"}, status_code=404
+        )
+
+    return JSONResponse(
+        {
+            "invocation_id": invocation_id,
+            "status": payload.get("status", info.status),
+            "output": payload.get("output"),
+        }
+    )
 
 
 if __name__ == "__main__":
