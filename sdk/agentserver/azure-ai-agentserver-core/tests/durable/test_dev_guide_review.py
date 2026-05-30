@@ -176,21 +176,43 @@ _REMOVED_NAMES: tuple[str, ...] = (
 )
 
 
-def test_removed_names_absent_from_guide() -> None:
-    """FR-024 (2): no retired names appear in the guide."""
+def _strip_rename_map(guide: str) -> str:
+    """Return the guide text with the rename-map appendix removed.
 
-    guide = _load_guide_text()
+    FR-007 explicitly requires a rename map appendix that mentions the
+    old names. That appendix is the *only* place those names are
+    allowed to appear, so we exclude it before scanning for retired-name
+    occurrences. Match is heuristic: any H2 whose title contains
+    "rename map" (case-insensitive) starts the excluded region;
+    excluded region runs to end-of-document (the appendix is expected
+    to be the final section).
+    """
+
+    import re as _re
+
+    m = _re.search(r"^##\s+.*rename map.*$", guide, flags=_re.IGNORECASE | _re.MULTILINE)
+    if m is None:
+        return guide
+    return guide[: m.start()]
+
+
+def test_removed_names_absent_from_guide() -> None:
+    """FR-024 (2): no retired names appear in the guide outside the rename map."""
+
+    guide = _strip_rename_map(_load_guide_text())
     offenders: list[tuple[str, int]] = []
     for name in _REMOVED_NAMES:
         # Use literal substring search — these strings should never appear,
-        # regardless of context (prose, code fence, comment).
+        # regardless of context (prose, code fence, comment), outside the
+        # FR-007 rename-map appendix.
         count = guide.count(name)
         if count:
             offenders.append((name, count))
     assert not offenders, (
-        f"Retired name(s) still present in {_CONSOLIDATED_GUIDE.name}: "
-        f"{offenders}. Phase 3-6 of spec 015 deleted these — remove them "
-        "from the guide. See the rename map appendix."
+        f"Retired name(s) still present in {_CONSOLIDATED_GUIDE.name} "
+        f"outside the rename map appendix: {offenders}. Phase 3-6 of "
+        "spec 015 deleted these — remove them from the guide body (the "
+        "rename map appendix is the only allowed mention)."
     )
 
 

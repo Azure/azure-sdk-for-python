@@ -158,8 +158,8 @@ wins; the other gets the 409). There is no soft path through; a steerable
 conversation cannot be branched.
 
 The check is enforced by the core durable layer's input-precondition primitive
-under the hood — see the core `durable-task-developer-guide.md` Input
-Acceptance Preconditions section for the underlying mechanism. From a
+under the hood — see the core `durable-task-guide.md` §4 (Concepts → "Input-acceptance
+preconditions") for the underlying mechanism. From a
 responses-API consumer's perspective: keep `previous_response_id` pointing at
 the latest `response_id` you have seen for this conversation.
 
