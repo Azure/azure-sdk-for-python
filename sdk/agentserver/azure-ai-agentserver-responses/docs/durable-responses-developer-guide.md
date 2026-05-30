@@ -105,7 +105,6 @@ def my_acceptor(request, context):
 | `durable_background` | `True` | Enable crash-recoverable background responses |
 | `steerable_conversations` | `False` | Enable multi-turn steering with cooperative cancel |
 | `store_disabled` | `False` | Disable response persistence |
-| `max_pending` | `10` | Max queued turns for steerable conversations |
 | `replay_event_ttl_seconds` | `600` | How long stream events remain replayable (seconds) |
 
 ## Configuration Matrix
@@ -201,11 +200,16 @@ if durability.is_recovery:
 print(durability.entry_mode)
 
 # Metadata: small JSON-serializable dict, persisted across crashes and turns.
-# Auto-flushed by the framework — no manual save needed.
+# Use namespaces to keep distinct concerns isolated:
+#   durability.metadata["key"]            -- default namespace
+#   durability.metadata("name")["key"]    -- named (sibling) namespace
+# Call await durability.metadata.flush() before any side effect that depends
+# on the write surviving a crash. Snapshots also happen at lifecycle
+# boundaries automatically.
 durability.metadata["my_checkpoint_id"] = "abc-123"
 
 # Run attempt counter: 0 on first invocation, 1 on first recovery, etc.
-print(f"Attempt #{durability.run_attempt}")
+print(f"Attempt #{durability.retry_attempt}")
 
 # Pending inputs (steerable mode only): how many newer turns are queued.
 print(f"{durability.pending_inputs} turns waiting")
@@ -245,14 +249,12 @@ your responsibility to compose from upstream state.
 
 ### Notes on Metadata
 
-- Keys are auto-flushed by the framework. No manual save needed.
-- Keys prefixed with `_framework.` are reserved (hidden from your view).
-- Metadata survives crashes — use it for small watermarks (session IDs,
-  checkpoint references, "side effect issued" flags).
+- The metadata API is a **callable namespace facade**. Use `durability.metadata["key"] = value` for the default namespace; use `durability.metadata("name")["key"] = value` for a sibling namespace (each namespace tracks dirty state independently and can be `await durability.metadata("name").flush()`-ed in isolation).
+- Persistence is **explicit**, not auto-flushed. Call `await durability.metadata.flush()` (or `await durability.metadata("name").flush()`) before any side effect that depends on a metadata write surviving a crash. The framework also snapshots all touched namespaces at lifecycle boundaries (start/suspend/complete/fail/cancel/terminate), so values written and forgotten will still be visible on a clean recovery — but the fence for at-most-once side-effect patterns is your explicit `flush()`.
+- Keys and namespace names **starting with `_` are rejected** (raise `ValueError`). Those prefixes are reserved for framework-internal namespaces (e.g. `_responses` for the responses orchestrator) — pick your own prefix-free names.
+- Metadata survives crashes — use it for small watermarks (session IDs, checkpoint references, "side effect issued" flags).
 - Keep values JSON-serializable (strings, numbers, lists, dicts).
-- **DO NOT** store conversation history, LLM outputs, or any bulk data in
-  metadata. Use the upstream framework's own storage (session JSONL,
-  checkpoint DB, etc.) for that.
+- **DO NOT** store conversation history, LLM outputs, or any bulk data in metadata. Use the upstream framework's own storage (session JSONL, checkpoint DB, etc.) for that.
 
 ## Building a Resumption Response
 
@@ -284,7 +286,7 @@ This section adds the configuration / API context.
 ### What you get on recovered entry
 
 - `context.durability.is_recovery == True`
-- `context.durability.run_attempt > 0`
+- `context.durability.retry_attempt > 0`
 - `context.durability.metadata` carrying whatever watermarks you stamped
 - The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the signal is pre-set with the appropriate `cancellation_reason` on re-entry.
 - The framework guarantees the response object is persisted **exactly once** at the first attempt's `response.created` and **exactly once** at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal events are deduplicated by the framework keyed on `response_id`; you don't need to do anything special. The SSE event stream is persisted as you emit it (no dedup).

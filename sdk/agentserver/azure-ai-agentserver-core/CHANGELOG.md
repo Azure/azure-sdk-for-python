@@ -2,6 +2,16 @@
 
 ## 2.0.0b4 (Unreleased)
 
+### Breaking Changes
+
+- **Public API cleanup for the durable-task primitive** (per spec 015). The `@task` decorator and related types have been simplified to ship a tighter, more honest surface ahead of GA:
+  - **Renames** — `DurabilityContext.run_attempt` → `retry_attempt`; `lease_generation` → `recovery_count`; `generation` → `steering_generation`.
+  - **`retry_attempt` is now durable across crash/recovery** — persisted at `payload["_retry_attempt"]` and re-hydrated on every TaskContext construction. `RetryPolicy.max_attempts` now means "total failure-retries across all lifetimes"; crash recovery does NOT consume the budget. The counter resets to 0 on successful invocation and on steering drain.
+  - **Drops from `@task` and `TaskOptions`** — `TaskSuspended` exception (removed entirely), `description`, `store_input` (storage is now always implicit), `lease_duration_seconds`, `max_pending` (server-side back-pressure lives at a different layer).
+  - **Drops from `TaskContext`** — `title`, `description`, `tags`, `agent_name`, `previous_input` (and the underlying `_steering["previous_input"]` slot).
+- **Metadata is now a callable namespace facility.** Instead of a single bag, `ctx.metadata` is the default namespace and `ctx.metadata("name")` returns a sibling namespace. Each namespace tracks dirty state independently and is snapshotted at lifecycle boundaries. **Auto-flush has been deleted entirely** (`start_auto_flush`/`stop_auto_flush` and the background loop are gone); persistence is explicit at lifecycle transitions (start/suspend/complete/fail/cancel/terminate). Persistence layout: default namespace at `payload["metadata"]`, named namespaces at `payload["metadata:<name>"]`.
+- **Primitive-reserved payload slots use the `_*` top-level convention.** `payload["_last_input_id"]`, `payload["_retry_attempt"]`, `payload["_steering"]` replace the previous `payload["_framework"]` nested namespace. The primitive does not enforce naming on the developer-facing metadata API — that enforcement is the responsibility of higher framework layers (see the `azure-ai-agentserver-responses` CHANGELOG).
+
 ### Bugs Fixed
 
 - **Input data cleared at suspend for steerable tasks** (privacy / data minimization). The framework now clears `payload["input"]`, `_steering["active_input"]`, and `_steering["previous_input"]` at the suspend transition. These hold mirror copies of consumed user input that is no longer needed once the handler returns. Recovery transitions still preserve these slots because the handler will re-run with them; completion transitions are unaffected (terminal entries are deleted via `ephemeral=True` or retained via `ephemeral=False` by operator choice). See `docs/durable-task-developer-guide.md` §"Data Retention on Suspend".

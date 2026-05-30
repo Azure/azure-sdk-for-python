@@ -1234,7 +1234,7 @@ Three layers, each owning a specific slice of state:
 
 | Layer | Owns | On crash recovery, surfaces / provides |
 |---|---|---|
-| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library writes the persisted response *object* exactly twice per response across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts emit `response.created` again but the framework dedups the write (idempotent persistence keyed on `response_id`). It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `entry_mode = "recovered"`, `is_recovery`, `run_attempt`. Replays persisted events to reconnecting clients. Reconstructs the in-memory handler context (`record`, `parsed`, `context`, cancellation signal) from the durable task input — the handler sees the same `response_id` it had on the first attempt. |
+| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library writes the persisted response *object* exactly twice per response across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts emit `response.created` again but the framework dedups the write (idempotent persistence keyed on `response_id`). It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `entry_mode = "recovered"`, `is_recovery`, `retry_attempt`. Replays persisted events to reconnecting clients. Reconstructs the in-memory handler context (`record`, `parsed`, `context`, cancellation signal) from the durable task input — the handler sees the same `response_id` it had on the first attempt. |
 | **Handler** (your code) | The "what was safely committed" decision, plus side-effect watermarks in `durability.metadata`. | Decides the resumption point. Constructs the **resumption response**. Emits a fresh `response.in_progress` carrying it. Continues producing new output items. |
 | **Upstream framework** (Claude SDK, Copilot SDK, LangGraph, your own LLM client) | The conversational / graph / agent state that has to outlive a process death. | Has its own resume facility (session ID, checkpoint store) that you call from the handler. |
 
@@ -1246,7 +1246,7 @@ together.
 
 When the server restarts after a crash and your handler is re-invoked:
 
-1. The library calls your handler with `context.durability.entry_mode == "recovered"` and `run_attempt > 0`.
+1. The library calls your handler with `context.durability.entry_mode == "recovered"` and `retry_attempt > 0`.
 2. You query upstream (and your own `metadata` watermarks) to determine the **resumption point** — the most recent state you are confident is durably committed.
 3. You build a **resumption response**: a `ResponseObject` reflecting only the output items you trust at the resumption point. **In-flight items from the crashed attempt are excluded.** Construct this from upstream framework state + your own metadata watermarks — the library does NOT give you a snapshot of the prior attempt's in-flight state, because none exists in a useful form.
 4. You construct `ResponseEventStream(response=resumption_response, ...)` instead of the usual `request=request` form.
@@ -1268,7 +1268,7 @@ is the naive fallback (see below).
 - Persists every SSE event in order. No reordering, no deduplication of stream events.
 - Persists the response *object* exactly twice per response_id across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal writes are deduplicated by the framework (idempotent persistence keyed on `response_id`); the handler does not need to branch.
 - Reconstructs the in-memory handler context (`record`, `parsed`, `context`, cancellation signal, runtime-state registration) from the durable task input on any cross-process recovery. The recovered handler sees the same `response_id` it had on the first attempt — id generation is a fresh-entry-only concern.
-- Surfaces `entry_mode`, `run_attempt`, `is_recovery` via `context.durability` (see [DurabilityContext API](durable-responses-developer-guide.md#durabilitycontext-api)). The library does NOT expose a snapshot of the prior attempt — handler must consult its upstream framework for resumption state.
+- Surfaces `entry_mode`, `retry_attempt`, `is_recovery` via `context.durability` (see [DurabilityContext API](durable-responses-developer-guide.md#durabilitycontext-api)). The library does NOT expose a snapshot of the prior attempt — handler must consult its upstream framework for resumption state.
 - Treats any `response.in_progress` event after the first one as a snapshot reset.
 - Replays persisted events to reconnecting clients on `starting_after=`. The reset `in_progress` is part of the replay; clients use it as the reconciliation signal.
 - **Translates the "return on shutdown" handler pattern into the right durable-task recovery behavior.** When your handler returns without emitting a terminal event AND the framework is in graceful shutdown (`cancellation_signal` is set due to SHUTTING_DOWN), the responses package detects this and signals the underlying durable-task primitive to leave the task `in_progress` so the next process lifetime re-invokes your handler with `entry_mode="recovered"`. You simply write `return` in your handler on shutdown — the framework handles the convention; you do not need to raise `CancelledError` yourself or know the durable-task primitive's internals.
@@ -1503,7 +1503,7 @@ with recovery cleanly:
 - **Recovered entry + cancellation_signal fires mid-stream**: same as fresh
   entry's Phase 2 — break the loop, then check `SHUTTING_DOWN` for
   return-without-terminal; otherwise close builders and `emit_completed`.
-- **Crash during recovery itself** (`run_attempt > 1`): same code path; each
+- **Crash during recovery itself** (`retry_attempt > 1`): same code path; each
   attempt queries upstream for its current state, computes a (possibly
   different) resumption response, emits a fresh reset `in_progress`. The
   loop is re-entrant.
@@ -1514,7 +1514,6 @@ with recovery cleanly:
 |--------|---------|-------------|
 | `durable_background` | `True` | Enable crash-recoverable background responses |
 | `steerable_conversations` | `False` | Multi-turn conversation steering (see [Cancellation](#cancellation)) |
-| `max_pending` | `10` | Max queued turns for steerable mode |
 | `replay_event_ttl_seconds` | `600` | Stream event replay window |
 
 See the [Durable Responses Developer Guide](durable-responses-developer-guide.md)

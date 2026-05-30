@@ -2,6 +2,15 @@
 
 ## 1.0.0b6 (Unreleased)
 
+### Breaking Changes
+
+- **Migrated to the new core durable-task primitive surface** (per spec 015). This is a coordinated cleanup of the durable response path now that the underlying primitive ships its final pre-GA shape (see the `azure-ai-agentserver-core` 2.0.0b4 entry):
+  - **`DurabilityContext.run_attempt` renamed to `retry_attempt`**, and the counter is now durable across crash/recovery (re-hydrated from the underlying task's `payload["_retry_attempt"]`).
+  - **`DurabilityContext.metadata` is now a callable namespace facade.** `ctx.metadata["key"]` accesses the default namespace; `ctx.metadata("namespace_name")["key"]` accesses a sibling namespace. The handler-facing wrapper **rejects keys (and namespace names) starting with `_`** with `ValueError` to protect developers from colliding with framework-internal namespaces.
+  - **Framework-internal metadata now lives under the `_responses` namespace.** All `_framework.*` keys (`response_id`, `last_sequence_number`, `background`, `disposition`) have moved to `ctx.metadata("_responses")[...]`. The orchestrator uses the underlying `TaskContext` directly so it can write `_*`-prefixed namespace names; the handler-facing `DurabilityContext` wrapper enforces the rejection.
+  - **`_FilteredMetadata` helper class removed.** It is replaced by the new callable metadata facade.
+  - **Auto-flush of metadata removed.** Persistence happens at lifecycle boundaries via explicit `await ctx.metadata("_responses").flush()`. No background task is needed.
+
 ### Features Added
 
 - **Cross-process recovery for durable background responses**: when a server crashes mid-response, the recovered task rebuilds the in-memory handler context (`ResponseExecution`, `ResponseContext`, parsed request) from the durable task input and resumes the canonical recovery contract. Previously the recovered task's early-exit path made cross-process recovery a no-op even though same-process tests passed; now both paths behave correctly. (Spec 013 US1 (a))
