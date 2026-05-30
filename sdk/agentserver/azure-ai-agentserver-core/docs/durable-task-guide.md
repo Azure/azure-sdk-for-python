@@ -306,9 +306,14 @@ Steerable (`steerable=True`):
      when the generation that *will eventually process this new input*
      finishes.
   4. **The original caller's `TaskRun` resolves with
-     `TaskResult(status="superseded", output=None)`** — no exception
-     is raised. The original caller cleanly observes "I got displaced
-     by a later turn; I am done."
+     `TaskResult(status="superseded", output=...)`** — no exception
+     is raised. The `output` is whatever the displaced generation
+     produced before being replaced: `None` if its handler cleanly
+     suspended on `ctx.cancel.is_set()`, or the handler's return
+     value if the handler completed normally just as steering
+     arrived. The original caller cleanly observes "I got displaced
+     by a later turn; I am done." — use `result.is_superseded` to
+     branch on it.
 - If the steering queue is at its internal bound, `.start()` raises
   `SteeringQueueFull` instead of queuing.
 
@@ -417,10 +422,14 @@ queue); `QueueStreamHandler` is the in-memory default.
     `ctx.suspend(reason=...)`.
 - `result.status == "superseded"` is the steering outcome: the
   original caller's `.run()` cleanly resolves with
-  `TaskResult(status="superseded", output=None)` when a later
+  `TaskResult(status="superseded", output=...)` when a later
   `.start()` queued a new input and the framework drained past their
-  generation. No exception is raised — it's the polite "you got
-  displaced" signal.
+  generation. No exception is raised. `result.output` is `None` if
+  the displaced handler suspended on `ctx.cancel.is_set()` (the
+  expected cooperative shape) or the handler's return value if it
+  completed normally just before the drain — it's a partial / late
+  result the displaced caller can log, but the *steering ack* run
+  (returned to the steerer) is what carries the new turn's outcome.
 - `Task.start()` returns a `TaskRun[Output]` handle you can poll,
   stream, or `await run.result()`-on. `TaskRun.cancel()` raises the
   cancel signal; `TaskRun.terminate(reason=...)` is the forceful
@@ -838,7 +847,8 @@ run2 = await steerable_chat.start(task_id=session, input={"message": "Actually, 
 
 # Original caller's run cleanly resolves "superseded".
 r1 = await run1.result()
-assert r1.is_superseded         # output is None; no exception.
+assert r1.is_superseded         # no exception; r1.output is None
+                                # because the handler suspended on ctx.cancel.
 
 # Steering ack resolves with the new turn's actual reply.
 r2 = await run2.result()
