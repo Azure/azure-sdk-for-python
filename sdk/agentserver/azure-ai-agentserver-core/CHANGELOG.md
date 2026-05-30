@@ -4,6 +4,16 @@
 
 ### Documentation
 
+- **Developer-guide tightening to remove internal-detail leakage.** Per end-user-developer feedback on `docs/durable-task-guide.md`, the guide no longer surfaces SDK-internal abstractions that application developers neither configure nor handle:
+  - `TaskStatus` is now correctly documented as the four lifecycle values from the foundry container spec (source of truth): `pending`, `in_progress`, `suspended`, `completed`. Unsuccessful terminations (failure, cancellation, termination) are *outcomes* surfaced to the caller via the `TaskFailed` / `TaskCancelled` / `TaskTerminated` exceptions raised by `.run()` / `.result()` — they are not separate stored statuses.
+  - `EtagConflict` is removed from the public `__all__` (still importable, just no longer advertised) and from the developer guide body. The class docstring carries an "advanced / internal" note. Optimistic-concurrency retries are an internal framework concern; application code does not handle etags.
+  - The "Local development" section no longer references the `LocalFileTaskProvider` class or the `AGENTSERVER_DURABLE_TASKS_PATH` environment variable. Durable storage is zero-configuration: file-backed in local development, hosted task-storage service in production, automatically selected by the framework.
+  - The "Crash-testing your handler" section no longer references the SDK's internal `_crash_harness` (a test-suite implementation detail). The reframed guidance shows how to exercise the `"recovered"` entry mode with a normal unit test: re-invoke the handler with the same `task_id` on a fresh `TaskContext`.
+  - Lease terminology ("lease-based liveness", "stale lease") replaced with developer-facing language ("framework-managed liveness", "previous lifetime torn down").
+  - The doc-review meta-test (`tests/durable/test_dev_guide_review.py`) now enforces all four invariants — guide will fail CI if `LocalFileTaskProvider`, `AGENTSERVER_DURABLE_TASKS_PATH`, `_crash_harness`, or `EtagConflict` reappear in the body.
+
+### Documentation
+
 - **New consolidated developer guide** — `docs/durable-task-guide.md` is the canonical end-to-end learning arc for the durable-task primitive (8 sections + a Rename Map appendix that documents every retired symbol from spec 015). It replaces the previous `docs/durable-task-overview.md` and `docs/durable-task-developer-guide.md` (both reduced to short redirects). The new guide is the source of truth for handler authors and is enforced by an automated CI doc-review meta-test (`tests/durable/test_dev_guide_review.py`) that checks public-symbol coverage, absence of retired names, presence of the 5 canonical statements (retry_attempt semantics, crash-recovery budget rule, callable namespace facade, reserved `_` prefix, explicit `flush()`), required-section presence, cross-guide consistency, and ambiguity heuristics.
 
 ### Breaking Changes

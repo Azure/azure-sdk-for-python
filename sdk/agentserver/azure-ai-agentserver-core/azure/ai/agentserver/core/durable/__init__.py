@@ -79,7 +79,6 @@ __all__ = [
     "TaskNotFound",
     "TaskConflictError",
     "TaskTerminated",
-    "EtagConflict",
     "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
     "TaskPreconditionFailed",

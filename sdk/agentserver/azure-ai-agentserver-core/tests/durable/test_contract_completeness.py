@@ -94,7 +94,6 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskNotFound",
         "TaskConflictError",
         "TaskTerminated",
-        "EtagConflict",
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
         "TaskPreconditionFailed",
@@ -108,6 +107,12 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskSuspended",  # exception deleted entirely (FR-006)
         "TaskOptions",    # demoted to internal (FR-006)
         "TaskInfo",       # demoted to internal (FR-006)
+        # Spec 015 Phase 11 closeout (user feedback 2026-05-30):
+        # EtagConflict is an advanced/internal exception (custom storage
+        # adapters only). Application code does not handle it — the
+        # framework retries internally on optimistic-concurrency conflicts.
+        # Importable, but no longer advertised via ``__all__``.
+        "EtagConflict",
     }
 )
 

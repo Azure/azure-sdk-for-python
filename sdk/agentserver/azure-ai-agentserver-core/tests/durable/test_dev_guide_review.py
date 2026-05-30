@@ -173,6 +173,14 @@ _REMOVED_NAMES: tuple[str, ...] = (
     "_framework[",
     # Responses-layer helper deleted in Phase 6
     "_FilteredMetadata",
+    # Phase 11 closeout — internal abstractions that leaked into the
+    # end-user-developer guide and must stay out of the guide body
+    # (per user feedback 2026-05-30: developers don't deal with etags,
+    # provider classes, env vars, or the SDK's own test harness).
+    "LocalFileTaskProvider",
+    "AGENTSERVER_DURABLE_TASKS_PATH",
+    "_crash_harness",
+    "EtagConflict",
 )
 
 

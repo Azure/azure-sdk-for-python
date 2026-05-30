@@ -44,7 +44,6 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "TaskNotFound",
         "TaskConflictError",
         "TaskTerminated",
-        "EtagConflict",
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
         "TaskPreconditionFailed",

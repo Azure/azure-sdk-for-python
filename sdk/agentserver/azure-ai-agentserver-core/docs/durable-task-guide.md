@@ -7,8 +7,8 @@
 >
 > Audience: developers building agents that run on the agentserver
 > hosting platform (or any host that backs the durable-task primitive)
-> and want their work to survive container crashes, OOM kills, lease
-> losses, and redeployments without hand-rolling lifecycle plumbing.
+> and want their work to survive container crashes, OOM kills, and
+> redeployments without hand-rolling lifecycle plumbing.
 
 ---
 
@@ -43,16 +43,16 @@ turns (LangGraph checkpointers, Semantic Kernel, Temporal, etc.). What
   sandbox doesn't get killed?
 
 That is the gap `@task` closes. It wraps a durable boundary around
-your agent function — a unit of work the platform can see, lease,
-restart, and resume — so whatever framework is underneath has somewhere
+your agent function — a unit of work the platform can see, restart,
+and resume — so whatever framework is underneath has somewhere
 to plug in.
 
 ### Two camps, one decorator
 
 | Camp | Examples | What `@task` adds |
 |------|----------|-------------------|
-| **Externally stateful** — framework owns durability | Temporal, Durable Functions, Orleans | Platform visibility: lifecycle tracking, lease-based liveness, status reporting on top of the framework's own durability |
-| **Locally stateful** — container holds state | LangGraph (SQLite checkpointer), Claude SDK tool loops, hand-written agents | A crash-safe entry point: lease-based liveness, plus run / resume / progress / suspend primitives the developer would otherwise hand-roll |
+| **Externally stateful** — framework owns durability | Temporal, Durable Functions, Orleans | Platform visibility: lifecycle tracking, liveness signal, status reporting on top of the framework's own durability |
+| **Locally stateful** — container holds state | LangGraph (SQLite checkpointer), Claude SDK tool loops, hand-written agents | A crash-safe entry point: framework-managed liveness, plus run / resume / progress / suspend primitives the developer would otherwise hand-roll |
 
 `@task` is **not** a replacement for Temporal or Durable Functions —
 it is the thin durable wrapper around the platform↔code boundary. It
@@ -67,40 +67,38 @@ whatever framework you use underneath.
 ## 2. Mental Model
 
 The primitive enforces exactly one invariant: **for a given `task_id`,
-at most one process holds a live lease at a time.** Everything else
-falls out of that.
+at most one handler runs at a time.** Everything else falls out of that.
 
-### Four state buckets
+### Four states
 
 ```
-        ┌──── pending ────┐
+         ┌──── pending ────┐
    .start/.run             │
         └──────────────────┤
                            ▼
-                     in_progress  ◄── recovered ──┐
-                       │   │                       │
-                       │   │                       │ (next
-                       │   │   crash               │  lifetime
-                       │   ▼                       │  re-acquires
-                       │  stale ───────────────────┘  the lease)
+                     in_progress  ◄── re-acquired ──┐
+                       │   │                         │
+                       │   │  process crashes        │ (a new lifetime
+                       │   │  (handler torn down     │  picks the task
+                       │   ▼   mid-execution)        │  back up)
+                       │   └─────────────────────────┘
                        │
-                       │   handler returns
+                       │   handler returns or
+                       │   raises an exception
                        ▼
                   ┌────┴────┐
                   │         │
               completed   suspended
-                  │         │
-                  │         └── .start/.run → resumed → in_progress
-                  │
-              failed / cancelled / terminated  (terminal too)
+                            │
+                            └── .start/.run → re-entered → in_progress
 ```
 
 | State | Meaning |
 |-------|---------|
 | `pending` | Created, not yet picked up by a handler. |
-| `in_progress` | A handler is currently executing under a live lease. |
+| `in_progress` | A handler is currently executing this task. |
 | `suspended` | Handler called `ctx.suspend(...)` and returned. Awaiting `.run()` / `.start()` with new input. |
-| `completed` / `failed` / `cancelled` / `terminated` | Terminal. |
+| `completed` | Terminal. The handler returned normally, raised, or the task was cancelled / terminated — in every case the task is finished and will not run again. Whether the run was *successful* is communicated to the caller through `.run()` / `.result()` (either the return value, or one of `TaskFailed` / `TaskCancelled` / `TaskTerminated` — see §4). |
 
 The framework computes the **entry mode** every time it invokes your
 handler, by looking at the task's current state in the store:
@@ -109,7 +107,7 @@ handler, by looking at the task's current state in the store:
 |---------------|------------|------------------------------|
 | No task / `pending` | `"fresh"` | First invocation. No prior state. |
 | `suspended` | `"resumed"` | Caller provided new input; resume from there. |
-| `in_progress` (stale) | `"recovered"` | Previous lifetime crashed; you are the new lifetime. |
+| `in_progress` (previous lifetime torn down) | `"recovered"` | Previous lifetime crashed; you are the new lifetime. |
 | `in_progress` (steerable, mid-flight) | `"resumed"` (with `ctx.was_steered=True`) | Another input arrived; drain it. |
 
 You read `ctx.entry_mode` (an `EntryMode` literal) once at the top of
@@ -198,8 +196,9 @@ elif ctx.entry_mode == "resumed":
   saw.
 
 The budget itself lives on `RetryPolicy.max_attempts`. When
-`retry_attempt >= max_attempts`, the framework marks the task `failed`
-without re-invoking your handler.
+`retry_attempt >= max_attempts`, the framework gives up — it stops
+re-invoking your handler and the awaiting `.run()` / `.result()`
+call raises `TaskFailed` with the last captured error.
 
 ```python
 from azure.ai.agentserver.core.durable import task, RetryPolicy, TaskContext
@@ -277,29 +276,32 @@ last-accepted input was *N-1*), `.start(... if_last_input_id=...)`
 applies an HTTP-`If-Match`-style precondition. Mismatch raises
 `LastInputIdPreconditionFailed` (a subclass of `TaskPreconditionFailed`).
 
-### Etag conflicts (`EtagConflict`)
-
-Concurrent writers race on optimistic-concurrency etags; on mismatch the
-framework raises `EtagConflict` (recoverable — retry with the fresh
-etag).
-
 ### Steering-queue backpressure (`SteeringQueueFull`)
 
 Steerable tasks have a bounded steering input queue; once full,
 new `.start()` calls raise `SteeringQueueFull`.
 
-### Failure modes (`TaskFailed`, `TaskCancelled`, `TaskNotFound`, `TaskConflictError`, `TaskTerminated`)
+### Unsuccessful outcomes (`TaskFailed`, `TaskCancelled`, `TaskTerminated`)
 
-Each is a typed exception with a single, documented cause:
+When a task ends without producing a normal return value, the
+*stored* task status is still `completed` — the task is finished
+either way — but `.run()` / `.result()` raises one of three typed
+exceptions so the caller can branch on **why** it ended:
 
-- `TaskNotFound` — `.get()` or `.start()` referenced a `task_id` that
-  no longer exists.
-- `TaskConflictError` — `.run()` / `.start()` against an already-active
-  non-steerable task.
-- `TaskFailed` — the underlying task ended in `failed`. Carries
-  cause information.
-- `TaskCancelled` — the task ended in `cancelled`.
-- `TaskTerminated` — the task was terminated by the operator / platform.
+- `TaskFailed` — the handler raised an unhandled exception. Carries
+  a structured `error` dict (`type`, `message`, optional `cause`).
+- `TaskCancelled` — the task was cancelled via `handle.cancel()`.
+- `TaskTerminated` — the task was forcefully terminated by the
+  operator or platform via `handle.terminate()` (carries a `reason`).
+
+In addition, `TaskNotFound` is raised by `.get()` / `.start()` when
+the referenced `task_id` no longer exists, and `TaskConflictError`
+is raised when `.run()` / `.start()` collides with an already-active
+non-steerable task.
+
+You do **not** need to catch any of these inside your handler —
+they exist for the *caller's* error-handling code. Your handler
+just `return`s, raises, or `await`s `ctx.suspend(...)`.
 
 ---
 
@@ -333,7 +335,7 @@ The single argument your handler receives. Properties:
 | `cancel` | `asyncio.Event` | Set when cancellation is requested. |
 | `shutdown` | `asyncio.Event` | Set when the container is shutting down. |
 | `retry_attempt` | `int` | Cross-lifetime retry counter (see §4). |
-| `recovery_count` | `int` | Increments each time the lease is re-acquired by a new lifetime. |
+| `recovery_count` | `int` | Increments each time the task is re-acquired by a new lifetime (after a crash). |
 | `steering_generation` | `int` | Increments each time the task drains for steering. |
 | `was_steered` | `bool` | `True` when this entry is part of a steering drain. |
 | `pending_inputs` | `Sequence[Any]` | Snapshot of queued steering inputs at entry. |
@@ -366,9 +368,12 @@ def on_entry(mode: EntryMode) -> None: ...
 
 ### `TaskResult` / `TaskRun` / `TaskStatus`
 
-See §4. `TaskStatus` is a literal:
-`"pending" | "in_progress" | "suspended" | "completed" | "failed" |
-"cancelled" | "terminated"`.
+See §4. `TaskStatus` is a literal of the four lifecycle states:
+`"pending" | "in_progress" | "suspended" | "completed"`.
+Unsuccessful terminations (failure / cancel / terminate) are still
+`"completed"` from the store's perspective — the *outcome* is
+communicated to the caller through `.run()` / `.result()` (return
+value, or one of the typed exceptions in §4).
 
 ### `Suspended`
 
@@ -390,17 +395,19 @@ See §4. Most users never touch these directly — they construct via
 
 ### Exceptions
 
-| Exception | When |
-|-----------|------|
-| `TaskFailed` | Task ended in `failed`. |
-| `TaskCancelled` | Task ended in `cancelled`. |
-| `TaskNotFound` | Lookup by `task_id` returned nothing. |
-| `TaskConflictError` | `.run()` / `.start()` raced an active non-steerable task. |
-| `TaskTerminated` | Operator / platform terminated the task. |
-| `EtagConflict` | Concurrent write lost the optimistic-concurrency race. |
-| `LastInputIdPreconditionFailed` | Sequential-input precondition was not satisfied (subclass of `TaskPreconditionFailed`). |
-| `SteeringQueueFull` | Steerable task's input queue is full. |
-| `TaskPreconditionFailed` | Base for input-acceptance precondition failures. |
+These are the exceptions developers actually catch. All others surfaced
+by the package are either internal-only or wrap one of these.
+
+| Exception | Raised by | When |
+|-----------|-----------|------|
+| `TaskFailed` | `.run()` / `.result()` | Handler raised an unhandled exception. `.error` carries the structured cause. |
+| `TaskCancelled` | `.run()` / `.result()` | Task was cancelled via `handle.cancel()`. |
+| `TaskTerminated` | `.run()` / `.result()` | Task was forcefully terminated (operator / platform). Carries `reason`. |
+| `TaskNotFound` | `.get()` / `.start()` | Referenced `task_id` does not exist. |
+| `TaskConflictError` | `.run()` / `.start()` | Collided with an already-active non-steerable task. |
+| `LastInputIdPreconditionFailed` | `.start(if_last_input_id=...)` | Sequential-input precondition not satisfied (subclass of `TaskPreconditionFailed`). |
+| `TaskPreconditionFailed` | `.start(...)` | Base for input-acceptance precondition failures. |
+| `SteeringQueueFull` | `.start(...)` on steerable task | Steerable task's input queue is full. |
 
 ---
 
@@ -506,30 +513,31 @@ final = await run.result()
 
 ### Local development
 
-The primitive uses a pluggable task-store provider. For local
-development, point the framework at the file-backed provider
-(`LocalFileTaskProvider`) and set
-`AGENTSERVER_DURABLE_TASKS_PATH=./.tasks` so durable state is
-inspectable on disk.
+Durable storage is **zero-configuration**. When you run the agent on
+your laptop, durable task state lives in a file under the project's
+working directory so you can `cat` it while debugging. When the same
+agent runs in the hosted platform, state lives in the platform's
+task-storage service. Your handler code does not change between the
+two, and there is no provider class or environment variable for you
+to set — the framework auto-selects.
 
-### Crash-testing your handler
+### Testing a recovery path
 
-Real crash recovery is exercised by the test suite's `_crash_harness`,
-which spawns the agent in a subprocess and sends SIGKILL mid-handler.
-For your own integration tests, you do not need the harness — you can
-exercise the recovery path by invoking the handler twice with the same
-`task_id` after mutating the task state directly through the provider.
-The cookbook example lives in
-`azure-ai-agentserver-core/tests/durable/test_retry.py` and is the
-recommended copy-paste starting point.
+You don't need a crashed process to exercise the `"recovered"` entry
+mode. In a unit test, invoke the handler once with a `task_id`, let
+it advance partway, then invoke it again with the **same** `task_id`
+on a fresh `TaskContext` — the second invocation will see
+`ctx.entry_mode == "recovered"` and the persisted `ctx.metadata` /
+counters from the first run. See `tests/durable/test_retry.py` for
+a copy-paste cookbook example.
 
-### What the framework does at lifecycle boundaries
+### What the framework persists at lifecycle boundaries
 
 | Boundary | What is persisted |
 |----------|-------------------|
 | `start` | Input, initial counters, namespace snapshot. |
 | `suspend` | `Suspended` envelope, namespace snapshot, queued inputs (steerable). |
-| `complete` / `fail` / `cancel` / `terminate` | Terminal status, final namespace snapshot, output (or error). |
+| Handler returns or raises | Terminal status (`completed`), final namespace snapshot, output (or structured error). |
 | `flush()` (handler-initiated) | The addressed namespace only, atomically. |
 
 There is no background auto-flush loop. Persistence is **explicit
