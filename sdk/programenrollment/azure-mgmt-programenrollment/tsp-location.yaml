@@ -1,0 +1,4 @@
+directory: specification/programenrollment/resource-manager/Microsoft.ProgramEnrollment/ProgramEnrollment
+commit: 8be35e606b4149f3d8fa519c8cd5b37a9b0c22bd
+repo: Azure/azure-rest-api-specs-pr
+additionalDirectories: 
