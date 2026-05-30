@@ -40,6 +40,15 @@ import time
 from dotenv import load_dotenv
 
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.settings import settings
+
+settings.tracing_implementation = "opentelemetry"
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+from azure.monitor.opentelemetry import configure_azure_monitor
+from azure.ai.projects.telemetry import AIProjectInstrumentor
+
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
@@ -52,6 +61,13 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
+# Console exporter: spans printed to stdout as they finish.
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
+AIProjectInstrumentor().instrument()
+
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 
@@ -60,6 +76,10 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
+    # Azure Monitor exporter: same spans also sent to the Application Insights
+    # resource attached to the Foundry project, viewable in the "Tracing" tab
+    # on ai.azure.com.
+    configure_azure_monitor(connection_string=project_client.telemetry.get_application_insights_connection_string())
 
     routine_name = "sample-routine-timer"
 
