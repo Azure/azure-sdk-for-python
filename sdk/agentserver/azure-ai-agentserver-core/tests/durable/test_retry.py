@@ -464,7 +464,7 @@ class TestRetryAttemptDurability:
         """
         observed: list[int] = []
 
-        @task(title="recovered-retry-aware", ephemeral=False)
+        @task(title="recovered-retry-aware", ephemeral=False, stale_timeout=1.0)
         async def handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"
@@ -477,7 +477,6 @@ class TestRetryAttemptDurability:
             result = await handler.run(
                 task_id="durable-1",
                 input="ignored-by-recovery",
-                stale_timeout=1.0,
             )
             assert result.output == "ok"
             assert observed == [2], (
@@ -512,6 +511,7 @@ class TestRetryAttemptDurability:
                 retry_on=(ValueError,),
                 jitter=False,
             ),
+            stale_timeout=1.0,
         )
         async def always_fail(ctx: TaskContext[str]) -> str:
             invocations.append(ctx.retry_attempt)
@@ -527,7 +527,6 @@ class TestRetryAttemptDurability:
                     await always_fail.run(
                         task_id="budget-1",
                         input="ignored",
-                        stale_timeout=1.0,
                     )
             assert invocations == [2], (
                 "FR-002 violated: with max_attempts=3 and 2 retries already "
@@ -561,6 +560,7 @@ class TestRetryAttemptDurability:
                 retry_on=(ValueError,),
                 jitter=False,
             ),
+            stale_timeout=1.0,
         )
         async def succeed_now(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
@@ -574,7 +574,6 @@ class TestRetryAttemptDurability:
             result = await succeed_now.run(
                 task_id="no-consume-1",
                 input="ignored",
-                stale_timeout=1.0,
             )
             assert result.output == "done@2"
             assert observed == [2], (
@@ -615,7 +614,12 @@ class TestRetryAttemptDurability:
 
         observed: list[int] = []
 
-        @task(title="steerable-retry-aware", ephemeral=False, steerable=True)
+        @task(
+            title="steerable-retry-aware",
+            ephemeral=False,
+            steerable=True,
+            stale_timeout=1.0,
+        )
         async def steer_handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             # Single-shot: just record and return — no Suspended dance needed
@@ -657,7 +661,6 @@ class TestRetryAttemptDurability:
             await steer_handler.run(
                 task_id="steer-reset-1",
                 input="ignored",
-                stale_timeout=1.0,
             )
 
             info = await manager.provider.get("steer-reset-1")

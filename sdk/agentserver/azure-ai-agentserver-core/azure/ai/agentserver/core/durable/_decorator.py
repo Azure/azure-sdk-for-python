@@ -322,7 +322,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
     *Internal*: not part of the public ``durable`` surface as of Spec 015 Phase 3.
     Constructed by the ``@task`` decorator (and ``Task.options()``) from a small
     public kwarg set: ``name``, ``title``, ``tags``, ``timeout``, ``ephemeral``,
-    ``retry``, ``steerable``, ``stream_handler_factory``.
+    ``retry``, ``steerable``, ``stream_handler_factory``, ``stale_timeout``.
 
     :param name: **Stable identity anchor.** Used for recovery routing and
         source stamping.  If you rename the Python function later, existing
@@ -342,6 +342,13 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         recovery and resume paths use this factory instead of defaulting to
         :class:`QueueStreamHandler`.
     :type stream_handler_factory: Callable[[str], StreamHandler] | None
+    :param stale_timeout: Seconds before an ``in_progress`` task with no
+        recent ``updated_at`` is considered abandoned by a previous lifetime
+        and eligible for callsite-driven recovery. Default 300 (5 minutes).
+        See the developer guide § "How crash recovery works" for the full
+        explanation. This is independent of the background lease-reclaim
+        loop that runs at process startup.
+    :type stale_timeout: float
     """
 
     __slots__ = (
@@ -353,6 +360,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         "retry",
         "steerable",
         "stream_handler_factory",
+        "stale_timeout",
     )
 
     def __init__(
@@ -365,6 +373,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         retry: RetryPolicy | None = None,
         steerable: bool = False,
         stream_handler_factory: StreamHandlerFactory | None = None,
+        stale_timeout: float = 300.0,
     ) -> None:
         self.name = name
         self.title = title
@@ -374,12 +383,14 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         self.retry = retry
         self.steerable = steerable
         self.stream_handler_factory = stream_handler_factory
+        self.stale_timeout = stale_timeout
 
     def __repr__(self) -> str:
         return (
             f"TaskOptions(name={self.name!r}, "
             f"ephemeral={self.ephemeral}, retry={self.retry!r}, "
-            f"timeout={self.timeout!r}, steerable={self.steerable})"
+            f"timeout={self.timeout!r}, steerable={self.steerable}, "
+            f"stale_timeout={self.stale_timeout!r})"
         )
 
 
@@ -456,9 +467,8 @@ class Task(Generic[Input, Output]):
         *,
         task_id: str,
         input: Input,  # noqa: A002
-        title: str | None = None,
-        tags: dict[str, str] | None = None,
-        stale_timeout: float = 300.0,
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
     ) -> TaskResult[Output]:
         """Run a lifecycle-aware durable task and return the result.
 
@@ -473,43 +483,56 @@ class Task(Generic[Input, Output]):
 
         .. note::
 
-            ``retry`` and ``stream_handler`` are configured on the
-            ``@task(...)`` decorator (or via :meth:`Task.options`), not
-            per-call. This is enforced so they survive crash recovery:
-            after the container crashes and the framework re-enters the
-            task, it has only the registered decorator's options to work
-            with — a per-call override would silently disappear at the
-            crash boundary. Session identity is platform-derived from
-            the ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+            ``title``, ``tags``, ``retry``, ``stream_handler``, and
+            ``stale_timeout`` are configured on the ``@task(...)``
+            decorator (or via :meth:`Task.options`), not per-call. This
+            is enforced so the values survive crash recovery: after the
+            container crashes and the framework re-enters the task, it
+            has only the registered decorator's options to work with — a
+            per-call override would silently disappear at the crash
+            boundary. Session identity is platform-derived from the
+            ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
 
         :keyword task_id: Unique task identifier.
         :paramtype task_id: str
         :keyword input: Typed input value.
         :paramtype input: Input
-        :keyword title: Title override for this call.
-        :paramtype title: str | None
-        :keyword tags: Per-call tag overrides (merged into the persisted
-            task record at start time, so they are recovery-safe).
-        :paramtype tags: dict[str, str] | None
-        :keyword stale_timeout: Seconds before an in-progress task is considered
-            stale and eligible for recovery. Default 300 (5 minutes).
-        :paramtype stale_timeout: float
+        :keyword input_id: Optional identifier for the input being accepted. When
+            supplied, the framework records it as the task's most-recently-accepted
+            input id in a framework-reserved slot (``payload["_last_input_id"]``).
+            Used together with ``if_last_input_id`` to implement HTTP If-Match-style
+            optimistic concurrency on the input queue.
+        :paramtype input_id: str | None
+        :keyword if_last_input_id: Optional precondition. When supplied, the framework
+            verifies that the task's currently-stored last input id equals this value
+            before accepting the new input. If the precondition does not hold (a
+            concurrent caller advanced the queue, or the caller's view is stale),
+            raises :class:`LastInputIdPreconditionFailed` before any state mutation.
+            Modelled on HTTP ``If-Match: <etag>`` semantics. Requires ``input_id``
+            to also be supplied (raises :class:`TypeError` otherwise — invalid
+            combination).
+        :paramtype if_last_input_id: str | None
         :return: The task result wrapper with output, status, and suspension info.
         :rtype: ~azure.ai.agentserver.core.durable.TaskResult[Output]
         :raises TaskFailed: On unhandled exception.
         :raises ~azure.ai.agentserver.core.durable.TaskConflictError: If the
             task is already in-progress or completed.
+        :raises ~azure.ai.agentserver.core.durable.LastInputIdPreconditionFailed: If
+            the ``if_last_input_id`` precondition does not match the stored
+            last input id.
+        :raises TypeError: If ``if_last_input_id`` is supplied without ``input_id``.
         """
         _validate_task_id(task_id)
+        if if_last_input_id is not None and input_id is None:
+            raise TypeError(
+                "if_last_input_id requires input_id (a precondition without an "
+                "advancing id is not meaningful)"
+            )
         handle = await self._lifecycle_start(
             task_id=task_id,
             input=input,
-            session_id=None,
-            title=title,
-            tags=tags,
-            retry=None,
-            stale_timeout=stale_timeout,
-            stream_handler=None,
+            input_id=input_id,
+            if_last_input_id=if_last_input_id,
         )
         return await handle.result()
 
@@ -518,9 +541,6 @@ class Task(Generic[Input, Output]):
         *,
         task_id: str,
         input: Input,  # noqa: A002
-        title: str | None = None,
-        tags: dict[str, str] | None = None,
-        stale_timeout: float = 300.0,
         input_id: str | None = None,
         if_last_input_id: str | None = None,
     ) -> TaskRun[Output]:
@@ -531,24 +551,17 @@ class Task(Generic[Input, Output]):
 
         .. note::
 
-            ``retry`` and ``stream_handler`` are configured on the
-            ``@task(...)`` decorator (or via :meth:`Task.options`), not
-            per-call — see :meth:`run` for the rationale. Session
-            identity is platform-derived from the
-            ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+            ``title``, ``tags``, ``retry``, ``stream_handler``, and
+            ``stale_timeout`` are configured on the ``@task(...)``
+            decorator (or via :meth:`Task.options`), not per-call —
+            see :meth:`run` for the rationale. Session identity is
+            platform-derived from the ``FOUNDRY_AGENT_SESSION_ID``
+            environment variable.
 
         :keyword task_id: Unique task identifier.
         :paramtype task_id: str
         :keyword input: Typed input value.
         :paramtype input: Input
-        :keyword title: Title override for this call.
-        :paramtype title: str | None
-        :keyword tags: Per-call tag overrides (merged into the persisted
-            task record at start time, so they are recovery-safe).
-        :paramtype tags: dict[str, str] | None
-        :keyword stale_timeout: Seconds before an in-progress task is considered
-            stale and eligible for recovery. Default 300 (5 minutes).
-        :paramtype stale_timeout: float
         :keyword input_id: Optional identifier for the input being accepted. When
             supplied, the framework records it as the task's most-recently-accepted
             input id in a framework-reserved slot (``payload["_last_input_id"]``).
@@ -582,12 +595,6 @@ class Task(Generic[Input, Output]):
         return await self._lifecycle_start(
             task_id=task_id,
             input=input,
-            session_id=None,
-            title=title,
-            tags=tags,
-            retry=None,
-            stale_timeout=stale_timeout,
-            stream_handler=None,
             input_id=input_id,
             if_last_input_id=if_last_input_id,
         )
@@ -797,34 +804,21 @@ class Task(Generic[Input, Output]):
         *,
         task_id: str,
         input: Input,  # noqa: A002
-        session_id: str | None,
-        title: str | None,
-        tags: dict[str, str] | None,
-        retry: RetryPolicy | None,
-        stale_timeout: float,
-        stream_handler: StreamHandler | None = None,
         input_id: str | None = None,
         if_last_input_id: str | None = None,
     ) -> TaskRun[Output]:
         """Resolve lifecycle state and start/resume/recover accordingly.
 
+        Title, tags, retry, stream handler, and stale timeout are all sourced
+        from ``self._opts`` (the decorator-time configuration). This is
+        deliberate: those settings must survive the crash boundary, and the
+        framework can only rely on the registered decorator's view of the task
+        on recovery.
+
         :keyword task_id: The task identifier.
         :paramtype task_id: str
         :keyword input: Typed input value.
         :paramtype input: Input
-        :keyword session_id: Session scope override.
-        :paramtype session_id: str | None
-        :keyword title: Title override.
-        :paramtype title: str | None
-        :keyword tags: Per-call tag overrides.
-        :paramtype tags: dict[str, str] | None
-        :keyword retry: Retry policy override.
-        :paramtype retry: RetryPolicy | None
-        :keyword stale_timeout: Stale timeout in seconds.
-        :paramtype stale_timeout: float
-        :keyword stream_handler: Custom stream handler. Defaults to
-            :class:`QueueStreamHandler` when ``None``.
-        :paramtype stream_handler: StreamHandler | None
         :keyword input_id: (Spec 013 US2) When set, the new input's identity
             recorded in the framework-reserved
             ``payload["_last_input_id"]`` slot.
@@ -845,7 +839,8 @@ class Task(Generic[Input, Output]):
         manager = get_task_manager()
         existing = await manager.provider.get(task_id)
 
-        resolved_retry = retry or self._opts.retry
+        resolved_retry = self._opts.retry
+        stale_timeout = self._opts.stale_timeout
 
         # (Spec 013 US2) Pre-acceptance check: if the caller supplied an
         # ``if_last_input_id`` precondition, verify the stored last input id
@@ -873,7 +868,7 @@ class Task(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
-                    stream_handler=stream_handler,
+                    stream_handler=None,
                 )
             # No task exists — create new
             return await manager.create_and_start(
@@ -882,13 +877,13 @@ class Task(Generic[Input, Output]):
                 task_id=task_id,
                 input_val=input,
                 input_type=self._input_type,
-                session_id=session_id,
-                title=title or self._resolve_title(input, task_id),
-                tags=self._merge_tags(input, task_id, tags),
+                session_id=None,
+                title=self._resolve_title(input, task_id),
+                tags=self._merge_tags(input, task_id, None),
                 opts=self._opts,
                 retry=resolved_retry,
                 entry_mode="fresh",
-                stream_handler=stream_handler,
+                stream_handler=None,
                 initial_payload_extras=_build_framework_extras(input_id),
             )
 
@@ -957,7 +952,7 @@ class Task(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
-                    stream_handler=stream_handler,
+                    stream_handler=None,
                 )
             )
 
@@ -979,7 +974,7 @@ class Task(Generic[Input, Output]):
                             input_type=self._input_type,
                             opts=self._opts,
                             retry=resolved_retry,
-                            stream_handler=stream_handler,
+                            stream_handler=None,
                         )
                 # Normal stale recovery
                 return await manager._start_existing_task(  # pylint: disable=protected-access
@@ -991,7 +986,7 @@ class Task(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
-                    stream_handler=stream_handler,
+                    stream_handler=None,
                 )
             if self._opts.steerable:
                 # Steering path: append input to queue, signal cancel, return ack
@@ -1027,6 +1022,7 @@ class Task(Generic[Input, Output]):
         ephemeral: bool | None = None,
         retry: RetryPolicy | None = None,
         steerable: bool | None = None,
+        stale_timeout: float | None = None,
     ) -> Task[Input, Output]:
         """Return a new Task with merged options.
 
@@ -1044,6 +1040,10 @@ class Task(Generic[Input, Output]):
         :paramtype retry: RetryPolicy | None
         :keyword steerable: Whether this task accepts steering inputs.
         :paramtype steerable: bool | None
+        :keyword stale_timeout: Seconds before an in-progress task with no
+            recent ``updated_at`` is considered abandoned and eligible for
+            callsite-driven recovery.  See :class:`TaskOptions`.
+        :paramtype stale_timeout: float | None
         :return: A new Task with overridden options.
         :rtype: Task[Input, Output]
         """
@@ -1073,6 +1073,9 @@ class Task(Generic[Input, Output]):
             retry=retry if retry is not None else self._opts.retry,
             steerable=(steerable if steerable is not None else self._opts.steerable),
             stream_handler_factory=self._opts.stream_handler_factory,
+            stale_timeout=(
+                stale_timeout if stale_timeout is not None else self._opts.stale_timeout
+            ),
         )
         return Task(
             fn=self._fn,
@@ -1099,6 +1102,7 @@ def task(
     retry: RetryPolicy | None = ...,
     steerable: bool = ...,
     stream_handler_factory: StreamHandlerFactory | None = ...,
+    stale_timeout: float = ...,
 ) -> Callable[
     [Callable[[TaskContext[Input]], Awaitable[Output]]],
     Task[Input, Output],
@@ -1116,6 +1120,7 @@ def task(
     retry: RetryPolicy | None = None,
     steerable: bool = False,
     stream_handler_factory: StreamHandlerFactory | None = None,
+    stale_timeout: float = 300.0,
 ) -> Any:
     """Turn an async function into a crash-resilient durable task.
 
@@ -1136,12 +1141,13 @@ def task(
         framework matches on this name, not the Python function name.
     :keyword title: Human-readable title (string or callable).
     :keyword tags: Default tags (static dict or callable factory receiving
-        ``(input, task_id)``). Merged with per-call ``tags=`` overrides.
+        ``(input, task_id)``).
     :keyword timeout: Execution timeout. When elapsed, ``ctx.cancel`` is set
         cooperatively. If the function does not exit, the lease eventually
         expires and the task is recovered.
     :keyword ephemeral: Delete task on terminal exit (default True).
-    :keyword retry: Default retry policy for this task.
+    :keyword retry: Default retry policy for this task. Recovery-safe: applied
+        by the framework on every entry, including crash recovery.
     :keyword steerable: Whether this task accepts steering inputs. When True,
         calling ``start()`` on an ``in_progress`` task queues the input and
         signals cancel instead of raising ``TaskConflictError``. Default False.
@@ -1151,6 +1157,16 @@ def task(
         defaulting to :class:`QueueStreamHandler`. The factory itself is the
         only supported configuration surface — there is no per-call override,
         so the handler stays consistent across the crash boundary.
+    :keyword stale_timeout: Seconds before an in-progress task whose
+        ``updated_at`` has not advanced is considered abandoned by a previous
+        lifetime and eligible for callsite-driven recovery via
+        :meth:`Task.run` / :meth:`Task.start`. Defaults to 300 (5 minutes).
+        This is *independent* of the background lease-reclaim loop that runs at
+        manager startup: that loop reclaims tasks whose ``lease_owner`` belongs
+        to a previous instance, while ``stale_timeout`` covers the window in
+        which a callsite encounters such a task before (or instead of) the
+        background loop. Override this to a short value (e.g. ``0.1``) in
+        tests that need to deterministically trigger the recovered code path.
     :return: A ``Task[Input, Output]`` wrapper.
     :rtype: Any
     """
@@ -1180,6 +1196,7 @@ def task(
             retry=retry,
             steerable=steerable,
             stream_handler_factory=stream_handler_factory,
+            stale_timeout=stale_timeout,
         )
 
         result = Task(

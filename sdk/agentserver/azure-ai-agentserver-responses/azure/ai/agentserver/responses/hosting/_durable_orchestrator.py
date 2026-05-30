@@ -603,7 +603,7 @@ class DurableResponseOrchestrator:
             # for next-lifetime recovery. Without this, _handle_success runs
             # (_manager.py:1200-1208), marks the task `completed`, and the
             # recovery scanner skips it. See
-            # `azure-ai-agentserver-core/docs/durable-task-developer-guide.md`
+            # `azure-ai-agentserver-core/docs/durable-task-guide.md`
             # § Graceful Shutdown (`ctx.shutdown`).
             if (
                 ctx.shutdown.is_set()

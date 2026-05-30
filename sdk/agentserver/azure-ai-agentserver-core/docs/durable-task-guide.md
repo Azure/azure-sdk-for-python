@@ -1,9 +1,7 @@
 # Durable Tasks Developer Guide
 
-> The consolidated end-user-developer guide for the `@task` primitive
-> shipped by `azure-ai-agentserver-core`. This replaces the previous
-> `durable-task-overview.md` and `durable-task-developer-guide.md` —
-> both are now thin pointers to this document.
+> The end-user-developer guide for the `@task` primitive shipped by
+> `azure-ai-agentserver-core`.
 >
 > Audience: developers building agents that run on the agentserver
 > hosting platform (or any host that backs the durable-task primitive)
@@ -316,6 +314,23 @@ a `Task[T, R]`. The `name` argument is the routing key the framework
 uses to discover the handler on recovery. Use a stable string —
 changing it strands existing tasks.
 
+| Keyword                  | Type                                      | Default | Description |
+|--------------------------|-------------------------------------------|---------|-------------|
+| `name`                   | `str`                                     | `fn.__qualname__` | Stable identity for recovery routing. Always set this explicitly for production tasks. |
+| `title`                  | `str \| Callable[[T, str], str] \| None`  | `None`  | Human-readable title (template or callable). |
+| `tags`                   | `dict[str, str] \| Callable[[T, str], dict[str, str]] \| None` | `None` | Default tags (static dict or callable factory). |
+| `timeout`                | `timedelta \| None`                       | `None`  | Execution timeout. When elapsed, `ctx.cancel` is set cooperatively. |
+| `ephemeral`              | `bool`                                    | `True`  | Delete the persisted record on terminal exit. |
+| `retry`                  | `RetryPolicy \| None`                     | `None`  | Retry policy for handler-raised exceptions. Recovery-safe (applied on every entry, including post-crash). |
+| `steerable`              | `bool`                                    | `False` | Allow `.start()` on an `in_progress` task to queue a steering input instead of raising. |
+| `stream_handler_factory` | `Callable[[str], StreamHandler] \| None`  | `None`  | Custom stream-handler factory. Recovery-safe: fresh starts, resumes, and crash recovery all use this factory. |
+| `stale_timeout`          | `float` (seconds)                         | `300.0` | Threshold for callsite-driven recovery (see §7). |
+
+All decorator options are recovery-safe: the framework only knows
+about the registered decorator after a crash, so anything that needs
+to survive recovery must be configured here. Use `Task.options(...)`
+to derive a variant with overrides without redefining the function.
+
 ### `Task` (the handle)
 
 The decorated function exposes two keyword-only entry points:
@@ -323,16 +338,12 @@ The decorated function exposes two keyword-only entry points:
 ```python
 async def run(
     *, task_id: str, input: T,
-    title: str | None = None,
-    tags: dict[str, str] | None = None,
-    stale_timeout: float = 300.0,
+    input_id: str | None = None,
+    if_last_input_id: str | None = None,
 ) -> TaskResult[R]
 
 async def start(
     *, task_id: str, input: T,
-    title: str | None = None,
-    tags: dict[str, str] | None = None,
-    stale_timeout: float = 300.0,
     input_id: str | None = None,
     if_last_input_id: str | None = None,
 ) -> TaskRun[R]
@@ -340,18 +351,20 @@ async def start(
 
 `.run()` blocks until the task reaches a terminal state and returns a
 `TaskResult`. `.start()` returns immediately with a `TaskRun` handle
-you can stream from or `await handle.result()` on. The
-`input_id` / `if_last_input_id` sequential-input preconditions live
-only on `.start()` (see §4).
+you can stream from or `await handle.result()` on. Both accept the
+same `input_id` / `if_last_input_id` sequential-input preconditions
+(see §4).
 
-Retry policy and the stream handler are configured on the
-`@task(...)` decorator (or via `Task.options(retry=...)` for a
-derived `Task`), not per-call — see §4. They have to be registered
-on the decorated function so they remain available after a crash,
-when the framework re-enters the task with only the decorator's
-options. Session identity is platform-derived from the
-`FOUNDRY_AGENT_SESSION_ID` environment variable; there is no
-per-call override.
+Everything else that characterises a task — `title`, `tags`, `retry`,
+`stream_handler_factory`, `stale_timeout`, `steerable`, `ephemeral`,
+`timeout` — is configured once on the `@task(...)` decorator (or via
+`Task.options(...)` for a derived `Task`). There is no per-call
+override. This is deliberate so the settings survive crash recovery:
+after the container crashes and the framework re-enters the task, it
+has only the registered decorator's view to work with — a per-call
+override would silently disappear at the crash boundary. Session
+identity is platform-derived from the `FOUNDRY_AGENT_SESSION_ID`
+environment variable.
 
 ### `TaskContext`
 
@@ -572,13 +585,17 @@ to set — the framework auto-selects.
 You don't need a crashed process to exercise the `"recovered"` entry
 mode. In a unit test, invoke the handler once with a `task_id`, let
 it write a watermark, and tear the first invocation down before it
-completes. Then invoke it again with the **same** `task_id` (and a
-short `stale_timeout=` so the framework treats the first lifetime as
-gone) — the second invocation will see `ctx.entry_mode == "recovered"`
-and the persisted `ctx.metadata` / counters from the first run.
+completes. Then invoke it again with the **same** `task_id` — the
+second invocation will see `ctx.entry_mode == "recovered"` and the
+persisted `ctx.metadata` / counters from the first run.
+
+Set a short `stale_timeout=` on the decorator so the framework
+considers the first lifetime gone immediately. (For production tasks
+the default 5-minute timeout is what you want — see "Stale-task
+recovery and `stale_timeout`" below.)
 
 ```python
-@task(name="resumable")
+@task(name="resumable", stale_timeout=0.1)
 async def resumable(ctx: TaskContext[int]) -> int:
     if ctx.entry_mode == "fresh":
         ctx.metadata["seen"] = ctx.input
@@ -590,10 +607,49 @@ async def resumable(ctx: TaskContext[int]) -> int:
 # Lifetime 1: writes watermark, then dies.
 with pytest.raises(SystemExit):
     await resumable.run(task_id="t-1", input=42)
-# Lifetime 2: short stale_timeout so the framework reclaims t-1.
-result = await resumable.run(task_id="t-1", input=42, stale_timeout=0.1)
+# Lifetime 2: framework treats t-1 as stale → recovered entry mode.
+result = await resumable.run(task_id="t-1", input=42)
 assert result.output == 42
 ```
+
+If a single test needs both the *stale* and *not-stale* outcomes on
+the same handler, derive variants with `Task.options(stale_timeout=...)`
+rather than redefining the function.
+
+### Stale-task recovery and `stale_timeout`
+
+`stale_timeout` (decorator option, default 300 seconds) controls
+**how long the framework waits before treating an `in_progress`
+record from a previous lifetime as abandoned and eligible for
+re-acquisition by a new `.run()` / `.start()` call**.
+
+It exists because a crash leaves an `in_progress` record behind with
+no signalled outcome — and the new lifetime needs a deterministic
+rule for "is anyone still working on this, or am I free to take it
+over?". The framework checks `now - updated_at` against
+`stale_timeout` at the start of every `.run()` / `.start()` that
+encounters an `in_progress` record:
+
+| Outcome | Behaviour |
+|---------|-----------|
+| `now - updated_at > stale_timeout` | The call enters with `entry_mode == "recovered"`. |
+| `now - updated_at ≤ stale_timeout` | A `TaskConflictError` is raised — the framework assumes the prior lifetime is still active. |
+
+This callsite-driven check is **independent of** the background
+lease-reclaim loop that runs at host startup. The background loop
+reclaims tasks whose lease owner is a *previous host instance*
+(dead/restarted) and re-enters them automatically. `stale_timeout`
+covers the narrower window where a callsite happens to encounter
+an unreclaimed-yet record — for example a same-process test that
+simulates a crash, or the briefly-racy window during host startup.
+
+Pick a value that comfortably exceeds the longest legitimate gap
+between the task's own `ctx.metadata.flush()` / lifecycle-boundary
+writes. For a quick `query()` task that finishes in seconds the
+default 300s is generous; for a multi-hour batch job that only
+flushes between batches, raise it to several times the batch
+interval. In tests, drop it to `0.0`–`0.1` to deterministically
+take the recovered path.
 
 ### What the framework persists at lifecycle boundaries
 

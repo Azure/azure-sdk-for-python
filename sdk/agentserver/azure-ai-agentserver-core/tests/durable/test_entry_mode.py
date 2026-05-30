@@ -120,7 +120,7 @@ class TestEntryMode:
         """Calling .run() on a stale in_progress task produces entry_mode='recovered'."""
         observed: list[str] = []
 
-        @task(title="test-recover", ephemeral=False)
+        @task(title="test-recover", ephemeral=False, stale_timeout=1.0)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return "recovered-ok"
@@ -157,7 +157,6 @@ class TestEntryMode:
             result = await my_task.run(
                 task_id="stale-1",
                 input="new-data",
-                stale_timeout=1.0,
             )
             assert result.output == "recovered-ok"
             assert observed == ["recovered"]
@@ -294,7 +293,7 @@ class TestRecoveryRetryAttempt:
         """
         observed: list[tuple[str, int]] = []
 
-        @task(title="rec-attempt", ephemeral=False)
+        @task(title="rec-attempt", ephemeral=False, stale_timeout=1.0)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.retry_attempt))
             return "done"
@@ -305,7 +304,6 @@ class TestRecoveryRetryAttempt:
             result = await my_task.run(
                 task_id="rec-attempt-1",
                 input="ignored",
-                stale_timeout=1.0,
             )
             assert result.output == "done"
             assert observed == [("recovered", 3)], (
@@ -329,7 +327,7 @@ class TestRecoveryRetryAttempt:
         """
         observed: list[int] = []
 
-        @task(title="rec-no-bump", ephemeral=False)
+        @task(title="rec-no-bump", ephemeral=False, stale_timeout=1.0)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"
@@ -340,7 +338,6 @@ class TestRecoveryRetryAttempt:
             await my_task.run(
                 task_id="rec-no-bump-1",
                 input="ignored",
-                stale_timeout=1.0,
             )
             assert observed == [1], (
                 "FR-003 violated: recovery entry MUST surface "

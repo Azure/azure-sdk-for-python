@@ -538,6 +538,7 @@ class TestStreamHandlerFactory:
                 name="t_factory_recovery",
                 stream_handler_factory=_factory,
                 ephemeral=False,
+                stale_timeout=1.0,
             )
             async def my_task(ctx: TaskContext[str]) -> str:
                 if ctx.entry_mode == "recovered":
@@ -574,7 +575,6 @@ class TestStreamHandlerFactory:
             run2 = await my_task.start(
                 task_id="recovery-1",
                 input="hi",
-                stale_timeout=1.0,
             )
             collected2 = []
             async for chunk in run2:

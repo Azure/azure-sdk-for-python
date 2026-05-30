@@ -183,7 +183,7 @@ class TestLifecycle:
         """run() on stale in_progress task → recovers, entry_mode='recovered'."""
         observed_mode: list[str] = []
 
-        @task(title="lifecycle-stale")
+        @task(title="lifecycle-stale", stale_timeout=1.0)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "recovered"
@@ -207,7 +207,6 @@ class TestLifecycle:
             result = await my_task.run(
                 task_id="lc-stale-1",
                 input="new",
-                stale_timeout=1.0,
             )
             assert result.output == "recovered"
             assert observed_mode == ["recovered"]
@@ -280,11 +279,19 @@ class TestLifecycle:
 
     @pytest.mark.asyncio
     async def test_stale_timeout_parameter(self, tmp_path) -> None:
-        """stale_timeout controls when in_progress is considered stale."""
+        """stale_timeout controls when in_progress is considered stale.
+
+        Configured at decorator time (or via ``Task.options(stale_timeout=...)``);
+        not a per-call kwarg. This test derives two variants of the same
+        underlying handler to exercise both the not-stale and stale branches.
+        """
 
         @task(title="stale-timeout")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "ok"
+
+        my_task_high = my_task.options(stale_timeout=999999999.0)
+        my_task_low = my_task.options(stale_timeout=1.0)
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
@@ -304,17 +311,15 @@ class TestLifecycle:
 
             # Very large timeout → not stale → conflict
             with pytest.raises(TaskConflictError):
-                await my_task.run(
+                await my_task_high.run(
                     task_id="lc-timeout-1",
                     input="new",
-                    stale_timeout=999999999.0,
                 )
 
             # Small timeout → stale → recover
-            result = await my_task.run(
+            result = await my_task_low.run(
                 task_id="lc-timeout-1",
                 input="new",
-                stale_timeout=1.0,
             )
             assert result.output == "ok"
         finally:

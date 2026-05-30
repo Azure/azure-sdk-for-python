@@ -100,30 +100,6 @@ class TestCallableTags:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
     @pytest.mark.asyncio
-    async def test_callable_tags_merged_with_callsite(self, tmp_path):
-        """Per-call tags merge on top of callable-resolved tags."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @task(
-                name="merge_tags",
-                tags=lambda inp, tid: {"source": "factory"},
-                ephemeral=False,
-            )
-            async def my_task(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            task_id = uuid.uuid4().hex
-            await my_task.run(task_id=task_id, input=None, tags={"extra": "call-site"})
-
-            task_record = await manager.provider.get(task_id)
-            assert task_record.tags["source"] == "factory"
-            assert task_record.tags["extra"] == "call-site"
-
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
     async def test_callable_tags_error_propagates(self, tmp_path):
         """If callable tags factory raises, the error propagates at creation."""
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)

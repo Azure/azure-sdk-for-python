@@ -576,15 +576,13 @@ class TestSteeringRecovery:
 
         inputs_seen: list[dict] = []
 
-        @task(name="chat", steerable=True, ephemeral=False)
+        @task(name="chat", steerable=True, ephemeral=False, stale_timeout=0.0)
         async def chat2(ctx: TaskContext[dict]) -> dict:
             inputs_seen.append(dict(ctx.input))
             return {"msg": ctx.input.get("msg", "?")}
 
         # Start with recovery input (doesn't matter — active_input overrides)
-        run2 = await chat2.start(
-            task_id="t1", input={"msg": "recovery"}, stale_timeout=0.0
-        )
+        run2 = await chat2.start(task_id="t1", input={"msg": "recovery"})
         result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
 
         # Should have used active_input "B", not the recovery caller input
@@ -663,16 +661,14 @@ class TestSteeringRecovery:
 
         inputs_seen: list[str] = []
 
-        @task(name="chat", steerable=True, ephemeral=False)
+        @task(name="chat", steerable=True, ephemeral=False, stale_timeout=0.0)
         async def chat(ctx: TaskContext[dict]) -> dict:
             inputs_seen.append(ctx.input.get("msg", "?"))
             if ctx.cancel.is_set():
                 return await ctx.suspend(reason="steered")
             return {"msg": ctx.input.get("msg", "?")}
 
-        run2 = await chat.start(
-            task_id="t2", input={"msg": "recover"}, stale_timeout=0.0
-        )
+        run2 = await chat.start(task_id="t2", input={"msg": "recover"})
         result = await asyncio.wait_for(run2.result(), timeout=5.0)
 
         # Should have drained through X (cancel set) → Y (cancel set) → Z (complete)

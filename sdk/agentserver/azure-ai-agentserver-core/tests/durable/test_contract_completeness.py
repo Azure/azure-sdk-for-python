@@ -245,9 +245,8 @@ def test_consolidated_developer_guide_exists() -> None:
     """
     assert _CONSOLIDATED_GUIDE.exists(), (
         f"consolidated developer guide not found at {_CONSOLIDATED_GUIDE}. "
-        f"Per FR-023, Phase 7 MUST consolidate the two existing guides "
-        f"(durable-task-overview.md, durable-task-developer-guide.md) into "
-        f"a single end-user-developer document at this path."
+        f"Per FR-023, the canonical end-user developer guide for the "
+        f"durable-task primitive MUST live at this path."
     )
 
 

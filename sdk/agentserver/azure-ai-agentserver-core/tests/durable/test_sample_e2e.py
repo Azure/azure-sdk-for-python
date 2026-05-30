@@ -363,31 +363,6 @@ class TestListE2E:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
-    @pytest.mark.asyncio
-    async def test_reserved_tag_stripped_from_callsite(self, tmp_path):
-        """Call-site tags with reserved prefix are stripped."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-            task_id = uuid.uuid4().hex
-
-            @task(name="e2e_callsite_tag", ephemeral=False)
-            async def callsite(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            await callsite.run(
-                task_id=task_id,
-                input=None,
-                tags={"_task_name": "evil", "safe_tag": "ok"},
-            )
-
-            task_info = await manager.provider.get(task_id)
-            assert task_info is not None
-            assert task_info.tags is not None
-            assert task_info.tags["_task_name"] == "e2e_callsite_tag"
-            assert task_info.tags["safe_tag"] == "ok"
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
 
 # ---------------------------------------------------------------------------
 # Sample 4: Multi-turn durable session (durable_multiturn)
