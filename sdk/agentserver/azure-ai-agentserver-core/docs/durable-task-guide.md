@@ -307,22 +307,62 @@ Steerable (`steerable=True`):
      finishes.
   4. **The original caller's `TaskRun` resolves with
      `TaskResult(status="superseded", output=...)`** — no exception
-     is raised. The `output` is whatever the displaced generation
-     produced before being replaced: `None` if its handler cleanly
-     suspended on `ctx.cancel.is_set()`, or the handler's return
-     value if the handler completed normally just as steering
-     arrived. The original caller cleanly observes "I got displaced
-     by a later turn; I am done." — use `result.is_superseded` to
-     branch on it.
+     is raised. What lands in `output` depends entirely on the
+     handler's cooperative-cancel strategy (see next subsection):
+     `None` if the handler suspended on cancel (the suspend
+     envelope's `output=` is dropped when there's a queued steering
+     input to drain); the handler's return value if the handler
+     ignored cancel and ran to completion. Either way, the original
+     caller observes "I got displaced by a later turn; I am done." —
+     branch on `result.is_superseded`.
 - If the steering queue is at its internal bound, `.start()` raises
   `SteeringQueueFull` instead of queuing.
 
-#### What your handler is supposed to do when steered
+#### Cooperative cancellation: the handler is in charge
 
-A steerable handler **must** check `ctx.cancel.is_set()` at every
-suspension-friendly boundary (between LLM tokens, between tool
-calls, between iterations of a loop). On a True read, the polite,
-correct shape is to suspend with the partial output you have so far:
+`ctx.cancel` is **advisory**. The framework signals it when a
+steering input arrives, but it does not preempt your handler — your
+handler decides what to do about it. There are three legitimate
+strategies, and the choice belongs to the handler author:
+
+- **A — Yield immediately.** Check `ctx.cancel.is_set()` at the next
+  boundary and `return await ctx.suspend(output=...)` right away.
+  Lowest user-visible latency to the new turn; throws away whatever
+  partial work was in flight. Use this when the in-flight work is
+  cheap to re-derive or strictly stale (e.g., the next chat turn
+  invalidates the previous one).
+
+- **B — Wind down to a safe checkpoint, then suspend.** Finish the
+  current tool call / token batch / loop iteration, persist a
+  durable checkpoint via `ctx.metadata`, *then*
+  `return await ctx.suspend(output=...)`. Costs one extra checkpoint
+  of latency but keeps your invariants clean. Use this when the
+  in-flight work has external side effects that need a clean cut
+  point.
+
+- **C — Ignore cancel and finish.** Don't read `ctx.cancel` at all;
+  let the handler run to its normal `return value`. The framework
+  will still drain the queued steering input afterwards — the
+  queued caller's turn runs second, sequentially. Use this when the
+  current input must complete atomically (e.g., a financial
+  transaction, a multi-step tool sequence that cannot leave the
+  world half-done).
+
+What the displaced original caller sees:
+
+| Handler strategy | Displaced caller's `TaskResult.output` |
+|---|---|
+| A — `return await ctx.suspend(output=X)` on cancel | `None` (the suspend envelope's `X` is dropped when steering drains) |
+| B — wind down then `return await ctx.suspend(output=X)` | `None` (same path as A) |
+| C — `return value` (ignored cancel) | `value` (delivered to the displaced caller with `status="superseded"`) |
+
+If your handler suspends and there is **no** queued steering input
+yet (timing race: cancel was set but the queue was drained by a
+concurrent call), the displaced caller instead sees
+`TaskResult(status="suspended", output=X)` — the normal suspend
+shape — because no supersede happened.
+
+#### Example: cooperative suspend (strategy A)
 
 ```python
 @task(name="chat", steerable=True)
@@ -333,7 +373,7 @@ async def chat(ctx: TaskContext[dict]) -> dict:
     reply_chunks: list[str] = []
     async for chunk in llm_stream(history):
         if ctx.cancel.is_set():
-            # Steering arrived. Stash the partial turn and bow out.
+            # Strategy A: bow out immediately.
             history.append({"role": "assistant", "content": "".join(reply_chunks), "partial": True})
             ctx.metadata["history"] = history
             await ctx.metadata.flush()
@@ -421,15 +461,18 @@ queue); `QueueStreamHandler` is the in-memory default.
     `"suspended"` branch when the handler returned via
     `ctx.suspend(reason=...)`.
 - `result.status == "superseded"` is the steering outcome: the
-  original caller's `.run()` cleanly resolves with
-  `TaskResult(status="superseded", output=...)` when a later
-  `.start()` queued a new input and the framework drained past their
-  generation. No exception is raised. `result.output` is `None` if
-  the displaced handler suspended on `ctx.cancel.is_set()` (the
-  expected cooperative shape) or the handler's return value if it
-  completed normally just before the drain — it's a partial / late
-  result the displaced caller can log, but the *steering ack* run
-  (returned to the steerer) is what carries the new turn's outcome.
+  original caller's `.run()` cleanly resolves (no exception) when a
+  later `.start()` queued a new input and the framework drained past
+  their generation. The handler's cooperative-cancel strategy
+  determines what shows up in `result.output`:
+  - Handler suspended on `ctx.cancel.is_set()` (strategy A/B above)
+    → `output=None` — the suspend envelope's `output=` is dropped on
+    the floor when there's a queued steering input to drain instead.
+  - Handler ignored cancel and ran to completion (strategy C) →
+    `output=value` — the original caller actually receives the
+    completed work, just labeled `superseded` because the
+    conversation has moved on. The queued steering input still runs
+    afterwards, sequentially.
 - `Task.start()` returns a `TaskRun[Output]` handle you can poll,
   stream, or `await run.result()`-on. `TaskRun.cancel()` raises the
   cancel signal; `TaskRun.terminate(reason=...)` is the forceful
@@ -847,8 +890,11 @@ run2 = await steerable_chat.start(task_id=session, input={"message": "Actually, 
 
 # Original caller's run cleanly resolves "superseded".
 r1 = await run1.result()
-assert r1.is_superseded         # no exception; r1.output is None
-                                # because the handler suspended on ctx.cancel.
+assert r1.is_superseded         # no exception; r1.output is None because
+                                # this handler chose strategy A — suspend
+                                # on ctx.cancel. A "strategy C" handler that
+                                # ignored cancel would deliver its return
+                                # value here with the same superseded label.
 
 # Steering ack resolves with the new turn's actual reply.
 r2 = await run2.result()
