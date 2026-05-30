@@ -214,31 +214,87 @@ class PartitionKeyRangeCache(object):
         current_previous_map = previous_routing_map
         incomplete_attempt_count = 0
 
+        # Bounded safety stop for the change-feed drain. A page is currently
+        # service-capped at ~8K ranges, so 100 pages covers up to ~800K ranges,
+        # well beyond any realistic container size.
+        _drain_max_pages = 100
+
         while True:
-            request_kwargs = dict(kwargs)
-            response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-            request_kwargs['_internal_response_headers_capture'] = response_headers
-
-            # Prepare sanitised options and headers for the PK-range fetch.
-            change_feed_options = prepare_fetch_options_and_headers(
-                current_previous_map, feed_options, request_kwargs
-            )
-
             ranges: List[Dict[str, Any]] = []
-            try:
-                pk_range_generator = self._document_client._ReadPartitionKeyRanges(
-                    collection_link,
-                    change_feed_options,
-                    **request_kwargs
+            # Start the change-feed drain at the previous map's etag (if any).
+            # On subsequent drain pages we advance this with the etag returned
+            # for the previous page so the service returns "what's new since X"
+            # until it eventually responds with 304 / no new ranges, mirroring
+            # the .NET and Go SDK behaviour.
+            current_if_none_match = (
+                current_previous_map.change_feed_etag if current_previous_map else None
+            )
+            new_etag = current_if_none_match
+            drained_normally = False
+
+            for _drain_page in range(_drain_max_pages):
+                request_kwargs = dict(kwargs)
+                response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+                request_kwargs['_internal_response_headers_capture'] = response_headers
+
+                # Prepare sanitised options and headers for the PK-range fetch.
+                change_feed_options = prepare_fetch_options_and_headers(
+                    current_previous_map, feed_options, request_kwargs
                 )
-                async for item in pk_range_generator:
-                    ranges.append(item)
 
-            except CosmosHttpResponseError as e:
-                logger.error("Failed to read partition key ranges for collection '%s': %s", collection_link, e)
-                raise
+                # Override If-None-Match with the running etag from the drain
+                # so each page advances. ``prepare_fetch_options_and_headers``
+                # only sets it from ``current_previous_map.change_feed_etag``
+                # which never advances during this drain.
+                drain_headers = request_kwargs.setdefault('headers', {})
+                if current_if_none_match:
+                    drain_headers[http_constants.HttpHeaders.IfNoneMatch] = current_if_none_match
+                else:
+                    drain_headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
 
-            new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
+                page_ranges: List[Dict[str, Any]] = []
+                try:
+                    pk_range_generator = self._document_client._ReadPartitionKeyRanges(
+                        collection_link,
+                        change_feed_options,
+                        **request_kwargs
+                    )
+                    async for item in pk_range_generator:
+                        page_ranges.append(item)
+                except CosmosHttpResponseError as e:
+                    if getattr(e, 'status_code', None) == 304:
+                        drained_normally = True
+                        break
+                    logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
+                        "Failed to read partition key ranges for collection '%s': %s",
+                        collection_link, e)
+                    raise
+
+                page_new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
+
+                if not page_ranges:
+                    # Service returned an empty page -- nothing more to drain.
+                    if page_new_etag:
+                        new_etag = page_new_etag
+                    drained_normally = True
+                    break
+
+                ranges.extend(page_ranges)
+
+                if not page_new_etag or page_new_etag == current_if_none_match:
+                    # Etag didn't advance -- no further progress possible.
+                    drained_normally = True
+                    break
+
+                current_if_none_match = page_new_etag
+                new_etag = page_new_etag
+
+            if not drained_normally:
+                logger.warning(
+                    "Routing-map change-feed drain hit safety bound of %d pages for "
+                    "collection '%s' (accumulated %d ranges).",
+                    _drain_max_pages, collection_link, len(ranges),
+                )
 
             try:
                 return process_fetched_ranges(
