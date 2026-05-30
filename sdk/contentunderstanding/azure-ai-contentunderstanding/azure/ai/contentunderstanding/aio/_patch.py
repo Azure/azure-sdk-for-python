@@ -56,7 +56,9 @@ class ContentUnderstandingClient(GeneratedClient):
     ) -> None:
         # Default polling_interval to 3 seconds (generated code defaults to 30s)
         kwargs.setdefault("polling_interval", 3)
-        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+        # Strip trailing slash so the generated URL template "{endpoint}/contentunderstanding"
+        # never produces "//contentunderstanding" (a common copy-paste pitfall from the Azure portal).
+        super().__init__(endpoint=endpoint.rstrip("/"), credential=credential, **kwargs)
 
     @overload  # type: ignore[override]
     async def begin_analyze(

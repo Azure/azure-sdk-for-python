@@ -181,12 +181,12 @@ def _validate_field_definition(
     if not isinstance(definition, Mapping):
         return [f"{prefix} must be an object"]
 
-    ftype = definition.get("type")
-    if ftype is None:
+    field_type = definition.get("type")
+    if field_type is None:
         errors.append(f"{prefix}.type is required")
-    elif ftype not in _ALLOWED_FIELD_TYPES:
+    elif field_type not in _ALLOWED_FIELD_TYPES:
         errors.append(
-            f"{prefix}.type {ftype!r} is not one of {sorted(_ALLOWED_FIELD_TYPES)}"
+            f"{prefix}.type {field_type!r} is not one of {sorted(_ALLOWED_FIELD_TYPES)}"
         )
 
     method = definition.get("method")
@@ -201,19 +201,19 @@ def _validate_field_definition(
 
     # Recurse into nested object/array shapes so typos in child fields are
     # caught here instead of at the service round-trip.
-    if ftype == "object":
+    if field_type == "object":
         props = definition.get("properties")
         if props is not None:
             if not isinstance(props, Mapping):
                 errors.append(f"{prefix}.properties must be an object")
             else:
-                for child, cdef in props.items():
+                for child, child_def in props.items():
                     errors.extend(
                         _validate_field_definition(
-                            child, cdef, path=f"{prefix}.properties[{child!r}]"
+                            child, child_def, path=f"{prefix}.properties[{child!r}]"
                         )
                     )
-    elif ftype == "array":
+    elif field_type == "array":
         items = definition.get("items")
         if items is not None:
             if not isinstance(items, Mapping):
