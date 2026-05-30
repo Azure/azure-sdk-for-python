@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-04-01/dedicatedHostExamples/DedicatedHost_ListAvailableSizes.json
+# x-ms-original-file: 2025-11-01/dedicatedHostExamples/DedicatedHost_ListAvailableSizes.json
 if __name__ == "__main__":
     main()

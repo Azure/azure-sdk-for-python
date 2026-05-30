@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-04-01/capacityReservationExamples/CapacityReservationGroup_ListBySubscriptionWithResourceIdsQuery.json
+# x-ms-original-file: 2025-11-01/capacityReservationExamples/CapacityReservationGroup_ListBySubscriptionWithResourceIdsQuery.json
 if __name__ == "__main__":
     main()

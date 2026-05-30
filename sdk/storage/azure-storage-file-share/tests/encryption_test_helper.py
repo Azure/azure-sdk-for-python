@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.padding import (
     OAEP,
@@ -14,6 +15,9 @@ from cryptography.hazmat.primitives.keywrap import (
     aes_key_wrap,
     aes_key_unwrap,
 )
+
+
+_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown keywrap algorithm specified. Supported algorithm: A256KW."
 
 
 class KeyWrapper:

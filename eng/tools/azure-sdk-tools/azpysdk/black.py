@@ -58,36 +58,61 @@ class black(Check):
 
             logger.info(f"Running black against {package_name}")
 
-            if in_ci():
+            check_only = in_ci() != 0
+
+            if check_only:
                 if not is_check_enabled(package_dir, "black", default=False):
                     logger.info(f"Package {package_name} opts-out of black check.")
                     continue
 
-            result = self.format_directory(executable, package_dir)
+            result = self.format_directory(executable, package_dir, check_only=check_only)
             if result is None:
-                # install or formatting failed, already logged
                 results.append(1)
                 continue
 
-            if result.stderr and "reformatted" in result.stderr.decode("utf-8"):
-                if in_ci():
+            stderr_text = result.stderr.decode("utf-8") if result.stderr else ""
+            stdout_text = result.stdout.decode("utf-8") if result.stdout else ""
+
+            has_issues = result.returncode != 0 if check_only else "reformatted" in stderr_text
+
+            if has_issues:
+                if check_only and result.returncode > 1:
+                    logger.error(f"Black failed for {package_name} (exit code {result.returncode}).")
+                    if stderr_text.strip():
+                        logger.error(f"Black stderr:\n{stderr_text}")
+                    results.append(result.returncode)
+                elif check_only:
                     logger.info(
-                        f"The package {package_name} needs reformat. Run `azpysdk black .` locally from the package root to reformat."
+                        f"The package {package_name} has black formatting issues. "
+                        f"Run `azpysdk black .` locally from the package root to reformat."
                     )
+                    if stdout_text.strip():
+                        logger.info(f"Black diff output:\n{stdout_text}")
+                    if stderr_text.strip():
+                        logger.info(f"Black summary:\n{stderr_text}")
                     results.append(1)
                 else:
                     logger.info(f"The package {package_name} was reformatted.")
+                    if stdout_text.strip():
+                        logger.info(f"Black diff output:\n{stdout_text}")
+                    if stderr_text.strip():
+                        logger.info(f"Black summary:\n{stderr_text}")
             else:
                 logger.info(f"The package {package_name} is properly formatted, no files changed.")
 
         return max(results) if results else 0
 
     @staticmethod
-    def format_directory(executable: str, target_dir: str) -> Optional[subprocess.CompletedProcess]:
+    def format_directory(
+        executable: str, target_dir: str, check_only: bool = False
+    ) -> Optional[subprocess.CompletedProcess]:
         """Run black on *target_dir* using the repo-wide config.
 
         Installs the pinned black version into the environment of *executable*,
         then formats all Python files under *target_dir*.
+
+        When *check_only* is True, runs with ``--check --diff`` to report
+        issues without modifying files.
         """
         try:
             install_into_venv(executable, [f"black=={BLACK_VERSION}"], target_dir)
@@ -96,12 +121,18 @@ class black(Check):
             return None
 
         config_file_location = os.path.join(REPO_ROOT, "eng/black-pyproject.toml")
+        cmd = [executable, "-m", "black", f"--config={config_file_location}"]
+        if check_only:
+            cmd.append("--check")
+            cmd.append("--diff")
+        cmd.append(target_dir)
+
         try:
             return subprocess.run(
-                [executable, "-m", "black", f"--config={config_file_location}", target_dir],
+                cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                check=True,
+                check=not check_only,
             )
         except subprocess.CalledProcessError as e:
             logger.error(f"Black formatting failed for {target_dir}: {e}")

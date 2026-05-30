@@ -53,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/imageExamples/Image_Create_DataDiskFromABlobIncluded.json
+# x-ms-original-file: 2025-11-01/imageExamples/Image_Create_DataDiskFromABlobIncluded.json
 if __name__ == "__main__":
     main()

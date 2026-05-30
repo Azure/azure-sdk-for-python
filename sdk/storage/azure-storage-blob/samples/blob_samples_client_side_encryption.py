@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_client_side_encryption.py
@@ -39,6 +38,9 @@ from cryptography.hazmat.primitives.keywrap import (
 
 from azure.storage.blob import BlobServiceClient
 from azure.core.exceptions import HttpResponseError
+
+
+MAX_SINGLE_PUT_SIZE = 64 * 1024 * 1024
 
 
 # Sample implementations of the encryption-related interfaces.
@@ -98,7 +100,7 @@ class RSAKeyWrapper:
         if algorithm == 'RSA':
             return self.private_key.decrypt(key,
                                             OAEP(
-                                                mgf=MGF1(algorithm=SHA1()), # nosec
+                                                mgf=MGF1(algorithm=SHA1()),  # nosec
                                                 algorithm=SHA1(),   # nosec
                                                 label=None)
                                             )
@@ -111,9 +113,10 @@ class RSAKeyWrapper:
         return self.kid
 
 
-class BlobEncryptionSamples():
+class BlobEncryptionSamples:
     def __init__(self, bsc: BlobServiceClient):
         self.bsc = bsc
+        self.container_client = self.bsc.get_container_client("container")
 
     def run_all_samples(self):
         self.put_encrypted_blob()
@@ -148,10 +151,9 @@ class BlobEncryptionSamples():
 
             self.container_client.upload_blob(block_blob_name, b'ABC')
 
-            # Even when encrypting, uploading large blobs will still automatically 
+            # Even when encrypting, uploading large blobs will still automatically
             # chunk the data.
-            max_single_put_size = self.bsc._config.max_single_put_size
-            self.container_client.upload_blob(block_blob_name, b'ABC' * max_single_put_size, overwrite=True)
+            self.container_client.upload_blob(block_blob_name, b'ABC' * MAX_SINGLE_PUT_SIZE, overwrite=True)
         finally:
             self.container_client.delete_container()
 
@@ -164,7 +166,7 @@ class BlobEncryptionSamples():
             self.container_client.key_encryption_key = kek
             self.container_client.encryption_version = '2.0'
 
-            data = os.urandom(13 * self.bsc._config.max_single_put_size + 1)
+            data = os.urandom(13 * MAX_SINGLE_PUT_SIZE + 1)
             self.container_client.upload_blob(block_blob_name, data)
 
             # Setting the key_resolver_function will tell the service to automatically
@@ -196,7 +198,7 @@ class BlobEncryptionSamples():
             self.container_client.upload_blob(block_blob_name, data)
 
             # If the key_encryption_key property is set on download, the blobservice
-            # will try to decrypt blobs using that key. If both the key_resolver and 
+            # will try to decrypt blobs using that key. If both the key_resolver and
             # key_encryption_key are set, the result of the key_resolver will take precedence
             # and the decryption will fail if that key is not successful.
             self.container_client.key_resolver_function = None
@@ -218,12 +220,12 @@ class BlobEncryptionSamples():
             data = b'ABC'
             self.container_client.upload_blob(unencrypted_blob_name, data)
 
-            # If the require_encryption flag is set, the service object will throw if 
+            # If the require_encryption flag is set, the service object will throw if
             # there is no encryption policy set on upload.
             self.container_client.require_encryption = True
             try:
                 self.container_client.upload_blob(encrypted_blob_name, data)
-                raise Exception
+                raise AssertionError("The upload_blob API requires encryption policy set on upload.")
             except ValueError:
                 pass
 
@@ -239,7 +241,7 @@ class BlobEncryptionSamples():
             self.container_client.key_encryption_key = None
             try:
                 self.container_client.get_blob_client(encrypted_blob_name).download_blob()
-                raise Exception
+                raise AssertionError("The download_blob API requires encryption policy set on upload.")
             except ValueError:
                 pass
 
@@ -248,7 +250,7 @@ class BlobEncryptionSamples():
             self.container_client.key_resolver_function = key_resolver.resolve_key
             try:
                 self.container_client.get_blob_client(unencrypted_blob_name).download_blob()
-                raise Exception
+                raise AssertionError("The download_blob API requires encryption policy set on upload.")
             except HttpResponseError:
                 pass
         finally:
@@ -274,6 +276,7 @@ class BlobEncryptionSamples():
         finally:
             self.container_client.delete_container()
 
+
 try:
     CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 except KeyError:
@@ -281,6 +284,6 @@ except KeyError:
     sys.exit(1)
 
 # Configure max_single_put_size to make blobs in this sample smaller
-bsc = BlobServiceClient.from_connection_string(CONNECTION_STRING, max_single_put_size=4 * 1024 * 1024)
-samples = BlobEncryptionSamples(bsc)
+blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING, max_single_put_size=4 * 1024 * 1024)
+samples = BlobEncryptionSamples(blob_service_client)
 samples.run_all_samples()

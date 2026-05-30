@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import PlanetaryComputerProClientConfiguration
-from .operations import DataOperations, IngestionOperations, SharedAccessSignatureOperations, StacOperations
+from .operations import DataOperations, IngestionOperations, SasOperations, StacOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -31,16 +31,17 @@ class PlanetaryComputerProClient:
     :vartype stac: azure.planetarycomputer.aio.operations.StacOperations
     :ivar data: DataOperations operations
     :vartype data: azure.planetarycomputer.aio.operations.DataOperations
-    :ivar shared_access_signature: SharedAccessSignatureOperations operations
-    :vartype shared_access_signature:
-     azure.planetarycomputer.aio.operations.SharedAccessSignatureOperations
-    :param endpoint: Service host. Required.
+    :ivar sas: SasOperations operations
+    :vartype sas: azure.planetarycomputer.aio.operations.SasOperations
+    :param endpoint: GeoCatalog endpoint, e.g.
+     `https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com
+     <https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com>`_. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2025-04-30-preview" and None. Default value is "2025-04-30-preview". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-15".
+     Default value is "2026-04-15". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -75,9 +76,7 @@ class PlanetaryComputerProClient:
         self.ingestion = IngestionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.stac = StacOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data = DataOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_access_signature = SharedAccessSignatureOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.sas = SasOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

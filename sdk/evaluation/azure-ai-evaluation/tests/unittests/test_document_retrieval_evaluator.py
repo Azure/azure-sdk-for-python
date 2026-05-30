@@ -50,7 +50,8 @@ def test_success(doc_retrieval_eval_data):
         result = evaluator(**record)
 
         assert isinstance(result, dict)
-        assert "ndcg@3" in result
+        assert "document_retrieval_properties" in result
+        assert "ndcg@3" in result["document_retrieval_properties"]
 
 
 def test_groundtruth_min_gte_max():
@@ -147,44 +148,54 @@ def test_thresholds(doc_retrieval_eval_data):
 
         expected_keys = [
             "ndcg@3",
+            "ndcg@3_passed",
             "ndcg@3_result",
             "ndcg@3_threshold",
             "ndcg@3_higher_is_better",
             "xdcg@3",
+            "xdcg@3_passed",
             "xdcg@3_result",
             "xdcg@3_threshold",
             "xdcg@3_higher_is_better",
             "fidelity",
+            "fidelity_passed",
             "fidelity_result",
             "fidelity_threshold",
             "fidelity_higher_is_better",
             "top1_relevance",
+            "top1_relevance_passed",
             "top1_relevance_result",
             "top1_relevance_threshold",
             "top1_relevance_higher_is_better",
             "top3_max_relevance",
+            "top3_max_relevance_passed",
             "top3_max_relevance_result",
             "top3_max_relevance_threshold",
             "top3_max_relevance_higher_is_better",
             "total_retrieved_documents",
+            "total_retrieved_documents_passed",
             "total_retrieved_documents_result",
             "total_retrieved_documents_threshold",
             "total_retrieved_documents_higher_is_better",
             "total_ground_truth_documents",
+            "total_ground_truth_documents_passed",
             "total_ground_truth_documents_result",
             "total_ground_truth_documents_threshold",
             "total_ground_truth_documents_higher_is_better",
             "holes",
+            "holes_passed",
             "holes_result",
             "holes_threshold",
             "holes_higher_is_better",
             "holes_ratio",
+            "holes_ratio_passed",
             "holes_ratio_result",
             "holes_ratio_threshold",
             "holes_ratio_higher_is_better",
         ]
 
-        assert set(expected_keys) == set(results.keys())
+        assert "document_retrieval_properties" in results
+        assert set(expected_keys) == set(results["document_retrieval_properties"].keys())
 
 
 def test_invalid_input(bad_doc_retrieval_eval_data):
@@ -253,8 +264,9 @@ def test_no_retrieved_documents():
     evaluator = DocumentRetrievalEvaluator()
     result = evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
 
-    assert result["ndcg@3"] == 0
-    assert result["holes"] == 0
+    properties = result["document_retrieval_properties"]
+    assert properties["ndcg@3"] == 0
+    assert properties["holes"] == 0
 
 
 def test_no_labeled_retrieved_documents():
@@ -273,5 +285,6 @@ def test_no_labeled_retrieved_documents():
     evaluator = DocumentRetrievalEvaluator()
     result = evaluator(retrieval_ground_truth=groundtruth_docs, retrieved_documents=retrieved_docs)
 
-    assert result["ndcg@3"] == 0
-    assert result["holes"] == len(retrieved_docs)
+    properties = result["document_retrieval_properties"]
+    assert properties["ndcg@3"] == 0
+    assert properties["holes"] == len(retrieved_docs)

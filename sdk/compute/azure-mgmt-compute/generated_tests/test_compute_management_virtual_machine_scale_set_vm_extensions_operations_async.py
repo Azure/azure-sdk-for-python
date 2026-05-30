@@ -27,7 +27,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperationsAsync(Azu
             vm_scale_set_name="str",
             instance_id="str",
             vm_extension_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperationsAsync(Azu
                     },
                     "type": "str",
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -118,7 +118,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperationsAsync(Azu
                     },
                     "type": "str",
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -134,7 +134,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperationsAsync(Azu
                 vm_scale_set_name="str",
                 instance_id="str",
                 vm_extension_name="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -148,7 +148,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperationsAsync(Azu
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself

@@ -1,5 +1,148 @@
 # Release History
 
+## 38.0.0 (2026-04-21)
+
+### Features Added
+
+  - Client `ComputeManagementClient` added method `send_request`
+  - Client `ComputeManagementClient` added operation group `virtual_machine_scale_set_life_cycle_hook_events`
+  - Model `CommunityGallery` added property `identifier`
+  - Model `CommunityGalleryImageVersion` added property `identifier`
+  - Model `DataDisk` added property `storage_fault_domain_alignment`
+  - Model `DiffDiskSettings` added property `enable_full_caching`
+  - Model `DiskInstanceView` added property `storage_alignment_status`
+  - Model `OSDisk` added property `storage_fault_domain_alignment`
+  - Model `ResiliencyPolicy` added property `operation_recovery_settings`
+  - Enum `SecurityTypes` added member `STANDARD`
+  - Model `SharedGallery` added property `identifier`
+  - Model `SharedGalleryImageVersion` added property `identifier`
+  - Model `Usage` added property `unit`
+  - Model `VirtualMachineScaleSetDataDisk` added property `storage_fault_domain_alignment`
+  - Model `VirtualMachineScaleSetOSDisk` added property `storage_fault_domain_alignment`
+  - Model `VirtualMachineScaleSetUpdate` added property `placement`
+  - Model `VirtualMachineScaleSetUpdateOSDisk` added property `storage_fault_domain_alignment`
+  - Enum `ZonalPlatformFaultDomainAlignMode` added member `BEST_EFFORT_ALIGNED`
+  - Added model `CloudError`
+  - Added enum `ComponentNames`
+  - Added model `ExternalHealthPolicy`
+  - Added model `LifecycleHook`
+  - Added enum `LifecycleHookAction`
+  - Added enum `LifecycleHookActionState`
+  - Added model `LifecycleHooksProfile`
+  - Added model `OperationRecoverySettings`
+  - Added enum `PassNames`
+  - Added model `ReimageRecoveryPolicy`
+  - Added model `ResiliencyProfile`
+  - Added model `RestartRecoveryPolicy`
+  - Added model `StartRecoveryPolicy`
+  - Added enum `StorageAlignmentStatus`
+  - Added enum `StorageFaultDomainAlignmentType`
+  - Added model `VMScaleSetLifecycleHookEvent`
+  - Added model `VMScaleSetLifecycleHookEventAdditionalContext`
+  - Added model `VMScaleSetLifecycleHookEventProperties`
+  - Added enum `VMScaleSetLifecycleHookEventState`
+  - Added model `VMScaleSetLifecycleHookEventTargetResource`
+  - Added enum `VMScaleSetLifecycleHookEventType`
+  - Added model `VMScaleSetLifecycleHookEventUpdate`
+  - Added model `ZoneMovement`
+  - Operation group `CapacityReservationsOperations` added parameter `expand` in method `list_by_capacity_reservation_group`
+  - Operation group `VirtualMachinesOperations` added parameter `force_deallocate` in method `begin_deallocate`
+  - Added operation group `VirtualMachineScaleSetLifeCycleHookEventsOperations`
+
+### Breaking Changes
+
+  - All Cloud Services (classic) related operations have been removed due to the [Azure Cloud Services (classic) retirement](https://azure.microsoft.com/updates?id=486344).
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Deleted or renamed enum `AvailabilitySetSkuTypes`
+  - Model `AvailabilitySetUpdate` moved instance variable `platform_update_domain_count`, `platform_fault_domain_count`, `virtual_machines`, `proximity_placement_group`, `statuses`, `scheduled_events_policy` and `virtual_machine_scale_set_migration_info` under property `properties`
+  - Model `CapacityReservationGroupUpdate` moved instance variable `capacity_reservations`, `virtual_machines_associated`, `instance_view`, `sharing_profile` and `reservation_type` under property `properties`
+  - Model `CapacityReservationUpdate` moved instance variable `reservation_id`, `platform_fault_domain_count`, `virtual_machines_associated`, `provisioning_time`, `provisioning_state`, `instance_view`, `time_created` and `schedule_profile` under property `properties`
+  - Model `DedicatedHostGroupUpdate` moved instance variable `platform_fault_domain_count`, `hosts`, `instance_view`, `support_automatic_placement` and `additional_capabilities` under property `properties`
+  - Model `DedicatedHostUpdate` moved instance variable `platform_fault_domain`, `auto_replace_on_failure`, `host_id`, `virtual_machines`, `license_type`, `provisioning_time`, `provisioning_state`, `instance_view` and `time_created` under property `properties`
+  - Model `DiskEncryptionSet` moved instance variable `encryption_type`, `active_key`, `previous_keys`, `provisioning_state`, `rotation_to_latest_key_version_enabled`, `last_key_rotation_timestamp`, `auto_key_rotation_error` and `federated_client_id` under property `properties` whose type is `EncryptionSetProperties`
+  - Model `GalleryApplicationUpdate` moved instance variable `description`, `eula`, `privacy_statement_uri`, `release_note_uri`, `end_of_life_date`, `supported_os_type` and `custom_actions` under property `properties`
+  - Model `GalleryApplicationVersionUpdate` moved instance variable `publishing_profile`, `safety_profile`, `provisioning_state` and `replication_status` under property `properties`
+  - Model `GalleryImageUpdate` moved instance variable `description`, `eula`, `privacy_statement_uri`, `release_note_uri`, `os_type`, `os_state`, `hyper_v_generation`, `end_of_life_date`, `identifier`, `recommended`, `disallowed`, `purchase_plan`, `provisioning_state`, `features`, `architecture` and `allow_update_image` under property `properties`
+  - Model `GalleryImageVersionUpdate` moved instance variable `publishing_profile`, `provisioning_state`, `storage_profile`, `safety_profile`, `replication_status`, `security_profile`, `restore` and `validations_profile` under property `properties`
+  - Model `GalleryInVMAccessControlProfileVersion` moved instance variable `target_locations`, `exclude_from_latest`, `published_date`, `provisioning_state`, `replication_status`, `mode`, `default_access` and `rules` under property `properties`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` moved instance variable `target_locations`, `exclude_from_latest`, `published_date`, `provisioning_state`, `replication_status`, `mode`, `default_access` and `rules` under property `properties`
+  - Model `GalleryScriptUpdate` moved instance variable `description`, `eula`, `privacy_statement_uri`, `release_note_uri`, `end_of_life_date`, `supported_os_type` and `provisioning_state` under property `properties`
+  - Model `GalleryScriptVersionUpdate` moved instance variable `publishing_profile`, `safety_profile`, `provisioning_state` and `replication_status` under property `properties`
+  - Model `GalleryUpdate` moved instance variable `description`, `identifier`, `provisioning_state`, `sharing_profile`, `soft_delete_policy` and `sharing_status` under property `properties`
+  - Model `ImageUpdate` moved instance variable `source_virtual_machine`, `storage_profile`, `provisioning_state` and `hyper_v_generation` under property `properties`
+  - Model `PirCommunityGalleryResource` moved instance variable `unique_id` under property `identifier` whose type is `CommunityGalleryIdentifier`
+  - Model `PirSharedGalleryResource` moved instance variable `unique_id` under property `identifier` whose type is `SharedGalleryIdentifier`
+  - Model `RestorePointCollectionUpdate` moved instance variable `source`, `provisioning_state`, `restore_point_collection_id`, `restore_points` and `instant_access` under property `properties`
+  - Model `SshPublicKeyUpdateResource` moved instance variable `public_key` under property `properties`
+  - Model `VirtualMachineRunCommandUpdate` moved instance variable `source`, `parameters`, `protected_parameters`, `async_execution`, `run_as_user`, `run_as_password`, `timeout_in_seconds`, `output_blob_uri`, `error_blob_uri`, `output_blob_managed_identity`, `error_blob_managed_identity`, `provisioning_state`, `instance_view` and `treat_failure_as_deployment_failure` under property `properties`
+  - Model `VirtualMachineScaleSetExtensionUpdate` moved instance variable `force_update_tag`, `publisher`, `type_properties_type`, `type_handler_version`, `auto_upgrade_minor_version`, `enable_automatic_upgrade`, `settings`, `protected_settings`, `provisioning_state`, `provision_after_extensions`, `suppress_failures` and `protected_settings_from_key_vault` under property `properties`
+  - Model `VirtualMachineScaleSetVMExtension` moved instance variable `force_update_tag`, `publisher`, `type_properties_type`, `type_handler_version`, `auto_upgrade_minor_version`, `enable_automatic_upgrade`, `settings`, `protected_settings`, `provisioning_state`, `instance_view`, `suppress_failures`, `protected_settings_from_key_vault` and `provision_after_extensions` under property `properties`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` moved instance variable `force_update_tag`, `publisher`, `type_properties_type`, `type_handler_version`, `auto_upgrade_minor_version`, `enable_automatic_upgrade`, `settings`, `protected_settings`, `suppress_failures` and `protected_settings_from_key_vault` under property `properties`
+  - Model `VirtualMachineUpdate` moved instance variable `hardware_profile`, `scheduled_events_policy`, `storage_profile`, `additional_capabilities`, `os_profile`, `network_profile`, `security_profile`, `diagnostics_profile`, `availability_set`, `virtual_machine_scale_set`, `proximity_placement_group`, `priority`, `eviction_policy`, `billing_profile`, `host`, `host_group`, `provisioning_state`, `instance_view`, `license_type`, `vm_id`, `extensions_time_budget`, `platform_fault_domain`, `scheduled_events_profile`, `user_data`, `capacity_reservation`, `application_profile` and `time_created` under property `properties`
+  - Model `ResourceSkuRestrictions` renamed its instance variable `values` to `values_property`
+  - Model `UserArtifactManage` renamed its instance variable `update` to `update_property`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VirtualMachineScaleSetsOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VirtualMachinesOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VirtualMachinesOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `AvailabilitySetsOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `CapacityReservationGroupsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `CapacityReservationGroupsOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `CapacityReservationGroupsOperations.list_by_subscription` changed its parameter `expand`/`resource_ids_only` from `positional_or_keyword` to `keyword_only`
+  - Method `CapacityReservationsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DedicatedHostGroupsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DedicatedHostsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `GalleriesOperations.get` changed its parameter `select`/`expand` from `positional_or_keyword` to `keyword_only`
+  - Method `GalleryApplicationVersionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `GalleryImageVersionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ImagesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProximityPlacementGroupsOperations.get` changed its parameter `include_colocation_status` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourceSkusOperations.list` changed its parameter `include_extended_locations` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorePointCollectionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorePointsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SharedGalleriesOperations.list` changed its parameter `shared_to` from `positional_or_keyword` to `keyword_only`
+  - Method `SharedGalleryImageVersionsOperations.list` changed its parameter `shared_to` from `positional_or_keyword` to `keyword_only`
+  - Method `SharedGalleryImagesOperations.list` changed its parameter `shared_to` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineExtensionImagesOperations.list_versions` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineExtensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesEdgeZoneOperations.list` changed its parameter `expand`/`orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesOperations.list` changed its parameter `expand`/`orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesOperations.list_with_properties` changed its parameter `expand`/`orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineRunCommandsOperations.get_by_virtual_machine` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineRunCommandsOperations.list_by_virtual_machine` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_delete` changed its parameter `force_deletion` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_power_off` changed its parameter `skip_shutdown` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.list` changed its parameter `select`/`expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.retrieve_boot_diagnostics_data` changed its parameter `sas_uri_expiration_time_in_minutes` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_deallocate` changed its parameter `hibernate` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_delete` changed its parameter `force_deletion` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_delete_instances` changed its parameter `force_deletion` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_power_off` changed its parameter `skip_shutdown` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk` changed its parameter `platform_update_domain`/`zone`/`placement_group_id` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.begin_deallocate` changed its parameter `hibernate` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.begin_delete` changed its parameter `force_deletion` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.begin_power_off` changed its parameter `skip_shutdown` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.list_all` changed its parameter `status_only`/`expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.retrieve_boot_diagnostics_data` changed its parameter `sas_uri_expiration_time_in_minutes` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_deallocate` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'hibernate', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'hibernate', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_power_off` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'skip_shutdown', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'skip_shutdown', 'kwargs']`
+
+### Other Changes
+
+  - Deleted model `CommunityGalleryImageList`/`CommunityGalleryImageVersionList`/`DiskAccessList`/`DiskEncryptionSetList`/`DiskList`/`DiskRestorePointList`/`GalleryApplicationList`/`GalleryApplicationVersionList`/`GalleryImageList`/`GalleryImageVersionList`/`GalleryInVMAccessControlProfileList`/`GalleryInVMAccessControlProfileVersionList`/`GalleryList`/`GalleryScriptList`/`GalleryScriptVersionList`/`GallerySoftDeletedResourceList`/`ListUsagesResult`/`ResourceSkusResult`/`ResourceUriList`/`SharedGalleryImageList`/`SharedGalleryImageVersionList`/`SharedGalleryList`/`SnapshotList`/`VirtualMachineScaleSetListOSUpgradeHistory`/`VirtualMachineScaleSetListSkusResult`/`VirtualMachineScaleSetListWithLinkResult` which actually were not used by SDK users
+
 ## 38.0.0b1 (2026-04-16)
 
 ### Features Added

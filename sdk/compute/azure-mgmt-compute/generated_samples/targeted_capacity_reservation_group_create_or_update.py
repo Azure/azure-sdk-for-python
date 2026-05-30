@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/capacityReservationExamples/TargetedCapacityReservationGroup_CreateOrUpdate.json
+# x-ms-original-file: 2025-11-01/capacityReservationExamples/TargetedCapacityReservationGroup_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

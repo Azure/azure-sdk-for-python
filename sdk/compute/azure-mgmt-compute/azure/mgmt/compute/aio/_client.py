@@ -62,6 +62,7 @@ from .operations import (
     VirtualMachineImagesOperations,
     VirtualMachineRunCommandsOperations,
     VirtualMachineScaleSetExtensionsOperations,
+    VirtualMachineScaleSetLifeCycleHookEventsOperations,
     VirtualMachineScaleSetRollingUpgradesOperations,
     VirtualMachineScaleSetVMExtensionsOperations,
     VirtualMachineScaleSetVMRunCommandsOperations,
@@ -88,6 +89,10 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
      operations
     :vartype virtual_machine_scale_set_extensions:
      azure.mgmt.compute.aio.operations.VirtualMachineScaleSetExtensionsOperations
+    :ivar virtual_machine_scale_set_life_cycle_hook_events:
+     VirtualMachineScaleSetLifeCycleHookEventsOperations operations
+    :vartype virtual_machine_scale_set_life_cycle_hook_events:
+     azure.mgmt.compute.aio.operations.VirtualMachineScaleSetLifeCycleHookEventsOperations
     :ivar virtual_machine_scale_set_vm_extensions: VirtualMachineScaleSetVMExtensionsOperations
      operations
     :vartype virtual_machine_scale_set_vm_extensions:
@@ -274,6 +279,9 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_life_cycle_hook_events = VirtualMachineScaleSetLifeCycleHookEventsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(

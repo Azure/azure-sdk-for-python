@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-04-01/virtualMachineExamples/VirtualMachine_Reimage.json
+# x-ms-original-file: 2025-11-01/virtualMachineExamples/VirtualMachine_Reimage.json
 if __name__ == "__main__":
     main()

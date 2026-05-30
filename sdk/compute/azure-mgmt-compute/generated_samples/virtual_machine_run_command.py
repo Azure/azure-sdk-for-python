@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/runCommandExamples/VirtualMachineRunCommand.json
+# x-ms-original-file: 2025-11-01/runCommandExamples/VirtualMachineRunCommand.json
 if __name__ == "__main__":
     main()

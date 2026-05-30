@@ -1,7 +1,8 @@
-from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob import BlobServiceClient
-import os
-import sys
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 
 """
 FILE: blob_samples_batch_delete_blobs.py
@@ -12,6 +13,12 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
+import os
+import sys
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import BlobServiceClient
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FOLDER = os.path.join(current_dir, "./sample-blobs/")
@@ -44,6 +51,6 @@ def batch_delete_blobs_sample(local_path):
     # Delete blobs
     container_client.delete_blobs(*blob_list)
 
+
 if __name__ == '__main__':
     batch_delete_blobs_sample(SOURCE_FOLDER)
-
