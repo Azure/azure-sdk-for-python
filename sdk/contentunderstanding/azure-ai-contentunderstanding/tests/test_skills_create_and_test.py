@@ -1,3 +1,4 @@
+# cspell:ignore capsys
 """Unit tests for the single-analyzer ``create_and_test.py`` script.
 
 Covers the dev-plan §Test Plan items for the helper script:

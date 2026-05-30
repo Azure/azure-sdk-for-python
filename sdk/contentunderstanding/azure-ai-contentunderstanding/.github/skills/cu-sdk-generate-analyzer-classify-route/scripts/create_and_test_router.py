@@ -295,11 +295,11 @@ def summarize_routed(
             category = content.get("category") or "(uncategorized)"
             seg_counts[category] = seg_counts.get(category, 0) + 1
             fields = content.get("fields") or {}
-            for fname, fval in fields.items():
-                if not isinstance(fval, dict):
+            for fname, field_val in fields.items():
+                if not isinstance(field_val, dict):
                     continue
                 row = table.setdefault(category, {}).setdefault(fname, [])
-                row.append((doc_name, _field_value(fval), fval.get("confidence")))
+                row.append((doc_name, _field_value(field_val), field_val.get("confidence")))
 
     if not table and not seg_counts:
         return "[SUMMARY] no segments classified."
@@ -322,13 +322,13 @@ def summarize_routed(
             fill_rate = (len(filled) / denom) if denom else 0.0
             # Only consider confidence from rows where the value was actually
             # extracted; reporting confidence for empty fields is misleading.
-            confs = [
+            confidences = [
                 r[2]
                 for r in rows
                 if r[1] not in (None, "", [], {})
                 and isinstance(r[2], (int, float))
             ]
-            avg_conf = (sum(confs) / len(confs)) if confs else None
+            avg_conf = (sum(confidences) / len(confidences)) if confidences else None
             conf_str = f"{avg_conf:.3f}" if avg_conf is not None else "  n/a"
             lines.append(f"  {fname:<30} {fill_rate * 100:>5.1f}%      {conf_str}")
 

@@ -147,31 +147,31 @@ def _iter_fields(doc: Dict[str, Any]) -> Iterable[Tuple[str, str, Dict[str, Any]
     * Scalars are yielded as-is.
     """
 
-    def _recurse(prefix: str, fval: Dict[str, Any]) -> Iterable[Tuple[str, Dict[str, Any]]]:
-        if "valueArray" in fval and isinstance(fval["valueArray"], list):
-            for item in fval["valueArray"]:
+    def _recurse(prefix: str, field_val: Dict[str, Any]) -> Iterable[Tuple[str, Dict[str, Any]]]:
+        if "valueArray" in field_val and isinstance(field_val["valueArray"], list):
+            for item in field_val["valueArray"]:
                 if isinstance(item, dict) and "valueObject" in item and isinstance(item["valueObject"], dict):
-                    for cname, cval in item["valueObject"].items():
-                        if isinstance(cval, dict):
-                            yield from _recurse(f"{prefix}[].{cname}", cval)
+                    for child_name, child_val in item["valueObject"].items():
+                        if isinstance(child_val, dict):
+                            yield from _recurse(f"{prefix}[].{child_name}", child_val)
                 else:
                     # array of scalars — emit one row per item under prefix
                     yield prefix, item if isinstance(item, dict) else {"valueString": item, "confidence": None}
             return
-        if "valueObject" in fval and isinstance(fval["valueObject"], dict):
-            for cname, cval in fval["valueObject"].items():
-                if isinstance(cval, dict):
-                    yield from _recurse(f"{prefix}.{cname}", cval)
+        if "valueObject" in field_val and isinstance(field_val["valueObject"], dict):
+            for child_name, child_val in field_val["valueObject"].items():
+                if isinstance(child_val, dict):
+                    yield from _recurse(f"{prefix}.{child_name}", child_val)
             return
-        yield prefix, fval
+        yield prefix, field_val
 
     contents = doc.get("contents") or []
     for content in contents:
         category = content.get("category") or ""
         fields = content.get("fields") or {}
-        for fname, fval in fields.items():
-            if isinstance(fval, dict):
-                for path, leaf in _recurse(fname, fval):
+        for fname, field_val in fields.items():
+            if isinstance(field_val, dict):
+                for path, leaf in _recurse(fname, field_val):
                     yield category, path, leaf
 
 
@@ -195,9 +195,9 @@ def summarize(results: List[Tuple[str, Dict[str, Any]]]) -> str:
     # category → field → list[(doc_name, value, confidence)]
     table: Dict[str, Dict[str, List[Tuple[str, Any, Optional[float]]]]] = {}
     for doc_name, doc in results:
-        for category, fname, fval in _iter_fields(doc):
+        for category, fname, field_val in _iter_fields(doc):
             row = table.setdefault(category, {}).setdefault(fname, [])
-            row.append((doc_name, _field_value(fval), fval.get("confidence")))
+            row.append((doc_name, _field_value(field_val), field_val.get("confidence")))
 
     if not table:
         return "[SUMMARY] no fields extracted across any document."
@@ -218,13 +218,13 @@ def summarize(results: List[Tuple[str, Dict[str, Any]]]) -> str:
             fill_rate = (len(filled) / denom) if denom else 0.0
             # Only consider confidence from rows where the value was actually
             # extracted; reporting confidence for empty fields is misleading.
-            confs = [
+            confidences = [
                 r[2]
                 for r in rows
                 if r[1] not in (None, "", [], {})
                 and isinstance(r[2], (int, float))
             ]
-            avg_conf = (sum(confs) / len(confs)) if confs else None
+            avg_conf = (sum(confidences) / len(confidences)) if confidences else None
             conf_str = f"{avg_conf:.3f}" if avg_conf is not None else "  n/a"
             lines.append(f"  {fname:<40} {fill_rate * 100:>5.1f}%      {conf_str}")
 
