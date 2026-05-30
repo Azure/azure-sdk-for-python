@@ -75,7 +75,10 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             if is_live():
                 env_target_endpoint = os.environ.get("CONTENTUNDERSTANDING_TARGET_ENDPOINT")
                 if env_target_endpoint:
-                    target_endpoint = env_target_endpoint
+                    # Strip trailing slash; the client appends "/contentunderstanding"
+                    # and a trailing slash on the endpoint produces a double-slash URL
+                    # that breaks test-proxy playback matching.
+                    target_endpoint = env_target_endpoint.rstrip("/")
                 env_source_resource_id = os.environ.get("CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID")
                 if env_source_resource_id:
                     source_resource_id = env_source_resource_id
