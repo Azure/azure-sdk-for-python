@@ -3,7 +3,7 @@
 ### 4.16.1 (Unreleased)
 
 #### Bugs Fixed
-* Fixed a bug in both the sync and async `/pkranges` change-feed refresh paths where containers with more than ~8K partition key ranges could repeatedly fail to build a complete routing map: subsequent drain requests did not propagate the per-page continuation `etag` as `If-None-Match`, so the incremental-merge path raised `_IncrementalMergeFailed` and forced repeated full refreshes. The refresh now drains all pages by advancing `If-None-Match` until the server responds with `304 Not Modified`, an empty page, or the same etag. A hard 100-page safety bound surfaces `503 Service Unavailable` (instead of caching an incomplete map) so the upstream retry policy can re-attempt, and an `ETag`-didn't-advance-with-non-empty-page anomaly is logged as a warning. See [PR 47245](https://github.com/Azure/azure-sdk-for-python/pull/47245).
+* Fixed a bug in the sync and async `/pkranges` change-feed refresh where some containers could fail to build a complete routing map. See [PR 47245](https://github.com/Azure/azure-sdk-for-python/pull/47245).
 
 ### 4.16.0 (2026-05-29)
 
