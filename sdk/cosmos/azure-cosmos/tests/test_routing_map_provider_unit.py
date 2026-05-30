@@ -532,17 +532,23 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         client = MagicMock()
         call_count = {'n': 0}
         seen_if_none_match = []
+        last_etag = {'v': None}
 
         def read_pk_ranges_retry_then_success(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                return iter([])
             call_count['n'] += 1
-            headers = kwargs.get('headers', {})
-            seen_if_none_match.append(headers.get(http_constants.HttpHeaders.IfNoneMatch))
+            seen_if_none_match.append(inm)
 
+            etag = '"etag-inc"'
             if response_hook:
-                response_hook({http_constants.HttpHeaders.ETag: '"etag-inc"'}, None)
+                response_hook({http_constants.HttpHeaders.ETag: etag}, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
             if capture_headers is not None:
-                capture_headers.update({http_constants.HttpHeaders.ETag: '"etag-inc"'})
+                capture_headers.update({http_constants.HttpHeaders.ETag: etag})
+            last_etag['v'] = etag
 
             # First incremental attempt is incomplete (missing parent), second resolves.
             if call_count['n'] == 1:
@@ -826,13 +832,20 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
         responses = [bad_payload, good_payload]
         call_count = {'n': 0}
+        last_etag = {'v': None}
 
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                return iter([])
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
             call_count['n'] += 1
-            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            etag = '"etag-{}"'.format(call_count['n'])
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
             if response_hook:
                 response_hook(headers, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
@@ -872,6 +885,10 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == '"etag-bad"':
+                return iter([])
             call_count['n'] += 1
             headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
             if response_hook:
@@ -920,13 +937,20 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
         responses = [bad_payload, good_payload]
         call_count = {'n': 0}
+        last_etag = {'v': None}
 
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                return iter([])
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
             call_count['n'] += 1
-            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            etag = '"etag-{}"'.format(call_count['n'])
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
             if response_hook:
                 response_hook(headers, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
@@ -959,6 +983,10 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == '"etag-bad"':
+                return iter([])
             call_count['n'] += 1
             headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
             if response_hook:
@@ -1039,13 +1067,20 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
         responses = [overlap_payload, gap_payload, overlap_payload]
         call_count = {'n': 0}
+        last_etag = {'v': None}
 
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                return iter([])
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else overlap_payload
             call_count['n'] += 1
-            headers = {http_constants.HttpHeaders.ETag: '"etag-mixed-{}"'.format(call_count['n'])}
+            etag = '"etag-mixed-{}"'.format(call_count['n'])
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
             if response_hook:
                 response_hook(headers, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
@@ -1091,6 +1126,10 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         ]
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == '"etag-bad"':
+                return iter([])
             headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
             if response_hook:
                 response_hook(headers, None)

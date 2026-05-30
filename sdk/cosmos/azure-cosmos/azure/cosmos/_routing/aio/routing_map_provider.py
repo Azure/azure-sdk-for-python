@@ -393,6 +393,11 @@ class PartitionKeyRangeCache(object):
             )
             new_etag = current_if_none_match
             drained_normally = False
+            # Track whether the service ever surfaced an ETag header during this
+            # drain attempt. If it never did, we want ``process_fetched_ranges``
+            # to surface the "no ETag" observability warning rather than
+            # silently treating ``current_if_none_match`` as the fresh etag.
+            seen_any_etag = False
 
             for _drain_page in range(_drain_max_pages):
                 request_kwargs = dict(kwargs)
@@ -433,6 +438,8 @@ class PartitionKeyRangeCache(object):
                     raise
 
                 page_new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
+                if page_new_etag:
+                    seen_any_etag = True
 
                 if not page_ranges:
                     # Service returned an empty page -- nothing more to drain.
@@ -444,7 +451,17 @@ class PartitionKeyRangeCache(object):
                 ranges.extend(page_ranges)
 
                 if not page_new_etag or page_new_etag == current_if_none_match:
-                    # Etag didn't advance -- no further progress possible.
+                    if page_new_etag == current_if_none_match and page_ranges:
+                        # Etag didn't advance but the service still returned
+                        # ranges -- this is a change-feed protocol anomaly. We
+                        # terminate to avoid an infinite loop, but log loudly
+                        # so live-site triage can spot the server-side bug.
+                        logger.warning(
+                            "Routing-map change-feed drain: server returned %d ranges but "
+                            "ETag did not advance ('%s') for collection '%s'. "
+                            "Terminating drain to avoid infinite loop; routing map may be incomplete.",
+                            len(page_ranges), current_if_none_match, collection_link,
+                        )
                     drained_normally = True
                     break
 
@@ -452,15 +469,29 @@ class PartitionKeyRangeCache(object):
                 new_etag = page_new_etag
 
             if not drained_normally:
+                # Safety bound exhausted. Do NOT feed the partially-accumulated
+                # ranges into ``process_fetched_ranges`` -- they would form a
+                # structurally-valid-but-incomplete map and poison the cache.
+                # Surface 503 so the upstream retry policy can re-attempt.
                 logger.warning(
                     "Routing-map change-feed drain hit safety bound of %d pages for "
-                    "collection '%s' (accumulated %d ranges).",
+                    "collection '%s' (accumulated %d ranges). Surfacing 503 so the "
+                    "retry policy can re-attempt instead of caching an incomplete map.",
                     _drain_max_pages, collection_link, len(ranges),
+                )
+                raise CosmosHttpResponseError(
+                    status_code=http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+                    message=(
+                        "Partition key range refresh exceeded the %d-page drain safety bound "
+                        "for collection '%s'. The cache was left untouched to avoid serving an "
+                        "incomplete routing map." % (_drain_max_pages, collection_link)
+                    ),
                 )
 
             try:
+                effective_new_etag = new_etag if seen_any_etag else None
                 return process_fetched_ranges(
-                    ranges, current_previous_map, collection_id, collection_link, new_etag
+                    ranges, current_previous_map, collection_id, collection_link, effective_new_etag
                 )
             except _IncrementalMergeFailed:
                 if current_previous_map is not None and incomplete_attempt_count < _INCOMPLETE_ROUTING_MAP_MAX_RETRIES:

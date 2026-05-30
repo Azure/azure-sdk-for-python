@@ -344,35 +344,121 @@ class PartitionKeyRangeCache(object):
         incomplete_attempt_count = 0
         inconsistency_attempt_count = 0
 
+        # Bounded safety stop for the change-feed drain. A page is currently
+        # service-capped at ~8K ranges, so 100 pages covers up to ~800K ranges,
+        # well beyond any realistic container size.
+        _drain_max_pages = 100
+
         while True:
-            request_kwargs = dict(kwargs)
-            response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-            request_kwargs['_internal_response_headers_capture'] = response_headers
-
-            # Prepare sanitised options and headers for the PK-range fetch.
-            change_feed_options = prepare_fetch_options_and_headers(
-                current_previous_map, feed_options, request_kwargs
-            )
-
             ranges: List[Dict[str, Any]] = []
-            try:
-                pk_range_generator = self._document_client._ReadPartitionKeyRanges(
-                    collection_link,
-                    change_feed_options,
-                    **request_kwargs
+            # Start the change-feed drain at the previous map's etag (if any).
+            # On subsequent drain pages we advance this with the etag returned
+            # for the previous page so the service returns "what's new since X"
+            # until it eventually responds with 304 / no new ranges, mirroring
+            # the .NET and Go SDK behaviour and the async provider.
+            current_if_none_match = (
+                current_previous_map.change_feed_etag if current_previous_map else None
+            )
+            new_etag = current_if_none_match
+            drained_normally = False
+            # Track whether the service ever surfaced an ETag header during this
+            # drain attempt. If it never did, we want ``process_fetched_ranges``
+            # to surface the "no ETag" observability warning rather than
+            # silently treating ``current_if_none_match`` as the fresh etag.
+            seen_any_etag = False
+
+            for _drain_page in range(_drain_max_pages):
+                request_kwargs = dict(kwargs)
+                response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+                request_kwargs['_internal_response_headers_capture'] = response_headers
+
+                # Prepare sanitised options and headers for the PK-range fetch.
+                change_feed_options = prepare_fetch_options_and_headers(
+                    current_previous_map, feed_options, request_kwargs
                 )
-                ranges.extend(list(pk_range_generator))
 
-            except CosmosHttpResponseError as e:
-                logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
-                    "Failed to read partition key ranges for collection '%s': %s", collection_link, e)
-                raise
+                # Override If-None-Match with the running etag from the drain
+                # so each page advances. ``prepare_fetch_options_and_headers``
+                # only sets it from ``current_previous_map.change_feed_etag``
+                # which never advances during this drain.
+                drain_headers = request_kwargs.setdefault('headers', {})
+                if current_if_none_match:
+                    drain_headers[http_constants.HttpHeaders.IfNoneMatch] = current_if_none_match
+                else:
+                    drain_headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
 
-            new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
+                page_ranges: List[Dict[str, Any]] = []
+                try:
+                    pk_range_generator = self._document_client._ReadPartitionKeyRanges(
+                        collection_link,
+                        change_feed_options,
+                        **request_kwargs
+                    )
+                    page_ranges.extend(list(pk_range_generator))
+                except CosmosHttpResponseError as e:
+                    if getattr(e, 'status_code', None) == 304:
+                        drained_normally = True
+                        break
+                    logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
+                        "Failed to read partition key ranges for collection '%s': %s",
+                        collection_link, e)
+                    raise
+
+                page_new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
+                if page_new_etag:
+                    seen_any_etag = True
+
+                if not page_ranges:
+                    # Service returned an empty page -- nothing more to drain.
+                    if page_new_etag:
+                        new_etag = page_new_etag
+                    drained_normally = True
+                    break
+
+                ranges.extend(page_ranges)
+
+                if not page_new_etag or page_new_etag == current_if_none_match:
+                    if page_new_etag == current_if_none_match and page_ranges:
+                        # Etag didn't advance but the service still returned
+                        # ranges -- this is a change-feed protocol anomaly. We
+                        # terminate to avoid an infinite loop, but log loudly
+                        # so live-site triage can spot the server-side bug.
+                        logger.warning(
+                            "Routing-map change-feed drain: server returned %d ranges but "
+                            "ETag did not advance ('%s') for collection '%s'. "
+                            "Terminating drain to avoid infinite loop; routing map may be incomplete.",
+                            len(page_ranges), current_if_none_match, collection_link,
+                        )
+                    drained_normally = True
+                    break
+
+                current_if_none_match = page_new_etag
+                new_etag = page_new_etag
+
+            if not drained_normally:
+                # Safety bound exhausted. Do NOT feed the partially-accumulated
+                # ranges into ``process_fetched_ranges`` -- they would form a
+                # structurally-valid-but-incomplete map and poison the cache.
+                # Surface 503 so the upstream retry policy can re-attempt.
+                logger.warning(
+                    "Routing-map change-feed drain hit safety bound of %d pages for "
+                    "collection '%s' (accumulated %d ranges). Surfacing 503 so the "
+                    "retry policy can re-attempt instead of caching an incomplete map.",
+                    _drain_max_pages, collection_link, len(ranges),
+                )
+                raise CosmosHttpResponseError(
+                    status_code=http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+                    message=(
+                        "Partition key range refresh exceeded the %d-page drain safety bound "
+                        "for collection '%s'. The cache was left untouched to avoid serving an "
+                        "incomplete routing map." % (_drain_max_pages, collection_link)
+                    ),
+                )
 
             try:
+                effective_new_etag = new_etag if seen_any_etag else None
                 return process_fetched_ranges(
-                    ranges, current_previous_map, collection_id, collection_link, new_etag
+                    ranges, current_previous_map, collection_id, collection_link, effective_new_etag
                 )
             except _IncrementalMergeFailed:
                 if current_previous_map is not None and incomplete_attempt_count < _INCOMPLETE_ROUTING_MAP_MAX_RETRIES:

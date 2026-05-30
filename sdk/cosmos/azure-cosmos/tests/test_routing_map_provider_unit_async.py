@@ -403,17 +403,25 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         client = MagicMock()
         call_count = {'n': 0}
         seen_if_none_match = []
+        last_etag = {'v': None}
 
         def read_pk_ranges_retry_then_success(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                async def empty_gen():
+                    if False:
+                        yield  # pragma: no cover
+                return empty_gen()
             call_count['n'] += 1
-            headers = kwargs.get('headers', {})
-            seen_if_none_match.append(headers.get(http_constants.HttpHeaders.IfNoneMatch))
+            seen_if_none_match.append(inm)
 
             if response_hook:
                 response_hook({http_constants.HttpHeaders.ETag: '"etag-inc"'}, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
             if capture_headers is not None:
                 capture_headers.update({http_constants.HttpHeaders.ETag: '"etag-inc"'})
+            last_etag['v'] = '"etag-inc"'
 
             async def async_gen():
                 if call_count['n'] == 1:
@@ -537,13 +545,23 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         responses = [bad_payload, good_payload]
         call_count = {'n': 0}
+        last_etag = {'v': None}
 
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                async def empty_gen():
+                    if False:
+                        yield  # pragma: no cover
+                return empty_gen()
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
             call_count['n'] += 1
-            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            etag = '"etag-{}"'.format(call_count['n'])
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
             if response_hook:
                 response_hook(headers, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
@@ -593,11 +611,21 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
         ]
         call_count = {'n': 0}
+        last_etag = {'v': None}
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                async def empty_gen():
+                    if False:
+                        yield  # pragma: no cover
+                return empty_gen()
             call_count['n'] += 1
-            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            etag = '"etag-bad"'
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
             if response_hook:
                 response_hook(headers, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
@@ -650,13 +678,23 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         responses = [bad_payload, good_payload]
         call_count = {'n': 0}
+        last_etag = {'v': None}
 
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                async def empty_gen():
+                    if False:
+                        yield  # pragma: no cover
+                return empty_gen()
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
             call_count['n'] += 1
-            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            etag = '"etag-{}"'.format(call_count['n'])
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
             if response_hook:
                 response_hook(headers, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
@@ -697,11 +735,21 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
         ]
         call_count = {'n': 0}
+        last_etag = {'v': None}
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                async def empty_gen():
+                    if False:
+                        yield  # pragma: no cover
+                return empty_gen()
             call_count['n'] += 1
-            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            etag = '"etag-bad"'
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
             if response_hook:
                 response_hook(headers, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
@@ -788,13 +836,23 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         responses = [overlap_payload, gap_payload, overlap_payload]
         call_count = {'n': 0}
+        last_etag = {'v': None}
 
         client = MagicMock()
 
         def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
+            if inm is not None and inm == last_etag['v']:
+                async def empty_gen():
+                    if False:
+                        yield  # pragma: no cover
+                return empty_gen()
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else overlap_payload
             call_count['n'] += 1
-            headers = {http_constants.HttpHeaders.ETag: '"etag-mixed-{}"'.format(call_count['n'])}
+            etag = '"etag-mixed-{}"'.format(call_count['n'])
+            headers = {http_constants.HttpHeaders.ETag: etag}
+            last_etag['v'] = etag
             if response_hook:
                 response_hook(headers, None)
             capture_headers = kwargs.get('_internal_response_headers_capture')
