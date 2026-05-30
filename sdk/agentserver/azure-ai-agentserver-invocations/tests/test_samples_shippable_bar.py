@@ -45,14 +45,15 @@ _REQUIRED_DURABLE_SAMPLES = (
 )
 
 # Section markers each per-sample README must contain (FR-020).
-# Match in any heading level; case-insensitive substring match.
+# Match in any heading level; case-insensitive substring match (no \b so
+# stems like "troubleshoot" also match "Troubleshooting").
 _REQUIRED_README_SECTIONS = (
-    ("prerequisites", r"^#+\s*(prereq|prerequisites|requirements)\b"),
-    ("quick_start", r"^#+\s*(quick\s*start|install|getting\s*started)\b"),
-    ("invocation_example", r"^#+\s*(invocation|usage|example|run\s*it|try\s*it)\b"),
-    ("crash_induction", r"^#+\s*(crash|induc(e|ing)|kill|sigkill|failure)\b"),
-    ("recovery_observation", r"^#+\s*(recover|resume|reconnect|replay|reattach)\b"),
-    ("troubleshooting", r"^#+\s*(troubleshoot|faq|debug|gotcha|known\s+issue)\b"),
+    ("prerequisites", r"^#+\s*(prereq|requirements)"),
+    ("quick_start", r"^#+\s*(quick\s*start|install|getting\s*started)"),
+    ("invocation_example", r"^#+\s*(invocation|usage|example|run\s*it|try\s*it)"),
+    ("crash_induction", r"^#+\s*(crash|induc|kill|sigkill|failure)"),
+    ("recovery_observation", r"^#+\s*(.*\b)?(recover|resume|reconnect|replay|reattach|observ)"),
+    ("troubleshooting", r"^#+\s*(troubleshoot|faq|debug|gotcha|known\s+issue)"),
 )
 
 
