@@ -127,7 +127,7 @@ with (
         "start_time": start_time,
         "end_time": end_time,
         "max_traces": args.max_traces,
-        "filter_strategy": "smart_filtering"
+        "filter_strategy": "smart_filtering",
     }
 
     if args.agent_id:

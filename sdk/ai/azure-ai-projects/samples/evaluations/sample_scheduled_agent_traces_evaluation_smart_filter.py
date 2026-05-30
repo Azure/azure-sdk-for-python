@@ -43,7 +43,7 @@ from azure.ai.projects.models import (
     Schedule,
     RecurrenceTrigger,
     DailyRecurrenceSchedule,
-    EvaluationScheduleTask
+    EvaluationScheduleTask,
 )
 import time
 
@@ -198,6 +198,7 @@ def assign_rbac():  # pylint: disable=too-many-statements
                 print("An unexpected error occurred. Please check the error details above.")
                 raise
 
+
 def schedule_trace_evaluation():
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
@@ -284,7 +285,7 @@ def schedule_trace_evaluation():
             "start_time": start_time,
             "end_time": end_time,
             "max_traces": args.max_traces,
-            "filter_strategy": "smart_filtering"
+            "filter_strategy": "smart_filtering",
         }
 
         if args.agent_id:
@@ -304,7 +305,7 @@ def schedule_trace_evaluation():
         eval_run_object = {
             "eval_id": eval_object.id,
             "name": "trace_eval_with_smart_filter",
-            "data_source": data_source
+            "data_source": data_source,
         }
 
         print("Eval Run:")
@@ -334,6 +335,7 @@ def schedule_trace_evaluation():
 
         client.evals.delete(eval_id=eval_object.id)
         print("Evaluation deleted")
+
 
 if __name__ == "__main__":
     main()
