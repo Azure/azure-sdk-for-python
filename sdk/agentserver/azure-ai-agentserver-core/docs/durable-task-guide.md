@@ -204,7 +204,7 @@ call raises `TaskFailed` with the last captured error.
 ```python
 from azure.ai.agentserver.core.durable import task, RetryPolicy, TaskContext
 
-@task(name="flaky", retry_policy=RetryPolicy(max_attempts=5))
+@task(name="flaky", retry=RetryPolicy(max_attempts=5))
 async def flaky(ctx: TaskContext[str]) -> str:
     ...
 ```
@@ -232,16 +232,156 @@ At the primitive layer this is a convention, not an enforced rule —
 framework layers built on top of the primitive enforce it on the
 handler-facing wrapper they expose.
 
-### Suspend, resume, steering (`Suspended`)
+### Suspend, resume, and multi-turn workflows (`Suspended`)
 
-`await ctx.suspend(output=...)` parks the task in `suspended` state
-and exits the handler. A subsequent `.run()` / `.start()` resumes it
-with `entry_mode="resumed"` and the new input. The `Suspended` type
-models the suspended-state envelope the framework records.
+A handler that runs to completion is **one-shot**. A handler that
+*suspends* enters a different mode: it persists its state, returns
+control to the caller, and waits for the next input to bring it back
+to life. This is the engine behind every multi-turn agent workflow —
+chat sessions, approval flows, human-in-the-loop pipelines,
+long-running orchestrations that wake up on external events.
 
-For steerable conversations (multiple turns racing against each
-other), the framework drains queued inputs into your handler with
-`ctx.was_steered=True` and `ctx.pending_inputs` populated.
+```python
+@task(name="approval_flow")
+async def approval_flow(ctx: TaskContext[dict]) -> dict:
+    if ctx.entry_mode == "fresh":
+        proposal = await draft_proposal(ctx.input)
+        ctx.metadata["proposal"] = proposal
+        await ctx.metadata.flush()
+        return await ctx.suspend(output={"awaiting": "approval", "proposal": proposal})
+
+    # entry_mode == "resumed": ctx.input is the approver's verdict.
+    if ctx.input["approved"]:
+        return {"status": "shipped", "proposal": ctx.metadata["proposal"]}
+    return {"status": "rejected", "proposal": ctx.metadata["proposal"]}
+```
+
+What's happening under the hood:
+
+1. **`await ctx.suspend(output=...)`** moves the task to the `suspended`
+   state, persists the metadata snapshot and the optional `output`
+   envelope, and exits the handler. The caller's `.run()` / `.start()`
+   resolves immediately with a `Suspended` envelope carrying that
+   `output` — there is no in-flight execution waiting in memory.
+2. **The next `.run(task_id=..., input=...)` or
+   `.start(task_id=..., input=...)`** transitions the task from
+   `suspended` back to `in_progress`. The framework re-invokes your
+   handler on a fresh `TaskContext`, with `ctx.entry_mode="resumed"`,
+   `ctx.input` populated from the new caller-supplied input, and
+   `ctx.metadata` re-hydrated from the persisted snapshot.
+3. **State lives in `ctx.metadata`** (see the metadata-namespace
+   section above), not in handler-local variables, because those are
+   gone the moment the handler returns. Whatever you want to see on
+   the next turn must be flushed before you `return await ctx.suspend(...)`.
+
+Multi-turn workflows are just this same suspend/resume cycle applied
+repeatedly to the same `task_id` — see Pattern C in §6 for the
+end-to-end chat-loop example.
+
+### Steering: replacing in-flight input on a new turn (`steerable`)
+
+`@task(steerable=True)` upgrades a task from "one input at a time" to
+"the caller can preempt the in-flight input with a new one". This is
+the model that lets a chat user say *"actually, ignore that and
+search for X instead"* mid-stream and get a coherent answer to the
+new question rather than the stale one.
+
+#### What `.start()` does on an in-flight steerable task
+
+Non-steerable (`steerable=False`, default):
+
+- `.start(task_id=existing_in_progress, input=...)` → `TaskConflictError`.
+  One input at a time, no exceptions.
+
+Steerable (`steerable=True`):
+
+- `.start(task_id=existing_in_progress, input=...)` →
+  1. **The new input is queued** at the tail of an internal
+     `pending_inputs` FIFO.
+  2. **The cancel signal is raised** on the currently-executing
+     generation (`ctx.cancel.is_set()` becomes True for the handler
+     that's running right now).
+  3. **A *new* `TaskRun` handle is returned** to the caller —
+     specifically, the steering-ack handle. Its `.result()` resolves
+     when the generation that *will eventually process this new input*
+     finishes.
+  4. **The original caller's `TaskRun` resolves with
+     `TaskResult(status="superseded", output=None)`** — no exception
+     is raised. The original caller cleanly observes "I got displaced
+     by a later turn; I am done."
+- If the steering queue is at its internal bound, `.start()` raises
+  `SteeringQueueFull` instead of queuing.
+
+#### What your handler is supposed to do when steered
+
+A steerable handler **must** check `ctx.cancel.is_set()` at every
+suspension-friendly boundary (between LLM tokens, between tool
+calls, between iterations of a loop). On a True read, the polite,
+correct shape is to suspend with the partial output you have so far:
+
+```python
+@task(name="chat", steerable=True)
+async def chat(ctx: TaskContext[dict]) -> dict:
+    history = ctx.metadata.get("history", [])
+    history.append({"role": "user", "content": ctx.input["message"]})
+
+    reply_chunks: list[str] = []
+    async for chunk in llm_stream(history):
+        if ctx.cancel.is_set():
+            # Steering arrived. Stash the partial turn and bow out.
+            history.append({"role": "assistant", "content": "".join(reply_chunks), "partial": True})
+            ctx.metadata["history"] = history
+            await ctx.metadata.flush()
+            return await ctx.suspend(output={"interrupted": True})
+        reply_chunks.append(chunk)
+
+    reply = "".join(reply_chunks)
+    history.append({"role": "assistant", "content": reply})
+    ctx.metadata["history"] = history
+    return await ctx.suspend(output={"reply": reply})
+```
+
+The framework then drains the next queued input by re-invoking the
+handler with `entry_mode="resumed"` and `ctx.was_steered=True`.
+
+#### Steering observability: `was_steered`, `pending_inputs`, `steering_generation`
+
+On a steering-driven re-entry, your `TaskContext` exposes three
+read-only fields:
+
+- **`ctx.was_steered: bool`** — True when this invocation is being
+  driven by a steering input drain (as opposed to a plain
+  `suspend()` → `.run()` resume). Branch on this to apply any
+  steering-specific logic (for example: log a "user changed their
+  mind" event for analytics).
+- **`ctx.pending_inputs: list[Any]`** — an *advisory snapshot* of
+  whatever else is queued behind the input you're processing right
+  now. Use it for logging or to decide "I'm three turns behind, I
+  should short-circuit even harder". Do NOT use it as the live queue
+  — it does not update mid-handler.
+- **`ctx.steering_generation: int`** — monotonic counter of how many
+  steering drains the framework has performed for this `task_id`.
+  Useful for dashboards and dedupe keys.
+
+#### Rapid-fire short-circuit
+
+If three steering inputs land while the first generation is still
+draining (`[B, C, D]` queued), the framework's drain loop calls your
+handler for B *with `ctx.cancel` already set* (because C and D are
+still queued). The intended idiom is to immediately suspend without
+doing the actual work for B, then again for C, and only execute D to
+completion. This keeps the user-visible latency to the most recent
+input close to "one handler run", not "N handler runs serialized".
+
+#### Composing multi-turn + steering
+
+A task can be both **steerable** AND **multi-turn**. The handler
+suspends after each turn (multi-turn), and additionally accepts
+preempting input mid-turn (steering). The two are orthogonal: the
+suspend/resume cycle drives sequential turns; `ctx.cancel` +
+`pending_inputs` drive within-turn preemption. Pattern F in §6 shows
+the unified shape.
+
 
 ### Streaming (`StreamHandler`, `StreamHandlerFactory`, `QueueStreamHandler`)
 
@@ -262,11 +402,30 @@ queue); `QueueStreamHandler` is the in-memory default.
 ### Results and runs (`TaskResult`, `TaskRun`, `TaskStatus`)
 
 - `Task.run()` returns a `TaskResult[Output]` once the task reaches a
-  terminal state — `result.status` is the `TaskStatus` literal,
-  `result.output` is your handler's return value (or the last
-  `ctx.suspend(output=...)` envelope).
+  terminal-for-this-caller state. `TaskResult` carries:
+  - `result.output` — your handler's return value, or the snapshot
+    passed to `ctx.suspend(output=...)`, or `None` if the caller was
+    superseded by a later steering input.
+  - `result.status: Literal["completed", "suspended", "superseded"]`
+    — what *kind* of outcome this is, with the corresponding
+    convenience properties `result.is_completed`,
+    `result.is_suspended`, `result.is_superseded`. Note: this is a
+    **different literal** from the four-state `TaskStatus`; it's
+    specifically the caller-observable outcome.
+  - `result.suspension_reason: str | None` — populated only on the
+    `"suspended"` branch when the handler returned via
+    `ctx.suspend(reason=...)`.
+- `result.status == "superseded"` is the steering outcome: the
+  original caller's `.run()` cleanly resolves with
+  `TaskResult(status="superseded", output=None)` when a later
+  `.start()` queued a new input and the framework drained past their
+  generation. No exception is raised — it's the polite "you got
+  displaced" signal.
 - `Task.start()` returns a `TaskRun[Output]` handle you can poll,
-  stream, or `await run.result()`-on.
+  stream, or `await run.result()`-on. `TaskRun.cancel()` raises the
+  cancel signal; `TaskRun.terminate(reason=...)` is the forceful
+  exit (goes through the failure path; the typed exception is
+  `TaskTerminated`).
 
 ### Input-acceptance preconditions (`LastInputIdPreconditionFailed`, `TaskPreconditionFailed`)
 
@@ -412,12 +571,41 @@ def on_entry(mode: EntryMode) -> None: ...
 
 ### `TaskResult` / `TaskRun` / `TaskStatus`
 
-See §4. `TaskStatus` is a literal of the four lifecycle states:
-`"pending" | "in_progress" | "suspended" | "completed"`.
-Unsuccessful terminations (failure / cancel / terminate) are still
-`"completed"` from the store's perspective — the *outcome* is
-communicated to the caller through `.run()` / `.result()` (return
-value, or one of the typed exceptions in §4).
+There are **two separate literals** in play here — pick the right
+one for the question you're asking:
+
+- **`TaskStatus = Literal["pending", "in_progress", "suspended",
+  "completed"]`** — the *stored lifecycle state* on the task record.
+  Four values only. Unsuccessful terminations (failure / cancel /
+  terminate) are still `"completed"` from the store's perspective;
+  the *cause* is surfaced through the typed exceptions in §4.
+- **`TaskResult.status = Literal["completed", "suspended",
+  "superseded"]`** — the *caller-observable outcome* of a single
+  `.run()` / `.result()` call. Three values:
+  - `"completed"` — handler returned normally; `result.output` is
+    the return value.
+  - `"suspended"` — handler called `ctx.suspend(output=...)`;
+    `result.output` is the suspend envelope; `result.suspension_reason`
+    is the optional reason passed in.
+  - `"superseded"` — a steering input displaced this caller before
+    their generation finished; `result.output` is `None`. See §4
+    "Steering" for the full mechanic.
+
+`TaskResult` also exposes `is_completed`, `is_suspended`, and
+`is_superseded` boolean properties — preferred over string compares.
+
+`TaskRun` is the handle returned by `Task.start()`. Useful members:
+
+- `await run.result()` — block until terminal-for-this-caller; same
+  `TaskResult` semantics as above.
+- `async for chunk in run` — stream incremental output (see
+  Streaming).
+- `await run.cancel()` — signal cancellation; the handler's
+  `ctx.cancel` event fires.
+- `await run.terminate(reason=...)` — forceful exit; the caller's
+  `.result()` raises `TaskTerminated`.
+- `run.status`, `run.metadata`, `run.lease_expiry_count` — last-known
+  values; call `await run.refresh()` to re-fetch from the store.
 
 ### `Suspended`
 
@@ -517,17 +705,51 @@ watermark. The framework snapshots metadata at lifecycle boundaries
 ```python
 @task(name="chat_session")
 async def chat_session(ctx: TaskContext[dict]) -> dict:
-    msg = ctx.input["message"]
-    history = ctx.metadata.get("history", [])
-    history.append({"role": "user", "content": msg})
+    if ctx.entry_mode == "fresh":
+        history: list[dict] = []
+    else:
+        history = ctx.metadata.get("history", [])
+
+    history.append({"role": "user", "content": ctx.input["message"]})
+
     reply = await llm(history)
     history.append({"role": "assistant", "content": reply})
+
     ctx.metadata["history"] = history
-    return await ctx.suspend(output={"reply": reply})
+    ctx.metadata["turn_count"] = ctx.metadata.get("turn_count", 0) + 1
+    await ctx.metadata.flush()
+
+    return await ctx.suspend(output={"reply": reply, "turn": ctx.metadata["turn_count"]})
 ```
 
-Every `.run(task_id=session_id, input={"message": ...})` resumes the
-same task with the new turn.
+Caller (one session, many turns, same `task_id`):
+
+```python
+session = f"chat:{user_id}:{conversation_id}"
+
+# Turn 1.
+r1 = await chat_session.run(task_id=session, input={"message": "Hello!"})
+print(r1.output["reply"])      # is_suspended is True; we'll come back.
+
+# Turn 2 — same task_id resumes the persisted history.
+r2 = await chat_session.run(task_id=session, input={"message": "What did I just say?"})
+print(r2.output["reply"])      # The LLM sees turn 1 in history.
+```
+
+Why this works:
+
+- **State survives in `ctx.metadata`**, not in handler locals. The
+  handler exits between turns; only metadata is persisted.
+- **The same `task_id` is the conversation's identity.** Pick a
+  stable key (user + conversation id, in this example) so subsequent
+  `.run()` calls land on the same task.
+- **`entry_mode == "fresh"` branches initialization** from resumption.
+  Turn 1 sees `"fresh"`; every subsequent turn sees `"resumed"`.
+- **`await ctx.metadata.flush()` before `ctx.suspend()`** ensures the
+  history is durably persisted before the caller is told the turn is
+  done. The framework also persists at the suspend boundary, but an
+  explicit pre-suspend flush is cheap insurance for partial-write
+  scenarios.
 
 ### Pattern D — Per-namespace metadata to keep concerns isolated
 
@@ -565,6 +787,79 @@ async for chunk in run:
     ui.push(chunk)
 final = await run.result()
 ```
+
+### Pattern F — Steerable chat: preempting in-flight turns
+
+```python
+@task(name="steerable_chat", steerable=True)
+async def steerable_chat(ctx: TaskContext[dict]) -> dict:
+    history = ctx.metadata.get("history", []) if ctx.entry_mode != "fresh" else []
+    history.append({"role": "user", "content": ctx.input["message"]})
+
+    if ctx.was_steered and ctx.pending_inputs:
+        # Multiple inputs already queued behind us — fast-suspend so
+        # the framework can drain to the freshest input without doing
+        # work for stale ones.
+        ctx.metadata["history"] = history
+        await ctx.metadata.flush()
+        return await ctx.suspend(output={"superseded_early": True})
+
+    reply_buf: list[str] = []
+    async for chunk in llm_stream(history):
+        if ctx.cancel.is_set():
+            # A new turn arrived. Stash the partial and yield.
+            history.append({
+                "role": "assistant",
+                "content": "".join(reply_buf),
+                "partial": True,
+            })
+            ctx.metadata["history"] = history
+            await ctx.metadata.flush()
+            return await ctx.suspend(output={"interrupted": True})
+        reply_buf.append(chunk)
+
+    reply = "".join(reply_buf)
+    history.append({"role": "assistant", "content": reply})
+    ctx.metadata["history"] = history
+    await ctx.metadata.flush()
+    return await ctx.suspend(output={"reply": reply})
+```
+
+Caller side, showing the supersede semantics:
+
+```python
+session = f"chat:{user_id}:{conversation_id}"
+
+# Turn 1 starts a slow generation.
+run1 = await steerable_chat.start(task_id=session, input={"message": "Tell me a long story."})
+
+# 50ms later, user changes their mind.
+run2 = await steerable_chat.start(task_id=session, input={"message": "Actually, what's 2 + 2?"})
+
+# Original caller's run cleanly resolves "superseded".
+r1 = await run1.result()
+assert r1.is_superseded         # output is None; no exception.
+
+# Steering ack resolves with the new turn's actual reply.
+r2 = await run2.result()
+assert r2.is_suspended          # the steerable handler ends each turn via ctx.suspend(...)
+print(r2.output["reply"])       # "4"
+```
+
+What this pattern covers that Pattern C doesn't:
+
+- **`steerable=True`** turns `.start()`-on-`in_progress` from
+  `TaskConflictError` into "queue + cancel".
+- **`ctx.cancel.is_set()`** is the in-handler signal to wind down
+  cleanly. Suspending with a partial output is the canonical shape.
+- **`ctx.was_steered` + `ctx.pending_inputs`** let a handler
+  short-circuit when it's already multiple turns behind.
+- **`TaskResult.is_superseded`** is how the displaced caller learns
+  their turn was preempted — no exception, just a polite terminal
+  outcome.
+- **Backpressure**: if a misbehaving client floods `.start()`, the
+  bounded steering queue raises `SteeringQueueFull` to the caller —
+  the handler never sees runaway memory growth.
 
 ---
 
@@ -694,20 +989,3 @@ flush** (handler-side) and lifecycle-boundary snapshots (framework-side).
 - **Not a queue.** A `task_id` identifies one logical unit of work.
   If you want competing consumers off a shared queue, you want a
   different primitive.
-
----
-
-## Rename map (for users migrating from earlier pre-release builds)
-
-| Old name | New name | Notes |
-|----------|----------|-------|
-| `ctx.run_attempt` | `ctx.retry_attempt` | Now durable across crash/recovery. |
-| `ctx.lease_generation` | `ctx.recovery_count` | Same semantics, clearer name. |
-| `ctx.generation` | `ctx.steering_generation` | Same semantics, clearer name. |
-| `ctx.previous_input` | (deleted) | Read the queued inputs from `ctx.pending_inputs` instead. |
-| `ctx.title` / `ctx.description` / `ctx.tags` / `ctx.agent_name` | (deleted) | Not part of the primitive's contract anymore. |
-| `@task(store_input=True)` | (deleted) | Storage is always implicit. |
-| `@task(max_pending=...)` | (deleted) | Server-side back-pressure lives at a different layer. |
-| `@task(lease_duration_seconds=...)` | (deleted) | The platform owns lease duration. |
-| `payload["_framework"][...]` | `payload["_last_input_id"]`, `payload["_retry_attempt"]`, `payload["metadata:<name>"]` | Top-level `_*` slots; named-namespace metadata moved out of a single bucket. |
-| `TaskSuspended` exception | (deleted) | Use `ctx.suspend(...)`'s return value; observers see the `Suspended` envelope. |
