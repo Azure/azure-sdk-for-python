@@ -2,6 +2,21 @@
 
 ## 1.0.0b4 (Unreleased)
 
+### Samples
+
+- **Durable-task sample suite rewritten** (per spec 015). The 4 shipped durable samples now conform to the refined `@task` primitive contract and demonstrate the full crash-recovery surface:
+  - `samples/durable_copilot` — rewritten end-to-end to close 5 streaming/recovery gaps (`streaming=True` on session create/resume; `AssistantMessageDeltaData` → live `text_delta` chunks; `SessionIdleData` → `session_idle` chunk that unblocks the idle event; upstream-history dedup so a resumed turn does not re-send the user message; recovery replay of the last assistant text on `entry_mode == "recovered"`).
+  - `samples/durable_multiturn` — rewritten to demonstrate the new callable namespace facility (`ctx.metadata("session")` for session-level state vs. the default per-invocation namespace). External `FileStore`-based checkpointing dropped; the primitive now owns persistence.
+  - `samples/durable_langgraph` — verified compliant with the spec-015 design (one `@task` body + LangGraph `SqliteSaver` + `thread_id`, no `DurabilityContext`).
+  - `samples/durable_research` — **new** peer-sample distilled from the foundry-hosted `durable-agent-demo/src/durable-research-agent` reference. 12-stage research loop with checkpoint-and-resume via `ctx.metadata()`, SSE streaming, async-poll fallback. ~280-line `agent.py` + ~115-line `app.py` — fits the standard sample shape.
+  - `samples/durable_claude` — **removed**. Consumer-only design no longer fit the invocations surface; the consolidated developer guide in `azure-ai-agentserver-core/docs/durable-task-guide.md` now carries the conceptual material.
+  - Reference-only `samples/durable-agent-demo/` is untouched — it remains the foundry-hosted-agent reference deployment.
+- **New per-sample documentation**:
+  - Each of the 4 shipped durable samples now has a `README.md` covering setup, run, observability, and crash-recovery checklist.
+  - `samples/SHIPPABLE.md` — source-of-truth manifest enumerating shipped samples, reference-only exemptions, and removed-sample notes.
+  - `samples/DURABLE_SAMPLES.md` — cross-sample operational guide with a selector matrix, concept primer (entry mode, metadata namespaces, recovery replay, steering), and production checklist.
+- **CI gate**: `tests/test_samples_shippable_bar.py` enforces the per-sample README sections, manifest presence, and `requirements.txt` install-independence on every PR.
+
 ### Features Added
 
 - **Durable invocation samples** — Added `durable_langgraph` and `durable_multiturn` sample applications demonstrating crash-resilient long-running agents using `@task` with the invocations protocol.

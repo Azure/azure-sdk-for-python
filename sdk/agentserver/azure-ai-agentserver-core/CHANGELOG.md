@@ -2,6 +2,10 @@
 
 ## 2.0.0b4 (Unreleased)
 
+### Documentation
+
+- **New consolidated developer guide** — `docs/durable-task-guide.md` is the canonical end-to-end learning arc for the durable-task primitive (8 sections + a Rename Map appendix that documents every retired symbol from spec 015). It replaces the previous `docs/durable-task-overview.md` and `docs/durable-task-developer-guide.md` (both reduced to short redirects). The new guide is the source of truth for handler authors and is enforced by an automated CI doc-review meta-test (`tests/durable/test_dev_guide_review.py`) that checks public-symbol coverage, absence of retired names, presence of the 5 canonical statements (retry_attempt semantics, crash-recovery budget rule, callable namespace facade, reserved `_` prefix, explicit `flush()`), required-section presence, cross-guide consistency, and ambiguity heuristics.
+
 ### Breaking Changes
 
 - **Public API cleanup for the durable-task primitive** (per spec 015). The `@task` decorator and related types have been simplified to ship a tighter, more honest surface ahead of GA:
@@ -14,7 +18,7 @@
 
 ### Bugs Fixed
 
-- **Input data cleared at suspend for steerable tasks** (privacy / data minimization). The framework now clears `payload["input"]`, `_steering["active_input"]`, and `_steering["previous_input"]` at the suspend transition. These hold mirror copies of consumed user input that is no longer needed once the handler returns. Recovery transitions still preserve these slots because the handler will re-run with them; completion transitions are unaffected (terminal entries are deleted via `ephemeral=True` or retained via `ephemeral=False` by operator choice). See `docs/durable-task-developer-guide.md` §"Data Retention on Suspend".
+- **Input data cleared at suspend for steerable tasks** (privacy / data minimization). The framework now clears `payload["input"]`, `_steering["active_input"]`, and `_steering["previous_input"]` at the suspend transition. These hold mirror copies of consumed user input that is no longer needed once the handler returns. Recovery transitions still preserve these slots because the handler will re-run with them; completion transitions are unaffected (terminal entries are deleted via `ephemeral=True` or retained via `ephemeral=False` by operator choice). See `docs/durable-task-guide.md` §"Data Retention on Suspend".
 - **Suspended-resume input patch is now etag-protected**. Concurrent resumes of the same suspended task race safely under the standard etag retry loop instead of silently overwriting each other.
 - **TaskManager shutdown tolerates lifespan cancellation**. The graceful shutdown sleep and lease-expire steps are now wrapped to catch `asyncio.CancelledError` so that handlers always reach the `execution_task.cancel()` step and can wind down cleanly, even when the lifespan task is itself being cancelled by the host.
 - **LocalFileTaskProvider default storage path** now honors the `AGENTSERVER_DURABLE_TASKS_PATH` environment variable. Without an explicit path, the provider still defaults to `~/.durable-tasks`. Enables operator / crash-harness isolation of durable task state without code changes.
@@ -25,7 +29,7 @@
 
 ### Features Added
 
-- **Input acceptance preconditions on `Task.start(...)`**. New optional `input_id` and `if_last_input_id` keyword arguments model HTTP `If-Match: <etag>` semantics on a task's input queue. `input_id` records the new input's identity; `if_last_input_id` is the precondition value that the framework verifies against the task's stored last input id before any state mutation. Mismatch raises the new typed exception `LastInputIdPreconditionFailed` (subclass of new base `TaskPreconditionFailed`). The id is recorded in a framework-reserved namespace (`payload["_framework"]["last_input_id"]`) atomically with the input persist via etag protection, so concurrent callers cannot lose the precondition. Generic — usable by any package with sequential-input or optimistic-concurrency semantics. See `docs/durable-task-developer-guide.md` §"Input Acceptance Preconditions".
+- **Input acceptance preconditions on `Task.start(...)`**. New optional `input_id` and `if_last_input_id` keyword arguments model HTTP `If-Match: <etag>` semantics on a task's input queue. `input_id` records the new input's identity; `if_last_input_id` is the precondition value that the framework verifies against the task's stored last input id before any state mutation. Mismatch raises the new typed exception `LastInputIdPreconditionFailed` (subclass of new base `TaskPreconditionFailed`). The id is recorded in the primitive-reserved top-level slot `payload["_last_input_id"]` atomically with the input persist via etag protection, so concurrent callers cannot lose the precondition. Generic — usable by any package with sequential-input or optimistic-concurrency semantics. See `docs/durable-task-guide.md` §"Input Acceptance Preconditions".
 
 ### Features Added
 
