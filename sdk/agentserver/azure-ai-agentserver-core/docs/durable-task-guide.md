@@ -98,7 +98,7 @@ at most one handler runs at a time.** Everything else falls out of that.
 | `pending` | Created, not yet picked up by a handler. |
 | `in_progress` | A handler is currently executing this task. |
 | `suspended` | Handler called `ctx.suspend(...)` and returned. Awaiting `.run()` / `.start()` with new input. |
-| `completed` | Terminal. The handler returned normally, raised, or the task was cancelled / terminated — in every case the task is finished and will not run again. Whether the run was *successful* is communicated to the caller through `.run()` / `.result()` (either the return value, or one of `TaskFailed` / `TaskCancelled` / `TaskTerminated` — see §4). |
+| `completed` | Terminal. The handler is finished and will not run again. The *outcome* (success, failure, cancellation, termination) is communicated to the caller through `.run()` / `.result()` — either as the return value, or as one of `TaskFailed` / `TaskCancelled` / `TaskTerminated` (see §4). Outcome is not encoded in the status field. |
 
 The framework computes the **entry mode** every time it invokes your
 handler, by looking at the task's current state in the store:
@@ -140,7 +140,8 @@ async def greet(ctx: TaskContext[str]) -> str:
     return f"Hello, {ctx.input}!"
 
 # Run it — lifecycle-aware: creates if new, recovers if a prior
-# lifetime crashed, raises TaskConflictError on duplicate active run.
+# lifetime crashed, raises TaskConflictError if another non-steerable
+# lifetime is already active (or the task has already completed).
 result = await greet.run(task_id="greet-alice", input="Alice")
 print(result.output)  # "Hello, Alice!"
 ```
@@ -155,9 +156,11 @@ re-invokes your function on restart **before any HTTP handlers go
 live** — your function is re-invoked with `ctx.entry_mode ==
 "recovered"` and the same input. No caller action is needed.
 
-If a caller calls `.run()` with a `task_id` that is already in
-progress (and the task is not steerable), the framework raises
-`TaskConflictError` — it does not create a duplicate.
+If a caller calls `.run()` with a `task_id` whose previous run has
+already completed, or with a `task_id` that is currently in progress
+on another lifetime (and the task is not steerable), the framework
+raises `TaskConflictError` — it does not create a duplicate or
+overwrite the prior result.
 
 ---
 
@@ -218,14 +221,12 @@ your handler owns. It is a **callable namespace facade**:
   **named** sibling namespace.
 
 Each namespace is independent: a write to one does not dirty the
-other; `flush()` on one persists only that namespace. Persistence
-layout: the default namespace lives at `payload["metadata"]`; named
-namespaces live at `payload["metadata:<name>"]`. The framework also
-snapshots all touched namespaces at lifecycle boundaries (start,
-suspend, complete, fail, cancel, terminate), so writes you forget to
-explicitly flush are still durable across a graceful boundary — but
-explicit `flush()` is the fence you use to make at-most-once
-side-effect patterns work across a crash.
+other; `flush()` on one persists only that namespace. The framework
+also snapshots all touched namespaces at lifecycle boundaries (task
+start, `ctx.suspend(...)` return, handler return or unhandled raise),
+so writes you forget to explicitly flush are still durable across a
+graceful boundary — but explicit `flush()` is the fence you use to
+make at-most-once side-effect patterns work across a crash.
 
 Names and keys starting with `_` are **reserved** for framework-internal
 namespaces (the responses framework uses `_responses`, for example).
@@ -294,10 +295,11 @@ exceptions so the caller can branch on **why** it ended:
 - `TaskTerminated` — the task was forcefully terminated by the
   operator or platform via `handle.terminate()` (carries a `reason`).
 
-In addition, `TaskNotFound` is raised by `.get()` / `.start()` when
-the referenced `task_id` no longer exists, and `TaskConflictError`
-is raised when `.run()` / `.start()` collides with an already-active
-non-steerable task.
+In addition, `TaskNotFound` is raised by `handle.result()` (and by
+`.start()` when resuming) if the referenced `task_id` has been
+deleted out from under the caller, and `TaskConflictError` is raised
+when `.run()` / `.start()` collides with an already-active
+non-steerable task or with an already-completed task.
 
 You do **not** need to catch any of these inside your handler —
 they exist for the *caller's* error-handling code. Your handler
@@ -316,10 +318,31 @@ changing it strands existing tasks.
 
 ### `Task` (the handle)
 
-- `.run(task_id, input, *, if_last_input_id=None, input_id=None) -> TaskResult`
-- `.start(task_id, input, *, if_last_input_id=None, input_id=None) -> TaskRun`
-- (Plus internal `.get()` / `.list()` helpers used by tests and the
-  hosting layer; treat those as not-for-end-user code.)
+The decorated function exposes two keyword-only entry points:
+
+```python
+async def run(
+    *, task_id: str, input: T,
+    session_id: str | None = None,
+    retry: RetryPolicy | None = None,
+    stream_handler: StreamHandler | None = None,
+) -> TaskResult[R]
+
+async def start(
+    *, task_id: str, input: T,
+    session_id: str | None = None,
+    retry: RetryPolicy | None = None,
+    stream_handler: StreamHandler | None = None,
+    input_id: str | None = None,
+    if_last_input_id: str | None = None,
+) -> TaskRun[R]
+```
+
+`.run()` blocks until the task reaches a terminal state and returns a
+`TaskResult`. `.start()` returns immediately with a `TaskRun` handle
+you can stream from or `await handle.result()` on. The
+`input_id` / `if_last_input_id` sequential-input preconditions live
+only on `.start()` (see §4).
 
 ### `TaskContext`
 
@@ -377,15 +400,30 @@ value, or one of the typed exceptions in §4).
 
 ### `Suspended`
 
-The suspended-state envelope returned to consumers when they
-`.get()` a task that is currently in `suspended`. Carries the
-optional `output` snapshot the handler passed to `ctx.suspend(...)`.
+The suspended-state envelope your handler returns via
+`return await ctx.suspend(...)`. The framework also surfaces it on
+the consumer side as `TaskResult.suspended` when a `.run()` call
+returns from a suspension. Carries the optional `output` snapshot
+the handler passed to `ctx.suspend(...)`.
 
 ### `RetryPolicy`
 
-Constructor: `RetryPolicy(max_attempts: int, backoff: ... = ...)`.
+```python
+RetryPolicy(
+    *,
+    initial_delay: timedelta = timedelta(seconds=1),
+    backoff_coefficient: float = 2.0,
+    max_delay: timedelta = timedelta(seconds=60),
+    max_attempts: int = 3,
+    retry_on: tuple[type[Exception], ...] | None = None,
+    jitter: bool = True,
+)
+```
+
 `max_attempts` is the total failure-retry budget across all
 lifetimes for the task; crash recovery does NOT consume it.
+`retry_on=None` retries every exception; pass a tuple to scope
+retries to specific types.
 
 ### Streaming types (`StreamHandler`, `StreamHandlerFactory`, `QueueStreamHandler`)
 
@@ -403,8 +441,8 @@ by the package are either internal-only or wrap one of these.
 | `TaskFailed` | `.run()` / `.result()` | Handler raised an unhandled exception. `.error` carries the structured cause. |
 | `TaskCancelled` | `.run()` / `.result()` | Task was cancelled via `handle.cancel()`. |
 | `TaskTerminated` | `.run()` / `.result()` | Task was forcefully terminated (operator / platform). Carries `reason`. |
-| `TaskNotFound` | `.get()` / `.start()` | Referenced `task_id` does not exist. |
-| `TaskConflictError` | `.run()` / `.start()` | Collided with an already-active non-steerable task. |
+| `TaskNotFound` | `handle.result()` / `.start()` | Referenced `task_id` has been deleted between calls. |
+| `TaskConflictError` | `.run()` / `.start()` | Collided with an already-active non-steerable task, or with a `task_id` whose previous run already completed. |
 | `LastInputIdPreconditionFailed` | `.start(if_last_input_id=...)` | Sequential-input precondition not satisfied (subclass of `TaskPreconditionFailed`). |
 | `TaskPreconditionFailed` | `.start(...)` | Base for input-acceptance precondition failures. |
 | `SteeringQueueFull` | `.start(...)` on steerable task | Steerable task's input queue is full. |
@@ -449,9 +487,9 @@ async def bulk_index(ctx: TaskContext[list[str]]) -> dict:
 ```
 
 On crash, the recovered lifetime picks up at the last persisted
-watermark. The metadata write is lifecycle-snapshotted; for crash
-safety inside the loop, add `await ctx.metadata.flush()` after each
-write.
+watermark. The framework snapshots metadata at lifecycle boundaries
+(see §4); for crash safety mid-loop, add
+`await ctx.metadata.flush()` after each write.
 
 ### Pattern C — Multi-turn conversation via suspend/resume
 
@@ -525,11 +563,29 @@ to set — the framework auto-selects.
 
 You don't need a crashed process to exercise the `"recovered"` entry
 mode. In a unit test, invoke the handler once with a `task_id`, let
-it advance partway, then invoke it again with the **same** `task_id`
-on a fresh `TaskContext` — the second invocation will see
-`ctx.entry_mode == "recovered"` and the persisted `ctx.metadata` /
-counters from the first run. See `tests/durable/test_retry.py` for
-a copy-paste cookbook example.
+it write a watermark, and tear the first invocation down before it
+completes. Then invoke it again with the **same** `task_id` (and a
+short `stale_timeout=` so the framework treats the first lifetime as
+gone) — the second invocation will see `ctx.entry_mode == "recovered"`
+and the persisted `ctx.metadata` / counters from the first run.
+
+```python
+@task(name="resumable")
+async def resumable(ctx: TaskContext[int]) -> int:
+    if ctx.entry_mode == "fresh":
+        ctx.metadata["seen"] = ctx.input
+        await ctx.metadata.flush()
+        raise SystemExit("simulate a crash")  # tear lifetime 1 down
+    assert ctx.entry_mode == "recovered"
+    return ctx.metadata["seen"]
+
+# Lifetime 1: writes watermark, then dies.
+with pytest.raises(SystemExit):
+    await resumable.run(task_id="t-1", input=42)
+# Lifetime 2: short stale_timeout so the framework reclaims t-1.
+result = await resumable.run(task_id="t-1", input=42, stale_timeout=0.1)
+assert result.output == 42
+```
 
 ### What the framework persists at lifecycle boundaries
 
