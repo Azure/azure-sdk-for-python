@@ -23,7 +23,13 @@ class RetryPolicy:
     :type backoff_coefficient: float
     :param max_delay: Upper bound on computed delay.
     :type max_delay: ~datetime.timedelta
-    :param max_attempts: Total attempts (including the first try).
+    :param max_attempts: Total attempts (including the first try). This is a
+        single **durable** budget that counts handler-raised failures across
+        ALL lifetimes — the count is persisted to
+        ``payload["_retry_attempt"]`` and restored on recovery. Crash
+        recovery does NOT consume the budget; only handler-raised exceptions
+        do. A steering input resets the counter (a steering input is a new
+        logical request).
     :type max_attempts: int
     :param retry_on: Exception types that trigger retry. ``None`` means all.
     :type retry_on: tuple[type[Exception], ...] | None

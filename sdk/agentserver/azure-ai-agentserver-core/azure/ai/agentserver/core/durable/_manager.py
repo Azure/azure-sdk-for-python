@@ -899,12 +899,22 @@ class TaskManager:
         if steering.get("cancel_requested"):
             cancel_event.set()
 
+        # Spec 015 Phase 4 FR-001: restore the persisted retry_attempt so the
+        # recovered (or developer-resumed) handler observes the correct
+        # cross-lifetime budget on its first invocation. ``_retry_attempt`` is
+        # written by ``_execute_task_loop`` on every handler-raised exception
+        # and cleared by the steering-drain path; default 0 covers fresh and
+        # never-failed tasks.
+        persisted_retry_attempt = (task_info.payload or {}).get(
+            "_retry_attempt", 0
+        )
+
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
             session_id=task_info.session_id,
             input=resolved_input,
             metadata=metadata,
-            retry_attempt=0,
+            retry_attempt=persisted_retry_attempt,
             recovery_count=lease_gen,
             cancel=cancel_event,
             shutdown=self._shutdown_event,
@@ -1129,7 +1139,11 @@ class TaskManager:
         reason_ref = (
             terminate_reason_ref if terminate_reason_ref is not None else [None]
         )
-        attempt = 0
+        # Spec 015 Phase 4 FR-001: honor the persisted retry_attempt so the
+        # cross-lifetime budget is respected. ``_start_existing_task`` and
+        # ``create_and_start`` populate ``ctx.retry_attempt`` from
+        # ``payload["_retry_attempt"]`` (default 0 for fresh tasks).
+        attempt = ctx.retry_attempt
         # Mutable ref: steering drain may swap the active result_future
         current_result_future = result_future
         while True:
@@ -1288,7 +1302,11 @@ class TaskManager:
                         exc,
                         delay,
                     )
-                    # Update error field so observers see intermediate failures
+                    # Spec 015 Phase 4 FR-001 / FR-002: persist the post-bump
+                    # retry_attempt alongside the error field in a single
+                    # patch. A subsequent crash + recover will restore this
+                    # counter via ``_start_existing_task`` so the durable
+                    # max_attempts budget is honored across lifetimes.
                     try:
                         await self._provider.update(
                             task_id,
@@ -1297,7 +1315,8 @@ class TaskManager:
                                     "type": type(exc).__name__,
                                     "message": str(exc),
                                     "attempt": attempt,
-                                }
+                                },
+                                payload={"_retry_attempt": attempt + 1},
                             ),
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
@@ -1490,6 +1509,11 @@ class TaskManager:
         # Clear drain_in_progress
         steering["drain_in_progress"] = False
         payload["_steering"] = steering
+        # Spec 015 Phase 4 FR-001: a steering input is a new logical request
+        # from the developer; the retry budget resets. Persist the reset so a
+        # subsequent crash does not resurrect the prior counter from
+        # ``payload["_retry_attempt"]``.
+        payload["_retry_attempt"] = 0
         try:
             await self._provider.update(
                 task_id,
