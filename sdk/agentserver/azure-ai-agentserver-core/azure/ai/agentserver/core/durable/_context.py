@@ -57,8 +57,6 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
 
     :param task_id: Unique task identifier.
     :type task_id: str
-    :param session_id: Session scope identifier.
-    :type session_id: str
     :param input: Typed, validated input value.
     :type input: Input
     :param metadata: Mutable progress metadata.
@@ -77,7 +75,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
 
     __slots__ = (
         "task_id",
-        "session_id",
+        "_session_id",
         "input",
         "metadata",
         "retry_attempt",
@@ -110,7 +108,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         steering_generation: int = 0,
     ) -> None:
         self.task_id = task_id
-        self.session_id = session_id
+        self._session_id = session_id
         self.input = input
         self.metadata = metadata
         self.retry_attempt = retry_attempt

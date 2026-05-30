@@ -1487,7 +1487,7 @@ class TaskManager:
 
         new_ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
-            session_id=ctx.session_id,
+            session_id=ctx._session_id,  # pylint: disable=protected-access
             input=resolved_input,
             metadata=ctx.metadata,
             retry_attempt=0,

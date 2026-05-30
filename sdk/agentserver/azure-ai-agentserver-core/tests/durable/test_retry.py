@@ -278,7 +278,10 @@ class TestRetryIntegration:
         """Task fails twice then succeeds on attempt 2."""
         call_log: list[int] = []
 
-        @task(title="retry-test")
+        @task(
+            title="retry-test",
+            retry=RetryPolicy.exponential_backoff(max_attempts=3),
+        )
         async def flaky(ctx: TaskContext[str]) -> str:
             call_log.append(ctx.retry_attempt)
             if ctx.retry_attempt < 2:
@@ -291,7 +294,6 @@ class TestRetryIntegration:
                 result = await flaky.run(
                     task_id="retry-1",
                     input="test",
-                    retry=RetryPolicy.exponential_backoff(max_attempts=3),
                 )
             assert result.output == "success"
             assert call_log == [0, 1, 2]
@@ -302,7 +304,14 @@ class TestRetryIntegration:
     async def test_retry_exhausted(self, tmp_path) -> None:
         """Task always fails — retries exhaust and TaskFailed is raised."""
 
-        @task(title="always-fail")
+        @task(
+            title="always-fail",
+            retry=RetryPolicy(
+                max_attempts=3,
+                retry_on=(ValueError,),
+                jitter=False,
+            ),
+        )
         async def always_fail(ctx: TaskContext[str]) -> str:
             raise ValueError(f"boom on attempt {ctx.retry_attempt}")
 
@@ -313,11 +322,6 @@ class TestRetryIntegration:
                     await always_fail.run(
                         task_id="exhaust-1",
                         input="test",
-                        retry=RetryPolicy(
-                            max_attempts=3,
-                            retry_on=(ValueError,),
-                            jitter=False,
-                        ),
                     )
             error = exc_info.value.error
             assert error["type"] == "exhausted_retries"
@@ -330,7 +334,14 @@ class TestRetryIntegration:
         """Wrong exception type — fails immediately without retry."""
         attempts: list[int] = []
 
-        @task(title="wrong-exc")
+        @task(
+            title="wrong-exc",
+            retry=RetryPolicy(
+                max_attempts=5,
+                retry_on=(ValueError,),
+                jitter=False,
+            ),
+        )
         async def wrong_exc(ctx: TaskContext[str]) -> str:
             attempts.append(ctx.retry_attempt)
             raise TypeError("not retryable")
@@ -341,11 +352,6 @@ class TestRetryIntegration:
                 await wrong_exc.run(
                     task_id="nonretry-1",
                     input="test",
-                    retry=RetryPolicy(
-                        max_attempts=5,
-                        retry_on=(ValueError,),
-                        jitter=False,
-                    ),
                 )
             # Only ran once — no retries for TypeError
             assert attempts == [0]
@@ -498,7 +504,15 @@ class TestRetryAttemptDurability:
 
         invocations: list[int] = []
 
-        @task(title="always-fail-recovered", ephemeral=False)
+        @task(
+            title="always-fail-recovered",
+            ephemeral=False,
+            retry=RetryPolicy(
+                max_attempts=3,
+                retry_on=(ValueError,),
+                jitter=False,
+            ),
+        )
         async def always_fail(ctx: TaskContext[str]) -> str:
             invocations.append(ctx.retry_attempt)
             raise ValueError(f"boom at retry_attempt={ctx.retry_attempt}")
@@ -514,11 +528,6 @@ class TestRetryAttemptDurability:
                         task_id="budget-1",
                         input="ignored",
                         stale_timeout=1.0,
-                        retry=RetryPolicy(
-                            max_attempts=3,
-                            retry_on=(ValueError,),
-                            jitter=False,
-                        ),
                     )
             assert invocations == [2], (
                 "FR-002 violated: with max_attempts=3 and 2 retries already "
@@ -544,7 +553,15 @@ class TestRetryAttemptDurability:
         """
         observed: list[int] = []
 
-        @task(title="recover-then-succeed", ephemeral=False)
+        @task(
+            title="recover-then-succeed",
+            ephemeral=False,
+            retry=RetryPolicy(
+                max_attempts=3,
+                retry_on=(ValueError,),
+                jitter=False,
+            ),
+        )
         async def succeed_now(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return f"done@{ctx.retry_attempt}"
@@ -558,11 +575,6 @@ class TestRetryAttemptDurability:
                 task_id="no-consume-1",
                 input="ignored",
                 stale_timeout=1.0,
-                retry=RetryPolicy(
-                    max_attempts=3,
-                    retry_on=(ValueError,),
-                    jitter=False,
-                ),
             )
             assert result.output == "done@2"
             assert observed == [2], (

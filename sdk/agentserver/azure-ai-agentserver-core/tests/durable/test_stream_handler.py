@@ -144,7 +144,10 @@ class TestCustomHandlerDispatch:
         try:
             handler = RecordingHandler()
 
-            @task(name="t010_custom_stream")
+            @task(
+                name="t010_custom_stream",
+                stream_handler_factory=lambda _tid: handler,
+            )
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("chunk-1")
                 await ctx.stream("chunk-2")
@@ -154,7 +157,6 @@ class TestCustomHandlerDispatch:
             run = await my_task.start(
                 task_id="t010-1",
                 input="hello",
-                stream_handler=handler,
             )
 
             collected = []
@@ -213,7 +215,11 @@ class TestSteeringCarryOver:
             handler = RecordingHandler()
             gen1_started = asyncio.Event()
 
-            @task(name="t013_steerable", steerable=True)
+            @task(
+                name="t013_steerable",
+                steerable=True,
+                stream_handler_factory=lambda _tid: handler,
+            )
             async def steerable_task(ctx: TaskContext[dict]) -> dict:
                 gen = ctx.steering_generation
                 await ctx.stream({"gen": gen, "event": "start"})
@@ -229,11 +235,10 @@ class TestSteeringCarryOver:
                 await ctx.stream({"gen": gen, "event": "finish"})
                 return {"gen": gen, "status": "completed"}
 
-            # Start gen 0 with custom handler
+            # Start gen 0 — handler comes from the factory
             run1 = await steerable_task.start(
                 task_id="t013-1",
                 input={"msg": "first"},
-                stream_handler=handler,
             )
 
             # Wait for gen 0 to start streaming
@@ -273,7 +278,10 @@ class TestStreamClosure:
         try:
             handler = RecordingHandler()
 
-            @task(name="t015_success")
+            @task(
+                name="t015_success",
+                stream_handler_factory=lambda _tid: handler,
+            )
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("data")
                 return "success"
@@ -281,7 +289,6 @@ class TestStreamClosure:
             run = await my_task.start(
                 task_id="t015-1",
                 input="x",
-                stream_handler=handler,
             )
             result = await run.result()
             assert result.output == "success"
@@ -296,7 +303,10 @@ class TestStreamClosure:
         try:
             handler = RecordingHandler()
 
-            @task(name="t016_failure")
+            @task(
+                name="t016_failure",
+                stream_handler_factory=lambda _tid: handler,
+            )
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("before-error")
                 raise ValueError("boom")
@@ -304,7 +314,6 @@ class TestStreamClosure:
             run = await my_task.start(
                 task_id="t016-1",
                 input="x",
-                stream_handler=handler,
             )
 
             # Drain stream
@@ -324,7 +333,10 @@ class TestStreamClosure:
         try:
             handler = FailingCloseHandler()
 
-            @task(name="t017_close_error")
+            @task(
+                name="t017_close_error",
+                stream_handler_factory=lambda _tid: handler,
+            )
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("data")
                 return "ok"
@@ -332,7 +344,6 @@ class TestStreamClosure:
             run = await my_task.start(
                 task_id="t017-1",
                 input="x",
-                stream_handler=handler,
             )
 
             collected = []
@@ -360,7 +371,10 @@ class TestStreamClosure:
         try:
             handler = FailingPutHandler()
 
-            @task(name="t018_put_error")
+            @task(
+                name="t018_put_error",
+                stream_handler_factory=lambda _tid: handler,
+            )
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("this will fail")
                 return "should not reach"
@@ -368,7 +382,6 @@ class TestStreamClosure:
             run = await my_task.start(
                 task_id="t018-1",
                 input="x",
-                stream_handler=handler,
             )
 
             # The task should fail because put() raised
@@ -506,43 +519,6 @@ class TestStreamHandlerFactory:
             assert len(created_handlers) == 1
             assert created_handlers[0].items_put == ["x"]
             assert created_handlers[0].close_called is True
-        finally:
-            await _teardown_manager(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_call_site_handler_overrides_factory(self, tmp_path):
-        """Call-site stream_handler takes precedence over factory."""
-        manager, mgr_mod = await _setup_manager(tmp_path)
-        try:
-            factory_called = False
-
-            def _factory(task_id: str) -> RecordingHandler:
-                nonlocal factory_called
-                factory_called = True
-                return RecordingHandler()
-
-            @task(
-                name="t_factory_override",
-                stream_handler_factory=_factory,
-            )
-            async def my_task(ctx: TaskContext[str]) -> str:
-                await ctx.stream("y")
-                return "ok"
-
-            call_site_handler = RecordingHandler()
-            run = await my_task.start(
-                task_id="override-1",
-                input="hi",
-                stream_handler=call_site_handler,
-            )
-            collected = []
-            async for chunk in run:
-                collected.append(chunk)
-            await run.result()
-
-            assert collected == ["y"]
-            assert call_site_handler.items_put == ["y"]
-            assert factory_called is False
         finally:
             await _teardown_manager(manager, mgr_mod)
 

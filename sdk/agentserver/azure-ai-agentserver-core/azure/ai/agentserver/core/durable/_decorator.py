@@ -456,12 +456,9 @@ class Task(Generic[Input, Output]):
         *,
         task_id: str,
         input: Input,  # noqa: A002
-        session_id: str | None = None,
         title: str | None = None,
         tags: dict[str, str] | None = None,
-        retry: RetryPolicy | None = None,
         stale_timeout: float = 300.0,
-        stream_handler: StreamHandler | None = None,
     ) -> TaskResult[Output]:
         """Run a lifecycle-aware durable task and return the result.
 
@@ -474,24 +471,29 @@ class Task(Generic[Input, Output]):
         - In-progress (not stale) → raise :class:`TaskConflictError`
         - Completed → raise :class:`TaskConflictError`
 
+        .. note::
+
+            ``retry`` and ``stream_handler`` are configured on the
+            ``@task(...)`` decorator (or via :meth:`Task.options`), not
+            per-call. This is enforced so they survive crash recovery:
+            after the container crashes and the framework re-enters the
+            task, it has only the registered decorator's options to work
+            with — a per-call override would silently disappear at the
+            crash boundary. Session identity is platform-derived from
+            the ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+
         :keyword task_id: Unique task identifier.
         :paramtype task_id: str
         :keyword input: Typed input value.
         :paramtype input: Input
-        :keyword session_id: Session scope override.
-        :paramtype session_id: str | None
-        :keyword title: Title override.
+        :keyword title: Title override for this call.
         :paramtype title: str | None
-        :keyword tags: Per-call tag overrides.
+        :keyword tags: Per-call tag overrides (merged into the persisted
+            task record at start time, so they are recovery-safe).
         :paramtype tags: dict[str, str] | None
-        :keyword retry: Retry policy override. Overrides decorator-level retry.
-        :paramtype retry: ~azure.ai.agentserver.core.durable.RetryPolicy | None
         :keyword stale_timeout: Seconds before an in-progress task is considered
             stale and eligible for recovery. Default 300 (5 minutes).
         :paramtype stale_timeout: float
-        :keyword stream_handler: Custom stream handler for pluggable streaming.
-            If ``None``, a default :class:`QueueStreamHandler` is used.
-        :paramtype stream_handler: ~azure.ai.agentserver.core.durable.StreamHandler | None
         :return: The task result wrapper with output, status, and suspension info.
         :rtype: ~azure.ai.agentserver.core.durable.TaskResult[Output]
         :raises TaskFailed: On unhandled exception.
@@ -502,12 +504,12 @@ class Task(Generic[Input, Output]):
         handle = await self._lifecycle_start(
             task_id=task_id,
             input=input,
-            session_id=session_id,
+            session_id=None,
             title=title,
             tags=tags,
-            retry=retry,
+            retry=None,
             stale_timeout=stale_timeout,
-            stream_handler=stream_handler,
+            stream_handler=None,
         )
         return await handle.result()
 
@@ -516,12 +518,9 @@ class Task(Generic[Input, Output]):
         *,
         task_id: str,
         input: Input,  # noqa: A002
-        session_id: str | None = None,
         title: str | None = None,
         tags: dict[str, str] | None = None,
-        retry: RetryPolicy | None = None,
         stale_timeout: float = 300.0,
-        stream_handler: StreamHandler | None = None,
         input_id: str | None = None,
         if_last_input_id: str | None = None,
     ) -> TaskRun[Output]:
@@ -530,24 +529,26 @@ class Task(Generic[Input, Output]):
         Follows the same lifecycle rules as :meth:`run` but returns
         immediately with a :class:`TaskRun` handle instead of blocking.
 
+        .. note::
+
+            ``retry`` and ``stream_handler`` are configured on the
+            ``@task(...)`` decorator (or via :meth:`Task.options`), not
+            per-call — see :meth:`run` for the rationale. Session
+            identity is platform-derived from the
+            ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+
         :keyword task_id: Unique task identifier.
         :paramtype task_id: str
         :keyword input: Typed input value.
         :paramtype input: Input
-        :keyword session_id: Session scope override.
-        :paramtype session_id: str | None
-        :keyword title: Title override.
+        :keyword title: Title override for this call.
         :paramtype title: str | None
-        :keyword tags: Per-call tag overrides.
+        :keyword tags: Per-call tag overrides (merged into the persisted
+            task record at start time, so they are recovery-safe).
         :paramtype tags: dict[str, str] | None
-        :keyword retry: Retry policy override. Overrides decorator-level retry.
-        :paramtype retry: ~azure.ai.agentserver.core.durable.RetryPolicy | None
         :keyword stale_timeout: Seconds before an in-progress task is considered
             stale and eligible for recovery. Default 300 (5 minutes).
         :paramtype stale_timeout: float
-        :keyword stream_handler: Custom stream handler for pluggable streaming.
-            If ``None``, a default :class:`QueueStreamHandler` is used.
-        :paramtype stream_handler: ~azure.ai.agentserver.core.durable.StreamHandler | None
         :keyword input_id: Optional identifier for the input being accepted. When
             supplied, the framework records it as the task's most-recently-accepted
             input id in a framework-reserved slot (``payload["_last_input_id"]``).
@@ -581,12 +582,12 @@ class Task(Generic[Input, Output]):
         return await self._lifecycle_start(
             task_id=task_id,
             input=input,
-            session_id=session_id,
+            session_id=None,
             title=title,
             tags=tags,
-            retry=retry,
+            retry=None,
             stale_timeout=stale_timeout,
-            stream_handler=stream_handler,
+            stream_handler=None,
             input_id=input_id,
             if_last_input_id=if_last_input_id,
         )
@@ -1145,10 +1146,11 @@ def task(
         calling ``start()`` on an ``in_progress`` task queues the input and
         signals cancel instead of raising ``TaskConflictError``. Default False.
     :keyword stream_handler_factory: Optional factory callable that receives a
-        ``task_id`` and returns a :class:`StreamHandler`. When set, crash-recovery
-        and resume paths use this factory instead of defaulting to
-        :class:`QueueStreamHandler`. Call-site ``stream_handler=`` overrides the
-        factory for that specific call.
+        ``task_id`` and returns a :class:`StreamHandler`. When set, fresh
+        starts, resumes, and crash-recovery all use this factory instead of
+        defaulting to :class:`QueueStreamHandler`. The factory itself is the
+        only supported configuration surface — there is no per-call override,
+        so the handler stays consistent across the crash boundary.
     :return: A ``Task[Input, Output]`` wrapper.
     :rtype: Any
     """

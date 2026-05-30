@@ -323,16 +323,16 @@ The decorated function exposes two keyword-only entry points:
 ```python
 async def run(
     *, task_id: str, input: T,
-    session_id: str | None = None,
-    retry: RetryPolicy | None = None,
-    stream_handler: StreamHandler | None = None,
+    title: str | None = None,
+    tags: dict[str, str] | None = None,
+    stale_timeout: float = 300.0,
 ) -> TaskResult[R]
 
 async def start(
     *, task_id: str, input: T,
-    session_id: str | None = None,
-    retry: RetryPolicy | None = None,
-    stream_handler: StreamHandler | None = None,
+    title: str | None = None,
+    tags: dict[str, str] | None = None,
+    stale_timeout: float = 300.0,
     input_id: str | None = None,
     if_last_input_id: str | None = None,
 ) -> TaskRun[R]
@@ -344,6 +344,15 @@ you can stream from or `await handle.result()` on. The
 `input_id` / `if_last_input_id` sequential-input preconditions live
 only on `.start()` (see §4).
 
+Retry policy and the stream handler are configured on the
+`@task(...)` decorator (or via `Task.options(retry=...)` for a
+derived `Task`), not per-call — see §4. They have to be registered
+on the decorated function so they remain available after a crash,
+when the framework re-enters the task with only the decorator's
+options. Session identity is platform-derived from the
+`FOUNDRY_AGENT_SESSION_ID` environment variable; there is no
+per-call override.
+
 ### `TaskContext`
 
 The single argument your handler receives. Properties:
@@ -353,7 +362,6 @@ The single argument your handler receives. Properties:
 | `input` | `T` | The typed input value. |
 | `entry_mode` | `EntryMode` | `"fresh"` / `"recovered"` / `"resumed"`. |
 | `task_id` | `str` | Task identity. |
-| `session_id` | `str` | Session scope identity. |
 | `metadata` | `TaskMetadata` | Callable namespace facade (see §4). |
 | `cancel` | `asyncio.Event` | Set when cancellation is requested. |
 | `shutdown` | `asyncio.Event` | Set when the container is shutting down. |
