@@ -100,6 +100,13 @@ class TaskConflictError(RuntimeError):
 class EtagConflict(RuntimeError):
     """Raised when an optimistic concurrency (etag) check fails.
 
+    .. note::
+       **Advanced / internal.** Most application code does not need to
+       handle this exception. The framework retries internally on optimistic
+       concurrency conflicts; ``EtagConflict`` only escapes when a low-level
+       caller manipulates etags directly (e.g., custom storage adapters or
+       admin tools).
+
     The task record was modified between read and write. Callers should
     retry the operation with the updated etag.
 
