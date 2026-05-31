@@ -193,7 +193,7 @@ with (
         time.sleep(10)
 
     if run.status == "completed":
-        print("\n✓ Simulation run completed successfully!")
+        print("\n[OK] Simulation run completed successfully!")
         print(f"Result Counts: {run.result_counts}")
         # With 3 seed scenarios and num_conversations=2, expect 6 total conversations
         print(f"Expected: {3 * 2} conversations (3 scenarios × 2 per scenario)")
@@ -206,7 +206,7 @@ with (
 
         print(f"\nEval Run Report URL: {run.report_url}")
     else:
-        print(f"\n✗ Simulation run failed: {run.error}")
+        print(f"\n[FAIL] Simulation run failed: {run.error}")
 
     client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

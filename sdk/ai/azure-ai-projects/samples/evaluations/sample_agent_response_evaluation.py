@@ -113,7 +113,7 @@ with (
         time.sleep(5)
 
     if response_eval_run.status == "completed":
-        print("\n✓ Evaluation run completed successfully!")
+        print("\n[OK] Evaluation run completed successfully!")
         print(f"Result Counts: {response_eval_run.result_counts}")
 
         output_items = list(
@@ -126,7 +126,7 @@ with (
         pprint(output_items)
         print(f"{'-'*60}")
     else:
-        print("\n✗ Evaluation run failed.")
+        print("\n[FAIL] Evaluation run failed.")
 
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

@@ -119,7 +119,7 @@ with (
 
     # If the eval run completed successfully, generate cluster insights
     if eval_run.status == "completed":
-        print("\n✓ Evaluation run completed successfully!")
+        print("\n[OK] Evaluation run completed successfully!")
         print(f"Evaluation run result counts: {eval_run.result_counts}")
 
         clusterInsight = project_client.beta.insights.generate(
@@ -141,13 +141,13 @@ with (
             time.sleep(5)
 
         if clusterInsight.state == OperationState.SUCCEEDED:
-            print("\n✓ Cluster insights generated successfully!")
+            print("\n[OK] Cluster insights generated successfully!")
             pprint(clusterInsight)
         else:
-            print("\n✗ Cluster insight generation failed.")
+            print("\n[FAIL] Cluster insight generation failed.")
 
     else:
-        print("\n✗ Evaluation run failed. Cannot generate cluster insights.")
+        print("\n[FAIL] Evaluation run failed. Cannot generate cluster insights.")
 
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

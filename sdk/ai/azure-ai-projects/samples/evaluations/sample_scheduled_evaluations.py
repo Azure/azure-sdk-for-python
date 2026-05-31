@@ -192,7 +192,7 @@ def assign_rbac():  # pylint: disable=too-many-statements
                 raise
 
             elif "RoleAssignmentExists" in error_message:
-                print("\n✅ ROLE ASSIGNMENT ALREADY EXISTS:")
+                print("\n[OK] ROLE ASSIGNMENT ALREADY EXISTS:")
                 print("The 'Azure AI User' role is already assigned to the project's managed identity.")
                 print("No action needed - the required permissions are already in place.")
 
@@ -210,7 +210,7 @@ def assign_rbac():  # pylint: disable=too-many-statements
                 print("This usually indicates a service availability issue.")
 
             else:
-                print("\n❌ UNEXPECTED ERROR:")
+                print("\n[FAIL] UNEXPECTED ERROR:")
                 print("An unexpected error occurred. Please check the error details above.")
                 raise
 
