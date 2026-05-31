@@ -169,16 +169,18 @@ class TestPkRangeDrainIntegration:
         )
         paginated_pairs = _ranges_as_pairs(paginated_entries)
 
-        # The drain loop must have made multiple round-trips. With
-        # PAGE_SIZE=1 and N partitions, we expect at least N pages
-        # (typically N+1: N data pages plus a terminating empty/304 page).
+        # The drain loop must have made more than a single round-trip
+        # (i.e. it issued at least one continuation request after the first
+        # page). We deliberately do NOT assert "one page per partition" --
+        # the /pkranges endpoint may ignore ``x-ms-max-item-count`` for
+        # small range counts on some gateway builds, so per-page granularity
+        # is server-controlled and not a drain-loop invariant. Strict
+        # page-size pagination is covered by the unit tests in
+        # ``test_pk_range_drain.py``; the real value this integration test
+        # adds is end-to-end correctness across the live drain + merge path.
         assert call_count["n"] > 1, (
-            f"Expected drain loop to paginate (>1 page) at PAGE_SIZE=1, "
-            f"got {call_count['n']} call(s)."
-        )
-        assert call_count["n"] >= len(baseline_pairs), (
-            f"Expected at least one drain page per partition ({len(baseline_pairs)}), "
-            f"got {call_count['n']}."
+            f"Expected drain loop to issue at least one continuation page "
+            f"(terminating 304/empty page), got {call_count['n']} call(s)."
         )
 
         # Paginated routing map must match the baseline exactly (same set

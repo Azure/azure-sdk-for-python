@@ -137,13 +137,12 @@ class TestPkRangeDrainIntegrationAsync:
             )
             paginated_pairs = _ranges_as_pairs(paginated_entries)
 
+            # See sync mirror for rationale: per-page granularity is a
+            # gateway concern, not a drain-loop invariant. We only assert
+            # the drain issued at least one continuation request.
             assert call_count["n"] > 1, (
-                f"Expected drain loop to paginate (>1 page) at PAGE_SIZE=1, "
-                f"got {call_count['n']} call(s)."
-            )
-            assert call_count["n"] >= len(baseline_pairs), (
-                f"Expected at least one drain page per partition ({len(baseline_pairs)}), "
-                f"got {call_count['n']}."
+                f"Expected drain loop to issue at least one continuation page "
+                f"(terminating 304/empty page), got {call_count['n']} call(s)."
             )
 
             _assert_complete_cover(paginated_pairs)

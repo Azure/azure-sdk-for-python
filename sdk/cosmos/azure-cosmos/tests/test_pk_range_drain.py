@@ -598,7 +598,7 @@ class TestPkRangeDrainSync(unittest.TestCase):
 
         ``try_combine`` raises ``ValueError("Ranges overlap...")`` when the
         merged range set is not a clean partition cover (e.g. two split
-        children that both claim the same byte range due to a misordered or
+        children that both claim the same byte range due to an out-of-order or
         duplicated split notification). ``process_fetched_ranges`` translates
         this into ``_IncrementalMergeFailed``; the provider then retries
         incrementally and falls back to a full refresh.
