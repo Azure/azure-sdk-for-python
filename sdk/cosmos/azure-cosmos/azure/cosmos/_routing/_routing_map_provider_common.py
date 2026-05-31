@@ -171,6 +171,7 @@ def _handle_transient_snapshot_retry_decision(
         )
         raise CosmosHttpResponseError(
             status_code=http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+            sub_status=http_constants.SubStatusCodes.ROUTING_MAP_SNAPSHOT_INCONSISTENT,
             message=(
                 "Routing-map fetch for collection '{}' returned overlapping "
                 "or gapped ranges on {} attempt(s)."
@@ -332,7 +333,9 @@ def evaluate_drain_page(
     ``_internal_response_status_capture`` sidecar populated by
     ``_synchronized_request`` / ``_asynchronous_request`` before any
     return, so it is always a concrete int by the time we land here.
-    The page cap in the caller is the secondary safety net.
+    There is intentionally no secondary safety net (e.g. a page cap)
+    here -- peer SDKs (.NET v3, Java, Go) all rely solely on the 304
+    termination predicate and we mirror that contract.
 
     :keyword page_new_etag: ETag header from the current page response, if any.
     :paramtype page_new_etag: str or None
@@ -348,6 +351,14 @@ def evaluate_drain_page(
         ``next_if_none_match`` is only meaningful when ``decision == CONTINUE``.
     :rtype: tuple
     """
+    if status_code is None:
+        raise RuntimeError(
+            "evaluate_drain_page invoked with status_code=None. The /pkranges "
+            "drain loop requires the _internal_response_status_capture sidecar "
+            "to be wired by the caller; this indicates a programming error in "
+            "the routing-map provider."
+        )
+
     if page_new_etag:
         seen_any_etag = True
         new_etag = page_new_etag

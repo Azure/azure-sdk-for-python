@@ -109,13 +109,18 @@ class TestPkRangeDrainIntegration:
     def test_drain_loop_paginates_pkranges_change_feed(self, monkeypatch):
         """Force ``PAGE_SIZE_CHANGE_FEED = "1"`` and verify the drain loop:
 
-        * issues more than one ``_ReadPartitionKeyRanges`` page, and
+        * issues at least one ``_ReadPartitionKeyRanges`` page **per physical
+          partition** (so the gateway is honoring the page-size override and
+          the drain is genuinely paginating, not just terminating on a single
+          page + 304), and
         * still produces a routing map identical to the default-page-size
           baseline, with a complete cover of ``["", "FF")``.
 
         A regression in the drain loop's continuation handling would surface
-        here as either a single-page fetch (no pagination) or a routing map
-        that is missing/duplicating ranges relative to the baseline.
+        here as either a single-page fetch (no pagination), a call count
+        below the ranges-per-partition floor (gateway returning everything
+        on one page despite ``PAGE_SIZE=1``), or a routing map that is
+        missing/duplicating ranges relative to the baseline.
         """
         client = _client()
         container = _get_container(client)
@@ -169,18 +174,21 @@ class TestPkRangeDrainIntegration:
         )
         paginated_pairs = _ranges_as_pairs(paginated_entries)
 
-        # The drain loop must have made more than a single round-trip
-        # (i.e. it issued at least one continuation request after the first
-        # page). We deliberately do NOT assert "one page per partition" --
-        # the /pkranges endpoint may ignore ``x-ms-max-item-count`` for
-        # small range counts on some gateway builds, so per-page granularity
-        # is server-controlled and not a drain-loop invariant. Strict
-        # page-size pagination is covered by the unit tests in
+        # The drain loop must have made at least one continuation request
+        # per physical partition (with PAGE_SIZE_CHANGE_FEED="1", we expect
+        # roughly one call per range plus a terminating empty/304 page). A
+        # call_count >= len(baseline_pairs) proves the gateway honored the
+        # page-size override and the drain genuinely paginated -- not just
+        # "first page returned everything, second page was the 304." Strict
+        # one-page-per-partition pagination is covered by the unit tests in
         # ``test_pk_range_drain.py``; the real value this integration test
         # adds is end-to-end correctness across the live drain + merge path.
-        assert call_count["n"] > 1, (
-            f"Expected drain loop to issue at least one continuation page "
-            f"(terminating 304/empty page), got {call_count['n']} call(s)."
+        assert call_count["n"] >= len(baseline_pairs), (
+            f"Expected drain loop to issue at least one page per physical "
+            f"partition (got {call_count['n']} call(s) for "
+            f"{len(baseline_pairs)} partition(s)). Either the gateway is no "
+            f"longer honoring PAGE_SIZE_CHANGE_FEED='1' or the drain loop "
+            f"is short-circuiting prematurely."
         )
 
         # Paginated routing map must match the baseline exactly (same set

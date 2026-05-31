@@ -796,6 +796,58 @@ class TestPkRangeDrainSync(unittest.TestCase):
         self.assertIs(result_a, map_a)
         self.assertIs(result_b, map_b)
 
+    def test_caller_headers_not_mutated_by_drain_loop(self):
+        """Drain loop must never mutate the caller's ``headers`` dict.
+
+        Regression guard: the drain loop receives an arbitrary ``kwargs``
+        dict from upstream and forwards it (via shallow-copy + per-iter
+        header dict-copy) to every ``_ReadPartitionKeyRanges`` call. It must
+        not leak per-iter mutations -- ``If-None-Match`` overrides, sidecar
+        captures, or ``prepare_fetch_options_and_headers`` additions
+        (``A-IM``, page-size, populate-stats, etc.) -- back into the
+        caller's dict. A regression here would silently poison the next
+        outbound request from the same caller (e.g. a stale
+        ``If-None-Match`` carried into an unrelated read).
+        """
+        page1 = [_full_range("0", "", "55")]
+        page2 = [_full_range("1", "55", "AA")]
+        page3 = [_full_range("2", "AA", "FF")]
+
+        client, script = _make_scripted_client([
+            ("page", page1, '"etag-1"'),
+            ("page", page2, '"etag-2"'),
+            ("page", page3, '"etag-3"'),
+            ("page", [], '"etag-3"'),
+        ])
+
+        # Sentinel headers from the caller -- snapshot up front so we can
+        # diff against the post-drain state.
+        caller_headers = {"X-Custom-Marker": "value", "Authorization": "Bearer x"}
+        caller_headers_snapshot = dict(caller_headers)
+
+        cache = PartitionKeyRangeCache(client)
+        routing_map = cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="coll1",
+            previous_routing_map=None,
+            feed_options={},
+            headers=caller_headers,
+        )
+
+        self.assertIsNotNone(routing_map)
+        self.assertEqual(script.calls, 4)
+        # Caller's dict identity AND contents are unchanged after the drain.
+        self.assertEqual(caller_headers, caller_headers_snapshot)
+        self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, caller_headers)
+        self.assertNotIn(http_constants.HttpHeaders.AIM, caller_headers)
+        # Per-page ``If-None-Match`` did still get sent to the wire on every
+        # call after the first -- proving the drain DID set the header on
+        # the outbound request, just not on the caller's dict.
+        self.assertEqual(
+            script.if_none_match_seen,
+            [None, '"etag-1"', '"etag-2"', '"etag-3"'],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

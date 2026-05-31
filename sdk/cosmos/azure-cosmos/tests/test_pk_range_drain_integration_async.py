@@ -90,6 +90,17 @@ class TestPkRangeDrainIntegrationAsync:
     """Async parity for the /pkranges drain-loop pagination contract."""
 
     async def test_drain_loop_paginates_pkranges_change_feed_async(self, monkeypatch):
+        """Async mirror of the sync drain pagination test.
+
+        Forces ``PAGE_SIZE_CHANGE_FEED = "1"`` and verifies the drain loop:
+
+        * issues at least one ``_ReadPartitionKeyRanges`` page **per physical
+          partition** (so the gateway is honoring the page-size override and
+          the drain is genuinely paginating, not just terminating on a single
+          page + 304), and
+        * still produces a routing map identical to the default-page-size
+          baseline, with a complete cover of ``["", "FF")``.
+        """
         client = _client()
         try:
             container = _get_container(client)
@@ -137,12 +148,18 @@ class TestPkRangeDrainIntegrationAsync:
             )
             paginated_pairs = _ranges_as_pairs(paginated_entries)
 
-            # See sync mirror for rationale: per-page granularity is a
-            # gateway concern, not a drain-loop invariant. We only assert
-            # the drain issued at least one continuation request.
-            assert call_count["n"] > 1, (
-                f"Expected drain loop to issue at least one continuation page "
-                f"(terminating 304/empty page), got {call_count['n']} call(s)."
+            # See sync mirror for rationale: with PAGE_SIZE_CHANGE_FEED="1"
+            # we expect roughly one call per physical partition plus a
+            # terminating empty/304 page. call_count >= len(baseline_pairs)
+            # proves the gateway honored the page-size override and the
+            # drain genuinely paginated -- not just "first page returned
+            # everything, second page was the 304."
+            assert call_count["n"] >= len(baseline_pairs), (
+                f"Expected drain loop to issue at least one page per physical "
+                f"partition (got {call_count['n']} call(s) for "
+                f"{len(baseline_pairs)} partition(s)). Either the gateway is no "
+                f"longer honoring PAGE_SIZE_CHANGE_FEED='1' or the drain loop "
+                f"is short-circuiting prematurely."
             )
 
             _assert_complete_cover(paginated_pairs)

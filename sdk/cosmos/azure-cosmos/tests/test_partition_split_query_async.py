@@ -612,6 +612,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             }
 
             async def mock_read_ranges(*args, **kwargs):
+                # Mirror the production wire-up: _asynchronous_request populates
+                # this sidecar with the real HTTP status. Without it, the drain
+                # loop's status==304 termination contract can't trip and the
+                # loop would run unbounded (OOM in CI).
+                status_capture = kwargs.get('_internal_response_status_capture')
+                if status_capture is not None:
+                    status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
                 yield incomplete_range
 
             with patch.object(

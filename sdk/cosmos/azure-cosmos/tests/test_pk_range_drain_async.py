@@ -674,6 +674,50 @@ class TestPkRangeDrainAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIs(result_a, map_a)
         self.assertIs(result_b, map_b)
 
+    async def test_caller_headers_not_mutated_by_drain_loop_async(self):
+        """Async mirror: drain loop must never mutate the caller's headers.
+
+        Regression guard for the async provider's drain loop. See the sync
+        ``test_caller_headers_not_mutated_by_drain_loop`` for the full
+        rationale; both providers shallow-copy ``kwargs`` per iteration and
+        deep-copy the ``headers`` dict per iteration so that per-page
+        ``If-None-Match`` overrides and ``prepare_fetch_options_and_headers``
+        additions (``A-IM``, page-size, populate-stats) never leak back into
+        the caller's dict.
+        """
+        page1 = [_full_range("0", "", "55")]
+        page2 = [_full_range("1", "55", "AA")]
+        page3 = [_full_range("2", "AA", "FF")]
+
+        client, script = _make_scripted_async_client([
+            ("page", page1, '"etag-1"'),
+            ("page", page2, '"etag-2"'),
+            ("page", page3, '"etag-3"'),
+            ("page", [], '"etag-3"'),
+        ])
+
+        caller_headers = {"X-Custom-Marker": "value", "Authorization": "Bearer x"}
+        caller_headers_snapshot = dict(caller_headers)
+
+        cache = PartitionKeyRangeCache(client)
+        routing_map = await cache._fetch_routing_map(
+            collection_link="dbs/db1/colls/coll1",
+            collection_id="coll1",
+            previous_routing_map=None,
+            feed_options={},
+            headers=caller_headers,
+        )
+
+        self.assertIsNotNone(routing_map)
+        self.assertEqual(script.calls, 4)
+        self.assertEqual(caller_headers, caller_headers_snapshot)
+        self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, caller_headers)
+        self.assertNotIn(http_constants.HttpHeaders.AIM, caller_headers)
+        self.assertEqual(
+            script.if_none_match_seen,
+            [None, '"etag-1"', '"etag-2"', '"etag-3"'],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

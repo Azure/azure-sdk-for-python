@@ -363,8 +363,23 @@ class PartitionKeyRangeCache(object):
             # silently treating ``current_if_none_match`` as the fresh etag.
             seen_any_etag = False
 
+            # Hoist: ``prepare_fetch_options_and_headers`` is loop-invariant
+            # for this drain attempt -- ``change_feed_options`` depends only on
+            # ``feed_options`` and the headers it builds depend only on
+            # ``current_previous_map.change_feed_etag``, neither of which
+            # change inside the inner drain loop. Compute them once here; the
+            # only per-page mutation is the ``If-None-Match`` override below.
+            base_kwargs_for_headers: Dict[str, Any] = dict(kwargs)
+            change_feed_options = prepare_fetch_options_and_headers(
+                current_previous_map, feed_options, base_kwargs_for_headers
+            )
+            base_headers: Dict[str, Any] = base_kwargs_for_headers['headers']
+
             while True:
                 request_kwargs = dict(kwargs)
+                # Shallow-copy ``base_headers`` so the per-iter
+                # ``If-None-Match`` override does not bleed across iterations.
+                request_kwargs['headers'] = dict(base_headers)
                 response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 request_kwargs['_internal_response_headers_capture'] = response_headers
                 # Sidecar list -- populated by _Request with the raw wire
@@ -373,16 +388,11 @@ class PartitionKeyRangeCache(object):
                 status_capture: List[Optional[int]] = [None]
                 request_kwargs['_internal_response_status_capture'] = status_capture
 
-                # Prepare sanitised options and headers for the PK-range fetch.
-                change_feed_options = prepare_fetch_options_and_headers(
-                    current_previous_map, feed_options, request_kwargs
-                )
-
                 # Override If-None-Match with the running etag from the drain
                 # so each page advances. ``prepare_fetch_options_and_headers``
                 # only sets it from ``current_previous_map.change_feed_etag``
                 # which never advances during this drain.
-                drain_headers = request_kwargs.setdefault('headers', {})
+                drain_headers = request_kwargs['headers']
                 if current_if_none_match:
                     drain_headers[http_constants.HttpHeaders.IfNoneMatch] = current_if_none_match
                 else:
