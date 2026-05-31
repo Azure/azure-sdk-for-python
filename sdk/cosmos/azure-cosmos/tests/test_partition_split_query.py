@@ -930,8 +930,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 # Any subsequent calls belong to the fallback drain loop. They may
                 # carry IfNoneMatch (the fresh etag returned by call 3), but they
                 # must NEVER carry the stale etag we already invalidated.
-                for idx, hdrs in enumerate(captured_headers_list[3:], start=4):
-                    assert hdrs.get(http_constants.HttpHeaders.IfNoneMatch) != stale_etag, \
+                for idx, request_headers in enumerate(captured_headers_list[3:], start=4):
+                    assert request_headers.get(http_constants.HttpHeaders.IfNoneMatch) != stale_etag, \
                         f"Call {idx} (post-fallback drain) must not resurrect the stale etag"
 
             print("Validated: IfNoneMatch header is correctly cleaned up on fallback")
