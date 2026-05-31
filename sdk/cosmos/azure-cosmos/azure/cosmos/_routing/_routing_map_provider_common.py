@@ -323,7 +323,7 @@ def evaluate_drain_page(
     current_if_none_match: Optional[str],
     new_etag: Optional[str],
     seen_any_etag: bool,
-    status_code: int,
+    status_code: Optional[int],
 ) -> Tuple[str, Optional[str], Optional[str], bool]:
     """Decide whether to keep draining the /pkranges change feed.
 
@@ -345,7 +345,13 @@ def evaluate_drain_page(
     :paramtype new_etag: str or None
     :keyword bool seen_any_etag: Whether the service has ever surfaced an ETag
         across the drain so far.
-    :keyword int status_code: HTTP status code of the page response. Required.
+    :keyword status_code: HTTP status code of the page response. Required at runtime;
+        ``None`` indicates the response-status sidecar was not wired by the caller and
+        raises ``RuntimeError``. Typed as ``Optional[int]`` so callers that read the
+        status from a sidecar list typed as ``List[Optional[int]]`` (whose first slot
+        is ``None`` until populated by ``_synchronized_request`` /
+        ``_asynchronous_request``) satisfy mypy without an extra cast.
+    :paramtype status_code: int or None
 
     :returns: ``(decision, new_etag, next_if_none_match, seen_any_etag)``.
         ``next_if_none_match`` is only meaningful when ``decision == CONTINUE``.
