@@ -46,7 +46,7 @@ import os
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional
+from typing import Optional
 
 from dotenv import load_dotenv
 
@@ -70,23 +70,13 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 load_dotenv()
 
 
-# Short persona; covers only the topics the seeded prompts ask about.
-AGENT_INSTRUCTIONS = """\
-Widgets & Gizmos support agent. Be concise. Say so if unsure.
-Returns: unopened 30 days full refund; defective 90 days free; refunds 5-7 business days.
-Warranty: Standard 1 year, Deluxe Sprocket 5 years; repairs free, we pay shipping, 10-14 days.
-Products: Standard Widget $19.99 (10-pack $149.99); Deluxe Sprocket $79.99.
-"""
-
-
-SEED_PROMPTS = [
-    "Refund policy?",
-    "Warranty length?",
-    "Standard Widget price?",
-    "Any bundle deal?",
-    "Who pays shipping for warranty repairs?",
-]
-NUM_CONVERSATIONS = 3  # NUM_CONVERSATIONS * len(SEED_PROMPTS) must be >= max_samples (15).
+# Minimal persona + prompt; one seeded turn is enough for the job to succeed
+# (max_samples is the cap on generated samples, not a floor on input traces).
+AGENT_INSTRUCTIONS = (
+    "Widgets & Gizmos support agent. Be concise. "
+    "Refunds: unopened 30 days; defective 90 days; 5-7 business days to process."
+)
+SEED_PROMPT = "What is your refund policy?"
 
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
@@ -115,7 +105,7 @@ with (
 ):
 
     created_agent = None
-    conversation_ids: List[str] = []
+    created_conversation_id: Optional[str] = None
     submitted_job_id: Optional[str] = None
     created_dataset: Optional[DatasetVersion] = None
 
@@ -139,24 +129,22 @@ with (
         print(f"Agent created (id: {created_agent.id}, version: {created_agent.version}).")
 
         seed_start = datetime.now(tz=timezone.utc)
-        print(f"Seed {NUM_CONVERSATIONS} conversation(s) x {len(SEED_PROMPTS)} turn(s) against the agent.")
+        print(f"Seed one conversation against the agent (prompt: {SEED_PROMPT!r}).")
         with project_client.get_openai_client() as openai_client:
-            for ci in range(1, NUM_CONVERSATIONS + 1):
-                conversation = openai_client.conversations.create()
-                conversation_ids.append(conversation.id)
-                print(f"  - conversation {ci}/{NUM_CONVERSATIONS} (id: {conversation.id})")
-                for prompt in SEED_PROMPTS:
-                    openai_client.responses.create(
-                        conversation=conversation.id,
-                        input=prompt,
-                        extra_body={
-                            "agent_reference": {
-                                "name": created_agent.name,
-                                "id": created_agent.id,
-                                "type": "agent_reference",
-                            }
-                        },
-                    )
+            conversation = openai_client.conversations.create()
+            created_conversation_id = conversation.id
+            print(f"  - conversation id: {conversation.id}")
+            openai_client.responses.create(
+                conversation=conversation.id,
+                input=SEED_PROMPT,
+                extra_body={
+                    "agent_reference": {
+                        "name": created_agent.name,
+                        "id": created_agent.id,
+                        "type": "agent_reference",
+                    }
+                },
+            )
 
         print(
             f"Wait {trace_ingestion_wait_seconds}s for Application Insights to ingest the emitted spans. "
@@ -187,7 +175,8 @@ with (
                             end_time=end_time,
                         ),
                     ],
-                    # Service requires max_samples in [15, 1000].
+                    # Service requires max_samples in [15, 1000]. It's a cap on
+                    # generated samples - one seeded trace turn is enough.
                     options=TracesDataGenerationJobOptions(max_samples=15),
                     output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
                 ),
@@ -245,17 +234,13 @@ with (
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete job: {exc}")
 
-        if conversation_ids:
+        if created_conversation_id is not None:
             try:
                 with project_client.get_openai_client() as openai_client:
-                    for cid in conversation_ids:
-                        try:
-                            openai_client.conversations.delete(conversation_id=cid)
-                            print(f"Deleted seeded conversation `{cid}`.")
-                        except Exception as exc:  # pylint: disable=broad-exception-caught
-                            print(f"  (warning) could not delete conversation `{cid}`: {exc}")
+                    openai_client.conversations.delete(conversation_id=created_conversation_id)
+                    print(f"Deleted seeded conversation `{created_conversation_id}`.")
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not open OpenAI client for conversation cleanup: {exc}")
+                print(f"  (warning) could not delete conversation: {exc}")
 
         if created_agent is not None:
             try:
