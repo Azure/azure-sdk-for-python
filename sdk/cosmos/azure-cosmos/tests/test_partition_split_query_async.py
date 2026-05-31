@@ -893,23 +893,38 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
                 assert result is not None
 
-                # Verify 3 calls: incremental + incremental retry + full fallback.
-                assert call_count['count'] == 3, \
-                    f"Expected 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
+                # Expected call sequence:
+                #   1. incremental attempt        (IfNoneMatch = stale etag)
+                #   2. incremental retry          (IfNoneMatch = stale etag)
+                #   3. full-load fallback page 1  (no IfNoneMatch -- the cleanup we are testing)
+                #   4. full-load fallback page 2  (IfNoneMatch = FRESH etag from page 1,
+                #                                  to receive the 304 terminator that ends
+                #                                  the drain loop -- peer-SDK parity)
+                stale_etag = cached_map.change_feed_etag
+                assert call_count['count'] >= 3, \
+                    f"Expected at least 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
 
-                # First two calls should be incremental and include IfNoneMatch.
+                # First two calls should be incremental and carry the stale IfNoneMatch.
                 first_headers = captured_headers_list[0]
-                assert http_constants.HttpHeaders.IfNoneMatch in first_headers, \
-                    "First call (incremental) should have IfNoneMatch header"
+                assert first_headers.get(http_constants.HttpHeaders.IfNoneMatch) == stale_etag, \
+                    "First call (incremental) should have stale IfNoneMatch header"
 
                 second_headers = captured_headers_list[1]
-                assert http_constants.HttpHeaders.IfNoneMatch in second_headers, \
-                    "Second call (incremental retry) should have IfNoneMatch header"
+                assert second_headers.get(http_constants.HttpHeaders.IfNoneMatch) == stale_etag, \
+                    "Second call (incremental retry) should have stale IfNoneMatch header"
 
-                # Third call is full-load fallback and should drop IfNoneMatch.
+                # Third call is full-load fallback and MUST drop IfNoneMatch -- this is
+                # the bug fix's whole point.
                 third_headers = captured_headers_list[2]
                 assert http_constants.HttpHeaders.IfNoneMatch not in third_headers, \
                     "Third call (full load fallback) should NOT have IfNoneMatch header"
+
+                # Any subsequent calls belong to the fallback drain loop. They may
+                # carry IfNoneMatch (the fresh etag returned by call 3), but they
+                # must NEVER carry the stale etag we already invalidated.
+                for idx, hdrs in enumerate(captured_headers_list[3:], start=4):
+                    assert hdrs.get(http_constants.HttpHeaders.IfNoneMatch) != stale_etag, \
+                        f"Call {idx} (post-fallback drain) must not resurrect the stale etag"
 
             print("Validated: IfNoneMatch header is correctly cleaned up on fallback")
 
