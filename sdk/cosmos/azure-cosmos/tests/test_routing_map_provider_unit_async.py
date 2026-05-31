@@ -67,6 +67,12 @@ _sync_provider_module.evaluate_drain_page = _tolerant_evaluate_drain_page
 _async_provider_module.evaluate_drain_page = _tolerant_evaluate_drain_page
 
 
+async def _empty_async_gen():
+    """Empty async generator used as the INM-match (304) response in mocks."""
+    if False:
+        yield  # pragma: no cover
+
+
 def _make_complete_routing_map(collection_id="coll1", etag='"etag-1"'):
     """Create a minimal but complete CollectionRoutingMap for testing."""
     ranges = [
@@ -448,10 +454,7 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             headers_in = kwargs.get('headers') or {}
             inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
             if inm is not None and inm == last_etag['v']:
-                async def empty_gen():
-                    if False:
-                        yield  # pragma: no cover
-                return empty_gen()
+                return _empty_async_gen()
             call_count['n'] += 1
             seen_if_none_match.append(inm)
 
@@ -592,10 +595,7 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             headers_in = kwargs.get('headers') or {}
             inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
             if inm is not None and inm == last_etag['v']:
-                async def empty_gen():
-                    if False:
-                        yield  # pragma: no cover
-                return empty_gen()
+                return _empty_async_gen()
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
             call_count['n'] += 1
             etag = '"etag-{}"'.format(call_count['n'])
@@ -657,10 +657,7 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             headers_in = kwargs.get('headers') or {}
             inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
             if inm is not None and inm == last_etag['v']:
-                async def empty_gen():
-                    if False:
-                        yield  # pragma: no cover
-                return empty_gen()
+                return _empty_async_gen()
             call_count['n'] += 1
             etag = '"etag-bad"'
             headers = {http_constants.HttpHeaders.ETag: etag}
@@ -725,10 +722,7 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             headers_in = kwargs.get('headers') or {}
             inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
             if inm is not None and inm == last_etag['v']:
-                async def empty_gen():
-                    if False:
-                        yield  # pragma: no cover
-                return empty_gen()
+                return _empty_async_gen()
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
             call_count['n'] += 1
             etag = '"etag-{}"'.format(call_count['n'])
@@ -781,10 +775,7 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             headers_in = kwargs.get('headers') or {}
             inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
             if inm is not None and inm == last_etag['v']:
-                async def empty_gen():
-                    if False:
-                        yield  # pragma: no cover
-                return empty_gen()
+                return _empty_async_gen()
             call_count['n'] += 1
             etag = '"etag-bad"'
             headers = {http_constants.HttpHeaders.ETag: etag}
@@ -883,10 +874,7 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             headers_in = kwargs.get('headers') or {}
             inm = headers_in.get(http_constants.HttpHeaders.IfNoneMatch)
             if inm is not None and inm == last_etag['v']:
-                async def empty_gen():
-                    if False:
-                        yield  # pragma: no cover
-                return empty_gen()
+                return _empty_async_gen()
             payload = responses[call_count['n']] if call_count['n'] < len(responses) else overlap_payload
             call_count['n'] += 1
             etag = '"etag-mixed-{}"'.format(call_count['n'])

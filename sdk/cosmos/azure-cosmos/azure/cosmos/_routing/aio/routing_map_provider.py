@@ -431,22 +431,18 @@ class PartitionKeyRangeCache(object):
                 else:
                     drain_headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
 
-                page_ranges: List[Dict[str, Any]] = []
                 try:
                     pk_range_generator = self._document_client._ReadPartitionKeyRanges(
                         collection_link,
                         change_feed_options,
                         **request_kwargs
                     )
-                    async for item in pk_range_generator:
-                        page_ranges.append(item)
+                    ranges.extend([item async for item in pk_range_generator])
                 except CosmosHttpResponseError as e:
                     logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
                         "Failed to read partition key ranges for collection '%s': %s",
                         collection_link, e)
                     raise
-
-                ranges.extend(page_ranges)
 
                 decision, new_etag, current_if_none_match, seen_any_etag = evaluate_drain_page(
                     page_new_etag=response_headers.get(http_constants.HttpHeaders.ETag),
