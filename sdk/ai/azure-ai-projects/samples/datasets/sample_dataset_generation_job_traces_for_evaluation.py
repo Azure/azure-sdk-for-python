@@ -72,46 +72,21 @@ load_dotenv()
 
 # Short persona; covers only the topics the seeded prompts ask about.
 AGENT_INSTRUCTIONS = """\
-You are the Widgets & Gizmos customer-support agent.
-
-Returns: Unopened products may be returned within 30 days for a full refund.
-Defective products may be returned within 90 days at no cost. Refunds take
-5-7 business days.
-
-Warranty: Standard products carry a 1-year limited warranty. The Deluxe
-Sprocket carries a 5-year warranty. Warranty repairs are free; we cover
-return shipping. Repairs take 10-14 business days.
-
-Products: Standard Widget is $19.99 (bundle of 10 for $149.99). Deluxe
-Sprocket is $79.99.
-
-If you do not know the answer, say so. Be concise.
+Widgets & Gizmos support agent. Be concise. Say so if unsure.
+Returns: unopened 30 days full refund; defective 90 days free; refunds 5-7 business days.
+Warranty: Standard 1 year, Deluxe Sprocket 5 years; repairs free, we pay shipping, 10-14 days.
+Products: Standard Widget $19.99 (10-pack $149.99); Deluxe Sprocket $79.99.
 """
 
 
-SEEDING_CONVERSATIONS: List[List[str]] = [
-    [
-        "Can I return a defective Standard Widget after 45 days?",
-        "How long does a refund take?",
-        "What about an unopened Standard Widget?",
-        "Do I pay return shipping?",
-        "Is there a restocking fee?",
-    ],
-    [
-        "What is the warranty on the Deluxe Sprocket?",
-        "What does the warranty cover?",
-        "Do warranty repairs cost anything?",
-        "How long do warranty repairs take?",
-        "Who pays return shipping for a warranty claim?",
-    ],
-    [
-        "How much is a Standard Widget?",
-        "Is there a bundle deal?",
-        "What is the Deluxe Sprocket price?",
-        "What products do you carry?",
-        "Do you sell accessories?",
-    ],
+SEED_PROMPTS = [
+    "Refund policy?",
+    "Warranty length?",
+    "Standard Widget price?",
+    "Any bundle deal?",
+    "Who pays shipping for warranty repairs?",
 ]
+NUM_CONVERSATIONS = 3  # NUM_CONVERSATIONS * len(SEED_PROMPTS) must be >= max_samples (15).
 
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
@@ -164,16 +139,13 @@ with (
         print(f"Agent created (id: {created_agent.id}, version: {created_agent.version}).")
 
         seed_start = datetime.now(tz=timezone.utc)
-        print(
-            f"Seed {len(SEEDING_CONVERSATIONS)} conversation(s) x "
-            f"{len(SEEDING_CONVERSATIONS[0])} turn(s) against the agent."
-        )
+        print(f"Seed {NUM_CONVERSATIONS} conversation(s) x {len(SEED_PROMPTS)} turn(s) against the agent.")
         with project_client.get_openai_client() as openai_client:
-            for ci, arc in enumerate(SEEDING_CONVERSATIONS, start=1):
+            for ci in range(1, NUM_CONVERSATIONS + 1):
                 conversation = openai_client.conversations.create()
                 conversation_ids.append(conversation.id)
-                print(f"  - conversation {ci}/{len(SEEDING_CONVERSATIONS)} (id: {conversation.id})")
-                for prompt in arc:
+                print(f"  - conversation {ci}/{NUM_CONVERSATIONS} (id: {conversation.id})")
+                for prompt in SEED_PROMPTS:
                     openai_client.responses.create(
                         conversation=conversation.id,
                         input=prompt,
