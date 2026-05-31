@@ -9,15 +9,16 @@ DESCRIPTION:
     Generates an evaluation dataset from an agent's conversation traces.
     The sample is fully self-contained:
 
-      1. Wires up Azure Monitor + AIProjectInstrumentor so agent calls emit
-         semantic GenAI spans (with content) to Application Insights.
-      2. Creates a temporary agent and seeds spans with sample conversations.
-      3. Waits for ingestion, then submits a `DataGenerationJob`
+      1. Creates an agent and seeds spans with a sample conversation.
+      2. Waits for ingestion, then submits a `DataGenerationJob`
          (scenario=EVALUATION, source=traces) that synthesizes Q/A pairs.
-      4. Polls the job and fetches the resulting `DatasetVersion`.
-      5. Cleans up the dataset, job, seeded conversations, and agent.
+      3. Polls the job and fetches the resulting `DatasetVersion`.
+      4. Cleans up the dataset, job, seeded conversations, and agent.
 
-    To adapt for an existing agent with recent traces, replace step 2 with
+    Prerequisite: the project must have an Application Insights resource
+    connected so the agent emits server-side traces.
+
+    To adapt for an existing agent with recent traces, replace step 1 with
     your agent's name and skip the ingestion wait.
 
 USAGE:
@@ -25,21 +26,13 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv \\
-        azure-monitor-opentelemetry azure-core-tracing-opentelemetry
+    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as
        found in the overview page of your Microsoft Foundry project.
     2) FOUNDRY_MODEL_NAME - Required. The Azure OpenAI deployment name used
-       to drive the temporary agent during trace seeding.
-    3) DATASET_NAME - Optional. Output dataset name. Defaults to
-       `traces-eval-sample`. Service caps the rendered name at 50 chars
-       (the sample appends a unique run-id suffix).
-    4) POLL_INTERVAL_SECONDS - Optional. Sleep between job status polls.
-       Defaults to 10.
-    5) TRACE_INGESTION_WAIT_SECONDS - Optional. Wait after seeding for
-       Application Insights ingestion. Defaults to 180.
+       to drive the agent during trace seeding.
 """
 
 import os
@@ -64,8 +57,6 @@ from azure.ai.projects.models import (
     TracesDataGenerationJobOptions,
     TracesDataGenerationJobSource,
 )
-from azure.ai.projects.telemetry import AIProjectInstrumentor
-from azure.monitor.opentelemetry import configure_azure_monitor
 
 load_dotenv()
 
@@ -81,20 +72,14 @@ SEED_PROMPT = "What is your refund policy?"
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment = os.environ["FOUNDRY_MODEL_NAME"]
-dataset_name = os.environ.get("DATASET_NAME", "traces-eval-sample")
-poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
-trace_ingestion_wait_seconds = int(os.environ.get("TRACE_INGESTION_WAIT_SECONDS", "180"))
+DATASET_NAME = "traces-eval-sample"
+POLL_INTERVAL_SECONDS = 10
+TRACE_INGESTION_WAIT_SECONDS = 180
 
 # Per-run id keeps repeated runs from colliding; output names are capped at 50 chars.
 run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
-output_dataset_name = f"{dataset_name}-{run_id}"
-if len(output_dataset_name) > 50:
-    raise ValueError(
-        f"Output dataset name `{output_dataset_name}` exceeds the 50-character service limit. "
-        f"Shorten DATASET_NAME (currently `{dataset_name}`) so that `<name>-<run id>` fits within 50 characters."
-    )
-
-agent_name = f"traces-eval-sample-{run_id}"
+output_dataset_name = f"{DATASET_NAME}-{run_id}"
+agent_name = f"{DATASET_NAME}-{run_id}"
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
@@ -110,18 +95,8 @@ with (
     created_dataset: Optional[DatasetVersion] = None
 
     try:
-        # 1. Configure Azure Monitor + GenAI instrumentation to emit spans with content.
-        # AIProjectInstrumentor gates on this env var at instrument() time; without it
-        # instrument() returns early and no spans flow.
-        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
-
-        print("Configure Azure Monitor exporter from the project's Application Insights connection.")
-        connection_string = project_client.telemetry.get_application_insights_connection_string()
-        configure_azure_monitor(connection_string=connection_string)
-        AIProjectInstrumentor().instrument(enable_content_recording=True)
-
-        # 2. Create a temporary agent and seed traces.
-        print(f"Create temporary agent `{agent_name}` (model: `{model_deployment}`).")
+        # 1. Create an agent and seed traces.
+        print(f"Create agent `{agent_name}` (model: `{model_deployment}`).")
         created_agent = project_client.agents.create_version(
             agent_name=agent_name,
             definition=PromptAgentDefinition(model=model_deployment, instructions=AGENT_INSTRUCTIONS),
@@ -146,14 +121,10 @@ with (
                 },
             )
 
-        print(
-            f"Wait {trace_ingestion_wait_seconds}s for Application Insights to ingest the emitted spans. "
-            f"Override with TRACE_INGESTION_WAIT_SECONDS.",
-            flush=True,
-        )
-        time.sleep(trace_ingestion_wait_seconds)
+        print(f"Wait {TRACE_INGESTION_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
+        time.sleep(TRACE_INGESTION_WAIT_SECONDS)
 
-        # 3. Submit a data generation job that reads the agent's traces.
+        # 2. Submit a data generation job that reads the agent's traces.
         # Small backoff so the seeded spans fall inside the queried window.
         start_time = seed_start - timedelta(minutes=5)
         end_time = datetime.now(tz=timezone.utc)
@@ -169,7 +140,7 @@ with (
                     scenario=DataGenerationJobScenario.EVALUATION,
                     sources=[
                         TracesDataGenerationJobSource(
-                            description="Application Insights conversation traces for the temporary agent.",
+                            description="Application Insights conversation traces for the agent.",
                             agent_name=agent_name,
                             start_time=start_time,
                             end_time=end_time,
@@ -187,7 +158,7 @@ with (
 
         print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
         while job.status not in TERMINAL_STATUSES:
-            time.sleep(poll_interval_seconds)
+            time.sleep(POLL_INTERVAL_SECONDS)
             print(".", end="", flush=True)
             job = project_client.beta.datasets.get_generation_job(job_id=job.id)
         print()
@@ -197,7 +168,7 @@ with (
             message = job.error.message if job.error is not None else "<no error message>"
             raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
 
-        # 4. Resolve the generated dataset.
+        # 3. Resolve the generated dataset.
         outputs = (job.result.outputs if job.result is not None else None) or []
         dataset_output = next(
             (o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None
@@ -248,6 +219,6 @@ with (
                     agent_name=created_agent.name,
                     agent_version=created_agent.version,
                 )
-                print(f"Deleted temporary agent `{created_agent.name}` v{created_agent.version}.")
+                print(f"Deleted agent `{created_agent.name}` v{created_agent.version}.")
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete agent: {exc}")
