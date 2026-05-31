@@ -9,23 +9,16 @@ DESCRIPTION:
     Generates an evaluation dataset from an agent's conversation traces.
     The sample is fully self-contained:
 
-      1. Wires up Azure Monitor + the AIProjectInstrumentor so the temporary
-         agent's calls emit semantic GenAI spans (with message content) to
-         Application Insights.
-      2. Creates a temporary Foundry agent and runs a few sample
-         conversations against it so spans flow to Application Insights.
+      1. Wires up Azure Monitor + AIProjectInstrumentor so agent calls emit
+         semantic GenAI spans (with content) to Application Insights.
+      2. Creates a temporary agent and seeds spans with sample conversations.
       3. Waits for ingestion, then submits a `DataGenerationJob`
-         (scenario=EVALUATION, source=traces) that synthesizes question/
-         answer pairs from those spans.
-      4. Polls the job, fetches the resulting `DatasetVersion`, and prints
-         the count of generated samples.
-      5. Cleans up the dataset, job, seeded conversations, and the
-         temporary agent.
+         (scenario=EVALUATION, source=traces) that synthesizes Q/A pairs.
+      4. Polls the job and fetches the resulting `DatasetVersion`.
+      5. Cleans up the dataset, job, seeded conversations, and agent.
 
-    To run against an existing agent that already has recent traces in
-    Application Insights, replace the seeding block (step 2) with your
-    agent's name and skip the ingestion wait. The data-generation API call
-    (step 3) is the same.
+    To adapt for an existing agent with recent traces, replace step 2 with
+    your agent's name and skip the ingestion wait.
 
 USAGE:
     python sample_dataset_generation_job_traces_for_evaluation.py
@@ -40,15 +33,13 @@ USAGE:
        found in the overview page of your Microsoft Foundry project.
     2) FOUNDRY_MODEL_NAME - Required. The Azure OpenAI deployment name used
        to drive the temporary agent during trace seeding.
-    3) DATASET_NAME - Optional. Name to assign to the generated output
-       dataset. Defaults to `traces-eval-sample`. The service caps the
-       rendered output name at 50 characters, so keep custom values short -
-       the sample appends a unique run id suffix.
-    4) POLL_INTERVAL_SECONDS - Optional. Seconds to sleep between status
-       polls for the data generation job. Defaults to 10.
-    5) TRACE_INGESTION_WAIT_SECONDS - Optional. Seconds to wait after
-       seeding for Application Insights to ingest the emitted spans before
-       submitting the data generation job. Defaults to 180.
+    3) DATASET_NAME - Optional. Output dataset name. Defaults to
+       `traces-eval-sample`. Service caps the rendered name at 50 chars
+       (the sample appends a unique run-id suffix).
+    4) POLL_INTERVAL_SECONDS - Optional. Sleep between job status polls.
+       Defaults to 10.
+    5) TRACE_INGESTION_WAIT_SECONDS - Optional. Wait after seeding for
+       Application Insights ingestion. Defaults to 180.
 """
 
 import os
@@ -79,10 +70,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 load_dotenv()
 
 
-# Short persona used to make seeded traces look like real customer-support
-# conversations. The data-gen service synthesizes eval samples from these
-# traces, so the persona just needs enough domain detail to answer the
-# seeding prompts confidently.
+# Short persona; covers only the topics the seeded prompts ask about.
 AGENT_INSTRUCTIONS = """\
 You are the Widgets & Gizmos customer-support agent.
 
@@ -132,9 +120,7 @@ dataset_name = os.environ.get("DATASET_NAME", "traces-eval-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 trace_ingestion_wait_seconds = int(os.environ.get("TRACE_INGESTION_WAIT_SECONDS", "180"))
 
-# Unique per-run id used for the output dataset name and the temporary
-# agent name so repeated runs do not collide and so any matched traces
-# clearly belong to this run. Output names are capped at 50 chars.
+# Per-run id keeps repeated runs from colliding; output names are capped at 50 chars.
 run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_dataset_name = f"{dataset_name}-{run_id}"
 if len(output_dataset_name) > 50:
@@ -168,12 +154,9 @@ with (
     created_dataset: Optional[DatasetVersion] = None
 
     try:
-        # ------------------------------------------------------------------
-        # 1. Configure Azure Monitor + GenAI instrumentation so the
-        #    temporary agent's calls emit semantic GenAI spans (with
-        #    message content) to Application Insights.
-        # ------------------------------------------------------------------
-        # AIProjectInstrumentor reads this env var at instrument() time.
+        # 1. Configure Azure Monitor + GenAI instrumentation to emit spans with content.
+        # AIProjectInstrumentor gates on this env var at instrument() time; without it
+        # instrument() returns early and no spans flow.
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
 
         print("Configure Azure Monitor exporter from the project's Application Insights connection.")
@@ -181,10 +164,7 @@ with (
         configure_azure_monitor(connection_string=connection_string)
         AIProjectInstrumentor().instrument(enable_content_recording=True)
 
-        # ------------------------------------------------------------------
-        # 2. Create a temporary agent and seed traces by running a few
-        #    conversations against it.
-        # ------------------------------------------------------------------
+        # 2. Create a temporary agent and seed traces.
         print(f"Create temporary agent `{agent_name}` (model: `{model_deployment}`).")
         created_agent = project_client.agents.create_version(
             agent_name=agent_name,
@@ -222,11 +202,8 @@ with (
         )
         time.sleep(trace_ingestion_wait_seconds)
 
-        # ------------------------------------------------------------------
         # 3. Submit a data generation job that reads the agent's traces.
-        # ------------------------------------------------------------------
-        # Cover a small backoff before seeding through "now" so the seeded
-        # spans definitely fall inside the queried window.
+        # Small backoff so the seeded spans fall inside the queried window.
         start_time = seed_start - timedelta(minutes=5)
         end_time = datetime.now(tz=timezone.utc)
 
@@ -247,7 +224,7 @@ with (
                             end_time=end_time,
                         ),
                     ],
-                    # Service requires max_samples to be between 15 and 1000.
+                    # Service requires max_samples in [15, 1000].
                     options=TracesDataGenerationJobOptions(max_samples=15),
                     output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
                 ),
@@ -268,9 +245,7 @@ with (
             message = job.error.message if job.error is not None else "<no error message>"
             raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
 
-        # ------------------------------------------------------------------
         # 4. Resolve the generated dataset.
-        # ------------------------------------------------------------------
         outputs = (job.result.outputs if job.result is not None else None) or []
         dataset_output = next(
             (o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None
