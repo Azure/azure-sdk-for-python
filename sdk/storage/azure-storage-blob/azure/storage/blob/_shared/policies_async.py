@@ -338,3 +338,17 @@ class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
+
+class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
+
+    def __init__(self):
+        pass
+
+    def on_request(self):
+        pass
+
+    def send(self, request):
+        pass
+
+    def on_response(self):
+        pass
