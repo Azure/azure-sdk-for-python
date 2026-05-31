@@ -316,6 +316,68 @@ class TestPkRangeDrainSync(unittest.TestCase):
         # New etag from the 304 response is still adopted.
         self.assertEqual(new_etag, '"etag-1"')
 
+    def test_status_blind_empty_page_logs_warning(self):
+        """When the status_code sidecar is missing (legacy callers / test
+        doubles), the empty-page defensive fallback must emit a WARNING so
+        the condition is observable in production logs if it ever fires
+        outside of test contexts. Pins both the termination decision and
+        the diagnostic warning together so a future refactor cannot silently
+        drop either signal.
+        """
+        from azure.cosmos._routing._routing_map_provider_common import (
+            evaluate_drain_page,
+            _DrainPageDecision,
+        )
+
+        with self.assertLogs(
+            "azure.cosmos._routing._routing_map_provider_common", level="WARNING"
+        ) as captured:
+            decision, _new_etag, _next_inm, _seen = evaluate_drain_page(
+                page_new_etag=None,
+                current_if_none_match='"etag-0"',
+                new_etag='"etag-0"',
+                seen_any_etag=True,
+                status_code=None,
+                is_empty_page=True,
+            )
+
+        self.assertEqual(decision, _DrainPageDecision.STOP_DRAINED)
+        self.assertTrue(
+            any("status-blind fallback terminated on empty page" in m for m in captured.output),
+            "Expected empty-page status-blind warning; got: %r" % (captured.output,),
+        )
+
+    def test_status_blind_stalled_etag_logs_warning(self):
+        """Same defensive fallback, etag-not-advanced sub-case: when the
+        status sidecar is missing AND the page is non-empty but the server
+        echoed back our If-None-Match, the drain must terminate AND emit a
+        WARNING. Splitting this from the empty-page assertion ensures a
+        future refactor cannot collapse the two heuristics and lose either
+        the termination or the diagnostic.
+        """
+        from azure.cosmos._routing._routing_map_provider_common import (
+            evaluate_drain_page,
+            _DrainPageDecision,
+        )
+
+        with self.assertLogs(
+            "azure.cosmos._routing._routing_map_provider_common", level="WARNING"
+        ) as captured:
+            decision, _new_etag, _next_inm, _seen = evaluate_drain_page(
+                page_new_etag='"etag-0"',
+                current_if_none_match='"etag-0"',
+                new_etag='"etag-0"',
+                seen_any_etag=True,
+                status_code=None,
+                is_empty_page=False,
+            )
+
+        self.assertEqual(decision, _DrainPageDecision.STOP_DRAINED)
+        self.assertTrue(
+            any("status-blind fallback terminated on stalled etag" in m for m in captured.output),
+            "Expected stalled-etag status-blind warning; got: %r" % (captured.output,),
+        )
+
     def test_literal_304_on_first_page_terminates_without_ranges(self):
         """Status 304 on the very first page short-circuits the drain.
 

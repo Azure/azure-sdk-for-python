@@ -367,8 +367,20 @@ def evaluate_drain_page(
         #   - empty page (matches how core.paging materializes a 304), or
         #   - no etag advancement (no new etag, or same etag echoed back).
         if is_empty_page:
+            logger.warning(
+                "Routing-map drain: status-blind fallback terminated on empty page "
+                "(caller did not wire status_code sidecar; expected 304 in production). "
+                "etag=%r if_none_match=%r seen_any_etag=%s",
+                page_new_etag, current_if_none_match, seen_any_etag,
+            )
             return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
         if not page_new_etag or page_new_etag == current_if_none_match:
+            logger.warning(
+                "Routing-map drain: status-blind fallback terminated on stalled etag "
+                "(caller did not wire status_code sidecar; expected 304 in production). "
+                "etag=%r if_none_match=%r seen_any_etag=%s",
+                page_new_etag, current_if_none_match, seen_any_etag,
+            )
             return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
 
     next_inm = page_new_etag if page_new_etag else current_if_none_match
