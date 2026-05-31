@@ -41,10 +41,8 @@ from .._routing_map_provider_common import (
     _OverlapDetected,
     _GapDetected,
     _handle_transient_snapshot_retry_decision,
-    _ROUTING_MAP_DRAIN_MAX_PAGES,
     _DrainPageDecision,
     evaluate_drain_page,
-    raise_drain_safety_bound_exceeded,
 )
 
 
@@ -392,14 +390,13 @@ class PartitionKeyRangeCache(object):
                 current_previous_map.change_feed_etag if current_previous_map else None
             )
             new_etag = current_if_none_match
-            drained_normally = False
             # Track whether the service ever surfaced an ETag header during this
             # drain attempt. If it never did, we want ``process_fetched_ranges``
             # to surface the "no ETag" observability warning rather than
             # silently treating ``current_if_none_match`` as the fresh etag.
             seen_any_etag = False
 
-            for _drain_page in range(_ROUTING_MAP_DRAIN_MAX_PAGES):
+            while True:
                 request_kwargs = dict(kwargs)
                 response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 request_kwargs['_internal_response_headers_capture'] = response_headers
@@ -442,34 +439,15 @@ class PartitionKeyRangeCache(object):
                 ranges.extend(page_ranges)
 
                 decision, new_etag, current_if_none_match, seen_any_etag = evaluate_drain_page(
-                    page_ranges=page_ranges,
                     page_new_etag=response_headers.get(http_constants.HttpHeaders.ETag),
                     current_if_none_match=current_if_none_match,
                     new_etag=new_etag,
                     seen_any_etag=seen_any_etag,
-                    collection_link=collection_link,
                     status_code=status_capture[0],
+                    is_empty_page=not page_ranges,
                 )
                 if decision == _DrainPageDecision.STOP_DRAINED:
-                    drained_normally = True
                     break
-
-            if not drained_normally:
-                # Safety bound exhausted. Do NOT feed the partially-accumulated
-                # ranges into ``process_fetched_ranges`` -- they would form a
-                # structurally-valid-but-incomplete map and poison the cache.
-                # Raise 503 (sub_status=ROUTING_MAP_DRAIN_LIMIT_EXCEEDED for
-                # diagnostics) so the routing-map provider returns an actionable
-                # error rather than a partial map. Retry behavior is caller-
-                # dependent: query and change-feed paths are wrapped by
-                # _retry_utility.Execute, so _ServiceUnavailableRetryPolicy
-                # will retry across preferred regions before surfacing; direct
-                # callers (_read_items_helper, _session, circuit-breaker,
-                # container, change-feed-continuation) are not wrapped and the
-                # 503 surfaces immediately to the customer. The sub_status lets
-                # SREs distinguish this synthesized error from a real
-                # server-side 503 in either path.
-                raise_drain_safety_bound_exceeded(collection_link, len(ranges))
 
             try:
                 effective_new_etag = new_etag if seen_any_etag else None

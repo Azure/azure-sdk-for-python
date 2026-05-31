@@ -306,13 +306,7 @@ def _resolve_endpoint(client: Any) -> str:
 # place. The providers still own the I/O-shaped parts that genuinely differ:
 #   - sync   uses ``ranges.extend(list(generator))``
 #   - async  uses ``async for item in generator: ...``
-# Everything else (per-page state transitions, safety-bound 503 raise) lives
-# here.
-
-# Bounded safety stop for the change-feed drain. A page is currently
-# service-capped at ~8K ranges, so 100 pages covers up to ~800K ranges,
-# well beyond any realistic container size.
-_ROUTING_MAP_DRAIN_MAX_PAGES = 100
+# Everything else (per-page state transitions) lives here.
 
 
 class _DrainPageDecision:
@@ -324,21 +318,21 @@ class _DrainPageDecision:
 
 def evaluate_drain_page(
     *,
-    page_ranges: List[Dict[str, Any]],
     page_new_etag: Optional[str],
     current_if_none_match: Optional[str],
     new_etag: Optional[str],
     seen_any_etag: bool,
-    collection_link: str,
     status_code: Optional[int] = None,
+    is_empty_page: bool = False,
 ) -> Tuple[str, Optional[str], Optional[str], bool]:
     """Decide whether to keep draining the /pkranges change feed.
 
-    Pure function: no I/O. The only side effect is a ``logger.warning`` on the
-    "ranges-but-etag-did-not-advance" protocol anomaly so live-site triage can
-    spot a server-side bug.
+    Pure function: no I/O. Primary termination signal is literal HTTP
+    ``304 Not Modified`` (matching Java, .NET v3, and Go). When the caller
+    cannot capture the wire status (``status_code is None``), an empty page
+    is treated as terminal so legacy callers and test doubles that don't wire
+    up ``_internal_response_status_capture`` still converge.
 
-    :keyword list page_ranges: Ranges returned by the current page (possibly empty).
     :keyword page_new_etag: ETag header from the current page response, if any.
     :paramtype page_new_etag: str or None
     :keyword current_if_none_match: The ``If-None-Match`` we sent for this page.
@@ -347,91 +341,38 @@ def evaluate_drain_page(
     :paramtype new_etag: str or None
     :keyword bool seen_any_etag: Whether the service has ever surfaced an ETag
         across the drain so far.
-    :keyword str collection_link: Collection link used for diagnostic logging.
     :keyword status_code: HTTP status code of the page response when available.
-        When ``status_code == 304`` we terminate the drain immediately --
-        matching peer SDKs (.NET/Java/Go) which literally check for 304 Not
-        Modified. ``None`` means the caller could not capture the wire status
-        (e.g. legacy callers / older tests) and we fall through to the
-        empty-page check below.
+        ``None`` means the caller can't observe the wire status; in that case
+        an empty page is the only termination signal available.
     :paramtype status_code: int or None
+    :keyword bool is_empty_page: Whether the current page returned zero ranges.
+        Only consulted when ``status_code is None`` as a defensive fallback.
 
-    :returns: ``(decision, new_etag, next_if_none_match, seen_any_etag)``
-        where ``decision`` is :data:`_DrainPageDecision.CONTINUE` or
-        :data:`_DrainPageDecision.STOP_DRAINED`. ``next_if_none_match`` is only
-        meaningful when ``decision == CONTINUE``.
+    :returns: ``(decision, new_etag, next_if_none_match, seen_any_etag)``.
+        ``next_if_none_match`` is only meaningful when ``decision == CONTINUE``.
     :rtype: tuple
     """
     if page_new_etag:
         seen_any_etag = True
+        new_etag = page_new_etag
 
-    # Literal 304 Not Modified -- the gateway tells us the routing map is
-    # fully drained. This matches the peer SDK termination check exactly and
-    # avoids relying on ``ItemPaged`` materializing 304 as an empty page.
     if status_code == http_constants.StatusCodes.NOT_MODIFIED:
-        if page_new_etag:
-            new_etag = page_new_etag
         return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
 
-    if not page_ranges:
-        # Defensive fallback for the unlikely case the gateway returns an
-        # empty body with a non-304 status (or the caller could not capture
-        # the wire status). Treated as "nothing more to drain" -- behavior
-        # matches the pre-status-capture implementation.
-        if page_new_etag:
-            new_etag = page_new_etag
-        return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
+    if status_code is None:
+        # Defensive fallback for callers (and test doubles) that cannot
+        # capture HTTP status. Production callers always provide status; this
+        # branch keeps legacy mocks (which don't wire the headers/status
+        # sidecars) from looping forever. Stop on:
+        #   - empty page (matches how core.paging materializes a 304), or
+        #   - no etag advancement (no new etag, or same etag echoed back).
+        if is_empty_page:
+            return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
+        if not page_new_etag or page_new_etag == current_if_none_match:
+            return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
 
-    if not page_new_etag or page_new_etag == current_if_none_match:
-        if page_new_etag == current_if_none_match and page_ranges:
-            # Etag didn't advance but the service still returned ranges --
-            # this is a change-feed protocol anomaly. Terminate to avoid an
-            # infinite loop, but log loudly so live-site triage can spot the
-            # server-side bug.
-            logger.warning(
-                "Routing-map change-feed drain: server returned %d ranges but "
-                "ETag did not advance ('%s') for collection '%s'. "
-                "Terminating drain to avoid infinite loop; routing map may be incomplete.",
-                len(page_ranges), current_if_none_match, collection_link,
-            )
-        return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
-
-    # Advance: continue with the new etag.
-    return (_DrainPageDecision.CONTINUE, page_new_etag, page_new_etag, seen_any_etag)
-
-
-def raise_drain_safety_bound_exceeded(
-    collection_link: str,
-    accumulated_range_count: int,
-    drain_max_pages: int = _ROUTING_MAP_DRAIN_MAX_PAGES,
-) -> None:
-    """Log + raise the synthetic 503 used when the drain safety bound is hit.
-
-    Shared by sync and async providers so the warning text, status code, and
-    sub-status stay identical across both code paths.
-
-    :param str collection_link: Collection link used for diagnostic logging.
-    :param int accumulated_range_count: Number of ranges accumulated before the
-        bound was hit (logged for triage, not surfaced to the customer).
-    :param int drain_max_pages: The page bound that was exceeded.
-    :raises CosmosHttpResponseError: Always; status 503 with sub-status
-        :data:`http_constants.SubStatusCodes.ROUTING_MAP_DRAIN_LIMIT_EXCEEDED`.
-    """
-    logger.warning(
-        "Routing-map change-feed drain hit safety bound of %d pages for "
-        "collection '%s' (accumulated %d ranges). Surfacing 503 so the "
-        "retry policy can re-attempt instead of caching an incomplete map.",
-        drain_max_pages, collection_link, accumulated_range_count,
-    )
-    raise CosmosHttpResponseError(
-        status_code=http_constants.StatusCodes.SERVICE_UNAVAILABLE,
-        message=(
-            "Partition key range refresh exceeded the %d-page drain safety bound "
-            "for collection '%s'. The cache was left untouched to avoid serving an "
-            "incomplete routing map." % (drain_max_pages, collection_link)
-        ),
-        sub_status=http_constants.SubStatusCodes.ROUTING_MAP_DRAIN_LIMIT_EXCEEDED,
-    )
+    next_inm = page_new_etag if page_new_etag else current_if_none_match
+    return (_DrainPageDecision.CONTINUE, new_etag, next_inm, seen_any_etag)
 
 
 class _IncrementalMergeFailed(Exception):
