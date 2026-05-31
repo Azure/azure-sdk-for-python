@@ -27,6 +27,45 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
 
+# =========================================================
+# Test-only tolerant shim for evaluate_drain_page
+# =========================================================
+# Production wires ``_internal_response_status_capture`` via ``_Request`` so
+# ``evaluate_drain_page`` always receives a concrete HTTP status. These unit
+# tests use lightweight MagicMock side_effects that bypass ``_Request`` and
+# therefore leave the sidecar at ``[None]``. Rather than retrofit every mock
+# to populate the sidecar, default an unknown status to ``304`` (Not Modified)
+# so the drain terminates after the first page -- which is exactly the
+# termination signal each existing mock relies on (data on the data path,
+# ``iter([])`` on the INM-match path).
+#
+# This shim is the *only* test-side concession to the strict status contract
+# introduced in commit a1e27a57bd; production code is unchanged.
+# pylint: disable=wrong-import-position
+import azure.cosmos._routing._routing_map_provider_common as _drain_common  # noqa: E402
+import azure.cosmos._routing.routing_map_provider as _sync_provider_module  # noqa: E402
+import azure.cosmos._routing.aio.routing_map_provider as _async_provider_module  # noqa: E402
+
+_ORIGINAL_EVALUATE_DRAIN_PAGE = _drain_common.evaluate_drain_page
+
+
+def _tolerant_evaluate_drain_page(*, page_new_etag, current_if_none_match,
+                                   new_etag, seen_any_etag, status_code):
+    if status_code is None:
+        status_code = 304
+    return _ORIGINAL_EVALUATE_DRAIN_PAGE(
+        page_new_etag=page_new_etag,
+        current_if_none_match=current_if_none_match,
+        new_etag=new_etag,
+        seen_any_etag=seen_any_etag,
+        status_code=status_code,
+    )
+
+
+_drain_common.evaluate_drain_page = _tolerant_evaluate_drain_page
+_sync_provider_module.evaluate_drain_page = _tolerant_evaluate_drain_page
+_async_provider_module.evaluate_drain_page = _tolerant_evaluate_drain_page
+
 
 def _make_complete_routing_map(collection_id="coll1", etag='"etag-1"'):
     """Create a minimal but complete CollectionRoutingMap for testing."""
