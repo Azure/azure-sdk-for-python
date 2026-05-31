@@ -20,7 +20,7 @@ DESCRIPTION:
     Key concepts:
       - data_source type is "azure_ai_target_completions" with
         item_generation_params.type = "conversation_gen_preview"
-      - num_conversations is per seed scenario (e.g., 2 conversations × 3 scenarios = 6 total)
+      - num_conversations is per seed scenario (e.g., 2 conversations per scenario)
       - max_turns controls the maximum exchanges per conversation
       - The seed scenarios source is at the data_source root level
 
@@ -40,6 +40,8 @@ USAGE:
 
 import os
 import time
+import uuid
+from datetime import datetime, timezone
 from pprint import pprint
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
@@ -57,6 +59,10 @@ agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 scenarios_file = os.path.join(data_folder, "sample_data_simulation_scenarios.jsonl")
+
+# Tag every run with a unique id so each invocation uploads a fresh dataset rather
+# than silently re-using a stale cached version on the service.
+run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 
 with (
     DefaultAzureCredential() as credential,
@@ -127,20 +133,18 @@ with (
     )
     print(f"Evaluation created (id: {eval_object.id})")
 
-    # Upload the simulation scenarios dataset
-    try:
-        dataset = project_client.datasets.upload_file(
-            name="simulation-scenarios",
-            version="1",
-            file_path=scenarios_file,
-        )
-        assert dataset.id is not None, "Dataset upload returned no ID"
-        scenarios_id: str = dataset.id
-        print(f"Scenarios dataset uploaded (id: {scenarios_id})")
-    except Exception:
-        # Dataset already exists — use the existing URI
-        scenarios_id = f"azureai://accounts/{endpoint.split('/')[2].split('.')[0]}/projects/{endpoint.rstrip('/').split('/')[-1]}/data/simulation-scenarios/versions/1"
-        print(f"Using existing scenarios dataset (id: {scenarios_id})")
+    # Upload the simulation scenarios dataset. The name is suffixed with `run_id` so
+    # every invocation creates a fresh dataset on the service; without this the
+    # service would reject a re-upload of a same-named dataset and the sample would
+    # silently fall back to whatever stale version was last cached.
+    dataset = project_client.datasets.upload_file(
+        name=f"simulation-scenarios-{run_id}",
+        version="1",
+        file_path=scenarios_file,
+    )
+    assert dataset.id is not None, "Dataset upload returned no ID"
+    scenarios_id: str = dataset.id
+    print(f"Scenarios dataset uploaded (id: {scenarios_id})")
 
     # Create a simulation run
     # - source: the seed scenarios dataset (each row is a test case)
@@ -195,8 +199,10 @@ with (
     if run.status == "completed":
         print("\n✓ Simulation run completed successfully!")
         print(f"Result Counts: {run.result_counts}")
-        # With 3 seed scenarios and num_conversations=2, expect 6 total conversations
-        print(f"Expected: {3 * 2} conversations (3 scenarios × 2 per scenario)")
+        # Total conversations = (rows in scenarios_file) * num_conversations
+        with open(scenarios_file, encoding="utf-8") as f:
+            num_scenarios = sum(1 for line in f if line.strip())
+        print(f"Expected: {num_scenarios * 2} conversations ({num_scenarios} scenarios x 2 per scenario)")
 
         output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
         print(f"\nOUTPUT ITEMS (Total: {len(output_items)})")
