@@ -131,7 +131,7 @@ with (
     failed_runs = [run for run in completed_runs.values() if run.status == "failed"]
 
     if not failed_runs:
-        print("\n✓ Both evaluation runs completed successfully!")
+        print("\n[OK] Both evaluation runs completed successfully!")
 
         # Generate comparison insights
         compareInsight = project_client.beta.insights.generate(
@@ -150,11 +150,11 @@ with (
             time.sleep(5)
 
         if compareInsight.state == OperationState.SUCCEEDED:
-            print("\n✓ Evaluation comparison generated successfully!")
+            print("\n[OK] Evaluation comparison generated successfully!")
             pprint(compareInsight)
 
     else:
-        print("\n✗ One or more eval runs failed. Cannot generate comparison insight.")
+        print("\n[FAIL] One or more eval runs failed. Cannot generate comparison insight.")
 
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

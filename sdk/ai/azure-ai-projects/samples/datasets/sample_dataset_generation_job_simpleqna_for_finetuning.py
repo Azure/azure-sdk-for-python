@@ -83,32 +83,226 @@ if len(output_name) > 50:
         f"Lower DATASET_NAME (currently `{dataset_name}`) so that `<DATASET_NAME>-<run id>` fits within 50 characters."
     )
 
-# Reference document the sample uploads as an Azure OpenAI file. The service
-# requires the file to contain at least 1 KB of content to generate QnA from.
-SEED_REFERENCE_DOCUMENT = """# Widgets and Gizmos Reference
+# Reference document the sample uploads as an Azure OpenAI file. SUPERVISED_FINETUNING
+# QnA generation requires a substantially richer corpus than the eval scenario does;
+# a 1-2 KB summary is not enough and the service will reject it with
+# "File content lacks sufficient context to generate quality questions." Keep this
+# block at roughly 8-12 KB of varied prose so the service has enough material to
+# synthesize diverse question/answer pairs.
+SEED_REFERENCE_DOCUMENT = """# Widgets, Gizmos, and Sprockets: Complete Product and Operations Reference
 
-## Products
-- Widget: blue, manufactured at Factory 7 in Acme, carbon-fiber, rated to 80 C, sold in packs of 4, 250 g each.
-- Gizmo: red, manufactured at Factory 12 in Bedrock, carbon-fiber, rated to 80 C, sold individually, 1.2 kg each.
-- Sprocket: green, manufactured at Factory 3 in Acme, stainless steel, rated to 200 C, sold individually, 500 g each.
+## 1. Product Catalog
 
-## Operations
-- Factory operates weekdays 0700-1900 local time.
-- Closed on public holidays, except for the annual maintenance run on December 27.
-- ISO 9001 certified; audited annually by an independent third party.
-- Quality control samples every 100th unit and runs full destructive testing on every 5000th unit.
+### 1.1 Widget (model WDG-100)
+The Widget is a structural carbon-fiber component manufactured at Factory 7 in Acme. It is
+finished in matte blue (Pantone 2935 C) using a UV-stable powder coating. Each unit measures
+120 mm x 40 mm x 18 mm and weighs 250 g (+/- 5 g). Widgets are rated for continuous service
+up to 80 degrees Celsius and a transient peak of 95 degrees Celsius for up to 60 seconds.
+Widgets ship in packs of 4, packaged in recyclable cardboard with biodegradable foam inserts.
+The serial number is laser-etched on the underside in the format WDG-100-YYWW-NNNNN, where
+YY is the two-digit year, WW is the ISO week, and NNNNN is the per-week sequence number.
 
-## Customer support
-- Warranty claims: email support@example.com with the serial number printed on the underside of the product.
-- Returns: accepted within 30 days if unopened; opened items are eligible for repair only.
-- Bulk orders (50+ units): contact sales@example.com for volume pricing and an extended 90-day return window.
-- Replacement parts: orderable directly from the support portal using the original order number.
+Compatible mounting hardware: M5 stainless steel bolts, torqued to 6.0 Nm. Substituting
+non-stainless bolts voids the corrosion portion of the warranty.
 
-## Pricing and SLAs
-- Widget pack: USD 24.99 per 4-pack; free shipping on orders over USD 75.
-- Gizmo unit: USD 49.99; free shipping on orders over USD 75.
-- Sprocket unit: USD 14.99; ships from regional warehouses in 1-2 business days.
-- Standard support response: within one business day. Priority support response: within four hours.
+### 1.2 Gizmo (model GZM-200)
+The Gizmo is a precision carbon-fiber assembly manufactured at Factory 12 in Bedrock. It is
+finished in gloss red (Pantone 186 C). Each Gizmo measures 220 mm x 110 mm x 60 mm and
+weighs 1.2 kg (+/- 20 g). Gizmos are sold individually and are rated to 80 degrees Celsius.
+They include an integrated thermal cutoff that disables the unit at 88 degrees Celsius and
+re-enables it after a five minute cool-down. The serial number is engraved on the side and
+follows the format GZM-200-YYWW-NNNNN.
+
+Compatible mounting hardware: M8 stainless steel bolts, torqued to 18 Nm. Gizmos should be
+installed on a flat surface with no more than 0.5 mm of warp across the 220 mm dimension.
+
+### 1.3 Sprocket (model SPR-300)
+The Sprocket is a stainless-steel rotating component manufactured at Factory 3 in Acme.
+It is finished in anodised green and weighs 500 g. The Sprocket is rated for continuous
+service up to 200 degrees Celsius. The teeth count is 24, the pitch diameter is 60 mm,
+and the bore is 12 mm with a standard 4 mm keyway. Sprockets ship individually with a
+laser-etched serial number on the hub in the format SPR-300-YYWW-NNNNN.
+
+Compatible mounting hardware: M12 stainless steel set screws, torqued to 22 Nm.
+
+### 1.4 Compatibility matrix
+* Widget + Gizmo: fully compatible, no adapter required.
+* Widget + Sprocket: requires the WDG-SPR adapter plate (part WDG-SPR-A01).
+* Gizmo + Sprocket: requires the GZM-SPR adapter plate (part GZM-SPR-A02) and a 4 mm shim.
+* Widget + Gizmo + Sprocket (three-way stack): requires both adapter plates and the
+  triple-stack bracket WGS-T01. Torque all bolts to spec in the sequence Widget,
+  Gizmo, Sprocket.
+
+## 2. Manufacturing and Operations
+
+### 2.1 Factory schedule
+All three factories operate weekdays from 0700 to 1900 local time. Factories are closed
+on national public holidays except for the annual maintenance run on December 27, when
+each factory performs cleaning, lubrication, and recalibration of CNC equipment and
+finishing lines. The maintenance run runs from 0600 to 1400 local time and does not
+produce shippable inventory.
+
+### 2.2 Quality control
+Every factory is ISO 9001:2015 certified and is audited annually by an independent
+third party. Quality control samples every 100th unit for visual and dimensional
+inspection. Every 5000th unit undergoes full destructive testing including tensile,
+compressive, and thermal cycling. Destructive test results are archived for seven
+years and are available to enterprise customers on request.
+
+### 2.3 Lot traceability
+The first four characters of every serial number identify the model, the next four
+characters identify the ISO year and week, and the remaining five characters identify
+the per-week sequence number. Given any serial number, customer support can identify
+the production line, the shift, the operator, and the raw material lot that produced
+the unit. Lot traceability records are retained for the life of the product plus three
+years.
+
+### 2.4 Environmental
+All three factories are powered by a mix of on-site solar and grid-tied wind generation.
+Total Scope 1 and Scope 2 emissions for FY2025 were 12,400 tonnes CO2e, a 14 percent
+reduction from FY2024. Packaging is fully recyclable; the cardboard boxes are made from
+80 percent post-consumer recycled fibre and the biodegradable foam is corn-starch based.
+
+## 3. Pricing and Ordering
+
+### 3.1 Standard list prices
+* Widget 4-pack (WDG-100-PK4): USD 24.99
+* Gizmo single (GZM-200): USD 49.99
+* Sprocket single (SPR-300): USD 14.99
+* WDG-SPR adapter plate: USD 6.50
+* GZM-SPR adapter plate: USD 7.50
+* Triple-stack bracket WGS-T01: USD 18.00
+
+### 3.2 Shipping
+Free standard shipping is provided on orders over USD 75 within the United States and
+Canada. International orders incur shipping based on weight and destination, computed
+at checkout. Standard transit time within North America is 3 to 5 business days. Express
+overnight shipping is available for an additional USD 18 per shipment.
+
+### 3.3 Bulk orders
+Bulk orders of 50 or more units of any single product receive a 12 percent discount
+on the list price plus a 90 day return window. Bulk orders of 250 or more units
+receive an 18 percent discount and the option of a dedicated account manager. Contact
+sales@example.com for bulk orders.
+
+### 3.4 Payment terms
+Standard payment is due at checkout via credit card or PayPal. Enterprise customers
+with an approved purchase order may pay net 30 days from invoice date. Late payments
+incur a 1.5 percent monthly service charge.
+
+## 4. Warranty and Returns
+
+### 4.1 Standard warranty
+All products carry a two year limited warranty against defects in materials and
+workmanship from the date of purchase. The warranty does not cover damage from
+incorrect installation, exposure beyond the rated temperature range, modification,
+or normal wear. Warranty service is provided by repair, replacement, or refund at
+the manufacturer's discretion.
+
+### 4.2 Filing a warranty claim
+Warranty claims are filed by emailing support@example.com with the product serial
+number, a description of the issue, and photographs of the failure mode. Acme will
+respond within one business day with either a Return Merchandise Authorisation (RMA)
+number or a request for additional information. RMAs are valid for 30 days and must
+be referenced on the outside of any returned package.
+
+### 4.3 Returns
+Unopened products can be returned within 30 days of receipt for a full refund.
+Opened products are eligible for repair only, except where required by local law.
+Bulk orders (50+ units) are eligible for return within 90 days under the same
+unopened/opened rules. Custom-finished products are non-returnable.
+
+### 4.4 Repair turnaround
+The target turnaround for in-warranty repair is 10 business days from receipt at the
+service centre. Out-of-warranty repair is offered at a fixed rate of USD 35 per
+Widget, USD 60 per Gizmo, or USD 20 per Sprocket, plus return shipping.
+
+## 5. Installation and Use
+
+### 5.1 Pre-installation checks
+Before installing any product, inspect for transit damage. If the box shows signs of
+crushing or moisture, photograph the damage before opening and report it to
+support@example.com within 48 hours. Confirm that the serial number on the unit
+matches the packing slip.
+
+### 5.2 Widget installation
+Mount Widgets on a flat surface with M5 stainless steel bolts torqued to 6.0 Nm in
+a star pattern. Apply a thin film of anti-seize compound to the bolt threads. Allow
+the assembly to cure for 30 minutes before applying load.
+
+### 5.3 Gizmo installation
+Mount Gizmos on a flat surface with M8 stainless steel bolts torqued to 18 Nm.
+Do not exceed 22 Nm; over-torquing can crack the carbon-fiber housing. The thermal
+cutoff cable must be routed away from heat sources and secured with the supplied
+P-clips at intervals of no more than 200 mm.
+
+### 5.4 Sprocket installation
+Press the Sprocket onto a 12 mm shaft using an arbor press. Hand pressure or
+percussive installation will damage the bore tolerance. Once seated, install the
+M12 set screw in the keyway and torque to 22 Nm.
+
+### 5.5 Periodic maintenance
+Inspect mounting hardware every 6 months. Re-torque to spec if any fastener has
+loosened. Replace any fastener that shows corrosion or thread damage. Clean exterior
+surfaces with isopropyl alcohol and a microfiber cloth; do not use abrasive cleaners.
+
+## 6. Customer Support
+
+### 6.1 Contact channels
+* Email: support@example.com (response within one business day)
+* Priority email: priority@example.com (response within four hours for enterprise
+  customers with a current support agreement)
+* Phone: 1-800-555-0100, Monday to Friday, 0800 to 1800 Eastern Time
+* Self-service portal: https://support.example.com
+
+### 6.2 Service level agreements
+The standard SLA is a one business day first response for general inquiries and a
+four hour first response for priority inquiries. Critical production-down issues for
+enterprise customers receive a one hour first response and a continuous-effort
+resolution target until the issue is resolved.
+
+### 6.3 Replacement parts
+Replacement parts including bolts, adapter plates, P-clips, and thermal cutoff
+cables can be ordered directly from the support portal using the original order
+number. Common parts ship the same business day if ordered before 1500 Eastern Time.
+
+## 7. Frequently Asked Questions
+
+Q. What is the maximum operating temperature of a Widget?
+A. 80 degrees Celsius continuous, with a transient peak of 95 degrees Celsius for
+up to 60 seconds.
+
+Q. Can I install a Gizmo with non-stainless bolts?
+A. No. Using non-stainless bolts voids the corrosion portion of the warranty.
+
+Q. Does the Sprocket fit a 12 mm shaft?
+A. Yes. The Sprocket bore is 12 mm with a standard 4 mm keyway.
+
+Q. What is the lead time for bulk orders of 250 units?
+A. Standard lead time is 10 to 15 business days, plus shipping.
+
+Q. How do I know when my Gizmo's thermal cutoff has tripped?
+A. The unit will go silent and the status LED will blink red twice per second.
+After five minutes the unit will automatically re-enable and resume normal operation.
+
+Q. Where do I find the serial number?
+A. Widget: laser-etched on the underside. Gizmo: engraved on the side. Sprocket:
+laser-etched on the hub.
+
+Q. Are your products RoHS compliant?
+A. Yes. All three products comply with EU RoHS 2 (Directive 2011/65/EU) and RoHS 3
+(Directive 2015/863).
+
+Q. Do you offer custom colours?
+A. Custom finishes are available for orders of 500 or more units. Contact
+sales@example.com for a custom-finish quote. Custom-finished products are
+non-returnable.
+
+Q. What torque should I use for the M8 bolts on a Gizmo?
+A. 18 Nm. Do not exceed 22 Nm.
+
+Q. How long is the warranty?
+A. Two years from date of purchase against defects in materials and workmanship.
 """
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}

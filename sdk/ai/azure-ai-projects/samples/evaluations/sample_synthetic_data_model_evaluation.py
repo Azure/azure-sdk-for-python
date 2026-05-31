@@ -151,7 +151,7 @@ with (
         time.sleep(5)
 
     if eval_run.status == "completed":
-        print("\n✓ Evaluation run completed successfully!")
+        print("\n[OK] Evaluation run completed successfully!")
         print(f"Result Counts: {eval_run.result_counts}")
 
         output_items = list(client.evals.runs.output_items.list(run_id=eval_run.id, eval_id=eval_object.id))
@@ -168,7 +168,7 @@ with (
         if output_dataset_id:
             print(f"Output Dataset ID (for reuse): {output_dataset_id}")
     else:
-        print("\n✗ Evaluation run failed.")
+        print("\n[FAIL] Evaluation run failed.")
 
     client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

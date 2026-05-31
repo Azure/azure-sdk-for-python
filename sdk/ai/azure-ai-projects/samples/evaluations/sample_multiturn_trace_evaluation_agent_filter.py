@@ -162,7 +162,7 @@ def main() -> None:
             time.sleep(5)
 
         if run.status == "completed":
-            print("\n✓ Evaluation run completed successfully!")
+            print("\n[OK] Evaluation run completed successfully!")
             print(f"Result Counts: {run.result_counts}")
 
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
@@ -173,7 +173,7 @@ def main() -> None:
 
             print(f"\nEval Run Report URL: {run.report_url}")
         else:
-            print(f"\n✗ Evaluation run failed: {run.error}")
+            print(f"\n[FAIL] Evaluation run failed: {run.error}")
 
         client.evals.delete(eval_id=eval_object.id)
         print("Evaluation deleted")
