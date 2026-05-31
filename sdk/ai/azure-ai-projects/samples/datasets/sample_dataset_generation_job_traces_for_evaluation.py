@@ -46,7 +46,7 @@ import os
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Callable, List, Optional
+from typing import List, Optional
 
 from dotenv import load_dotenv
 
@@ -132,15 +132,6 @@ if len(output_dataset_name) > 50:
 agent_name = f"traces-eval-sample-{run_id}"
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
-
-def _try_delete(label: str, fn: Callable[..., object], *args: object, **kwargs: object) -> None:
-    """Best-effort delete; logs and swallows failures so later cleanup steps still run."""
-    try:
-        fn(*args, **kwargs)
-        print(f"Deleted {label}.")
-    except Exception as exc:  # pylint: disable=broad-exception-caught
-        print(f"  (warning) could not delete {label}: {exc}")
 
 
 with (
@@ -266,36 +257,40 @@ with (
     finally:
         # Best-effort cleanup, outputs -> producers (dataset, job, conversations, agent).
         if created_dataset is not None:
-            _try_delete(
-                f"generated dataset `{created_dataset.name}` v{created_dataset.version}",
-                project_client.datasets.delete,
-                name=created_dataset.name or "",
-                version=created_dataset.version or "",
-            )
+            try:
+                project_client.datasets.delete(
+                    name=created_dataset.name or "",
+                    version=created_dataset.version or "",
+                )
+                print(f"Deleted dataset `{created_dataset.name}` v{created_dataset.version}.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete dataset: {exc}")
 
         if submitted_job_id is not None:
-            _try_delete(
-                f"data generation job `{submitted_job_id}`",
-                project_client.beta.datasets.delete_generation_job,
-                job_id=submitted_job_id,
-            )
+            try:
+                project_client.beta.datasets.delete_generation_job(job_id=submitted_job_id)
+                print(f"Deleted data generation job `{submitted_job_id}`.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete job: {exc}")
 
         if conversation_ids:
             try:
                 with project_client.get_openai_client() as openai_client:
                     for cid in conversation_ids:
-                        _try_delete(
-                            f"seeded conversation `{cid}`",
-                            openai_client.conversations.delete,
-                            conversation_id=cid,
-                        )
+                        try:
+                            openai_client.conversations.delete(conversation_id=cid)
+                            print(f"Deleted seeded conversation `{cid}`.")
+                        except Exception as exc:  # pylint: disable=broad-exception-caught
+                            print(f"  (warning) could not delete conversation `{cid}`: {exc}")
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not open OpenAI client for conversation cleanup: {exc}")
 
         if created_agent is not None:
-            _try_delete(
-                f"temporary agent `{created_agent.name}` v{created_agent.version}",
-                project_client.agents.delete_version,
-                agent_name=created_agent.name,
-                agent_version=created_agent.version,
-            )
+            try:
+                project_client.agents.delete_version(
+                    agent_name=created_agent.name,
+                    agent_version=created_agent.version,
+                )
+                print(f"Deleted temporary agent `{created_agent.name}` v{created_agent.version}.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete agent: {exc}")
