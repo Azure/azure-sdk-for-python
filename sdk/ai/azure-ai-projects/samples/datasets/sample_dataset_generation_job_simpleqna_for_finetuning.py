@@ -88,27 +88,24 @@ if len(output_name) > 50:
 SEED_REFERENCE_DOCUMENT = """# Widgets and Gizmos Reference
 
 ## Products
-- Widget: blue, manufactured at Factory 7 in Acme, carbon-fiber, rated to 80 C, sold in packs of 4, 250 g each.
-- Gizmo: red, manufactured at Factory 12 in Bedrock, carbon-fiber, rated to 80 C, sold individually, 1.2 kg each.
-- Sprocket: green, manufactured at Factory 3 in Acme, stainless steel, rated to 200 C, sold individually, 500 g each.
+- Widget (WDG-100): blue carbon-fiber, 250 g, packs of 4, rated to 80 C, made at Factory 7 in Acme.
+- Gizmo (GZM-200): red carbon-fiber, 1.2 kg, sold individually, rated to 80 C, made at Factory 12 in Bedrock.
+- Sprocket (SPR-300): green stainless steel, 500 g, sold individually, rated to 200 C, made at Factory 3 in Acme.
 
 ## Operations
-- Factory operates weekdays 0700-1900 local time.
-- Closed on public holidays, except for the annual maintenance run on December 27.
+- Factories operate weekdays 0700-1900 local time and are closed on public holidays.
 - ISO 9001 certified; audited annually by an independent third party.
-- Quality control samples every 100th unit and runs full destructive testing on every 5000th unit.
+- QC samples every 100th unit; full destructive testing every 5000th unit.
 
 ## Customer support
-- Warranty claims: email support@example.com with the serial number printed on the underside of the product.
+- Warranty claims: email support@example.com with the serial number etched on the underside.
 - Returns: accepted within 30 days if unopened; opened items are eligible for repair only.
-- Bulk orders (50+ units): contact sales@example.com for volume pricing and an extended 90-day return window.
-- Replacement parts: orderable directly from the support portal using the original order number.
+- Bulk orders (50+ units): contact sales@example.com for volume pricing and a 90-day return window.
 
 ## Pricing and SLAs
-- Widget pack: USD 24.99 per 4-pack; free shipping on orders over USD 75.
-- Gizmo unit: USD 49.99; free shipping on orders over USD 75.
-- Sprocket unit: USD 14.99; ships from regional warehouses in 1-2 business days.
-- Standard support response: within one business day. Priority support response: within four hours.
+- Widget pack: USD 24.99 per 4-pack. Gizmo: USD 49.99 each. Sprocket: USD 14.99 each.
+- Free shipping on orders over USD 75. Sprockets ship in 1-2 business days from regional warehouses.
+- Standard support response within one business day; priority support response within four hours.
 """
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
