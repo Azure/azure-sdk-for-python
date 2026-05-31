@@ -864,7 +864,14 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 if call_count['count'] <= 2:
                     # First two calls are incremental attempts; return a child
                     # with a missing parent so merge is incomplete and fallback
-                    # path is exercised.
+                    # path is exercised. Mirror the production wire-up:
+                    # _synchronized_request populates this sidecar with the real
+                    # HTTP status. Without it, the drain loop's status==304
+                    # termination contract can't trip and evaluate_drain_page
+                    # raises RuntimeError.
+                    status_capture = kwargs.get('_internal_response_status_capture')
+                    if status_capture is not None:
+                        status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
                     fake_child = {
                         'id': f'child_{call_count["count"]}',
                         'minInclusive': '',
