@@ -322,16 +322,17 @@ def evaluate_drain_page(
     current_if_none_match: Optional[str],
     new_etag: Optional[str],
     seen_any_etag: bool,
-    status_code: Optional[int] = None,
-    is_empty_page: bool = False,
+    status_code: int,
 ) -> Tuple[str, Optional[str], Optional[str], bool]:
     """Decide whether to keep draining the /pkranges change feed.
 
-    Pure function: no I/O. Primary termination signal is literal HTTP
-    ``304 Not Modified`` (matching Java, .NET v3, and Go). When the caller
-    cannot capture the wire status (``status_code is None``), an empty page
-    is treated as terminal so legacy callers and test doubles that don't wire
-    up ``_internal_response_status_capture`` still converge.
+    Pure function: no I/O. The sole termination signal is literal HTTP
+    ``304 Not Modified`` (matching Java, .NET v3, and Go). ``status_code``
+    is required: production callers wire it via the
+    ``_internal_response_status_capture`` sidecar populated by
+    ``_synchronized_request`` / ``_asynchronous_request`` before any
+    return, so it is always a concrete int by the time we land here.
+    The page cap in the caller is the secondary safety net.
 
     :keyword page_new_etag: ETag header from the current page response, if any.
     :paramtype page_new_etag: str or None
@@ -341,12 +342,7 @@ def evaluate_drain_page(
     :paramtype new_etag: str or None
     :keyword bool seen_any_etag: Whether the service has ever surfaced an ETag
         across the drain so far.
-    :keyword status_code: HTTP status code of the page response when available.
-        ``None`` means the caller can't observe the wire status; in that case
-        an empty page is the only termination signal available.
-    :paramtype status_code: int or None
-    :keyword bool is_empty_page: Whether the current page returned zero ranges.
-        Only consulted when ``status_code is None`` as a defensive fallback.
+    :keyword int status_code: HTTP status code of the page response. Required.
 
     :returns: ``(decision, new_etag, next_if_none_match, seen_any_etag)``.
         ``next_if_none_match`` is only meaningful when ``decision == CONTINUE``.
@@ -358,30 +354,6 @@ def evaluate_drain_page(
 
     if status_code == http_constants.StatusCodes.NOT_MODIFIED:
         return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
-
-    if status_code is None:
-        # Defensive fallback for callers (and test doubles) that cannot
-        # capture HTTP status. Production callers always provide status; this
-        # branch keeps legacy mocks (which don't wire the headers/status
-        # sidecars) from looping forever. Stop on:
-        #   - empty page (matches how core.paging materializes a 304), or
-        #   - no etag advancement (no new etag, or same etag echoed back).
-        if is_empty_page:
-            logger.warning(
-                "Routing-map drain: status-blind fallback terminated on empty page "
-                "(caller did not wire status_code sidecar; expected 304 in production). "
-                "etag=%r if_none_match=%r seen_any_etag=%s",
-                page_new_etag, current_if_none_match, seen_any_etag,
-            )
-            return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
-        if not page_new_etag or page_new_etag == current_if_none_match:
-            logger.warning(
-                "Routing-map drain: status-blind fallback terminated on stalled etag "
-                "(caller did not wire status_code sidecar; expected 304 in production). "
-                "etag=%r if_none_match=%r seen_any_etag=%s",
-                page_new_etag, current_if_none_match, seen_any_etag,
-            )
-            return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
 
     next_inm = page_new_etag if page_new_etag else current_if_none_match
     return (_DrainPageDecision.CONTINUE, new_etag, next_inm, seen_any_etag)

@@ -410,7 +410,6 @@ class PartitionKeyRangeCache(object):
                     new_etag=new_etag,
                     seen_any_etag=seen_any_etag,
                     status_code=status_capture[0],
-                    is_empty_page=not page_ranges,
                 )
                 if decision == _DrainPageDecision.STOP_DRAINED:
                     break
