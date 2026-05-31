@@ -286,6 +286,8 @@ with (
     created_agent = None
     conversation_ids: List[str] = []
     seed_start: Optional[datetime] = None
+    submitted_job_id: Optional[str] = None
+    created_dataset: Optional[DatasetVersion] = None
 
     try:
         if seed_traces:
@@ -410,6 +412,7 @@ with (
             ),
         )
         job = project_client.beta.datasets.create_generation_job(job=job)
+        submitted_job_id = job.id
         print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
 
         print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
@@ -438,23 +441,39 @@ with (
             raise RuntimeError(f"Job `{job.id}` did not produce a dataset output.")
 
         dataset: DatasetVersion = project_client.datasets.get(name=output_name, version=output_version)
+        created_dataset = dataset
         print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
         if job.result is not None and job.result.generated_samples is not None:
             print(f"Generated samples: {job.result.generated_samples}")
 
-        # ------------------------------------------------------------------
-        # 2. Clean up dataset + job.
-        # ------------------------------------------------------------------
-        print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
-        project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
-
-        print(f"Delete the data generation job `{job.id}`.")
-        project_client.beta.datasets.delete_generation_job(job_id=job.id)
-
     finally:
-        # Best-effort cleanup of the temporary agent and seeded conversations.
-        # Wrap each step so a failure in one does not skip the others, and so
-        # cleanup never masks the real exception that brought us here.
+        # Best-effort cleanup. Each step is wrapped in its own try/except so a
+        # failure in one does not skip the others, and so cleanup never masks
+        # the real exception that brought us here. Order is outputs -> producers:
+        # dataset -> job -> seeded conversations -> temporary agent.
+        if created_dataset is not None:
+            try:
+                print(
+                    f"Delete the generated dataset `{created_dataset.name}` v{created_dataset.version}."
+                )
+                project_client.datasets.delete(
+                    name=created_dataset.name or "", version=created_dataset.version or ""
+                )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(
+                    f"  (warning) could not delete generated dataset "
+                    f"`{created_dataset.name}` v{created_dataset.version}: {exc}"
+                )
+
+        if submitted_job_id is not None:
+            try:
+                print(f"Delete the data generation job `{submitted_job_id}`.")
+                project_client.beta.datasets.delete_generation_job(job_id=submitted_job_id)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(
+                    f"  (warning) could not delete data generation job `{submitted_job_id}`: {exc}"
+                )
+
         if conversation_ids:
             try:
                 with project_client.get_openai_client() as openai_client:
