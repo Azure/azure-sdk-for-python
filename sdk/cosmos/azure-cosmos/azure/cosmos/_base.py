@@ -168,6 +168,17 @@ def _merge_query_results(
     if not results:
         return partial_result
 
+    # AVG cannot be merged across partitions. By the second call, the
+    # query has spanned at least two partitions and the answer is wrong
+    # regardless of the partial shape (numeric, [None], or empty).
+    # Must run before the empty-partial short-circuit below so an empty
+    # partial cannot return the prior single-partition answer as if it
+    # were the merged result.
+    if _get_select_value_aggregate_function(query) == "AVG":
+        raise ValueError(
+            "VALUE AVG aggregate merge across partitions is not supported client-side."
+        )
+
     partial_docs = partial_result.get("Documents")
     if not partial_docs:
         return results

@@ -83,6 +83,50 @@ def get_container(setup, container_id: str):
 def get_key_container(setup, container_id: str):
     return setup["key_db"].get_container_client(container_id)
 
+
+def _require_multi_partition(container) -> None:
+    """Skip the test if the container has only one physical partition.
+
+    Cross-partition AVG raises only on the second merge call. On a one-
+    partition lane that call never happens, so the test would pass
+    without exercising the bug.
+    """
+    feed_range_count = len(list(container.read_feed_ranges()))
+    if feed_range_count <= 1:
+        pytest.skip(
+            "Cross-partition AVG contract requires >1 physical partition; "
+            "container reports {} feed range(s).".format(feed_range_count)
+        )
+
+
+def _assert_avg_value_error_chain(excinfo) -> None:
+    """Assert the full AVG raise contract end-to-end.
+
+    Outer message must include the range-scoped pagination prefix and
+    the "SELECT VALUE AVG" callout. ``__cause__`` must chain the inner
+    merge ``ValueError`` with its original text intact so callers can
+    match on the inner message without parsing the outer rephrased one.
+    """
+    outer_message = str(excinfo.value)
+    assert "Unsupported query shape for range-scoped pagination" in outer_message, (
+        "Unexpected outer ValueError message: {!r}".format(outer_message)
+    )
+    assert "SELECT VALUE AVG" in outer_message, (
+        "Outer message must mention SELECT VALUE AVG: {!r}".format(outer_message)
+    )
+
+    cause = excinfo.value.__cause__
+    assert isinstance(cause, ValueError), (
+        "Outer ValueError must chain the inner merge ValueError via "
+        "`raise ... from`; got __cause__={!r}".format(cause)
+    )
+    inner_message = str(cause)
+    assert "VALUE AVG aggregate merge across partitions is not supported client-side." in inner_message, (
+        "Inner __cause__ must preserve the original merge error text; "
+        "got {!r}".format(inner_message)
+    )
+
+
 @pytest.mark.cosmosQuery
 @pytest.mark.cosmosAADSplit
 class TestQueryFeedRange:
@@ -162,8 +206,16 @@ class TestQueryFeedRange:
     # the scope, not by the container.
 
     def test_query_with_avg_aggregate_across_full_feed_range_raises(self, setup):
-        """AVG over a feed_range spanning multiple partitions must raise."""
+        """AVG over a feed_range spanning multiple partitions must raise.
+
+        Strict contract per the 4.16.0 CHANGELOG: ``ValueError`` with the
+        user-facing outer message AND a chained inner ``__cause__`` that
+        preserves the original merge error text. The multi-partition
+        precondition prevents this test from silently passing on a
+        single-partition lane.
+        """
         container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        _require_multi_partition(container)
         query = 'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
 
         # Full hash range covers every physical partition of the container.
@@ -178,9 +230,7 @@ class TestQueryFeedRange:
         with pytest.raises(ValueError) as excinfo:
             list(container.query_items(query=query, feed_range=feed_range))
 
-        message = str(excinfo.value)
-        assert "Unsupported query shape for range-scoped pagination" in message
-        assert "SELECT VALUE AVG" in message
+        _assert_avg_value_error_chain(excinfo)
 
     def test_query_with_avg_aggregate_single_partition_feed_range_succeeds(self, setup):
         """AVG scoped to a single-partition feed_range must still succeed."""
@@ -308,6 +358,71 @@ class TestQueryFeedRange:
         print(f"Total sum AFTER split: {post_split_sum}, Expected: {initial_sum}")
         assert initial_sum == post_split_sum, f"Sum mismatch: before={initial_sum}, after={post_split_sum}"
         print("Test 4 (sum aggregate with stale feed ranges) passed")
+
+        # Test 5: AVG aggregate with stale (now-exploded) feed ranges
+        # must surface the AVG raise. Pins that the merge guard fires
+        # on the post-explode branch — a regression the offline unit
+        # tests cannot catch because they call _merge_query_results
+        # directly without going through the split-aware loop in
+        # _cosmos_client_connection.__QueryFeed.
+        feed_ranges_after_split = list(
+            container.read_feed_ranges(force_refresh=True)
+        )
+        print(
+            "Feed ranges before/after split: {} -> {}".format(
+                len(feed_ranges_before_split), len(feed_ranges_after_split),
+            )
+        )
+        if len(feed_ranges_after_split) <= len(feed_ranges_before_split):
+            # No new physical partitions in this environment — no real
+            # explode to test.
+            pytest.skip(
+                "Split did not produce new physical partitions "
+                "(pre={}, post={}); cannot exercise explode path.".format(
+                    len(feed_ranges_before_split),
+                    len(feed_ranges_after_split),
+                )
+            )
+
+        query_avg = 'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+        exploded_range_raised = False
+        for i, stale_feed_range in enumerate(feed_ranges_before_split):
+            try:
+                items = list(container.query_items(
+                    query=query_avg, feed_range=stale_feed_range,
+                ))
+            except ValueError as exc:
+                # Shim so we can reuse the module-level chain helper.
+                class _ExcInfoShim:  # pylint: disable=too-few-public-methods
+                    value = exc
+                _assert_avg_value_error_chain(_ExcInfoShim())
+                exploded_range_raised = True
+                print(f"Feed range {i}: AVG raised (post-explode wrapper fired)")
+            else:
+                # Stale range still maps to one post-split partition.
+                # Single numeric scalar (or empty) is the correct shape.
+                assert len(items) <= 1, (
+                    "Stale feed range {} with single-partition post-split "
+                    "mapping must return at most one AVG scalar; got {!r}"
+                    .format(i, items)
+                )
+                print(
+                    f"Feed range {i}: AVG returned {items!r} "
+                    "(stale range still maps to one partition)"
+                )
+
+        # Pigeonhole: when post-split count exceeds pre-split count, at
+        # least one pre-split range now overlaps >=2 partitions and must
+        # raise. Zero raises means the wrapper is not firing on the
+        # explode path.
+        assert exploded_range_raised, (
+            "Split produced new partitions ({} -> {}) but no pre-split "
+            "feed_range raised on AVG; the wrapper is not firing on the "
+            "post-explode merge path.".format(
+                len(feed_ranges_before_split), len(feed_ranges_after_split),
+            )
+        )
+        print("Test 5 (AVG aggregate with exploded feed ranges) passed")
 
     @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)

@@ -1,5 +1,10 @@
 ## Release History
 
+### Unreleased
+
+#### Bugs Fixed
+* Fixed bug where a query that averages a numeric field across multiple partitions could silently return one partition's average as if it were the combined answer. This happened when another partition returned no matching rows — for example, when the field being averaged was missing, null, or filtered out on every row in that partition. These queries now raise `ValueError`.
+
 ### 4.16.0 (2026-05-29)
 
 #### Features Added
