@@ -102,6 +102,16 @@ def add_sanitizers(test_proxy):
     # This regex matches the hostname part (between // and .services.ai.azure.com) and replaces it with "Sanitized"
     add_general_regex_sanitizer(value="Sanitized", regex="(?<=\\/\\/)[^/]+(?=\\.services\\.ai\\.azure\\.com)")
 
+    # Collapse "//contentunderstanding" → "/contentunderstanding" on both record and request URIs.
+    # The client patch normalizes trailing slashes on the endpoint at runtime so live requests
+    # always use a single slash. Older cassettes (made when the endpoint was passed with a
+    # trailing slash) stored the double-slash form. This sanitizer keeps those existing
+    # recordings playable without re-recording.
+    add_uri_regex_sanitizer(
+        regex=r"//contentunderstanding",
+        value="/contentunderstanding",
+    )
+
     # Sanitize Operation-Location headers specifically (used by LRO polling)
     # This ensures the poller uses the correct endpoint URL during playback
     # IMPORTANT: Do NOT use lookahead (?=...) as it doesn't consume the match,
