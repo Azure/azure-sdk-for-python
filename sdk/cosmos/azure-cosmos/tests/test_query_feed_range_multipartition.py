@@ -859,6 +859,7 @@ class TestFeedRangeMultiPartition:
     # Post-split resume (slow; requires a real partition split)
     # ------------------------------------------------------------------ #
     @pytest.mark.cosmosSplit
+    @pytest.mark.cosmosAADSplit
     def test_post_split_resume(self):
         """End-to-end "the routing layout changed underneath a saved
         continuation token" scenario:

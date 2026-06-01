@@ -41,6 +41,8 @@ from .._routing_map_provider_common import (
     _OverlapDetected,
     _GapDetected,
     _handle_transient_snapshot_retry_decision,
+    _DrainPageDecision,
+    evaluate_drain_page,
 )
 
 
@@ -334,6 +336,7 @@ class PartitionKeyRangeCache(object):
             return self._collection_routing_map_by_item.get(collection_id)
 
 
+    # pylint: disable=too-many-statements,too-many-locals
     async def _fetch_routing_map(
             self,
             collection_link: str,
@@ -377,35 +380,84 @@ class PartitionKeyRangeCache(object):
         inconsistency_attempt_count = 0
 
         while True:
-            request_kwargs = dict(kwargs)
-            response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-            request_kwargs['_internal_response_headers_capture'] = response_headers
-
-            # Prepare sanitised options and headers for the PK-range fetch.
-            change_feed_options = prepare_fetch_options_and_headers(
-                current_previous_map, feed_options, request_kwargs
-            )
-
             ranges: List[Dict[str, Any]] = []
-            try:
-                pk_range_generator = self._document_client._ReadPartitionKeyRanges(
-                    collection_link,
-                    change_feed_options,
-                    **request_kwargs
+            # Start the change-feed drain at the previous map's etag (if any).
+            # On subsequent drain pages we advance this with the etag returned
+            # for the previous page so the service returns "what's new since X"
+            # until it eventually responds with 304 / no new ranges, mirroring
+            # the .NET and Go SDK behaviour.
+            current_if_none_match = (
+                current_previous_map.change_feed_etag if current_previous_map else None
+            )
+            new_etag = current_if_none_match
+            # Track whether the service ever surfaced an ETag header during this
+            # drain attempt. If it never did, we want ``process_fetched_ranges``
+            # to surface the "no ETag" observability warning rather than
+            # silently treating ``current_if_none_match`` as the fresh etag.
+            seen_any_etag = False
+
+            # Hoist: ``prepare_fetch_options_and_headers`` is loop-invariant
+            # for this drain attempt -- ``change_feed_options`` depends only on
+            # ``feed_options`` and the headers it builds depend only on
+            # ``current_previous_map.change_feed_etag``, neither of which
+            # change inside the inner drain loop. Compute them once here; the
+            # only per-page mutation is the ``If-None-Match`` override below.
+            base_kwargs_for_headers: Dict[str, Any] = dict(kwargs)
+            change_feed_options = prepare_fetch_options_and_headers(
+                current_previous_map, feed_options, base_kwargs_for_headers
+            )
+            base_headers: Dict[str, Any] = base_kwargs_for_headers['headers']
+
+            while True:
+                request_kwargs = dict(kwargs)
+                # Shallow-copy ``base_headers`` so the per-iter
+                # ``If-None-Match`` override does not bleed across iterations.
+                request_kwargs['headers'] = dict(base_headers)
+                response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+                request_kwargs['_internal_response_headers_capture'] = response_headers
+                # Sidecar list -- populated by _Request with the raw wire
+                # status. Lets us terminate on literal 304 (matching peer
+                # SDKs) instead of inferring it from an empty page.
+                status_capture: List[Optional[int]] = [None]
+                request_kwargs['_internal_response_status_capture'] = status_capture
+
+                # Override If-None-Match with the running etag from the drain
+                # so each page advances. ``prepare_fetch_options_and_headers``
+                # only sets it from ``current_previous_map.change_feed_etag``
+                # which never advances during this drain.
+                drain_headers = request_kwargs['headers']
+                if current_if_none_match:
+                    drain_headers[http_constants.HttpHeaders.IfNoneMatch] = current_if_none_match
+                else:
+                    drain_headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
+
+                try:
+                    pk_range_generator = self._document_client._ReadPartitionKeyRanges(
+                        collection_link,
+                        change_feed_options,
+                        **request_kwargs
+                    )
+                    ranges.extend([item async for item in pk_range_generator])
+                except CosmosHttpResponseError as e:
+                    logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
+                        "Failed to read partition key ranges for collection '%s': %s",
+                        collection_link, e)
+                    raise
+
+                decision, new_etag, current_if_none_match, seen_any_etag = evaluate_drain_page(
+                    page_new_etag=response_headers.get(http_constants.HttpHeaders.ETag),
+                    current_if_none_match=current_if_none_match,
+                    new_etag=new_etag,
+                    seen_any_etag=seen_any_etag,
+                    status_code=status_capture[0],
                 )
-                async for item in pk_range_generator:
-                    ranges.append(item)
-
-            except CosmosHttpResponseError as e:
-                logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
-                    "Failed to read partition key ranges for collection '%s': %s", collection_link, e)
-                raise
-
-            new_etag = response_headers.get(http_constants.HttpHeaders.ETag)
+                if decision == _DrainPageDecision.STOP_DRAINED:
+                    break
 
             try:
+                effective_new_etag = new_etag if seen_any_etag else None
                 return process_fetched_ranges(
-                    ranges, current_previous_map, collection_id, collection_link, new_etag
+                    ranges, current_previous_map, collection_id, collection_link, effective_new_etag
                 )
             except _IncrementalMergeFailed:
                 if current_previous_map is not None and incomplete_attempt_count < _INCOMPLETE_ROUTING_MAP_MAX_RETRIES:

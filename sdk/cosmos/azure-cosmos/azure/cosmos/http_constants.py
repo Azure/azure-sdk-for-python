@@ -451,6 +451,12 @@ class SubStatusCodes:
     # 503: Service Unavailable due to region being out of capacity for bindable partitions
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
 
+    # 503: Routing-map (/pkranges) drain produced overlapping or gapped ranges
+    # across the configured number of retries (transient snapshot inconsistency).
+    # Surfaced by ``_handle_transient_snapshot_retry_decision`` so callers and
+    # telemetry can distinguish this client-side condition from backend 503s.
+    ROUTING_MAP_SNAPSHOT_INCONSISTENT = 21015
+
     # Client Side substatus codes
     THROUGHPUT_OFFER_NOT_FOUND = 10004
 
