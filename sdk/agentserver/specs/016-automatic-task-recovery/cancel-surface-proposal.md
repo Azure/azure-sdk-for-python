@@ -34,7 +34,7 @@ Plus methods: `suspend(reason, output)`, `stream(item)`.
 |---|---|
 | "Should I stop?" | `ctx.cancel.is_set()` |
 | "Is the container going down?" | `ctx.shutdown.is_set()` |
-| "Is there steering input queued for me right now?" | `len(ctx.pending_inputs) > 0` |
+| "Is there steering input queued for me right now?" | `ctx.pending_input_count > 0` (replaces today's `len(ctx.pending_inputs) > 0`) |
 | "Am I a fresh entry vs a resume vs a crash-recovery vs a steering-drain re-entry?" | `ctx.entry_mode` + `ctx.was_steered` |
 | "How many crash recoveries has this task seen?" | `ctx.recovery_count` |
 | "Why was `ctx.cancel` set (timeout vs steering)?" | **Not directly answerable** — would need to infer. |
@@ -47,31 +47,32 @@ For each scenario, the columns are: who set what; what the handler should observ
 
 ### S1 — Steady-state mid-handler (no signals set)
 - **Trigger:** Nothing. Handler is doing work.
-- **`cancel`:** unset. **`shutdown`:** unset. **`pending_inputs`:** empty.
+- **`cancel`:** unset. **`shutdown`:** unset. **`pending_input_count`:** 0.
 - **Prescribed action:** keep going.
 
 ### S2 — Steering pressure arrives mid-handler (steerable=True only)
 - **Trigger:** Caller invokes `.start(task_id, input=I2)` while turn-1 handler is running. Drain logic in `_try_drain_steering` enqueues `I2` into `_steering.pending_inputs` and sets `ctx.cancel` with `cancel_requested = True` so the active handler notices.
-- **`cancel`:** set. **`shutdown`:** unset. **`pending_inputs`:** non-empty (contains I2).
+- **`cancel`:** set. **`shutdown`:** unset. **`pending_input_count`:** ≥ 1 (live; reflects current queue depth).
 - **Prescribed action (per the FR-020..FR-024a "three strategies" framing — **all three end with `return await ctx.suspend(...)`** because to enable multi-turn the function MUST suspend; returning a raw value terminates the task and burns the queued steering input as `TaskConflictError` per FR-022):**
   - Strategy A: yield immediately → `return await ctx.suspend(...)`.
   - Strategy B: wind down to a safe checkpoint → `await ctx.metadata.flush()` → `return await ctx.suspend(...)`.
   - Strategy C: ignore the cancel hint, finish current input naturally, THEN `return await ctx.suspend(...)` so the queued I2 can drain into a fresh re-entry of the handler. The terminal-via-`return-value` path is only correct when the developer genuinely wants the task to end (no more turns, no draining I2 — caller-2 will see `TaskConflictError`); for any handler that wanted to be steerable in the first place, the suspend ending is the right shape.
+  - Strategy D (NEW with `pending_input_count`): inspect the count to decide pace — `if ctx.pending_input_count > 2: yield_now()` vs `if ctx.pending_input_count == 1: finish_current_then_suspend()`.
 
 ### S3 — Per-turn timeout fires
 - **Trigger:** `@task(timeout=...)` watchdog. Reaches the durable wall-clock deadline (FR-032..FR-035). Watchdog calls `ctx.cancel.set()` (with `reason="timeout"` under FR-031, or bare `.set()` if we drop FR-031).
-- **`cancel`:** set. **`shutdown`:** unset. **`pending_inputs`:** typically empty (steering didn't trigger this).
+- **`cancel`:** set. **`shutdown`:** unset. **`pending_input_count`:** typically 0 (steering didn't trigger this).
 - **Prescribed action:** suspend with partial progress (`return await ctx.suspend(output=partial)`) or fail (`raise TimeoutError(...)`) — handler's choice. Multi-turn-friendly path is suspend; terminal-fail path is raise. Returning normally is also legal — it's a completed run, just one that overran the developer's deadline.
 
 ### S4 — Container shutdown (SIGTERM/SIGINT)
 - **Trigger:** Process is going down. `_shutdown_event` is set; propagated to `ctx.shutdown`. Hard cutoff after `shutdown_grace_period_seconds`.
-- **`cancel`:** unset (today). **`shutdown`:** set. **`pending_inputs`:** unrelated.
-- **Prescribed action:** checkpoint progress to `ctx.metadata`, then suspend cleanly (`return await ctx.suspend(...)`) so the next process re-enters with `entry_mode="recovered"`. Do NOT raise — raising marks the task failed (terminal).
+- **`cancel`:** unset (today). **`shutdown`:** set. **`pending_input_count`:** unrelated.
+- **Prescribed action:** checkpoint progress to `ctx.metadata`, then call `return await ctx.exit_for_recovery()` per FR-037 (NOT `ctx.suspend()` — suspend transitions to `suspended` which is not auto-recovered). The recovered process re-enters with `entry_mode="recovered"`.
 - **Note:** the responses guide treats shutdown as a flavor of cancel (SHUTTING_DOWN). The task primitive today keeps them separate (`ctx.cancel` vs `ctx.shutdown`).
 
 ### S5 — Explicit `TaskRun.cancel()` call from external code
 - **Trigger:** Operator or test code wants to stop a specific task. `TaskRun.cancel()` sets `ctx.cancel`. The handler is responsible for the terminal shape (suspend / complete / raise) based on its reaction. **Note (spec 016 FR-036):** `TaskRun.terminate()` and the `TaskTerminated` exception are being REMOVED entirely; `.cancel()` is the only "stop the task" API. The handler chooses whether to suspend / complete / raise; the framework does not force a terminal failure.
-- **`cancel`:** set. **`shutdown`:** unset. **`pending_inputs`:** unrelated.
+- **`cancel`:** set. **`shutdown`:** unset. **`pending_input_count`:** unrelated.
 - **Prescribed action:** handler decides. To honor cancellation cleanly: `if ctx.cancel.is_set(): return await ctx.suspend(reason="cancelled", output=partial)`. To force a failure (caller wanted terminal-failed semantics): `if ctx.cancel.is_set(): raise RuntimeError("cancelled by operator")`. To finish current input and then suspend: just let the handler run to its natural suspend boundary; `ctx.cancel` being set has no in-framework force-stop effect.
 
 ### S6 — Crash recovery mid-turn
@@ -81,32 +82,32 @@ For each scenario, the columns are: who set what; what the handler should observ
 
 ### S7 — Multi-turn resume (normal, not steering)
 - **Trigger:** Handler previously suspended; caller invokes `.run(task_id, input=I2)`. Handler re-enters with the new input.
-- **`entry_mode`:** `"resumed"`. **`was_steered`:** `False`. **`cancel`:** unset. **`pending_inputs`:** empty.
+- **`entry_mode`:** `"resumed"`. **`was_steered`:** `False`. **`cancel`:** unset. **`pending_input_count`:** 0.
 - **Prescribed action:** treat as a normal new turn. `ctx.input` is the new input; `ctx.metadata` carries prior state.
 
 ### S8 — Steering-drain re-entry (the OTHER kind of "resumed")
 - **Trigger:** Handler previously suspended (or returned and was drained-through), framework re-entered the loop with the next queued steering input.
-- **`entry_mode`:** `"resumed"`. **`was_steered`:** `True`. **`cancel`:** may be pre-set if another steering input was already queued behind I2 at drain time (per existing `_try_drain_steering` logic at `_manager.py:1485-1486`). **`pending_inputs`:** may be non-empty (additional steering inputs already queued behind the one driving this re-entry).
+- **`entry_mode`:** `"resumed"`. **`was_steered`:** `True`. **`cancel`:** may be pre-set if another steering input was already queued behind I2 at drain time (per existing `_try_drain_steering` logic at `_manager.py:1485-1486`). **`pending_input_count`:** ≥ 0 (additional steering inputs already queued behind the one driving this re-entry).
 - **Prescribed action:** treat as a normal new turn. The "was steered" flag exists for telemetry / branching, but the input itself is the source of truth.
 
 ### S9 — Multiple steering inputs queued simultaneously
 - **Trigger:** Caller-2 AND caller-3 both `.start()` while turn-1 is running. Queue is `[I2, I3]`.
-- **`cancel`:** set on turn-1 ctx. **`pending_inputs`:** `[I2, I3]`. On turn-2's re-entry: `cancel` set, `pending_inputs == [I3]`. On turn-3's re-entry: `cancel` unset, `pending_inputs == []`.
-- **Prescribed action:** same as S2 — suspend or finish; framework drains FIFO.
+- **`cancel`:** set on turn-1 ctx. **`pending_input_count`:** 2 (live; visible to turn-1 handler so it can decide rapid-drain vs single-turn-finish). On turn-2's re-entry: `cancel` set, `pending_input_count == 1`. On turn-3's re-entry: `cancel` unset, `pending_input_count == 0`.
+- **Prescribed action:** same as S2 — suspend or finish; framework drains FIFO. With `pending_input_count` the handler can make pace decisions ("3 queued? definitely yield now; just 1? maybe finish current first").
 
 ### S10 — Hybrid: steering pressure + timeout firing within milliseconds of each other
 - **Trigger:** Edge case. `ctx.cancel` is set; could be from either source; could be both.
-- **`cancel`:** set. **`shutdown`:** unset. **`pending_inputs`:** non-empty (steering happened) — but could also be empty (timeout fired first).
+- **`cancel`:** set. **`shutdown`:** unset. **`pending_input_count`:** ≥ 1 (steering happened) — but could also be 0 (timeout fired first).
 - **Prescribed action:** handler doesn't actually need to know which fired first; the right reaction in both cases is the same — wind down, suspend with partial work, let the next turn run.
 
 ### S11 — Hybrid: shutdown + steering pressure
 - **Trigger:** Rare. Shutdown firing while a steering input was queued.
-- **`shutdown`:** set. **`cancel`:** may or may not be set. **`pending_inputs`:** non-empty.
-- **Prescribed action:** shutdown wins — checkpoint and suspend. The queued steering input remains in the store; the recovered task will drain it on the next process's first scheduling.
+- **`shutdown`:** set. **`cancel`:** may or may not be set. **`pending_input_count`:** ≥ 1.
+- **Prescribed action:** shutdown wins — checkpoint and `ctx.exit_for_recovery()`. The queued steering input remains in the store; the recovered task will drain it on the next process's first scheduling.
 
 ### S12 — Hybrid: shutdown + timeout
 - **Trigger:** Rare. Watchdog fires near shutdown.
-- **`shutdown`:** set. **`cancel`:** set. **`pending_inputs`:** empty.
+- **`shutdown`:** set. **`cancel`:** set. **`pending_input_count`:** 0.
 - **Prescribed action:** shutdown wins. Same as S11.
 
 ---
@@ -118,13 +119,15 @@ A handler at a checkpoint that observes `ctx.cancel.is_set() == True` wants to d
 ```
 if ctx.shutdown.is_set():
     # S4, S11, S12 — shutdown wins.
-    # Checkpoint to ctx.metadata, suspend (NOT raise).
-    return await ctx.suspend(reason="shutting_down", output=partial)
+    # Checkpoint to ctx.metadata, exit_for_recovery (NOT suspend).
+    await ctx.metadata.flush()
+    return await ctx.exit_for_recovery()
 
-if len(ctx.pending_inputs) > 0:
+if ctx.pending_input_count > 0:
     # S2, S9, S10 — steering pressure. (S10 hybrid: timeout coexists but reaction is the same.)
     # Strategy A: yield now.  Strategy B: wind down + flush + suspend.
     # Strategy C: let current input finish, then suspend so I2 can drain.
+    # Strategy D: branch on count (>2 ⇒ yield ASAP, ==1 ⇒ finish current).
     return await ctx.suspend(reason="steered", output=checkpoint)
 
 # Else: timeout (S3). No steering, no shutdown — only timeout could have set ctx.cancel.
@@ -133,7 +136,7 @@ return await ctx.suspend(reason="deadline_exceeded", output=partial)
 
 Two implementation truths fall out:
 
-1. **The existing surface (`ctx.shutdown.is_set()`, `len(ctx.pending_inputs) > 0`, fall-through "must be timeout") gives complete disambiguation today** — no `CancelSignal.reason` needed for the *information*.
+1. **The existing surface (`ctx.shutdown.is_set()`, `ctx.pending_input_count > 0`, fall-through "must be timeout") gives complete disambiguation today** — no `CancelSignal.reason` needed for the *information*.
 2. **All three strategies in S2 converge on `return await ctx.suspend(...)`** (the user's clarification, 2026-06-01: to enable multi-turn the function MUST suspend; returning a raw value terminates and burns the queued steering input). Similarly, for S3 (timeout), the multi-turn-friendly action is also `return await ctx.suspend(...)`. So the "any cancel → suspend uniformly" handler shape is a **valid uniform default** that needs no disambiguation at all.
 
 So when does disambiguation *actually matter for handler behavior*? Three narrower cases:
@@ -202,7 +205,7 @@ Four shapes ranging from "no new surface" to "full alignment with responses".
 
 ### Proposal A — Zero new public surface (status quo + recipe)
 
-Drop FR-031 entirely. Keep `ctx.cancel` as a bare `asyncio.Event`. Keep `ctx.shutdown` as a separate bare `asyncio.Event`. Keep `ctx.pending_inputs` as it is. Educate developers via the dev guide:
+Drop FR-031 entirely. Keep `ctx.cancel` as a bare `asyncio.Event`. Keep `ctx.shutdown` as a separate bare `asyncio.Event`. Replace `ctx.pending_inputs: Sequence[Any]` with `ctx.pending_input_count: int` (live, read-only — see Proposal E for the rationale). Educate developers via the dev guide:
 
 ```python
 # Disambiguating ctx.cancel (when needed):
@@ -210,7 +213,7 @@ if ctx.cancel.is_set():
     if ctx.shutdown.is_set():
         # Shutdown wins; suspend.
         return await ctx.suspend(reason="shutting_down", output=partial)
-    elif ctx.pending_inputs:
+    elif ctx.pending_input_count > 0:
         # Steering pressure. Strategy A/B/C — your choice.
         ...
     else:
@@ -234,7 +237,7 @@ Add `CancelReason` enum + replace `ctx.cancel` with a `CancelSignal` wrapper. Fo
 
 ```python
 class CancelReason(str, Enum):
-    STEERED = "steered"          # steering pressure (pending_inputs > 0)
+    STEERED = "steered"          # steering pressure (pending_input_count > 0)
     DEADLINE_EXCEEDED = "deadline_exceeded"  # @task(timeout=...) fired
     SHUTTING_DOWN = "shutting_down"          # container SIGTERM
     # Note: TERMINATED reason previously considered for manager.terminate(),
@@ -341,16 +344,28 @@ if ctx.cancel.is_set():
 Drop the "single reason value" framing entirely. Each independent cause that can set `ctx.cancel` gets its own boolean property on `TaskContext`, set when the cause fires, never unset. `ctx.cancel` remains the composite "stop" signal that fires when ANY cause fires. `ctx.shutdown` remains separate (per user direction: shutdown is a distinct concern that requires a different handler action — `ctx.exit_for_recovery()` per FR-037 — and is optional to implement).
 
 ```python
-# ctx.cancel              : asyncio.Event   (composite; set by ANY of the causes below)
-# ctx.shutdown            : asyncio.Event   (separate concern, unchanged)
-# ctx.pending_inputs      : Sequence        (already exists; len > 0 ⇒ steering pressure)
-#
+# Existing (unchanged):
+ctx.cancel              : asyncio.Event   (composite; set by ANY of the causes below)
+ctx.shutdown            : asyncio.Event   (separate concern, unchanged)
+
+# REPLACED — was Sequence[Any] snapshot; now a live read-only count:
+ctx.pending_input_count : int             live count of queued steering inputs
+                                          (replaces ctx.pending_inputs;
+                                          see "Steering count" subsection below)
+
 # NEW boolean properties (read-only from handler perspective; framework-set):
-# ctx.timeout_exceeded    : bool            True iff the timeout watchdog fired
-# ctx.cancel_requested    : bool            True iff TaskRun.cancel() was called externally
+ctx.timeout_exceeded    : bool            True iff the timeout watchdog fired
+ctx.cancel_requested    : bool            True iff TaskRun.cancel() was called externally
 ```
 
-Note: steering is NOT a new boolean — `len(ctx.pending_inputs) > 0` already encodes it precisely. Adding a `ctx.steered` boolean would duplicate state.
+Note: steering is NOT a new boolean — `ctx.pending_input_count > 0` already encodes it precisely. Adding a `ctx.steered` boolean would duplicate state.
+
+**Steering count (`ctx.pending_input_count`) — user direction 2026-06-01.** The existing `ctx.pending_inputs: Sequence[Any]` is being REPLACED with a live read-only integer count. Rationale:
+- The sequence exposed the inputs themselves, misleading developers into thinking they could process those inputs in the current execution (they cannot — those inputs belong to future turns, drained one-by-one via the steering re-entry mechanism).
+- The sequence was an entry-time snapshot; it did NOT update if new inputs arrived mid-handler. So a long-running handler couldn't see backlog accumulating.
+- The integer count is live (read from the in-memory steering tracker on each property access) and conveys the only information the developer actually needs: **how many turns are waiting**.
+- A handler can use the count to decide pace: `if ctx.pending_input_count > 2: yield_now()` for rapid-drain mode under backlog pressure; `if ctx.pending_input_count == 1: maybe_finish_current_first()` when only one input is queued.
+- The count is read-only from the handler's perspective. The framework updates it as inputs are enqueued (`.start()`) and as the drain pops them on re-entry. There is no public API to mutate or peek at the queued inputs themselves — that would re-introduce the "developer thinks they can process them" footgun.
 
 Developer pattern:
 
@@ -369,8 +384,11 @@ if ctx.cancel_requested:
 if ctx.timeout_exceeded:
     # Deadline blown — handler may want to mark output as partial / log differently.
     ...
-if ctx.pending_inputs:
+if ctx.pending_input_count > 0:
     # Steering input queued — handler may want to wind down quickly to yield turn.
+    # Branch on the count for pace decisions:
+    #   if ctx.pending_input_count > 2: yield_now()
+    #   elif ctx.pending_input_count == 1: finish_current_then_suspend()
     ...
 
 # Shutdown is checked separately (per user direction: distinct concern, optional):
@@ -435,8 +453,9 @@ if ctx.shutdown.is_set():
 The following spec edits will land in a single follow-up commit:
 
 - **Rewrite FR-031**: title becomes "Independent boolean properties for cancel causes". Defines `ctx.timeout_exceeded: bool` and `ctx.cancel_requested: bool` on `TaskContext`. Both default `False` at handler entry; framework subsystems set them at the moment the cause fires; they never flip back. Drop all references to `CancelSignal` class and `CancelReason` enum — `ctx.cancel` stays a bare `asyncio.Event`.
-- **Rewrite FR-033**: title becomes "Set independent booleans at the source". `_timeout_watchdog` sets `ctx.timeout_exceeded = True` then `ctx.cancel.set()`. `TaskRun.cancel()` sets `ctx.cancel_requested = True` then `ctx.cancel.set()`. `_try_drain_steering` does NOT set a new boolean (steering pressure is already encoded by `len(ctx.pending_inputs) > 0`); it just sets `ctx.cancel.set()` as today. Crash-recovery zero-budget case (FR-032's `remaining == 0` path) pre-sets `ctx.timeout_exceeded = True` and `ctx.cancel.set()` so the recovered handler sees both from the first checkpoint.
-- **Rewrite SC-016**: title becomes "Independent cause booleans visible to handler". Parametrized sweep covers (a) timeout-only — `timeout_exceeded=True`, `cancel_requested=False`, `pending_inputs=()`; (b) external-cancel-only — `timeout_exceeded=False`, `cancel_requested=True`, `pending_inputs=()`; (c) steering-only — `timeout_exceeded=False`, `cancel_requested=False`, `pending_inputs` non-empty; (d) composite (all three fire in sequence) — all three booleans observable as True at the final checkpoint; (e) backward-compat — existing `ctx.cancel.is_set()` / `await ctx.cancel.wait()` patterns continue to work unchanged.
+- **Rewrite FR-033**: title becomes "Set independent booleans at the source". `_timeout_watchdog` sets `ctx.timeout_exceeded = True` then `ctx.cancel.set()`. `TaskRun.cancel()` sets `ctx.cancel_requested = True` then `ctx.cancel.set()`. `_try_drain_steering` does NOT set a new boolean (steering pressure is already encoded by `ctx.pending_input_count > 0`); it just sets `ctx.cancel.set()` as today. Crash-recovery zero-budget case (FR-032's `remaining == 0` path) pre-sets `ctx.timeout_exceeded = True` and `ctx.cancel.set()` so the recovered handler sees both from the first checkpoint.
+- **Rewrite SC-016**: title becomes "Independent cause booleans + live steering count visible to handler". Parametrized sweep covers (a) timeout-only — `timeout_exceeded=True`, `cancel_requested=False`, `pending_input_count=0`; (b) external-cancel-only — `timeout_exceeded=False`, `cancel_requested=True`, `pending_input_count=0`; (c) steering-only — `timeout_exceeded=False`, `cancel_requested=False`, `pending_input_count >= 1`; (d) composite (all three fire in sequence; multiple steering inputs queued) — all booleans True at the final checkpoint AND `pending_input_count` reflects current backlog (≥ 1); (e) live-count semantics — handler observes `pending_input_count` incrementing as additional `.start()` calls land mid-execution (asserts the count is NOT an entry-time snapshot); (f) backward-compat for `ctx.cancel.is_set()` / `ctx.cancel.wait()` patterns continue to work unchanged.
+- **Add a sibling FR (Proposal E §8 addendum)**: replace `ctx.pending_inputs: Sequence[Any]` with `ctx.pending_input_count: int` (live, read-only property). Removes 4 slots' worth of public surface (`pending_inputs`, `Sequence[Any]` typing, snapshot semantics, and the misleading exposure of queued input data). Implementation: the property reads from the framework-internal in-memory steering tracker on each access; updates as `.start()` enqueues and as `_try_drain_steering` pops. The `pending_inputs` attribute MUST be removed from `TaskContext.__slots__`, `__init__`, and `_try_drain_steering`'s new-context construction. Any test asserting on `ctx.pending_inputs` MUST be ported to `ctx.pending_input_count`.
 - **Update `TaskContext` Key Entity** (currently lists `CancelSignal`): remove `CancelSignal` entry, add `timeout_exceeded` and `cancel_requested` to the field table.
 - **Update Principle XII checklist**: remove `CancelSignal` and `TaskContext.cancel type change` from affected-symbols list; add `TaskContext.timeout_exceeded` and `TaskContext.cancel_requested` as new additive properties. `ctx.cancel` remains bare `asyncio.Event` — NOT a public-surface change.
 - **Update "What goes where" table**: rewrite the `ctx.cancel` row to describe independent booleans + composite-case handling; cross-reference FR-037's `ctx.exit_for_recovery()` for the shutdown branch.
