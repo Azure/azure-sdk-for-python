@@ -161,7 +161,10 @@ class TaskManager:
         self._active_tasks: dict[str, _ActiveTask] = {}
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
         self._resume_opts: dict[str, TaskOptions] = {}
-        self._lease_owner = derive_lease_owner(config.session_id or "local")
+        self._lease_owner = derive_lease_owner(
+            config.agent_name or "unknown-agent",
+            config.session_id or "local",
+        )
         self._instance_id = generate_instance_id()
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._shutdown_grace_seconds = shutdown_grace_seconds

@@ -23,18 +23,42 @@ from ._provider import TaskProvider
 logger = logging.getLogger("azure.ai.agentserver.durable")
 
 
-def derive_lease_owner(session_id: str) -> str:
-    """Derive a stable lease owner string from the session ID.
+def derive_lease_owner(agent_name: str, session_id: str) -> str:
+    """Derive a stable lease owner string from the agent name and session ID.
 
-    The owner is stable across process restarts within the same session,
-    enabling dual-identity lease reclamation.
+    Spec 016 FR-004a (US3): the lease owner string MUST be derived from
+    BOTH the agent name (from ``FOUNDRY_AGENT_NAME``) AND the session
+    identifier — not from the session ID alone. Two different agents
+    that happen to share a session ID (a misconfiguration or a future
+    multi-agent platform topology) would otherwise collide on lease
+    ownership and step on each other's tasks. The platform's
+    ``binding_mismatch`` protection (FR-006) covers split-brain on the
+    same agent+session but is silent on this orthogonal case.
 
+    The owner is stable across process restarts within the same
+    ``(agent_name, session_id)`` pair, enabling dual-identity lease
+    reclamation.
+
+    On-the-wire format: ``"{agent_name}|session:{session_id}"``. Both
+    components are recoverable from the string by splitting on the
+    first ``"|"``; the format is chosen for operator readability in
+    logs.
+
+    :param agent_name: The agent name (resolved from
+        ``FOUNDRY_AGENT_NAME``). Falls back to ``"unknown-agent"`` when
+        the env var is unset — the caller decides whether to do the
+        fallback or pass ``"unknown-agent"`` directly. The fallback
+        string matches the rest of the framework's agent-name
+        conventions so traces, logs, and lease ownership agree.
+    :type agent_name: str
     :param session_id: The agent session identifier.
     :type session_id: str
-    :return: A lease owner string in the format ``"session:{session_id}"``.
+    :return: A lease owner string containing both components in a
+        stable, parseable format.
     :rtype: str
     """
-    return f"session:{session_id}"
+    safe_agent = agent_name or "unknown-agent"
+    return f"{safe_agent}|session:{session_id}"
 
 
 def generate_instance_id() -> str:
