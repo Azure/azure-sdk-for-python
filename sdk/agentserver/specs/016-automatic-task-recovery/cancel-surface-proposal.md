@@ -69,10 +69,10 @@ For each scenario, the columns are: who set what; what the handler should observ
 - **Prescribed action:** checkpoint progress to `ctx.metadata`, then suspend cleanly (`return await ctx.suspend(...)`) so the next process re-enters with `entry_mode="recovered"`. Do NOT raise — raising marks the task failed (terminal).
 - **Note:** the responses guide treats shutdown as a flavor of cancel (SHUTTING_DOWN). The task primitive today keeps them separate (`ctx.cancel` vs `ctx.shutdown`).
 
-### S5 — Explicit `manager.terminate(task_id)` call
-- **Trigger:** Operator or test code wants to force-stop a specific task. The manager sets a per-task `terminate_event` and cancels the underlying `asyncio.Task`. Handler receives `asyncio.CancelledError`. Per `_manager.py:1266-1284` the framework writes a `TaskTerminated` failure record.
-- **`cancel`:** may be set (depending on order). **`shutdown`:** unset. The handler doesn't see `terminate_event` directly — it sees `asyncio.CancelledError`.
-- **Prescribed action:** propagate the `CancelledError` (don't swallow). Cleanup in `try/finally` is fine. Framework writes the terminal record.
+### S5 — Explicit `TaskRun.cancel()` call from external code
+- **Trigger:** Operator or test code wants to stop a specific task. `TaskRun.cancel()` sets `ctx.cancel`. The handler is responsible for the terminal shape (suspend / complete / raise) based on its reaction. **Note (spec 016 FR-036):** `TaskRun.terminate()` and the `TaskTerminated` exception are being REMOVED entirely; `.cancel()` is the only "stop the task" API. The handler chooses whether to suspend / complete / raise; the framework does not force a terminal failure.
+- **`cancel`:** set. **`shutdown`:** unset. **`pending_inputs`:** unrelated.
+- **Prescribed action:** handler decides. To honor cancellation cleanly: `if ctx.cancel.is_set(): return await ctx.suspend(reason="cancelled", output=partial)`. To force a failure (caller wanted terminal-failed semantics): `if ctx.cancel.is_set(): raise RuntimeError("cancelled by operator")`. To finish current input and then suspend: just let the handler run to its natural suspend boundary; `ctx.cancel` being set has no in-framework force-stop effect.
 
 ### S6 — Crash recovery mid-turn
 - **Trigger:** Process died; new process restarts; recovery picks up an in-progress task. Handler re-enters.
@@ -351,18 +351,23 @@ if ctx.cancel.is_set():
 
 ## 7. Recommendation (to debate)
 
-**Lean: Proposal D** — add a `ctx.cancel_reason: Literal["steered", "deadline_exceeded"] | None` property directly on `TaskContext`. Keep `ctx.cancel` and `ctx.shutdown` as today.
+**Lean: Proposal A or D, with the balance shifted toward A by the §3 corollary.** The user's clarification that Strategy C in S2 also ends with `return await ctx.suspend(...)` (because multi-turn requires suspend) narrows the disambiguation-actually-matters set to handlers that want to vary strategy (A vs C) or terminal action (suspend vs raise) based on cause. For handlers that adopt the uniform "any `cancel` → suspend" default — likely the majority — the existing surface already suffices.
 
-Reasoning:
-- Solves the one real ergonomic gap (S2 Strategy C vs S3 — must suspend) without adding a wrapping class.
-- Preserves the existing `ctx.shutdown` separation; no breaking change to consumers that check it.
-- Smaller diff than Proposal B/C; one new attribute vs. a new class + an enum + a typing migration.
-- Aligns with `Literal`-based context attributes elsewhere in the package (`entry_mode`, `TaskResult.status`).
+Two ways to read this:
+
+- **If we believe handlers will commonly want to vary by cause:** Proposal D (add `ctx.cancel_reason: Literal[...] | None` to `TaskContext`). Smallest addition that supports the branching, no wrapping class, mirrors existing `Literal`-based context attributes.
+- **If we believe the uniform default covers the common case and varying-by-cause is rare advanced usage:** Proposal A (zero new public surface). Document the 3-way `if` recipe in the dev guide as the advanced/optional pattern. The fall-through "must be timeout" footgun is real but manageable — if a future scope adds a 4th cancel cause we add the reason API then, at the point we actually need it. Until then, simpler surface.
 
 Reasoning against the alternatives:
-- **A** (status quo): the fall-through "must be timeout" inference is a footgun if a future scope adds a fourth cancel cause.
-- **B** (single enum, drop shutdown): bigger breaking change than is justified by the symmetry win. The two events are genuinely different events with different operator semantics (per-task cancel vs container drain); merging them is a semantic loss.
-- **C** (CancelSignal class): adds a wrapping class for a single property. Doesn't earn its keep vs. D.
+- **B** (single enum, drop `ctx.shutdown`): bigger breaking change than is justified by the symmetry win. The two events are genuinely different events with different operator semantics (per-task cancel vs container drain); merging them is a semantic loss.
+- **C** (CancelSignal class with reason; keep shutdown): adds a wrapping class for a single property. Doesn't earn its keep vs. D.
+
+### Decision proposed to the user
+
+Pick between A and D. The deciding question is: **do we expect handlers to commonly want to vary their cancel reaction by cause, or will the uniform "any `cancel` → suspend" default cover the common case?**
+
+- If "uniform default covers common case" → **Proposal A**. Drop FR-031, simplify FR-033, document the recipe.
+- If "varying by cause is expected as a first-class pattern" → **Proposal D**. Add `ctx.cancel_reason`, keep FR-033's "set reason at the source", drop the `CancelSignal` wrapping class entirely.
 
 ### Open questions to resolve before locking in
 
