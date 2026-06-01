@@ -922,17 +922,15 @@ class TestPartitionSplitQuery(unittest.TestCase):
                     "Second call (incremental retry) should have stale IfNoneMatch header"
 
                 # Third call is full-load fallback and MUST drop IfNoneMatch -- this is
-                # the bug fix's whole point.
+                # the bug fix's whole point. Any post-fallback drain pages (call 4+)
+                # legitimately reuse the etag returned by call 3 as their If-None-Match
+                # to receive the 304 terminator; that fresh etag may coincidentally equal
+                # the original stale etag if nothing changed server-side between caching
+                # and fallback, so we cannot assert "!= stale_etag" on those drain pages.
+                # The call-3 assertion is the actual production contract.
                 third_headers = captured_headers_list[2]
                 assert http_constants.HttpHeaders.IfNoneMatch not in third_headers, \
                     "Third call (full load fallback) should NOT have IfNoneMatch header"
-
-                # Any subsequent calls belong to the fallback drain loop. They may
-                # carry IfNoneMatch (the fresh etag returned by call 3), but they
-                # must NEVER carry the stale etag we already invalidated.
-                for idx, request_headers in enumerate(captured_headers_list[3:], start=4):
-                    assert request_headers.get(http_constants.HttpHeaders.IfNoneMatch) != stale_etag, \
-                        f"Call {idx} (post-fallback drain) must not resurrect the stale etag"
 
             print("Validated: IfNoneMatch header is correctly cleaned up on fallback")
 
