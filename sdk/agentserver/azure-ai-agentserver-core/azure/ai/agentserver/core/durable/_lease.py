@@ -19,6 +19,7 @@ from collections.abc import Awaitable, Callable
 
 from ._models import TaskPatchRequest
 from ._provider import TaskProvider
+from ._client import TransportClassifiedError
 
 logger = logging.getLogger("azure.ai.agentserver.durable")
 
@@ -148,6 +149,46 @@ async def lease_renewal_loop(
                     logger.debug(
                         "Steering poll failed for task %s", task_id, exc_info=True
                     )
+        except TransportClassifiedError as exc:
+            if (
+                getattr(exc, "classification", None) == "evicted"
+                and on_cancel_callback is not None
+            ):
+                # Spec 016 FR-007: orphan-sandbox eviction at the lease-renewal
+                # site. Stop renewing immediately; signal the local cleanup
+                # callback so _manager.py can cancel the local execution,
+                # suppress any pending terminal write, and signal awaiters
+                # with TaskConflictError. The local cleanup sequence is
+                # atomic per Invariant 1 (no partial cleanup state observable).
+                logger.warning(
+                    "Lease renewal rejected with binding_mismatch for task %s "
+                    "(orphan-sandbox eviction) — cancelling local execution",
+                    task_id,
+                )
+                on_cancel_callback.set()
+                break
+            # Non-eviction classified errors fall through to the generic
+            # failure-counter path (e.g. transient 503 → retry).
+            consecutive_failures += 1
+            logger.warning(
+                "Lease renewal failed for task %s (attempt %d/%d): %s",
+                task_id,
+                consecutive_failures,
+                on_failure_count,
+                exc,
+                exc_info=True,
+            )
+            if (
+                consecutive_failures >= on_failure_count
+                and on_cancel_callback is not None
+            ):
+                logger.error(
+                    "Lease renewal failed %d times for task %s — signalling cancellation",
+                    on_failure_count,
+                    task_id,
+                )
+                on_cancel_callback.set()
+                break
         except Exception:  # pylint: disable=broad-exception-caught
             consecutive_failures += 1
             logger.warning(

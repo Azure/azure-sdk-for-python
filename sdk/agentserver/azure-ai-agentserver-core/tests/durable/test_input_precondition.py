@@ -324,12 +324,17 @@ async def test_framework_namespace_isolated_from_user_payload(tmp_path: Path) ->
 
 @pytest.mark.asyncio
 async def test_precondition_check_source_signature() -> None:
-    """Source-level: the precondition helper is wired into _lifecycle_start."""
+    """Source-level: the precondition helper is wired into _lifecycle_start.
+
+    Spec 016 note: the body of `_lifecycle_start` was extracted to
+    `_lifecycle_start_inner` to host the FR-008 eviction-to-TaskConflictError
+    wrapper. Source assertions follow the body to the inner method.
+    """
     import inspect
 
     from azure.ai.agentserver.core.durable import _decorator as dec_mod
 
-    src = inspect.getsource(dec_mod.Task._lifecycle_start)
+    src = inspect.getsource(dec_mod.Task._lifecycle_start_inner)
     # Pre-acceptance check is invoked unconditionally.
     assert "_check_input_precondition" in src
     # Spec 013 US2 framing annotation present.

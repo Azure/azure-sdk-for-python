@@ -18,9 +18,10 @@ from pathlib import Path
 from typing import Any, Optional, TypeVar
 
 from .._config import AgentConfig
+from ._client import TransportClassifiedError
 from ._context import EntryMode, TaskContext
 from ._decorator import TaskOptions, _deserialize_input, _serialize_input
-from ._exceptions import TaskFailed, TaskNotFound
+from ._exceptions import TaskConflictError, TaskFailed, TaskNotFound
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
 from ._metadata import TaskMetadata
 from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest, TaskStatus
@@ -55,6 +56,23 @@ Output = TypeVar("Output")
 
 # Module-level manager singleton
 _manager: TaskManager | None = None
+
+
+def _is_evicted(exc: BaseException) -> bool:
+    """Return True if ``exc`` is the FR-006 eviction-classified rejection.
+
+    Spec 016 helper used by every store-write call site that must
+    funnel through the FR-007 / FR-008 local-cleanup sequence on
+    orphan-sandbox eviction. The HostedTaskProvider raises
+    ``TransportClassifiedError(classification="evicted")`` after the
+    pipeline classifier maps an HTTP 409 + ``binding_mismatch`` body;
+    in-test stubs raise the same typed exception so the framework's
+    cleanup runs identically against both.
+    """
+    return (
+        isinstance(exc, TransportClassifiedError)
+        and getattr(exc, "classification", None) == "evicted"
+    )
 
 
 def get_task_manager() -> TaskManager:
@@ -1591,6 +1609,22 @@ class TaskManager:
                         task_id,
                     )
                     return False
+                except TransportClassifiedError as exc:
+                    if _is_evicted(exc):
+                        # Spec 016 FR-007: orphan-sandbox eviction at the
+                        # terminal-write site. Suppress this terminal write
+                        # (already done — the call raised) and signal awaiters
+                        # via TaskConflictError. Caller-observable shape is
+                        # identical to the live-elsewhere case per Invariant 1.
+                        logger.warning(
+                            "Eviction (binding_mismatch) on terminal write for "
+                            "task %s (session=%s) — suppressing terminal write, "
+                            "signalling awaiters with TaskConflictError",
+                            task_id,
+                            self._config.session_id or "local",
+                        )
+                        raise TaskConflictError(task_id, "in_progress") from exc
+                    raise
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Failed to complete task %s", task_id, exc_info=True)
             else:
@@ -1602,6 +1636,17 @@ class TaskManager:
                             payload=payload_patch,
                         ),
                     )
+                except TransportClassifiedError as exc:
+                    if _is_evicted(exc):
+                        logger.warning(
+                            "Eviction (binding_mismatch) on terminal write for "
+                            "task %s (session=%s) — suppressing terminal write, "
+                            "signalling awaiters with TaskConflictError",
+                            task_id,
+                            self._config.session_id or "local",
+                        )
+                        raise TaskConflictError(task_id, "in_progress") from exc
+                    raise
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Failed to complete task %s", task_id, exc_info=True)
 
@@ -1636,6 +1681,17 @@ class TaskManager:
         if opts.ephemeral:
             try:
                 await self._provider.delete(task_id, force=True)
+            except TransportClassifiedError as exc:
+                if _is_evicted(exc):
+                    logger.warning(
+                        "Eviction (binding_mismatch) on failed-task delete for "
+                        "task %s (session=%s) — suppressing delete, signalling "
+                        "awaiters with TaskConflictError",
+                        task_id,
+                        self._config.session_id or "local",
+                    )
+                    raise TaskConflictError(task_id, "in_progress") from exc
+                raise
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
                     "Failed to delete failed ephemeral task %s",
@@ -1652,6 +1708,17 @@ class TaskManager:
                         payload={"metadata": metadata.to_dict()},
                     ),
                 )
+            except TransportClassifiedError as exc:
+                if _is_evicted(exc):
+                    logger.warning(
+                        "Eviction (binding_mismatch) on terminal failure write "
+                        "for task %s (session=%s) — suppressing terminal write, "
+                        "signalling awaiters with TaskConflictError",
+                        task_id,
+                        self._config.session_id or "local",
+                    )
+                    raise TaskConflictError(task_id, "in_progress") from exc
+                raise
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
                     "Failed to record error for task %s",
@@ -1723,6 +1790,17 @@ class TaskManager:
                     payload=payload_patch,
                 ),
             )
+        except TransportClassifiedError as exc:
+            if _is_evicted(exc):
+                logger.warning(
+                    "Eviction (binding_mismatch) on suspend write for task %s "
+                    "(session=%s) — suppressing suspend write, signalling "
+                    "awaiters with TaskConflictError",
+                    task_id,
+                    self._config.session_id or "local",
+                )
+                raise TaskConflictError(task_id, "in_progress") from exc
+            raise
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning("Failed to suspend task %s", task_id, exc_info=True)
 

@@ -108,12 +108,16 @@ def test_handle_suspend_only_fires_on_suspend_not_recovery() -> None:
 
 
 def test_suspended_resume_uses_etag_retry_loop() -> None:
-    """The suspended-resume input patch is now etag-protected (T-083)."""
+    """The suspended-resume input patch is now etag-protected (T-083).
+
+    Spec 016 note: the body of `_lifecycle_start` was extracted to
+    `_lifecycle_start_inner`; source assertions follow.
+    """
     import inspect
 
     from azure.ai.agentserver.core.durable._decorator import Task
 
-    src = inspect.getsource(Task._lifecycle_start)
+    src = inspect.getsource(Task._lifecycle_start_inner)
     # Etag retry loop at the suspended-resume site.
     assert 'if_match=etag' in src
     # And the standard retry behaviour.

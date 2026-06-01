@@ -8,14 +8,15 @@ hosts two reusable fixtures:
 
 1. **``binding_mismatch_provider``** — a :class:`TaskProvider`-conforming
    stub that wraps an in-memory delegate and selectively raises a
-   ``binding_mismatch``-classified rejection on configured write
-   operations. Used by ``test_split_brain_eviction.py`` (US2) and the
+   ``TransportClassifiedError(classification="evicted")`` on configured
+   write operations (the same exception type the real
+   :class:`HostedTaskProvider` would raise after the FR-006 classifier
+   maps an HTTP 409 / ``{"error": {"code": "binding_mismatch"}}``
+   response). Used by ``test_split_brain_eviction.py`` (US2) and the
    SC-006 ``(scheduling primitive × steerable × lease state)``
-   parametrized sweep cells. The stub mirrors the real platform's
-   HTTP 409 / ``{"error": {"code": "binding_mismatch"}}`` shape so the
-   FR-006 classifier (see ``_classify_store_write_error`` in
-   ``durable/_client.py``) translates the rejection to the ``evicted``
-   outcome without monkey-patching.
+   parametrized sweep cells. The unified exception type lets the
+   framework's local-cleanup sequence run identically against the stub
+   and the real hosted client without monkey-patching.
 
    Reference: spec.md §Conformance Test Map row 13.
 
@@ -39,6 +40,8 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping, Sequence
 
 import pytest
+
+from azure.ai.agentserver.core.durable._client import TransportClassifiedError
 
 
 # --------------------------------------------------------------------- #
@@ -119,7 +122,22 @@ class BindingMismatchProvider:
 
     def _maybe_reject(self, op: str, task_id: str) -> None:
         if task_id in self._reject[op] or "*" in self._reject[op]:
-            raise _BindingMismatchRejection()
+            # Raise the SAME typed exception the real HostedTaskProvider
+            # would raise after the FR-006 classifier maps an HTTP 409 /
+            # binding_mismatch response. Using the unified type means the
+            # framework's local-cleanup sequence (FR-007) runs identically
+            # against the stub and the real wire path.
+            raise TransportClassifiedError(
+                status=409,
+                classification="evicted",
+                message=(
+                    f"task-store {op} {task_id}: classified=evicted "
+                    f"(binding_mismatch; sandbox is no longer the "
+                    f"authoritative owner of this task)"
+                ),
+                request_id=None,
+                body_prefix='{"error":{"code":"binding_mismatch"}}',
+            )
 
     async def create(self, request: Any) -> Any:
         self._maybe_reject("create", getattr(request, "id", ""))

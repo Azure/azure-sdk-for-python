@@ -34,6 +34,7 @@ from typing import (
 
 import re
 
+from ._client import TransportClassifiedError as _TransportClassifiedError
 from ._context import TaskContext
 from ._result import TaskResult
 from ._retry import RetryPolicy
@@ -844,6 +845,44 @@ class Task(Generic[Input, Output]):
         :paramtype if_last_input_id: str | None
         :return: A handle to the running task.
         :rtype: TaskRun[Output]
+        """
+        from ._exceptions import (  # pylint: disable=import-outside-toplevel
+            TaskConflictError,
+        )
+        from ._manager import (  # pylint: disable=import-outside-toplevel
+            get_task_manager,
+        )
+
+        # Spec 016 FR-008 (US2): orphan-sandbox eviction at scheduling
+        # entry points MUST surface as TaskConflictError(current_status=
+        # "in_progress") — the same shape as the live-elsewhere case
+        # per Invariant 1. Operator-facing WARNING logs (in _manager.py
+        # and _lease.py) are the only differentiator.
+        try:
+            return await self._lifecycle_start_inner(
+                task_id=task_id,
+                input=input,
+                input_id=input_id,
+                if_last_input_id=if_last_input_id,
+            )
+        except _TransportClassifiedError as exc:
+            if getattr(exc, "classification", None) == "evicted":
+                # Pre-import only at the eviction site to avoid a cycle.
+                raise TaskConflictError(task_id, "in_progress") from exc
+            raise
+
+    async def _lifecycle_start_inner(  # pylint: disable=too-many-locals
+        self,
+        *,
+        task_id: str,
+        input: Input,  # noqa: A002
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> TaskRun[Output]:
+        """Inner body of :meth:`_lifecycle_start`. See that method for docs.
+
+        Split out so the outer wrapper can convert spec 016 FR-008 evictions
+        to ``TaskConflictError`` without indenting the entire body.
         """
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskConflictError,
