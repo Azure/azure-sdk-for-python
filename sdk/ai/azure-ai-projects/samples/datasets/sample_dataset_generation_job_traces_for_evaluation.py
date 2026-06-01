@@ -152,8 +152,7 @@ with (
                                 end_time=end_time,
                             ),
                         ],
-                        # Service requires max_samples in [15, 1000]. It's a cap on
-                        # generated samples - one seeded trace turn is enough.
+                        # max_samples must be in [15, 1000]; caps output dataset size.
                         options=TracesDataGenerationJobOptions(max_samples=15),
                         output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
                     ),
