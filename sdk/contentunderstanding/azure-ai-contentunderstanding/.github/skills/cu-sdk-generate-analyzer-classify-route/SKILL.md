@@ -48,10 +48,6 @@ run once for this resource. Full setup lives in [`cu-sdk-setup`](../cu-sdk-setup
 > 1. "Does each document in your packet contain more than one type of form (e.g. an invoice page followed by a bank statement page)?" — if no, route to `cu-sdk-generate-analyzer`.
 > 2. "What types of documents appear in your packets?" — capture as the list of inner analyzers.
 
-> **[ASK USER] Packet check:**
-> 1. "Does each document in your packet contain more than one type of form (e.g. an invoice page followed by a bank statement page)?" — if no, route to `cu-sdk-generate-analyzer`.
-> 2. "What types of documents appear in your packets?" — capture as the list of inner analyzers.
-
 ## Architecture
 
 ```
