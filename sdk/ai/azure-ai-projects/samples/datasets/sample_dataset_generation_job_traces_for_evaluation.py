@@ -116,13 +116,7 @@ with (
             openai_client.responses.create(
                 conversation=conversation.id,
                 input=SEED_PROMPT,
-                extra_body={
-                    "agent_reference": {
-                        "name": created_agent.name,
-                        "id": created_agent.id,
-                        "type": "agent_reference",
-                    }
-                },
+                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
             )
 
         print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
