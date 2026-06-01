@@ -27,9 +27,6 @@
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `EmergingIssuesGetResult` moved instance variable `refresh_timestamp`, `status_banners` and `status_active_events` under property `properties` whose type is `EmergingIssue`
-  - Deleted or renamed model `Events`
-  - Deleted or renamed model `ImpactedResourceStatus`
-  - Deleted or renamed model `ReasonTypeValues`
   - Method `AvailabilityStatusesOperations.get_by_resource` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `AvailabilityStatusesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `AvailabilityStatusesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
@@ -41,6 +38,10 @@
   - Method `EventOperations.get_by_tenant_id_and_tracking_id` changed its parameter `query_start_time` from `positional_or_keyword` to `keyword_only`
   - Method `EventsOperations.list_by_subscription_id` changed its parameter `query_start_time` from `positional_or_keyword` to `keyword_only`
   - Method `EventsOperations.list_by_tenant_id` changed its parameter `query_start_time` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `Events`/`ImpactedResourceStatus`/`ReasonTypeValues` which actually was not used by SDK users
 
 ## 1.0.0b6 (2024-10-30)
 
