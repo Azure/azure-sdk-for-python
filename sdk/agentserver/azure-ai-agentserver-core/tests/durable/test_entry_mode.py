@@ -120,7 +120,7 @@ class TestEntryMode:
         """Calling .run() on a stale in_progress task produces entry_mode='recovered'."""
         observed: list[str] = []
 
-        @task(title="test-recover", ephemeral=False, stale_timeout=1.0)
+        @task(title="test-recover", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return "recovered-ok"
@@ -293,7 +293,7 @@ class TestRecoveryRetryAttempt:
         """
         observed: list[tuple[str, int]] = []
 
-        @task(title="rec-attempt", ephemeral=False, stale_timeout=1.0)
+        @task(title="rec-attempt", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.retry_attempt))
             return "done"
@@ -327,7 +327,7 @@ class TestRecoveryRetryAttempt:
         """
         observed: list[int] = []
 
-        @task(title="rec-no-bump", ephemeral=False, stale_timeout=1.0)
+        @task(title="rec-no-bump", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"

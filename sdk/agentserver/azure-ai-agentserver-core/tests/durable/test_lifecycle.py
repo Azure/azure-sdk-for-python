@@ -183,7 +183,7 @@ class TestLifecycle:
         """run() on stale in_progress task → recovers, entry_mode='recovered'."""
         observed_mode: list[str] = []
 
-        @task(title="lifecycle-stale", stale_timeout=1.0)
+        @task(title="lifecycle-stale")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "recovered"
@@ -278,20 +278,29 @@ class TestLifecycle:
             await self._teardown_manager(manager, mgr_mod)
 
     @pytest.mark.asyncio
-    async def test_stale_timeout_parameter(self, tmp_path) -> None:
-        """stale_timeout controls when in_progress is considered stale.
+    async def test_stale_timeout_kwarg_removed_spec_016(self, tmp_path) -> None:
+        """Spec 016 FR-001 / US1: stale_timeout removed from developer surface.
 
-        Configured at decorator time (or via ``Task.options(stale_timeout=...)``);
-        not a per-call kwarg. This test derives two variants of the same
-        underlying handler to exercise both the not-stale and stale branches.
+        Replaces the prior `test_stale_timeout_parameter` test (which
+        exercised the per-task `stale_timeout` kwarg behavior). After
+        spec 016 the kwarg is gone — passing it raises TypeError. The
+        recovery decision is framework-managed (no developer knob).
+
+        For deterministic in-test recovery triggering during the
+        transitional Phase-4 cohort of spec 016 (Phase 6 replaces this
+        mechanism entirely), tests monkey-patch
+        ``_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS`` directly. The
+        backdated `updated_at` pattern used elsewhere in this suite
+        continues to work because the 2020 timestamp exceeds the
+        default 300s threshold by years.
         """
+        # The kwarg removal is asserted by TestStaleTimeoutRemoved in
+        # test_decorator.py. Here we verify the framework-managed default
+        # still recovers a backdated record correctly.
 
-        @task(title="stale-timeout")
+        @task(title="stale-default")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "ok"
-
-        my_task_high = my_task.options(stale_timeout=999999999.0)
-        my_task_low = my_task.options(stale_timeout=1.0)
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
@@ -309,15 +318,9 @@ class TestLifecycle:
             )
             self._backdate_task(tmp_path, "lc-timeout-1")
 
-            # Very large timeout → not stale → conflict
-            with pytest.raises(TaskConflictError):
-                await my_task_high.run(
-                    task_id="lc-timeout-1",
-                    input="new",
-                )
-
-            # Small timeout → stale → recover
-            result = await my_task_low.run(
+            # Backdated record (2020) is far past the framework's default
+            # 300s threshold → recovery is triggered.
+            result = await my_task.run(
                 task_id="lc-timeout-1",
                 input="new",
             )

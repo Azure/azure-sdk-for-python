@@ -464,7 +464,7 @@ class TestRetryAttemptDurability:
         """
         observed: list[int] = []
 
-        @task(title="recovered-retry-aware", ephemeral=False, stale_timeout=1.0)
+        @task(title="recovered-retry-aware", ephemeral=False)
         async def handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"
@@ -511,7 +511,6 @@ class TestRetryAttemptDurability:
                 retry_on=(ValueError,),
                 jitter=False,
             ),
-            stale_timeout=1.0,
         )
         async def always_fail(ctx: TaskContext[str]) -> str:
             invocations.append(ctx.retry_attempt)
@@ -560,7 +559,6 @@ class TestRetryAttemptDurability:
                 retry_on=(ValueError,),
                 jitter=False,
             ),
-            stale_timeout=1.0,
         )
         async def succeed_now(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
@@ -618,7 +616,6 @@ class TestRetryAttemptDurability:
             title="steerable-retry-aware",
             ephemeral=False,
             steerable=True,
-            stale_timeout=1.0,
         )
         async def steer_handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)

@@ -511,8 +511,14 @@ class TestSteeringRecovery:
         mgr_mod._manager = None
 
     @pytest.mark.asyncio
-    async def test_recovery_with_drain_in_progress(self, tmp_path):
+    async def test_recovery_with_drain_in_progress(self, tmp_path, monkeypatch):
         """Recovery after crash mid-drain uses active_input from steering state."""
+        # Spec 016 transitional: force immediate recovery via the legacy
+        # threshold constant. Phase 6 of spec 016 replaces this with
+        # lease-based reclaim (FR-002 / FR-004).
+        import azure.ai.agentserver.core.durable._decorator as _dec
+        monkeypatch.setattr(_dec, "_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS", 0.0)
+
         from azure.ai.agentserver.core.durable._local_provider import (
             LocalFileTaskProvider,
         )
@@ -576,7 +582,7 @@ class TestSteeringRecovery:
 
         inputs_seen: list[dict] = []
 
-        @task(name="chat", steerable=True, ephemeral=False, stale_timeout=0.0)
+        @task(name="chat", steerable=True, ephemeral=False)
         async def chat2(ctx: TaskContext[dict]) -> dict:
             inputs_seen.append(dict(ctx.input))
             return {"msg": ctx.input.get("msg", "?")}
@@ -593,8 +599,14 @@ class TestSteeringRecovery:
         mgr_mod._manager = None
 
     @pytest.mark.asyncio
-    async def test_recovery_with_pending_inputs(self, tmp_path):
+    async def test_recovery_with_pending_inputs(self, tmp_path, monkeypatch):
         """Recovery with pending inputs drains them after function completes."""
+        # Spec 016 transitional: force immediate recovery via the legacy
+        # threshold constant. Phase 6 of spec 016 replaces this with
+        # lease-based reclaim (FR-002 / FR-004).
+        import azure.ai.agentserver.core.durable._decorator as _dec
+        monkeypatch.setattr(_dec, "_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS", 0.0)
+
         from azure.ai.agentserver.core.durable._local_provider import (
             LocalFileTaskProvider,
         )
@@ -661,7 +673,7 @@ class TestSteeringRecovery:
 
         inputs_seen: list[str] = []
 
-        @task(name="chat", steerable=True, ephemeral=False, stale_timeout=0.0)
+        @task(name="chat", steerable=True, ephemeral=False)
         async def chat(ctx: TaskContext[dict]) -> dict:
             inputs_seen.append(ctx.input.get("msg", "?"))
             if ctx.cancel.is_set():

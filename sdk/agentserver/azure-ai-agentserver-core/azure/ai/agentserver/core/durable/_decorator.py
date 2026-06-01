@@ -184,14 +184,27 @@ def _deserialize_input(value: Any, input_type: type[Any]) -> Any:
     return value
 
 
-def _is_stale(task_updated_at: str, timeout: float) -> bool:
-    """Check if an in_progress task is stale based on its updated_at timestamp.
+def _in_progress_was_abandoned_legacy(task_updated_at: str, threshold: float) -> bool:
+    """Transitional helper for the Phase-4 cohort of spec 016.
+
+    Replaces the public ``_is_stale`` helper that was removed by FR-001
+    (spec 016 US1 / T031). This intentionally non-stale-named function
+    holds the in-process recovery decision until Phase 6 of spec 016
+    lands the proper FR-002 / FR-004 lease-based reclaim path
+    (``_lease_is_dead`` + ``_reclaim_one``) that supersedes this entire
+    code path.
+
+    The function MUST NOT be imported from outside ``_decorator.py`` —
+    it is a transitional implementation detail with a planned
+    deprecation in the same PR (Phase 6 of spec 016).
 
     :param task_updated_at: ISO 8601 timestamp of the task's last update.
     :type task_updated_at: str
-    :param timeout: Seconds after which the task is considered stale.
-    :type timeout: float
-    :returns: True if the task is stale.
+    :param threshold: Internal threshold seconds (currently fixed; see
+        ``_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS``).
+    :type threshold: float
+    :returns: True if the framework should treat the in-progress record
+        as abandoned by a previous lifetime and recover it.
     :rtype: bool
     """
     if not task_updated_at:
@@ -202,7 +215,21 @@ def _is_stale(task_updated_at: str, timeout: float) -> bool:
     now = datetime.now(timezone.utc)
     if updated.tzinfo is None:
         updated = updated.replace(tzinfo=timezone.utc)
-    return (now - updated).total_seconds() > timeout
+    return (now - updated).total_seconds() > threshold
+
+
+# Spec 016 transitional internal constant (FR-001).
+#
+# Replaces the per-task ``stale_timeout`` developer-facing knob that
+# was removed in Phase 4 of spec 016 (US1, T028-T032). Tests that
+# previously passed ``stale_timeout=0.1`` to deterministically trigger
+# the recovered code path now monkeypatch this module-level constant
+# instead. Phase 6 of spec 016 (US3, T053-T058) replaces both this
+# constant AND the entire ``_in_progress_was_abandoned_legacy`` code
+# path with the proper FR-002 / FR-004 framework-managed reclaim
+# (``_reclaim_one`` + ``_lease_is_dead``) — at which point this
+# constant becomes dead code and is removed.
+_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS: float = 300.0
 
 
 # Spec 015 Phase 5 (FR-004) — framework-reserved payload slot for the
@@ -322,7 +349,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
     *Internal*: not part of the public ``durable`` surface as of Spec 015 Phase 3.
     Constructed by the ``@task`` decorator (and ``Task.options()``) from a small
     public kwarg set: ``name``, ``title``, ``tags``, ``timeout``, ``ephemeral``,
-    ``retry``, ``steerable``, ``stream_handler_factory``, ``stale_timeout``.
+    ``retry``, ``steerable``, ``stream_handler_factory``.
 
     :param name: **Stable identity anchor.** Used for recovery routing and
         source stamping.  If you rename the Python function later, existing
@@ -342,13 +369,6 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         recovery and resume paths use this factory instead of defaulting to
         :class:`QueueStreamHandler`.
     :type stream_handler_factory: Callable[[str], StreamHandler] | None
-    :param stale_timeout: Seconds before an ``in_progress`` task with no
-        recent ``updated_at`` is considered abandoned by a previous lifetime
-        and eligible for callsite-driven recovery. Default 300 (5 minutes).
-        See the developer guide § "How crash recovery works" for the full
-        explanation. This is independent of the background lease-reclaim
-        loop that runs at process startup.
-    :type stale_timeout: float
     """
 
     __slots__ = (
@@ -360,7 +380,6 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         "retry",
         "steerable",
         "stream_handler_factory",
-        "stale_timeout",
     )
 
     def __init__(
@@ -373,7 +392,6 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         retry: RetryPolicy | None = None,
         steerable: bool = False,
         stream_handler_factory: StreamHandlerFactory | None = None,
-        stale_timeout: float = 300.0,
     ) -> None:
         self.name = name
         self.title = title
@@ -383,14 +401,12 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         self.retry = retry
         self.steerable = steerable
         self.stream_handler_factory = stream_handler_factory
-        self.stale_timeout = stale_timeout
 
     def __repr__(self) -> str:
         return (
             f"TaskOptions(name={self.name!r}, "
             f"ephemeral={self.ephemeral}, retry={self.retry!r}, "
-            f"timeout={self.timeout!r}, steerable={self.steerable}, "
-            f"stale_timeout={self.stale_timeout!r})"
+            f"timeout={self.timeout!r}, steerable={self.steerable})"
         )
 
 
@@ -483,8 +499,8 @@ class Task(Generic[Input, Output]):
 
         .. note::
 
-            ``title``, ``tags``, ``retry``, ``stream_handler``, and
-            ``stale_timeout`` are configured on the ``@task(...)``
+            ``title``, ``tags``, ``retry``, and ``stream_handler`` are
+            configured on the ``@task(...)``
             decorator (or via :meth:`Task.options`), not per-call. This
             is enforced so the values survive crash recovery: after the
             container crashes and the framework re-enters the task, it
@@ -551,8 +567,8 @@ class Task(Generic[Input, Output]):
 
         .. note::
 
-            ``title``, ``tags``, ``retry``, ``stream_handler``, and
-            ``stale_timeout`` are configured on the ``@task(...)``
+            ``title``, ``tags``, ``retry``, and ``stream_handler`` are
+            configured on the ``@task(...)``
             decorator (or via :meth:`Task.options`), not per-call —
             see :meth:`run` for the rationale. Session identity is
             platform-derived from the ``FOUNDRY_AGENT_SESSION_ID``
@@ -840,7 +856,6 @@ class Task(Generic[Input, Output]):
         existing = await manager.provider.get(task_id)
 
         resolved_retry = self._opts.retry
-        stale_timeout = self._opts.stale_timeout
 
         # (Spec 013 US2) Pre-acceptance check: if the caller supplied an
         # ``if_last_input_id`` precondition, verify the stored last input id
@@ -957,7 +972,9 @@ class Task(Generic[Input, Output]):
             )
 
         if existing.status == "in_progress":
-            if _is_stale(existing.updated_at, stale_timeout):
+            if _in_progress_was_abandoned_legacy(
+                existing.updated_at, _LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS
+            ):
                 # Stale — check for steering recovery state first
                 if self._opts.steerable and existing.payload:
                     steering = existing.payload.get("_steering", {})
@@ -1022,7 +1039,6 @@ class Task(Generic[Input, Output]):
         ephemeral: bool | None = None,
         retry: RetryPolicy | None = None,
         steerable: bool | None = None,
-        stale_timeout: float | None = None,
     ) -> Task[Input, Output]:
         """Return a new Task with merged options.
 
@@ -1040,10 +1056,6 @@ class Task(Generic[Input, Output]):
         :paramtype retry: RetryPolicy | None
         :keyword steerable: Whether this task accepts steering inputs.
         :paramtype steerable: bool | None
-        :keyword stale_timeout: Seconds before an in-progress task with no
-            recent ``updated_at`` is considered abandoned and eligible for
-            callsite-driven recovery.  See :class:`TaskOptions`.
-        :paramtype stale_timeout: float | None
         :return: A new Task with overridden options.
         :rtype: Task[Input, Output]
         """
@@ -1073,9 +1085,6 @@ class Task(Generic[Input, Output]):
             retry=retry if retry is not None else self._opts.retry,
             steerable=(steerable if steerable is not None else self._opts.steerable),
             stream_handler_factory=self._opts.stream_handler_factory,
-            stale_timeout=(
-                stale_timeout if stale_timeout is not None else self._opts.stale_timeout
-            ),
         )
         return Task(
             fn=self._fn,
@@ -1102,7 +1111,6 @@ def task(
     retry: RetryPolicy | None = ...,
     steerable: bool = ...,
     stream_handler_factory: StreamHandlerFactory | None = ...,
-    stale_timeout: float = ...,
 ) -> Callable[
     [Callable[[TaskContext[Input]], Awaitable[Output]]],
     Task[Input, Output],
@@ -1120,7 +1128,6 @@ def task(
     retry: RetryPolicy | None = None,
     steerable: bool = False,
     stream_handler_factory: StreamHandlerFactory | None = None,
-    stale_timeout: float = 300.0,
 ) -> Any:
     """Turn an async function into a crash-resilient durable task.
 
@@ -1142,9 +1149,13 @@ def task(
     :keyword title: Human-readable title (string or callable).
     :keyword tags: Default tags (static dict or callable factory receiving
         ``(input, task_id)``).
-    :keyword timeout: Execution timeout. When elapsed, ``ctx.cancel`` is set
-        cooperatively. If the function does not exit, the lease eventually
-        expires and the task is recovered.
+    :keyword timeout: Per-turn, wall-clock, durable, cooperative-only
+        execution budget. When the budget elapses for the current turn,
+        ``ctx.timeout_exceeded`` is set then ``ctx.cancel`` is set; the
+        handler decides whether to wind down. The watchdog does NOT
+        force-stop the handler. See the developer guide §4 Timeout for
+        the full mechanic (including the crash-mid-turn budget-preserving
+        recovery semantics).
     :keyword ephemeral: Delete task on terminal exit (default True).
     :keyword retry: Default retry policy for this task. Recovery-safe: applied
         by the framework on every entry, including crash recovery.
@@ -1157,16 +1168,6 @@ def task(
         defaulting to :class:`QueueStreamHandler`. The factory itself is the
         only supported configuration surface — there is no per-call override,
         so the handler stays consistent across the crash boundary.
-    :keyword stale_timeout: Seconds before an in-progress task whose
-        ``updated_at`` has not advanced is considered abandoned by a previous
-        lifetime and eligible for callsite-driven recovery via
-        :meth:`Task.run` / :meth:`Task.start`. Defaults to 300 (5 minutes).
-        This is *independent* of the background lease-reclaim loop that runs at
-        manager startup: that loop reclaims tasks whose ``lease_owner`` belongs
-        to a previous instance, while ``stale_timeout`` covers the window in
-        which a callsite encounters such a task before (or instead of) the
-        background loop. Override this to a short value (e.g. ``0.1``) in
-        tests that need to deterministically trigger the recovered code path.
     :return: A ``Task[Input, Output]`` wrapper.
     :rtype: Any
     """
@@ -1196,7 +1197,6 @@ def task(
             retry=retry,
             steerable=steerable,
             stream_handler_factory=stream_handler_factory,
-            stale_timeout=stale_timeout,
         )
 
         result = Task(

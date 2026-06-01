@@ -114,17 +114,17 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 
 ### Tests for US1 (RED first)
 
-- [ ] T025 [P] [US1] Extend `<core>/tests/durable/test_decorator.py` per spec.md §Conformance Test Map row 3 — assert `@task(stale_timeout=...)` raises `TypeError`; assert `Task.options(stale_timeout=...)` raises `TypeError` (FR-001).
-- [ ] T026 [P] [US1] Extend `<core>/tests/durable/test_public_api_surface.py` — assert `hasattr(TaskOptions, 'stale_timeout') == False` (slot removed); assert `_is_stale` is not importable from any module under `durable/` (FR-001, SC-001).
-- [ ] T027 [P] [US1] Verify the SC-001 surface-search assertion is encoded in `<core>/tests/durable/test_contract_completeness.py` (auto-pickup via `__all__` traversal — verify by running the meta-test against the post-FR-001 surface).
+- [X] T025 [P] [US1] Extend `<core>/tests/durable/test_decorator.py` per spec.md §Conformance Test Map row 3 — assert `@task(stale_timeout=...)` raises `TypeError`; assert `Task.options(stale_timeout=...)` raises `TypeError` (FR-001).
+- [X] T026 [P] [US1] Extend `<core>/tests/durable/test_public_api_surface.py` — assert `hasattr(TaskOptions, 'stale_timeout') == False` (slot removed); assert `_is_stale` is not importable from any module under `durable/` (FR-001, SC-001).
+- [X] T027 [P] [US1] Verify the SC-001 surface-search assertion is encoded in `<core>/tests/durable/test_contract_completeness.py` (auto-pickup via `__all__` traversal — verify by running the meta-test against the post-FR-001 surface).
 
 ### Implementation for US1
 
-- [ ] T028 [US1] Remove `stale_timeout` kwarg from `@task` decorator factory and all overload signatures in `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
-- [ ] T029 [US1] Remove the `stale_timeout` slot from the inline-defined `TaskOptions` class in `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
-- [ ] T030 [US1] Remove the `stale_timeout` keyword from `Task.options()` method in `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
-- [ ] T031 [US1] Remove `_is_stale` helper function and all references from `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
-- [ ] T032 [US1] Sweep `<core>/azure/ai/agentserver/core/durable/` for any remaining `stale_timeout` / `_is_stale` references in docstrings / comments / call sites. Remove all. Verify by `grep -rn 'stale_timeout\|_is_stale' <core>/azure/` returns zero matches.
+- [X] T028 [US1] Remove `stale_timeout` kwarg from `@task` decorator factory and all overload signatures in `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
+- [X] T029 [US1] Remove the `stale_timeout` slot from the inline-defined `TaskOptions` class in `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
+- [X] T030 [US1] Remove the `stale_timeout` keyword from `Task.options()` method in `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
+- [X] T031 [US1] Remove `_is_stale` helper function and all references from `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
+- [X] T032 [US1] Sweep `<core>/azure/ai/agentserver/core/durable/` for any remaining `stale_timeout` / `_is_stale` references in docstrings / comments / call sites. Remove all. Verify by `grep -rn 'stale_timeout\|_is_stale' <core>/azure/` returns zero matches.
 
 **Checkpoint**: US1 complete — `stale_timeout` developer surface entirely gone; surface tests green. **→ Run T114 (per-story code review for US1) before moving to Phase 5.**
 

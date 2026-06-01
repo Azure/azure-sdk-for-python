@@ -538,7 +538,6 @@ class TestStreamHandlerFactory:
                 name="t_factory_recovery",
                 stream_handler_factory=_factory,
                 ephemeral=False,
-                stale_timeout=1.0,
             )
             async def my_task(ctx: TaskContext[str]) -> str:
                 if ctx.entry_mode == "recovered":

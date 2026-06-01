@@ -210,3 +210,69 @@ def test_httpx_absent_from_production_durable_package() -> None:
         f"`azure.core.rest.HttpRequest` / `AsyncPipelineClient.send_request` "
         f"and remove the import."
     )
+
+
+# --------------------------------------------------------------------- #
+# Spec 016 US1 / SC-001 — T026: stale_timeout / _is_stale absence
+# --------------------------------------------------------------------- #
+
+
+def test_task_options_has_no_stale_timeout_slot() -> None:
+    """SC-001: the (internal) TaskOptions slot for ``stale_timeout`` is gone.
+
+    Asserted via slot inspection — the slot is no longer part of the
+    TaskOptions __slots__ tuple. Constructing TaskOptions with
+    ``stale_timeout=...`` would fail with the same TypeError as any
+    other unknown kwarg.
+    """
+    from azure.ai.agentserver.core.durable._decorator import TaskOptions
+
+    assert "stale_timeout" not in TaskOptions.__slots__, (
+        "TaskOptions.__slots__ must NOT contain 'stale_timeout' (spec 016 "
+        "FR-001 / US1). Found: {}".format(TaskOptions.__slots__)
+    )
+
+    # Also assert the slot is not an instance attribute (catches subclass
+    # or runtime monkey-patching attempts to add it back).
+    sample = TaskOptions(name="test")
+    assert not hasattr(sample, "stale_timeout"), (
+        "TaskOptions instance must NOT expose a 'stale_timeout' attribute "
+        "(spec 016 FR-001 / US1)."
+    )
+
+
+def test_is_stale_not_importable_from_durable_subpackage() -> None:
+    """SC-001: ``_is_stale`` MUST NOT be importable from any module under
+    ``azure/ai/agentserver/core/durable/``.
+
+    Per FR-001's "any helper named after staleness" qualifier, the
+    helper itself is removed (not just dropped from a public list).
+    Phase 6 of spec 016 (T053-T058) replaces the staleness concept
+    entirely with the FR-002 / FR-004 lease-based reclaim path
+    (``_reclaim_one`` + ``_lease_is_dead``).
+    """
+    import re
+
+    durable_dir = _PACKAGE_ROOT / "durable"
+    offenders: list[tuple[str, int]] = []
+    # Match ``def _is_stale(`` or ``_is_stale =``, plus literal
+    # ``from .... import ... _is_stale`` / ``import _is_stale``. We
+    # intentionally permit prose mentions in comments so the
+    # transitional ``_in_progress_was_abandoned_legacy`` docstring can
+    # cite the predecessor by name.
+    pattern = re.compile(
+        r"^\s*(?:def\s+_is_stale\b|_is_stale\s*=|from\s+\S+\s+import.*\b_is_stale\b|import\s+_is_stale\b)",
+        re.MULTILINE,
+    )
+    for py_file in durable_dir.rglob("*.py"):
+        text = py_file.read_text(encoding="utf-8")
+        for m in pattern.finditer(text):
+            line_no = text[: m.start()].count("\n") + 1
+            offenders.append((str(py_file.relative_to(_PACKAGE_ROOT)), line_no))
+
+    assert not offenders, (
+        f"_is_stale name still defined / importable under durable subpackage "
+        f"(spec 016 FR-001 / US1): {offenders}. Replace with the transitional "
+        f"`_in_progress_was_abandoned_legacy` (Phase 4) or the Phase-6 lease-"
+        f"based reclaim (`_reclaim_one` + `_lease_is_dead`)."
+    )

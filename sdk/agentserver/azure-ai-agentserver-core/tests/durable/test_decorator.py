@@ -185,3 +185,37 @@ class TestTypeExtraction:
             return 1
 
         assert my_task._output_type is int
+
+
+# --------------------------------------------------------------------- #
+# Spec 016 US1 — stale_timeout removal from developer surface (T025)
+# --------------------------------------------------------------------- #
+
+
+class TestStaleTimeoutRemoved:
+    """Spec 016 FR-001 / US1: ``stale_timeout`` MUST be removed from the
+    developer-facing recovery surface (``@task``, ``Task.options()``,
+    ``TaskOptions``, ``TaskContext``). Passing the removed kwarg MUST
+    raise ``TypeError``.
+
+    Recovery is now framework-managed; see the developer guide §7
+    Testing a recovery path for the new mental model.
+    """
+
+    def test_task_decorator_rejects_stale_timeout(self) -> None:
+        """@task(stale_timeout=...) raises TypeError (kwarg removed)."""
+        with pytest.raises(TypeError):
+
+            @task(stale_timeout=1.0)  # type: ignore[call-arg]
+            async def _my_task(ctx: TaskContext[str]) -> int:
+                return 0
+
+    def test_task_options_rejects_stale_timeout(self) -> None:
+        """Task.options(stale_timeout=...) raises TypeError (kwarg removed)."""
+
+        @task
+        async def my_task(ctx: TaskContext[str]) -> int:
+            return 0
+
+        with pytest.raises(TypeError):
+            my_task.options(stale_timeout=1.0)  # type: ignore[call-arg]
