@@ -350,6 +350,7 @@
   - Deleted model `ChangeDataCaptureListResponse`/`CredentialListResponse`/`DataFlowListResponse`/`DatasetListResponse`/`FactoryListResponse`/`GlobalParameterListResponse`/`IntegrationRuntimeListResponse`/`IntegrationRuntimeStatusListResponse`/`LinkedServiceListResponse`/`ManagedPrivateEndpointListResponse`/`ManagedVirtualNetworkListResponse`/`OperationListResponse`/`PipelineListResponse`/`PrivateEndpointConnectionListResponse`/`QueryDataFlowDebugSessionsResponse`/`TriggerListResponse` which actually were not used by SDK users
   - Deleted model `CopyTranslator`/`GetDataFactoryOperationStatusResponse`/`TabularTranslator`/`TypeConversionSettings`/`AdditionalColumns`/`DatasetDataElement`/`DatasetSchemaDataElement`/`OutputColumn`/`StoredProcedureParameter` which actually were not used by SDK users
   - Deleted enum `AmazonRdsForOraclePartitionOption`/`AvroCompressionCodec`/`CompressionCodec`/`CopyBehaviorType`/`DatasetCompressionLevel`/`DynamicsAuthenticationType`/`DynamicsDeploymentType`/`HdiNodeTypes`/`JsonFormatFilePattern`/`JsonWriteFilePattern`/`NetezzaPartitionOption`/`OraclePartitionOption`/`OrcCompressionCodec`/`SalesforceSourceReadBehavior`/`SapHanaPartitionOption`/`SapTablePartitionOption`/`ServicePrincipalCredentialType`/`SqlPartitionOption`/`StoredProcedureParameterType`/`TeradataPartitionOption`/`ScriptType`/`SqlDWWriteBehaviorEnum`/`SqlWriteBehaviorEnum` which actually were not used by SDK users
+
 ## 9.3.0 (2026-03-10)
 
 ### Features Added
