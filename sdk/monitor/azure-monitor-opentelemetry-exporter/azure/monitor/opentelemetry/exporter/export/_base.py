@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
+    _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
     _INVALID_STATUS_CODES,
@@ -81,7 +82,6 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
-
 
 class ExportResult(Enum):
     SUCCESS = 0
@@ -640,10 +640,13 @@ class BaseExporter:
         cannot cause the exporter (and its credential-bearing pipeline) to
         send telemetry and the Authorization header to an unrelated host.
 
-        A redirect is considered safe only if the target differs from the
-        currently-configured host by at most the leftmost DNS label (the
-        region/instance prefix), AND the shared suffix has at least three
-        labels.
+        A redirect is permitted only when the target equals the currently
+        configured host exactly, or when both the current host and the
+        redirect target are under one of the known Azure Monitor ingestion
+        host suffixes (see ``_ALLOWED_REDIRECT_DOMAIN_SUFFIXES``). Customers
+        with a custom (non-Azure) ingestion host will therefore not have
+        server-issued cross-host redirects followed; such deployments should
+        configure their proxy to terminate redirects locally.
 
         :param str current_netloc: The netloc of the currently-configured ingestion endpoint.
         :param str redirect_netloc: The netloc of the redirect target from the server's location header.
@@ -651,22 +654,24 @@ class BaseExporter:
         :rtype: bool
         """
 
-        def _host_labels(netloc: str) -> list:
-            host = netloc.split("@")[-1].split(":")[0].lower().rstrip(".")
-            return [label for label in host.split(".") if label]
+        def _host(netloc: str) -> str:
+            return netloc.split("@")[-1].split(":")[0].lower().rstrip(".")
 
         if not current_netloc or not redirect_netloc:
             return False
-        current_labels = _host_labels(current_netloc)
-        redirect_labels = _host_labels(redirect_netloc)
-        # Exact host match is always safe.
-        if current_labels == redirect_labels:
-            return True
-        # Otherwise require identical structure with only the leftmost label
-        # differing, and at least three shared suffix labels.
-        if len(current_labels) != len(redirect_labels) or len(current_labels) < 4:
+        current_host = _host(current_netloc)
+        redirect_host = _host(redirect_netloc)
+        if not current_host or not redirect_host:
             return False
-        return current_labels[1:] == redirect_labels[1:]
+        # Exact host match is always safe.
+        if current_host == redirect_host:
+            return True
+        # Otherwise both hosts must live under the same trusted Azure Monitor
+        # ingestion suffix.
+        for suffix in _ALLOWED_REDIRECT_DOMAIN_SUFFIXES:
+            if current_host.endswith(suffix) and redirect_host.endswith(suffix):
+                return True
+        return False
 
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
