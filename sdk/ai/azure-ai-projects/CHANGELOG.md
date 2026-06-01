@@ -1,5 +1,11 @@
 # Release History
 
+## 2.3.0 (Unreleased)
+
+### Sample updates
+
+* Added Routines samples `sample_routines_crud.py` demonstrating CRUD operations and `sample_routines_with_timer_trigger.py` demonstrating triggering a routine by a timer.
+
 ## 2.2.0 (2026-05-29)
 
 ### Features Added

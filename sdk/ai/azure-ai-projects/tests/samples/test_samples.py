@@ -185,17 +185,17 @@ class TestSamples(AzureRecordedTestCase):
         # fails the test).
 
     @servicePreparer()
-    # @additionalSampleTests(
-    #     [
-    #         AdditionalSampleTestDetail(
-    #             test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
-    #             sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
-    #             env_vars={
-    #                 "POLL_INTERVAL_SECONDS": "60",
-    #             },
-    #         ),
-    #     ]
-    # )
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
+                sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "60",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
@@ -250,7 +250,10 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "hosted_agents",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_routines_crud.py",  # Skipped due to service serialization issues
+                "sample_routines_with_timer_trigger.py",  # Skipped due to service serialization issues
+            ],
         ),
     )
     @SamplePathPasser()
