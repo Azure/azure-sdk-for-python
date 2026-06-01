@@ -39,7 +39,7 @@ import os
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import List, Optional
 
 from dotenv import load_dotenv
 
@@ -74,7 +74,9 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment = os.environ["FOUNDRY_MODEL_NAME"]
 DATASET_NAME = "traces-eval-sample"
 POLL_INTERVAL_SECONDS = 10
-TRACE_INGESTION_WAIT_SECONDS = 180
+INITIAL_INGEST_WAIT_SECONDS = 30
+MAX_JOB_ATTEMPTS = 3
+RETRY_WAIT_SECONDS = 60
 
 # Per-run id keeps repeated runs from colliding; output names are capped at 50 chars.
 run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
@@ -91,7 +93,7 @@ with (
 
     created_agent = None
     created_conversation_id: Optional[str] = None
-    submitted_job_id: Optional[str] = None
+    submitted_job_ids: List[str] = []
     created_dataset: Optional[DatasetVersion] = None
 
     try:
@@ -121,52 +123,66 @@ with (
                 },
             )
 
-        print(f"Wait {TRACE_INGESTION_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
-        time.sleep(TRACE_INGESTION_WAIT_SECONDS)
+        print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
+        time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
-        # 2. Submit a data generation job that reads the agent's traces.
+        # 2. Submit a data generation job that reads the agent's traces. Retry on
+        # failure: server-side ingestion is usually <1 minute but isn't guaranteed,
+        # and the data-gen job fails fast if it can't find the trace yet.
         # Small backoff so the seeded spans fall inside the queried window.
         start_time = seed_start - timedelta(minutes=5)
-        end_time = datetime.now(tz=timezone.utc)
 
-        print(
-            f"Create a data generation job from traces for agent `{agent_name}` "
-            f"(window: {start_time.isoformat()} .. {end_time.isoformat()})."
-        )
-        job = project_client.beta.datasets.create_generation_job(
-            job=DataGenerationJob(
-                inputs=DataGenerationJobInputs(
-                    name=f"traces-eval-{run_id}",
-                    scenario=DataGenerationJobScenario.EVALUATION,
-                    sources=[
-                        TracesDataGenerationJobSource(
-                            description="Application Insights conversation traces for the agent.",
-                            agent_name=agent_name,
-                            start_time=start_time,
-                            end_time=end_time,
-                        ),
-                    ],
-                    # Service requires max_samples in [15, 1000]. It's a cap on
-                    # generated samples - one seeded trace turn is enough.
-                    options=TracesDataGenerationJobOptions(max_samples=15),
-                    output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
+        job = None
+        for attempt in range(1, MAX_JOB_ATTEMPTS + 1):
+            end_time = datetime.now(tz=timezone.utc)
+            print(
+                f"Create data generation job from traces for agent `{agent_name}` "
+                f"(attempt {attempt}/{MAX_JOB_ATTEMPTS}, "
+                f"window: {start_time.isoformat()} .. {end_time.isoformat()})."
+            )
+            job = project_client.beta.datasets.create_generation_job(
+                job=DataGenerationJob(
+                    inputs=DataGenerationJobInputs(
+                        name=f"traces-eval-{run_id}-a{attempt}",
+                        scenario=DataGenerationJobScenario.EVALUATION,
+                        sources=[
+                            TracesDataGenerationJobSource(
+                                description="Application Insights conversation traces for the agent.",
+                                agent_name=agent_name,
+                                start_time=start_time,
+                                end_time=end_time,
+                            ),
+                        ],
+                        # Service requires max_samples in [15, 1000]. It's a cap on
+                        # generated samples - one seeded trace turn is enough.
+                        options=TracesDataGenerationJobOptions(max_samples=15),
+                        output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
+                    ),
                 ),
-            ),
-        )
-        submitted_job_id = job.id
-        print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
+            )
+            submitted_job_ids.append(job.id)
+            print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
 
-        print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-        while job.status not in TERMINAL_STATUSES:
-            time.sleep(POLL_INTERVAL_SECONDS)
-            print(".", end="", flush=True)
-            job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-        print()
-        print(f"Final job status: `{job.status}`.")
+            print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
+            while job.status not in TERMINAL_STATUSES:
+                time.sleep(POLL_INTERVAL_SECONDS)
+                print(".", end="", flush=True)
+                job = project_client.beta.datasets.get_generation_job(job_id=job.id)
+            print()
+            print(f"Final job status: `{job.status}`.")
 
-        if job.status != JobStatus.SUCCEEDED:
+            if job.status == JobStatus.SUCCEEDED:
+                break
+
             message = job.error.message if job.error is not None else "<no error message>"
-            raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
+            if attempt == MAX_JOB_ATTEMPTS:
+                raise RuntimeError(
+                    f"Job `{job.id}` failed after {MAX_JOB_ATTEMPTS} attempts: {message}"
+                )
+            print(f"  Attempt {attempt} failed ({message}); wait {RETRY_WAIT_SECONDS}s and retry.")
+            time.sleep(RETRY_WAIT_SECONDS)
+
+        assert job is not None  # for type-checker; loop guarantees success path sets job
 
         # 3. Resolve the generated dataset.
         outputs = (job.result.outputs if job.result is not None else None) or []
@@ -198,12 +214,12 @@ with (
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete dataset: {exc}")
 
-        if submitted_job_id is not None:
+        for jid in submitted_job_ids:
             try:
-                project_client.beta.datasets.delete_generation_job(job_id=submitted_job_id)
-                print(f"Deleted data generation job `{submitted_job_id}`.")
+                project_client.beta.datasets.delete_generation_job(job_id=jid)
+                print(f"Deleted data generation job `{jid}`.")
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not delete job: {exc}")
+                print(f"  (warning) could not delete job `{jid}`: {exc}")
 
         if created_conversation_id is not None:
             try:
