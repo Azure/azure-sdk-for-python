@@ -63,8 +63,6 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 
-# Minimal persona + prompt; one seeded turn is enough for the job to succeed
-# (max_samples is the cap on generated samples, not a floor on input traces).
 AGENT_INSTRUCTIONS = (
     "Widgets & Gizmos support agent. Be concise. "
     "Refunds: unopened 30 days; defective 90 days; 5-7 business days to process."
