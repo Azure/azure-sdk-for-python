@@ -63,11 +63,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "memories",
-            samples_to_skip=[
-                "sample_memory_advanced.py",
-                "sample_memory_basic.py",
-                "sample_memory_crud.py",  # Sample works fine. But AI thinks something is wrong.
-            ],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()
