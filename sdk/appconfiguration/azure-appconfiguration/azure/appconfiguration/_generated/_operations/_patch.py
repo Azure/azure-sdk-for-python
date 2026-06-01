@@ -35,8 +35,8 @@ from ._operations import (
     prep_if_none_match,
 )
 from .. import models as _models
-from .._model_base import _deserialize
-from .._serialization import Serializer
+from .._utils.model_base import _deserialize
+from .._utils.serialization import Serializer
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False

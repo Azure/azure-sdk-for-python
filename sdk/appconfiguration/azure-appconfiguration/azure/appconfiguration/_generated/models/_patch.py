@@ -10,8 +10,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils import model_base as _model_base
+from .._utils.model_base import rest_field
 
 
 class KeyValue(_model_base.Model):
