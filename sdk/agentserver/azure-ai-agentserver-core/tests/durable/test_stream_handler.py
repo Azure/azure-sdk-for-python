@@ -428,7 +428,7 @@ class TestLateJoinConsumer:
             await task_started.wait()
 
             # Late-join: get a handle without being the original caller
-            late_run = my_task.get_active_run("t021-1")
+            late_run = await my_task.get_active_run("t021-1")
             assert late_run is not None
 
             # Let the task finish
@@ -453,7 +453,7 @@ class TestLateJoinConsumer:
             async def my_task(ctx: TaskContext[str]) -> str:
                 return "done"
 
-            result = my_task.get_active_run("nonexistent-task")
+            result = await my_task.get_active_run("nonexistent-task")
             assert result is None
         finally:
             await _teardown_manager(manager, mgr_mod)

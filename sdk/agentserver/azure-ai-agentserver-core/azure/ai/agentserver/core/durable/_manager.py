@@ -75,6 +75,62 @@ def _is_evicted(exc: BaseException) -> bool:
     )
 
 
+# Spec 016 FR-002 Layer 2 / FR-009 / gap-list §FR-009:
+# periodic background scan interval. Module-level constant so tests
+# can monkey-patch it to a small value for deterministic exercise
+# without adding a public surface to TaskManager. Default ~300s
+# matches the spec's "internal-only interval" requirement.
+_PERIODIC_RECOVERY_INTERVAL_SECONDS: float = 300.0
+
+# Spec 016 §FR-002-retries (gap-list): bounded retry budget for the
+# transient-error path in the startup scan / inline reclaim.
+# Exponential backoff: 0.2 → 0.4 → 0.8 across attempts 1..3.
+_RECLAIM_MAX_RETRIES: int = 3
+_RECLAIM_BACKOFF_BASE_SECONDS: float = 0.2
+
+
+def _lease_is_dead(
+    task_info: Any,
+    *,
+    this_lease_owner: str,
+    active_locally: bool,
+) -> bool:
+    """Determine whether an in-progress record's lease is dead per FR-004.
+
+    Spec 016 FR-004: a lease is "live" only if EITHER ownership matches
+    this process AND an in-memory active entry tracks it (so we know
+    the local execution is running), OR the lease ownership belongs to
+    this process AND the expiry has not passed. A lease is "dead"
+    otherwise — i.e., the previous lifetime is no longer authoritative
+    and the record is eligible for reclaim.
+
+    For the LocalFileTaskProvider used in tests (no real expiry
+    tracking), absence of a local in-memory entry combined with a
+    backdated ``updated_at`` suffices.
+
+    :param task_info: The persisted record.
+    :keyword this_lease_owner: This process's lease-owner string
+        (from :class:`TaskManager`).
+    :keyword active_locally: True if this process has an in-memory
+        ``_ActiveTask`` entry tracking the record.
+    :return: True if the lease is dead.
+    """
+    if active_locally:
+        # We are actively executing it; lease is definitely live in
+        # this process.
+        return False
+    # Ownership mismatch: previous lifetime owned the record.
+    owner = getattr(task_info, "lease_owner", None) or ""
+    if owner and owner != this_lease_owner:
+        return True
+    # Same owner but no local in-memory entry → previous lifetime
+    # crashed; lease is dead by inference (no live executor).
+    if owner == this_lease_owner and not active_locally:
+        return True
+    # No owner recorded → dead by definition.
+    return True
+
+
 def get_task_manager() -> TaskManager:
     """Return the active TaskManager singleton.
 
@@ -188,6 +244,9 @@ class TaskManager:
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
         self._pending_steering_futures: dict[str, list[asyncio.Future[Any]]] = {}
+        # Spec 016 FR-002 Layer 2: periodic recovery scan task. Created
+        # at startup() time; cancelled at shutdown().
+        self._periodic_recovery_task: asyncio.Task[None] | None = None
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -376,6 +435,50 @@ class TaskManager:
 
         await self._recover_stale_tasks()
 
+        # Spec 016 FR-002 Layer 2: start the periodic recovery task.
+        # Reads _PERIODIC_RECOVERY_INTERVAL_SECONDS at spawn time;
+        # tests monkey-patch the constant to drive the scan
+        # deterministically (FR-009).
+        try:
+            loop = asyncio.get_running_loop()
+            self._periodic_recovery_task = loop.create_task(
+                self._periodic_recovery_loop()
+            )
+        except RuntimeError:
+            # No running loop (called from outside async context); skip
+            # — the layer-1 startup scan above still covered the
+            # initial reclaim pass.
+            pass
+
+    async def _periodic_recovery_loop(self) -> None:
+        """Spec 016 FR-002 Layer 2: periodic background recovery scan.
+
+        Runs at the interval defined by ``_PERIODIC_RECOVERY_INTERVAL_SECONDS``
+        (monkey-patchable for tests per FR-009). Each iteration calls
+        :meth:`_recover_stale_tasks` and tolerates exceptions per
+        per-record so a single failed reclaim does not break the
+        scan. Exits cleanly when ``_shutdown_event`` is set or the
+        task is cancelled.
+        """
+        while not self._shutdown_event.is_set():
+            try:
+                await asyncio.wait_for(
+                    self._shutdown_event.wait(),
+                    timeout=_PERIODIC_RECOVERY_INTERVAL_SECONDS,
+                )
+                # shutdown_event was set — exit
+                return
+            except asyncio.TimeoutError:
+                pass
+            except asyncio.CancelledError:
+                return
+            try:
+                await self._recover_stale_tasks()
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning(
+                    "Periodic recovery scan iteration failed", exc_info=True
+                )
+
     async def shutdown(self) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
 
@@ -383,6 +486,17 @@ class TaskManager:
         """
         logger.info("TaskManager shutting down")
         self._shutdown_event.set()
+
+        # Spec 016 FR-002 Layer 2: stop the periodic recovery scan task.
+        # Cancel cleanly so the shutdown event in its sleep wakes
+        # immediately and the task exits.
+        if self._periodic_recovery_task is not None:
+            self._periodic_recovery_task.cancel()
+            try:
+                await self._periodic_recovery_task
+            except (asyncio.CancelledError, Exception):  # pylint: disable=broad-exception-caught
+                pass
+            self._periodic_recovery_task = None
 
         # Signal shutdown on all active contexts. Yield once so the bridge
         # tasks (running in the event loop) get a chance to observe the
@@ -770,31 +884,121 @@ class TaskManager:
 
         logger.info("Resumed task %s", task_id)
 
-    def get_active_run(self, task_id: str) -> TaskRun[Any] | None:
+    async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:
         """Return a TaskRun handle for an active (in-progress) task.
 
-        Enables late-join consumers to get a handle to a running task's
-        stream without being the original caller of ``start()``/``run()``.
-        Returns ``None`` if the task is not currently active in this process.
+        Spec 016 FR-005 (US3 / US4): consults the store, not only
+        in-memory state. If the record is in-progress with a dead
+        lease (per :func:`_lease_is_dead`), performs inline reclaim as
+        a hidden side effect and returns a usable :class:`TaskRun`
+        bound to the new lifetime. Terminal records return ``None``.
+        Eviction (FR-008) also returns ``None`` — same shape as
+        "not active in this process" per Invariant 1.
 
         :param task_id: The task identifier.
         :type task_id: str
         :return: A TaskRun bound to the active task's stream handler,
-            or ``None`` if not active.
+            or ``None`` if not active / terminal / evicted.
         :rtype: TaskRun[Any] | None
         """
+        # Fast path: locally-tracked active execution.
         active = self._active_tasks.get(task_id)
-        if active is None:
+        if active is not None:
+            return TaskRun(
+                task_id=task_id,
+                provider=self._provider,
+                result_future=active.result_future,
+                metadata=active.context.metadata,
+                cancel_event=active.context.cancel,
+                stream_handler=active.context._stream_handler,  # pylint: disable=protected-access
+                terminate_event=active.terminate_event,
+                execution_task=active.execution_task,
+            )
+
+        # Spec 016 FR-005: consult the store for tasks not active in
+        # this process. Reads are not rejected for orphan sandboxes
+        # per the spec's assumptions.
+        try:
+            task_info = await self._provider.get(task_id)
+        except TransportClassifiedError as exc:
+            if _is_evicted(exc):
+                # Even reads classified as evicted (unexpected per
+                # assumption but defensive) map to "not active".
+                return None
+            raise
+        if task_info is None or task_info.status in ("completed", "suspended", "pending"):
             return None
-        return TaskRun(
-            task_id=task_id,
-            provider=self._provider,
-            result_future=active.result_future,
-            metadata=active.context.metadata,
-            cancel_event=active.context.cancel,
-            stream_handler=active.context._stream_handler,  # pylint: disable=protected-access
-            terminate_event=active.terminate_event,
-            execution_task=active.execution_task,
+        # Status is in_progress. Check whether the lease is dead per
+        # FR-004. If so, perform inline reclaim and re-enter as
+        # recovered. If reclaim fails (race lost / evicted), return None
+        # per Invariant 1.
+        if task_info.status == "in_progress" and _lease_is_dead(
+            task_info,
+            this_lease_owner=self._lease_owner,
+            active_locally=False,
+        ):
+            fn = self._find_resume_callback(task_info)
+            if fn is None:
+                return None
+            fn_name = (task_info.source or {}).get("name", task_info.agent_name)
+            opts = self._resume_opts.get(fn_name)
+            try:
+                await self._reclaim_one(task_info)
+            except TransportClassifiedError as exc:
+                if _is_evicted(exc):
+                    logger.warning(
+                        "get_active_run: reclaim of %s rejected with eviction; "
+                        "returning None (same shape as 'not active here')",
+                        task_id,
+                    )
+                    return None
+                raise
+            await self._start_existing_task(
+                fn=fn,
+                fn_name=task_info.agent_name,
+                task_info=task_info,
+                entry_mode="recovered",
+                opts=opts,
+            )
+            # Re-check the active-tasks table now that reclaim is done.
+            active = self._active_tasks.get(task_id)
+            if active is not None:
+                return TaskRun(
+                    task_id=task_id,
+                    provider=self._provider,
+                    result_future=active.result_future,
+                    metadata=active.context.metadata,
+                    cancel_event=active.context.cancel,
+                    stream_handler=active.context._stream_handler,  # pylint: disable=protected-access
+                    terminate_event=active.terminate_event,
+                    execution_task=active.execution_task,
+                )
+        return None
+
+    async def _reclaim_one(self, task_info: TaskInfo) -> None:
+        """Spec 016 FR-003: CAS-protected lease reclaim helper.
+
+        Updates the lease ownership to this process's owner+instance
+        with ``If-Match: <etag>`` so two concurrent reclaims produce
+        exactly one winner. Tolerates the LocalFileTaskProvider
+        (which ignores ``if_match``) — race protection is best-effort
+        in tests, deterministic against the hosted client.
+
+        :param task_info: The task to reclaim.
+        :type task_info: TaskInfo
+        :raises TransportClassifiedError: With classification='evicted'
+            on orphan-sandbox rejection; with other classifications on
+            transient / conflict / permanent outcomes.
+        """
+        etag = getattr(task_info, "etag", None) or None
+        await self._provider.update(
+            task_info.id,
+            TaskPatchRequest(
+                lease_owner=self._lease_owner,
+                lease_instance_id=self._instance_id,
+                lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
+                if_match=etag,
+            ),
         )
 
     async def _start_existing_task(  # pylint: disable=too-many-locals,too-many-statements

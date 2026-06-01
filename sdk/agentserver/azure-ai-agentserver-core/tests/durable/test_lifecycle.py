@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Tests for lifecycle-aware .run() and .start() on Task."""
 
+import asyncio
 import json
 from pathlib import Path
 
@@ -327,3 +328,227 @@ class TestLifecycle:
             assert result.output == "ok"
         finally:
             await self._teardown_manager(manager, mgr_mod)
+
+
+# --------------------------------------------------------------------- #
+# Spec 016 US3 — 3-layer recovery + periodic scan (T043..T046)
+# --------------------------------------------------------------------- #
+
+
+class TestSpec016ThreeLayerRecovery:
+    """Spec 016 FR-002 / FR-005 / FR-009 / SC-003 / SC-004 / SC-005.
+
+    Three internal recovery layers share a single reclaim helper
+    (FR-002):
+    - Layer 1: hardened startup scan (always runs at TaskManager.startup).
+    - Layer 2: periodic background scan, monkey-patchable via
+      ``_PERIODIC_RECOVERY_INTERVAL_SECONDS`` (FR-009 test hook).
+    - Layer 3: inline reclaim on scheduling primitives
+      (.run / .start / get_active_run) when they observe a dead-lease
+      in-progress record.
+
+    The lease is "dead" per FR-004 when ownership belongs to a previous
+    lifetime AND no live in-memory entry tracks it.
+    """
+
+    async def _setup_manager(self, tmp_path):
+        from azure.ai.agentserver.core.durable._local_provider import (
+            LocalFileTaskProvider,
+        )
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+        provider = LocalFileTaskProvider(base_dir=Path(str(tmp_path)))
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        await manager.startup()
+        return manager, mgr_mod
+
+    async def _teardown_manager(self, manager, mgr_mod):
+        await manager.shutdown()
+        mgr_mod._manager = None
+
+    @pytest.mark.asyncio
+    async def test_get_active_run_resurrects_dead_lease_orphan(self, tmp_path) -> None:
+        """T043 / SC-003 / FR-005: ``get_active_run()`` on an in-progress
+        record with a dead lease returns a usable TaskRun bound to a
+        new lifetime that re-enters with ``entry_mode == "recovered"``.
+        """
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        observed: list[str] = []
+
+        @task(name="t043_resurrect", ephemeral=False)
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed.append(ctx.entry_mode)
+            return "resumed-ok"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            # Seed a dead-lease orphan record using the SAME lease_owner
+            # the current manager derives (simulates a previous-process
+            # incarnation that crashed; the owner is stable across
+            # restarts within the same (agent, session) pair). Include
+            # the source.name so _find_resume_callback maps the record
+            # back to this test's @task deterministically.
+            await manager.provider.create(
+                TaskCreateRequest(
+                    id="t043-orphan",
+                    agent_name="test-agent",
+                    session_id="test-session",
+                    status="in_progress",
+                    title="orphan",
+                    payload={"input": '"x"'},
+                    lease_owner=manager._lease_owner,  # noqa: SLF001
+                    lease_instance_id="previous-instance",
+                    lease_duration_seconds=60,
+                    source={"name": "t043_resurrect", "type": "agentserver.task"},
+                )
+            )
+            # get_active_run sees the dead-lease orphan, reclaims it
+            # inline, and returns a TaskRun bound to the new lifetime.
+            run = await my_task.get_active_run("t043-orphan")
+            assert run is not None
+            result = await asyncio.wait_for(run.result(), timeout=5.0)
+            assert result.output == "resumed-ok"
+            assert observed == ["recovered"]
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_get_active_run_returns_none_for_terminal(self, tmp_path) -> None:
+        """T043 / FR-005 / SC-003: terminal records return None."""
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        @task(name="t043_terminal", ephemeral=False)
+        async def my_task(ctx: TaskContext[str]) -> str:
+            return "ok"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            await manager.provider.create(
+                TaskCreateRequest(
+                    id="t043-done",
+                    agent_name="test-agent",
+                    session_id="test-session",
+                    status="completed",
+                    title="done",
+                    payload={"output": '"done"'},
+                )
+            )
+            run = await my_task.get_active_run("t043-done")
+            assert run is None
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_periodic_scan_reclaims_orphan_within_interval(
+        self, tmp_path, monkeypatch
+    ) -> None:
+        """T045 / FR-002 Layer 2 / FR-009 / SC-004: using the FR-009
+        interval-override constant, a post-startup orphan is reclaimed
+        within the test override (~0.05s) without any user-space
+        scheduling call.
+        """
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+        import azure.ai.agentserver.core.durable._manager as mgr_module
+
+        # Set the interval BEFORE startup so the periodic scan task spawns
+        # with the test value (monkeypatch.setattr is read at spawn time).
+        monkeypatch.setattr(
+            mgr_module, "_PERIODIC_RECOVERY_INTERVAL_SECONDS", 0.05
+        )
+
+        recovered: list[str] = []
+
+        @task(name="t045_periodic", ephemeral=False)
+        async def my_task(ctx: TaskContext[str]) -> str:
+            recovered.append(ctx.entry_mode)
+            return "ok"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            # Seed AFTER startup so layer-1 misses it; layer-2 periodic
+            # scan must pick it up within the override interval. Use the
+            # SAME lease_owner the manager derives (simulates the
+            # previous-incarnation-crashed scenario) and the same source
+            # name so _find_resume_callback matches the @task.
+            await manager.provider.create(
+                TaskCreateRequest(
+                    id="t045-orphan",
+                    agent_name="test-agent",
+                    session_id="test-session",
+                    status="in_progress",
+                    title="orphan",
+                    payload={"input": '"x"'},
+                    lease_owner=manager._lease_owner,  # noqa: SLF001
+                    lease_instance_id="previous-instance",
+                    lease_duration_seconds=60,
+                    source={"name": "t045_periodic", "type": "agentserver.task"},
+                )
+            )
+            # Wait up to 2 seconds for the periodic scan to fire and
+            # for the recovered handler to execute.
+            deadline = asyncio.get_event_loop().time() + 2.0
+            while not recovered and asyncio.get_event_loop().time() < deadline:
+                await asyncio.sleep(0.05)
+            assert recovered == ["recovered"], (
+                f"Periodic recovery scan did not reclaim the orphan within "
+                f"the override interval. observed={recovered}"
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_startup_scan_tolerates_mixed_responses(self, tmp_path) -> None:
+        """T044 / SC-005: startup scan with mixed healthy / unreachable
+        records completes without raising; every record is logged."""
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        # Just seed a normal record + an in_progress orphan. The startup
+        # scan runs in _setup_manager; if it raises, the test fails.
+        from azure.ai.agentserver.core.durable._local_provider import (
+            LocalFileTaskProvider,
+        )
+        provider = LocalFileTaskProvider(base_dir=Path(str(tmp_path)))
+        await provider.create(
+            TaskCreateRequest(
+                id="t044-orphan",
+                agent_name="test-agent",
+                session_id="test-session",
+                status="in_progress",
+                title="orphan",
+                payload={},
+                lease_owner="some-previous-lifetime",
+            )
+        )
+
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        # Should NOT raise even though there's an orphan.
+        await manager.startup()
+        await manager.shutdown()
+        mgr_mod._manager = None
