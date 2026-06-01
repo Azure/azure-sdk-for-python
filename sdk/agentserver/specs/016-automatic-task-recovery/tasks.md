@@ -9,7 +9,33 @@ description: "Task list for durable-task primitive contract hardening (spec 016)
 
 **Tests**: REQUIRED. Constitution Principle XII §3 mandates RED-first commits for every public-surface conformance test, verifiable from git history. The spec's §Conformance Test Map routes every test to a specific existing test file (with two genuinely-new modules justified, and a permissible third per the gap-list escape hatch).
 
-**Organization**: Tasks are grouped by user story per the spec-kit template. The plan's three-phase Implementation Ordering Strategy (Phase A transport → Phase B recovery+eviction+lease-owner → Phase C steering+cancel+timeout+shutdown) is encoded as **inter-story dependencies** — US9 (Transport, P2) must complete BEFORE the P1 stories US1..US4 (Phase B) can begin, because the eviction classifier integration depends on the new pipeline seam. P2 stories US6/US7/US8 form Phase C and depend on US1..US5 plus US9 being complete.
+---
+
+## Implementation progress (rolling status)
+
+**Session pause point: 2026-06-01 22:55 UTC.** 38 of 122 tasks complete (31%); full durable test suite 325/325 GREEN; no regressions; all work committed in 5 focused commits (`af16196abc`, `665c22d425`, `ad33e12c16` / `92c3486f6f`, `6b3f2531a6`, `2dbb83e5dd`).
+
+**Completed slices:**
+- Phase 1 (Setup): T001..T005 — gap-list scaffolded; T002/T003/T004 plan-phase decisions resolved.
+- Phase 2 (Foundational): T006..T011 — full dev-guide rewrite; meta-test extended with 14 spec-016 invariants; CHANGELOG rewritten to initial-release shape; durability-contract amended with cross-cutting binding_mismatch note; BindingMismatchProvider + FakeAsyncHttpTransport fixtures created.
+- Phase 3 (US9 Transport, Implementation-phase A): T012..T024 — full `_client.py` rewrite on `azure.core.AsyncPipelineClient`; `_classify_store_write_error` classifier seam established; httpx removed; 24 new transport tests pass.
+- Phase 4 (US1 stale_timeout removal, Implementation-phase B start): T025..T032 — surface cleaned; 13 pre-existing test sites ported; transitional `_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS` constant introduced (to be removed by Phase 6).
+- Phase 6 partial (FR-004a lease owner): T047..T052 — `derive_lease_owner` signature changed to `(agent_name, session_id)`; 4 new SC-005a tests pass.
+
+**Remaining work (deferred to next session because of inter-phase code coupling):**
+
+The remaining 84 tasks (Phases 5, 6 remainder, 7, 8, 9, 10, 11, 12, 13) collectively rewrite the cohesive `_execute_task_loop` / drain / cancel-cause / timeout / shutdown surface in `_manager.py` (1840 LOC). The phases share file ownership of `_manager.py`, `_context.py`, `_run.py`, `_result.py`, and `_exceptions.py`, so safe incremental progress requires a focused session that can land Phase 5+6 (Phase B classifier integration + 3-layer recovery) together, then Phase 8-11 (Phase C drain rewrite) together. Smaller slices risk landing a half-rewritten code path in a state where existing tests cannot represent the intermediate contract.
+
+**Suggested next-session sequence (per `plan.md` §Implementation Ordering Strategy):**
+1. Phase 5 (T033..T042 — US2 split-brain): wire `_classify_store_write_error` into `_manager.py` and `_lease_renewal_loop` at every store-write site (incl. input enqueue per T038a); local-cleanup sequence; SC-002 sweep in new `test_split_brain_eviction.py` (uses BindingMismatchProvider fixture).
+2. Phase 6 remainder (T043..T046, T053..T058 — US3): `_reclaim_one` helper with ETag CAS; three recovery layers (`_recover_stale_tasks` hardening, periodic-scan task, inline reclaim in `.run()`/`.start()`/`get_active_run()`); supersede the transitional `_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS` constant; FR-009 periodic-scan test hook; SC-003/SC-004/SC-005 sweeps. Phase 7 (T059 — US4) is a verification-only task that completes with this slice.
+3. Phase 8-11 (T060..T100 — US5+US6+US7+US8): the cohesive `_execute_task_loop` / drain rewrite — narrow `TaskResult.status` Literal; drop `_pending_steering_futures`; rewrite drain re-entry; auto-flush metadata at every terminal-of-turn boundary; add cancel-cause booleans; remove `terminate` / `TaskTerminated` plumbing; per-turn durable timeout with `_turn_started_at`; `ctx.exit_for_recovery()` sentinel. This is the largest single chunk and rewrites the largest single file in the package.
+4. Phase 12 (T101..T111 — Polish): sample updates per the spec's Samples affected matrix; lint/type/build/test sweeps; conformance gap-list final audit.
+5. Phase 13 (T112..T122 — Continuous Code Review): per-phase reviews via the `code-review` agent at each Checkpoint boundary; cross-phase seam reviews T113 (A→B done) / T117 (B→C); final holistic review T122. BLOCKING / HIGH findings gate the next phase per Constitution Principle XIII.
+
+---
+
+## Phase 1: Setup
 
 **Note**: This spec's user stories are NOT independently shippable — they collectively rewrite one cohesive pre-release contract that lands in a single PR. The story decomposition exists for implementation tracking and reviewer auditability, not for incremental delivery. The Implementation Strategy section at the bottom captures this exception to the template's usual MVP framing.
 
