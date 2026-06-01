@@ -126,10 +126,9 @@ with (
         print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
-        # 2. Submit a data generation job that reads the agent's traces. Retry on
-        # failure: server-side ingestion is usually <1 minute but isn't guaranteed,
-        # and the data-gen job fails fast if it can't find the trace yet.
-        # Small backoff so the seeded spans fall inside the queried window.
+        # 2. Submit a data generation job that reads the agent's traces (retry
+        # in case ingestion is still in flight). Small backoff so the seeded
+        # spans fall inside the queried window.
         start_time = seed_start - timedelta(minutes=5)
 
         job = None
