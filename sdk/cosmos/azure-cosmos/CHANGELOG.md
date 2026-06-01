@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.16.1 (2026-05-31)
+### 4.16.1 (2026-06-01)
 
 #### Bugs Fixed
 * Fixed a bug in the sync and async `/pkranges` change-feed refresh where some containers could fail to build a complete routing map. See [PR 47245](https://github.com/Azure/azure-sdk-for-python/pull/47245).
