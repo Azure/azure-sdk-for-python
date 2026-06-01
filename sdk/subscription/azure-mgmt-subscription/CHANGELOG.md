@@ -21,22 +21,21 @@
   - Added model `TargetDirectoryRequestProperties`
   - Added model `TargetDirectoryResult`
   - Added model `TargetDirectoryResultProperties`
-  - Model `SubscriptionsOperations` added method `accept_target_directory`
-  - Model `SubscriptionsOperations` added method `delete_target_directory`
-  - Model `SubscriptionsOperations` added method `get_target_directory`
-  - Model `SubscriptionsOperations` added method `list_target_directory`
-  - Model `SubscriptionsOperations` added method `put_target_directory`
-  - Model `SubscriptionsOperations` added method `target_directory_status`
-  - Added model `SubscriptionOperationOperations`
+  - Operation group `SubscriptionsOperations` added method `accept_target_directory`
+  - Operation group `SubscriptionsOperations` added method `delete_target_directory`
+  - Operation group `SubscriptionsOperations` added method `get_target_directory`
+  - Operation group `SubscriptionsOperations` added method `list_target_directory`
+  - Operation group `SubscriptionsOperations` added method `put_target_directory`
+  - Operation group `SubscriptionsOperations` added method `target_directory_status`
+  - Added operation group `SubscriptionOperationOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed client operation group `SubscriptionClient.tenants`
-  - Method `AliasOperations.list` changed from `asynchronous` to `synchronous`
   - Model `ErrorResponse` deleted or renamed its instance variable `code`
   - Model `ErrorResponse` deleted or renamed its instance variable `message`
   - Deleted or renamed model `ErrorResponseBody`
-  - Deleted or renamed model `GetTenantPolicyListResponse`
   - Deleted or renamed model `Location`
   - Deleted or renamed model `SpendingLimit`
   - Deleted or renamed model `Subscription`
@@ -46,9 +45,12 @@
   - Deleted or renamed method `SubscriptionsOperations.get`
   - Deleted or renamed method `SubscriptionsOperations.list`
   - Deleted or renamed method `SubscriptionsOperations.list_locations`
-  - Deleted or renamed model `TenantsOperations`
-  - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `AsyncItemPaged[_models.SubscriptionAliasResponse]`
+  - Deleted or renamed operation group `TenantsOperations`
   - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `ItemPaged[_models.SubscriptionAliasResponse]`
+
+### Other Changes
+
+  - Deleted model `GetTenantPolicyListResponse` which actually was not used by SDK users
 
 ## 3.2.0b1 (2022-12-27)
 
