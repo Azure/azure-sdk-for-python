@@ -19,7 +19,7 @@
   - Added model `Resource`
   - Added enum `ResultKind`
   - Added model `SystemData`
-  - Added model `GraphQueryOperations`
+  - Added operation group `GraphQueryOperations`
 
 ### Breaking Changes
 
