@@ -78,7 +78,9 @@ INITIAL_INGEST_WAIT_SECONDS = 30
 MAX_JOB_ATTEMPTS = 5
 RETRY_WAIT_SECONDS = 60
 
-# Per-run id keeps repeated runs from colliding; output names are capped at 50 chars.
+# Per-run id suffixed on the agent, output dataset, and job-input names so
+# repeated runs don't collide. Kept short (timestamp + 4 hex) to stay under
+# the 50-char service limit on output names.
 run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_dataset_name = f"{DATASET_NAME}-{run_id}"
 agent_name = f"{DATASET_NAME}-{run_id}"
