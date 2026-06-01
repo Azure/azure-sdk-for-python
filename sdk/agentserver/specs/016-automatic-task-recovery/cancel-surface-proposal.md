@@ -23,7 +23,7 @@ From `azure-ai-agentserver-core/azure/ai/agentserver/core/durable/_context.py`:
 | **`shutdown`** | `asyncio.Event` | empty | Container-level shutdown event. **Distinct from `cancel`**; set on SIGTERM/SIGINT. |
 | `entry_mode` | `Literal["fresh","resumed","recovered"]` | `"fresh"` | Why the framework entered the handler. |
 | **`was_steered`** | `bool` | `False` | True when this invocation is the result of a steering-drain re-entry. Describes the entry — not "is steering pressure pending right now". |
-| **`pending_inputs`** | `Sequence[Any]` | `()` | The queue of steering inputs not yet processed. **Length > 0 ⇒ steering pressure is queued for the current generation.** |
+| **`pending_inputs`** | `Sequence[Any]` | `()` | **Current public surface — being REPLACED per user direction 2026-06-01 with `pending_input_count: int`.** Today's shape exposes the snapshot of the queue at entry, which (1) misleads developers into thinking they can process those inputs in current execution (they cannot — those belong to future turns), (2) doesn't update if more inputs arrive mid-handler, and (3) exposes far more surface than needed. The replacement is a live read-only `int` count. |
 | `steering_generation` | `int` | `0` | Monotonically increasing per-drain. |
 
 Plus methods: `suspend(reason, output)`, `stream(item)`.
