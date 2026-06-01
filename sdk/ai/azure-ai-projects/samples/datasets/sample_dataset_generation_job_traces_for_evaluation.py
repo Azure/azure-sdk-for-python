@@ -67,7 +67,15 @@ AGENT_INSTRUCTIONS = (
     "Widgets & Gizmos support agent. Be concise. "
     "Refunds: unopened 30 days; defective 90 days; 5-7 business days to process."
 )
-SEED_PROMPT = "What is your refund policy?"
+# Multiple seeded conversations give the EVALUATION job enough trace material
+# to extract and format into evaluation samples.
+SEED_PROMPTS = [
+    "What is your refund policy?",
+    "I bought a widget last week and it's defective. What can I do?",
+    "How long does it take to process a refund?",
+    "Can I return an unopened gizmo after 45 days?",
+    "Do you offer exchanges, or only refunds?",
+]
 
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
@@ -94,7 +102,7 @@ with (
 ):
 
     created_agent = None
-    created_conversation_id: Optional[str] = None
+    created_conversation_ids: List[str] = []
     submitted_job_ids: List[str] = []
     created_dataset: Optional[DatasetVersion] = None
 
@@ -108,16 +116,17 @@ with (
         print(f"Agent created (id: {created_agent.id}, version: {created_agent.version}).")
 
         seed_start = datetime.now(tz=timezone.utc)
-        print(f"Seed one conversation against the agent (prompt: {SEED_PROMPT!r}).")
+        print(f"Seed {len(SEED_PROMPTS)} conversation(s) against the agent.")
         with project_client.get_openai_client() as openai_client:
-            conversation = openai_client.conversations.create()
-            created_conversation_id = conversation.id
-            print(f"  - conversation id: {conversation.id}")
-            openai_client.responses.create(
-                conversation=conversation.id,
-                input=SEED_PROMPT,
-                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
-            )
+            for prompt in SEED_PROMPTS:
+                conversation = openai_client.conversations.create()
+                created_conversation_ids.append(conversation.id)
+                print(f"  - conversation id: {conversation.id}  (prompt: {prompt!r})")
+                openai_client.responses.create(
+                    conversation=conversation.id,
+                    input=prompt,
+                    extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
+                )
 
         print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
@@ -215,13 +224,17 @@ with (
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete job `{jid}`: {exc}")
 
-        if created_conversation_id is not None:
+        if created_conversation_ids:
             try:
                 with project_client.get_openai_client() as openai_client:
-                    openai_client.conversations.delete(conversation_id=created_conversation_id)
-                    print(f"Deleted seeded conversation `{created_conversation_id}`.")
+                    for cid in created_conversation_ids:
+                        try:
+                            openai_client.conversations.delete(conversation_id=cid)
+                            print(f"Deleted seeded conversation `{cid}`.")
+                        except Exception as exc:  # pylint: disable=broad-exception-caught
+                            print(f"  (warning) could not delete conversation `{cid}`: {exc}")
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not delete conversation: {exc}")
+                print(f"  (warning) could not open openai client for conversation cleanup: {exc}")
 
         if created_agent is not None:
             try:
