@@ -60,7 +60,7 @@ Breaking changes in beta classes:
   * Added Hosted Agent code-upload samples `sample_create_hosted_agent_from_code.py` and `sample_create_hosted_agent_from_code_async.py`, demonstrating uploading a code package (zip) as a new hosted agent version.
   * The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
   * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
-  * Added Routines samples `sample_routines_crud.py` demonstring CRUD operations and `sample_routines_with_timer_trigger.py` trigger a routine by a timer.
+  * Added Routines samples `sample_routines_crud.py` demonstrating CRUD operations and `sample_routines_with_timer_trigger.py` demonstrating triggering a routine by a timer.
 * Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
 * Added `.beta.models` samples under `samples/models/`:
   * `sample_models_basic.py` — synchronous end-to-end registration via the `create` helper (uses `azcopy`), followed by `get`, `list_versions`, `list`, `get_credentials`, `update`, and `delete`.
