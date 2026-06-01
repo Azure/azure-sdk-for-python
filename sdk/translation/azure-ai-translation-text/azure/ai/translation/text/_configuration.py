@@ -31,9 +31,9 @@ class TextTranslationClientConfiguration:  # pylint: disable=too-many-instance-a
      credential type or a token credential type. Default value is None.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: Mandatory API version parameter. Known values are "2026-06-06". Default
-     value is "2026-06-06". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: Mandatory API version parameter. Known values are "2026-06-06" and None.
+     Default value is None. If not set, the operation's default API version will be used. Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

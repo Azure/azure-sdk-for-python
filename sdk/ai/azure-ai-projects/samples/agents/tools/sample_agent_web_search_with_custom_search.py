@@ -58,14 +58,12 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
-    # [START tool_declaration]
     tool = WebSearchTool(
         custom_search_configuration=WebSearchConfiguration(
             project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
             instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
         )
     )
-    # [END tool_declaration]
     # Create Agent with web search tool
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

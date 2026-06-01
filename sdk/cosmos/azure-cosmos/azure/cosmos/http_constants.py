@@ -221,7 +221,7 @@ class HttpHeaders:
 
     # Change feed
     AIM = "A-IM"
-    IncrementalFeedHeaderValue = "Incremental feed"
+    IncrementalFeedHeaderValue = "Incremental Feed"
     FullFidelityFeedHeaderValue = "Full-Fidelity Feed"
     ChangeFeedWireFormatVersion = "x-ms-cosmos-changefeed-wire-format-version"
 
