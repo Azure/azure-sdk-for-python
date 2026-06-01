@@ -227,7 +227,6 @@ def is_cache_unchanged_since_previous(
 
 
 
-
 def prepare_fetch_options_and_headers(
     previous_routing_map: Optional[CollectionRoutingMap],
     feed_options: Optional[Dict[str, Any]],
@@ -235,7 +234,12 @@ def prepare_fetch_options_and_headers(
 ) -> Dict[str, Any]:
     """Prepare sanitised feed options and headers for a PK-range fetch.
 
-    This mutates *kwargs* in-place (sets ``headers``).
+    Mutates *kwargs* in-place: sets ``headers`` and pops the internal
+    ``_honor_customer_timeout`` sentinel. When that sentinel is not truthy,
+    also pops ``timeout`` / ``read_timeout`` / ``connection_timeout`` so a
+    customer's data-operation deadline cannot bound an internal metadata
+    fetch. ``read_feed_ranges`` opts in via the sentinel because in that
+    call the PK-range read is the customer operation.
 
     :param previous_routing_map: The base routing map for incremental
         updates, or ``None`` for a full load.
@@ -243,7 +247,7 @@ def prepare_fetch_options_and_headers(
         ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
         or None
     :param dict feed_options: Raw feed options from the caller.
-    :param dict kwargs: Keyword arguments (mutated -- ``headers`` is set).
+    :param dict kwargs: Keyword arguments (mutated in place as described above).
     :return: The sanitised ``change_feed_options`` dict.
     :rtype: dict
     """
@@ -266,8 +270,15 @@ def prepare_fetch_options_and_headers(
         headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
 
     kwargs['headers'] = headers
+    # Pop internal sentinel; strip per-request timeout kwargs unless the
+    # caller opts in. All three timeout kwargs are stripped together so
+    # one cannot leak through and still bound the internal fetch.
+    honor_customer_timeout = bool(kwargs.pop('_honor_customer_timeout', False))
+    if not honor_customer_timeout:
+        kwargs.pop('timeout', None)
+        kwargs.pop('read_timeout', None)
+        kwargs.pop('connection_timeout', None)
     return change_feed_options
-
 
 
 

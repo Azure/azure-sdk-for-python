@@ -2045,6 +2045,10 @@ class ContainerProxy:
         feed_options: Dict[str, Any] = {}
         setup_complete = False
 
+        # For read_feed_ranges, timeout should flow to the PK-range request.
+        # The cache layer strips timeout by default, so this call opts in.
+        kwargs["_honor_customer_timeout"] = True
+
         async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
             nonlocal setup_complete
             if not setup_complete:

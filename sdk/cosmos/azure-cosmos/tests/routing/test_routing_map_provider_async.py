@@ -1,10 +1,14 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import unittest
+from typing import Optional, Mapping, Any
+from unittest.mock import MagicMock, patch
 
 import pytest
 
+from azure.cosmos import _base, http_constants
 from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.aio.routing_map_provider import CollectionRoutingMap
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider
@@ -12,19 +16,16 @@ from azure.cosmos._routing.aio.routing_map_provider import PartitionKeyRangeCach
 from azure.cosmos._routing._routing_map_provider_common import (
     _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
 )
-from azure.cosmos import http_constants
-
-from typing import Optional, Mapping, Any
-from unittest.mock import MagicMock, patch
-import gc
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._routing.aio.routing_map_provider import (
     _shared_routing_map_cache,
     _shared_collection_locks,
     _shared_locks_locks,
+    _shared_inflight_fetches,
     _shared_cache_refcounts,
     _shared_cache_lock,
 )
+import gc
 
 
 @pytest.mark.cosmosEmulator
@@ -61,6 +62,10 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
     def tearDown(self):
         # Release first, then collect cycles, then clear all shared dicts
         # together so no partial shared-cache state leaks across tests.
+        # _shared_inflight_fetches is async-only (sync coalesces on a Lock,
+        # async coalesces on Futures) -- clearing it here prevents a test
+        # that crashes mid-fetch from leaving an _InflightEntry that the
+        # next test's first cache lookup would block on or coalesce against.
         provider = getattr(self, 'smart_routing_map_provider', None)
         if provider is not None:
             provider.release()
@@ -70,6 +75,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             _shared_routing_map_cache.clear()
             _shared_collection_locks.clear()
             _shared_locks_locks.clear()
+            _shared_inflight_fetches.clear()
             _shared_cache_refcounts.clear()
 
     def setUp(self):
@@ -201,7 +207,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         self.assertIsNotNone(result)
         self.assertEqual(len(list(result._orderedPartitionKeyRanges)), 5)
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         self.assertIn(collection_id, provider._collection_routing_map_by_item)
 
@@ -237,6 +242,47 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result.change_feed_etag, expected_internal_etag)
         self.assertEqual(hook_calls, ['"user-hook-etag"'])
+
+    async def test_get_routing_map_strips_customer_timeout_kwargs_async(self):
+        """Async mirror: cache layer strips ``timeout``/``read_timeout`` before PK-range fetch."""
+        call_count = {'count': 0}
+        seen_kwargs: dict = {}
+        original_ranges = self.partition_key_ranges
+
+        class TimeoutAwareClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                seen_kwargs.update(kwargs)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"strip-etag"')
+
+                async def _gen():
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(TimeoutAwareClient())
+        collection_link = "dbs/db/colls/container"
+
+        result1 = await provider.get_routing_map(
+            collection_link, feed_options={}, timeout=0.001, read_timeout=0.001,
+        )
+        self.assertIsNotNone(result1)
+        self.assertEqual(call_count['count'], 1)
+
+        self.assertNotIn('timeout', seen_kwargs,
+                         "Cache layer must strip customer 'timeout' before the fetch")
+        self.assertNotIn('read_timeout', seen_kwargs,
+                         "Cache layer must strip customer 'read_timeout' before the fetch")
+
+        # Internal header capture still needs to flow through.
+        self.assertIn('_internal_response_headers_capture', seen_kwargs)
+
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        self.assertIn(collection_id, provider._collection_routing_map_by_item)
+        result2 = await provider.get_routing_map(collection_link, feed_options={})
+        self.assertIs(result2, result1)
+        self.assertEqual(call_count['count'], 1)
 
     async def test_get_routing_map_returns_cached_on_second_call_async(self):
         """Second call returns the same cached object without re-fetching."""
@@ -315,7 +361,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             TestRoutingMapProviderAsync.MockedCosmosClientConnection(self.partition_key_ranges)
         )
         collection_link = "dbs/db/colls/container"
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         cached_map = await provider.get_routing_map(collection_link, feed_options={})
@@ -358,7 +403,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(IncompleteClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -406,7 +450,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(DeltaClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -457,7 +500,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(HeaderCapturingClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -519,7 +561,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -571,7 +612,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -642,7 +682,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(RapidSplitClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -703,7 +742,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -764,9 +802,12 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         Verifies that coroutines don't corrupt the cache and all get a valid result.
         """
-        import asyncio
+        # The cache uses a per-collection lock to serialise concurrent
+        # `force_refresh=True` callers. The contract we pin down here is
+        # the weak one: no caller raises, every caller gets a valid map.
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
+        # Gate the mock so refreshes stack up before we let them run.
         fetch_event = asyncio.Event()
 
         class SlowCountingClient:
@@ -784,10 +825,13 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         provider = PartitionKeyRangeCache(SlowCountingClient())
         collection_link = "dbs/db/colls/container"
 
-        # Populate cache with initial map (let it go fast)
+        # === Step 1: populate the cache with a known initial map. Let the
+        # gate be open so this initial load isn't slow.
         fetch_event.set()
         initial_map = await provider.get_routing_map(collection_link, feed_options={})
         self.assertEqual(call_count['count'], 1)
+        # === Step 2: close the gate so subsequent fetches will block,
+        # giving the concurrent callers time to all queue up.
         fetch_event.clear()
 
         async def refresh_fn():
@@ -796,15 +840,19 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 force_refresh=True, previous_routing_map=initial_map
             )
 
-        # Launch 5 concurrent refresh coroutines
+        # === Step 3: launch 5 concurrent refresh coroutines. With the gate
+        # closed, they'll all pile up at the lock and/or the fetch event.
         tasks = [asyncio.create_task(refresh_fn()) for _ in range(5)]
 
+        # Yield so they all reach their parked state before we release.
         await asyncio.sleep(0.1)
+        # Now open the gate and let them all proceed.
         fetch_event.set()
 
         results = await asyncio.gather(*tasks)
 
-        # All coroutines should get a non-None result
+        # === Step 4: contract — every coroutine got back a non-None result.
+        # Concurrency didn't corrupt anyone's view of the cache.
         for i, r in enumerate(results):
             self.assertIsNotNone(r, f"Coroutine {i} got None")
 
@@ -813,7 +861,10 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         The cache entry is atomically replaced, never deleted.
         """
-        import asyncio
+        # A fast-path reader must never observe `None` in the cache slot
+        # while a refresh is in flight, otherwise it would assume the cache
+        # is cold and trigger a redundant fetch. The refresh code uses
+        # atomic assignment, never delete-then-reinsert.
         original_ranges = self.partition_key_ranges
         call_count = {'count': 0}
 
@@ -822,6 +873,8 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 call_count['count'] += 1
 
                 async def _gen():
+                    # A small artificial delay so the refresher is provably
+                    # in flight while the reader is polling.
                     await asyncio.sleep(0.05)
                     TestRoutingMapProviderAsync._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                     for r in original_ranges:
@@ -831,13 +884,15 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         provider = PartitionKeyRangeCache(SlowClient())
         collection_link = "dbs/db/colls/container"
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        # Populate cache
+        # === Step 1: populate the cache so the reader has something
+        # non-None to observe between refresh windows.
         initial_map = await provider.get_routing_map(collection_link, feed_options={})
         self.assertIsNotNone(initial_map)
 
+        # === Step 2: set up the reader. It polls the cache as fast as the
+        # loop will let it, counting any None observations as failures.
         none_seen = {'count': 0}
         stop_event = asyncio.Event()
 
@@ -846,6 +901,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 cached = provider._collection_routing_map_by_item.get(collection_id)
                 if cached is None:
                     none_seen['count'] += 1
+                # Yield so this loop doesn't monopolise the event loop.
                 await asyncio.sleep(0)
 
         async def refresher_fn():
@@ -854,13 +910,1353 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 force_refresh=True, previous_routing_map=initial_map
             )
 
+        # === Step 3: start the reader, then do the refresh, then stop the reader.
         reader_task = asyncio.create_task(reader_fn())
         await refresher_fn()
         stop_event.set()
         await reader_task
 
+        # === Step 4: contract — the reader saw the slot transition from
+        # old map to new map without ever observing a None intermediate.
         self.assertEqual(none_seen['count'], 0,
                          "Cache entry should never be None during a refresh — it should be atomically replaced")
+
+    async def test_cache_populated_when_originating_caller_is_cancelled_async(self):
+        """Cancelling the originating caller mid-fetch must NOT prevent the cache write.
+
+        Reproduces the failure mode where a customer's ``asyncio.wait_for``
+        deadline expires while the routing-map fetch is in flight. The fetch
+        task runs independently of the caller, owns the cache assignment, and
+        completes successfully so the cache ends up populated.
+        """
+        # Before the fix, the fetch ran on the customer's call stack. A
+        # cancellation mid-fetch tore down the fetch and skipped the
+        # cache write, so every retry repeated the same doomed sequence.
+        # The fix moves the fetch into a shared task per collection and
+        # waits on it through `asyncio.shield`, so cancellation only
+        # unwinds the waiter -- the task keeps running and writes the
+        # result into the cache.
+        original_ranges = self.partition_key_ranges
+        # Gate the mock so we can guarantee the fetch is still in flight
+        # at the moment the customer's deadline fires.
+        fetch_gate = asyncio.Event()
+        call_count = {'count': 0}
+
+        class SlowClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+
+                async def _gen():
+                    # Park here — simulates a slow HTTP round trip the customer
+                    # won't wait long enough for.
+                    await fetch_gate.wait()
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"slow-etag"')
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # === Step 1: customer's wait_for fires before the fetch can complete.
+        # Without the fix this is where the publish would be lost forever.
+        with self.assertRaises(asyncio.TimeoutError):
+            await asyncio.wait_for(
+                provider.get_routing_map(collection_link, feed_options={}),
+                timeout=0.05,
+            )
+
+        # === Step 2: at this instant the cache MUST still be empty.
+        # The fetch is gated — it hasn't run to completion yet, so the
+        # in-flight task hasn't had a chance to write to the cache. If anything
+        # were in the cache here it would mean the fetch shortcut something,
+        # and the test wouldn't actually be exercising the fix.
+        self.assertIsNone(provider._collection_routing_map_by_item.get(collection_id))
+
+        # === Step 3: let the gated fetch complete.
+        # The originating caller is long gone (raised TimeoutError above), but
+        # the shared task is still alive on the event loop. We open the gate
+        # so it can finish its work, then poll until the cache slot fills in.
+        fetch_gate.set()
+        for _ in range(100):
+            if provider._collection_routing_map_by_item.get(collection_id) is not None:
+                break
+            await asyncio.sleep(0.01)
+
+        # === Step 4: cache must now be populated — this is the fix in action.
+        # Even though the caller that triggered the fetch was cancelled, the
+        # task survived, the publish ran inside the task, and the routing map
+        # made it into the cache.
+        populated = provider._collection_routing_map_by_item.get(collection_id)
+        self.assertIsNotNone(populated,
+                             "Cache must be populated after the gated fetch completes")
+        self.assertEqual(len(list(populated._orderedPartitionKeyRanges)), len(original_ranges))
+        self.assertEqual(call_count['count'], 1,
+                         "Exactly one fetch should have been issued")
+
+        # === Step 5: the customer's retry now hits a populated cache.
+        # No new HTTP fetch. The whole point of the fix — the second attempt
+        # gets the work that the first attempt's fetch finished after timeout.
+        result = await provider.get_routing_map(collection_link, feed_options={})
+        self.assertIs(result, populated)
+        self.assertEqual(call_count['count'], 1)
+
+    async def test_cache_populated_when_cancelled_with_timeout_kwarg_async(self):
+        """Cache still populates when caller is cancelled and timeout kwarg is present."""
+        original_ranges = self.partition_key_ranges
+        fetch_gate = asyncio.Event()
+        call_count = {'count': 0}
+        seen_kwargs: dict = {}
+
+        class SlowClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                seen_kwargs.update(kwargs)
+
+                async def _gen():
+                    # Gate again — fetch won't complete until we say so.
+                    await fetch_gate.wait()
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"slow-timeout-etag"')
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        with self.assertRaises(asyncio.TimeoutError):
+            await asyncio.wait_for(
+                provider.get_routing_map(collection_link, feed_options={}, timeout=0.001),
+                timeout=0.05,
+            )
+
+        self.assertNotIn(
+            'timeout', seen_kwargs,
+            "Cache layer must strip customer 'timeout' before the fetch",
+        )
+        self.assertIsNone(provider._collection_routing_map_by_item.get(collection_id))
+
+        fetch_gate.set()
+        for _ in range(100):
+            if provider._collection_routing_map_by_item.get(collection_id) is not None:
+                break
+            await asyncio.sleep(0.01)
+
+        populated = provider._collection_routing_map_by_item.get(collection_id)
+        self.assertIsNotNone(populated)
+        self.assertEqual(call_count['count'], 1)
+
+        result = await provider.get_routing_map(collection_link, feed_options={})
+        self.assertIs(result, populated)
+        self.assertEqual(call_count['count'], 1)
+
+    async def test_all_waiters_cancelled_cache_still_populates_async(self):
+        """Cache populates even when all concurrent waiters time out."""
+        original_ranges = self.partition_key_ranges
+        fetch_gate = asyncio.Event()
+        call_count = {'count': 0}
+
+        class SlowClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+
+                async def _gen():
+                    await fetch_gate.wait()
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"all-cancel-etag"')
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        async def cancellable_caller():
+            with self.assertRaises(asyncio.TimeoutError):
+                await asyncio.wait_for(
+                    provider.get_routing_map(collection_link, feed_options={}),
+                    timeout=0.05,
+                )
+
+        callers = [asyncio.create_task(cancellable_caller()) for _ in range(5)]
+        await asyncio.gather(*callers)
+
+        self.assertIsNone(provider._collection_routing_map_by_item.get(collection_id))
+
+        fetch_gate.set()
+        for _ in range(100):
+            if provider._collection_routing_map_by_item.get(collection_id) is not None:
+                break
+            await asyncio.sleep(0.01)
+
+        populated = provider._collection_routing_map_by_item.get(collection_id)
+        self.assertIsNotNone(populated,
+                             "Cache must populate even after every awaiter is cancelled")
+        self.assertEqual(call_count['count'], 1,
+                         "All 5 cancelled callers should have coalesced on one fetch")
+        self.assertEqual(len(list(populated._orderedPartitionKeyRanges)), len(original_ranges))
+
+        result = await provider.get_routing_map(collection_link, feed_options={})
+        self.assertIs(result, populated)
+        self.assertEqual(call_count['count'], 1)
+
+    async def test_concurrent_cold_cache_callers_share_a_single_fetch_async(self):
+        """Concurrent cold-cache callers must coalesce onto one fetch task."""
+        original_ranges = self.partition_key_ranges
+        fetch_gate = asyncio.Event()
+        call_count = {'count': 0}
+
+        class SlowClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+
+                async def _gen():
+                    await fetch_gate.wait()
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"shared-etag"')
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowClient())
+        collection_link = "dbs/db/colls/container"
+
+        async def caller():
+            return await provider.get_routing_map(collection_link, feed_options={})
+
+        tasks = [asyncio.create_task(caller()) for _ in range(10)]
+        await asyncio.sleep(0.05)
+        fetch_gate.set()
+        results = await asyncio.gather(*tasks)
+
+        self.assertEqual(call_count['count'], 1,
+                         "All 10 concurrent cold-cache callers should share one fetch")
+        first = results[0]
+        self.assertIsNotNone(first)
+        for r in results[1:]:
+            self.assertIs(r, first, "All callers should observe the same routing map object")
+
+    async def test_force_refresh_caller_joins_cold_cache_fetch_async(self):
+        """A force-refresh caller should join an in-flight cold-cache fetch."""
+        original_ranges = self.partition_key_ranges
+        fetch_gate = asyncio.Event()
+        call_count = {'count': 0}
+
+        class SlowClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+
+                async def _gen():
+                    await fetch_gate.wait()
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"mixed-mode-etag"')
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowClient())
+        collection_link = "dbs/db/colls/container"
+
+        caller_a = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        # Wait until caller A has registered the in-flight task.
+        for _ in range(100):
+            if provider._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0.01)
+        self.assertTrue(
+            provider._inflight_fetches,  # pylint: disable=protected-access
+            "Originating cold-cache caller should register an in-flight task",
+        )
+
+        caller_b = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={}, force_refresh=True
+            )
+        )
+        await asyncio.sleep(0.01)
+
+        fetch_gate.set()
+        result_a, result_b = await asyncio.gather(caller_a, caller_b)
+
+        self.assertEqual(
+            call_count['count'], 1,
+            "force_refresh joiner should share the cold-cache fetch, not duplicate it",
+        )
+        self.assertIsNotNone(result_a)
+        self.assertIs(
+            result_a, result_b,
+            "Both callers should observe the same routing map object",
+        )
+
+    async def test_waiter_joining_after_originator_cancelled_gets_result_async(self):
+        """A waiter that joins after the originating caller is cancelled still receives the fetched map."""
+        # The originator can be cancelled, but a later caller that arrives
+        # while the fetch is still in flight must find the same task in
+        # the in-flight dict, await it, and receive the result. The mock
+        # must record exactly ONE call -- the waiter joined, it did not
+        # start a fresh fetch.
+        original_ranges = self.partition_key_ranges
+        fetch_gate = asyncio.Event()
+        call_count = {'count': 0}
+
+        class SlowClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+
+                async def _gen():
+                    await fetch_gate.wait()
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"join-etag"')
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowClient())
+        collection_link = "dbs/db/colls/container"
+
+        # === Step 1: kick off the originator as its own task so we can
+        # cancel it explicitly without bringing down the test coroutine.
+        originator = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        # Poll for the in-flight task to be registered before we cancel
+        # the originator. Polling on the condition itself avoids any
+        # assumption about how many event-loop ticks the registration
+        # path needs.
+        for _ in range(100):
+            if provider._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0.01)
+        self.assertTrue(
+            provider._inflight_fetches,  # pylint: disable=protected-access
+            "Originator should have registered an in-flight task before cancellation",
+        )
+
+        # === Step 2: cancel the originator. The shared task it created
+        # should keep running on the event loop (still parked on the gate).
+        originator.cancel()
+        with self.assertRaises(asyncio.CancelledError):
+            await originator
+
+        # === Step 3: a NEW caller arrives — the waiter. The originator is
+        # gone, but the in-flight task is still alive. The waiter should
+        # find that task and join it.
+        waiter = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        # Yield so the waiter has time to enter the slow path and find the
+        # already-registered in-flight task.
+        await asyncio.sleep(0.01)
+        # === Step 4: now let the gated fetch complete. The waiter is
+        # awaiting on the shared task; when the task finishes, the waiter
+        # wakes up with the result.
+        fetch_gate.set()
+        result = await waiter
+
+        # === Step 5: the waiter received a real routing map (not None,
+        # not an exception inherited from the cancelled originator).
+        self.assertIsNotNone(result)
+        # And critically: only ONE underlying fetch happened. The waiter
+        # joined the originator's task, didn't start a separate one.
+        self.assertEqual(call_count['count'], 1,
+                         "Waiter should join the in-flight task, not start a new fetch")
+        self.assertEqual(len(list(result._orderedPartitionKeyRanges)), len(original_ranges))
+
+    async def test_failed_fetch_clears_inflight_slot_so_next_caller_retries_async(self):
+        """When a fetch fails, the in-flight slot is freed and the next caller can retry."""
+        # The `finally` block in `_fetch_and_publish` must pop the slot
+        # whether the fetch succeeded or raised. Otherwise the next caller
+        # would find a dead task in the dict and await it forever.
+        original_ranges = self.partition_key_ranges
+        call_count = {'count': 0}
+
+        class FlakyClient:
+            """First call raises, second call returns valid ranges."""
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                attempt = call_count['count']
+
+                async def _gen():
+                    if attempt == 1:
+                        # Simulate the kind of transient backend error that
+                        # would cause the fetch task to raise — and bring the
+                        # whole publish path down with it.
+                        raise CosmosHttpResponseError(status_code=500, message="simulated transient failure")
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"retry-etag"')
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(FlakyClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        # The in-flight dict is keyed by (loop_id, collection_id) so the same
+        # cache can be safely reused across different event loops.
+        inflight_key = (id(asyncio.get_running_loop()), collection_id)
+
+        # === Step 1: first call. Mock raises; expect the exception to
+        # propagate out to us (the awaiting caller).
+        with self.assertRaises(CosmosHttpResponseError):
+            await provider.get_routing_map(collection_link, feed_options={})
+
+        # === Step 2: the critical assertion. The failed task's `finally`
+        # block should have removed itself from the in-flight dict. If this
+        # fails, the next caller would be stuck awaiting a dead task.
+        self.assertNotIn(inflight_key, provider._inflight_fetches,
+                         "Failed fetch should free the in-flight slot")
+
+        # === Step 3: a fresh caller arrives. Because the slot is empty,
+        # they register a brand-new fetch — that's `call_count` going to 2.
+        # And this attempt succeeds.
+        result = await provider.get_routing_map(collection_link, feed_options={})
+        self.assertIsNotNone(result)
+        self.assertEqual(call_count['count'], 2,
+                         "Second attempt should issue a brand-new fetch")
+
+    async def test_inflight_slot_freed_after_successful_fetch_async(self):
+        """The in-flight slot must be empty after a successful fetch completes."""
+        # Companion to the previous test: cleanup must also happen on the
+        # success path, otherwise the dict would grow over the lifetime
+        # of the client.
+        provider = PartitionKeyRangeCache(
+            TestRoutingMapProviderAsync.MockedCosmosClientConnection(self.partition_key_ranges)
+        )
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        inflight_key = (id(asyncio.get_running_loop()), collection_id)
+
+        # Do a normal, successful fetch.
+        await provider.get_routing_map(collection_link, feed_options={})
+        # Slot must be cleaned up. If this fails it means the `finally` block
+        # is only running on the failure path, not on success.
+        self.assertNotIn(inflight_key, provider._inflight_fetches,
+                         "Successful fetch should free the in-flight slot")
+
+    async def test_cold_cache_caller_joins_incremental_refresh_in_flight_async(self):
+        """A cold-cache caller should join an in-flight incremental refresh.
+
+        The in-flight key is per-collection, not per-refresh-mode, so a
+        cold-cache caller (no force_refresh, no previous_routing_map)
+        must coalesce onto an in-flight incremental refresh task instead
+        of starting its own fetch.
+        """
+        original_ranges = self.partition_key_ranges
+        # Mock a topology delta so we can tell the incremental refresh result
+        # apart from the initial-load result: range '0' split into '5' + '6'.
+        split_ranges = [
+            {'id': '5', 'minInclusive': '', 'maxExclusive': '05C1B9CD673398', 'parents': ['0']},
+            {'id': '6', 'minInclusive': '05C1B9CD673398', 'maxExclusive': '05C1C9CD673398', 'parents': ['0']},
+        ]
+        fetch_gate = asyncio.Event()
+        call_count = {'count': 0}
+        seen_headers: list = []
+
+        class TopologyChangingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                attempt = call_count['count']
+                seen_headers.append(dict(kwargs.get('headers', {})))
+
+                async def _gen():
+                    if attempt == 1:
+                        # Initial load — no gate, returns immediately so the
+                        # cache is warm for the incremental scenario below.
+                        TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"warm-etag"')
+                        for r in original_ranges:
+                            yield r
+                        return
+                    # Second call is the incremental refresh — park on the
+                    # gate so we can land caller B while it is in flight.
+                    await fetch_gate.wait()
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"incremental-etag"')
+                    for r in split_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(TopologyChangingClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # === Step 1: warm the cache so an incremental refresh is possible.
+        warm_map = await provider.get_routing_map(collection_link, feed_options={})
+        self.assertEqual(call_count['count'], 1)
+        self.assertIs(
+            provider._collection_routing_map_by_item.get(collection_id),  # pylint: disable=protected-access
+            warm_map,
+        )
+
+        # === Step 2: caller A starts an incremental refresh. With
+        # ``force_refresh=True`` and ``previous_routing_map`` matching the
+        # cached map's ETag, ``determine_refresh_action`` returns the
+        # cached map as the base — i.e. an incremental fetch, not a full load.
+        caller_a = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                force_refresh=True, previous_routing_map=warm_map,
+            )
+        )
+        # Poll until A has registered the in-flight task. Polling (vs.
+        # ``await asyncio.sleep(0)``) protects against future ``await``s
+        # being added on the registration path.
+        for _ in range(100):
+            if provider._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0.01)
+        self.assertTrue(
+            provider._inflight_fetches,  # pylint: disable=protected-access
+            "Incremental-refresh caller should register an in-flight task",
+        )
+
+        # === Step 3: empty the cache while the incremental refresh is gated.
+        # This forces caller B onto the slow path so it actually tries to join
+        # the in-flight task instead of short-circuiting on the fast path.
+        # ``clear_cache`` uses in-place ``.clear()`` so the dict identity is
+        # preserved and caller A's task can still publish into it.
+        provider.clear_cache()
+        self.assertIsNone(
+            provider._collection_routing_map_by_item.get(collection_id),  # pylint: disable=protected-access
+        )
+
+        # === Step 4: caller B arrives cold (no args). Cache is empty, so the
+        # fast path misses; B enters ``_register_or_join_inflight_fetch``,
+        # finds A's incremental task already there, and joins it.
+        caller_b = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        # Yield so B can reach the join site before the gate opens.
+        await asyncio.sleep(0.01)
+
+        # === Step 5: release the gate. A's incremental task completes and
+        # both callers wake up with the merged routing map.
+        fetch_gate.set()
+        result_a, result_b = await asyncio.gather(caller_a, caller_b)
+
+        # === Step 6: contract checks.
+        # Exactly two fetches total: the warm-up (call 1) and the shared
+        # incremental refresh (call 2). B did NOT trigger a third.
+        self.assertEqual(
+            call_count['count'], 2,
+            "Cold-cache caller must join the incremental task, not start a new fetch",
+        )
+        self.assertIsNotNone(result_a)
+        self.assertIs(
+            result_a, result_b,
+            "Both callers should receive the same routing map object",
+        )
+        # The post-split map has 6 ranges (original 5 minus '0' plus '5' + '6').
+        self.assertEqual(len(list(result_a._orderedPartitionKeyRanges)), 6)  # pylint: disable=protected-access
+        # The in-flight task ran in incremental mode — confirmed by the
+        # ``If-None-Match`` header on the second request, which
+        # ``prepare_fetch_options_and_headers`` sets only when a previous
+        # routing map is supplied.
+        self.assertIn(http_constants.HttpHeaders.IfNoneMatch, seen_headers[1])
+        self.assertEqual(
+            seen_headers[1][http_constants.HttpHeaders.IfNoneMatch],
+            warm_map.change_feed_etag,
+        )
+
+    async def test_stale_completed_task_in_inflight_dict_is_dropped_async(self):
+        """A stale completed task in the in-flight dict must be dropped, not awaited.
+
+        The ``finally`` block in ``_fetch_and_publish`` pops the slot before
+        the task transitions to ``done``, so under normal scheduling no
+        completed task is ever observable in ``_inflight_fetches``. The one
+        realistic way an orphan ends up there is a previous event loop being
+        closed mid-fetch whose ``id()`` is then reused by the current loop.
+        ``_register_or_join_inflight_fetch`` defensively drops any such
+        ``done`` entry and starts a fresh fetch on the live loop.
+
+        This test injects a completed task directly into the dict to exercise
+        that drop path — there's no other way to reach it because the
+        ``finally`` would have evicted any real task before it could be seen
+        as ``done``.
+        """
+        original_ranges = self.partition_key_ranges
+        call_count = {'count': 0}
+
+        class CountingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"fresh-etag"')
+
+                async def _gen():
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(CountingClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        inflight_key = (id(asyncio.get_running_loop()), collection_id)
+
+        # === Step 1: inject an orphan completed task into the in-flight slot
+        # to simulate the loop-id-reuse edge case. Returning a sentinel
+        # routing map (not ``None``) makes the test fail loudly if the drop
+        # path is silently skipped — the caller would observe this sentinel
+        # rather than the real ranges.
+        stale_sentinel = MagicMock(name="stale-routing-map")
+
+        async def _stale_coro():
+            return stale_sentinel
+
+        stale_task = asyncio.create_task(_stale_coro())
+        await stale_task
+        self.assertTrue(stale_task.done(), "Stale task must be done before injection")
+        # Wrap the stale task in the typed slot the dict expects.
+        from azure.cosmos._routing.aio.routing_map_provider import _InflightEntry
+        provider._inflight_fetches[inflight_key] = _InflightEntry(  # pylint: disable=protected-access
+            task=stale_task,
+            joined_hooks=[],
+        )
+
+        # === Step 2: a fresh caller arrives. ``_register_or_join_inflight_fetch``
+        # must (a) not return the stale ``done`` task, (b) evict it from the
+        # dict, and (c) schedule a brand-new fetch on the live loop.
+        result = await provider.get_routing_map(collection_link, feed_options={})
+
+        # === Step 3: contract checks.
+        # A real network round trip happened — proof the stale task was
+        # dropped rather than awaited.
+        self.assertEqual(call_count['count'], 1,
+                         "Stale completed task must trigger a fresh fetch")
+        # The caller received the freshly-fetched map, not the injected
+        # sentinel from the stale task.
+        self.assertIsNotNone(result)
+        self.assertIsNot(result, stale_sentinel,
+                         "Caller must not receive the stale task's result")
+        # The cache holds the freshly-fetched map.
+        cached = provider._collection_routing_map_by_item.get(collection_id)  # pylint: disable=protected-access
+        self.assertIs(result, cached)
+        self.assertEqual(len(list(result._orderedPartitionKeyRanges)), len(original_ranges))  # pylint: disable=protected-access
+        # And the slot is empty after the successful fetch — the ``finally``
+        # cleanup in ``_fetch_and_publish`` ran on the new task too.
+        self.assertNotIn(inflight_key, provider._inflight_fetches)  # pylint: disable=protected-access
+
+    # ---------------------------------------------------------------
+    # Customer timeout opt-in plumbing through the async cache layer
+    # ---------------------------------------------------------------
+
+    async def test_customer_timeout_reaches_pipeline_with_opt_in_async(self):
+        """When ``read_feed_ranges`` sets ``_honor_customer_timeout=True``
+        the customer's ``timeout`` / ``read_timeout`` / ``connection_timeout``
+        must all reach the pipeline unchanged, and the internal sentinel
+        must NOT escape onto the wire.
+        """
+        seen_kwargs = {}
+
+        class CapturingClient:
+            url_connection = "https://mock-async-timeout.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                seen_kwargs.update(kwargs)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+
+                async def _gen():
+                    for r in TestRoutingMapProviderAsync._sample_ranges():
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(CapturingClient())
+        await provider.get_routing_map(
+            "dbs/db/colls/container", feed_options={},
+            timeout=7, read_timeout=5, connection_timeout=3,
+            _honor_customer_timeout=True,
+        )
+
+        self.assertEqual(seen_kwargs.get("timeout"), 7,
+                         "Opt-in caller's timeout must reach the pipeline")
+        self.assertEqual(seen_kwargs.get("read_timeout"), 5,
+                         "Opt-in caller's read_timeout must reach the pipeline")
+        self.assertEqual(seen_kwargs.get("connection_timeout"), 3,
+                         "Opt-in caller's connection_timeout must reach the pipeline")
+        self.assertNotIn(
+            "_honor_customer_timeout", seen_kwargs,
+            "Internal sentinel must never reach the pipeline / wire",
+        )
+
+    async def test_customer_timeout_stripped_without_opt_in_async(self):
+        """Without the sentinel, customer ``timeout`` / ``read_timeout`` /
+        ``connection_timeout`` must all be stripped by the cache layer to
+        protect the internal metadata fetch from a data-operation
+        deadline. Stripping all three uniformly prevents an aggressively
+        short ``connection_timeout`` on a data call from gating an
+        internal metadata fetch on TCP connect.
+        """
+        seen_kwargs = {}
+
+        class CapturingClient:
+            url_connection = "https://mock-async-timeout-strip.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                seen_kwargs.update(kwargs)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+
+                async def _gen():
+                    for r in TestRoutingMapProviderAsync._sample_ranges():
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(CapturingClient())
+        await provider.get_routing_map(
+            "dbs/db/colls/container", feed_options={},
+            timeout=7, read_timeout=5, connection_timeout=3,
+        )
+
+        self.assertNotIn(
+            "timeout", seen_kwargs,
+            "Default path must strip customer timeout to protect the metadata fetch",
+        )
+        self.assertNotIn(
+            "read_timeout", seen_kwargs,
+            "Default path must strip customer read_timeout to protect the metadata fetch",
+        )
+        self.assertNotIn(
+            "connection_timeout", seen_kwargs,
+            "Default path must strip customer connection_timeout to protect the metadata fetch",
+        )
+
+    async def test_coalesced_fetch_keeps_originator_default_timeout_posture_async(self):
+        """A timeout-opt-in joiner cannot retrofit timeout kwargs onto an in-flight
+        fetch started by a default-path originator.
+        """
+        seen_kwargs = {}
+        call_count = {"n": 0}
+        gate = asyncio.Event()
+
+        class SlowCapturingClient:
+            url_connection = "https://mock-async-timeout-coalesce-default.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count["n"] += 1
+                seen_kwargs.update(kwargs)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+
+                async def _gen():
+                    await gate.wait()
+                    for r in TestRoutingMapProviderAsync._sample_ranges():
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowCapturingClient())
+        collection_link = "dbs/db/colls/container"
+
+        originator = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+        joiner = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link,
+                feed_options={},
+                timeout=7,
+                read_timeout=5,
+                connection_timeout=3,
+                _honor_customer_timeout=True,
+            )
+        )
+        await asyncio.sleep(0)
+        gate.set()
+        result_originator, result_joiner = await asyncio.gather(originator, joiner)
+
+        self.assertEqual(call_count["n"], 1, "Joiner should share originator fetch, not create a second call")
+        self.assertIs(result_originator, result_joiner)
+        self.assertNotIn("timeout", seen_kwargs, "Originator default posture should strip timeout on shared fetch")
+        self.assertNotIn("read_timeout", seen_kwargs, "Originator default posture should strip read_timeout")
+        self.assertNotIn("connection_timeout", seen_kwargs, "Originator default posture should strip connection_timeout")
+
+    async def test_coalesced_fetch_keeps_originator_opt_in_timeout_posture_async(self):
+        """A joiner with different timeout kwargs cannot override an in-flight
+        timeout-opted-in originator fetch.
+        """
+        seen_kwargs = {}
+        call_count = {"n": 0}
+        gate = asyncio.Event()
+
+        class SlowCapturingClient:
+            url_connection = "https://mock-async-timeout-coalesce-optin.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count["n"] += 1
+                seen_kwargs.update(kwargs)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+
+                async def _gen():
+                    await gate.wait()
+                    for r in TestRoutingMapProviderAsync._sample_ranges():
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowCapturingClient())
+        collection_link = "dbs/db/colls/container"
+
+        originator = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link,
+                feed_options={},
+                timeout=7,
+                read_timeout=5,
+                connection_timeout=3,
+                _honor_customer_timeout=True,
+            )
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+        joiner = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link,
+                feed_options={},
+                timeout=1,
+                read_timeout=1,
+                connection_timeout=1,
+                _honor_customer_timeout=True,
+            )
+        )
+        await asyncio.sleep(0)
+        gate.set()
+        result_originator, result_joiner = await asyncio.gather(originator, joiner)
+
+        self.assertEqual(call_count["n"], 1, "Joiner should share originator fetch, not create a second call")
+        self.assertIs(result_originator, result_joiner)
+        self.assertEqual(seen_kwargs.get("timeout"), 7, "Originator timeout should govern the shared fetch")
+        self.assertEqual(seen_kwargs.get("read_timeout"), 5, "Originator read_timeout should govern shared fetch")
+        self.assertEqual(
+            seen_kwargs.get("connection_timeout"),
+            3,
+            "Originator connection_timeout should govern shared fetch",
+        )
+
+    # ---------------------------------------------------------------
+    # Coalesced fetch exceptions must not produce noisy GC logs
+    # ---------------------------------------------------------------
+
+    async def test_coalesced_fetch_exception_is_retrieved_after_awaiter_cancel(self):
+        """Done-callback should mark failed in-flight task exceptions as retrieved."""
+        from azure.cosmos._routing.aio.routing_map_provider import (
+            _consume_task_exception,
+        )
+
+        class FailingClient:
+            url_connection = "https://mock-async-fail.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                async def _gen():
+                    # Yield-then-raise so the generator actually starts.
+                    if False:  # pylint: disable=using-constant-test
+                        yield None
+                    raise CosmosHttpResponseError(status_code=503, message="boom")
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(FailingClient())
+        collection_link = "dbs/db/colls/container"
+
+        # Timeout can cancel awaiter while shielded task keeps running.
+        with self.assertRaises((asyncio.TimeoutError, CosmosHttpResponseError)):
+            await asyncio.wait_for(
+                provider.get_routing_map(collection_link, feed_options={}),
+                timeout=0.001,
+            )
+
+        # Drain the loop so any orphan task and its done-callback run.
+        for _ in range(20):
+            await asyncio.sleep(0)
+
+        # Verify callback behavior on a synthetic failed task.
+        async def _raise():
+            raise RuntimeError("synthetic")
+
+        synthetic_task = asyncio.create_task(_raise())
+        with self.assertRaises(RuntimeError):
+            await synthetic_task
+
+        # Callback should not clear the task exception.
+        _consume_task_exception(synthetic_task)
+        self.assertIsInstance(synthetic_task.exception(), RuntimeError)
+
+        # Callback should no-op for cancelled tasks.
+        async def _sleep_forever():
+            await asyncio.sleep(3600)
+
+        cancelled_task = asyncio.create_task(_sleep_forever())
+        cancelled_task.cancel()
+        try:
+            await cancelled_task
+        except asyncio.CancelledError:
+            pass
+        _consume_task_exception(cancelled_task)  # must not raise
+
+    # ---------------------------------------------------------------
+    # release() at refcount==0 cancels still-running in-flight tasks
+    # ---------------------------------------------------------------
+
+    async def test_release_cancels_inflight_tasks_at_refcount_zero(self):
+        """Last release should cancel in-flight tasks before endpoint eviction."""
+        from azure.cosmos._routing.aio.routing_map_provider import (
+            _shared_inflight_fetches,
+        )
+
+        # Keep fetch in-flight while release() runs.
+        gate = asyncio.Event()
+
+        class SlowClient:
+            url_connection = "https://mock-async-release-cancel.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+
+                async def _gen():
+                    await gate.wait()  # never set in this test
+                    if False:  # pylint: disable=using-constant-test
+                        yield None
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        inflight_key = (id(asyncio.get_running_loop()), collection_id)
+
+        # Kick off a fetch and wait until the task is actually registered.
+        fetch_originator = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        for _ in range(50):
+            if inflight_key in provider._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0)
+        in_flight_entry = provider._inflight_fetches.get(inflight_key)  # pylint: disable=protected-access
+        self.assertIsNotNone(in_flight_entry, "Fetch entry must be registered")
+        in_flight_task = in_flight_entry.task
+        self.assertFalse(in_flight_task.done(), "Fetch must still be running")
+
+        # Release only client; cleanup path should run.
+        provider.release()
+
+        # Yield so the cancellation propagates and the originator unwinds.
+        for _ in range(20):
+            await asyncio.sleep(0)
+
+        self.assertTrue(in_flight_task.cancelled() or in_flight_task.done(),
+                        "release() at refcount==0 must cancel in-flight tasks")
+        # Endpoint slot must be gone from the shared dict.
+        self.assertNotIn(
+            provider._endpoint, _shared_inflight_fetches,  # pylint: disable=protected-access
+            "Endpoint entry must be evicted at refcount==0",
+        )
+
+        # Originator should see cancellation from task teardown.
+        with self.assertRaises((asyncio.CancelledError, CosmosHttpResponseError)):
+            await fetch_originator
+
+    async def test_release_does_not_cancel_inflight_when_other_clients_share(self):
+        """When more than one client shares the endpoint, ``release()`` on
+        one of them must NOT cancel in-flight tasks -- a peer client may
+        still be relying on them. Only the last-client release cleans up.
+        """
+        gate = asyncio.Event()
+
+        class SlowClient:
+            url_connection = "https://mock-async-release-share.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+
+                async def _gen():
+                    await gate.wait()
+                    for r in TestRoutingMapProviderAsync._sample_ranges():
+                        yield r
+
+                return _gen()
+
+        client = SlowClient()
+        provider_a = PartitionKeyRangeCache(client)
+        provider_b = PartitionKeyRangeCache(client)  # shares the endpoint
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        inflight_key = (id(asyncio.get_running_loop()), collection_id)
+
+        fetch_originator = asyncio.create_task(
+            provider_a.get_routing_map(collection_link, feed_options={})
+        )
+        for _ in range(50):
+            if inflight_key in provider_a._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0)
+        in_flight_entry = provider_a._inflight_fetches.get(inflight_key)  # pylint: disable=protected-access
+        self.assertIsNotNone(in_flight_entry)
+        in_flight_task = in_flight_entry.task
+
+        # Release only provider_a; provider_b still holds a reference, so
+        # refcount stays >0 and no cleanup should occur.
+        provider_a.release()
+
+        for _ in range(5):
+            await asyncio.sleep(0)
+
+        self.assertFalse(in_flight_task.cancelled(),
+                         "In-flight task must NOT be cancelled while a peer client shares the endpoint")
+        self.assertFalse(in_flight_task.done())
+
+        # Unblock the fetch so the originator can finish and the test can
+        # tear down cleanly.
+        gate.set()
+        await fetch_originator
+        provider_b.release()
+
+    @staticmethod
+    def _sample_ranges():
+        return [
+            {u'id': u'0', u'minInclusive': u'', u'maxExclusive': u'FF'},
+        ]
+
+    # ---------------------------------------------------------------
+    # raw_response_hook fan-out for coalesced callers
+    # ---------------------------------------------------------------
+
+    @staticmethod
+    def _make_hook_replay_client(synthetic_response, capture_target=None, gate=None):
+        """Build a mock client that invokes ``raw_response_hook`` once."""
+
+        class _HookReplayClient:
+            url_connection = "https://mock-async-hook-replay.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+                hook = kwargs.get("raw_response_hook")
+                if capture_target is not None and hook is not None:
+                    capture_target.append(hook)
+
+                async def _gen():
+                    # Wait until joiners are registered.
+                    if gate is not None:
+                        await gate.wait()
+                    # Match pipeline behavior: hook runs before body consumption.
+                    if hook is not None:
+                        hook(synthetic_response)
+                    for r in TestRoutingMapProviderAsync._sample_ranges():
+                        yield r
+
+                return _gen()
+
+        return _HookReplayClient()
+
+    async def _wait_for_inflight_slot(self, provider, collection_link, max_iters=50):
+        """Wait until an in-flight slot is registered for ``collection_link``."""
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        inflight_key = (id(asyncio.get_running_loop()), collection_id)
+        for _ in range(max_iters):
+            if inflight_key in provider._inflight_fetches:  # pylint: disable=protected-access
+                return
+            await asyncio.sleep(0)
+        raise AssertionError("Originator never registered its in-flight slot")
+
+    async def test_raw_response_hook_replays_for_originator_and_single_joiner(self):
+        """Originator + 1 joiner: both hooks fire exactly once with the real
+        response object provided by the pipeline.
+        """
+        synthetic_response = MagicMock(name="pipeline-response")
+        gate = asyncio.Event()
+        provider = PartitionKeyRangeCache(
+            self._make_hook_replay_client(synthetic_response, gate=gate)
+        )
+        collection_link = "dbs/db/colls/container"
+
+        originator_calls = []
+        joiner_calls = []
+
+        def originator_hook(resp):
+            originator_calls.append(resp)
+
+        def joiner_hook(resp):
+            joiner_calls.append(resp)
+
+        # Start originator and pause fetch so joiner can attach.
+        originator = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=originator_hook,
+            )
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+
+        joiner = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=joiner_hook,
+            )
+        )
+        # Yield so joiner can append its hook before opening the gate.
+        await asyncio.sleep(0)
+
+        gate.set()
+        results = await asyncio.gather(originator, joiner)
+
+        # Both callers share the same fetched map.
+        self.assertIsNotNone(results[0])
+        self.assertIs(results[0], results[1])
+
+        # Both hooks fired exactly once with the real response object.
+        self.assertEqual(len(originator_calls), 1,
+                         "Originator hook must fire exactly once")
+        self.assertEqual(len(joiner_calls), 1,
+                         "Joiner hook must fire exactly once")
+        self.assertIs(originator_calls[0], synthetic_response)
+        self.assertIs(joiner_calls[0], synthetic_response)
+
+    async def test_raw_response_hook_replays_for_multiple_joiners(self):
+        """Originator + 2 joiners: all three hooks fire exactly once each."""
+        synthetic_response = MagicMock(name="pipeline-response")
+        gate = asyncio.Event()
+        provider = PartitionKeyRangeCache(
+            self._make_hook_replay_client(synthetic_response, gate=gate)
+        )
+        collection_link = "dbs/db/colls/container"
+
+        calls = {"originator": [], "joiner_a": [], "joiner_b": []}
+
+        def hook_for(label):
+            def _hook(resp):
+                calls[label].append(resp)
+            return _hook
+
+        originator = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=hook_for("originator"),
+            )
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+
+        joiner_a = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=hook_for("joiner_a"),
+            )
+        )
+        joiner_b = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=hook_for("joiner_b"),
+            )
+        )
+        await asyncio.sleep(0)
+
+        gate.set()
+        await asyncio.gather(originator, joiner_a, joiner_b)
+
+        self.assertEqual(len(calls["originator"]), 1)
+        self.assertEqual(len(calls["joiner_a"]), 1)
+        self.assertEqual(len(calls["joiner_b"]), 1)
+
+    async def test_joiner_without_hook_does_not_break_fan_out(self):
+        """Joiners without hooks must not break fan-out."""
+        synthetic_response = MagicMock(name="pipeline-response")
+        gate = asyncio.Event()
+        provider = PartitionKeyRangeCache(
+            self._make_hook_replay_client(synthetic_response, gate=gate)
+        )
+        collection_link = "dbs/db/colls/container"
+
+        originator_calls = []
+        joiner_with_hook_calls = []
+
+        originator = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=lambda r: originator_calls.append(r),
+            )
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+
+        # Joiner with no hook.
+        joiner_no_hook = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        joiner_with_hook = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=lambda r: joiner_with_hook_calls.append(r),
+            )
+        )
+        await asyncio.sleep(0)
+
+        gate.set()
+        await asyncio.gather(originator, joiner_no_hook, joiner_with_hook)
+
+        self.assertEqual(len(originator_calls), 1)
+        self.assertEqual(len(joiner_with_hook_calls), 1)
+
+    async def test_joiner_hook_that_raises_does_not_break_others(self):
+        """A joiner hook exception should not break other hooks or fetch publish."""
+        synthetic_response = MagicMock(name="pipeline-response")
+        gate = asyncio.Event()
+        provider = PartitionKeyRangeCache(
+            self._make_hook_replay_client(synthetic_response, gate=gate)
+        )
+        collection_link = "dbs/db/colls/container"
+
+        originator_calls = []
+        good_joiner_calls = []
+
+        def bad_hook(_resp):
+            raise RuntimeError("misbehaving hook")
+
+        originator = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=lambda r: originator_calls.append(r),
+            )
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+
+        joiner_bad = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=bad_hook,
+            )
+        )
+        joiner_good = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                raw_response_hook=lambda r: good_joiner_calls.append(r),
+            )
+        )
+        await asyncio.sleep(0)
+
+        gate.set()
+        results = await asyncio.gather(originator, joiner_bad, joiner_good)
+
+        # Bad hook did not block fetch result.
+        for r in results:
+            self.assertIsNotNone(r)
+
+        # Originator and the good joiner both fired exactly once.
+        self.assertEqual(len(originator_calls), 1,
+                         "Originator hook must fire despite bad joiner hook")
+        self.assertEqual(len(good_joiner_calls), 1,
+                         "Good joiner hook must fire despite bad joiner hook")
+
+    async def test_originator_hook_replaced_by_wrapper_in_kwargs(self):
+        """Cache layer should wrap originator hook instead of passing it through."""
+        synthetic_response = MagicMock(name="pipeline-response")
+        seen_hooks = []
+        provider = PartitionKeyRangeCache(
+            self._make_hook_replay_client(synthetic_response, capture_target=seen_hooks)
+        )
+        collection_link = "dbs/db/colls/container"
+
+        def originator_hook(_r):
+            pass
+
+        await provider.get_routing_map(
+            collection_link, feed_options={},
+            raw_response_hook=originator_hook,
+        )
+
+        self.assertEqual(len(seen_hooks), 1, "Pipeline must receive exactly one hook")
+        self.assertIsNot(
+            seen_hooks[0], originator_hook,
+            "Cache layer must wrap the originator hook.",
+        )
+
+    async def test_hook_fan_out_fires_per_pipeline_call_across_retries(self):
+        """Hook wrapper should fire once per pipeline call across retries."""
+        synthetic_response = MagicMock(name="pipeline-response")
+        gate = asyncio.Event()
+        call_count = {"n": 0}
+
+        # First call fails merge and forces retry; second call succeeds.
+        full_refresh_payload = TestRoutingMapProviderAsync._sample_ranges()
+        # Parent id mismatch triggers ``_IncrementalMergeFailed``.
+        incremental_bad_payload = [
+            {"id": "child", "minInclusive": "",
+             "maxExclusive": "FF", "parents": ["unknown-parent"]},
+        ]
+
+        class _RetryingClient:
+            url_connection = "https://mock-async-retry.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+                hook = kwargs.get("raw_response_hook")
+                call_count["n"] += 1
+                # First call returns bad payload, later calls return good payload.
+                is_first = call_count["n"] == 1
+                payload = incremental_bad_payload if is_first else full_refresh_payload
+
+                async def _gen():
+                    # Gate only first call so joiner can register.
+                    if is_first and gate is not None:
+                        await gate.wait()
+                    if hook is not None:
+                        hook(synthetic_response)
+                    for r in payload:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(_RetryingClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # Pre-populate cache so force-refresh takes the incremental path.
+        partitionRangeWithInfo = [(r, True) for r in self._sample_ranges()]
+        seeded_map = CollectionRoutingMap.CompleteRoutingMap(
+            partitionRangeWithInfo, collection_id
+        )
+        provider._collection_routing_map_by_item[collection_id] = seeded_map  # pylint: disable=protected-access
+
+        originator_calls = []
+        joiner_calls = []
+
+        originator = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                force_refresh=True,
+                raw_response_hook=lambda r: originator_calls.append(r),
+            )
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+
+        joiner = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                # Force-refresh bypasses cache-hit and joins in-flight task.
+                force_refresh=True,
+                raw_response_hook=lambda r: joiner_calls.append(r),
+            )
+        )
+        await asyncio.sleep(0)
+
+        gate.set()
+        await asyncio.gather(originator, joiner)
+
+        # Each pipeline call should trigger both callbacks.
+        self.assertGreaterEqual(
+            call_count["n"], 2,
+            "Test setup error: expected retry path to issue >=2 calls.",
+        )
+        self.assertEqual(
+            len(originator_calls), call_count["n"],
+            "Originator hook must fire once per pipeline call",
+        )
+        self.assertEqual(
+            len(joiner_calls), call_count["n"],
+            "Joiner hook must fire once per pipeline call",
+        )
 
 
 if __name__ == "__main__":

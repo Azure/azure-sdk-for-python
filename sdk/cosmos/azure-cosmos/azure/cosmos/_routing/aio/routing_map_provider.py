@@ -25,7 +25,7 @@ Cosmos database service.
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import threading
-from typing import Dict, Any, Optional, List, TYPE_CHECKING
+from typing import Callable, Dict, Any, NamedTuple, Optional, List, TYPE_CHECKING
 from azure.core.utils import CaseInsensitiveDict
 from ... import _base, http_constants
 from ..collection_routing_map import CollectionRoutingMap
@@ -47,43 +47,28 @@ from .._routing_map_provider_common import (
 if TYPE_CHECKING:
     from ...aio._cosmos_client_connection_async import CosmosClientConnection
 
-# Module-level shared state, keyed by endpoint URL. All four dicts and the
-# refcount are mutated only while holding ``_shared_cache_lock``. Sharing across
-# every async CosmosClient that targets the same endpoint is what eliminates
-# the per-client duplicate copies of the routing map (the memory win driving
-# this change), and what lets concurrent readers single-flight a single
-# refresh.
+# Module-level state keyed by endpoint. Access is guarded by
+# ``_shared_cache_lock``.
 
 # endpoint -> { collection_id -> CollectionRoutingMap }. The actual cached
 # routing maps. The inner dict is shared by every client for that endpoint, so
 # a routing-map populated by one client is immediately visible to all others.
 _shared_routing_map_cache: dict = {}
 
-# endpoint -> { (loop_id, collection_id) -> asyncio.Lock }. Per-collection
-# refresh lock, scoped to the asyncio event loop that owns it. We key by loop
-# id (``id(asyncio.get_running_loop())``) because ``asyncio.Lock`` instances
-# bind to the loop on first ``acquire()`` (CPython 3.10+) and raise
-# ``RuntimeError: ... bound to a different event loop`` if reused from a
-# different running loop. Single-flighting only needs to be per-loop in
-# practice — coroutines on different loops have different connection pools
-# and are effectively independent clients.
+# endpoint -> { (loop_id, collection_id) -> asyncio.Lock }. Locks are scoped
+# per loop because ``asyncio.Lock`` objects are loop-bound.
 _shared_collection_locks: Dict[str, Dict[tuple, asyncio.Lock]] = {}
 
-# endpoint -> threading.Lock. Guards the creation of new entries in the inner
-# dict of ``_shared_collection_locks``. Was an ``asyncio.Lock`` previously,
-# but its critical sections are pure dict reads/writes (no await), so a
-# ``threading.Lock`` works identically and avoids the same loop-binding
-# hazard described above. Without this guard, two coroutines racing on a
-# brand-new (loop, collection_id) could each create a different Lock object
-# and defeat the single-flight invariant.
+# endpoint -> threading.Lock. Guards creation of entries in
+# ``_shared_collection_locks``.
 _shared_locks_locks: Dict[str, threading.Lock] = {}
 
-# endpoint -> int. Number of live async ``PartitionKeyRangeCache`` instances
-# using this endpoint. Incremented on construction and decremented in
-# ``release`` (called from ``CosmosClient.__aexit__`` / ``close`` / ``__del__``).
-# When the count hits zero we drop the entry from all four dicts so an idle
-# endpoint does not pin memory forever. ``clear_cache`` does NOT touch this
-# count — it only wipes routing-map contents.
+# endpoint -> { (loop_id, collection_id) -> _InflightEntry }. Tracks one
+# in-flight fetch per (loop, collection) and joined hooks.
+_shared_inflight_fetches: Dict[str, Dict[tuple, "_InflightEntry"]] = {}
+
+# endpoint -> int. Number of live async ``PartitionKeyRangeCache`` instances.
+# When this reaches zero, shared endpoint state is evicted.
 _shared_cache_refcounts: Dict[str, int] = {}
 
 # Process-wide lock guarding the four dicts above. The sync module
@@ -111,6 +96,36 @@ logger = logging.getLogger(__name__)
 _INCOMPLETE_ROUTING_MAP_MAX_RETRIES = 1
 
 
+def _consume_task_exception(task: "asyncio.Task") -> None:
+    """Consume task exceptions to avoid noisy asyncio warnings.
+
+    :param task: The completed asyncio task whose exception (if any) should be
+        retrieved so that asyncio does not emit a ``Task exception was never
+        retrieved`` warning after all awaiters have unwound.
+    :type task: asyncio.Task
+    """
+    if task.cancelled():
+        return
+    try:
+        exc = task.exception()
+    except asyncio.CancelledError:
+        return
+    if exc is not None:
+        logger.debug(
+            "Coalesced PK-range fetch raised after all awaiters unwound: %s",
+            exc,
+        )
+
+
+class _InflightEntry(NamedTuple):
+    """Per-(loop, collection) value stored in ``_shared_inflight_fetches``.
+
+    Stores the in-flight task and joined ``raw_response_hook`` callbacks.
+    """
+    task: asyncio.Task
+    joined_hooks: List[Optional[Callable[..., None]]]
+
+
 class PartitionKeyRangeCache(object):
     """
     PartitionKeyRangeCache provides list of effective partition key ranges for a
@@ -131,29 +146,23 @@ class PartitionKeyRangeCache(object):
         self._endpoint = _resolve_endpoint(client)
         self._released = False
 
-        # Share routing map cache, per-collection asyncio locks, and the lock
-        # that protects lock creation across clients for this endpoint.
-        # Defaults are allocated before locking so this block stays dict-only.
-        new_routing_map: Dict[str, CollectionRoutingMap] = {}
-        new_collection_locks: Dict[tuple, asyncio.Lock] = {}
-        new_locks_lock = threading.Lock()
-
+        # Share routing map cache, per-collection asyncio locks, the
+        # per-endpoint meta-lock that guards the per-collection-lock dict,
+        # and the in-flight fetch-task dict across all clients with the same
+        # endpoint. Refcount lets us evict the entry when the last sharing
+        # client releases it (see ``release``).
         with _shared_cache_lock:
-            # ``setdefault`` preserves existing endpoint entries.
-            routing_map = _shared_routing_map_cache.setdefault(
-                self._endpoint, new_routing_map)
-            collection_locks = _shared_collection_locks.setdefault(
-                self._endpoint, new_collection_locks)
-            locks_lock = _shared_locks_locks.setdefault(
-                self._endpoint, new_locks_lock)
-            # Preserve existing refcount instead of reinitializing.
-            _shared_cache_refcounts[self._endpoint] = (
-                _shared_cache_refcounts.get(self._endpoint, 0) + 1
-            )
-
-            self._collection_routing_map_by_item = routing_map
-            self._collection_locks: Dict[tuple, asyncio.Lock] = collection_locks
-            self._locks_lock: threading.Lock = locks_lock
+            if self._endpoint not in _shared_routing_map_cache:
+                _shared_routing_map_cache[self._endpoint] = {}
+                _shared_collection_locks[self._endpoint] = {}
+                _shared_locks_locks[self._endpoint] = threading.Lock()
+                _shared_inflight_fetches[self._endpoint] = {}
+                _shared_cache_refcounts[self._endpoint] = 0
+            _shared_cache_refcounts[self._endpoint] += 1
+            self._collection_routing_map_by_item = _shared_routing_map_cache[self._endpoint]
+            self._collection_locks: Dict[tuple, asyncio.Lock] = _shared_collection_locks[self._endpoint]
+            self._locks_lock: threading.Lock = _shared_locks_locks[self._endpoint]
+            self._inflight_fetches: Dict[tuple, _InflightEntry] = _shared_inflight_fetches[self._endpoint]
 
     def clear_cache(self):
         """Clear the shared routing map cache for this endpoint.
@@ -162,29 +171,20 @@ class PartitionKeyRangeCache(object):
         client references to the same dict object, so concurrent clients
         sharing the endpoint continue to share a single cache instance.
 
-        The per-collection locks dict is intentionally **not** cleared here:
-        an in-flight ``_fetch_routing_map`` caller holds one of those locks
-        and will write its result into the (now-empty) shared cache when it
-        completes. Keeping the lock in place ensures that any concurrent
-        arrival serialises behind the in-flight refresh (single-flight
-        invariant) instead of racing it with a fresh lock. The locks dict
-        is evicted in ``release()`` once the endpoint refcount hits zero.
+        The per-collection locks dict and the in-flight fetch-task dict are
+        intentionally **not** cleared here. A fetch task scheduled before
+        this call keeps a reference to the (now-empty) cache dict and will
+        publish its result into it when it completes; any concurrent arrival
+        meanwhile joins that same task instead of racing it. Both auxiliary
+        dicts are evicted in ``release()`` once the endpoint refcount hits
+        zero.
         """
         with _shared_cache_lock:
             if self._endpoint in _shared_routing_map_cache:
                 _shared_routing_map_cache[self._endpoint].clear()
 
     def release(self) -> None:
-        """Decrement the per-endpoint refcount and evict shared state at zero.
-
-        Safe to call multiple times concurrently. Best-effort: never raises.
-
-        The ``_released`` check-and-set is performed *inside* the shared
-        cache lock to close the TOCTOU window between two concurrent callers
-        (e.g. ``CosmosClient.__aexit__`` racing the GC's ``__del__``).
-        Without the lock, both callers could pass the early-return guard
-        before either set the flag, then both would decrement the refcount.
-        """
+        """Decrease endpoint refcount and evict shared state at zero."""
         endpoint = self._endpoint
         try:
             with _shared_cache_lock:
@@ -197,6 +197,12 @@ class PartitionKeyRangeCache(object):
                     _shared_routing_map_cache.pop(endpoint, None)
                     _shared_collection_locks.pop(endpoint, None)
                     _shared_locks_locks.pop(endpoint, None)
+                    inflight = _shared_inflight_fetches.pop(endpoint, None)
+                    if inflight:
+                        # Best-effort cancellation of leftover in-flight tasks.
+                        for entry in inflight.values():
+                            if not entry.task.done():
+                                entry.task.cancel()
                 else:
                     _shared_cache_refcounts[endpoint] = count
         except Exception:  # pylint: disable=broad-except
@@ -284,9 +290,13 @@ class PartitionKeyRangeCache(object):
     ) -> Optional[CollectionRoutingMap]:
         """Gets or refreshes the routing map for a collection.
 
-        This method handles the logic for fetching, caching, and updating the
-        collection's routing map. It uses a locking mechanism to prevent race
-        conditions during concurrent updates.
+        Concurrent callers that arrive while a fetch is already in flight for
+        the same collection join that fetch via ``asyncio.shield`` rather than
+        issuing their own network round trip. The fetch task owns the cache
+        write, so the publish completes even if every awaiting caller is
+        cancelled (for example by ``asyncio.wait_for``) before the fetch
+        returns. The next caller — whether the original caller retrying or a
+        new one — finds the cache populated.
 
         :param str collection_link: The link to the collection.
         :param Optional[Dict[str, Any]] feed_options: Optional query options.
@@ -298,40 +308,223 @@ class PartitionKeyRangeCache(object):
         """
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        # First check (no lock) for the fast path.
+        # Fast path: cache hit without acquiring any lock.
         if not force_refresh:
             cached_map = self._collection_routing_map_by_item.get(collection_id)
             if cached_map:
                 return cached_map
 
-        # Acquire lock only when a refresh or initial load is likely needed.
+        fetch_task = await self._register_or_join_inflight_fetch(
+            collection_id,
+            collection_link,
+            feed_options,
+            force_refresh,
+            previous_routing_map,
+            kwargs,
+        )
+
+        if fetch_task is not None:
+            # ``shield`` ensures our cancellation only unwinds *this* awaiter;
+            # the underlying task keeps running on the event loop and the
+            # cache write inside the task body still happens. Other waiters
+            # (and any subsequent caller hitting the now-populated cache) are
+            # unaffected by our cancellation.
+            fetched_map = await asyncio.shield(fetch_task)
+            # Return the task's result directly instead of re-reading from
+            # the cache dict. Between the task completing and this line
+            # running, another coroutine (e.g. ``clear_cache()`` from a
+            # concurrent retry) could empty the dict, leaving us returning
+            # ``None`` despite the fetch having just succeeded.
+            if fetched_map is not None:
+                return fetched_map
+
+        return self._collection_routing_map_by_item.get(collection_id)
+
+    async def _register_or_join_inflight_fetch(
+            self,
+            collection_id: str,
+            collection_link: str,
+            feed_options: Optional[Dict[str, Any]],
+            force_refresh: bool,
+            previous_routing_map: Optional[CollectionRoutingMap],
+            fetch_kwargs: Dict[str, Any],
+    ) -> Optional[asyncio.Task]:
+        """Return the in-flight fetch task for this collection, creating one if needed.
+
+        Holding the per-collection lock for just the check-or-create window
+        (no network I/O inside the lock) keeps the critical section small.
+        The returned task may be one this call just scheduled or one a
+        concurrent caller scheduled moments earlier — either way the caller
+        should await it through ``asyncio.shield``.
+
+        When a new task is created, this method wraps the originator's
+        ``raw_response_hook`` and fans out callbacks to joined callers.
+
+        The shared fetch runs with the originator's ``timeout`` /
+        ``read_timeout`` / ``_honor_customer_timeout`` kwargs. Joiners
+        contribute only their ``raw_response_hook``; their timeout kwargs
+        are not applied to the shared HTTP call, since only one HTTP call
+        is issued. Callers needing an overall deadline should wrap the
+        call in ``asyncio.wait_for(...)``.
+
+        :param str collection_id: The resolved collection identifier used as the cache key.
+        :param str collection_link: The link to the collection.
+        :param Optional[Dict[str, Any]] feed_options: Optional query options.
+        :param bool force_refresh: Whether the caller asked for a refresh.
+        :param Optional[CollectionRoutingMap] previous_routing_map: The caller's last
+            observed routing map, used by the refresh-decision helper.
+        :param Dict[str, Any] fetch_kwargs: Pipeline kwargs forwarded to the fetch.
+        :return: A running ``asyncio.Task`` to await, or ``None`` if no fetch
+            is needed (cache was populated by a concurrent caller after the
+            fast-path check).
+        :rtype: Optional[asyncio.Task]
+        """
+        inflight_key = (id(asyncio.get_running_loop()), collection_id)
         collection_lock = await self._get_lock_for_collection(collection_id)
         async with collection_lock:
-            # Second check (with lock) — use shared helper for the decision logic.
+            existing_entry = self._inflight_fetches.get(inflight_key)
+            if existing_entry is not None:
+                if not existing_entry.task.done():
+                    # Join in-flight fetch. Only ``raw_response_hook`` is
+                    # taken from the joiner; timeout kwargs are dropped
+                    # because the shared HTTP call already runs under the
+                    # originator's timeout kwargs.
+                    joiner_hook = fetch_kwargs.get("raw_response_hook")
+                    if joiner_hook is not None:
+                        existing_entry.joined_hooks.append(joiner_hook)
+                    return existing_entry.task
+                # Drop stale completed entry and start a new fetch.
+                self._inflight_fetches.pop(inflight_key, None)
+
             should_fetch, base_routing_map = determine_refresh_action(
                 self._collection_routing_map_by_item,
                 collection_id,
                 force_refresh,
                 previous_routing_map,
             )
+            if not should_fetch:
+                return None
 
-            if should_fetch:
-                new_routing_map = await self._fetch_routing_map(
-                    collection_link,
+            # Install one shared raw_response_hook. Only one HTTP call
+            # happens, so we replay its response to every caller's hook.
+            # A failing hook is logged and swallowed so it cannot break
+            # the fetch outcome for the other callers.
+            wrapped_fetch_kwargs = dict(fetch_kwargs)
+            originator_hook = wrapped_fetch_kwargs.pop("raw_response_hook", None)
+            joined_hooks: List[Optional[Callable[..., None]]] = []
+
+            def _hook_fan_out(response: Any) -> None:
+                """Replay the shared response to every caller's raw_response_hook.
+
+                Fires the originator's hook first, then each joiner's hook
+                in join order. Exceptions from any hook are logged at
+                WARNING with ``exc_info`` and swallowed, so one caller's
+                buggy hook cannot break the fetch outcome for the others
+                that joined the same network call.
+
+                :param response: The raw response object produced by the single
+                    coalesced PK-range fetch, fanned out to every joined
+                    caller's ``raw_response_hook``.
+                :type response: Any
+                """
+                # Originator's hook runs first so its ordering matches the
+                # non-coalesced path where the originator's hook was the
+                # only one installed.
+                if originator_hook is not None:
+                    try:
+                        originator_hook(response)
+                    except Exception:  # pylint: disable=broad-except
+                        logger.warning(
+                            "raw_response_hook (originator) raised during "
+                            "coalesced PK-range fetch for collection '%s'",
+                            collection_link,
+                            exc_info=True,
+                        )
+                # Joiners run in the order they registered. ``list(...)``
+                # snapshots the list so a hook that itself triggers another
+                # join cannot mutate what we are iterating.
+                for joiner_hook in list(joined_hooks):
+                    if joiner_hook is None:
+                        continue
+                    try:
+                        joiner_hook(response)
+                    except Exception:  # pylint: disable=broad-except
+                        logger.warning(
+                            "raw_response_hook (joiner) raised during "
+                            "coalesced PK-range fetch for collection '%s'",
+                            collection_link,
+                            exc_info=True,
+                        )
+
+            wrapped_fetch_kwargs["raw_response_hook"] = _hook_fan_out
+
+            new_task = asyncio.create_task(
+                self._fetch_and_publish(
                     collection_id,
+                    collection_link,
                     base_routing_map,
                     feed_options,
-                    **kwargs
+                    inflight_key,
+                    wrapped_fetch_kwargs,
                 )
+            )
+            # Consume task exceptions so asyncio does not log unretrieved errors.
+            new_task.add_done_callback(_consume_task_exception)
+            self._inflight_fetches[inflight_key] = _InflightEntry(
+                task=new_task,
+                joined_hooks=joined_hooks,
+            )
+            return new_task
 
-                # ``_fetch_routing_map`` always returns a populated
-                # ``CollectionRoutingMap`` on success and raises otherwise --
-                # No defensive None-check needed; one
-                # would only mask a future regression by silently leaving
-                # the cache empty instead of surfacing the failure.
-                self._collection_routing_map_by_item[collection_id] = new_routing_map
+    async def _fetch_and_publish(
+            self,
+            collection_id: str,
+            collection_link: str,
+            base_routing_map: Optional[CollectionRoutingMap],
+            feed_options: Optional[Dict[str, Any]],
+            inflight_key: tuple,
+            fetch_kwargs: Dict[str, Any],
+    ) -> Optional[CollectionRoutingMap]:
+        """Run ``_fetch_routing_map`` and publish its result, then free the in-flight slot.
 
-            return self._collection_routing_map_by_item.get(collection_id)
+        The cache assignment lives inside this task body so a caller's
+        cancellation while awaiting the task cannot interrupt the publish.
+        The ``finally`` block always frees the in-flight slot — on success,
+        on a fetch error, or on cancellation — so the next caller is free to
+        schedule a fresh attempt.
+
+        :param str collection_id: The resolved collection identifier used as the cache key.
+        :param str collection_link: The link to the collection.
+        :param Optional[CollectionRoutingMap] base_routing_map: The base routing map
+            for incremental updates, or ``None`` for a full load.
+        :param Optional[Dict[str, Any]] feed_options: Optional query options.
+        :param tuple inflight_key: The ``(loop_id, collection_id)`` key into the in-flight dict.
+        :param Dict[str, Any] fetch_kwargs: Pipeline kwargs forwarded to the fetch.
+        :return: The new routing map, or ``None`` if the fetch produced nothing.
+        :rtype: Optional[CollectionRoutingMap]
+        """
+        try:
+            new_routing_map = await self._fetch_routing_map(
+                collection_link,
+                collection_id,
+                base_routing_map,
+                feed_options,
+                **fetch_kwargs,
+            )
+
+            # ``_fetch_routing_map`` always returns a populated
+            # ``CollectionRoutingMap`` on success and raises otherwise -- no
+            # defensive ``if new_routing_map:`` check needed; one would only
+            # mask a future regression by silently leaving the cache empty
+            # instead of surfacing the failure.
+            self._collection_routing_map_by_item[collection_id] = new_routing_map
+
+            return new_routing_map
+        finally:
+            # Always free the slot so the next caller can register a fresh
+            # fetch. ``dict.pop`` with a default is atomic under the GIL
+            # and tolerant of the key already being gone.
+            self._inflight_fetches.pop(inflight_key, None)
 
 
     async def _fetch_routing_map(

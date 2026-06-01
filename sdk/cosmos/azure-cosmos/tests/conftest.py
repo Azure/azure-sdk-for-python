@@ -72,10 +72,22 @@ def _reset_shared_pk_range_cache():
     # if we ``.clear()`` the outer registry, a freshly-constructed client for
     # the same endpoint creates a brand-new inner dict and the dict-identity
     # invariant that test_shared_cache_integration relies on is broken.
-    # Same reasoning for ``_shared_collection_locks``.
+    # Same reasoning for ``_shared_collection_locks`` and
+    # ``_shared_inflight_fetches``. The in-flight dict is async-only, so we
+    # tolerate it being absent on the sync module via ``getattr``.
     for pmp in (_sync_pmp, _async_pmp):
         with pmp._shared_cache_lock:  # pylint: disable=protected-access
             for cache in pmp._shared_routing_map_cache.values():  # pylint: disable=protected-access
                 cache.clear()
             for locks in pmp._shared_collection_locks.values():  # pylint: disable=protected-access
                 locks.clear()
+            # Drop references to any leaked in-flight fetch tasks. By the
+            # time this fixture runs the per-test event loop has already
+            # been torn down by IsolatedAsyncioTestCase, so any task still
+            # in the dict is either cancelled or stranded — we cannot
+            # await it, only release the reference so the next test starts
+            # with an empty in-flight slot.
+            inflight_registry = getattr(pmp, "_shared_inflight_fetches", None)  # pylint: disable=protected-access
+            if inflight_registry is not None:
+                for inflight in inflight_registry.values():
+                    inflight.clear()

@@ -446,8 +446,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
         await cleanup_method([custom_setup, setup])
 
 
-    # send 15 write concurrent requests when trying to recover
-    # verify that only one failed
+    # During recovery, send concurrent writes; at most one failure is expected.
     async def test_recovering_only_fails_one_requests_async(self):
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0, CosmosHttpResponseError(
