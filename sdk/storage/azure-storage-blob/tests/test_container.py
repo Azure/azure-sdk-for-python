@@ -2838,7 +2838,6 @@ class TestStorageContainer(StorageRecordedTestCase):
         container1.upload_blob(c1b1_name, c1b1_data, overwrite=True, raw_response_hook=make_capture("c1_upload"))
         assert captured["c1_upload"].startswith("Bearer ")
 
-        # Download is an eligible GET → session scheme.
         c1b1_actual = container1.download_blob(c1b1_name, raw_response_hook=make_capture("c1_download")).readall()
         assert c1b1_data == c1b1_actual
         assert captured["c1_download"].startswith("Session ")
@@ -2861,5 +2860,4 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert captured["c2_download"].startswith("Session ")
         c2_token = session_token_from(captured["c2_download"])
 
-        # Different containers must not share the same session token.
         assert c1_token != c2_token
