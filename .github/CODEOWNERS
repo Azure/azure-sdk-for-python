@@ -112,10 +112,10 @@
 /sdk/textanalytics/    @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/    @jrjrguo @SG-MS
+/sdk/translation/    @jrjrguo @zhangeugenia
 
 # ServiceLabel: %Cognitive - Translator
-# ServiceOwners: @jrjrguo @SG-MS
+# ServiceOwners: @jrjrguo @zhangeugenia
 
 # ServiceLabel: %Communication
 # PRLabel: %Communication
