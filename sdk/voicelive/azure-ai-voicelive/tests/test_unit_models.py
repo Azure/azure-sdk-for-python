@@ -9,12 +9,17 @@ from azure.ai.voicelive.models import (
     ActionOpenPage,
     ActionSearch,
     ActionSearchSource,
+    AudioEchoCancellation,
     AssistantMessageItem,
     AzureAvatarVoiceSyncVoice,
     AzureCustomVoice,
     AzurePersonalVoice,
+    AzureRealtimeNativeVoice,
+    AzureRealtimeNativeVoiceName,
     AzureStandardVoice,
     AzureVoiceType,
+    EchoCancellationReferenceSource,
+    EouThresholdLevel,
     FileSearchResult,
     InputAudioContentPart,
     InputTextContentPart,
@@ -31,6 +36,8 @@ from azure.ai.voicelive.models import (
     OpenAIVoiceName,
     OutputTextContentPart,
     PersonalVoiceModels,
+    RequestImageContentPart,
+    RequestImageContentPartDetail,
     RequestSession,
     ResponseFileSearchCallItem,
     ResponseMCPApprovalRequestItem,
@@ -39,12 +46,20 @@ from azure.ai.voicelive.models import (
     ResponseMCPListToolItem,
     ResponseSession,
     ResponseWebSearchCallItem,
+    RtcCallErrorDetails,
     ServerEventMcpListToolsCompleted,
     ServerEventMcpListToolsFailed,
     ServerEventMcpListToolsInProgress,
+    ServerEventOutputAudioBufferStarted,
+    ServerEventOutputAudioBufferStopped,
+    ServerEventResponseInvocationDelta,
     ServerEventResponseMcpCallArgumentsDelta,
     ServerEventResponseMcpCallArgumentsDone,
+    ServerEventRtcCallError,
+    ServerEventRtcCallSdpCreated,
     ServerEventType,
+    ServerVad,
+    SmartEndOfTurnDetection,
     SystemMessageItem,
     ToolType,
     TranscriptionPhrase,
@@ -101,6 +116,13 @@ class TestAzureVoiceModels:
         assert voice.temperature == 0.5
         assert voice.model == PersonalVoiceModels.DRAGON_LATEST_NEURAL
 
+    def test_azure_realtime_native_voice(self):
+        """Test AzureRealtimeNativeVoice model."""
+        voice = AzureRealtimeNativeVoice(name=AzureRealtimeNativeVoiceName.AVA)
+
+        assert voice.type == "azure-realtime-native"
+        assert voice.name == AzureRealtimeNativeVoiceName.AVA
+
 
 class TestOpenAIVoice:
     """Test OpenAIVoice model."""
@@ -148,6 +170,17 @@ class TestMessageContentParts:
 
         assert content.type == "text"
         assert content.text == "Response text"
+
+    def test_request_image_content_part(self):
+        """Test RequestImageContentPart model uses image_url."""
+        content = RequestImageContentPart(
+            image_url="https://example.com/image.png",
+            detail=RequestImageContentPartDetail.HIGH,
+        )
+
+        assert content.type == "input_image"
+        assert content.image_url == "https://example.com/image.png"
+        assert content.detail == RequestImageContentPartDetail.HIGH
 
     def test_message_content_part_inheritance(self):
         """Test that content parts inherit from MessageContentPart."""
@@ -261,6 +294,20 @@ class TestRequestSession:
         assert session.temperature == 0.7
         assert session.max_response_output_tokens == 1000
 
+    def test_request_session_with_azure_realtime_native_voice(self):
+        """Test request session with Azure realtime native voice configuration."""
+        voice = AzureRealtimeNativeVoice(name=AzureRealtimeNativeVoiceName.XIAOXIAO)
+        session = RequestSession(model="azure-realtime", voice=voice)
+
+        assert session.voice == voice
+        assert session.voice.type == "azure-realtime-native"
+
+    def test_request_session_with_parallel_tool_calls(self):
+        """Test request session with parallel tool call control."""
+        session = RequestSession(model="gpt-4o-realtime-preview", parallel_tool_calls=False)
+
+        assert session.parallel_tool_calls is False
+
 
 class TestResponseSession:
     """Test ResponseSession model."""
@@ -271,6 +318,12 @@ class TestResponseSession:
 
         assert session.id == "session-789"
         assert session.model == "gpt-4o-realtime-preview"
+
+    def test_response_session_with_parallel_tool_calls(self):
+        """Test response session with parallel tool call control."""
+        session = ResponseSession(model="gpt-4o-realtime-preview", parallel_tool_calls=True)
+
+        assert session.parallel_tool_calls is True
 
 
 class TestModelValidation:
@@ -317,6 +370,46 @@ class TestModelSerialization:
         # Verify the nested structure
         assert session.voice.name == "personal-voice"
         assert session.voice.model == PersonalVoiceModels.PHOENIX_LATEST_NEURAL
+
+
+class TestAudioEchoCancellationModel:
+    """Test enhanced audio echo cancellation configuration."""
+
+    def test_audio_echo_cancellation_with_client_reference(self):
+        """Test AudioEchoCancellation with client-provided stereo reference."""
+        config = AudioEchoCancellation(reference_source=EchoCancellationReferenceSource.CLIENT, channels=2)
+
+        assert config.reference_source == EchoCancellationReferenceSource.CLIENT
+        assert config.channels == 2
+
+    def test_request_session_with_explicit_echo_cancellation_settings(self):
+        """Test RequestSession with explicit echo cancellation settings."""
+        config = AudioEchoCancellation(reference_source=EchoCancellationReferenceSource.SERVER, channels=1)
+        session = RequestSession(model="gpt-4o-realtime-preview", input_audio_echo_cancellation=config)
+
+        assert session.input_audio_echo_cancellation is not None
+        assert session.input_audio_echo_cancellation.reference_source == EchoCancellationReferenceSource.SERVER
+        assert session.input_audio_echo_cancellation.channels == 1
+
+
+class TestEndOfTurnDetectionModels:
+    """Test smart end-of-turn detection models."""
+
+    def test_smart_end_of_turn_detection_basic(self):
+        """Test SmartEndOfTurnDetection model."""
+        detection = SmartEndOfTurnDetection(threshold_level=EouThresholdLevel.MEDIUM, timeout_ms=750)
+
+        assert detection.model == "smart_end_of_turn_detection"
+        assert detection.threshold_level == EouThresholdLevel.MEDIUM
+        assert detection.timeout_ms == 750
+
+    def test_server_vad_with_smart_end_of_turn_detection(self):
+        """Test ServerVad using SmartEndOfTurnDetection."""
+        detection = SmartEndOfTurnDetection(threshold_level=EouThresholdLevel.HIGH, timeout_ms=1000)
+        turn_detection = ServerVad(end_of_utterance_detection=detection)
+
+        assert turn_detection.end_of_utterance_detection is not None
+        assert turn_detection.end_of_utterance_detection.model == "smart_end_of_turn_detection"
 
 
 class TestMCPModels:
@@ -756,6 +849,63 @@ class TestMCPServerEvents:
         )
 
         assert event.arguments == full_args
+
+
+class TestRealtimeAndRtcServerEvents:
+    """Test realtime playback and RTC server event models."""
+
+    def test_server_event_output_audio_buffer_started(self):
+        """Test output audio buffer started event."""
+        event = ServerEventOutputAudioBufferStarted(event_id="evt-1", response_id="resp-123")
+
+        assert event.type == ServerEventType.OUTPUT_AUDIO_BUFFER_STARTED
+        assert event.event_id == "evt-1"
+        assert event.response_id == "resp-123"
+
+    def test_server_event_output_audio_buffer_stopped(self):
+        """Test output audio buffer stopped event."""
+        event = ServerEventOutputAudioBufferStopped(event_id="evt-2", response_id="resp-456")
+
+        assert event.type == ServerEventType.OUTPUT_AUDIO_BUFFER_STOPPED
+        assert event.event_id == "evt-2"
+        assert event.response_id == "resp-456"
+
+    def test_server_event_response_invocation_delta(self):
+        """Test hosted agent invocation delta event."""
+        delta = {"type": "trace", "message": "partial hosted agent event"}
+        event = ServerEventResponseInvocationDelta(delta=delta, event_id="evt-3")
+
+        assert event.type == ServerEventType.RESPONSE_INVOCATION_DELTA
+        assert event.event_id == "evt-3"
+        assert event.delta == delta
+
+    def test_server_event_rtc_call_sdp_created(self):
+        """Test RTC SDP created event."""
+        event = ServerEventRtcCallSdpCreated(
+            event_id="evt-4",
+            rtc_call_id="rtc-123",
+            sdp_answer="v=0\r\no=- 1 2 IN IP4 127.0.0.1",
+        )
+
+        assert event.type == ServerEventType.RTC_CALL_SDP_CREATED
+        assert event.rtc_call_id == "rtc-123"
+        assert event.sdp_answer.startswith("v=0")
+
+    def test_server_event_rtc_call_error(self):
+        """Test RTC call error event."""
+        error = RtcCallErrorDetails(type="server_error", message="RTC negotiation failed", code="rtc_failed")
+        event = ServerEventRtcCallError(
+            error=error,
+            operation="rtc.call.sdp.create",
+            rtc_call_id="rtc-123",
+            event_id="evt-5",
+        )
+
+        assert event.type == ServerEventType.RTC_CALL_ERROR
+        assert event.error.code == "rtc_failed"
+        assert event.error.message == "RTC negotiation failed"
+        assert event.operation == "rtc.call.sdp.create"
+        assert event.rtc_call_id == "rtc-123"
 
 
 class TestMCPApprovalType:
