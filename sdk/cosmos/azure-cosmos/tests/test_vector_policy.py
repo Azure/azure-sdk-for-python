@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import copy
-import copy
 import os
 import unittest
 import uuid
@@ -697,11 +696,6 @@ class TestVectorPolicy(unittest.TestCase):
                     "Expected 400 for missing '{}', got {}".format(field_name, e.status_code)
                 )
 
-
-if __name__ == '__main__':
-    unittest.main()
-
-
 class TestVectorEmbeddingPolicyOffline(unittest.TestCase):
 
     def test_embedding_source_round_trips_through_create_container_definition(self):
@@ -719,3 +713,7 @@ class TestVectorEmbeddingPolicyOffline(unittest.TestCase):
 
         sent_collection = mock_connection.CreateContainer.call_args.kwargs["collection"]
         assert sent_collection["vectorEmbeddingPolicy"] == vector_embedding_policy
+
+
+if __name__ == '__main__':
+    unittest.main()
