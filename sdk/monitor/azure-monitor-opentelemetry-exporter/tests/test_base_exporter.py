@@ -788,35 +788,26 @@ class TestBaseExporter(unittest.TestCase):
         same = self._base._is_same_registered_domain
         # Same host (exact match) is always safe, even when not under a
         # trusted ingestion suffix (e.g. customer-configured custom host).
-        self.assertTrue(same("westus-0.in.applicationinsights.azure.com",
-                             "westus-0.in.applicationinsights.azure.com"))
-        self.assertTrue(same("custom-ingestion.example.invalid",
-                             "custom-ingestion.example.invalid"))
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("custom-ingestion.example.invalid", "custom-ingestion.example.invalid"))
         # Both hosts under the same trusted Azure Monitor ingestion suffix
         # are permitted -- this is the cross-region case.
-        self.assertTrue(same("westus-0.in.applicationinsights.azure.com",
-                             "eastus-0.in.applicationinsights.azure.com"))
-        self.assertTrue(same("dc.services.visualstudio.com",
-                             "westus.services.visualstudio.com"))
-        self.assertTrue(same("foo.applicationinsights.azure.us",
-                             "bar.applicationinsights.azure.us"))
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com", "eastus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("dc.services.visualstudio.com", "westus.services.visualstudio.com"))
+        self.assertTrue(same("foo.applicationinsights.azure.us", "bar.applicationinsights.azure.us"))
         # Different registered domain entirely is rejected.
         self.assertFalse(same("westus-0.in.applicationinsights.azure.com", "attacker.com"))
         self.assertFalse(same("foo.example.com", "foo.example.org"))
         # Sibling subdomains under an untrusted parent are rejected -- this
         # is the cross-origin-leak PoC scenario.
-        self.assertFalse(same("legit-ingestion.example.invalid",
-                              "attacker.example.invalid"))
+        self.assertFalse(same("legit-ingestion.example.invalid", "attacker.example.invalid"))
         self.assertFalse(same("foo.azure.com", "bar.azure.com"))
         # A trusted host cannot be redirected to a host under an untrusted
         # suffix (and vice versa).
-        self.assertFalse(same("dc.services.visualstudio.com",
-                              "attacker.example.invalid"))
-        self.assertFalse(same("legit-ingestion.example.invalid",
-                              "dc.services.visualstudio.com"))
+        self.assertFalse(same("dc.services.visualstudio.com", "attacker.example.invalid"))
+        self.assertFalse(same("legit-ingestion.example.invalid", "dc.services.visualstudio.com"))
         # Mixing two different trusted suffixes is rejected.
-        self.assertFalse(same("dc.services.visualstudio.com",
-                              "westus-0.in.applicationinsights.azure.com"))
+        self.assertFalse(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
         # Empty inputs are treated as not-same.
         self.assertFalse(same("", "applicationinsights.azure.com"))
         self.assertFalse(same("applicationinsights.azure.com", ""))

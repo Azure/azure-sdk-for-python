@@ -83,6 +83,7 @@ _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 
+
 class ExportResult(Enum):
     SUCCESS = 0
     FAILED_RETRYABLE = 1
