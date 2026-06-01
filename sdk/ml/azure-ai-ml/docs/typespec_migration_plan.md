@@ -61,7 +61,6 @@ The following GA versions were fully deleted by PR #45389. Their functionality i
 | `v2023_06_01_preview/` | 2023-06-01-preview | ServiceClient062023Preview, models | Medium |
 | `v2023_08_01_preview/` | 2023-08-01-preview | ServiceClient082023Preview, JobType, ListViewType, ModelVersion | Medium |
 | `v2024_01_01_preview/` | 2024-01-01-preview | ServiceClient012024, TriggerOnceRequest, ComponentVersion, ComputeInstanceDataMount, JobBase | **HIGH** |
-| `v2024_04_01_dataplanepreview/` | 2024-04-01-preview (dataplane) | (check usage) | Medium — TypeSpec available via `AzureAI.Assets` |
 | `v2024_04_01_preview/` | 2024-04-01-preview | ServiceClient042024Preview, SsoSetting, models | **HIGH** |
 | `v2024_07_01_preview/` | 2024-07-01-preview | ServiceClient072024Preview, Datastore models, SecretExpiry | **HIGH** |
 | `v2024_10_01_preview/` | 2024-10-01-preview | ServiceClient102024Preview, ManagedNetworkProvisionOptions, OutboundRuleBasicResource, JobType | **HIGH** |
@@ -107,7 +106,6 @@ For each remaining API version, swagger must be converted to TypeSpec in the `az
 | 2023-08-01-preview | ARM | ✅ | Add to `@versioned` enum |
 | 2024-01-01-preview | ARM | ✅ | Add to `@versioned` enum |
 | 2024-04-01-preview | ARM | ✅ | Add to `@versioned` enum |
-| 2024-04-01-preview (dp) | Dataplane | ✅ | ✅ Already available via `AzureAI.Assets` TypeSpec |
 | 2024-07-01-preview | ARM | ✅ | Add to `@versioned` enum |
 | 2025-01-01-preview | ARM | ✅ | Add to `@versioned` enum |
 
@@ -134,14 +132,15 @@ Remove leftover `__pycache__` directories from the deleted GA folders (v2022_05_
 
 ## Immediate Action: Versions With TypeSpec Already Available
 
-The following 2 remaining autorest clients **already have TypeSpec definitions** in the spec repo and should be converted first:
+The `v2024_04_01_dataplanepreview/` autorest client has been fully migrated — it was replaced by `azure_ai_assets_v2024_04_01/` (TypeSpec-generated from `AzureAI.Assets`). The old folder has been deleted.
+
+The following remaining autorest client **already has TypeSpec definitions** in the spec repo and should be converted next:
 
 | Autorest Client | API Version | TypeSpec Path in `azure-rest-api-specs` | Status |
 |---|---|---|---|
 | `v2024_10_01_preview/` | 2024-10-01-preview | `specification/machinelearningservices/MachineLearningServices.Management` (in `@versioned` enum) | Ready to generate |
-| `v2024_04_01_dataplanepreview/` | 2024-04-01-preview (dataplane) | `specification/machinelearningservices/AzureAI.Assets` (version `2024-04-01-preview`) | Ready to generate |
 
-**These should be the starting point** — generate TypeSpec clients for these versions, update imports, and remove the old autorest folders.
+**This should be the next target** — generate the TypeSpec client for this version, update imports, and remove the old autorest folder.
 
 ### How to Generate a REST Client from TypeSpec
 
@@ -167,7 +166,7 @@ To target a specific commit or branch of the spec repo, update the `commit` fiel
 
 ## Versions Without TypeSpec (Require Spec Authoring First)
 
-The following **14 versions** do NOT have TypeSpec definitions yet. Swagger-to-TypeSpec conversion is needed before these can be migrated:
+The following **13 versions** do NOT have TypeSpec definitions yet. Swagger-to-TypeSpec conversion is needed before these can be migrated:
 
 | Autorest Client | API Version | Type |
 |---|---|---|
@@ -190,7 +189,7 @@ The following **14 versions** do NOT have TypeSpec definitions yet. Swagger-to-T
 
 ## Recommended Execution Order
 
-1. **Start with the 2 versions that have TypeSpec available now** (`v2024_10_01_preview`, `v2024_04_01_dataplanepreview`) — generate clients and migrate.
+1. **Start with the 1 version that has TypeSpec available now** (`v2024_10_01_preview`) — generate client and migrate. (`v2024_04_01_dataplanepreview` already migrated as `azure_ai_assets_v2024_04_01`).
 2. **Then target recent ARM previews** (2025-01-01-preview, 2024-07-01-preview, 2024-04-01-preview, 2024-01-01-preview) once their TypeSpecs are authored.
 3. **Work backwards** through 2023-08-01-preview, 2023-06-01-preview, 2023-04-01-preview, etc.
 4. **Legacy dataplane versions** (2020/2021) should be assessed for deprecation rather than migration — they may only be needed for very old model compatibility.
@@ -210,7 +209,7 @@ The following **14 versions** do NOT have TypeSpec definitions yet. Swagger-to-T
 
 | Category | Count |
 |---|---|
-| TypeSpec clients already generated | 7 (+ 4 GA versions fully migrated) |
-| Autorest clients still remaining | 16 preview versions |
+| TypeSpec clients already generated | 8 (+ 4 GA versions fully migrated) |
+| Autorest clients still remaining | 15 preview versions |
 | High-priority migrations | 6 (2023-04-01-preview through 2025-01-01-preview) |
 | Legacy candidates for deprecation | 2 (2020/2021 dataplane) |
