@@ -458,10 +458,32 @@ class BaseExporter:
                         else:
                             redirect_has_headers = False
                         if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
-                            # Change the host to the new redirected host
-                            self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
-                            # Attempt to export again
-                            result = self._transmit(envelopes, _skip_rate_limit=True)
+                            current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
+                            # Refuse cross-origin redirects so an attacker-controlled
+                            # `Location` header cannot cause the auth policy to attach
+                            # a freshly-signed Authorization header for a foreign host
+                            # on the recursive _transmit call.
+                            if not self._is_same_registered_domain(current_url.netloc, url.netloc):
+                                if not self._is_stats_exporter():
+                                    if self._should_collect_customer_sdkstats():
+                                        track_dropped_items(
+                                            envelopes,
+                                            DropCode.CLIENT_EXCEPTION,
+                                            _exception_categories.CLIENT_EXCEPTION.value,
+                                        )
+                                    logger.error(
+                                        "Refusing cross-origin redirect to %s://%s.",
+                                        url.scheme,
+                                        url.netloc,
+                                    )
+                                result = ExportResult.FAILED_NOT_RETRYABLE
+                            else:
+                                # Change the host to the new redirected host
+                                self.client._config.host = "{}://{}".format(
+                                    url.scheme, url.netloc
+                                )  # pylint: disable=W0212
+                                # Attempt to export again
+                                result = self._transmit(envelopes, _skip_rate_limit=True)
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
@@ -610,6 +632,41 @@ class BaseExporter:
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, "_is_customer_sdkstats", False)
+
+    def _is_same_registered_domain(self, current_netloc: str, redirect_netloc: str) -> bool:
+        """Return True if the redirect target is safe to follow.
+
+        Used to gate redirects so an attacker-controlled ``Location`` header
+        cannot cause the exporter (and its credential-bearing pipeline) to
+        send telemetry and the Authorization header to an unrelated host.
+
+        A redirect is considered safe only if the target differs from the
+        currently-configured host by at most the leftmost DNS label (the
+        region/instance prefix), AND the shared suffix has at least three
+        labels.
+
+        :param str current_netloc: The netloc of the currently-configured ingestion endpoint.
+        :param str redirect_netloc: The netloc of the redirect target from the server's location header.
+        :return: True if the redirect target is considered safe to follow.
+        :rtype: bool
+        """
+
+        def _host_labels(netloc: str) -> list:
+            host = netloc.split("@")[-1].split(":")[0].lower().rstrip(".")
+            return [label for label in host.split(".") if label]
+
+        if not current_netloc or not redirect_netloc:
+            return False
+        current_labels = _host_labels(current_netloc)
+        redirect_labels = _host_labels(redirect_netloc)
+        # Exact host match is always safe.
+        if current_labels == redirect_labels:
+            return True
+        # Otherwise require identical structure with only the leftmost label
+        # differing, and at least three shared suffix labels.
+        if len(current_labels) != len(redirect_labels) or len(current_labels) < 4:
+            return False
+        return current_labels[1:] == redirect_labels[1:]
 
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
