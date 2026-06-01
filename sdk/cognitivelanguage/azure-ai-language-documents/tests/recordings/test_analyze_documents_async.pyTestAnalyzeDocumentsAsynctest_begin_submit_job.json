@@ -5,7 +5,6 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Connection": "keep-alive",
         "Content-Length": "411",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-language-documents/1.0.0b1 Python/3.13.13 (Windows-11-10.0.26200-SP0)"
@@ -43,13 +42,13 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "8a71bb16-caeb-4ee8-9a9c-ac0bd0761803",
+        "apim-request-id": "b78ce457-73f0-46a5-b073-15d007d58843",
         "Content-Length": "0",
-        "Date": "Mon, 01 Jun 2026 20:59:22 GMT",
-        "operation-location": "https://fake_analyzedocuments_endpoint.comlanguage/analyze-documents/jobs/f4e8ddab-6f7e-44ef-a316-4b64d50658b9?api-version=2026-05-15-preview",
+        "Date": "Mon, 01 Jun 2026 21:17:12 GMT",
+        "operation-location": "https://fake_analyzedocuments_endpoint.comlanguage/analyze-documents/jobs/48a70698-0612-401c-8862-878a280b985a?api-version=2026-05-15-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "268",
+        "x-envoy-upstream-service-time": "318",
         "x-ms-region": "East US"
       },
       "ResponseBody": null

@@ -1,0 +1,174 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/analyze-documents/jobs?api-version=2026-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Content-Length": "411",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-language-documents/1.0.0b1 Python/3.13.13 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": {
+        "displayName": "Document Analysis.",
+        "analysisInput": {
+          "documents": [
+            {
+              "language": "en",
+              "id": "Sanitized",
+              "source": {
+                "location": "https://fakeaccount.blob.core.windows.net/input/fake.docx"
+              },
+              "target": {
+                "location": "https://fakeaccount.blob.core.windows.net/output"
+              }
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "redactionPolicies": [
+                {
+                  "policyName": "defaultPolicy",
+                  "policyKind": "EntityMask",
+                  "isDefault": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "8ef01b05-0a4c-4e63-89c7-069609219b79",
+        "Content-Length": "0",
+        "Date": "Mon, 01 Jun 2026 21:48:36 GMT",
+        "operation-location": "https://fake_analyzedocuments_endpoint.comlanguage/analyze-documents/jobs/bb757fc4-1966-4e99-a3bd-d48184a3bfdc?api-version=2026-05-15-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "270",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/analyze-documents/jobs/bb757fc4-1966-4e99-a3bd-d48184a3bfdc:cancel?api-version=2026-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-language-documents/1.0.0b1 Python/3.13.13 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "4953635b-f256-4ae1-95f4-f8fbf018335c",
+        "Content-Length": "0",
+        "Date": "Mon, 01 Jun 2026 21:48:36 GMT",
+        "operation-location": "https://fake_analyzedocuments_endpoint.comlanguage/analyze-documents/jobs/bb757fc4-1966-4e99-a3bd-d48184a3bfdc?api-version=2026-05-15-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "44",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/analyze-documents/jobs/bb757fc4-1966-4e99-a3bd-d48184a3bfdc?api-version=2026-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "User-Agent": "azsdk-python-ai-language-documents/1.0.0b1 Python/3.13.13 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "44245074-0acd-4c7b-8609-a89d2e93fa12",
+        "Content-Length": "488",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jun 2026 21:48:36 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "9",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "bb757fc4-1966-4e99-a3bd-d48184a3bfdc",
+        "lastUpdatedDateTime": "2026-06-01T21:48:36Z",
+        "createdDateTime": "2026-06-01T21:48:36Z",
+        "expirationDateTime": "2026-06-02T21:48:36Z",
+        "status": "cancelled",
+        "errors": [],
+        "displayName": "Document Analysis.",
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "lastUpdateDateTime": "2026-06-01T21:48:36.2570386Z",
+              "status": "cancelled",
+              "results": {
+                "documents": [],
+                "errors": [],
+                "modelVersion": ""
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/analyze-documents/jobs/bb757fc4-1966-4e99-a3bd-d48184a3bfdc?api-version=2026-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "User-Agent": "azsdk-python-ai-language-documents/1.0.0b1 Python/3.13.13 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "ebb282c3-a708-4776-b6b2-7736214239b5",
+        "Content-Length": "488",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jun 2026 21:48:36 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "7",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "bb757fc4-1966-4e99-a3bd-d48184a3bfdc",
+        "lastUpdatedDateTime": "2026-06-01T21:48:36Z",
+        "createdDateTime": "2026-06-01T21:48:36Z",
+        "expirationDateTime": "2026-06-02T21:48:36Z",
+        "status": "cancelled",
+        "errors": [],
+        "displayName": "Document Analysis.",
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 0,
+          "total": 1,
+          "items": [
+            {
+              "kind": "PiiEntityRecognitionLROResults",
+              "lastUpdateDateTime": "2026-06-01T21:48:36.2570386Z",
+              "status": "cancelled",
+              "results": {
+                "documents": [],
+                "errors": [],
+                "modelVersion": ""
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

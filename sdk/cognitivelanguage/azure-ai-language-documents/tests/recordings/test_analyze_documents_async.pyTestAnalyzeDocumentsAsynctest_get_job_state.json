@@ -1,0 +1,94 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/analyze-documents/jobs?api-version=2026-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Content-Length": "411",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-language-documents/1.0.0b1 Python/3.13.13 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": {
+        "displayName": "Document Analysis.",
+        "analysisInput": {
+          "documents": [
+            {
+              "language": "en",
+              "id": "Sanitized",
+              "source": {
+                "location": "https://fakeaccount.blob.core.windows.net/input/fake.docx"
+              },
+              "target": {
+                "location": "https://fakeaccount.blob.core.windows.net/output"
+              }
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "redactionPolicies": [
+                {
+                  "policyName": "defaultPolicy",
+                  "policyKind": "EntityMask",
+                  "isDefault": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "9d21ea21-8584-4d89-ac47-a21c5b3126c4",
+        "Content-Length": "0",
+        "Date": "Mon, 01 Jun 2026 21:19:30 GMT",
+        "operation-location": "https://fake_analyzedocuments_endpoint.comlanguage/analyze-documents/jobs/dfc35a49-f6a8-4d16-93b3-788cb8ae60ac?api-version=2026-05-15-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "333",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/analyze-documents/jobs/dfc35a49-f6a8-4d16-93b3-788cb8ae60ac?api-version=2026-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "User-Agent": "azsdk-python-ai-language-documents/1.0.0b1 Python/3.13.13 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "070c5354-19fb-4e2d-b626-a59c456e65b1",
+        "Content-Length": "318",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jun 2026 21:19:31 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "171",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "dfc35a49-f6a8-4d16-93b3-788cb8ae60ac",
+        "lastUpdatedDateTime": "2026-06-01T21:19:31Z",
+        "createdDateTime": "2026-06-01T21:19:30Z",
+        "expirationDateTime": "2026-06-02T21:19:30Z",
+        "status": "notStarted",
+        "errors": [],
+        "displayName": "Document Analysis.",
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
