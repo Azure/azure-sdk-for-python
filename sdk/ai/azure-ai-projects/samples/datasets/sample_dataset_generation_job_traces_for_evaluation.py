@@ -16,7 +16,9 @@ DESCRIPTION:
       4. Cleans up the dataset, job, seeded conversations, and agent.
 
     Prerequisite: the project must have an Application Insights resource
-    connected so the agent emits server-side traces.
+    connected so the agent emits server-side traces. The Foundry project's
+    managed identity must have the `Reader` role on that Application Insights
+    resource so the data generation job can query the traces.
 
     To adapt for an existing agent with recent traces, replace step 1 with
     your agent's name and skip the ingestion wait.
