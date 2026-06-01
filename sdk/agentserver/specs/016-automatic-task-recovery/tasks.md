@@ -100,7 +100,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T023 [US9] Wrap every call-site body-parsing access (`.json()` / `.text()`) per FR-033: catch `UnicodeDecodeError`, `json.JSONDecodeError`, `azure.core.exceptions.DecodeError`; on failure raise a classified transport error carrying status + request-id + truncated body prefix.
 - [ ] T024 [US9] Drop `import httpx` from `<core>/azure/ai/agentserver/core/durable/_client.py`. Verify `grep -r 'import httpx' <core>/azure/` returns zero matches. If so, remove `httpx` from the production install requires in `<core>/pyproject.toml` (may remain under dev/test dependencies during transition).
 
-**Checkpoint**: US9 complete — pipeline migration green; T018 now passes; classifier seam available for US1–US4.
+**Checkpoint**: US9 complete — pipeline migration green; T018 now passes; classifier seam available for US1–US4. **→ Run T112 (per-story code review for US9) AND T113 (Phase A→B cross-phase seam review) before moving to Phase 4.**
 
 ---
 
@@ -126,7 +126,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T031 [US1] Remove `_is_stale` helper function and all references from `<core>/azure/ai/agentserver/core/durable/_decorator.py` (FR-001).
 - [ ] T032 [US1] Sweep `<core>/azure/ai/agentserver/core/durable/` for any remaining `stale_timeout` / `_is_stale` references in docstrings / comments / call sites. Remove all. Verify by `grep -rn 'stale_timeout\|_is_stale' <core>/azure/` returns zero matches.
 
-**Checkpoint**: US1 complete — `stale_timeout` developer surface entirely gone; surface tests green.
+**Checkpoint**: US1 complete — `stale_timeout` developer surface entirely gone; surface tests green. **→ Run T114 (per-story code review for US1) before moving to Phase 5.**
 
 ---
 
@@ -154,7 +154,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T041 [US2] In `<core>/azure/ai/agentserver/core/durable/_manager.py`, wire `_classify_store_write_error` into the inline-reclaim paths called by `.run()` / `.start()` / `get_active_run()`. On `evicted`: map to the per-entry-point outcome per Invariant 1 (FR-008). Add operator-facing WARNING with the binding_mismatch correlation; the outcome MUST be identical in type/shape to the live-elsewhere case.
 - [ ] T042 [US2] In `<core>/azure/ai/agentserver/core/durable/_lease.py`, integrate `_classify_store_write_error` into the lease-renewal path. On `evicted`, trigger the local-cleanup sequence atomically (FR-007).
 
-**Checkpoint**: US2 complete — split-brain protection green; caller observability preserved; no new error types leaked.
+**Checkpoint**: US2 complete — split-brain protection green; caller observability preserved; no new error types leaked. **→ Run T115 (per-story code review for US2) before moving to Phase 6.**
 
 ---
 
@@ -188,7 +188,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T057 [US3] Layer 3 (inline reclaim on scheduling primitives): modify `.run()` and `.start()` paths in `<core>/azure/ai/agentserver/core/durable/_manager.py` to check lease liveness on `in_progress` records and invoke `_reclaim_one` as a hidden side effect when the lease is dead. Caller-observable outcome MUST be identical to the live-in-this-process case per Invariant 1 (FR-002 layer (c)).
 - [ ] T058 [US3] Modify `TaskManager.get_active_run(task_id)` in `<core>/azure/ai/agentserver/core/durable/_manager.py` to consult the provider (not only in-memory state) and inline-reclaim dead-lease records per FR-005. Returns `TaskRun` for live or reclaimed; `None` for terminal or evicted.
 
-**Checkpoint**: US3 complete — three recovery layers landed; lease owner now agent+session.
+**Checkpoint**: US3 complete — three recovery layers landed; lease owner now agent+session. **→ Run T116 (per-story code review for US3+US4 together — US4 is verification-only) AND T117 (Phase B→C cross-phase seam review) before moving to Phase 8.**
 
 ---
 
@@ -204,7 +204,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 
 - [ ] T059 [US4] Verify T058 is complete and T043 + T037 pass. (US4 has no additional implementation tasks beyond what US3 delivered — the test ownership for `get_active_run` is split across `test_lifecycle.py`/`test_get.py` per Conformance Test Map row 11, and the implementation is in `_manager.py` per T058.)
 
-**Checkpoint**: US4 complete by virtue of US3 — `get_active_run()` orphan-resurrection green.
+**Checkpoint**: US4 complete by virtue of US3 — `get_active_run()` orphan-resurrection green. **→ T116 already covers this story (combined US3+US4 review).**
 
 ---
 
@@ -233,7 +233,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T069 [US5] In `<core>/azure/ai/agentserver/core/durable/_manager.py`, rewrite the return-path code (currently `_manager.py:1197-1223`) per FR-012 — execute in order: (1) `await ctx.metadata.flush_all()`, (2) persist the terminal record via `_handle_success` in a single CAS write that ALSO clears `_steering.pending_inputs` if non-empty, (3) resolve the current turn's `result_future` with `TaskResult(status="completed", output=V)`, (4) resolve every queued steerer's future with `TaskConflictError(current_status="completed")`. Symmetric for raise (status="failed", `TaskFailed` payload, queued steerers get `TaskConflictError(current_status="failed")`).
 - [ ] T070 [US5] Sweep `<core>/azure/ai/agentserver/core/durable/` and `<core>/tests/durable/` for any remaining `superseded` / `is_superseded` references. Pre-existing tests that exercised these MUST be ported per spec.md §Conformance Test Map "Hardening pre-existing tests" subsection — rewrite to assert the natural multi-turn outcome (suspended / completed / terminal). Record each port in `conformance-gap-list.md`.
 
-**Checkpoint**: US5 complete — steering is plain multi-turn; superseded surface gone; metadata flush invariant holds across all boundaries.
+**Checkpoint**: US5 complete — steering is plain multi-turn; superseded surface gone; metadata flush invariant holds across all boundaries. **→ Run T118 (per-story code review for US5) before moving to Phase 9.**
 
 ---
 
@@ -272,7 +272,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T084 [US6] In `<core>/azure/ai/agentserver/core/durable/__init__.py`, drop `TaskTerminated` from imports and `__all__`. Verify no `stale_timeout` / `superseded` mentions in `__all__`.
 - [ ] T085 [US6] In `<core>/azure/ai/agentserver/core/durable/_manager.py`, collapse the `asyncio.CancelledError` branch in `_execute_task_loop` to the cooperative-cancel path only per FR-022: remove the `if resolved_terminate.is_set():` discriminator and the `TaskTerminated` construction. Result future set with `TaskCancelled`; framework writes the terminal record (or lets the handler's natural exception propagate). Remove the `terminate_event` and `terminate_reason_ref` plumbing from `_ActiveTask`, `_execute_task`, `_execute_task_loop`, and every call site (~13 sites).
 
-**Checkpoint**: US6 complete — cancel-cause booleans live, steering surface cleaned up, terminate removed.
+**Checkpoint**: US6 complete — cancel-cause booleans live, steering surface cleaned up, terminate removed. **→ Run T119 (per-story code review for US6) before moving to Phase 10.**
 
 ---
 
@@ -306,7 +306,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T092 [US7] In `<core>/azure/ai/agentserver/core/durable/_manager.py`, pre-set `ctx.timeout_exceeded = True` + `ctx.cancel.set()` if the recovered watchdog computes `remaining == 0` per FR-033, so the recovered handler sees the cause from its first checkpoint.
 - [ ] T093 [US7] Rewrite the docstring of `TaskManager._timeout_watchdog` per FR-026. Remove the false "lease will eventually expire" claim. State explicitly: cooperative-only; sets `ctx.timeout_exceeded = True` then `ctx.cancel.set()` and exits; an ignoring handler runs until process death or external `TaskRun.cancel()` (FR-026). Watchdog-fired log message stays at INFO.
 
-**Checkpoint**: US7 complete — timeout is per-turn / wall-clock / durable; watchdog docstring corrected.
+**Checkpoint**: US7 complete — timeout is per-turn / wall-clock / durable; watchdog docstring corrected. **→ Run T120 (per-story code review for US7) before moving to Phase 11.**
 
 ---
 
@@ -334,7 +334,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T099 [US8] In `<core>/azure/ai/agentserver/core/durable/_manager.py`, modify `_execute_task_loop` to recognise the `ExitForRecovery` sentinel per FR-027. When returned by the handler: (a) `await ctx.metadata.flush_all()` (FR-015 invariant); (b) stop the lease renewal (`renewal_cancel.set()`); (c) do NOT write a terminal record (status MUST remain `in_progress`); (d) set the result future to `TaskCancelled` (same shape as the cooperative asyncio-cancel path); (e) preserve `_steering["pending_inputs"]` in the persisted state — do NOT drain during shutdown (FR-028).
 - [ ] T100 [US8] Verify that the `RuntimeError` from misuse propagates through `_execute_task_loop`'s exception handler and results in `status="failed"` (not `in_progress`), so misuse is loudly visible in operator logs AND in the resulting record per US8 scenario 3.
 
-**Checkpoint**: US8 complete — shutdown API discoverable; misuse caught; recovery cycle preserved.
+**Checkpoint**: US8 complete — shutdown API discoverable; misuse caught; recovery cycle preserved. **→ Run T121 (per-story code review for US8) before moving to Phase 12 Polish.**
 
 ---
 
@@ -356,7 +356,56 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - [ ] T110 Final commit-history audit per Constitution Principle XII: every conformance-test commit MUST precede its paired implementation commit (RED-first). Run `git log --oneline` and verify the pattern.
 - [ ] T111 Final review against `conformance-gap-list.md` (T005): every affected symbol has a test; every ported test is recorded; every deferred sample-update has a justification; no parallel test suite was created outside the two flagged new modules; no test was deleted without gap-list justification.
 
-**Checkpoint**: All spec-016 work complete. PR ready for review.
+**Checkpoint**: All spec-016 work complete. **→ Run T122 (final whole-PR holistic review) before marking the PR ready for human review.**
+
+---
+
+## Phase 13: Continuous Code Review (interleaved with Phases 3–12)
+
+**Purpose**: catch quality issues — hacks, scope creep, premature abstraction, under-design, dev-guide drift, spec-violation slips — at the cheapest possible moment. Per-story reviews catch local issues; cross-phase seam reviews catch architectural drift at the points the plan's Implementation Ordering Strategy identifies as boundaries (A→B, B→C); the final review catches anything that requires the full picture.
+
+**How**: each review task dispatches the `code-review` agent (via the `task` tool with `agent_type: "code-review"`) with a specific scope statement. BLOCKING / HIGH findings MUST be addressed before the next phase begins. MEDIUM / LOW findings get logged in `conformance-gap-list.md` for the final-review sweep to verify they're either resolved or explicitly accepted with reviewer sign-off.
+
+**Why this exists** (per user direction 2026-06-01): with 9 user stories and 12 phases on one cohesive PR, each phase risks shipping a hack that LOOKS LOCAL but degrades overall code quality, introduces a workaround that a later phase will have to fight, or silently drifts from the spec's design invariants. Per-phase, cross-phase, and final reviews collectively keep an eye on the overall shape.
+
+### Per-story reviews (execute at each Phase 3-11 Checkpoint)
+
+- [ ] T112 CODE REVIEW (Phase 3 / US9 / Phase A transport): Dispatch the code-review agent. Scope: review the commits implementing US9 (T012–T024) against spec FR-029..FR-034 and SC-016/SC-017. Verify: (a) every FR has corresponding implementation; (b) every SC has a behavior-deep test (no shape-only); (c) `ContentDecodePolicy` exclusion is enforced with an inline comment citing the responses-storage gzip lesson; (d) pre-existing httpx-fixture tests were ported (not deleted) per the "Hardening pre-existing tests" subsection; (e) RED commits precede GREEN commits; (f) no new public surface beyond what spec / data-model authorized; (g) no `# type: ignore` / `# pylint: disable` without justification per Constitution Principle II; (h) classifier seam from T021 is shape-stable (no premature abstraction; will not need re-shaping in Phase B). Address BLOCKING / HIGH findings before T025.
+
+- [ ] T113 CODE REVIEW (Phase A→B cross-phase seam): Dispatch the code-review agent. Scope: review the classifier seam (T021) and pipeline construction (T020) from a "is the next phase's consumer going to love this or fight it?" perspective. Verify: (a) classifier signature is parameter-stable for the FR-007/FR-008 consumers in Phase B; (b) pipeline policy-chain ordering is fixed (no need for Phase B to re-order or re-insert policies); (c) error-classification outcomes (`transient` / `evicted` / `conflict` / `permanent`) are exhaustive against the Phase B store-write call sites; (d) no Phase A scaffolding will be removed by Phase B (no throw-away code shipped). Findings here often surface design issues that are cheap to fix now and expensive later.
+
+- [ ] T114 CODE REVIEW (Phase 4 / US1 / surface cleanup): Dispatch the code-review agent. Scope: review the commits implementing US1 (T025–T032) against spec FR-001 and SC-001. Verify: (a) `stale_timeout` removed from every documented location (decorator, options, context, docstrings, doc, sample); (b) `_is_stale` helper removed including any internal call sites; (c) `TypeError` raised cleanly at every entry point that previously accepted the kwarg; (d) no replacement knob secretly introduced (e.g., a new `recovery_timeout` or `liveness_threshold` would be a regression of the "no developer knob" principle); (e) the existing `_decorator.py` tests that referenced `stale_timeout` are ported or replaced with the FR-009 test-only hook, not deleted.
+
+- [ ] T115 CODE REVIEW (Phase 5 / US2 / split-brain): Dispatch the code-review agent. Scope: review the commits implementing US2 (T033–T042) against spec FR-007/FR-008 and SC-002. Verify: (a) the `binding_mismatch` body-shape detection is tolerant of non-JSON / missing-`error.code` bodies and falls back to `"conflict"` not `"evicted"` (guards against false-positive evictions); (b) the local-cleanup sequence (cancel + suppress terminal-write + signal awaiters + log) is ATOMIC — partial cleanup states are not observable; (c) the eviction outcome maps to the SAME `TaskConflictError` / `None` shape per Invariant 1 — verify no leaked split-brain field on the exception or return type; (d) operator WARNING logs include `task_id`, `session_id`, and binding_mismatch correlation; (e) no synthetic-bypass shortcuts in tests per Constitution Principle X (the provider stub returns real responses; the classifier is not monkey-patched).
+
+- [ ] T116 CODE REVIEW (Phases 6+7 / US3+US4 / 3-layer recovery + lease owner): Dispatch the code-review agent. Scope: review the commits implementing US3 (T043–T058) and US4 (T059 verification) against spec FR-002..FR-005 and FR-004a; SC-003, SC-004, SC-005, SC-005a. Verify: (a) the three layers share ONE `_reclaim_one` helper — no per-layer duplicated reclaim logic; (b) CAS race protection is correct (loser re-reads and falls through; deterministic single-winner); (c) lease owner derivation incorporates BOTH agent name AND session ID per FR-004a, with the format choice consistent across all call sites; (d) `FOUNDRY_AGENT_NAME` unset fallback agrees with the rest of the framework (consistency invariant); (e) periodic-scan task is cancellable cleanly in `shutdown()` even during event-loop teardown; (f) `get_active_run()` outcome shape matches Invariant 1 exactly (TaskRun for live/reclaimed; None for terminal/evicted; no leaked "reclaimed" state). Pay particular attention to whether internal `_steering["generation"]` retention decision (T004) is honored.
+
+- [ ] T117 CODE REVIEW (Phase B→C cross-phase seam): Dispatch the code-review agent. Scope: review the recovery + classifier integration completed in Phases 4-7 from a "is Phase C's steering / cancel / timeout / shutdown rewrite going to compose cleanly with this?" perspective. Verify: (a) the `_manager.py` mutation patterns from Phase B leave `_execute_task_loop` and the steering-drain code path in a shape that Phase C can rewrite without fighting recovery code; (b) `_turn_started_at` payload-field decision (T003) is implemented in a way that the Phase C watchdog-respawn (T091) can use cleanly; (c) the metadata-flush invariant (FR-015) for non-steering boundaries was preserved in Phase B's changes, so Phase C only has to ADD the missing flushes on drain-shortcut paths (not also retrofit the existing boundaries); (d) the `_reclaim_one` outcome handling propagates correctly into the Phase C terminal-write paths (no race between recovery-reclaim and steering-terminal-clear). Findings here are especially valuable: they prevent Phase C from having to monkey-patch around Phase B leftovers.
+
+- [ ] T118 CODE REVIEW (Phase 8 / US5 / steering as multi-turn): Dispatch the code-review agent. Scope: review the commits implementing US5 (T060–T070) against spec FR-010..FR-015 and SC-007, SC-008, SC-009. Verify: (a) `superseded` is GONE from every code path that produces a `TaskResult` — no synthesis anywhere, no hidden alias; (b) the steering-drain code path is re-entry-only — does NOT resolve caller-visible futures, does NOT touch `ctx.metadata` (those are the boundary's concern); (c) the suspend / return path orders match FR-011 / FR-012 exactly (flush → persist → resolve → drain); (d) terminal-with-queued-input cleanup is ATOMIC (one CAS write clears `pending_inputs` AND records terminal status); (e) every queued steerer's future resolves with the correct `current_status` value; (f) metadata-flush invariant holds at ALL six terminal-of-turn boundaries (regression-tested by SC-009's sweep); (g) pre-existing tests that asserted `is_superseded` are ported to assert natural multi-turn outcomes, not deleted; (h) no parallel future-tracking dict survives in any form.
+
+- [ ] T119 CODE REVIEW (Phase 9 / US6 / cancel-cause + terminate removal): Dispatch the code-review agent. Scope: review the commits implementing US6 (T071–T085) against spec FR-016..FR-022 and SC-010, SC-011, SC-014. Verify: (a) the four new `TaskContext` properties (`timeout_exceeded`, `cancel_requested`, `pending_input_count`, `is_steered_turn`) have no public setters — framework-owned; (b) the ordering invariant holds — each cause boolean is set BEFORE `ctx.cancel.set()` at every set site; (c) `pending_input_count` is genuinely LIVE (reads from the in-memory tracker on each access), not a snapshot; (d) `is_steered_turn` correctly composes with `entry_mode` (the `(recovered, is_steered_turn=True)` orthogonality is tested in T074); (e) `TaskRun.terminate` raises `AttributeError`; `TaskTerminated` import raises `ImportError`; (f) ALL `terminate_event` / `terminate_reason_ref` plumbing is removed (`grep` returns zero matches); (g) the `_execute_task_loop` `asyncio.CancelledError` branch is collapsed to ONE path; (h) `ctx.cancel` REMAINS a bare `asyncio.Event` — no wrapping class introduced. Pay attention to whether any "convenience" helper was introduced (e.g., `ctx.is_cancelled_for_reason(...)`) — the spec deliberately does NOT include such helpers; the four properties are the API.
+
+- [ ] T120 CODE REVIEW (Phase 10 / US7 / per-turn durable timeout): Dispatch the code-review agent. Scope: review the commits implementing US7 (T086–T093) against spec FR-023..FR-026 and SC-012, SC-013. Verify: (a) `_turn_started_at` is set at the right places (fresh, suspended-to-in_progress resume, drain re-entry) and NOT set on recovery; (b) the watchdog's `remaining` computation matches the FR-023 formula exactly; (c) clock-skew clamping is applied in both directions (backwards and forwards) per SC-013; (d) at most ONE watchdog is live at a time — the previous-cancel-before-next-spawn invariant holds; (e) the watchdog stays cooperative-only — verifying no code path was secretly added that cancels the lease-renewal loop on watchdog fire; (f) the watchdog docstring is rewritten and contains the right keywords (`cooperative-only`, `process death`, `TaskRun.cancel`); (g) the log level for watchdog-fired is INFO, not WARNING.
+
+- [ ] T121 CODE REVIEW (Phase 11 / US8 / shutdown API): Dispatch the code-review agent. Scope: review the commits implementing US8 (T094–T100) against spec FR-027..FR-028 and SC-015. Verify: (a) `ctx.exit_for_recovery()` signature is exactly `async def exit_for_recovery(self) -> ExitForRecovery` (no parameters); (b) the precondition `ctx.shutdown.is_set()` is checked AT THE METHOD START — not deferred to the framework's terminal-handling path; (c) the `RuntimeError` message clearly indicates the precondition violation; (d) the sentinel-recognition path in `_execute_task_loop` honors the precise ordering: flush metadata → release lease → preserve `in_progress` status → signal awaiter — no terminal write happens; (e) queued steering inputs are PRESERVED in the persisted state — not drained during shutdown; (f) misuse propagates through normal exception handling and ends in `status="failed"` (not `in_progress`) — the misuse cannot silently leave the task `in_progress`. This is the highest-risk story for "hack that LOOKS fine but breaks recovery" — review carefully.
+
+### Final whole-PR review (execute at Phase 12 final task)
+
+- [ ] T122 CODE REVIEW (whole PR / holistic): Dispatch the code-review agent. Scope: review the entire spec-016 PR holistically. Verify:
+  - **Spec coverage**: every FR (FR-001..FR-034 + FR-004a) has implementation + test; conformance-gap-list.md is complete; every SC (SC-001..SC-018 + SC-005a) passes with a behavior-deep test.
+  - **Public surface match**: Principle XII's affected-symbols enumeration matches the implementation symbol-for-symbol — no extras, no missing, no aliased re-exports of removed symbols.
+  - **Documentation truth**: dev guide accurately reflects the implementation; doc-review meta-test passes; CHANGELOG reflects every public-surface change; source docstrings agree with the guide on every contract claim.
+  - **Sample handling**: samples either updated per the spec's Samples Affected matrix OR deferred-with-justification recorded in tasks.md / conformance-gap-list.md.
+  - **Cross-document artifacts**: `durability-contract.md` cross-cutting amendment is present and correct; `conformance-gap-list.md` records every test-routing decision (including any deviations from the spec's Conformance Test Map).
+  - **Plan-phase decisions resolved**: the three deferred implementation decisions (FR-009 hook shape, `_turn_started_at` field name/location, `_steering["generation"]` retain-or-delete) are decided and documented in conformance-gap-list.md.
+  - **Constitution exit checklists**: Principles X and XII exit checklists are all checked off; Principle XI is correctly marked N/A.
+  - **No hacks**: no synthetic-bypass mechanisms in tests; no monkey-patched classifiers; no scaffolding-that-will-be-removed-later code present; no "TODO: revisit in next PR" comments without a tracked issue.
+  - **No regression**: the existing test suite passes at the same count as the T001 baseline plus the new tests from US1–US9; no test was deleted without gap-list justification.
+  - **Commit history hygiene**: RED-first commits precede GREEN commits for every conformance test per Constitution Principle XII §3.
+  - **Lint / type / build clean**: T105 / T106 / T107 / T108 all green (pylint / mypy / pyright / sphinx).
+
+Address BLOCKING / HIGH findings before marking the PR ready for human review. MEDIUM / LOW findings should be either resolved or explicitly accepted with a one-line justification in conformance-gap-list.md.
 
 ---
 
@@ -366,22 +415,24 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 
 - **Phase 1 (Setup)**: no dependencies; T001–T005 can begin immediately. T002/T003/T004 are blocking inputs to later phases.
 - **Phase 2 (Foundational)**: depends on Phase 1; blocks all user story phases.
-- **Phase 3 (US9 Transport)**: depends on Phase 2. Blocks Phases 4–7 (Phase B) because the classifier seam lives here.
-- **Phase 4 (US1 Recovery surface clean)**: depends on Phase 3.
-- **Phase 5 (US2 Split-brain)**: depends on Phase 3 + Phase 4 (parallel-safe with US1, but reviewer-friendly to land US1 first).
+- **Phase 3 (US9 Transport)**: depends on Phase 2. Blocks Phases 4–7 (Phase B) because the classifier seam lives here. **GATE: T112 (per-story review) + T113 (Phase A→B seam review) MUST complete before Phase 4 begins; BLOCKING / HIGH findings MUST be addressed.**
+- **Phase 4 (US1 Recovery surface clean)**: depends on Phase 3. **GATE: T114 before Phase 5.**
+- **Phase 5 (US2 Split-brain)**: depends on Phase 3 + Phase 4. **GATE: T115 before Phase 6.**
 - **Phase 6 (US3 3-layer recovery + lease owner)**: depends on Phases 3, 5.
-- **Phase 7 (US4 get_active_run)**: depends on Phase 6 (US3 implements it via T058).
-- **Phase 8 (US5 Steering multi-turn)**: depends on Phases 3–7 complete (Phase B fully landed).
-- **Phase 9 (US6 Cancel-cause + terminate removal)**: depends on Phase 8 (steering rewrite shares files).
-- **Phase 10 (US7 Per-turn durable timeout)**: depends on Phase 9 (uses `ctx.timeout_exceeded` from US6).
-- **Phase 11 (US8 Shutdown API)**: depends on Phases 8, 10 (reuses metadata-flush and watchdog patterns).
+- **Phase 7 (US4 get_active_run)**: depends on Phase 6 (US3 implements it via T058). **GATE: T116 (combined US3+US4 per-story review) + T117 (Phase B→C seam review) MUST complete before Phase 8 begins.**
+- **Phase 8 (US5 Steering multi-turn)**: depends on Phases 3–7 complete (Phase B fully landed). **GATE: T118 before Phase 9.**
+- **Phase 9 (US6 Cancel-cause + terminate removal)**: depends on Phase 8 (steering rewrite shares files). **GATE: T119 before Phase 10.**
+- **Phase 10 (US7 Per-turn durable timeout)**: depends on Phase 9 (uses `ctx.timeout_exceeded` from US6). **GATE: T120 before Phase 11.**
+- **Phase 11 (US8 Shutdown API)**: depends on Phases 8, 10 (reuses metadata-flush and watchdog patterns). **GATE: T121 before Phase 12.**
 - **Phase 12 (Polish)**: depends on all user story phases.
+- **Phase 13 (Continuous Code Review)**: review tasks T112–T122 are sequencing fences interleaved with Phases 3–12 per the GATE annotations above. T122 (final holistic review) is the last action before marking the PR ready for human review.
 
 ### Within each phase
 
 - Tests MUST land RED in a commit BEFORE the implementation commit lands GREEN (Constitution Principle XII).
 - `[P]` marked tasks within a phase can run in parallel (different files, no dependency on each other).
 - Foundational documentation (T006 guide, T008 CHANGELOG, T009 durability-contract) lands before any phase-3+ tests, NOT before each phase — single up-front rewrite per the plan's coherence fix.
+- Review tasks (T112–T122) are NOT parallel with anything in their target phase — they are blocking fences that consume the completed phase as input.
 
 ### Parallel opportunities
 
@@ -395,6 +446,7 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 - T086–T088 (US7 tests): parallel.
 - T094–T096 (US8 tests): parallel.
 - T101–T103 (Polish meta-test runs): parallel.
+- **Review tasks T112–T122 are NOT parallel with each other** — each one consumes the result of a completed phase and gates the next. T113 and T117 (cross-phase seam reviews) can run in parallel with their paired per-story review (T112 with T113; T116 with T117) since they have different scope, but the next phase only begins after both complete.
 
 ---
 
