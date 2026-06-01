@@ -5,7 +5,8 @@
 ### Sample updates
 
 * Added Routines samples `sample_routines_crud.py` demonstrating CRUD operations and `sample_routines_with_timer_trigger.py` demonstrating triggering a routine by a timer.
-* `samples/datasets/sample_dataset_generation_job_traces_for_evaluation.py` and `samples/datasets/sample_dataset_generation_job_traces_for_finetuning.py` are now self-contained: each sample creates a temporary agent, seeds conversations, retries the data generation job over the trace window, and cleans up all created resources.
+* `sample_dataset_generation_job_traces_for_evaluation.py` and `sample_dataset_generation_job_traces_for_finetuning.py` are now self-contained: each sample creates a temporary agent, seeds conversations, retries the data generation job over the trace window, and cleans up all created resources.
+* Extended `sample_memory_crud.py` and `sample_memory_crud_async.py` to also demonstrate memory item CRUD (`create_memory`, `get_memory`, `update_memory`, `list_memories`, `delete_memory`) in addition to memory store CRUD.
 
 ## 2.2.0 (2026-05-29)
 
