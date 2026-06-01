@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import os
+import re
 from setuptools import setup, Extension
 from wheel.bdist_wheel import bdist_wheel
 
@@ -25,9 +26,16 @@ PACKAGE_PPRINT_NAME = "Azure Storage Extensions"
 
 package_folder_path = PACKAGE_NAME.replace("-", "/")
 
+# Version extraction inspired from 'requests'
+with open(os.path.join(package_folder_path, "checksums", "_version.py"), "r") as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
+
+if not version:
+    raise RuntimeError("Cannot find version information")
+
 setup(
     name=PACKAGE_NAME,
-    version="0.1.0",
+    version=version,
     description=PACKAGE_PPRINT_NAME,
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
