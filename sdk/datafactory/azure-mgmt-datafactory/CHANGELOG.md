@@ -318,14 +318,6 @@
   - Model `ZendeskLinkedService` moved instance variable `authentication_type`, `url`, `user_name`, `password`, `api_token` and `encrypted_credential` under property `type_properties` whose type is `ZendeskLinkedServiceTypeProperties`
   - Model `ZohoLinkedService` moved instance variable `connection_properties`, `endpoint`, `access_token`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `ZohoLinkedServiceTypeProperties`
   - Model `ZohoObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
-  - Deleted or renamed model `AdditionalColumns`
-  - Deleted or renamed model `DatasetDataElement`
-  - Deleted or renamed model `DatasetSchemaDataElement`
-  - Deleted or renamed model `OutputColumn`
-  - Deleted or renamed model `ScriptType`
-  - Deleted or renamed model `SqlDWWriteBehaviorEnum`
-  - Deleted or renamed model `SqlWriteBehaviorEnum`
-  - Deleted or renamed model `StoredProcedureParameter`
   - Method `ChangeDataCaptureOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
   - Method `ChangeDataCaptureOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameter `etag`/`match_condition`
   - Method `CredentialOperationsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
@@ -356,8 +348,8 @@
 ### Other Changes
 
   - Deleted model `ChangeDataCaptureListResponse`/`CredentialListResponse`/`DataFlowListResponse`/`DatasetListResponse`/`FactoryListResponse`/`GlobalParameterListResponse`/`IntegrationRuntimeListResponse`/`IntegrationRuntimeStatusListResponse`/`LinkedServiceListResponse`/`ManagedPrivateEndpointListResponse`/`ManagedVirtualNetworkListResponse`/`OperationListResponse`/`PipelineListResponse`/`PrivateEndpointConnectionListResponse`/`QueryDataFlowDebugSessionsResponse`/`TriggerListResponse` which actually were not used by SDK users
-  - Deleted model `CopyTranslator`/`GetDataFactoryOperationStatusResponse`/`TabularTranslator`/`TypeConversionSettings` which actually were not used by SDK users
-  - Deleted enum `AmazonRdsForOraclePartitionOption`/`AvroCompressionCodec`/`CompressionCodec`/`CopyBehaviorType`/`DatasetCompressionLevel`/`DynamicsAuthenticationType`/`DynamicsDeploymentType`/`HdiNodeTypes`/`JsonFormatFilePattern`/`JsonWriteFilePattern`/`NetezzaPartitionOption`/`OraclePartitionOption`/`OrcCompressionCodec`/`SalesforceSourceReadBehavior`/`SapHanaPartitionOption`/`SapTablePartitionOption`/`ServicePrincipalCredentialType`/`SqlPartitionOption`/`StoredProcedureParameterType`/`TeradataPartitionOption` which actually were not used by SDK users
+  - Deleted model `CopyTranslator`/`GetDataFactoryOperationStatusResponse`/`TabularTranslator`/`TypeConversionSettings`/`AdditionalColumns`/`DatasetDataElement`/`DatasetSchemaDataElement`/`OutputColumn`/`StoredProcedureParameter` which actually were not used by SDK users
+  - Deleted enum `AmazonRdsForOraclePartitionOption`/`AvroCompressionCodec`/`CompressionCodec`/`CopyBehaviorType`/`DatasetCompressionLevel`/`DynamicsAuthenticationType`/`DynamicsDeploymentType`/`HdiNodeTypes`/`JsonFormatFilePattern`/`JsonWriteFilePattern`/`NetezzaPartitionOption`/`OraclePartitionOption`/`OrcCompressionCodec`/`SalesforceSourceReadBehavior`/`SapHanaPartitionOption`/`SapTablePartitionOption`/`ServicePrincipalCredentialType`/`SqlPartitionOption`/`StoredProcedureParameterType`/`TeradataPartitionOption`/`ScriptType`/`SqlDWWriteBehaviorEnum`/`SqlWriteBehaviorEnum` which actually were not used by SDK users
 ## 9.3.0 (2026-03-10)
 
 ### Features Added
