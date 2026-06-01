@@ -34,7 +34,7 @@ def add_sanitizers(test_proxy):
         regex=r"<SessionToken>[^<]*</SessionToken>", value="<SessionToken>Sanitized</SessionToken>"
     )
     add_general_regex_sanitizer(
-        regex=r"<SessionKey>[^<]*</SessionKey>", value="<SessionKey>Sanitized</SessionKey>"
+        regex=r"<SessionKey>[^<]*</SessionKey>", value="<SessionKey>U2FuaXRpemVk</SessionKey>"
     )
     add_general_regex_sanitizer(regex=r'"EncryptionLibrary": "Python .*?"', value='"EncryptionLibrary": "Python x.x.x"')
 

@@ -2841,7 +2841,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         c1b1_actual = container1.download_blob(c1b1_name, raw_response_hook=make_capture("c1_download")).readall()
         assert c1b1_data == c1b1_actual
         assert captured["c1_download"].startswith("Session ")
-        c1_token = session_token_from(captured["c1_download"])
+        session1 = session_token_from(captured["c1_download"])
 
         container2 = service.get_container_client("container2")
         try:
@@ -2853,11 +2853,19 @@ class TestStorageContainer(StorageRecordedTestCase):
         container2.upload_blob(c2b2_name, c2b2_data, overwrite=True, raw_response_hook=make_capture("c2_upload"))
         assert captured["c2_upload"].startswith("Bearer ")
 
-        c2b2_actual = container2.download_blob(
-            c2b2_name, raw_response_hook=make_capture("c2_download"),
-        ).readall()
+        c2b2_actual = container2.download_blob(c2b2_name, raw_response_hook=make_capture("c2_download")).readall()
         assert c2b2_data == c2b2_actual
         assert captured["c2_download"].startswith("Session ")
-        c2_token = session_token_from(captured["c2_download"])
+        session2 = session_token_from(captured["c2_download"])
 
-        assert c1_token != c2_token
+        assert session1 != session2
+
+        c1b1_actual = container1.download_blob(c1b1_name, raw_response_hook=make_capture("c1_download")).readall()
+        assert c1b1_data == c1b1_actual
+        assert captured["c1_download"].startswith("Session ")
+        assert session1 == session_token_from(captured["c1_download"])
+
+        c2b2_actual = container2.download_blob(c2b2_name, raw_response_hook=make_capture("c2_download")).readall()
+        assert c2b2_data == c2b2_actual
+        assert captured["c2_download"].startswith("Session ")
+        assert session2 == session_token_from(captured["c2_download"])
