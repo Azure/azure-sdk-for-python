@@ -25,6 +25,10 @@ _DURABLE_INIT = _PACKAGE_ROOT / "durable" / "__init__.py"
 
 
 # Post-Phase-3 expected exact public surface (FR-006).
+#
+# Spec 016 FR-022 (US6): TaskTerminated removed from __all__ as
+# preparatory work. The class itself and all plumbing is removed by
+# T082-T085.
 EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
     {
         "task",
@@ -43,7 +47,6 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "TaskCancelled",
         "TaskNotFound",
         "TaskConflictError",
-        "TaskTerminated",
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
         "TaskPreconditionFailed",
@@ -57,6 +60,8 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskSuspended",
         "TaskOptions",
         "TaskInfo",
+        # Spec 016 FR-022: dropped from __all__ as preparatory Phase 9 work.
+        "TaskTerminated",
     }
 )
 
@@ -132,4 +137,76 @@ def test_task_get_list_renamed_to_private() -> None:
     )
     assert hasattr(Task, "_list") and callable(Task._list), (
         "Task._list (internal rename) must remain callable."
+    )
+
+
+# --------------------------------------------------------------------- #
+# Spec 016 — T017: HostedTaskProvider.__init__ credential typing
+# --------------------------------------------------------------------- #
+
+
+def test_hosted_provider_credential_typed_as_async_token_credential() -> None:
+    """Spec 016 FR-029: ``HostedTaskProvider.__init__``'s ``credential``
+    parameter MUST be annotated as ``AsyncTokenCredential`` (or a
+    compatible type). The legacy ``Any`` annotation hid type errors
+    at construction sites.
+
+    Asserted by inspecting the runtime annotation; an
+    isinstance check on actual credentials is intentionally NOT done
+    here because :class:`AsyncTokenCredential` is a structural type
+    (Protocol-like).
+    """
+    import inspect
+
+    from azure.ai.agentserver.core.durable._client import HostedTaskProvider
+
+    sig = inspect.signature(HostedTaskProvider.__init__)
+    cred_param = sig.parameters.get("credential")
+    assert cred_param is not None, "HostedTaskProvider.__init__ has no `credential` parameter"
+
+    annotation = cred_param.annotation
+    # Either the real azure.core.credentials_async.AsyncTokenCredential class
+    # or a string annotation (PEP 563) referring to it. Both are acceptable.
+    annotation_str = (
+        annotation.__name__ if hasattr(annotation, "__name__") else str(annotation)
+    )
+    assert "AsyncTokenCredential" in annotation_str, (
+        f"`credential` parameter must be typed as `AsyncTokenCredential` "
+        f"(per spec 016 FR-029); got {annotation_str!r}."
+    )
+
+
+# --------------------------------------------------------------------- #
+# Spec 016 — T018: httpx import readiness (lands RED until T024 lands)
+# --------------------------------------------------------------------- #
+
+
+def test_httpx_absent_from_production_durable_package() -> None:
+    """Spec 016 FR-029 + T024: ``import httpx`` MUST not appear anywhere
+    under the durable subpackage's production source tree. The
+    transport migration to ``azure.core.AsyncPipelineClient`` removes
+    the dependency entirely.
+
+    Per the test_dev_guide_review pattern, this scan only inspects
+    the durable subpackage — we do NOT walk the broader package because
+    other modules (host, base) may legitimately retain httpx during
+    the rollout window.
+    """
+    import re
+
+    durable_dir = _PACKAGE_ROOT / "durable"
+    offenders: list[tuple[str, int]] = []
+    pattern = re.compile(r"^\s*(?:import\s+httpx\b|from\s+httpx\b)", re.MULTILINE)
+    for py_file in durable_dir.rglob("*.py"):
+        text = py_file.read_text(encoding="utf-8")
+        matches = list(pattern.finditer(text))
+        if matches:
+            line_no = text[: matches[0].start()].count("\n") + 1
+            offenders.append((str(py_file.relative_to(_PACKAGE_ROOT)), line_no))
+
+    assert not offenders, (
+        f"httpx imports still present under durable subpackage (spec 016 "
+        f"T024 / FR-029): {offenders}. Migrate the call site to "
+        f"`azure.core.rest.HttpRequest` / `AsyncPipelineClient.send_request` "
+        f"and remove the import."
     )

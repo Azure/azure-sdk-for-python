@@ -36,7 +36,6 @@ Public API::
         TaskCancelled,
         TaskNotFound,
         TaskConflictError,
-        TaskTerminated,
         EntryMode,
     )
 """
@@ -61,6 +60,13 @@ from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
 from ._stream import QueueStreamHandler, StreamHandler, StreamHandlerFactory
 
+# Spec 016 FR-022 (US6): TaskTerminated is being removed from the public
+# surface. It is dropped from __all__ here as preparatory work; the
+# class itself and the cancellation-branch plumbing in _manager.py /
+# _run.py are removed by T082-T085 of spec 016. The import above is
+# retained until those tasks land so any pre-existing internal call
+# sites continue to function during the rollout window of the spec
+# implementation PR.
 __all__ = [
     "task",
     "Task",
@@ -78,7 +84,6 @@ __all__ = [
     "TaskCancelled",
     "TaskNotFound",
     "TaskConflictError",
-    "TaskTerminated",
     "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
     "TaskPreconditionFailed",

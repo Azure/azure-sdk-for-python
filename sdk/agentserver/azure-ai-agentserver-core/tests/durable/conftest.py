@@ -278,7 +278,13 @@ class FakeAsyncHttpTransport:
         self._closed = True
 
     async def send(self, request: Any, **kwargs: Any) -> Any:  # noqa: ARG002
-        """Pop the next canned response, recording the sent request."""
+        """Pop the next canned response, recording the sent request.
+
+        Returns an :class:`AsyncHttpResponse`-shaped object (NOT a
+        :class:`PipelineResponse` — the surrounding pipeline wraps the
+        returned http response into a PipelineResponse on its way back
+        through the policy chain).
+        """
 
         if not self._responses:
             raise IndexError(
@@ -329,9 +335,7 @@ class FakeAsyncHttpTransport:
 
                 return _gen()
 
-        from azure.core.pipeline import PipelineResponse  # type: ignore
-
-        return PipelineResponse(http_request=request, http_response=_FakeResp(), context=None)
+        return _FakeResp()
 
 
 @pytest.fixture

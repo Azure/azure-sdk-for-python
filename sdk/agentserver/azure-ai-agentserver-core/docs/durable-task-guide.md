@@ -740,6 +740,12 @@ Methods:
 - `await ctx.stream(chunk)` — emit an incremental chunk to consumers.
 - `await ctx.exit_for_recovery()` — graceful-shutdown shape. See §4 Shutdown.
 
+The cancel-cause boolean fields exposed above are read as
+`ctx.timeout_exceeded`, `ctx.cancel_requested`, and `ctx.pending_input_count`
+respectively; `ctx.is_steered_turn` is the steering-drain marker
+(orthogonal to `ctx.entry_mode`). All are framework-owned — there are
+no public setters.
+
 ### `TaskMetadata`
 
 The persistent state surface returned by `ctx.metadata` and

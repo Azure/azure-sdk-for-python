@@ -93,7 +93,7 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskCancelled",
         "TaskNotFound",
         "TaskConflictError",
-        "TaskTerminated",
+        # Spec 016 FR-022 (US6): TaskTerminated removed from __all__.
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
         "TaskPreconditionFailed",

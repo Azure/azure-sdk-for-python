@@ -3,18 +3,47 @@
 # ---------------------------------------------------------
 """Hosted durable task provider — HTTP client for the Foundry Task Storage API.
 
-Communicates with ``{FOUNDRY_PROJECT_ENDPOINT}/tasks`` using
-``httpx.AsyncClient``. Bearer tokens are obtained lazily from
-``DefaultAzureCredential`` when running in a hosted environment.
+Communicates with ``{FOUNDRY_PROJECT_ENDPOINT}/tasks`` via
+``azure.core.AsyncPipelineClient`` with the standard Azure SDK policy
+chain. Bearer tokens are obtained lazily by ``AsyncBearerTokenCredentialPolicy``;
+call-site code never assembles ``Authorization`` headers directly.
+
+**`ContentDecodePolicy` is intentionally excluded** from the policy
+chain (spec 016 FR-030). The responses-storage gzip lesson: that policy
+eagerly deserializes every body as JSON in middleware and crashes on
+gzip / non-UTF-8 / gateway-HTML payloads before call-site code can
+handle the response. Body parsing here happens at the call site with
+defensive error handling (FR-033).
+
+Every store-write call site funnels through :func:`_classify_store_write_error`
+(spec 016 FR-006 / FR-032) so the manager can react uniformly to
+transient / evicted / conflict / permanent outcomes without re-deriving
+the classification per-site.
 """
 
 from __future__ import annotations
 
+import gzip
+import json
 import logging
-from typing import Any
+from typing import Any, Literal
 
-import httpx
+from azure.core import AsyncPipelineClient
+from azure.core.configuration import Configuration
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.exceptions import DecodeError
+from azure.core.pipeline.policies import (
+    AsyncBearerTokenCredentialPolicy,
+    AsyncRetryPolicy,
+    DistributedTracingPolicy,
+    HeadersPolicy,
+    RequestIdPolicy,
+    UserAgentPolicy,
+)
+from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.rest import HttpRequest
 
+from .._version import VERSION
 from ._exceptions import TaskNotFound
 from ._models import (
     TaskCreateRequest,
@@ -22,34 +51,315 @@ from ._models import (
     TaskPatchRequest,
     TaskStatus,
 )
+from ._task_api_logging_policy import TaskApiLoggingPolicy
 
 logger = logging.getLogger("azure.ai.agentserver.durable")
 
 _AUTH_SCOPE = "https://ai.azure.com/.default"
 _API_VERSION = "v1"
+_USER_AGENT = f"ai-agentserver-core/{VERSION}"
+_BODY_PREFIX_LIMIT = 256  # truncation length for classified error bodies
+
+
+# --------------------------------------------------------------------- #
+# Classifier (spec 016 FR-006)
+# --------------------------------------------------------------------- #
+
+
+ClassifiedOutcome = Literal["transient", "evicted", "conflict", "permanent"]
+
+
+class TransportClassifiedError(Exception):
+    """Raised when a non-success response cannot be parsed safely.
+
+    Carries enough metadata for operator triage without exposing
+    bearer tokens or full response bodies. ``classification`` carries
+    the FR-006 outcome label so callers can branch consistently.
+    """
+
+    def __init__(
+        self,
+        *,
+        status: int,
+        classification: ClassifiedOutcome,
+        message: str,
+        request_id: str | None = None,
+        body_prefix: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.status = status
+        self.classification = classification
+        self.request_id = request_id
+        self.body_prefix = body_prefix
+
+
+def _classify_store_write_error(
+    status_code: int, body: bytes | None
+) -> ClassifiedOutcome:
+    """Classify a non-success task-store response per spec 016 FR-006.
+
+    Returns one of ``"transient"`` (retry), ``"evicted"`` (orphan-sandbox
+    eviction; local cleanup sequence), ``"conflict"`` (etag mismatch or
+    409-other), ``"permanent"`` (404 / 400 / unrecognised 4xx).
+
+    Tolerant of non-JSON / empty / shape-unexpected bodies — never
+    raises from inside the classifier; misshapen evictions are downgraded
+    to ``"conflict"`` so the framework never invents an eviction event
+    from noise (guard against false-positive evictions).
+    """
+    # Transient: server-side problems, throttling, timeouts.
+    if status_code in (408, 429) or 500 <= status_code < 600:
+        return "transient"
+
+    # 409: requires body inspection.
+    if status_code == 409:
+        if not body:
+            return "conflict"
+        try:
+            payload = json.loads(body)
+        except (ValueError, TypeError, UnicodeDecodeError):
+            return "conflict"  # malformed 409 → safe default
+        if not isinstance(payload, dict):
+            return "conflict"
+        err = payload.get("error")
+        if isinstance(err, dict) and err.get("code") == "binding_mismatch":
+            return "evicted"
+        return "conflict"
+
+    # 412 etag mismatch is a CAS conflict.
+    if status_code == 412:
+        return "conflict"
+
+    # Everything else with 4xx is permanent (caller error).
+    if 400 <= status_code < 500:
+        return "permanent"
+
+    # Anything else (e.g. 1xx, 3xx) — treat as permanent so callers
+    # do not silently retry unexpected shapes.
+    return "permanent"
+
+
+def _body_prefix(body: bytes | None, limit: int = _BODY_PREFIX_LIMIT) -> str | None:
+    """Return up to ``limit`` decoded characters of ``body``, or ``None`` if empty.
+
+    Tolerant of non-UTF-8 (uses ``errors="replace"``) and non-bytes input.
+    Used by the classified-error path so operators can see the start of a
+    non-JSON response without dumping the whole body to logs.
+    """
+    if not body:
+        return None
+    try:
+        text = bytes(body).decode("utf-8", errors="replace")
+    except Exception:  # noqa: BLE001
+        return None
+    if len(text) > limit:
+        return text[:limit] + "…"
+    return text
+
+
+def _maybe_decompress(body: bytes | None, headers: Any) -> bytes | None:
+    """Decompress ``body`` if the response declares ``Content-Encoding: gzip``.
+
+    Since ``ContentDecodePolicy`` is intentionally absent from the
+    pipeline (FR-030), each call site is responsible for honoring
+    ``Content-Encoding``. Returns ``body`` unchanged for other encodings
+    so the caller's defensive JSON-parse can produce a useful error.
+    """
+    if not body or not headers:
+        return body
+    try:
+        encoding = headers.get("Content-Encoding") or headers.get("content-encoding")
+    except Exception:  # noqa: BLE001
+        return body
+    if not encoding:
+        return body
+    if encoding.lower().strip() == "gzip":
+        try:
+            return gzip.decompress(bytes(body))
+        except (OSError, EOFError, ValueError):
+            # Malformed gzip — let the caller's JSON-parse surface it.
+            return body
+    return body
+
+
+def _parse_json_body(
+    response: Any,
+    *,
+    method: str,
+    url: str,
+) -> Any:
+    """Defensively decode a JSON body from the response.
+
+    Spec 016 FR-033: catches ``UnicodeDecodeError``, ``json.JSONDecodeError``,
+    ``azure.core.exceptions.DecodeError`` and raises
+    :class:`TransportClassifiedError` carrying the classification, the
+    request id (if any), and a truncated body prefix.
+
+    Returns the parsed JSON value on success.
+    """
+    status = getattr(response, "status_code", 0)
+    headers = getattr(response, "headers", {}) or {}
+    try:
+        raw = response.body()
+    except Exception as exc:  # noqa: BLE001
+        raise TransportClassifiedError(
+            status=status,
+            classification=_classify_store_write_error(status, None),
+            message=(
+                f"task-store {method} {url}: failed to read response body: "
+                f"{type(exc).__name__}: {exc}"
+            ),
+            request_id=str(headers.get("x-ms-request-id", "") or "") or None,
+        ) from exc
+    body = _maybe_decompress(raw, headers)
+    try:
+        text = bytes(body or b"").decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise TransportClassifiedError(
+            status=status,
+            classification=_classify_store_write_error(status, body),
+            message=(
+                f"task-store {method} {url}: response body not valid UTF-8 "
+                f"(status={status}); body_prefix={_body_prefix(body)!r}"
+            ),
+            request_id=str(headers.get("x-ms-request-id", "") or "") or None,
+            body_prefix=_body_prefix(body),
+        ) from exc
+    try:
+        return json.loads(text)
+    except (json.JSONDecodeError, DecodeError) as exc:
+        raise TransportClassifiedError(
+            status=status,
+            classification=_classify_store_write_error(status, body),
+            message=(
+                f"task-store {method} {url}: response body not valid JSON "
+                f"(status={status}); body_prefix={_body_prefix(body)!r}"
+            ),
+            request_id=str(headers.get("x-ms-request-id", "") or "") or None,
+            body_prefix=_body_prefix(body),
+        ) from exc
+
+
+def _raise_classified(
+    response: Any,
+    *,
+    method: str,
+    url: str,
+) -> None:
+    """Inspect a response and raise :class:`TransportClassifiedError`.
+
+    Replaces the legacy ``response.raise_for_status()`` call sites
+    (spec 016 FR-032) so every non-success response funnels through
+    the FR-006 classifier and carries the canonical outcome label.
+    """
+    status = getattr(response, "status_code", 0)
+    headers = getattr(response, "headers", {}) or {}
+    try:
+        raw = response.body()
+    except Exception:  # noqa: BLE001
+        raw = None
+    body = _maybe_decompress(raw, headers) if raw else None
+    classification = _classify_store_write_error(status, body)
+    raise TransportClassifiedError(
+        status=status,
+        classification=classification,
+        message=(
+            f"task-store {method} {url}: classified={classification} status={status}"
+        ),
+        request_id=str(headers.get("x-ms-request-id", "") or "") or None,
+        body_prefix=_body_prefix(body),
+    )
+
+
+# --------------------------------------------------------------------- #
+# HostedTaskProvider — azure.core.AsyncPipelineClient
+# --------------------------------------------------------------------- #
+
+
+def _build_default_policies(
+    credential: AsyncTokenCredential,
+) -> list[Any]:
+    """Construct the canonical policy chain per spec 016 FR-030.
+
+    Order: RequestIdPolicy, HeadersPolicy, UserAgentPolicy,
+    AsyncRetryPolicy (retry on 5xx / 408 / 429 only — NEVER on 409),
+    AsyncBearerTokenCredentialPolicy, TaskApiLoggingPolicy,
+    DistributedTracingPolicy.
+
+    ``ContentDecodePolicy`` is intentionally NOT included — see module
+    docstring for the responses-storage gzip lesson.
+    """
+    return [
+        RequestIdPolicy(),
+        HeadersPolicy(),
+        UserAgentPolicy(base_user_agent=_USER_AGENT),
+        # Retry on 5xx and the standard transient HTTP statuses; 409
+        # is explicitly NOT in retry_on_status_codes (FR-030) because
+        # 409 carries application semantics (conflict / binding_mismatch)
+        # that retry would silently mask.
+        AsyncRetryPolicy(
+            retry_total=3,
+            retry_on_status_codes=[408, 429, 500, 502, 503, 504],
+            retry_backoff_factor=0.5,
+        ),
+        AsyncBearerTokenCredentialPolicy(credential, _AUTH_SCOPE),
+        TaskApiLoggingPolicy(),
+        DistributedTracingPolicy(),
+    ]
 
 
 class HostedTaskProvider:
     """HTTP-backed provider for the Foundry Task Storage API.
 
+    Built on :class:`azure.core.AsyncPipelineClient` with the standard
+    policy chain (spec 016 FR-029..FR-034). ``ContentDecodePolicy`` is
+    explicitly excluded; body parsing happens at the call site with
+    defensive error handling.
+
     :param project_endpoint: The ``FOUNDRY_PROJECT_ENDPOINT`` base URL.
     :type project_endpoint: str
-    :param credential: An ``azure.identity.aio.DefaultAzureCredential``
-        instance, or any token credential supporting ``get_token(scope)``.
-    :type credential: Any
+    :param credential: An async token credential supporting
+        ``get_token(scope)`` (e.g.
+        :class:`azure.identity.aio.DefaultAzureCredential`).
+    :type credential: AsyncTokenCredential
+    :keyword transport: Optional :class:`AsyncHttpTransport` override
+        (used by tests for fake-transport injection per spec 016
+        Conformance Test Map row 14).
+    :paramtype transport: AsyncHttpTransport | None
     """
 
-    def __init__(self, project_endpoint: str, credential: Any) -> None:
+    def __init__(
+        self,
+        project_endpoint: str,
+        credential: AsyncTokenCredential,
+        *,
+        transport: AsyncHttpTransport | None = None,
+    ) -> None:
         self._base_url = f"{project_endpoint.rstrip('/')}/tasks"
         self._credential = credential
-        self._client = httpx.AsyncClient(timeout=30.0)
+        config = Configuration()
+        config.user_agent_policy = UserAgentPolicy(base_user_agent=_USER_AGENT)
+        self._policies: list[Any] = _build_default_policies(credential)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=self._base_url,
+            config=config,
+            policies=self._policies,
+            transport=transport,
+        )
 
-    async def _get_headers(self) -> dict[str, str]:
-        token = await self._credential.get_token(_AUTH_SCOPE)
-        return {
-            "Authorization": f"Bearer {token.token}",
-            "Content-Type": "application/json",
-        }
+    @property
+    def policies(self) -> list[Any]:
+        """The policy chain in order — used by tests for composition assertions."""
+        return list(self._policies)
+
+    async def _send(self, request: HttpRequest) -> Any:
+        """Send ``request`` through the pipeline and return the HTTP response.
+
+        The pipeline returns a ``PipelineResponse`` whose
+        ``http_response`` is the wire response we operate on.
+        """
+        pipeline_response = await self._client._pipeline.run(request)  # noqa: SLF001
+        return pipeline_response.http_response
 
     async def create(self, request: TaskCreateRequest) -> TaskInfo:
         """Create a new task via POST /tasks.
@@ -59,7 +369,6 @@ class HostedTaskProvider:
         :return: The created task record.
         :rtype: TaskInfo
         """
-        headers = await self._get_headers()
         params: dict[str, str] = {"api-version": _API_VERSION}
         if request.lease_owner is not None:
             params["lease_owner"] = request.lease_owner
@@ -87,33 +396,41 @@ class HostedTaskProvider:
         if request.source is not None:
             body["source"] = request.source
 
-        response = await self._client.post(
-            self._base_url, json=body, headers=headers, params=params
+        http_request = HttpRequest(
+            "POST",
+            self._base_url,
+            params=params,
+            json=body,
+            headers={"Content-Type": "application/json"},
         )
-        response.raise_for_status()
-        return TaskInfo.from_dict(response.json())
+        response = await self._send(http_request)
+        if response.status_code >= 400:
+            _raise_classified(response, method="POST", url=self._base_url)
+        return TaskInfo.from_dict(_parse_json_body(response, method="POST", url=self._base_url))
 
     async def get(self, task_id: str) -> TaskInfo | None:
-        """Get a task by ID via GET /internal/tasks/{id}.
+        """Get a task by ID via GET /tasks/{id}.
 
         :param task_id: The task identifier.
         :type task_id: str
         :return: The task record, or ``None`` if not found.
         :rtype: TaskInfo | None
         """
-        headers = await self._get_headers()
-        response = await self._client.get(
-            f"{self._base_url}/{task_id}",
-            headers=headers,
+        url = f"{self._base_url}/{task_id}"
+        http_request = HttpRequest(
+            "GET",
+            url,
             params={"api-version": _API_VERSION},
         )
+        response = await self._send(http_request)
         if response.status_code == 404:
             return None
-        response.raise_for_status()
-        return TaskInfo.from_dict(response.json())
+        if response.status_code >= 400:
+            _raise_classified(response, method="GET", url=url)
+        return TaskInfo.from_dict(_parse_json_body(response, method="GET", url=url))
 
     async def update(self, task_id: str, patch: TaskPatchRequest) -> TaskInfo:
-        """Update a task via PATCH /internal/tasks/{id}.
+        """Update a task via PATCH /tasks/{id}.
 
         :param task_id: The task identifier.
         :type task_id: str
@@ -123,7 +440,6 @@ class HostedTaskProvider:
         :rtype: TaskInfo
         :raises TaskNotFound: If the task does not exist.
         """
-        headers = await self._get_headers()
         params: dict[str, str] = {"api-version": _API_VERSION}
         if patch.lease_owner is not None:
             params["lease_owner"] = patch.lease_owner
@@ -144,19 +460,24 @@ class HostedTaskProvider:
         if patch.suspension_reason is not None:
             body["suspension_reason"] = patch.suspension_reason
 
+        headers: dict[str, str] = {"Content-Type": "application/json"}
         if patch.if_match is not None:
             headers["If-Match"] = f'"{patch.if_match}"'
 
-        response = await self._client.patch(
-            f"{self._base_url}/{task_id}",
+        url = f"{self._base_url}/{task_id}"
+        http_request = HttpRequest(
+            "PATCH",
+            url,
+            params=params,
             json=body,
             headers=headers,
-            params=params,
         )
+        response = await self._send(http_request)
         if response.status_code == 404:
             raise TaskNotFound(task_id)
-        response.raise_for_status()
-        return TaskInfo.from_dict(response.json())
+        if response.status_code >= 400:
+            _raise_classified(response, method="PATCH", url=url)
+        return TaskInfo.from_dict(_parse_json_body(response, method="PATCH", url=url))
 
     async def delete(
         self,
@@ -165,7 +486,7 @@ class HostedTaskProvider:
         force: bool = False,
         cascade: bool = False,
     ) -> None:
-        """Delete a task via DELETE /internal/tasks/{id}.
+        """Delete a task via DELETE /tasks/{id}.
 
         :param task_id: The task identifier.
         :type task_id: str
@@ -174,21 +495,23 @@ class HostedTaskProvider:
         :keyword cascade: Delete dependent tasks.
         :paramtype cascade: bool
         """
-        headers = await self._get_headers()
         params: dict[str, str] = {"api-version": _API_VERSION}
         if force:
             params["force"] = "true"
         if cascade:
             params["cascade"] = "true"
 
-        response = await self._client.delete(
-            f"{self._base_url}/{task_id}",
-            headers=headers,
+        url = f"{self._base_url}/{task_id}"
+        http_request = HttpRequest(
+            "DELETE",
+            url,
             params=params,
         )
+        response = await self._send(http_request)
         if response.status_code == 404:
             raise TaskNotFound(task_id)
-        response.raise_for_status()
+        if response.status_code >= 400:
+            _raise_classified(response, method="DELETE", url=url)
 
     async def list(
         self,
@@ -200,24 +523,7 @@ class HostedTaskProvider:
         tag: dict[str, str] | None = None,
         source_type: str | None = None,
     ) -> list[TaskInfo]:
-        """List tasks via GET /internal/tasks with automatic pagination.
-
-        :keyword agent_name: Filter by agent name.
-        :paramtype agent_name: str
-        :keyword session_id: Filter by session ID.
-        :paramtype session_id: str
-        :keyword status: Filter by task status.
-        :paramtype status: TaskStatus | None
-        :keyword lease_owner: Filter by lease owner.
-        :paramtype lease_owner: str | None
-        :keyword tag: Filter by tag key-value pairs.
-        :paramtype tag: dict[str, str] | None
-        :keyword source_type: Filter by source type.
-        :paramtype source_type: str | None
-        :return: Matching task records.
-        :rtype: list[TaskInfo]
-        """
-        headers = await self._get_headers()
+        """List tasks via GET /tasks with automatic cursor pagination."""
         params: dict[str, str] = {
             "api-version": _API_VERSION,
             "agent_name": agent_name,
@@ -236,17 +542,16 @@ class HostedTaskProvider:
 
         all_tasks: list[TaskInfo] = []
         while True:
-            response = await self._client.get(
-                self._base_url, headers=headers, params=params
-            )
-            response.raise_for_status()
-            data = response.json()
+            http_request = HttpRequest("GET", self._base_url, params=params)
+            response = await self._send(http_request)
+            if response.status_code >= 400:
+                _raise_classified(response, method="GET", url=self._base_url)
+            data = _parse_json_body(response, method="GET", url=self._base_url)
             items: list[dict[str, Any]] = data.get("data", data.get("items", []))
             all_tasks.extend(TaskInfo.from_dict(item) for item in items)
 
             if not data.get("has_more", False):
                 break
-            # Use cursor-based pagination: after = last_id from current page
             last_id = data.get("last_id")
             if not last_id:
                 break
@@ -255,5 +560,5 @@ class HostedTaskProvider:
         return all_tasks
 
     async def close(self) -> None:
-        """Close the underlying HTTP client."""
-        await self._client.aclose()
+        """Close the underlying pipeline client."""
+        await self._client.close()
