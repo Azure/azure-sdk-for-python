@@ -53,10 +53,10 @@ For each scenario, the columns are: who set what; what the handler should observ
 ### S2 — Steering pressure arrives mid-handler (steerable=True only)
 - **Trigger:** Caller invokes `.start(task_id, input=I2)` while turn-1 handler is running. Drain logic in `_try_drain_steering` enqueues `I2` into `_steering.pending_inputs` and sets `ctx.cancel` with `cancel_requested = True` so the active handler notices.
 - **`cancel`:** set. **`shutdown`:** unset. **`pending_inputs`:** non-empty (contains I2).
-- **Prescribed action (per the FR-020..FR-024a "three strategies" framing):**
+- **Prescribed action (per the FR-020..FR-024a "three strategies" framing — **all three end with `return await ctx.suspend(...)`** because to enable multi-turn the function MUST suspend; returning a raw value terminates the task and burns the queued steering input as `TaskConflictError` per FR-022):**
   - Strategy A: yield immediately → `return await ctx.suspend(...)`.
-  - Strategy B: wind down to checkpoint → `await ctx.metadata.flush()` → `return await ctx.suspend(...)`.
-  - Strategy C: ignore and finish → `return value` or `raise`. (Terminal — queued I2 gets `TaskConflictError` per FR-022.)
+  - Strategy B: wind down to a safe checkpoint → `await ctx.metadata.flush()` → `return await ctx.suspend(...)`.
+  - Strategy C: ignore the cancel hint, finish current input naturally, THEN `return await ctx.suspend(...)` so the queued I2 can drain into a fresh re-entry of the handler. The terminal-via-`return-value` path is only correct when the developer genuinely wants the task to end (no more turns, no draining I2 — caller-2 will see `TaskConflictError`); for any handler that wanted to be steerable in the first place, the suspend ending is the right shape.
 
 ### S3 — Per-turn timeout fires
 - **Trigger:** `@task(timeout=...)` watchdog. Reaches the durable wall-clock deadline (FR-032..FR-035). Watchdog calls `ctx.cancel.set()` (with `reason="timeout"` under FR-031, or bare `.set()` if we drop FR-031).
@@ -123,7 +123,8 @@ if ctx.shutdown.is_set():
 
 if len(ctx.pending_inputs) > 0:
     # S2, S9, S10 — steering pressure. (S10 hybrid: timeout coexists but reaction is the same.)
-    # Strategy A: yield now.  Strategy B: wind down + flush + suspend.  Strategy C: ignore.
+    # Strategy A: yield now.  Strategy B: wind down + flush + suspend.
+    # Strategy C: let current input finish, then suspend so I2 can drain.
     return await ctx.suspend(reason="steered", output=checkpoint)
 
 # Else: timeout (S3). No steering, no shutdown — only timeout could have set ctx.cancel.
@@ -133,28 +134,17 @@ return await ctx.suspend(reason="deadline_exceeded", output=partial)
 Two implementation truths fall out:
 
 1. **The existing surface (`ctx.shutdown.is_set()`, `len(ctx.pending_inputs) > 0`, fall-through "must be timeout") gives complete disambiguation today** — no `CancelSignal.reason` needed for the *information*.
-2. **The above pattern is the prescribed reaction** in both the steering-pressure and the timeout cases — handler doesn't need to branch on cause to do the right thing (suspend with partial work is correct for both). Only the *log message* / *reason string* / *strategy choice* differs.
+2. **All three strategies in S2 converge on `return await ctx.suspend(...)`** (the user's clarification, 2026-06-01: to enable multi-turn the function MUST suspend; returning a raw value terminates and burns the queued steering input). Similarly, for S3 (timeout), the multi-turn-friendly action is also `return await ctx.suspend(...)`. So the "any cancel → suspend uniformly" handler shape is a **valid uniform default** that needs no disambiguation at all.
 
-The case where disambiguation *actually matters for handler behavior* is:
+So when does disambiguation *actually matter for handler behavior*? Three narrower cases:
 
-- **Strategy C in S2** (handler intentionally ignores steering pressure and finishes its current turn) **vs Strategy A/B in S3** (handler suspends because it ran out of time). If the handler treats "any `cancel` → suspend" uniformly, it can't pick "ignore" for steering only.
+- **Strategy choice within the cancel branch.** For STEERING, Strategy C (let current input finish, then suspend) is often appropriate — the queued input runs on the next turn; finishing the in-flight work is courteous. For TIMEOUT, Strategy A (yield ASAP) is more naturally appropriate — the deadline was missed, additional work is generally undesirable unless atomic. A handler that wants to pick Strategy C for steering but Strategy A for timeout needs to disambiguate.
+- **Suspend vs raise on timeout.** For STEERING, suspending is always correct (raise terminates the conversation). For TIMEOUT, a handler may legitimately prefer to raise (`raise TimeoutError(...)`) instead of suspending, depending on the workflow's semantics — "I missed my deadline; give up" vs "let me be resumed later". The handler can only express this preference if it knows the cause was timeout.
+- **Observability / log message.** Logging "I yielded because user steered" vs "I yielded because I missed the deadline" is a real-but-modest value-add. A handler can always log unconditionally as "I yielded because `ctx.cancel` was set" and it's not wrong.
 
-That's the one real ergonomic gap. The handler wants something like:
+The first two are the load-bearing reasons to add reason-disambiguation. The third is a nice-to-have.
 
-```python
-if ctx.cancel.is_set():
-    if len(ctx.pending_inputs) > 0:
-        # Steering pressure — I have the option to ignore and finish.
-        if i_am_in_the_middle_of_an_atomic_thing():
-            pass  # ignore, finish the atomic thing
-        else:
-            return await ctx.suspend(output=checkpoint)  # yield
-    else:
-        # Timeout — I MUST suspend or raise; "ignore" isn't valid.
-        return await ctx.suspend(output=partial)
-```
-
-The branching is on **what `cancel` means** (steering vs timeout), not just **whether it's set**.
+**Important corollary of #2 above:** if a handler is willing to adopt the uniform "any `cancel` → suspend" default, NO disambiguation is needed and the existing surface is sufficient. Disambiguation is only required for handlers that want to vary strategy (Strategy A vs C) or terminal action (suspend vs raise) based on cause. That's a smaller set of handlers than I initially framed, which weakens the case for a new public surface and strengthens the case for Proposal A.
 
 ---
 
