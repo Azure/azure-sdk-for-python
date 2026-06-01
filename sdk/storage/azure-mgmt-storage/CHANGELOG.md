@@ -13,7 +13,7 @@
   - Added model `AdvancedPlatformMetricsRuleProperties`
   - Added enum `AdvancedPlatformMetricsRuleType`
   - Added enum `MetricsEmitted`
-  - Added model `AdvancedPlatformMetricsOperations`
+  - Added operation group `AdvancedPlatformMetricsOperations`
 
 ## 25.0.0 (2026-05-19)
 
