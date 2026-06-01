@@ -144,14 +144,9 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache by running a query
             run_queries(container, 1)
 
-            # Trigger split (1 -> 2 partitions)  -  control-plane
-            key_container.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = key_container.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Trigger split via the shared bounded helper (timeout + SkipTest)
+            # instead of an unbounded polling loop.
+            test_config.TestConfig.trigger_split(key_container, 11000)
 
             # Run queries to trigger routing map refresh
             run_queries(container, 1)
@@ -235,14 +230,9 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache
             run_queries(container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)  -  control-plane
-            key_container.replace_throughput(25000)
-            pending = True
-            while pending:
-                offer = key_container.read_offer()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Trigger split via the shared bounded helper (timeout + SkipTest)
+            # instead of an unbounded polling loop.
+            test_config.TestConfig.trigger_split(key_container, 25000)
 
             # Run queries to trigger routing map refresh
             run_queries(container, 1)
@@ -355,14 +345,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # Split only Container A  -  control-plane
-            key_container_a.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = key_container_a.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Split only Container A via the shared bounded helper.
+            test_config.TestConfig.trigger_split(key_container_a, 11000)
 
             # Wait for physical partition ranges to reflect the split.
             split_convergence_deadline = time.time() + 300
@@ -528,7 +512,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             assert refreshed_ranges[0]['minInclusive'] == ''
             assert refreshed_ranges[0]['maxExclusive'] == 'FF'
 
-            print("✓ Validated: routing_map_provider successfully fell back to full refresh")
+            print("Validated: routing_map_provider successfully fell back to full refresh")
 
             # Verify queries still work after fallback
             query_results = list(container.query_items(
@@ -608,9 +592,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
         the service returns an incomplete set of partition ranges.
 
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map must return None immediately  - 
-        there is no incremental state to fall back from, and repeating the
-        identical request would produce the same result."""
+        returns gapped ranges, _fetch_routing_map should surface a retryable
+        HTTP 503 after exhausting the bounded retry budget."""
         container_id = 'test_fallback_guard_' + str(uuid.uuid4())
         self.key_database.create_container(
             id=container_id,
@@ -637,6 +620,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
             }
 
             def mock_read_ranges(*args, **kwargs):
+                # Mirror the production wire-up: _synchronized_request populates
+                # this sidecar with the real HTTP status. Without it, the drain
+                # loop's status==304 termination contract can't trip and the
+                # loop would run unbounded (OOM in CI).
+                status_capture = kwargs.get('_internal_response_status_capture')
+                if status_capture is not None:
+                    status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
                 return iter([incomplete_range])
 
             with patch.object(
@@ -644,19 +634,17 @@ class TestPartitionSplitQuery(unittest.TestCase):
                     '_ReadPartitionKeyRanges',
                     side_effect=mock_read_ranges
             ):
-                # Full load with incomplete ranges should return None immediately
-                result = provider._fetch_routing_map(
-                    collection_link=collection_link,
-                    collection_id=collection_id,
-                    previous_routing_map=None,
-                    feed_options={},
-                )
+                with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+                    with self.assertRaises(CosmosHttpResponseError) as ctx:
+                        provider._fetch_routing_map(
+                            collection_link=collection_link,
+                            collection_id=collection_id,
+                            previous_routing_map=None,
+                            feed_options={},
+                        )
+                    self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
-                # Should return None instead of recursing infinitely
-                assert result is None, \
-                    "_fetch_routing_map should return None when full load produces incomplete ranges"
-
-            print("Validated: full load with incomplete ranges returns None without recursion")
+            print("Validated: full load with incomplete ranges surfaces retryable HTTP 503")
 
         finally:
             self.key_database.delete_container(container_id)
@@ -876,7 +864,14 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 if call_count['count'] <= 2:
                     # First two calls are incremental attempts; return a child
                     # with a missing parent so merge is incomplete and fallback
-                    # path is exercised.
+                    # path is exercised. Mirror the production wire-up:
+                    # _synchronized_request populates this sidecar with the real
+                    # HTTP status. Without it, the drain loop's status==304
+                    # termination contract can't trip and evaluate_drain_page
+                    # raises RuntimeError.
+                    status_capture = kwargs.get('_internal_response_status_capture')
+                    if status_capture is not None:
+                        status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
                     fake_child = {
                         'id': f'child_{call_count["count"]}',
                         'minInclusive': '',
@@ -906,20 +901,33 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
                 assert result is not None
 
-                # Verify 3 calls: incremental + incremental retry + full fallback.
-                assert call_count['count'] == 3, \
-                    f"Expected 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
+                # Expected call sequence:
+                #   1. incremental attempt        (IfNoneMatch = stale etag)
+                #   2. incremental retry          (IfNoneMatch = stale etag)
+                #   3. full-load fallback page 1  (no IfNoneMatch -- the cleanup we are testing)
+                #   4. full-load fallback page 2  (IfNoneMatch = FRESH etag from page 1,
+                #                                  to receive the 304 terminator that ends
+                #                                  the drain loop -- peer-SDK parity)
+                stale_etag = cached_map.change_feed_etag
+                assert call_count['count'] >= 3, \
+                    f"Expected at least 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
 
-                # First two calls should be incremental and include IfNoneMatch.
+                # First two calls should be incremental and carry the stale IfNoneMatch.
                 first_headers = captured_headers_list[0]
-                assert http_constants.HttpHeaders.IfNoneMatch in first_headers, \
-                    "First call (incremental) should have IfNoneMatch header"
+                assert first_headers.get(http_constants.HttpHeaders.IfNoneMatch) == stale_etag, \
+                    "First call (incremental) should have stale IfNoneMatch header"
 
                 second_headers = captured_headers_list[1]
-                assert http_constants.HttpHeaders.IfNoneMatch in second_headers, \
-                    "Second call (incremental retry) should have IfNoneMatch header"
+                assert second_headers.get(http_constants.HttpHeaders.IfNoneMatch) == stale_etag, \
+                    "Second call (incremental retry) should have stale IfNoneMatch header"
 
-                # Third call is full-load fallback and should drop IfNoneMatch.
+                # Third call is full-load fallback and MUST drop IfNoneMatch -- this is
+                # the bug fix's whole point. Any post-fallback drain pages (call 4+)
+                # legitimately reuse the etag returned by call 3 as their If-None-Match
+                # to receive the 304 terminator; that fresh etag may coincidentally equal
+                # the original stale etag if nothing changed server-side between caching
+                # and fallback, so we cannot assert "!= stale_etag" on those drain pages.
+                # The call-3 assertion is the actual production contract.
                 third_headers = captured_headers_list[2]
                 assert http_constants.HttpHeaders.IfNoneMatch not in third_headers, \
                     "Third call (full load fallback) should NOT have IfNoneMatch header"

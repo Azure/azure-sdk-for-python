@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -25,6 +25,11 @@ from .operations import (
     EvaluationRulesOperations,
     IndexesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -58,8 +63,9 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :param allow_preview: Whether to enable preview features. Must be specified and set to True to
      enable preview features. Default value is None.
     :type allow_preview: bool
-    :keyword api_version: The API version to use for this operation. Known values are "v1". Default
-     value is "v1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is None. If not set, the operation's default API version will be used. Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
