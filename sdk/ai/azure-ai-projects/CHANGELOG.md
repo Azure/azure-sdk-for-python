@@ -36,7 +36,7 @@
 ### Breaking Changes
 
 Breaking changes in beta methods:
-* Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
+* Argument `isolation_key` in method `.beta.agents.create_session()` and `.beta.agents.delete_session()` renamed to `user_isolation_key`.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
 * Argument `body` in method `.beta.skills.create_from_files()` renamed to `content`.
 * Method `.beta.agents.get_session_files` renamed to `.beta.agents.list_session_files`.
