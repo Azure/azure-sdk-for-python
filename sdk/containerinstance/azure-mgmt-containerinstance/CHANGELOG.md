@@ -75,8 +75,6 @@
   - Added model `UpdateProfile`
   - Added model `UpdateProfileRollingUpdateProfile`
   - Added model `UserAssignedIdentity`
-  - Added operation group `CGProfileOperations`
-  - Added operation group `CGProfilesOperations`
   - Added operation group `NGroupsOperations`
   - Added operation group `SandboxGroupsOperations`
 
@@ -84,15 +82,13 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed client operation group `ContainerInstanceManagementClient.container_group_profiles`
-  - Deleted or renamed client operation group `ContainerInstanceManagementClient.container_group_profile`
+  - Client `ContainerInstanceManagementClient` renamed operation group `container_group_profiles` to `cg_profiles`
+  - Client `ContainerInstanceManagementClient` renamed operation group `container_group_profile` to `cg_profile`
   - Model `ContainerGroup` moved instance variable `provisioning_state`, `containers`, `image_registry_credentials`, `restart_policy`, `ip_address`, `os_type`, `volumes`, `instance_view`, `diagnostics`, `subnet_ids`, `dns_config`, `sku`, `encryption_properties`, `init_containers`, `extensions`, `confidential_compute_properties`, `priority`, `container_group_profile`, `standby_pool_profile` and `is_created_from_standby_pool` under property `properties` whose type is `ContainerGroupProperties`
   - Model `ContainerGroupProfile` moved instance variable `containers`, `image_registry_credentials`, `restart_policy`, `ip_address`, `os_type`, `volumes`, `diagnostics`, `sku`, `encryption_properties`, `init_containers`, `extensions`, `confidential_compute_properties`, `priority` and `revision` under property `properties` whose type is `ContainerGroupProfileProperties`
   - Model `ContainerGroupProperties` deleted or renamed its instance variable `identity`
   - Model `InitContainerDefinition` moved instance variable `image`, `command`, `environment_variables`, `instance_view`, `volume_mounts` and `security_context` under property `properties` whose type is `InitContainerPropertiesDefinition`
   - Method `ContainersOperations.list_logs` changed its parameter `tail`/`timestamps` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed operation group `ContainerGroupProfileOperations`
-  - Deleted or renamed operation group `ContainerGroupProfilesOperations`
 
 ## 10.2.0b1 (2024-10-21)
 
