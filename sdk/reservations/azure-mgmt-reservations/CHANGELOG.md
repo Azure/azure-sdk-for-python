@@ -11,7 +11,7 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed model `AzureReservationAPI`
+  - Renamed client name `AzureReservationAPI` to `ReservationsMgmtClient`
   - Model `MergeRequest` moved instance variable `sources` under property `properties` whose type is `MergeProperties`
   - Model `Patch` moved instance variable `applied_scope_type`, `applied_scopes`, `applied_scope_properties`, `instance_flexibility`, `name`, `renew`, `renew_properties` and `review_date_time` under property `properties` whose type is `PatchProperties`
   - Model `QuotaRequestDetails` moved instance variable `provisioning_state`, `message`, `request_submit_time` and `value` under property `properties` whose type is `QuotaRequestProperties`
@@ -32,7 +32,7 @@
   - Method `ReservationOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ReservationOperations.list_all` changed its parameter `orderby`/`refresh_summary`/`skiptoken`/`selected_state`/`take` from `positional_or_keyword` to `keyword_only`
   - Method `ReservationOrderOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `AzureReservationAPIOperationsMixin`
+  - Renamed operation group `AzureReservationAPIOperationsMixin` to `_ReservationsMgmtClientOperationsMixin`
 
 ### Other Changes
 
