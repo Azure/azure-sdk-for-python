@@ -85,27 +85,19 @@ class PyPIClient:
 
         results: List[Version] = []
         for version in version_set:
-            requires_python = self.project_release(package_name, version)["info"][
-                "requires_python"
-            ]
+            requires_python = self.project_release(package_name, version)["info"]["requires_python"]
             if requires_python:
                 try:
-                    if parse(".".join(map(str, sys.version_info[:3]))) in SpecifierSet(
-                        requires_python
-                    ):
+                    if parse(".".join(map(str, sys.version_info[:3]))) in SpecifierSet(requires_python):
                         results.append(version)
                 except InvalidSpecifier:
-                    logging.warn(
-                        f"Invalid python_requires {requires_python!r} for package {package_name}=={version}"
-                    )
+                    logging.warn(f"Invalid python_requires {requires_python!r} for package {package_name}=={version}")
                     continue
             else:
                 results.append(version)
         return results
 
-    def get_ordered_versions(
-        self, package_name, filter_by_compatibility=False
-    ) -> List[Version]:
+    def get_ordered_versions(self, package_name, filter_by_compatibility=False) -> List[Version]:
         if self._backend == "azdo":
             versions = self._azdo.get_ordered_versions(package_name)
             if filter_by_compatibility:
@@ -122,9 +114,7 @@ class PyPIClient:
                     continue
                 versions.append(parse(package_version))
             except InvalidVersion:
-                logging.warn(
-                    f"Invalid version {package_version} for package {package_name}"
-                )
+                logging.warn(f"Invalid version {package_version} for package {package_name}")
                 continue
         versions.sort()
 
@@ -151,9 +141,7 @@ class PyPIClient:
         * **PyPI** — reads the JSON API and returns the latest version's sdist URL.
         """
         if self._backend == "azdo":
-            return self._azdo.get_latest_download_uri(
-                package_name, allow_prerelease=allow_prerelease
-            )
+            return self._azdo.get_latest_download_uri(package_name, allow_prerelease=allow_prerelease)
 
         versions = self.get_ordered_versions(package_name)
         if not versions:

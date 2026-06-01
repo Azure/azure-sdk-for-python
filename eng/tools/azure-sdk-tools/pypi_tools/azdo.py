@@ -29,8 +29,7 @@ class AzureArtifactsFeedConfig:
 # Pattern: https://pkgs.dev.azure.com/{org}/{project}/_packaging/{feed}/pypi/simple/
 # or org-scoped: https://pkgs.dev.azure.com/{org}/_packaging/{feed}/pypi/simple/
 _AZDO_FEED_RE = re.compile(
-    r"/(?P<org>[^/]+)/(?:(?P<project>[^/_][^/]*)/)?"
-    r"_packaging/(?P<feed>[^/]+)/pypi/simple/?$"
+    r"/(?P<org>[^/]+)/(?:(?P<project>[^/_][^/]*)/)?" r"_packaging/(?P<feed>[^/]+)/pypi/simple/?$"
 )
 
 
@@ -83,9 +82,7 @@ class AzureArtifactsClient:
 
         if self._cfg.pat:
             # Azure DevOps PATs can be used via HTTP Basic by base64-encoding ":<PAT>".
-            token = base64.b64encode(f":{self._cfg.pat}".encode("utf-8")).decode(
-                "ascii"
-            )
+            token = base64.b64encode(f":{self._cfg.pat}".encode("utf-8")).decode("ascii")
             return {"Authorization": f"Basic {token}"}
 
         return {}
@@ -119,9 +116,7 @@ class AzureArtifactsClient:
 
         raise KeyError(f"Feed not found: {feed!r}")
 
-    def get_package_record(
-        self, package_name: str, include_deleted: bool = False
-    ) -> Dict[str, Any]:
+    def get_package_record(self, package_name: str, include_deleted: bool = False) -> Dict[str, Any]:
         feed_id = self.resolve_feed_id()
         url = f"{self._base_url}/{self._path_prefix()}/_apis/packaging/Feeds/{feed_id}/packages"
 
@@ -139,10 +134,7 @@ class AzureArtifactsClient:
         # packageNameQuery is "contains string", so choose best match.
         target = pep503_normalize(package_name)
         for pkg in packages:
-            if (
-                pep503_normalize(pkg.get("normalizedName", pkg.get("name", "")))
-                == target
-            ):
+            if pep503_normalize(pkg.get("normalizedName", pkg.get("name", ""))) == target:
                 return pkg
         for pkg in packages:
             if pep503_normalize(pkg.get("name", "")) == target:
@@ -150,9 +142,7 @@ class AzureArtifactsClient:
 
         raise KeyError(f"Package not found in feed: {package_name!r}")
 
-    def get_ordered_versions(
-        self, package_name: str, include_deleted: bool = False
-    ) -> List[Version]:
+    def get_ordered_versions(self, package_name: str, include_deleted: bool = False) -> List[Version]:
         pkg = self.get_package_record(package_name, include_deleted=include_deleted)
 
         out: List[Version] = []
@@ -198,9 +188,7 @@ class AzureArtifactsClient:
         underscore = re.sub(r"[-_.]+", "_", package_name)
         # Preserve insertion order while de-duplicating (e.g. single-token names).
         stems = list(dict.fromkeys([hyphen, underscore, package_name]))
-        return [
-            f"{stem}-{version}{ext}" for stem in stems for ext in (".tar.gz", ".zip")
-        ]
+        return [f"{stem}-{version}{ext}" for stem in stems for ext in (".tar.gz", ".zip")]
 
     def get_download_uri(self, package_name: str, version: str) -> Optional[str]:
         """Resolve the sdist download URI for *package_name*==*version*.
@@ -217,13 +205,9 @@ class AzureArtifactsClient:
         for filename in self._sdist_filename_candidates(package_name, version):
             url = f"{download_base}/{filename}"
             if self._head_ok(url):
-                logging.info(
-                    "Resolved download URI for %s==%s: %s", package_name, version, url
-                )
+                logging.info("Resolved download URI for %s==%s: %s", package_name, version, url)
                 return url
-        logging.warning(
-            "Could not resolve a download URI for %s==%s", package_name, version
-        )
+        logging.warning("Could not resolve a download URI for %s==%s", package_name, version)
         return None
 
     def get_latest_download_uri(
