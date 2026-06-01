@@ -418,6 +418,7 @@ This spec touches the public surface of `azure-ai-agentserver-core/azure/ai/agen
 
 **Behavior-changed (signature unchanged):**
 - `TaskManager.get_active_run(task_id)` — now consults the store and inline-reclaims dead leases (FR-005).
+- `derive_lease_owner(...)` (internal helper, but its OUTPUT is durably persisted and observable by operators) — now incorporates the agent name from `FOUNDRY_AGENT_NAME` alongside the session ID (FR-004a). Signature changes from `derive_lease_owner(session_id)` to `derive_lease_owner(agent_name, session_id)` (or equivalent). All call sites in `_manager.py` MUST pass both inputs.
 - `@task(timeout=...)` — semantic sharpened to per-turn / wall-clock / durable / cooperative-only (FR-023..FR-026).
 - `TaskRun.cancel()` — handler now owns the terminal shape (no force-fail pathway) (FR-022).
 - Bytes-on-the-wire behavior of `HostedTaskProvider`'s public methods — same public method signatures, but bodies migrate to `azure.core.AsyncPipelineClient` (FR-029..FR-034). The `credential` parameter type SHOULD be re-typed to `AsyncTokenCredential` for proper typing.
