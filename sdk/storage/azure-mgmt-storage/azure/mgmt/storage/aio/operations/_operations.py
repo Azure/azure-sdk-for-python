@@ -39,6 +39,10 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_advanced_platform_metrics_create_or_update_request,
+    build_advanced_platform_metrics_delete_request,
+    build_advanced_platform_metrics_get_request,
+    build_advanced_platform_metrics_list_request,
     build_blob_containers_clear_legal_hold_request,
     build_blob_containers_create_or_update_immutability_policy_request,
     build_blob_containers_create_request,
@@ -228,7 +232,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1688,7 +1695,10 @@ class BlobContainersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2887,7 +2897,10 @@ class BlobServicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3745,7 +3758,10 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3836,7 +3852,10 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6670,7 +6689,10 @@ class FileSharesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7199,7 +7221,10 @@ class FileServicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7631,15 +7656,16 @@ class DeletedAccountsOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
         cls: ClsType[_models.DeletedAccount] = kwargs.pop("cls", None)
 
         _request = build_deleted_accounts_get_request(
             deleted_account_name=deleted_account_name,
             location=location,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -7727,7 +7753,10 @@ class DeletedAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8556,7 +8585,10 @@ class BlobInventoryPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9019,7 +9051,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9656,7 +9691,10 @@ class EncryptionScopesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10210,7 +10248,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11234,7 +11275,10 @@ class StorageTaskAssignmentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11287,7 +11331,7 @@ class StorageTaskAssignmentsOperations:
                 "storage_task_assignment_name",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def _stop_assignment_initial(
         self, resource_group_name: str, account_name: str, storage_task_assignment_name: str, **kwargs: Any
@@ -11366,7 +11410,7 @@ class StorageTaskAssignmentsOperations:
                 "storage_task_assignment_name",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def begin_stop_assignment(
         self, resource_group_name: str, account_name: str, storage_task_assignment_name: str, **kwargs: Any
@@ -11464,7 +11508,7 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any
@@ -11555,7 +11599,7 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def _create_initial(
         self,
@@ -11755,7 +11799,7 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def begin_create(
         self,
@@ -11852,7 +11896,7 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def _update_initial(
         self,
@@ -12044,7 +12088,7 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def begin_update(
         self,
@@ -12131,7 +12175,7 @@ class ConnectorsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "connector_name"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any
@@ -12201,7 +12245,7 @@ class ConnectorsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "connector_name"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any
@@ -12272,7 +12316,7 @@ class ConnectorsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     def list_by_storage_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -12332,7 +12376,10 @@ class ConnectorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12387,7 +12434,7 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def _test_existing_connection_initial(
         self,
@@ -12603,7 +12650,7 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def begin_test_existing_connection(
         self,
@@ -12664,14 +12711,10 @@ class ConnectorsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.TestConnectionResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -12728,7 +12771,7 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -12819,7 +12862,7 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def _create_initial(
         self,
@@ -13019,7 +13062,7 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def begin_create(
         self,
@@ -13116,7 +13159,7 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def _update_initial(
         self,
@@ -13308,7 +13351,7 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def begin_update(
         self,
@@ -13395,7 +13438,7 @@ class DataSharesOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "data_share_name"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -13465,7 +13508,7 @@ class DataSharesOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "data_share_name"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -13536,7 +13579,7 @@ class DataSharesOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-08-01"],
+        api_versions_list=["2025-08-01", "2026-04-01"],
     )
     def list_by_storage_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -13596,7 +13639,10 @@ class DataSharesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13611,6 +13657,535 @@ class DataSharesOperations:
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.DataShare],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AdvancedPlatformMetricsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.storage.aio.StorageManagementClient`'s
+        :attr:`advanced_platform_metrics` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "advanced_platform_metrics_rule_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        advanced_platform_metrics_rule_type: Union[str, _models.AdvancedPlatformMetricsRuleType],
+        **kwargs: Any
+    ) -> _models.AdvancedPlatformMetricsRule:
+        """Get the advanced platform metrics rule for the storage account by rule type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param advanced_platform_metrics_rule_type: The type of the advanced platform metrics rule.
+         "ContainerLevelCapacityMetrics" Required.
+        :type advanced_platform_metrics_rule_type: str or
+         ~azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType
+        :return: AdvancedPlatformMetricsRule. The AdvancedPlatformMetricsRule is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AdvancedPlatformMetricsRule] = kwargs.pop("cls", None)
+
+        _request = build_advanced_platform_metrics_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            advanced_platform_metrics_rule_type=advanced_platform_metrics_rule_type,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AdvancedPlatformMetricsRule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        advanced_platform_metrics_rule_type: Union[str, _models.AdvancedPlatformMetricsRuleType],
+        resource: _models.AdvancedPlatformMetricsRule,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AdvancedPlatformMetricsRule:
+        """Create or update the advanced platform metrics rule for the storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param advanced_platform_metrics_rule_type: The type of the advanced platform metrics rule.
+         "ContainerLevelCapacityMetrics" Required.
+        :type advanced_platform_metrics_rule_type: str or
+         ~azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AdvancedPlatformMetricsRule. The AdvancedPlatformMetricsRule is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        advanced_platform_metrics_rule_type: Union[str, _models.AdvancedPlatformMetricsRuleType],
+        resource: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AdvancedPlatformMetricsRule:
+        """Create or update the advanced platform metrics rule for the storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param advanced_platform_metrics_rule_type: The type of the advanced platform metrics rule.
+         "ContainerLevelCapacityMetrics" Required.
+        :type advanced_platform_metrics_rule_type: str or
+         ~azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType
+        :param resource: Resource create parameters. Required.
+        :type resource: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AdvancedPlatformMetricsRule. The AdvancedPlatformMetricsRule is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        advanced_platform_metrics_rule_type: Union[str, _models.AdvancedPlatformMetricsRuleType],
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AdvancedPlatformMetricsRule:
+        """Create or update the advanced platform metrics rule for the storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param advanced_platform_metrics_rule_type: The type of the advanced platform metrics rule.
+         "ContainerLevelCapacityMetrics" Required.
+        :type advanced_platform_metrics_rule_type: str or
+         ~azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AdvancedPlatformMetricsRule. The AdvancedPlatformMetricsRule is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "advanced_platform_metrics_rule_type",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        advanced_platform_metrics_rule_type: Union[str, _models.AdvancedPlatformMetricsRuleType],
+        resource: Union[_models.AdvancedPlatformMetricsRule, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.AdvancedPlatformMetricsRule:
+        """Create or update the advanced platform metrics rule for the storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param advanced_platform_metrics_rule_type: The type of the advanced platform metrics rule.
+         "ContainerLevelCapacityMetrics" Required.
+        :type advanced_platform_metrics_rule_type: str or
+         ~azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType
+        :param resource: Resource create parameters. Is one of the following types:
+         AdvancedPlatformMetricsRule, JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule or JSON or IO[bytes]
+        :return: AdvancedPlatformMetricsRule. The AdvancedPlatformMetricsRule is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AdvancedPlatformMetricsRule] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_advanced_platform_metrics_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            advanced_platform_metrics_rule_type=advanced_platform_metrics_rule_type,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AdvancedPlatformMetricsRule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "advanced_platform_metrics_rule_type",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        advanced_platform_metrics_rule_type: Union[str, _models.AdvancedPlatformMetricsRuleType],
+        **kwargs: Any
+    ) -> None:
+        """Delete the advanced platform metrics rule for the storage account by rule type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :param advanced_platform_metrics_rule_type: The type of the advanced platform metrics rule.
+         "ContainerLevelCapacityMetrics" Required.
+        :type advanced_platform_metrics_rule_type: str or
+         ~azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_advanced_platform_metrics_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            advanced_platform_metrics_rule_type=advanced_platform_metrics_rule_type,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def list(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AdvancedPlatformMetricsRule"]:
+        """List the advanced platform metrics rules associated with the storage account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the specified resource group.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only. Required.
+        :type account_name: str
+        :return: An iterator like instance of AdvancedPlatformMetricsRule
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storage.models.AdvancedPlatformMetricsRule]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AdvancedPlatformMetricsRule]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_advanced_platform_metrics_list_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AdvancedPlatformMetricsRule],
                 deserialized.get("value", []),
             )
             if cls:
@@ -13817,7 +14392,10 @@ class StorageTaskAssignmentsInstancesReportOperations:  # pylint: disable=name-t
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13942,7 +14520,10 @@ class QueueOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14967,7 +15548,10 @@ class ObjectReplicationPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15440,7 +16024,10 @@ class LocalUsersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16261,7 +16848,10 @@ class TableOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16400,7 +16990,10 @@ class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=name-to
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16508,7 +17101,10 @@ class SkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16620,7 +17216,10 @@ class UsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
