@@ -67,7 +67,7 @@ AGENT_INSTRUCTIONS = (
     "Refunds: unopened 30 days; defective 90 days; 5-7 business days to process."
 )
 # Multiple seeded conversations give the SFT job enough trace material to
-# synthesize meaningful training/validation samples.
+# extract and format into training/validation samples.
 SEED_PROMPTS = [
     "What is your refund policy?",
     "I bought a widget last week and it's defective. What can I do?",
