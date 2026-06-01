@@ -76,8 +76,31 @@ Close six inter-related defects in the unshipped durable-task primitive in `azur
 | X | Durability Contract Conformance (NON-NEG) | ✅ | `durability-contract.md` amendment (cross-cutting note covering `binding_mismatch`) lands in the same PR per the spec's exit checklist. FR-015 metadata-flush invariant lives in Principle XII scope (core-primitive layer) with explicit justification — not a new matrix row. |
 | XI | Contract-Surface Test Depth (NON-NEG) | N/A | Principle XI governs the **response-stream durability matrix** under `tests/e2e/durability_contract/` (per-cell depth assertions, `_test_handler.py` per-lifetime-tagged content, `CONTRACT_COVERAGE.md` mapping). This spec does NOT add or modify a `durability-contract.md` matrix row — the cross-cutting `binding_mismatch` note is prose, not a matrix entry — so the per-cell depth requirement is structurally inapplicable. Spec-internal SC depth (SC-006 3×3, SC-008 4×2, SC-010 6-cell, SC-012 4-cell crash-recovery, SC-016 transport behavior) lives under Principle XII's core-primitive depth complement, not XI. (This is the same X-vs-XII routing the spec uses for FR-015 metadata-flush invariant.) |
 | XII | Core-Primitive TDD Discipline (NON-NEG) | ✅ | Spec mandates `conformance-gap-list.md` deliverable; Conformance Test Map names existing test files for every surface area; only 2 new modules justified; pre-existing tests ported (not deleted by default). RED-first ordering mandated and verifiable from git history. |
+| XIII | Continuous Code Review Discipline (NON-NEG) | ✅ | Spec implementation spans 9 user stories across 12 implementation phases on one cohesive PR — triggers Principle XIII's three-or-more-phases rule. The Code Review Cadence subsection below enumerates the per-phase reviews, the two cross-phase seam reviews (A→B, B→C), and the final holistic review. `tasks.md` materializes these as Phase 13 (T112–T122) with `→ Run TXXX before moving to Phase Y` arrows on each Checkpoint marker. BLOCKING / HIGH findings gate the next phase per Principle XIII §4. |
 
-**Constitution Check verdict (initial)**: PASS. No gates violated; no complexity-tracking entries needed. Re-evaluation after Phase 1 design below.
+**Constitution Check verdict (initial)**: PASS (12 principles applicable, all PASS; Principle XI structurally N/A — see row XI). No gates violated; no complexity-tracking entries needed. Re-evaluation after Phase 1 design below.
+
+### Code Review Cadence (Constitution Principle XIII)
+
+*Required by Constitution Principle XIII §1 because this spec has 9 user stories across 12 implementation phases — well above the three-or-more-phases threshold.*
+
+The review structure materialized in `tasks.md` Phase 13:
+
+- **Per-phase reviews** (one per implementation phase containing user-story work):
+  - **T112 — Phase 3 / US9 (Transport, Implementation-phase A)**: `azure.core` pipeline migration; `ContentDecodePolicy` exclusion; classifier seam shape-stability; httpx-fixture port discipline.
+  - **T114 — Phase 4 / US1**: `stale_timeout` removal completeness; no replacement knob secretly introduced; FR-009 test-only hook port.
+  - **T115 — Phase 5 / US2**: `binding_mismatch` body-shape tolerance; atomic local-cleanup sequence; Invariant 1 outcome preservation; no synthetic-bypass shortcuts.
+  - **T116 — Phase 6+7 combined / US3+US4** (US4 is verification-only over US3): three-layer recovery; CAS race protection; lease-owner agent+session identity; `get_active_run` reclaim semantics.
+  - **T118 — Phase 8 / US5**: steering-as-multi-turn rewrite; `superseded` removal; metadata auto-flush invariant across every terminal-of-turn boundary; pre-existing-test port discipline.
+  - **T119 — Phase 9 / US6**: cancel-cause boolean accumulation; `is_steered_turn` sticky-True bug fix; `terminate` + `TaskTerminated` removal across all ~13 call sites.
+  - **T120 — Phase 10 / US7**: per-turn / wall-clock / durable timeout; watchdog respawn at every boundary; clock-skew clamping; docstring correctness.
+  - **T121 — Phase 11 / US8**: `exit_for_recovery()` sentinel handling; lease release; misuse-as-`failed` path; queued-input preservation across shutdown.
+- **Cross-phase seam reviews** (at the architecturally significant boundaries the Implementation Ordering Strategy identifies):
+  - **T113 — Phase A → B seam**: is the FR-006 classifier seam stable for Phase B's consumers? are policy-chain ordering and outcome enumeration final? no throw-away Phase A scaffolding?
+  - **T117 — Phase B → C seam**: are the recovery primitives stable for the Phase C `_execute_task_loop` rewrite? does the eviction-cleanup sequence compose cleanly with the cancel-cause cleanup the loop rewrite introduces?
+- **Final whole-PR holistic review**: **T122** at the end of Phase 12 Polish — spec coverage symbol-for-symbol, documentation truth, plan-phase-decision resolution, constitution exit checklists complete, no regression, RED-first commit-history audit, lint/type/build clean.
+
+Each Checkpoint marker in Phases 3–11 of `tasks.md` carries a `→ Run TXXX before moving to Phase Y` arrow pointing at its gating review task. BLOCKING / HIGH findings MUST be addressed before the gate clears; MEDIUM / LOW findings get logged to `conformance-gap-list.md` for the T122 final-review sweep.
 
 ---
 
@@ -154,10 +177,11 @@ Per the spec's iteration history, the design decisions have already been researc
 
 ### Outstanding unknowns (NEEDS CLARIFICATION)
 
-None. The spec is locked-in. All 5 open questions from the cancel-surface proposal were resolved per user direction. Two implementation decisions deferred to the plan/implementation phase (NOT clarifications, just plan-phase implementation choices):
+None. The spec is locked-in. All 5 open questions from the cancel-surface proposal were resolved per user direction. Three implementation decisions deferred to the plan/implementation phase (NOT clarifications, just plan-phase implementation choices — these match `research.md` §Plan-phase implementation decisions exactly):
 
 1. **Concrete shape of the test-only hook for periodic-scan determinism (FR-009)**: interval-override-constant vs. trigger-function-on-manager. Plan-phase choice; both are valid; pick based on which is least invasive to existing tests.
 2. **Whether the internal `_steering["generation"]` payload field can be deleted** alongside the public `ctx.steering_generation` removal (FR-021). Requires tracing every read site of `_steering["generation"]` against the post-FR-013/14 invariants. If no load-bearing internal use remains, drop in the same PR; otherwise retain internally with an inline justification comment.
+3. **`_turn_started_at` on-the-wire payload field name + location (FR-023)**. The contract is "ISO-8601 UTC string, persisted at every turn-start boundary, NOT re-stamped on recovery"; the exact field name (`_turn_started_at` vs. `_lease["turn_started_at"]` vs. another location) is documented in `data-model.md` during `/speckit.tasks`.
 
 ### Research consolidation
 
@@ -228,7 +252,7 @@ Three implementation phases land in one cohesive PR. The order minimizes interme
 
 **Risk mitigation**: pre-existing tests using `stale_timeout` are ported to FR-009 test-only hook in the same commit pair.
 
-### Phase C — Steering + cancel-cause surface + timeout + shutdown (FR-010..FR-028 + FR-024a)
+### Phase C — Steering + cancel-cause surface + timeout + shutdown (FR-010..FR-028)
 
 **Why last**: this is the cohesive `_execute_task_loop` / drain rewrite. It depends on Phase B's classifier seam (the drain interacts with the suspend-persist path, which now funnels errors through the classifier) and on Phase A's pipeline (suspend/terminal writes go through the pipeline). Landing it as the last phase keeps `_execute_task_loop` rewritten exactly once.
 
@@ -267,7 +291,7 @@ Re-evaluation: no new gate violations introduced by the design.
 - Pre-existing tests are ported, not deleted; deletion requires gap-list justification.
 - All `NEEDS CLARIFICATION` items in the spec are resolved; the two plan-phase implementation choices (FR-009 hook shape; internal `_steering["generation"]` retain-or-delete) are NOT clarifications — they're implementation decisions to be made during `/speckit.tasks` planning.
 
-**Constitution Check verdict (post-design)**: PASS.
+**Constitution Check verdict (post-design)**: PASS (12 applicable principles PASS; Principle XI N/A as noted in initial check; Principle XIII satisfied by the Code Review Cadence subsection above + Phase 13 tasks T112–T122).
 
 ---
 
