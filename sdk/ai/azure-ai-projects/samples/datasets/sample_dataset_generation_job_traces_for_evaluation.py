@@ -75,7 +75,7 @@ model_deployment = os.environ["FOUNDRY_MODEL_NAME"]
 DATASET_NAME = "traces-eval-sample"
 POLL_INTERVAL_SECONDS = 10
 INITIAL_INGEST_WAIT_SECONDS = 30
-MAX_JOB_ATTEMPTS = 3
+MAX_JOB_ATTEMPTS = 5
 RETRY_WAIT_SECONDS = 60
 
 # Per-run id keeps repeated runs from colliding; output names are capped at 50 chars.
