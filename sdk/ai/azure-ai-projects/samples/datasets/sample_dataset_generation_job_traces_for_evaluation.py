@@ -10,7 +10,7 @@ DESCRIPTION:
 
       1. Creates an agent and seeds spans with a sample conversation.
       2. Waits for ingestion, then submits a `DataGenerationJob`
-         (scenario=EVALUATION, source=traces) that synthesizes Q/A pairs.
+         (scenario=EVALUATION, source=traces) that synthesizes evaluation samples.
       3. Polls the job and fetches the resulting `DatasetVersion`.
       4. Cleans up the dataset, job, seeded conversations, and agent.
 
