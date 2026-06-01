@@ -11,7 +11,7 @@
 
 Close six inter-related defects in the unshipped durable-task primitive in `azure-ai-agentserver-core` before it ships: (1) recovery is leaky — make it framework-owned and three-layered; (2) steering is over-modeled — collapse to plain multi-turn with a queue; (3) cancellation surface is confused — decompose into independent cause booleans + simplified steering state; (4) timeout is non-durable and per-invocation — make it per-turn / wall-clock / durable; (5) shutdown has no first-class API — add `ctx.exit_for_recovery()`; (6) transport has no policy stack — migrate the hosted task-store client to `azure.core.AsyncPipelineClient` with the `ContentDecodePolicy` exclusion lesson from the responses package. Plus one corollary fix: include agent name in the stable lease owner string so different agents sharing a session ID can't collide (FR-004a).
 
-**Technical approach:** rewrite the affected internal modules in a single cohesive PR, preserving Constitution Principle XII's RED-first TDD discipline by extending existing test files per the Conformance Test Map in the spec. Only two genuinely-new test modules are justified (split-brain eviction, transport-layer pipeline behavior).
+**Technical approach:** rewrite the affected internal modules in a single cohesive PR, preserving Constitution Principle XII's RED-first TDD discipline by extending existing test files per the Conformance Test Map in the spec. Up to two genuinely-new test modules are justified (split-brain eviction, transport-layer pipeline behavior); a third (`test_periodic_recovery.py`) is permissible per spec.md's gap-list escape hatch if the periodic-scan fixture proves unwieldy in `test_lifecycle.py`.
 
 ## Technical Context
 
@@ -74,7 +74,7 @@ Close six inter-related defects in the unshipped durable-task primitive in `azur
 | VIII | Minimal Surface, Maximum Composability | ✅ | Aggressive removal: `stale_timeout`, `superseded`, `is_superseded`, `_pending_steering_futures`, `was_steered`, `pending_inputs`, `steering_generation`, `TaskRun.terminate`, `TaskTerminated`. Net new public surface: 4 boolean/int properties + 1 method on `TaskContext`. |
 | IX | Docs ↔ Samples Feedback Loop (NON-NEG) | ✅ | Spec's Docs↔Samples section authored guide-first; samples-affected matrix enumerates every sample touched. |
 | X | Durability Contract Conformance (NON-NEG) | ✅ | `durability-contract.md` amendment (cross-cutting note covering `binding_mismatch`) lands in the same PR per the spec's exit checklist. FR-015 metadata-flush invariant lives in Principle XII scope (core-primitive layer) with explicit justification — not a new matrix row. |
-| XI | Contract-Surface Test Depth (NON-NEG) | ✅ | SCs are content-deep: SC-006 sweeps 3×3 outcomes, SC-008 sweeps 4×2 handler-end × steerer-timing cells, SC-010 covers 6 cell scenarios including live-count semantics, SC-012 has 4 crash-recovery cells. No shape-only `status == ...` assertions. |
+| XI | Contract-Surface Test Depth (NON-NEG) | N/A | Principle XI governs the **response-stream durability matrix** under `tests/e2e/durability_contract/` (per-cell depth assertions, `_test_handler.py` per-lifetime-tagged content, `CONTRACT_COVERAGE.md` mapping). This spec does NOT add or modify a `durability-contract.md` matrix row — the cross-cutting `binding_mismatch` note is prose, not a matrix entry — so the per-cell depth requirement is structurally inapplicable. Spec-internal SC depth (SC-006 3×3, SC-008 4×2, SC-010 6-cell, SC-012 4-cell crash-recovery, SC-016 transport behavior) lives under Principle XII's core-primitive depth complement, not XI. (This is the same X-vs-XII routing the spec uses for FR-015 metadata-flush invariant.) |
 | XII | Core-Primitive TDD Discipline (NON-NEG) | ✅ | Spec mandates `conformance-gap-list.md` deliverable; Conformance Test Map names existing test files for every surface area; only 2 new modules justified; pre-existing tests ported (not deleted by default). RED-first ordering mandated and verifiable from git history. |
 
 **Constitution Check verdict (initial)**: PASS. No gates violated; no complexity-tracking entries needed. Re-evaluation after Phase 1 design below.
@@ -108,12 +108,11 @@ sdk/agentserver/azure-ai-agentserver-core/
 │   │   ├── __init__.py          # MODIFY: drop TaskTerminated re-export; verify presence of new public names
 │   │   ├── _client.py           # REWRITE: AsyncPipelineClient migration (FR-029..FR-034)
 │   │   ├── _context.py          # MODIFY: cancel-cause booleans, pending_input_count, is_steered_turn, exit_for_recovery (FR-016..FR-021, FR-027)
-│   │   ├── _decorator.py        # MODIFY: remove stale_timeout kwarg and _is_stale helper (FR-001)
+│   │   ├── _decorator.py        # MODIFY: remove stale_timeout kwarg, drop the slot from the inline-defined TaskOptions class, remove _is_stale helper (FR-001)
 │   │   ├── _exceptions.py       # MODIFY: remove TaskTerminated (FR-022)
 │   │   ├── _lease.py            # MODIFY: derive_lease_owner(agent_name, session_id) (FR-004a); lease_renewal classifier integration (FR-007)
 │   │   ├── _manager.py          # REWRITE-IN-PLACE: layered recovery, reclaim helper, classifier, drain rewrite, watchdog respawn, _turn_started_at, exit_for_recovery sentinel handling (FR-002..FR-027, large)
 │   │   ├── _models.py           # MODIFY: _turn_started_at payload field (FR-023); other internal-record shape touches as needed
-│   │   ├── _options.py          # MODIFY: drop stale_timeout slot (FR-001)
 │   │   ├── _result.py           # MODIFY: narrow TaskResult.status Literal; remove is_superseded (FR-010)
 │   │   └── _run.py              # MODIFY: drop terminate() (FR-022); rebind result_future flow for steering (FR-013, FR-014)
 │   └── _config.py               # READ-ONLY HERE: source of FOUNDRY_AGENT_NAME for lease-owner derivation (no change)
@@ -217,7 +216,7 @@ Three implementation phases land in one cohesive PR. The order minimizes interme
 
 **Why second**: the classifier seam from Phase A is now available. This phase wires recovery into it. Also lands the lease-owner agent+session identity fix as a paired concern (touches the same code paths).
 
-**Surface touched**: `_lease.py` (derive_lease_owner signature, lease_renewal classifier integration), `_manager.py` (3-layer recovery, reclaim helper, classifier funnel, FR-009 test hooks), `_decorator.py` / `_options.py` / `_context.py` (drop stale_timeout / _is_stale).
+**Surface touched**: `_lease.py` (derive_lease_owner signature, lease_renewal classifier integration), `_manager.py` (3-layer recovery, reclaim helper, classifier funnel, FR-009 test hooks), `_decorator.py` (drop stale_timeout kwarg + inline-`TaskOptions` slot + `_is_stale` helper), `_context.py` (drop stale_timeout if any references remain).
 
 **Tests added/extended (RED-first)**:
 - `test_split_brain_eviction.py` (NEW): provider stub with `binding_mismatch`, full FR-006..FR-008 sweep (SC-002, SC-005).
@@ -251,7 +250,7 @@ Three implementation phases land in one cohesive PR. The order minimizes interme
 These do NOT belong to any single phase; they MUST land in the same PR:
 
 - **`durability-contract.md` amendment** — cross-cutting "Lease eviction (binding_mismatch)" note + change-log entry (Principle X exit checklist).
-- **Developer guide rewrite** — all sections per the spec's Docs↔Samples Loop §Authoring sequence step 1. Land BEFORE the tests for each phase (guide-first per Constitution Principle IX).
+- **Developer guide rewrite** — all sections per the spec's Docs↔Samples Loop §Authoring sequence step 1. Lands as ONE up-front rewrite preceding all phases' tests (matches the spec's authoring sequence which treats the guide as a single deliverable). Constitution Principle IX strictly requires guide-before-**samples** (not guide-before-tests); the guide-before-tests ordering is the spec's authoring sequence requirement, not the Constitution's.
 - **CHANGELOG.md (2.0.0b4 Unreleased)** — full initial-release-shape rewrite per spec §Docs↔Samples Loop step 3.
 - **Source docstrings** — `_timeout_watchdog`, the drain helper, the pipeline construction comment (ContentDecodePolicy exclusion), `TaskResult` class docstring, new `TaskContext` properties + `exit_for_recovery`.
 - **Sample updates** — recommended-not-required updates per the spec's "Samples affected" table; deferrals recorded in `tasks.md` with one-line justifications per Constitution Principle IX.

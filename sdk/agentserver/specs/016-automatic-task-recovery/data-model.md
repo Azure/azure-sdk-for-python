@@ -31,7 +31,7 @@ The task-store schema is owned by the platform. The fields below are all in the 
 The pre-existing `_steering` payload subsection carries:
 - `pending_inputs: list[Any]` — FIFO queue of steering inputs awaiting drain. UNCHANGED in shape; the public surface change is to remove `ctx.pending_inputs` and add `ctx.pending_input_count` (which reads from the in-memory tracker, NOT from this field directly).
 - `active_input: Any` — the input currently being processed by the handler. UNCHANGED.
-- `generation: int` — monotonically increasing per drain. UNCHANGED in this spec; FR-021 only drops the public `ctx.steering_generation` field. Plan-phase decision: whether to delete the internal field entirely (deferred per Decision 11 in `research.md`).
+- `generation: int` — monotonically increasing per drain. UNCHANGED in this spec; FR-021 only drops the public `ctx.steering_generation` field. Plan-phase decision: whether to delete the internal field entirely (see Decision 6's last bullet in `research.md` and item 2 of `research.md`'s "Plan-phase implementation decisions (NOT clarifications)" section — trace every read site against the post-FR-013/14 invariants and delete in the same PR if no load-bearing internal use remains).
 - `cancel_requested: bool` — internal flag the drain code path uses to decide whether to pre-set `ctx.cancel` on the new generation. UNCHANGED. (Note: this internal name is unrelated to the NEW PUBLIC `ctx.cancel_requested` boolean which is set by `TaskRun.cancel()`.)
 - `drain_in_progress: bool` — guard to detect crash-mid-drain on recovery. UNCHANGED.
 - **REMOVED**: any `generation_results` field (already removed per spec 013 US4 scenario 11 work; restated here as not-coming-back).
