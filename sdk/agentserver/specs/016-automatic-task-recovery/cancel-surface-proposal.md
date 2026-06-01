@@ -166,7 +166,7 @@ context.cancellation_reason: CancellationReason | None  # set by the framework b
 Note three differences from the task primitive:
 
 1. **`CancellationReason` is a SINGLE enum covering all causes** — including `SHUTTING_DOWN`. The responses package does NOT split shutdown out into a separate event the way the task primitive's `ctx.shutdown` does.
-2. **There's a separate `CLIENT_CANCELLED`** — for foreground HTTP disconnects and explicit `POST /cancel`. The task primitive has `manager.terminate()` which is the equivalent, but it's surfaced as `asyncio.CancelledError`, not as a `ctx.cancel` set with a reason.
+2. **There's a separate `CLIENT_CANCELLED`** — for foreground HTTP disconnects and explicit `POST /cancel`. The task primitive has `TaskRun.cancel()` which sets `ctx.cancel` cooperatively. **Per spec 016 FR-036 the previously-existing `TaskRun.terminate()` / `TaskTerminated` force-fail pathway is being removed**, so there's no force-stop primitive to compare against responses' `CLIENT_CANCELLED` — they both end at "cooperative cancel; handler chooses terminal shape", just with different surface naming.
 3. **No "TIMEOUT" reason.** Responses doesn't have a per-turn timeout knob (that's a task-primitive concept).
 
 The responses guide's prescribed pattern (handler-implementation-guide.md §Cancellation):
@@ -192,7 +192,7 @@ if cancellation_signal.is_set():
 **Lessons that DON'T transfer:**
 
 - Responses has no per-turn timeout, so the task primitive's `TIMEOUT` reason is genuinely new.
-- Responses has `CLIENT_CANCELLED` because foreground HTTP disconnects are a thing. The task primitive's equivalent is `manager.terminate()`, but today this surfaces as `asyncio.CancelledError` — not as a `cancel` set. We could keep this divergence (terminate stays as `CancelledError`) or align it (terminate also sets `cancel` with `reason="terminated"`).
+- Responses has `CLIENT_CANCELLED` because foreground HTTP disconnects are a thing. The task primitive's `TaskRun.cancel()` is the equivalent — both sets `ctx.cancel` (or its responses analogue) and let the handler choose terminal shape. Per spec 016 FR-036, the previously-existing `TaskRun.terminate()` force-fail pathway is being removed, so there's no third "force-stop" semantic to align.
 
 ---
 
@@ -237,7 +237,11 @@ class CancelReason(str, Enum):
     STEERED = "steered"          # steering pressure (pending_inputs > 0)
     DEADLINE_EXCEEDED = "deadline_exceeded"  # @task(timeout=...) fired
     SHUTTING_DOWN = "shutting_down"          # container SIGTERM
-    TERMINATED = "terminated"                # manager.terminate(task_id) — see note below
+    # Note: TERMINATED reason previously considered for manager.terminate(),
+    # but that API is being removed per spec 016 FR-036. TaskRun.cancel() —
+    # which would yield this reason if we kept it — is itself the explicit
+    # API, so a dedicated reason value would just say "the developer called
+    # the cancel API I just called" which is tautological. Omit.
 
 class CancelSignal:
     def is_set(self) -> bool: ...
@@ -256,7 +260,7 @@ class CancelSignal:
 
 **Cons:**
 - Breaking change to `ctx.shutdown` (which today is its own event some handlers may already check). Pre-release, but still — every code path that used `ctx.shutdown.is_set()` has to migrate to `ctx.cancel.reason == SHUTTING_DOWN`.
-- `TERMINATED` reason requires changing how `manager.terminate()` surfaces — today it's `asyncio.CancelledError`. Aligning these adds work.
+- `TERMINATED` reason was considered but dropped — `TaskRun.terminate()` is being removed per spec 016 FR-036, and `TaskRun.cancel()` (which would yield this reason) is itself the API the developer is calling. Reason redundant.
 - A wrapping class adds a tiny indirection on a hot path (`ctx.cancel.is_set()`).
 
 ### Proposal C — Add reason to `ctx.cancel`, KEEP `ctx.shutdown` separate
@@ -332,60 +336,112 @@ if ctx.cancel.is_set():
 - A `Literal` is less self-documenting than an `Enum` (no class to import / introspect / pattern-match on). Could use a `str Enum` instead; same idea.
 - Same shutdown-asymmetry as Proposal C.
 
+### Proposal E — Independent boolean property per cause (preferred per user direction 2026-06-01)
+
+Drop the "single reason value" framing entirely. Each independent cause that can set `ctx.cancel` gets its own boolean property on `TaskContext`, set when the cause fires, never unset. `ctx.cancel` remains the composite "stop" signal that fires when ANY cause fires. `ctx.shutdown` remains separate (per user direction: shutdown is a distinct concern that requires a different handler action — `ctx.exit_for_recovery()` per FR-037 — and is optional to implement).
+
+```python
+# ctx.cancel              : asyncio.Event   (composite; set by ANY of the causes below)
+# ctx.shutdown            : asyncio.Event   (separate concern, unchanged)
+# ctx.pending_inputs      : Sequence        (already exists; len > 0 ⇒ steering pressure)
+#
+# NEW boolean properties (read-only from handler perspective; framework-set):
+# ctx.timeout_exceeded    : bool            True iff the timeout watchdog fired
+# ctx.cancel_requested    : bool            True iff TaskRun.cancel() was called externally
+```
+
+Note: steering is NOT a new boolean — `len(ctx.pending_inputs) > 0` already encodes it precisely. Adding a `ctx.steered` boolean would duplicate state.
+
+Developer pattern:
+
+```python
+# Composite "should I stop?" — the simplest path, covers the majority case.
+if ctx.cancel.is_set():
+    await ctx.metadata.flush()
+    return await ctx.suspend(output=partial)
+
+# Advanced: branch on independent causes, including the COMPOSITE case
+# where multiple causes have fired in sequence:
+if ctx.cancel_requested:
+    # External cancel takes priority — operator explicitly asked us to stop.
+    # Often the handler wants to commit current work and exit.
+    ...
+if ctx.timeout_exceeded:
+    # Deadline blown — handler may want to mark output as partial / log differently.
+    ...
+if ctx.pending_inputs:
+    # Steering input queued — handler may want to wind down quickly to yield turn.
+    ...
+
+# Shutdown is checked separately (per user direction: distinct concern, optional):
+if ctx.shutdown.is_set():
+    await ctx.metadata.flush()
+    return await ctx.exit_for_recovery()
+```
+
+**Pros:**
+- **Composite cases compose naturally** — a handler that experiences steering → then timeout → then explicit cancel sees ALL THREE booleans `True` at the final checkpoint. No information lost. The user's concern about stacking causes is solved by construction.
+- **Independent**: each cause can be queried independently. No "first-reason-wins" race semantics to reason about.
+- **No new wrapping class** — bare `asyncio.Event` for `ctx.cancel` (and `ctx.shutdown`) preserved; just two new `bool` properties on `TaskContext`.
+- **Backward-compatible** — every existing `ctx.cancel.is_set()` / `ctx.cancel.wait()` pattern works unchanged.
+- **No enum to maintain** — adding a new cause is a new boolean (one line in `__slots__` + one assignment site), not an enum value plus migration.
+- **Mirrors the established convention** — `ctx.was_steered` is already a boolean on `TaskContext` (for "this entry was a drain re-entry"). The new booleans extend that pattern.
+
+**Cons:**
+- More public surface than Proposal D (two boolean properties vs one Literal). Marginal.
+- Slightly more verbose for handlers that DO want to discriminate (`if ctx.timeout_exceeded:` vs `if ctx.cancel_reason == "timeout":`). Trade-off for composite-case clarity.
+- Could grow if many future causes are added. Mitigated by the fact that the causes are bounded by physical reality — there are only so many things that legitimately stop a task.
+
 ---
 
 ## 6. Tradeoff matrix
 
-| Concern | A (status quo) | B (single enum) | C (reason, keep shutdown) | D (cancel_reason on ctx) |
-|---|---|---|---|---|
-| New public class | None | `CancelSignal` + `CancelReason` | `CancelSignal` + `CancelReason` | Just `Literal`/Enum (no class) |
-| Handler ergonomics for "why was I cancelled" | Three-way `if` | `cancel.reason ==` | `cancel.reason ==` + `shutdown.is_set()` | `cancel_reason ==` + `shutdown.is_set()` |
-| Mirrors responses-package guidance | No | Yes (closest) | Partial | Partial |
-| Breaks existing `ctx.shutdown` consumers | No | YES (removes it) | No | No |
-| Breaks `ctx.cancel.is_set()` / `.wait()` patterns | No | No (wrapper preserves) | No (wrapper preserves) | No |
-| Future-proof if a 4th cancel source appears | Fragile (fall-through breaks) | Add enum value | Add enum value | Add enum value |
-| Smallest surface | No (3 checks) | Yes (1 check via reason) | Medium | Medium |
-| Test/spec churn | Lowest | Highest | Medium | Lowest among the "add reason" options |
+| Concern | A (status quo) | B (single enum) | C (reason, keep shutdown) | D (cancel_reason on ctx) | **E (separate booleans)** |
+|---|---|---|---|---|---|
+| New public class | None | `CancelSignal` + `CancelReason` | `CancelSignal` + `CancelReason` | Just `Literal`/Enum (no class) | **None** |
+| New public attributes | 0 | 1 (class replaces event) | 1 (class replaces event) | 1 (Literal) | **2 (`timeout_exceeded`, `cancel_requested`)** |
+| Handler ergonomics for "why was I cancelled" | Three-way `if` | `cancel.reason ==` | `cancel.reason ==` + `shutdown.is_set()` | `cancel_reason ==` + `shutdown.is_set()` | **Independent `if` per cause; composite-friendly** |
+| **Composite cases (steering → timeout → cancel all stacked)** | Inferable but fragile | First-reason-wins; info lost | First-reason-wins; info lost | First-reason-wins; info lost | **All booleans True; full fidelity** |
+| Mirrors responses-package guidance | No | Yes (closest) | Partial | Partial | No (different shape) |
+| Breaks existing `ctx.shutdown` consumers | No | YES (removes it) | No | No | **No** |
+| Breaks `ctx.cancel.is_set()` / `.wait()` patterns | No | No (wrapper preserves) | No (wrapper preserves) | No | **No** |
+| Future-proof if a 4th cancel source appears | Fragile (fall-through breaks) | Add enum value | Add enum value | Add enum value | **Add boolean** |
+| Test/spec churn | Lowest | Highest | Medium | Lowest among "add reason" options | **Low (2 attrs + assignment sites)** |
 
 ---
 
-## 7. Recommendation (to debate)
+## 7. Recommendation (locked in per user direction 2026-06-01)
 
-**Lean: Proposal A or D, with the balance shifted toward A by the §3 corollary.** The user's clarification that Strategy C in S2 also ends with `return await ctx.suspend(...)` (because multi-turn requires suspend) narrows the disambiguation-actually-matters set to handlers that want to vary strategy (A vs C) or terminal action (suspend vs raise) based on cause. For handlers that adopt the uniform "any `cancel` → suspend" default — likely the majority — the existing surface already suffices.
+**Proposal E — Independent boolean property per cause.** User direction (three decisions):
 
-Two ways to read this:
+1. **`ctx.shutdown` stays separate** — different concern, requires different handler action (`ctx.exit_for_recovery()` per FR-037), optional to implement. Folding it into a cancel reason (Proposal B) would re-introduce the "two checks for one concept" confusion.
+2. **Timeout and `TaskRun.cancel()` MUST be distinguishable by the handler.** This rules out Proposal A (relies on fall-through inference).
+3. **Composite cases are real and information must not be lost.** Multiple causes can stack across the handler's execution (steering → timeout → explicit cancel). A handler may want to react ONCE at the final checkpoint but with full visibility into which causes fired. This rules out first-reason-wins (Proposals B/C/D) and points squarely at separate booleans.
 
-- **If we believe handlers will commonly want to vary by cause:** Proposal D (add `ctx.cancel_reason: Literal[...] | None` to `TaskContext`). Smallest addition that supports the branching, no wrapping class, mirrors existing `Literal`-based context attributes.
-- **If we believe the uniform default covers the common case and varying-by-cause is rare advanced usage:** Proposal A (zero new public surface). Document the 3-way `if` recipe in the dev guide as the advanced/optional pattern. The fall-through "must be timeout" footgun is real but manageable — if a future scope adds a 4th cancel cause we add the reason API then, at the point we actually need it. Until then, simpler surface.
+### Open questions — resolved per user direction
 
-Reasoning against the alternatives:
-- **B** (single enum, drop `ctx.shutdown`): bigger breaking change than is justified by the symmetry win. The two events are genuinely different events with different operator semantics (per-task cancel vs container drain); merging them is a semantic loss.
-- **C** (CancelSignal class with reason; keep shutdown): adds a wrapping class for a single property. Doesn't earn its keep vs. D.
-
-### Decision proposed to the user
-
-Pick between A and D. The deciding question is: **do we expect handlers to commonly want to vary their cancel reaction by cause, or will the uniform "any `cancel` → suspend" default cover the common case?**
-
-- If "uniform default covers common case" → **Proposal A**. Drop FR-031, simplify FR-033, document the recipe.
-- If "varying by cause is expected as a first-class pattern" → **Proposal D**. Add `ctx.cancel_reason`, keep FR-033's "set reason at the source", drop the `CancelSignal` wrapping class entirely.
-
-### Open questions to resolve before locking in
-
-1. **Should `manager.terminate(task_id)` also set `ctx.cancel` with a reason?** Today it raises `asyncio.CancelledError` into the handler. Aligning with responses would mean `cancel_reason = "terminated"` and the handler can run cleanup BEFORE the CancelledError reaches it. But this changes semantics significantly. Recommend: **defer; keep terminate as `CancelledError` for now**, document the distinction.
-2. **Should the enum/Literal include `SHUTTING_DOWN` even though `ctx.shutdown` is separate?** Recommend: **no** — `cancel_reason` describes what set `ctx.cancel`. Shutdown is its own signal. Mixing them re-introduces the "two checks for one concept" confusion.
-3. **First-reason-wins?** YES under all proposals. If timeout fires while steering is also pending, the recorded reason is whichever set the event first. Tests should make this deterministic; production handlers shouldn't depend on it being one specific value in the race window.
-4. **Should the reason be readable before `ctx.cancel.is_set()` is true?** Proposal: NO. `cancel_reason is None` when `cancel` is unset; it becomes a Literal value at the moment `cancel.set()` is called by the framework.
-5. **Naming.** `cancel_reason` vs `cancellation_reason` (matches responses) vs `cancel.reason` (only under proposals B/C). Pick one and stay consistent.
+1. **`TaskRun.cancel()` distinguishability:** YES — surfaces as `ctx.cancel_requested = True`. No enum value needed.
+2. **`SHUTTING_DOWN` in the cancel-reason enum:** N/A — no cancel-reason enum exists in Proposal E. Shutdown is `ctx.shutdown`, distinct as decided.
+3. **First-reason-wins:** N/A — booleans accumulate. Every cause that fires sets its own boolean True; nothing is overwritten.
+4. **Readable before `ctx.cancel.is_set()` is true:** booleans default to `False` at handler entry. They flip to `True` at the moment the corresponding framework subsystem fires the cause (watchdog sets `timeout_exceeded`; cancel call sets `cancel_requested`). They never flip back.
+5. **Naming:**
+   - `ctx.timeout_exceeded: bool` — the deadline configured via `@task(timeout=...)` was reached.
+   - `ctx.cancel_requested: bool` — an external caller invoked `TaskRun.cancel()`. Naming chosen for symmetry with the existing internal "cancel_requested" steering flag, but here it's the *external* one. If confusion is a risk, alternatives: `cancelled_by_caller`, `was_cancelled_externally`, `external_cancel`. Recommend `cancel_requested` for brevity unless reviewer feedback prefers an alternative.
 
 ---
 
-## 8. What changes in spec 016 once we decide
+## 8. What changes in spec 016 (Proposal E locked in)
 
-Once the user picks a proposal:
+The following spec edits will land in a single follow-up commit:
 
-- **If A:** delete FR-031, delete SC-016, simplify FR-033 to "set `ctx.cancel` (bare event) at the source — no reason API", update dev guide §Steering with the three-way `if` recipe.
-- **If B:** rewrite FR-031 to define `CancelReason` enum (4 values) and `CancelSignal` wrapper that subsumes shutdown; rewrite FR-033 accordingly; add new FR for removing `ctx.shutdown` from the public surface; SC-016 sweep includes `SHUTTING_DOWN` and `TERMINATED` scenarios; update dev guide §Steering AND §Shutdown sections.
-- **If C:** rewrite FR-031 to define `CancelReason` enum (2 values: `STEERED`, `DEADLINE_EXCEEDED`) and `CancelSignal` wrapper; keep `ctx.shutdown`; SC-016 sweep covers steered + deadline + their interaction; dev guide gets a "if you need to disambiguate cancel" subsection.
-- **If D:** rewrite FR-031 to add a `cancel_reason: Literal[...] | None` property on `TaskContext` (no wrapping class); keep `ctx.cancel` and `ctx.shutdown` bare events; rewrite FR-033 to "watchdog sets `ctx.cancel` and assigns `cancel_reason='deadline_exceeded'`; drain sets `ctx.cancel` and assigns `cancel_reason='steered'`"; SC-016 sweep checks `cancel_reason` values across scenarios; dev guide gets the same disambiguation subsection as C.
+- **Rewrite FR-031**: title becomes "Independent boolean properties for cancel causes". Defines `ctx.timeout_exceeded: bool` and `ctx.cancel_requested: bool` on `TaskContext`. Both default `False` at handler entry; framework subsystems set them at the moment the cause fires; they never flip back. Drop all references to `CancelSignal` class and `CancelReason` enum — `ctx.cancel` stays a bare `asyncio.Event`.
+- **Rewrite FR-033**: title becomes "Set independent booleans at the source". `_timeout_watchdog` sets `ctx.timeout_exceeded = True` then `ctx.cancel.set()`. `TaskRun.cancel()` sets `ctx.cancel_requested = True` then `ctx.cancel.set()`. `_try_drain_steering` does NOT set a new boolean (steering pressure is already encoded by `len(ctx.pending_inputs) > 0`); it just sets `ctx.cancel.set()` as today. Crash-recovery zero-budget case (FR-032's `remaining == 0` path) pre-sets `ctx.timeout_exceeded = True` and `ctx.cancel.set()` so the recovered handler sees both from the first checkpoint.
+- **Rewrite SC-016**: title becomes "Independent cause booleans visible to handler". Parametrized sweep covers (a) timeout-only — `timeout_exceeded=True`, `cancel_requested=False`, `pending_inputs=()`; (b) external-cancel-only — `timeout_exceeded=False`, `cancel_requested=True`, `pending_inputs=()`; (c) steering-only — `timeout_exceeded=False`, `cancel_requested=False`, `pending_inputs` non-empty; (d) composite (all three fire in sequence) — all three booleans observable as True at the final checkpoint; (e) backward-compat — existing `ctx.cancel.is_set()` / `await ctx.cancel.wait()` patterns continue to work unchanged.
+- **Update `TaskContext` Key Entity** (currently lists `CancelSignal`): remove `CancelSignal` entry, add `timeout_exceeded` and `cancel_requested` to the field table.
+- **Update Principle XII checklist**: remove `CancelSignal` and `TaskContext.cancel type change` from affected-symbols list; add `TaskContext.timeout_exceeded` and `TaskContext.cancel_requested` as new additive properties. `ctx.cancel` remains bare `asyncio.Event` — NOT a public-surface change.
+- **Update "What goes where" table**: rewrite the `ctx.cancel` row to describe independent booleans + composite-case handling; cross-reference FR-037's `ctx.exit_for_recovery()` for the shutdown branch.
+- **Dev guide updates** (per FR-031's Docs↔Samples sequence): rewrite §4 Steering's cancel-disambiguation paragraph around independent booleans, with a composite-case worked example showing all three booleans True at a final checkpoint.
 
-Either choice integrates cleanly into the existing FR-032 (per-turn watchdog respawn) and FR-035 (durable `_turn_started_at`) — those don't depend on the reason surface shape.
+Either the spec edits land in one cohesive commit, or alongside the FR-031..FR-037 cohesive `_execute_task_loop`/drain rewrite implementation PR per the existing implementation-order proposal in plan.md.
+
+The other FRs in the cancel-signal cluster (FR-032 per-turn watchdog respawn, FR-034 docstring correction, FR-035 durable `_turn_started_at`, FR-036 terminate removal, FR-037 `ctx.exit_for_recovery`) are unaffected — they don't depend on the reason-surface shape.
