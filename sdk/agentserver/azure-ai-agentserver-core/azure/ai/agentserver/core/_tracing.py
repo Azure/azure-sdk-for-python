@@ -85,6 +85,23 @@ logger = logging.getLogger("azure.ai.agentserver")
 # duplicates across multiple AgentServerHost instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
+# Logger names whose INFO messages are too noisy for the console.
+_SUPPRESSED_LOGGERS = (
+    "azure.monitor.opentelemetry.exporter",
+    "azure.core.pipeline.policies.http_logging_policy",
+)
+
+
+class _NoisyLoggerFilter(logging.Filter):
+    """Drops INFO (and below) records from known-noisy loggers."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if record.levelno <= logging.INFO:
+            for prefix in _SUPPRESSED_LOGGERS:
+                if record.name.startswith(prefix):
+                    return False
+        return True
+
 
 def configure_observability(
     *,
@@ -128,6 +145,7 @@ def configure_observability(
     if not _has_console:
         _console = logging.StreamHandler()
         _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+        _console.addFilter(_NoisyLoggerFilter())
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
@@ -137,8 +155,19 @@ def configure_observability(
     # Tracing and OTel export
     _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
 
-    # Suppress noisy exporter logs *after* tracing setup (which may create child loggers).
-    logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+    # Best-effort suppression via logger level (may be overridden by distro).
+    for _noisy in (
+        "azure.monitor.opentelemetry.exporter",
+        "azure.monitor.opentelemetry.exporter.export._base",
+    ):
+        logging.getLogger(_noisy).setLevel(logging.WARNING)
+
+    # Ensure the noisy-logger filter is applied to ALL root handlers
+    # (including any added by the distro/OTel setup above).
+    _noisy_filter = _NoisyLoggerFilter()
+    for handler in root.handlers:
+        if not any(isinstance(f, _NoisyLoggerFilter) for f in handler.filters):
+            handler.addFilter(_noisy_filter)
 
 
 def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive_data: bool = False) -> None:
