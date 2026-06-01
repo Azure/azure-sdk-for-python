@@ -1,5 +1,139 @@
 # Release History
 
+## 10.2.0b2 (2026-06-01)
+
+### Features Added
+
+  - Client `ContainerInstanceManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ContainerInstanceManagementClient` added method `send_request`
+  - Client `ContainerInstanceManagementClient` added operation group `ngroups`
+  - Client `ContainerInstanceManagementClient` added operation group `cg_profile`
+  - Client `ContainerInstanceManagementClient` added operation group `sandbox_groups`
+  - Client `ContainerInstanceManagementClient` added operation group `cg_profiles`
+  - Model `AzureFileVolume` added property `storage_account_key_reference`
+  - Model `ContainerGroup` added property `properties`
+  - Model `ContainerGroup` added property `system_data`
+  - Model `ContainerGroupProfile` added property `properties`
+  - Model `ContainerGroupProfile` added property `system_data`
+  - Model `ContainerGroupProfileProperties` added property `shutdown_grace_period`
+  - Model `ContainerGroupProfileProperties` added property `time_to_live`
+  - Model `ContainerGroupProfileProperties` added property `security_context`
+  - Model `ContainerGroupProfileProperties` added property `registered_revisions`
+  - Model `ContainerGroupProfileProperties` added property `use_krypton`
+  - Model `ContainerGroupProperties` added property `secret_references`
+  - Model `ContainerGroupProperties` added property `identity_acls`
+  - Enum `ContainerGroupSku` added member `NOT_SPECIFIED`
+  - Model `EnvironmentVariable` added property `secure_value_reference`
+  - Model `ImageRegistryCredential` added property `password_reference`
+  - Model `InitContainerDefinition` added property `properties`
+  - Model `Volume` added property `secret_reference`
+  - Added model `ApiEntityReference`
+  - Added model `ApplicationGateway`
+  - Added model `ApplicationGatewayBackendAddressPool`
+  - Added model `ArmResource`
+  - Added enum `AzureFileShareAccessTier`
+  - Added enum `AzureFileShareAccessType`
+  - Added model `CloudError`
+  - Added model `ContainerGroupProfileStub`
+  - Added enum `CreatedByType`
+  - Added model `ElasticProfile`
+  - Added model `ElasticProfileContainerGroupNamingPolicy`
+  - Added model `ElasticProfileContainerGroupNamingPolicyGuidNamingPolicy`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `FileShare`
+  - Added model `FileShareProperties`
+  - Added model `IdentityAccessControl`
+  - Added enum `IdentityAccessLevel`
+  - Added model `IdentityAcls`
+  - Added model `InitContainerPropertiesDefinition`
+  - Added model `LoadBalancer`
+  - Added model `LoadBalancerBackendAddressPool`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `NGroup`
+  - Added model `NGroupCGPropertyContainer`
+  - Added model `NGroupCGPropertyContainerProperties`
+  - Added model `NGroupCGPropertyVolume`
+  - Added model `NGroupContainerGroupProperties`
+  - Added model `NGroupIdentity`
+  - Added model `NGroupPatch`
+  - Added model `NGroupProperties`
+  - Added enum `NGroupProvisioningState`
+  - Added enum `NGroupUpdateMode`
+  - Added model `NetworkProfile`
+  - Added model `PlacementProfile`
+  - Added model `ProxyResource`
+  - Added model `SandboxGroup`
+  - Added model `SandboxGroupAccessToken`
+  - Added model `SandboxGroupNetworkProfile`
+  - Added model `SandboxGroupProperties`
+  - Added enum `SandboxGroupProvisioningState`
+  - Added model `SandboxGroupTagsUpdate`
+  - Added model `SecretReference`
+  - Added model `StorageProfile`
+  - Added model `SubnetReference`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+  - Added model `UpdateProfile`
+  - Added model `UpdateProfileRollingUpdateProfile`
+  - Added model `UserAssignedIdentity`
+  - Added model `CGProfileOperations`
+  - Added model `CGProfilesOperations`
+  - Added model `NGroupsOperations`
+  - Added model `SandboxGroupsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ContainerInstanceManagementClient.container_group_profiles`
+  - Deleted or renamed client operation group `ContainerInstanceManagementClient.container_group_profile`
+  - Model `ContainerGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `ContainerGroup` deleted or renamed its instance variable `containers`
+  - Model `ContainerGroup` deleted or renamed its instance variable `image_registry_credentials`
+  - Model `ContainerGroup` deleted or renamed its instance variable `restart_policy`
+  - Model `ContainerGroup` deleted or renamed its instance variable `ip_address`
+  - Model `ContainerGroup` deleted or renamed its instance variable `os_type`
+  - Model `ContainerGroup` deleted or renamed its instance variable `volumes`
+  - Model `ContainerGroup` deleted or renamed its instance variable `instance_view`
+  - Model `ContainerGroup` deleted or renamed its instance variable `diagnostics`
+  - Model `ContainerGroup` deleted or renamed its instance variable `subnet_ids`
+  - Model `ContainerGroup` deleted or renamed its instance variable `dns_config`
+  - Model `ContainerGroup` deleted or renamed its instance variable `sku`
+  - Model `ContainerGroup` deleted or renamed its instance variable `encryption_properties`
+  - Model `ContainerGroup` deleted or renamed its instance variable `init_containers`
+  - Model `ContainerGroup` deleted or renamed its instance variable `extensions`
+  - Model `ContainerGroup` deleted or renamed its instance variable `confidential_compute_properties`
+  - Model `ContainerGroup` deleted or renamed its instance variable `priority`
+  - Model `ContainerGroup` deleted or renamed its instance variable `container_group_profile`
+  - Model `ContainerGroup` deleted or renamed its instance variable `standby_pool_profile`
+  - Model `ContainerGroup` deleted or renamed its instance variable `is_created_from_standby_pool`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `containers`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `image_registry_credentials`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `restart_policy`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `ip_address`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `os_type`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `volumes`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `diagnostics`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `sku`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `encryption_properties`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `init_containers`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `extensions`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `confidential_compute_properties`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `priority`
+  - Model `ContainerGroupProfile` deleted or renamed its instance variable `revision`
+  - Model `ContainerGroupProperties` deleted or renamed its instance variable `identity`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `image`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `command`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `environment_variables`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `instance_view`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `volume_mounts`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `security_context`
+  - Method `ContainersOperations.list_logs` changed its parameter `tail` from `positional_or_keyword` to `keyword_only`
+  - Method `ContainersOperations.list_logs` changed its parameter `timestamps` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `ContainerGroupProfileOperations`
+  - Deleted or renamed model `ContainerGroupProfilesOperations`
+
 ## 10.2.0b1 (2024-10-21)
 
 ### Features Added
