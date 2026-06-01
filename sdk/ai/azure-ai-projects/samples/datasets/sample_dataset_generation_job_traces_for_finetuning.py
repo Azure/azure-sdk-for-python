@@ -101,6 +101,7 @@ TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
 ):
 
     created_agent = None
@@ -119,16 +120,15 @@ with (
 
         seed_start = datetime.now(tz=timezone.utc)
         print(f"Seed {len(SEED_PROMPTS)} conversation(s) against the agent.")
-        with project_client.get_openai_client() as openai_client:
-            for prompt in SEED_PROMPTS:
-                conversation = openai_client.conversations.create()
-                created_conversation_ids.append(conversation.id)
-                print(f"  - conversation id: {conversation.id}  (prompt: {prompt!r})")
-                openai_client.responses.create(
-                    conversation=conversation.id,
-                    input=prompt,
-                    extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
-                )
+        for prompt in SEED_PROMPTS:
+            conversation = openai_client.conversations.create()
+            created_conversation_ids.append(conversation.id)
+            print(f"  - conversation id: {conversation.id}  (prompt: {prompt!r})")
+            openai_client.responses.create(
+                conversation=conversation.id,
+                input=prompt,
+                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
+            )
 
         print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
@@ -198,29 +198,24 @@ with (
             raise RuntimeError(f"Job `{job.id}` did not produce any file outputs.")
 
         print(f"Generated {len(file_outputs)} fine-tuning file(s):")
-        with project_client.get_openai_client() as openai_client:
-            for output in file_outputs:
-                if not output.id:
-                    raise RuntimeError(f"Job `{job.id}` returned a file output without an id.")
-                created_file_ids.append(output.id)
-                file_info = openai_client.files.retrieve(file_id=output.id)
-                print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
+        for output in file_outputs:
+            if not output.id:
+                raise RuntimeError(f"Job `{job.id}` returned a file output without an id.")
+            created_file_ids.append(output.id)
+            file_info = openai_client.files.retrieve(file_id=output.id)
+            print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
         if job.result is not None and job.result.generated_samples is not None:
             print(f"Generated samples: {job.result.generated_samples}")
 
     finally:
         # Best-effort cleanup, outputs -> producers (files, job, conversations, agent).
         if created_file_ids:
-            try:
-                with project_client.get_openai_client() as openai_client:
-                    for fid in created_file_ids:
-                        try:
-                            openai_client.files.delete(file_id=fid)
-                            print(f"Deleted Azure OpenAI file `{fid}`.")
-                        except Exception as exc:  # pylint: disable=broad-exception-caught
-                            print(f"  (warning) could not delete file `{fid}`: {exc}")
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not open openai client for file cleanup: {exc}")
+            for fid in created_file_ids:
+                try:
+                    openai_client.files.delete(file_id=fid)
+                    print(f"Deleted Azure OpenAI file `{fid}`.")
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    print(f"  (warning) could not delete file `{fid}`: {exc}")
 
         for jid in submitted_job_ids:
             try:
@@ -230,16 +225,12 @@ with (
                 print(f"  (warning) could not delete job `{jid}`: {exc}")
 
         if created_conversation_ids:
-            try:
-                with project_client.get_openai_client() as openai_client:
-                    for cid in created_conversation_ids:
-                        try:
-                            openai_client.conversations.delete(conversation_id=cid)
-                            print(f"Deleted seeded conversation `{cid}`.")
-                        except Exception as exc:  # pylint: disable=broad-exception-caught
-                            print(f"  (warning) could not delete conversation `{cid}`: {exc}")
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not open openai client for conversation cleanup: {exc}")
+            for cid in created_conversation_ids:
+                try:
+                    openai_client.conversations.delete(conversation_id=cid)
+                    print(f"Deleted seeded conversation `{cid}`.")
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    print(f"  (warning) could not delete conversation `{cid}`: {exc}")
 
         if created_agent is not None:
             try:
