@@ -9,195 +9,6 @@
   - Model `PolicyMetadata` added property `system_data`
   - Model `Resource` added property `system_data`
   - Added model `ProxyResource`
-  - Operation group `AttestationsOperations` added parameter `top` in method `list_for_resource`
-  - Operation group `AttestationsOperations` added parameter `filter` in method `list_for_resource`
-  - Operation group `AttestationsOperations` added parameter `top` in method `list_for_resource_group`
-  - Operation group `AttestationsOperations` added parameter `filter` in method `list_for_resource_group`
-  - Operation group `AttestationsOperations` added parameter `top` in method `list_for_subscription`
-  - Operation group `AttestationsOperations` added parameter `filter` in method `list_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `top` in method `list_query_results_for_management_group`
-  - Operation group `PolicyEventsOperations` added parameter `order_by` in method `list_query_results_for_management_group`
-  - Operation group `PolicyEventsOperations` added parameter `select` in method `list_query_results_for_management_group`
-  - Operation group `PolicyEventsOperations` added parameter `from_parameter` in method `list_query_results_for_management_group`
-  - Operation group `PolicyEventsOperations` added parameter `to` in method `list_query_results_for_management_group`
-  - Operation group `PolicyEventsOperations` added parameter `filter` in method `list_query_results_for_management_group`
-  - Operation group `PolicyEventsOperations` added parameter `apply` in method `list_query_results_for_management_group`
-  - Operation group `PolicyEventsOperations` added parameter `skip_token` in method `list_query_results_for_management_group`
-  - Operation group `PolicyEventsOperations` added parameter `top` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyEventsOperations` added parameter `order_by` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyEventsOperations` added parameter `select` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyEventsOperations` added parameter `from_parameter` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyEventsOperations` added parameter `to` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyEventsOperations` added parameter `filter` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyEventsOperations` added parameter `apply` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyEventsOperations` added parameter `skip_token` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyEventsOperations` added parameter `top` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyEventsOperations` added parameter `order_by` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyEventsOperations` added parameter `select` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyEventsOperations` added parameter `from_parameter` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyEventsOperations` added parameter `to` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyEventsOperations` added parameter `filter` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyEventsOperations` added parameter `apply` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyEventsOperations` added parameter `skip_token` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyEventsOperations` added parameter `top` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `order_by` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `select` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `from_parameter` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `to` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `filter` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `apply` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `expand` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `skip_token` in method `list_query_results_for_resource`
-  - Operation group `PolicyEventsOperations` added parameter `top` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyEventsOperations` added parameter `order_by` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyEventsOperations` added parameter `select` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyEventsOperations` added parameter `from_parameter` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyEventsOperations` added parameter `to` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyEventsOperations` added parameter `filter` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyEventsOperations` added parameter `apply` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyEventsOperations` added parameter `skip_token` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyEventsOperations` added parameter `top` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `order_by` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `select` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `from_parameter` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `to` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `filter` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `apply` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `skip_token` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `top` in method `list_query_results_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `order_by` in method `list_query_results_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `select` in method `list_query_results_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `from_parameter` in method `list_query_results_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `to` in method `list_query_results_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `filter` in method `list_query_results_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `apply` in method `list_query_results_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `skip_token` in method `list_query_results_for_subscription`
-  - Operation group `PolicyEventsOperations` added parameter `top` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `order_by` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `select` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `from_parameter` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `to` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `filter` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `apply` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyEventsOperations` added parameter `skip_token` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyMetadataOperations` added parameter `top` in method `list`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `list_query_results_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `order_by` in method `list_query_results_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `select` in method `list_query_results_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `list_query_results_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `list_query_results_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `list_query_results_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `apply` in method `list_query_results_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `skip_token` in method `list_query_results_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `order_by` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `select` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `apply` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `skip_token` in method `list_query_results_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `order_by` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `select` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `apply` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `skip_token` in method `list_query_results_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `order_by` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `select` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `apply` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `expand` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `skip_token` in method `list_query_results_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `order_by` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `select` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `apply` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `skip_token` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `order_by` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `select` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `apply` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `skip_token` in method `list_query_results_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `list_query_results_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `order_by` in method `list_query_results_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `select` in method `list_query_results_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `list_query_results_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `list_query_results_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `list_query_results_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `apply` in method `list_query_results_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `skip_token` in method `list_query_results_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `order_by` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `select` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `apply` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `skip_token` in method `list_query_results_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `summarize_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `summarize_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `summarize_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `summarize_for_management_group`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `summarize_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `summarize_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `summarize_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `summarize_for_policy_definition`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `summarize_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `summarize_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `summarize_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `summarize_for_policy_set_definition`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `summarize_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `summarize_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `summarize_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `summarize_for_resource`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `summarize_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `summarize_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `summarize_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `summarize_for_resource_group`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `summarize_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `summarize_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `summarize_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `summarize_for_resource_group_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `summarize_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `summarize_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `summarize_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `summarize_for_subscription`
-  - Operation group `PolicyStatesOperations` added parameter `top` in method `summarize_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `from_parameter` in method `summarize_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `to` in method `summarize_for_subscription_level_policy_assignment`
-  - Operation group `PolicyStatesOperations` added parameter `filter` in method `summarize_for_subscription_level_policy_assignment`
-  - Operation group `PolicyTrackedResourcesOperations` added parameter `top` in method `list_query_results_for_management_group`
-  - Operation group `PolicyTrackedResourcesOperations` added parameter `filter` in method `list_query_results_for_management_group`
-  - Operation group `PolicyTrackedResourcesOperations` added parameter `top` in method `list_query_results_for_resource`
-  - Operation group `PolicyTrackedResourcesOperations` added parameter `filter` in method `list_query_results_for_resource`
-  - Operation group `PolicyTrackedResourcesOperations` added parameter `top` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyTrackedResourcesOperations` added parameter `filter` in method `list_query_results_for_resource_group`
-  - Operation group `PolicyTrackedResourcesOperations` added parameter `top` in method `list_query_results_for_subscription`
-  - Operation group `PolicyTrackedResourcesOperations` added parameter `filter` in method `list_query_results_for_subscription`
-  - Operation group `RemediationsOperations` added parameter `top` in method `list_deployments_at_management_group`
-  - Operation group `RemediationsOperations` added parameter `top` in method `list_deployments_at_resource`
-  - Operation group `RemediationsOperations` added parameter `top` in method `list_deployments_at_resource_group`
-  - Operation group `RemediationsOperations` added parameter `top` in method `list_deployments_at_subscription`
-  - Operation group `RemediationsOperations` added parameter `top` in method `list_for_management_group`
-  - Operation group `RemediationsOperations` added parameter `filter` in method `list_for_management_group`
-  - Operation group `RemediationsOperations` added parameter `top` in method `list_for_resource`
-  - Operation group `RemediationsOperations` added parameter `filter` in method `list_for_resource`
-  - Operation group `RemediationsOperations` added parameter `top` in method `list_for_resource_group`
-  - Operation group `RemediationsOperations` added parameter `filter` in method `list_for_resource_group`
-  - Operation group `RemediationsOperations` added parameter `top` in method `list_for_subscription`
-  - Operation group `RemediationsOperations` added parameter `filter` in method `list_for_subscription`
 
 ### Breaking Changes
 
@@ -218,46 +29,46 @@
   - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply` from `positional_or_keyword` to `keyword_only`
   - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply` from `positional_or_keyword` to `keyword_only`
   - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` changed its parameter `order_by`/`select`/`from_parameter`/`to`/`apply` from `positional_or_keyword` to `keyword_only`
-  - Method `AttestationsOperations.list_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `AttestationsOperations.list_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `AttestationsOperations.list_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyEventsOperations.list_query_results_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyEventsOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyEventsOperations.list_query_results_for_policy_set_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyEventsOperations.list_query_results_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyEventsOperations.list_query_results_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyEventsOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyEventsOperations.list_query_results_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyEventsOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyMetadataOperations.list` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.list_query_results_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.list_query_results_for_policy_set_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.summarize_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.summarize_for_policy_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.summarize_for_policy_set_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.summarize_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.summarize_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.summarize_for_resource_group_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.summarize_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyStatesOperations.summarize_for_subscription_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyTrackedResourcesOperations.list_query_results_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyTrackedResourcesOperations.list_query_results_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyTrackedResourcesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `PolicyTrackedResourcesOperations.list_query_results_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `RemediationsOperations.list_deployments_at_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `RemediationsOperations.list_deployments_at_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `RemediationsOperations.list_deployments_at_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `RemediationsOperations.list_deployments_at_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `RemediationsOperations.list_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `RemediationsOperations.list_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `RemediationsOperations.list_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
-  - Method `RemediationsOperations.list_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `AttestationsOperations.list_for_resource` replaced parameter `query_options` with `top`/`filter`
+  - Method `AttestationsOperations.list_for_resource_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `AttestationsOperations.list_for_subscription` replaced parameter `query_options` with `top`/`filter`
+  - Method `PolicyEventsOperations.list_query_results_for_management_group` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_policy_definition` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_policy_set_definition` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_resource` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`expand`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_resource_group` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_resource_group_level_policy_assignment` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_subscription` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyEventsOperations.list_query_results_for_subscription_level_policy_assignment` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyMetadataOperations.list` replaced parameter `query_options` with `top`
+  - Method `PolicyStatesOperations.list_query_results_for_management_group` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_policy_definition` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_policy_set_definition` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_resource` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`expand`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_resource_group` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_subscription` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` replaced parameter `query_options` with `top`/`order_by`/`select`/`from_parameter`/`to`/`filter`/`apply`/`skip_token`
+  - Method `PolicyStatesOperations.summarize_for_management_group` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_policy_definition` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_policy_set_definition` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_resource` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_resource_group` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_resource_group_level_policy_assignment` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_subscription` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyStatesOperations.summarize_for_subscription_level_policy_assignment` replaced parameter `query_options` with `top`/`from_parameter`/`to`/`filter`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_management_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_resource` replaced parameter `query_options` with `top`/`filter`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_resource_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_subscription` replaced parameter `query_options` with `top`/`filter`
+  - Method `RemediationsOperations.list_deployments_at_management_group` replaced parameter `query_options` with `top`
+  - Method `RemediationsOperations.list_deployments_at_resource` replaced parameter `query_options` with `top`
+  - Method `RemediationsOperations.list_deployments_at_resource_group` replaced parameter `query_options` with `top`
+  - Method `RemediationsOperations.list_deployments_at_subscription` replaced parameter `query_options` with `top`
+  - Method `RemediationsOperations.list_for_management_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `RemediationsOperations.list_for_resource` replaced parameter `query_options` with `top`/`filter`
+  - Method `RemediationsOperations.list_for_resource_group` replaced parameter `query_options` with `top`/`filter`
+  - Method `RemediationsOperations.list_for_subscription` replaced parameter `query_options` with `top`/`filter`
 
 ### Other Changes
 
