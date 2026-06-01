@@ -75,6 +75,29 @@ This spec therefore removes `TaskRun.terminate()`, `TaskTerminated`, and all int
 
 Detailed requirements for the previous scope items remain in FR-031 through FR-035.
 
+### Scope expansion: `ctx.exit_for_recovery()` for shutdown-preserves-in_progress
+
+A sixth (and final) simplification. Today, when a handler observes `ctx.shutdown.is_set()` and wants the framework to *restore the task on the next process startup* (the obvious developer intent during graceful shutdown of a long-running task), the prescribed path is awkward and undocumented:
+
+| Handler exit | Stored status | Restored on restart? |
+|---|---|---|
+| `return await ctx.suspend(...)` | `suspended` | NO — waits for explicit `.run()` from a caller; recovery scan does NOT touch suspended records. |
+| `return value` | `completed` | NO — terminal. |
+| `raise SomeError` | `failed` | NO — terminal. |
+| `raise asyncio.CancelledError` | `in_progress` preserved | YES — recovery scan picks up dead-lease in_progress record (FR-006/007/011). |
+| Let framework force-cancel at grace expiry (handler ignores `ctx.shutdown`) | `in_progress` preserved | YES — same path. |
+
+Only the `raise asyncio.CancelledError` path (or force-cancel at grace expiry) leaves the task `in_progress` for recovery. That's not discoverable from the dev guide; the "obvious" thing — `ctx.suspend()` — silently moves the task to `suspended` and breaks the restore-on-restart goal.
+
+This spec therefore adds an explicit framework API `ctx.exit_for_recovery()` that returns a sentinel the framework recognizes as "leave the task in `in_progress`; the recovery loop will re-enter on the next process startup". The shape mirrors `ctx.suspend()` (`return await ctx.exit_for_recovery()`), discoverability is high, no asyncio coupling leaks into handler code.
+
+Two constraints per user direction:
+
+- **No parameters.** The framework already knows the cause (`ctx.shutdown` is the only legitimate trigger); there's no `reason=` or `output=` to set — partial work belongs in `ctx.metadata`, which is auto-flushed at this boundary per FR-024a.
+- **Only callable when `ctx.shutdown.is_set()` is true.** Calling it outside shutdown is a developer error and MUST raise an exception at the API surface. Recovery-via-leaving-in_progress outside of shutdown is not a legitimate pattern — it would defeat the lifecycle contract (every other code path either terminates or suspends with a clear caller-observable outcome).
+
+Detailed requirements in FR-037.
+
 ## Design invariant (load-bearing)
 
 **Caller-observable behavior of `.run() / .start() / get_active_run()` is invariant across `live | dead+reclaimed | dead+evicted` lease states.** These methods are scheduling/lookup primitives whose contract is defined entirely against the "task is already running in the current process" mental model. The framework opportunistically uses them as *additional signals* to trigger recovery (reclaim when the lease is dead), but the reclaim is a hidden side effect — it never changes the caller's observable outcome.
@@ -271,6 +294,25 @@ A developer or operator who wants to stop a running task uses `TaskRun.cancel()`
 5. **Given** the implementation of `_execute_task_loop`'s `asyncio.CancelledError` branch (`_manager.py:1266-1293`), **When** the developer reads it, **Then** the branch contains a SINGLE path (cooperative cancel → set `TaskCancelled` on the result future, framework writes terminal failure record if handler did not suspend). The `if resolved_terminate.is_set():` discriminator and the `TaskTerminated` construction MUST be removed.
 6. **Given** the `_ActiveTask` dataclass / `__slots__` (`_manager.py:98`), **When** the developer inspects it, **Then** `terminate_event` MUST NOT appear. Same for `terminate_reason_ref` — anywhere it was plumbed (`_manager.py:672-1141`, ~13 sites).
 7. **Given** an existing test that exercised `.terminate(reason="...")`, **When** the test is ported, **Then** the test either (a) calls `.cancel()` and asserts the handler-chosen terminal (preserving the cancel-semantic intent) OR (b) calls `.cancel()` with a handler that `raise`s on `ctx.cancel.is_set()` and asserts `TaskFailed` (preserving the forced-failure intent). NO test MUST reference `TaskTerminated` after this spec lands.
+
+---
+
+### User Story 11 - `ctx.exit_for_recovery()` for shutdown-preserves-in_progress (Priority: P2)
+
+A developer writing a long-running steerable task wants to do the right thing on container shutdown (SIGTERM): checkpoint progress to `ctx.metadata` and exit cleanly so the framework re-enters the handler on the next process startup with `entry_mode == "recovered"`. They reach for the obvious framework API and find one — `await ctx.exit_for_recovery()` — that does exactly this: returns a sentinel the framework recognizes as "leave the task `in_progress`; the recovery loop owns the next entry". The framework asserts the precondition (`ctx.shutdown.is_set()` must be true) so the API cannot be misused outside its single legitimate context.
+
+**Why this priority**: P2 — closes a documentation-and-discoverability gap that the rest of the spec's recovery work (FR-006/007/011) silently relies on. Today, the only ways to keep a task in `in_progress` for recovery are `raise asyncio.CancelledError` (asyncio coupling leaking into handler code; easily swallowed by a stray `try/except`) or letting the framework force-cancel at grace expiry (developer is passive). Neither is a documented framework API. A handler reading the dev guide would reach for `ctx.suspend(...)` (the "obvious" pause API) and silently get `status="suspended"` — which waits for an explicit `.run()` call from a caller and is NOT touched by the recovery scan. That's a footgun the existing surface doesn't address.
+
+**Independent Test**: Author a handler that on `ctx.shutdown.is_set()` calls `ctx.metadata.flush()` then `return await ctx.exit_for_recovery()`. Simulate shutdown via `manager.shutdown()`. Inspect the stored task record — `status` MUST equal `"in_progress"`. Start a fresh `TaskManager`; the recovery loop MUST reclaim the task and re-enter the handler with `ctx.entry_mode == "recovered"` and the metadata snapshot intact. A second variant calls `ctx.exit_for_recovery()` from a handler WITHOUT `ctx.shutdown` being set → MUST raise `RuntimeError` at the API call site.
+
+**Acceptance Scenarios**:
+
+1. **Given** a handler that on `ctx.shutdown.is_set()` checkpoints to `ctx.metadata` and calls `return await ctx.exit_for_recovery()`, **When** `TaskManager.shutdown()` fires, **Then** the stored task record has `status == "in_progress"`; the metadata snapshot is durable; the result future is set to `TaskCancelled` (same shape as the existing asyncio-cancel cooperative path); no terminal record is written.
+2. **Given** the task is left `in_progress` per Scenario 1, **When** a fresh `TaskManager` starts on a new process, **Then** the recovery scan (FR-006/007/011) reclaims the task and re-enters the handler with `ctx.entry_mode == "recovered"`. `ctx.recovery_count` is incremented. `ctx.metadata` is rehydrated from the persisted snapshot.
+3. **Given** a handler calls `await ctx.exit_for_recovery()` when `ctx.shutdown.is_set() == False`, **When** the framework processes the call, **Then** `ctx.exit_for_recovery()` MUST raise `RuntimeError` with a message clearly indicating the precondition violation (e.g., `"ctx.exit_for_recovery() may only be called when ctx.shutdown.is_set() is true"`). The exception MUST be raised at the call site in user code (not deferred to the framework's terminal-handling path), so the developer sees a clear traceback pointing at the misuse.
+4. **Given** a handler that calls `ctx.exit_for_recovery()` does NOT pass any parameters, **When** the developer inspects the signature, **Then** the method accepts no `reason=`, no `output=`, no positional arguments — only `self`. Partial work belongs in `ctx.metadata` (which is auto-flushed at the exit-for-recovery boundary per FR-024a); a `reason` parameter is redundant because the framework already knows shutdown is the only legitimate trigger.
+5. **Given** the developer inspects the public surface, **When** they look at `TaskContext`, **Then** `exit_for_recovery` appears as an `async def` method alongside `suspend` and `stream`. `Suspended` and the new `ExitForRecovery` sentinel are discoverable from the `__all__` of `azure.ai.agentserver.core.durable` if exposed, else internal-only with the public API being `ctx.exit_for_recovery()`.
+6. **Given** a handler that calls `ctx.exit_for_recovery()` while a steering input is queued (`pending_inputs` non-empty), **When** the framework processes the call, **Then** the task is preserved in `in_progress` per the normal exit_for_recovery semantic. The queued steering input is NOT drained (the framework is shutting down). On the next process startup, the recovery scan re-enters the handler with `entry_mode == "recovered"` and the pending steering input is preserved in the persisted state — it will be drained naturally on the recovered handler's next checkpoint.
 
 ---
 
