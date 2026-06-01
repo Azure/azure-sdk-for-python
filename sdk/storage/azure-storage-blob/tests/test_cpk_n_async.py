@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
-import asyncio
 from datetime import datetime, timedelta
 
 import pytest

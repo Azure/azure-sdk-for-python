@@ -84,12 +84,12 @@ def _build_structured_message(
 
             segment_crc = None
             if StructuredMessageProperties.CRC64 in flags:
-                segment_crc = checksums.crc64.compute(segment_data, 0)
+                segment_crc = checksums.crc64.compute(segment_data, 0)  # pylint: disable=c-extension-no-member
                 if i == invalidate_crc_segment:
                     segment_crc += 5
             _write_segment(i, segment_data, segment_crc, message)
 
-            message_crc = checksums.crc64.compute(segment_data, message_crc)
+            message_crc = checksums.crc64.compute(segment_data, message_crc)  # pylint: disable=c-extension-no-member
 
     # Message footer
     if StructuredMessageProperties.CRC64 in flags:

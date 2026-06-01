@@ -85,9 +85,7 @@ class RSAKeyWrapper:
 
     def wrap_key(self, key, algorithm="RSA"):
         if algorithm == "RSA":
-            return self.public_key.encrypt(
-                key, OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None)  # nosec
-            )
+            return self.public_key.encrypt(key, OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None))  # nosec
         raise ValueError("Unknown key wrap algorithm.")
 
     def unwrap_key(self, key, algorithm):
