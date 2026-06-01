@@ -183,9 +183,7 @@ with (
 
             message = job.error.message if job.error is not None else "<no error message>"
             if attempt == MAX_JOB_ATTEMPTS:
-                raise RuntimeError(
-                    f"Job `{job.id}` failed after {MAX_JOB_ATTEMPTS} attempts: {message}"
-                )
+                raise RuntimeError(f"Job `{job.id}` failed after {MAX_JOB_ATTEMPTS} attempts: {message}")
             print(f"  Attempt {attempt} failed ({message}); wait {RETRY_WAIT_SECONDS}s and retry.")
             time.sleep(RETRY_WAIT_SECONDS)
 

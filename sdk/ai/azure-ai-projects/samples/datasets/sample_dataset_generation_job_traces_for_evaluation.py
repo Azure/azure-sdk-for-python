@@ -179,9 +179,7 @@ with (
 
             message = job.error.message if job.error is not None else "<no error message>"
             if attempt == MAX_JOB_ATTEMPTS:
-                raise RuntimeError(
-                    f"Job `{job.id}` failed after {MAX_JOB_ATTEMPTS} attempts: {message}"
-                )
+                raise RuntimeError(f"Job `{job.id}` failed after {MAX_JOB_ATTEMPTS} attempts: {message}")
             print(f"  Attempt {attempt} failed ({message}); wait {RETRY_WAIT_SECONDS}s and retry.")
             time.sleep(RETRY_WAIT_SECONDS)
 
@@ -189,15 +187,11 @@ with (
 
         # 3. Resolve the generated dataset.
         outputs = (job.result.outputs if job.result is not None else None) or []
-        dataset_output = next(
-            (o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None
-        )
+        dataset_output = next((o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None)
         if dataset_output is None or not dataset_output.name or not dataset_output.version:
             raise RuntimeError(f"Job `{job.id}` did not produce a dataset output.")
 
-        created_dataset = project_client.datasets.get(
-            name=dataset_output.name, version=dataset_output.version
-        )
+        created_dataset = project_client.datasets.get(name=dataset_output.name, version=dataset_output.version)
         print(
             f"Generated dataset: name=`{created_dataset.name}` "
             f"version=`{created_dataset.version}` id=`{created_dataset.id}`"
