@@ -7,7 +7,6 @@
 """
 DESCRIPTION:
     Generates an evaluation dataset from an agent's conversation traces.
-    The sample is fully self-contained:
 
       1. Creates an agent and seeds spans with a sample conversation.
       2. Waits for ingestion, then submits a `DataGenerationJob`
