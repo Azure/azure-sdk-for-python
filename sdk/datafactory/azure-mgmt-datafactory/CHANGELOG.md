@@ -23,6 +23,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `AmazonMWSLinkedService` moved instance variable `endpoint`, `marketplace_id`, `seller_id`, `mws_auth_token`, `access_key_id`, `secret_key`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `AmazonMWSLinkedServiceTypeProperties`
   - Model `AmazonMWSObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
