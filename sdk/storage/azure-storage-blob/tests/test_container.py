@@ -2804,3 +2804,62 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         assert blobs is not None
         assert blobs == ["a/b/blob2", "a/b/blob3", "a/b/blob4", "a/blob1"]
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_create_session_same_policy(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient)
+        captured = {}
+        def make_capture(label):
+            def _hook(response):
+                auth = response.http_request.headers.get("Authorization", "")
+                captured[label] = auth
+            return _hook
+
+        def session_token_from(auth):
+            # "Session {token}:{signature}" -> token
+            assert auth.startswith("Session ")
+            return auth[len("Session "):].split(":", 1)[0]
+
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=True,
+        )
+        container1 = service.get_container_client("container1")
+        try:
+            container1.create_container()
+        except ResourceExistsError:
+            pass
+
+        c1b1_name, c1b1_data = "c1b1", b"abc123"
+        container1.upload_blob(c1b1_name, c1b1_data, overwrite=True, raw_response_hook=make_capture("c1_upload"))
+        assert captured["c1_upload"].startswith("Bearer ")
+
+        # Download is an eligible GET → session scheme.
+        c1b1_actual = container1.download_blob(c1b1_name, raw_response_hook=make_capture("c1_download")).readall()
+        assert c1b1_data == c1b1_actual
+        assert captured["c1_download"].startswith("Session ")
+        c1_token = session_token_from(captured["c1_download"])
+
+        container2 = service.get_container_client("container2")
+        try:
+            container2.create_container()
+        except ResourceExistsError:
+            pass
+
+        c2b2_name, c2b2_data = "c2b2", b"def456"
+        container2.upload_blob(c2b2_name, c2b2_data, overwrite=True, raw_response_hook=make_capture("c2_upload"))
+        assert captured["c2_upload"].startswith("Bearer ")
+
+        c2b2_actual = container2.download_blob(
+            c2b2_name, raw_response_hook=make_capture("c2_download"),
+        ).readall()
+        assert c2b2_data == c2b2_actual
+        assert captured["c2_download"].startswith("Session ")
+        c2_token = session_token_from(captured["c2_download"])
+
+        # Different containers must not share the same session token.
+        assert c1_token != c2_token

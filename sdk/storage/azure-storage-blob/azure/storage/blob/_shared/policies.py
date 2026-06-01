@@ -32,7 +32,8 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
 )
 
-from .authentication import AzureSigningError, SharedKeyCredentialPolicy, StorageHttpChallenge
+from . import sign_string
+from .authentication import AzureSigningError, _storage_header_sort, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE, DATA_BLOCK_SIZE
 from .models import LocationMode, StorageErrorCode
 from .streams import (
@@ -965,6 +966,11 @@ class StorageSessionPolicy(HTTPPolicy):
     """Service-reported code: session operations are temporarily unavailable."""
     FEATURE_NOT_ENABLED: str = "FeatureNotEnabled"
     """Service-reported code: the session feature is not enabled on the scale unit."""
+    _SIGNED_HEADERS = (
+        "content-encoding", "content-language", "content-length", "content-md5",
+        "content-type", "date", "if-modified-since", "if-match", "if-none-match",
+        "if-unmodified-since", "byte_range",
+    )
 
     def __init__(
         self,
@@ -1033,17 +1039,48 @@ class StorageSessionPolicy(HTTPPolicy):
         return session_token, session_key, expires_at
 
     def _apply_session_auth(self, request: "PipelineRequest", session_token: str, session_key: str) -> None:
-        # Stamp the session token BEFORE signing so it participates in the
-        # canonicalized headers, then sign with SharedKey using the session key.
-        request.http_request.headers[SESSION_TOKEN_HEADER] = session_token
-        SharedKeyCredentialPolicy(self._account_name, session_key).on_request(request)
+        http_request = request.http_request
+        http_request.headers["x-ms-date"] = format_date_time(time())
+
+        # Lowercased non-empty headers; Storage omits content-length when it is "0".
+        headers = {
+            name.lower(): value
+            for name, value in http_request.headers.items()
+            if value and not (name.lower() == "content-length" and value == "0")
+        }
+        x_ms = _storage_header_sort(
+            [(n.lower(), v) for n, v in http_request.headers.items() if n.lower().startswith("x-ms-")]
+        )
+        string_to_sign = "\n".join(
+            (
+                http_request.method,
+                *(headers.get(h, "") for h in self._SIGNED_HEADERS),
+                *(f"{n}:{v}" for n, v in x_ms if v is not None),
+                "/" + self._account_name + urlparse(http_request.url).path
+                + "".join(f"\n{n.lower()}:{v}" for n, v in sorted(http_request.query.items()) if v is not None),
+            )
+        )
+
+        try:
+            signature = sign_string(session_key, string_to_sign)
+        except Exception as ex:  # pylint: disable=broad-except
+            raise AzureSigningError(str(ex)) from ex
+        http_request.headers["Authorization"] = f"Session {session_token}:{signature}"
 
     def _is_eligible(self, request: "PipelineRequest") -> bool:
         if not self._use_session:
             return False
-        if request.http_request.method != "GET":
+        http_request = request.http_request
+        if http_request.method != "GET":
             return False
-        return bool(request.context.options.get(SESSION_ELIGIBLE_CONTEXT_KEY))
+        parsed = urlparse(http_request.url)
+        segments = [s for s in parsed.path.split("/") if s]
+        if len(segments) < 2:
+            return False
+        query = http_request.query
+        if "comp" in query or query.get("restype") == "container":
+            return False
+        return True
 
     def _create_session(self, container_url: str) -> Tuple[str, str, datetime]:
         # The factory returns a session-DISABLED generated client bound to the
