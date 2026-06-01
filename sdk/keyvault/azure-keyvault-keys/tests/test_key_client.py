@@ -17,6 +17,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import (
     ApiVersion,
+    ExternalKey,
     JsonWebKey,
     KeyClient,
     KeyProperties,
@@ -806,6 +807,38 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         )
         response = client.send_request(request)
         assert response.json()["key"]["kid"] == key.id
+
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_create_external_key(self, client, **kwargs):
+        """Register an external HSM key and verify the external_key reference round-trips."""
+        external_id = kwargs.pop("ekm_external_id")
+        if not external_id:
+            pytest.skip(
+                "No external key ID provided. This test requires an EKM-connected HSM and an existing external key."
+            )
+
+        key_name = self.get_resource_name("ext-key")
+        external_key = ExternalKey(id=external_id)
+
+        created = client.create_external_key(key_name, external_key=external_key)
+        assert created is not None
+        assert created.name == key_name
+        assert created.properties.external_key is not None
+        assert created.properties.external_key.id == external_id
+        assert created.key_type is not None
+
+        # Verify the external_key reference is also returned by a subsequent get_key.
+        fetched = client.get_key(key_name)
+        assert fetched.properties.external_key is not None
+        assert fetched.properties.external_key.id == external_id
+        assert fetched.key_type is not None
+
+        # Delete the external key registration.
+        deleted_key = client.begin_delete_key(key_name).result()
+        assert deleted_key is not None
+        assert deleted_key.name == key_name
 
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
     @KeysClientPreparer()

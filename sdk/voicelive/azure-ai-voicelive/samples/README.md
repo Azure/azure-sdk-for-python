@@ -6,7 +6,7 @@ This directory contains sample applications demonstrating various capabilities o
 
 ## Prerequisites
 
-- Python 3.9 or later
+- Python 3.10 or later
 - An Azure subscription with access to Azure AI VoiceLive
 - An Entra ID identity with access to Azure AI VoiceLive, or a VoiceLive API key
 
@@ -14,15 +14,20 @@ This directory contains sample applications demonstrating various capabilities o
 
 1. **Install dependencies**:
 
-   ```bash
-  pip install azure-ai-voicelive[aiohttp] azure-identity python-dotenv
-   ```
+  ```bash
+  python -m pip install --pre "azure-ai-voicelive[aiohttp]" azure-identity python-dotenv
+  ```
 
 2. **Install PyAudio** (required for audio samples):
 
    PyAudio requires PortAudio to be installed on your system:
 
    - **Linux (Ubuntu/Debian)**:
+
+  The interactive audio samples explicitly use `AudioEchoCancellation(reference_source="server",
+  channels=1)` by default. If your application captures stereo PCM16 input with the microphone on
+  channel 0 and an echo reference on channel 1, you can switch to `reference_source="client"` and
+  `channels=2`.
      ```bash
      sudo apt-get install -y portaudio19-dev libasound2-dev
      pip install pyaudio
@@ -39,7 +44,7 @@ This directory contains sample applications demonstrating various capabilities o
 
 3. **Configure environment variables**:
 
-  Create a `.env` file at the root of the azure-ai-voicelive directory or in the samples directory. By default, the samples use Entra ID via `DefaultAzureCredential`:
+  Create a `.env` file at the root of the azure-ai-voicelive directory or in the samples directory. By default, the samples use Entra ID via `DefaultAzureCredential`. For local development, run `az login` first if you want to use your Azure CLI session:
 
    ```ini
    AZURE_VOICELIVE_ENDPOINT=wss://api.voicelive.com/v1
@@ -116,9 +121,10 @@ python basic_voice_assistant_async.py --help
 
 ## Sample descriptions
 
-- **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Supports optional OpenTelemetry tracing via `--enable-tracing`. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
-- **agent_v2_sample.py**: Demonstrates how to connect to an Azure AI Foundry agent using flattened `connect()` keyword arguments. Shows the new pattern where agents are configured at connection time rather than as tools in the session. Features callback-based audio streaming, sequence number based interrupt handling, and standard logger output for conversation events.
+- **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Supports optional OpenTelemetry tracing via `--enable-tracing`, defaults to Entra ID auth, and writes logs to standard output instead of creating log files. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
+- **agent_v2_sample.py**: Demonstrates how to connect to an Azure AI Foundry agent using flattened `connect()` keyword arguments. Shows the new pattern where agents are configured at connection time rather than as tools in the session. Features callback-based audio streaming, sequence number based interrupt handling, standard logger output for conversation events, and defaults the agent connection to API version `2026-04-10`.
 - **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
+- **async_mcp_sample.py**: Demonstrates async MCP capabilities with Entra ID-first authentication and uses API version `2026-04-10` for MCP support.
 
 ### Telemetry samples
 
@@ -162,7 +168,7 @@ Set `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` to enable tracing.
   - Confirm your network allows WSS to the service
 
 - **Auth errors**
-  - By default: ensure `DefaultAzureCredential` can acquire a token and your identity has access to the resource
+  - By default: run `az login` or otherwise ensure `DefaultAzureCredential` can acquire a token and your identity has access to the resource
   - For API key auth: set `AZURE_VOICELIVE_USE_API_KEY=true` and confirm `AZURE_VOICELIVE_API_KEY`
 
 ## Next steps
