@@ -16,6 +16,7 @@ from threading import Lock
 from typing import Any, Callable, Dict, Optional, Tuple, TYPE_CHECKING, Union
 from urllib.parse import (
     parse_qsl,
+    unquote,
     urlencode,
     urlparse,
     urlunparse,
@@ -1042,23 +1043,26 @@ class StorageSessionPolicy(HTTPPolicy):
         http_request = request.http_request
         http_request.headers["x-ms-date"] = format_date_time(time())
 
-        # Lowercased non-empty headers; Storage omits content-length when it is "0".
-        headers = {
-            name.lower(): value
-            for name, value in http_request.headers.items()
-            if value and not (name.lower() == "content-length" and value == "0")
-        }
-        x_ms = _storage_header_sort(
+        # 1) Standard headers. Storage omits content-length when it is "0".
+        headers = {name.lower(): value for name, value in http_request.headers.items() if value}
+        if headers.get("content-length") == "0":
+            del headers["content-length"]
+        signed_headers = "\n".join(headers.get(h, "") for h in self._SIGNED_HEADERS) + "\n"
+
+        # 2) Canonicalized x-ms-* headers, sorted by the service-emulating comparator.
+        x_ms_headers = _storage_header_sort(
             [(n.lower(), v) for n, v in http_request.headers.items() if n.lower().startswith("x-ms-")]
         )
-        string_to_sign = "\n".join(
-            (
-                http_request.method,
-                *(headers.get(h, "") for h in self._SIGNED_HEADERS),
-                *(f"{n}:{v}" for n, v in x_ms if v is not None),
-                "/" + self._account_name + urlparse(http_request.url).path
-                + "".join(f"\n{n.lower()}:{v}" for n, v in sorted(http_request.query.items()) if v is not None),
-            )
+        canonicalized_headers = "".join(f"{n}:{v}\n" for n, v in x_ms_headers if v is not None)
+
+        # 3) Canonicalized resource + query (query values must be url-decoded).
+        canonicalized_resource = "/" + self._account_name + urlparse(http_request.url).path
+        canonicalized_resource += "".join(
+            f"\n{n.lower()}:{unquote(v)}" for n, v in sorted(http_request.query.items()) if v is not None
+        )
+
+        string_to_sign = (
+            http_request.method + "\n" + signed_headers + canonicalized_headers + canonicalized_resource
         )
 
         try:
@@ -1083,9 +1087,6 @@ class StorageSessionPolicy(HTTPPolicy):
         return True
 
     def _create_session(self, container_url: str) -> Tuple[str, str, datetime]:
-        # The factory returns a session-DISABLED generated client bound to the
-        # container URL; its pipeline uses OAuth/bearer, so this call authenticates
-        # without re-entering this policy.
         config = CreateSessionConfiguration(authentication_type="HMAC")
         client = self._session_client_factory(container_url)
         response = client.container.create_session(create_session_configuration=config)
