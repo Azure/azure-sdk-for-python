@@ -181,6 +181,21 @@ _REMOVED_NAMES: tuple[str, ...] = (
     "AGENTSERVER_DURABLE_TASKS_PATH",
     "_crash_harness",
     "EtagConflict",
+    # Spec 016 retired names (durable-task contract hardening) — these
+    # MUST NOT appear in the dev guide body after the spec 016 rewrite.
+    # See sdk/agentserver/specs/016-automatic-task-recovery/spec.md
+    # §Docs↔Samples Loop §Authoring sequence step 2.
+    "stale_timeout",
+    "superseded",
+    "is_superseded",
+    "_pending_steering_futures",
+    "lease will eventually expire",
+    "was_steered",
+    "pending_inputs",
+    "steering_generation",
+    "CancelSignal",
+    "TaskTerminated",
+    ".terminate(",
 )
 
 
@@ -374,4 +389,94 @@ def test_pre_consolidation_state_would_have_failed() -> None:
     assert "task" in missing or "TaskContext" in missing or "RetryPolicy" in missing, (
         "Regression check broken: coverage detector did not flag a missing "
         "real symbol on the synthetic bad guide."
+    )
+
+
+# --------------------------------------------------------------------- #
+# 7. Spec 016 — required new symbols/sections in the rewritten dev guide
+# --------------------------------------------------------------------- #
+
+# Symbols added by spec 016 (durable-task contract hardening) that MUST be
+# documented in the rewritten guide. See spec.md §Docs↔Samples Loop §Authoring
+# sequence step 2.
+_SPEC_016_REQUIRED_SYMBOLS: tuple[str, ...] = (
+    "ctx.timeout_exceeded",
+    "ctx.cancel_requested",
+    "ctx.pending_input_count",
+    "ctx.is_steered_turn",
+    "ctx.exit_for_recovery",
+)
+
+
+def test_spec_016_new_symbols_present_in_concepts_and_reference() -> None:
+    """Spec 016: the new TaskContext surface symbols MUST appear in both
+    §4 Concepts (Cancellation / Steering / Shutdown) AND §5 Reference."""
+
+    guide = _load_guide_text()
+    # Find the §4 Concepts heading and §5 Reference heading.
+    m_concepts = re.search(r"^##\s+(?:4\.\s+)?Concepts\b", guide, flags=re.MULTILINE | re.IGNORECASE)
+    m_reference = re.search(r"^##\s+(?:5\.\s+)?Reference\b", guide, flags=re.MULTILINE | re.IGNORECASE)
+    m_patterns = re.search(r"^##\s+(?:6\.\s+)?Patterns\b", guide, flags=re.MULTILINE | re.IGNORECASE)
+    assert m_concepts and m_reference and m_patterns, (
+        "Required sections §4 Concepts / §5 Reference / §6 Patterns not all present; "
+        "see test_required_sections_present_in_order for the canonical check."
+    )
+    concepts_body = guide[m_concepts.end():m_reference.start()]
+    reference_body = guide[m_reference.end():m_patterns.start()]
+
+    missing_in_concepts = [s for s in _SPEC_016_REQUIRED_SYMBOLS if s not in concepts_body]
+    missing_in_reference = [s for s in _SPEC_016_REQUIRED_SYMBOLS if s not in reference_body]
+    assert not missing_in_concepts, (
+        f"Spec 016 new symbols missing from §4 Concepts (Cancellation / Steering / "
+        f"Shutdown subsections): {missing_in_concepts}. The rewritten guide must "
+        f"document these where developers first encounter them."
+    )
+    assert not missing_in_reference, (
+        f"Spec 016 new symbols missing from §5 Reference: {missing_in_reference}. "
+        f"The reference section must enumerate every new TaskContext property and "
+        f"method introduced by spec 016."
+    )
+
+
+def test_spec_016_timeout_vocabulary_present() -> None:
+    """Spec 016: the @task(timeout=...) description MUST include the
+    canonical per-turn / wall-clock / durable semantics so handler authors
+    do not infer the legacy per-invocation / monotonic semantics. Per
+    spec.md FR-026 + §Docs↔Samples Loop §Authoring sequence step 2."""
+
+    guide = _load_guide_text().lower()
+    for vocab in ("per-turn", "wall-clock", "durable"):
+        assert vocab in guide, (
+            f"Spec 016 required timeout vocabulary missing: {vocab!r}. The "
+            f"@task(timeout=...) description must explicitly characterise the "
+            f"semantic as per-turn / wall-clock / durable so callers do not "
+            f"infer the legacy per-invocation behavior."
+        )
+
+
+def test_spec_016_cancellation_shutdown_subsections_present() -> None:
+    """Spec 016: §4 Concepts must contain dedicated Cancellation, Timeout,
+    and Shutdown subsections (each as an H3). Per plan.md §Phase C +
+    spec.md §Docs↔Samples Loop §Authoritative surfaces."""
+
+    guide = _load_guide_text()
+    m_concepts = re.search(r"^##\s+(?:4\.\s+)?Concepts\b", guide, flags=re.MULTILINE | re.IGNORECASE)
+    m_reference = re.search(r"^##\s+(?:5\.\s+)?Reference\b", guide, flags=re.MULTILINE | re.IGNORECASE)
+    assert m_concepts and m_reference, "§4 / §5 headings missing"
+    concepts_body = guide[m_concepts.end():m_reference.start()]
+
+    required_h3 = [
+        ("Cancellation", r"^###\s+.*Cancellation\b"),
+        ("Timeout", r"^###\s+.*Timeout\b"),
+        ("Shutdown", r"^###\s+.*Shutdown\b"),
+    ]
+    missing = [
+        name for name, pattern in required_h3
+        if re.search(pattern, concepts_body, flags=re.MULTILINE | re.IGNORECASE) is None
+    ]
+    assert not missing, (
+        f"Spec 016 required §4 subsections missing: {missing}. The rewritten "
+        f"guide must dedicate H3 subsections to each so the cancel-cause "
+        f"booleans, per-turn timeout, and exit_for_recovery shapes are "
+        f"discoverable in their natural locations."
     )
