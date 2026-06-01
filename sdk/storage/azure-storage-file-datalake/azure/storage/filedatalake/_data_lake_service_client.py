@@ -98,7 +98,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         account_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> None:
         parsed_url = _parse_url(account_url=account_url)
@@ -156,7 +156,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         conn_str: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> Self:
         """

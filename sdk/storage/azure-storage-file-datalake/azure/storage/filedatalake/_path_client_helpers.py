@@ -210,7 +210,7 @@ def _parse_rename_path(
             "TokenCredential",
             "AsyncTokenCredential",
         ]
-    ],  # pylint: disable=line-too-long
+    ],
 ) -> Tuple[str, str, Optional[str]]:
     new_name = new_name.strip("/")
     new_file_system = new_name.split("/")[0]

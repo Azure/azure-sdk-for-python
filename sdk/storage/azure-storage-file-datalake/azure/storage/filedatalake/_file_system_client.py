@@ -95,7 +95,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_system_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> None:
         if not file_system_name:
@@ -167,7 +167,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_system_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """

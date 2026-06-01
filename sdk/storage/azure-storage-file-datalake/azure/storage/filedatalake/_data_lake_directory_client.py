@@ -87,7 +87,7 @@ class DataLakeDirectoryClient(PathClient):
         directory_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> None:
         super(DataLakeDirectoryClient, self).__init__(
@@ -102,7 +102,7 @@ class DataLakeDirectoryClient(PathClient):
         directory_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """
