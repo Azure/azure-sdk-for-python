@@ -23,6 +23,7 @@ USAGE:
 from urllib.parse import urlparse
 
 
+# [START sample_get_job_state]
 def sample_get_job_state() -> None:
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -80,6 +81,9 @@ def sample_get_job_state() -> None:
 
         print(f"Job ID: {response['jobId']}")
         print(f"Status: {response['status']}")
+
+
+# [END sample_get_job_state]
 
 
 if __name__ == "__main__":

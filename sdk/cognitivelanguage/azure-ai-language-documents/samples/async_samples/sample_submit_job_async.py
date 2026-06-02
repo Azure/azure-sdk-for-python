@@ -20,6 +20,7 @@ USAGE:
     4) AZURE_LANGUAGE_DOCUMENTS_TARGET_LOCATION - the output location.
 """
 
+# [START sample_submit_job_async]
 import asyncio
 
 
@@ -67,8 +68,10 @@ async def sample_submit_job() -> None:
             polling=False,
         )
 
-        print(f"Continuation token: {poller.continuation_token()}")
         print(f"Initial poller status: {poller.status()}")
+
+
+# [END sample_submit_job_async]
 
 
 async def main():

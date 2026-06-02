@@ -23,6 +23,7 @@ USAGE:
 from urllib.parse import urlparse
 
 
+# [START sample_cancel_job]
 def sample_cancel_job() -> None:
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -84,6 +85,9 @@ def sample_cancel_job() -> None:
         print(f"Cancel operation status: {cancel_poller.status()}")
         print(f"Job ID: {response['jobId']}")
         print(f"Job status: {response['status']}")
+
+
+# [END sample_cancel_job]
 
 
 if __name__ == "__main__":

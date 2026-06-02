@@ -7,7 +7,7 @@ Azure AI Language Documents lets you submit documents stored in Azure Blob Stora
 | [Package (Conda)](https://anaconda.org/microsoft/azure-ai-language-documents/)
 | <!-- [API reference][documents_refdocs] -->
 | [Product documentation][documents_docs]
-| <!-- [Samples][documents_samples] -->
+| [Samples][documents_samples]
 | [Documents REST API][documents_rest_docs]
 
 > _Python 2.7 is not supported. For details see the Azure SDK for Python end-of-support notice._
@@ -73,44 +73,39 @@ client = AnalyzeDocumentsClient(endpoint, credential)
 
 ### `AnalyzeDocumentsClient`
 
-[`AnalyzeDocumentsClient`][documents_client_class] is the primary interface for submitting document analysis jobs, checking job status, and cancelling submitted jobs.
+`AnalyzeDocumentsClient` is the primary interface for:
 
-For asynchronous operations, an async `AnalyzeDocumentsClient` is available in the `azure.ai.language.documents.aio` namespace.
+- submitting long-running document analysis jobs with `begin_submit_job`
+- checking job status with `get_job_state`
+- cancelling jobs with `begin_cancel_job`
 
-### Input and task model relationships
+For asynchronous operations, use `AnalyzeDocumentsClient` from the `azure.ai.language.documents.aio` namespace.
 
-The request body for job submission is built from these models:
+### Input models
 
-* `AnalyzeDocumentJobsInput` – top-level job definition
-* `MultiLanguageAnalysisInput` – collection of documents to analyze
-* `MultiLanguageInput` – one input document, including:
-  * `source` – input document location
-  * `target` – output location
-* `DocumentLocation` subtypes – storage-backed document locations:
-  * `AzureBlobDocumentLocation`
-  * `AzureContainerDocumentLocation`
-  * `AzureContainerFolderDocumentLocation`
-* `AnalyzeDocumentsLROTask` subtypes – tasks to run for the job, such as:
-  * `PiiLROTask`
+The request body for job submission can be passed either as:
 
-PII task configuration is provided through `PiiTaskParameters`, including optional `redaction_policies`.
+- an `AnalyzeDocumentsJob` model
+- a JSON-compatible `dict`
 
-### Results model relationships
+Common related models include:
 
-`analyze_documents_job_status` returns `AnalyzeDocumentsJobState`, which contains:
+- `AnalyzeDocumentsJob`
+- `MultiLanguageAnalysisInput`
+- `MultiLanguageInput`
+- `AzureBlobDocumentLocation`
+- `AzureContainerDocumentLocation`
+- `AzureContainerFolderDocumentLocation`
+- `PiiEntityRecognitionAction`
+- `PiiTaskParameters`
 
-* overall job metadata and status
-* `tasks`, a `Tasks` object
-* `tasks.items_property`, which contains per-task results such as:
-  * `PiiEntityRecognitionLROResult`
-  * `AbstractiveSummarizationLROResult`
+### Job state
 
-Each task result contains an `AnalyzeDocumentsResult`, which exposes:
+`get_job_state` returns an `AnalyzeDocumentsJobState`, which contains:
 
-* `documents`
-* `errors`
-* `statistics`
-* `model_version`
+- job metadata
+- overall job status
+- task summary details
 
 ## Examples
 
@@ -118,241 +113,276 @@ Each task result contains an `AnalyzeDocumentsResult`, which exposes:
 
 The `azure-ai-language-documents` client library provides both synchronous and asynchronous APIs.
 
-* [Submit a job (model objects)](#submit-a-job-model-objects)
-* [Submit a job (JSON body)](#submit-a-job-json-body)
-* [Get job status and results](#get-job-status-and-results)
-* [Cancel a job](#cancel-a-job)
-* [Async usage](#async-usage)
+- [Submit a job](#submit-a-job)
+- [Get job state](#get-job-state)
+- [Cancel a job](#cancel-a-job)
+- [Async usage](#async-usage)
+- [Samples](#samples)
 
-#### Submit a job (model objects)
+#### Submit a job
 
 This example submits a PII analysis job using strongly typed model objects:
 
-```python
-
-import os
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.language.documents import AnalyzeDocumentsClient
-from azure.ai.language.documents.models import (
-    AnalyzeDocumentJobsInput,
-    MultiLanguageAnalysisInput,
-    MultiLanguageInput,
-    AzureBlobDocumentLocation,
-    AzureContainerFolderDocumentLocation,
-    PiiLROTask,
-    PiiTaskParameters,
-    CharacterMaskPolicy,
-)
-
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-client = AnalyzeDocumentsClient(endpoint, DefaultAzureCredential())
-
-job = AnalyzeDocumentJobsInput(
-    display_name="sample-documents-job",
-    analysis_input=MultiLanguageAnalysisInput(
-        documents=[
-            MultiLanguageInput(
-                id="1",
-                source=AzureBlobDocumentLocation(
-                    location="https://<storage-account>.blob.core.windows.net/input/invoice-1.txt"
-                ),
-                target=AzureContainerFolderDocumentLocation(
-                    location="https://<storage-account>.blob.core.windows.net/output/pii-results/"
-                ),
-                language="en",
-            )
-        ]
-    ),
-    tasks=[
-        PiiLROTask(
-            task_name="pii-redaction",
-            parameters=PiiTaskParameters(
-                redaction_policies=[
-                    CharacterMaskPolicy(is_default=True)
-                ]
-            ),
-        )
-    ],
-    default_language="en",
-)
-
-poller = client.begin_analyze_documents_submit_job(job)
-poller.result()
-
-print(f"Job completed with status: {poller.status()}")
-```
-
-#### Submit a job (JSON body)
-
-You can also submit the request as a JSON-compatible dictionary:
+<!-- SNIPPET:sample_submit_job.sample_submit_job -->
 
 ```python
-import os
+def sample_submit_job() -> None:
+    import os
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.language.documents import AnalyzeDocumentsClient
 
-from azure.identity import DefaultAzureCredential
-from azure.ai.language.documents import AnalyzeDocumentsClient
+    endpoint = os.environ["AZURE_LANGUAGE_DOCUMENTS_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
+    source_location = os.environ["AZURE_LANGUAGE_DOCUMENTS_SOURCE_LOCATION"]
+    target_location = os.environ["AZURE_LANGUAGE_DOCUMENTS_TARGET_LOCATION"]
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-client = AnalyzeDocumentsClient(endpoint, DefaultAzureCredential())
+    client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-body = {
-    "displayName": "sample-documents-job",
-    "analysisInput": {
-        "documents": [
-            {
-                "id": "1",
-                "source": {
-                    "kind": "AzureBlob",
-                    "location": "https://<storage-account>.blob.core.windows.net/input/invoice-1.txt",
+    with client:
+        poller = client.begin_submit_job(
+            body={
+                "displayName": "Document Analysis Sample",
+                "analysisInput": {
+                    "documents": [
+                        {
+                            "language": "en",
+                            "id": "1",
+                            "source": {"location": source_location},
+                            "target": {"location": target_location},
+                        }
+                    ]
                 },
-                "target": {
-                    "kind": "AzureContainerFolder",
-                    "location": "https://<storage-account>.blob.core.windows.net/output/pii-results/",
-                },
-                "language": "en",
-            }
-        ]
-    },
-    "tasks": [
-        {
-            "kind": "PiiEntityRecognition",
-            "taskName": "pii-redaction",
-            "parameters": {
-                "redactionPolicies": [
+                "tasks": [
                     {
-                        "policyKind": "characterMask",
-                        "isDefault": True,
+                        "kind": "PiiEntityRecognition",
+                        "parameters": {
+                            "redactionPolicies": [
+                                {
+                                    "policyName": "defaultPolicy",
+                                    "policyKind": "EntityMask",
+                                    "isDefault": True,
+                                }
+                            ]
+                        },
                     }
-                ]
+                ],
             },
-        }
-    ],
-    "defaultLanguage": "en",
-}
+            polling=False,
+        )
 
-poller = client.begin_analyze_documents_submit_job(body)
-poller.result()
-
-print(f"Job completed with status: {poller.status()}")
+        print(f"Initial poller status: {poller.status()}")
 ```
 
-#### Get job status and results
+<!-- END SNIPPET -->
 
-If you have a job ID, use `analyze_documents_job_status` to retrieve the full job state and task results:
+#### Get job state
+
+Use `get_job_state` to retrieve the current state of a submitted job:
+
+<!-- SNIPPET:sample_get_job_state.sample_get_job_state -->
 
 ```python
-from azure.core.exceptions import HttpResponseError
+def sample_get_job_state() -> None:
+    import os
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.language.documents import AnalyzeDocumentsClient
 
-job_id = "<job-id>"
+    endpoint = os.environ["AZURE_LANGUAGE_DOCUMENTS_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
+    source_location = os.environ["AZURE_LANGUAGE_DOCUMENTS_SOURCE_LOCATION"]
+    target_location = os.environ["AZURE_LANGUAGE_DOCUMENTS_TARGET_LOCATION"]
 
-try:
-    job_state = client.analyze_documents_job_status(job_id, show_stats=True)
+    client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    print(f"Job ID: {job_state.job_id}")
-    print(f"Status: {job_state.status}")
-    print(f"Created: {job_state.created_date_time}")
-    print(f"Updated: {job_state.last_updated_date_time}")
+    operation_location = {}
 
-    if job_state.statistics:
-        print(f"Documents: {job_state.statistics.documents_count}")
-        print(f"Transactions: {job_state.statistics.transactions_count}")
+    def raw_response_hook(response):
+        operation_location["value"] = response.http_response.headers.get("Operation-Location")
 
-    for task in job_state.tasks.items_property or []:
-        print(f"Task kind: {task.kind}")
-        print(f"Task status: {task.status}")
+    with client:
+        client.begin_submit_job(
+            body={
+                "displayName": "Document Analysis Sample",
+                "analysisInput": {
+                    "documents": [
+                        {
+                            "language": "en",
+                            "id": "1",
+                            "source": {"location": source_location},
+                            "target": {"location": target_location},
+                        }
+                    ]
+                },
+                "tasks": [
+                    {
+                        "kind": "PiiEntityRecognition",
+                        "parameters": {
+                            "redactionPolicies": [
+                                {
+                                    "policyName": "defaultPolicy",
+                                    "policyKind": "EntityMask",
+                                    "isDefault": True,
+                                }
+                            ]
+                        },
+                    }
+                ],
+            },
+            raw_response_hook=raw_response_hook,
+            polling=False,
+        )
 
-        if hasattr(task, "results"):
-            print(f"Model version: {task.results.model_version}")
-            for document in task.results.documents:
-                print(f"Document ID: {document.id}")
-                print(f"Source: {document.source.location}")
-                for target in document.target:
-                    print(f"Target: {target.location}")
+        parsed = urlparse(operation_location["value"])
+        job_id = parsed.path.rstrip("/").split("/")[-1]
 
-except HttpResponseError as error:
-    print(f"Request failed: {error.message}")
+        response = client.get_job_state(job_id=job_id)
+
+        print(f"Job ID: {response['jobId']}")
+        print(f"Status: {response['status']}")
 ```
+
+<!-- END SNIPPET -->
 
 #### Cancel a job
 
-If you need to cancel a submitted job, use `begin_analyze_documents_cancel_job`:
+If you need to cancel a submitted job, use `begin_cancel_job`:
+
+<!-- SNIPPET:sample_cancel_job.sample_cancel_job -->
 
 ```python
+def sample_cancel_job() -> None:
+    import os
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.language.documents import AnalyzeDocumentsClient
 
-job_id = "<job-id>"
+    endpoint = os.environ["AZURE_LANGUAGE_DOCUMENTS_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
+    source_location = os.environ["AZURE_LANGUAGE_DOCUMENTS_SOURCE_LOCATION"]
+    target_location = os.environ["AZURE_LANGUAGE_DOCUMENTS_TARGET_LOCATION"]
 
-cancel_poller = client.begin_analyze_documents_cancel_job(job_id)
-cancel_poller.result()
+    client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-print(f"Cancellation request completed with status: {cancel_poller.status()}")
+    operation_location = {}
 
+    def raw_response_hook(response):
+        operation_location["value"] = response.http_response.headers.get("Operation-Location")
+
+    with client:
+        client.begin_submit_job(
+            body={
+                "displayName": "Document Analysis Sample",
+                "analysisInput": {
+                    "documents": [
+                        {
+                            "language": "en",
+                            "id": "1",
+                            "source": {"location": source_location},
+                            "target": {"location": target_location},
+                        }
+                    ]
+                },
+                "tasks": [
+                    {
+                        "kind": "PiiEntityRecognition",
+                        "parameters": {
+                            "redactionPolicies": [
+                                {
+                                    "policyName": "defaultPolicy",
+                                    "policyKind": "EntityMask",
+                                    "isDefault": True,
+                                }
+                            ]
+                        },
+                    }
+                ],
+            },
+            raw_response_hook=raw_response_hook,
+            polling=False,
+        )
+
+        parsed = urlparse(operation_location["value"])
+        job_id = parsed.path.rstrip("/").split("/")[-1]
+
+        cancel_poller = client.begin_cancel_job(job_id=job_id)
+        cancel_poller.result()
+
+        response = client.get_job_state(job_id=job_id)
+
+        print(f"Cancel operation status: {cancel_poller.status()}")
+        print(f"Job ID: {response['jobId']}")
+        print(f"Job status: {response['status']}")
 ```
+
+<!-- END SNIPPET -->
 
 #### Async usage
 
 The same patterns are available with the async client in `azure.ai.language.documents.aio`:
 
-```python
+<!-- SNIPPET:sample_submit_job_async.sample_submit_job_async -->
 
-import os
+```python
 import asyncio
 
-from azure.identity.aio import DefaultAzureCredential
-from azure.ai.language.documents.aio import AnalyzeDocumentsClient
-from azure.ai.language.documents.models import (
-    AnalyzeDocumentJobsInput,
-    MultiLanguageAnalysisInput,
-    MultiLanguageInput,
-    AzureBlobDocumentLocation,
-    AzureContainerFolderDocumentLocation,
-    PiiLROTask,
-)
 
+async def sample_submit_job() -> None:
+    import os
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.language.documents.aio import AnalyzeDocumentsClient
 
-async def main():
-    credential = DefaultAzureCredential()
-    client = AnalyzeDocumentsClient(
-        os.environ["AZURE_LANGUAGE_ENDPOINT"],
-        credential,
-    )
+    endpoint = os.environ["AZURE_LANGUAGE_DOCUMENTS_ENDPOINT"]
+    key = os.environ["AZURE_LANGUAGE_KEY"]
+    source_location = os.environ["AZURE_LANGUAGE_DOCUMENTS_SOURCE_LOCATION"]
+    target_location = os.environ["AZURE_LANGUAGE_DOCUMENTS_TARGET_LOCATION"]
 
-    try:
-        job = AnalyzeDocumentJobsInput(
-            display_name="async-documents-job",
-            analysis_input=MultiLanguageAnalysisInput(
-                documents=[
-                    MultiLanguageInput(
-                        id="1",
-                        source=AzureBlobDocumentLocation(
-                            location="https://<storage-account>.blob.core.windows.net/input/invoice-1.txt"
-                        ),
-                        target=AzureContainerFolderDocumentLocation(
-                            location="https://<storage-account>.blob.core.windows.net/output/pii-results/"
-                        ),
-                        language="en",
-                    )
-                ]
-            ),
-            tasks=[
-                PiiLROTask(task_name="pii-analysis")
-            ],
-            default_language="en",
+    client = AnalyzeDocumentsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+    async with client:
+        poller = await client.begin_submit_job(
+            body={
+                "displayName": "Document Analysis Sample",
+                "analysisInput": {
+                    "documents": [
+                        {
+                            "language": "en",
+                            "id": "1",
+                            "source": {"location": source_location},
+                            "target": {"location": target_location},
+                        }
+                    ]
+                },
+                "tasks": [
+                    {
+                        "kind": "PiiEntityRecognition",
+                        "parameters": {
+                            "redactionPolicies": [
+                                {
+                                    "policyName": "defaultPolicy",
+                                    "policyKind": "EntityMask",
+                                    "isDefault": True,
+                                }
+                            ]
+                        },
+                    }
+                ],
+            },
+            polling=False,
         )
 
-        poller = await client.begin_analyze_documents_submit_job(job)
-        await poller.result()
-
-        print(f"Job completed with status: {poller.status()}")
-
-    finally:
-        await client.close()
-        await credential.close()
-
-
-asyncio.run(main())
-
+        print(f"Initial poller status: {poller.status()}")
 ```
+
+<!-- END SNIPPET -->
+
+## Samples
+
+The following samples are available in this package:
+
+|**File Name**|**Description**|
+|----------------|-------------|
+|[sample_submit_job.py][sample_submit_job] and [sample_submit_job_async.py][sample_submit_job_async]|Submit an analyze documents job|
+|[sample_get_job_state.py][sample_get_job_state] and [sample_get_job_state_async.py][sample_get_job_state_async]|Submit a job and retrieve its job state|
+|[sample_cancel_job.py][sample_cancel_job] and [sample_cancel_job_async.py][sample_cancel_job_async]|Submit a job and cancel it|
 
 ## Optional configuration
 
@@ -393,7 +423,7 @@ See the full SDK logging documentation in the [logging guidance][sdk_logging_doc
 
 This library supports both:
 
-* **Strongly typed model inputs** via `AnalyzeDocumentJobsInput`
+* **Strongly typed model inputs** via `AnalyzeDocumentsJob`
 * **JSON-compatible dictionary inputs** for direct request construction
 
 The typed-model approach is recommended for clarity, static analysis, and discoverability.
@@ -428,14 +458,20 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_ref_docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]: https://pypi.org/project/pip/
-<!-- [documents_client_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-documents/latest/azure.ai.language.documents.html#azure.ai.language.documents.AnalyzeDocumentsClient -->
+[documents_client_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-documents/latest/azure.ai.language.documents.html#azure.ai.language.documents.AnalyzeDocumentsClient
 [documents_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/
 [documents_docs]: https://learn.microsoft.com/azure/ai-services/language-service/
 [documents_pypi_package]: https://pypi.org/project/azure-ai-language-documents/
-<!-- [documents_refdocs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-documents/latest/azure.ai.language.documents.html -->
-<!-- [documents_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/ -->
+[documents_refdocs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-documents/latest/azure.ai.language.documents.html
 [documents_rest_docs]: https://learn.microsoft.com/rest/api/language/
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#install-the-package
 [register_aad_app]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[documents_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/
+[sample_submit_job]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/sample_submit_job.py
+[sample_submit_job_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/async_samples/sample_submit_job_async.py
+[sample_get_job_state]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/sample_get_job_state.py
+[sample_get_job_state_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/async_samples/sample_get_job_state_async.py
+[sample_cancel_job]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/sample_cancel_job.py
+[sample_cancel_job_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/async_samples/sample_cancel_job_async.py

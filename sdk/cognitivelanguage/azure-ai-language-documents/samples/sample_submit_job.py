@@ -21,6 +21,7 @@ USAGE:
 """
 
 
+# [START sample_submit_job]
 def sample_submit_job() -> None:
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -65,8 +66,10 @@ def sample_submit_job() -> None:
             polling=False,
         )
 
-        print(f"Continuation token: {poller.continuation_token()}")
         print(f"Initial poller status: {poller.status()}")
+
+
+# [END sample_submit_job]
 
 
 if __name__ == "__main__":
