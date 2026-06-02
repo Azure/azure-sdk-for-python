@@ -24,10 +24,6 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     flush_spans,
 )
-from azure.ai.agentserver.core.durable import (
-    LastInputIdPreconditionFailed,
-    TaskConflictError,
-)
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     CHAT_ISOLATION_KEY,
     CLIENT_HEADER_PREFIX,
@@ -45,13 +41,7 @@ from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
-from ..models.runtime import (
-    CancellationReason,
-    ResponseExecution,
-    ResponseModeFlags,
-    build_cancelled_response,
-    build_failed_response,
-)
+from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
 from ..streaming._helpers import _encode_sse
@@ -339,68 +329,23 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     # Streaming response helpers
     # ------------------------------------------------------------------
 
-    async def _monitor_disconnect(
-        self,
-        request: Request,
-        cancellation_signal: asyncio.Event,
-        *,
-        context: "ResponseContext | None" = None,
-    ) -> None:
-        """Poll for client disconnect or server shutdown and set cancellation signal.
+    async def _monitor_disconnect(self, request: Request, cancellation_signal: asyncio.Event) -> None:
+        """Poll for client disconnect and set cancellation signal.
 
-        Used for non-background requests so that handler cancellation is
-        triggered when the client drops the connection (spec requirement B17)
-        or when the server is shutting down.
-
-        Client disconnect on a foreground request is treated as an explicit
-        cancellation (CLIENT_CANCELLED) since the client abandoned the request.
+        Used for non-background streaming requests so that handler
+        cancellation is triggered when the client drops the connection
+        (spec requirement B17).
 
         :param request: The Starlette request to monitor.
         :type request: Request
         :param cancellation_signal: Event to set when disconnect is detected.
         :type cancellation_signal: asyncio.Event
-        :param context: Optional response context to stamp cancellation reason.
-        :type context: ResponseContext | None
         """
-        # Create a task that resolves when _shutdown_requested fires.
-        # This avoids relying on the 0.5s poll interval for shutdown detection.
-        shutdown_waiter = asyncio.create_task(self._shutdown_requested.wait())
-        try:
-            while not cancellation_signal.is_set():
-                if self._shutdown_requested.is_set():
-                    if context is not None and context.cancellation_reason is None:
-                        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-                    cancellation_signal.set()
-                    return
-                if await request.is_disconnected():
-                    # Client disconnect on foreground. If shutdown is also
-                    # in progress, prefer SHUTTING_DOWN — the disconnect
-                    # is a side effect of server shutdown (Hypercorn
-                    # closing connections during graceful drain), not an
-                    # independent client action. (Spec 014 Row 3 Path B.)
-                    if context is not None and context.cancellation_reason is None:
-                        if self._shutdown_requested.is_set():
-                            context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-                        else:
-                            context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
-                    cancellation_signal.set()
-                    return
-                # Race: either shutdown fires or we poll again for disconnect
-                poll_task = asyncio.create_task(asyncio.sleep(0.5))
-                done, _ = await asyncio.wait(
-                    {shutdown_waiter, poll_task},
-                    return_when=asyncio.FIRST_COMPLETED,
-                )
-                if poll_task not in done:
-                    poll_task.cancel()
-                if shutdown_waiter in done:
-                    if context is not None and context.cancellation_reason is None:
-                        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-                    cancellation_signal.set()
-                    return
-        finally:
-            if not shutdown_waiter.done():
-                shutdown_waiter.cancel()
+        while not cancellation_signal.is_set():
+            if await request.is_disconnected():
+                cancellation_signal.set()
+                return
+            await asyncio.sleep(0.5)
 
     # ------------------------------------------------------------------
     # ResponseContext factory
@@ -519,8 +464,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             ),
             prefetched_history_ids=ctx.prefetched_history_ids,
         )
-        if self._shutdown_requested.is_set():
-            context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+        context.is_shutdown_requested = self._shutdown_requested.is_set()
         return context
 
     async def _prefetch_history_ids(
@@ -721,7 +665,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # B17: monitor client disconnect for non-background streams
                 if not ctx.background:
                     disconnect_task = asyncio.create_task(
-                        self._monitor_disconnect(request, ctx.cancellation_signal, context=ctx.context)
+                        self._monitor_disconnect(request, ctx.cancellation_signal)
                     )
                     raw_iter = body_iter
 
@@ -729,22 +673,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         try:
                             async for chunk in raw_iter:
                                 yield chunk
-                        except (asyncio.CancelledError, GeneratorExit):
-                            # B17: Hypercorn cancels the generator when client
-                            # disconnects. Stamp CLIENT_CANCELLED and signal
-                            # the handler to exit gracefully — UNLESS the
-                            # server is shutting down, in which case the
-                            # cancellation is a side effect of server
-                            # shutdown and SHUTTING_DOWN is the correct
-                            # reason (Spec 014 Row 3 Path B).
-                            if not ctx.cancellation_signal.is_set():
-                                if ctx.context and ctx.context.cancellation_reason is None:
-                                    if self._shutdown_requested.is_set():
-                                        ctx.context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-                                    else:
-                                        ctx.context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
-                                ctx.cancellation_signal.set()
-                            raise
                         finally:
                             if disconnect_task and not disconnect_task.done():
                                 disconnect_task.cancel()
@@ -759,9 +687,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return sse_response
 
             if not ctx.background:
-                disconnect_task = asyncio.create_task(
-                    self._monitor_disconnect(request, ctx.cancellation_signal, context=ctx.context)
-                )
+                disconnect_task = asyncio.create_task(self._monitor_disconnect(request, ctx.cancellation_signal))
                 try:
                     snapshot = await self._orchestrator.run_sync(ctx)
                     logger.info(
@@ -803,45 +729,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 snapshot.get("status"),
             )
             return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
-        except LastInputIdPreconditionFailed as exc:
-            # (Spec 013 US2) Steerable conversations enforce sequential
-            # `previous_response_id` (no forks). Surface as a succinct
-            # client-facing error.
-            logger.info(
-                "Conversation fork rejected for %s: expected previous=%r, actual=%r",
-                ctx.response_id,
-                exc.expected_last_input_id,
-                exc.actual_last_input_id,
-            )
-            err_body = {
-                "error": {
-                    "message": (
-                        "This agent does not support conversation forking. "
-                        "previous_response_id must reference the most recent "
-                        "response in the conversation."
-                    ),
-                    "type": "conflict",
-                    "code": "conversation_fork_not_supported",
-                    "param": "previous_response_id",
-                }
-            }
-            return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
-        except TaskConflictError as exc:
-            logger.info(
-                "Conversation lock conflict for %s: task %s is %s",
-                ctx.response_id,
-                exc.task_id,
-                exc.current_status,
-            )
-            err_body = {
-                "error": {
-                    "message": f"Conversation is locked — task '{exc.task_id}' is {exc.current_status}",
-                    "type": "conflict",
-                    "code": "conversation_locked",
-                    "param": None,
-                }
-            }
-            return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
         except _HandlerError as exc:
             logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
             # Handler errors are server-side faults, not client errors
@@ -1389,8 +1276,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # B11: initiate cancellation winddown
         record.cancel_requested = True
-        if record.response_context is not None and record.response_context.cancellation_reason is None:
-            record.response_context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
         record.cancel_signal.set()
 
         # Wait for handler task to finish (up to 10s grace period).
@@ -1579,37 +1464,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         Signals all active responses to cancel and waits for in-flight
         background executions to complete within the configured grace period.
 
-        Shutdown behaviour depends on the response mode:
-
-        - **durable=True, background=True** (``store=True`` with
-          ``durable_background=True`` server option): The response is left in
-          whatever state the handler left it.  On restart the durable task
-          framework will re-enter the handler to resume work.
-        - **durable=True, background=False** (``store=True`` but foreground):
-          Best-effort mark as ``failed`` after the grace period expires.  If
-          that did not succeed, restart re-entry marks it failed.  The handler
-          is never re-entered.
-        - **store=False** (non-durable): Best-effort mark as ``failed`` after
-          the grace period (and return the same to the client if still
-          connected).
-
         :return: None
         :rtype: None
         """
         self._is_draining = True
         self._shutdown_requested.set()
 
-        is_durable_server = self._runtime_options.durable_background
-
         records = await self._runtime_state.list_records()
         for record in records:
             if record.response_context is not None:
-                if record.response_context.cancellation_reason is None:
-                    record.response_context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                record.response_context.is_shutdown_requested = True
 
             record.cancel_signal.set()
 
-        # Wait for the grace period — give handlers time to checkpoint and exit.
+            if record.mode_flags.background and record.status in {"queued", "in_progress"}:
+                record.set_response_snapshot(
+                    build_failed_response(record.response_id, record.agent_reference, record.model)
+                )
+                record.transition_to("failed")
+
         deadline = asyncio.get_running_loop().time() + float(self._runtime_options.shutdown_grace_period_seconds)
         while True:
             pending = [
@@ -1624,53 +1497,3 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if asyncio.get_running_loop().time() >= deadline:
                 break
             await asyncio.sleep(0.05)
-
-        # After grace period: mark non-durable-background responses as failed.
-        # Durable+background responses are left as-is — the durable task
-        # framework will re-invoke the handler on restart.
-        for record in records:
-            if record.status not in {"queued", "in_progress"}:
-                continue
-            is_durable_background = (
-                is_durable_server and record.mode_flags.store and record.mode_flags.background
-            )
-            if is_durable_background:
-                # Leave in current state — will be re-entered on restart.
-                continue
-            # Non-durable or foreground: best-effort mark failed.
-            failed_payload = build_failed_response(
-                record.response_id, record.agent_reference, record.model
-            )
-            record.set_response_snapshot(failed_payload)
-            record.transition_to("failed")
-
-            # (Spec 014 FR-005b — close divergence 5) Persist the failed
-            # terminal to the response store before subprocess exit. Without
-            # this the response store still shows ``status="in_progress"``
-            # on next-lifetime GET, even though the in-memory record was
-            # marked failed. Only attempt for store=True responses (the
-            # store-disabled / ephemeral row 4 case has no store to persist
-            # to). Best-effort — log warning on failure rather than blocking
-            # shutdown.
-            if (
-                record.mode_flags.store
-                and self._provider is not None
-            ):
-                try:
-                    from ..models._generated import (  # pylint: disable=import-outside-toplevel
-                        ResponseObject,
-                    )
-
-                    isolation = None
-                    if record.response_context is not None:
-                        isolation = getattr(record.response_context, "isolation", None)
-                    await self._provider.update_response(
-                        ResponseObject(failed_payload), isolation=isolation
-                    )
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    logger.warning(
-                        "Failed to persist Path-B failed terminal for %s during "
-                        "shutdown: %s",
-                        record.response_id,
-                        exc,
-                    )

@@ -360,13 +360,7 @@ async def test_hosting__shutdown_signals_inflight_background_execution() -> None
 
     finally:
         shutdown_event.set()  # ensure shutdown in case of test failure
-        try:
-            await asyncio.wait_for(server_task, timeout=30.0)
-        except Exception:
-            # Hypercorn's connection-drain on shutdown can extend the
-            # server task lifetime; surface but don't fail the test, which
-            # is checking handler-side cancellation behavior above.
-            pass
+        await asyncio.wait_for(server_task, timeout=10.0)
 
 
 def test_hosting__client_headers_keys_are_normalized_to_lowercase() -> None:

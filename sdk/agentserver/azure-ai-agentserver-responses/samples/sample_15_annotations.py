@@ -41,11 +41,7 @@ async def annotations_handler(request: CreateResponse, context: ResponseContext)
     annotations = [
         FilePath(file_id="/reports/monthly-summary.pdf", index=0),
         FilePath(file_id="/exports/data.csv", index=1),
-        FileCitationBody(
-            file_id="/sources/research-paper.pdf",
-            index=2,
-            filename="research-paper.pdf",
-        ),
+        FileCitationBody(file_id="/sources/research-paper.pdf", index=2, filename="research-paper.pdf"),
         UrlCitationBody(
             url="https://example.com/docs/guide",
             start_index=0,

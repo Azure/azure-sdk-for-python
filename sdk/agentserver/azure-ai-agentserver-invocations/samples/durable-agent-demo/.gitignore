@@ -1,6 +1,0 @@
-# azd environment
-.azure/*/state/
-.azure/*/*.env.bak
-
-# Demo client runtime
-.demo-session

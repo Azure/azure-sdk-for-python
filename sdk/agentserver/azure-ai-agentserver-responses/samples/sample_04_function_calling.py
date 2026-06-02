@@ -81,16 +81,12 @@ async def handler(
 
     if tool_output is not None:
         # Turn 2: we have the tool result — produce a final text message.
-        async for event in stream.aoutput_item_message(
-            f"The weather is: {tool_output}"
-        ):
+        async for event in stream.aoutput_item_message(f"The weather is: {tool_output}"):
             yield event
     else:
         # Turn 1: ask the client to call get_weather.
         arguments = json.dumps({"location": "Seattle", "unit": "fahrenheit"})
-        async for event in stream.aoutput_item_function_call(
-            "get_weather", "call_weather_1", arguments
-        ):
+        async for event in stream.aoutput_item_function_call("get_weather", "call_weather_1", arguments):
             yield event
 
     yield stream.emit_completed()
@@ -130,9 +126,7 @@ async def handler_builder(
     else:
         # Turn 1: emit a function call for "get_weather".
         arguments = json.dumps({"location": "Seattle", "unit": "fahrenheit"})
-        fc = stream.add_output_item_function_call(
-            name="get_weather", call_id="call_weather_1"
-        )
+        fc = stream.add_output_item_function_call(name="get_weather", call_id="call_weather_1")
         yield fc.emit_added()
         yield fc.emit_arguments_delta(arguments)
         yield fc.emit_arguments_done(arguments)

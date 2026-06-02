@@ -53,15 +53,8 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     TextResponse,
 )
-from azure.ai.agentserver.responses._data_url import (
-    get_media_type,
-    is_data_url,
-    try_decode_bytes,
-)
-from azure.ai.agentserver.responses.models import (
-    ItemMessage,
-    MessageContentInputImageContent,
-)
+from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
+from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputImageContent
 
 app = ResponsesAgentServerHost()
 
@@ -85,14 +78,8 @@ async def url_handler(request: CreateResponse, context: ResponseContext):
     items = await context.get_input_items()
     images = _extract_images(items)
 
-    urls = [
-        img.image_url
-        for img in images
-        if img.image_url and not is_data_url(img.image_url)
-    ]
-    return TextResponse(
-        context, request, text=f"Received {len(urls)} image URL(s): {', '.join(urls)}"
-    )
+    urls = [img.image_url for img in images if img.image_url and not is_data_url(img.image_url)]
+    return TextResponse(context, request, text=f"Received {len(urls)} image URL(s): {', '.join(urls)}")
 
 
 # ── Handler 2: Base64 data URL ──────────────────────────────────────────
@@ -109,9 +96,7 @@ async def base64_handler(request: CreateResponse, context: ResponseContext):
             media = get_media_type(img.image_url)
             size = len(raw) if raw else 0
             results.append(f"{media or 'unknown'} ({size} bytes)")
-    return TextResponse(
-        context, request, text=f"Decoded {len(results)} image(s): {'; '.join(results)}"
-    )
+    return TextResponse(context, request, text=f"Decoded {len(results)} image(s): {'; '.join(results)}")
 
 
 # ── Handler 3: File ID ──────────────────────────────────────────────────
@@ -122,11 +107,7 @@ async def file_id_handler(request: CreateResponse, context: ResponseContext):
     images = _extract_images(items)
 
     file_ids = [img.file_id for img in images if img.file_id]
-    return TextResponse(
-        context,
-        request,
-        text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}",
-    )
+    return TextResponse(context, request, text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}")
 
 
 if __name__ == "__main__":
