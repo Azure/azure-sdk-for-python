@@ -153,36 +153,15 @@ def configure_observability(
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
     # Suppress noisy Azure Monitor exporter loggers BEFORE tracing setup.
-    # This is the same approach that works when done in main.py.
+    # The distro respects pre-set levels, so setting WARNING here prevents
+    # the repetitive "Transmission succeeded" INFO messages.
     # Preserve visibility when user explicitly requests DEBUG.
-    _suppress_noisy = logging.getLevelName(resolved_level) > logging.DEBUG
-    if _suppress_noisy:
-        for _noisy in (
-            "azure.monitor.opentelemetry.exporter",
-            "azure.monitor.opentelemetry.exporter.export",
-            "azure.monitor.opentelemetry.exporter.export._base",
-        ):
+    if logging.getLevelName(resolved_level) > logging.DEBUG:
+        for _noisy in _SUPPRESSED_LOGGERS:
             logging.getLogger(_noisy).setLevel(logging.WARNING)
-        print(f"[agentserver] Suppressed noisy exporter loggers (resolved_level={resolved_level}, numeric={logging.getLevelName(resolved_level)})")
-    else:
-        print(f"[agentserver] NOT suppressing exporter loggers (resolved_level={resolved_level}, numeric={logging.getLevelName(resolved_level)})")
 
     # Tracing and OTel export
     _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
-
-    # Check if distro reset the levels
-    _post_level = logging.getLogger("azure.monitor.opentelemetry.exporter.export._base").level
-    print(f"[agentserver] After distro: exporter logger level = {_post_level} ({logging.getLevelName(_post_level)})")
-
-    # If distro reset the level, re-apply suppression
-    if _suppress_noisy and _post_level < logging.WARNING:
-        print("[agentserver] Distro reset levels! Re-applying suppression.")
-        for _noisy in (
-            "azure.monitor.opentelemetry.exporter",
-            "azure.monitor.opentelemetry.exporter.export",
-            "azure.monitor.opentelemetry.exporter.export._base",
-        ):
-            logging.getLogger(_noisy).setLevel(logging.WARNING)
 
     # Ensure the noisy-logger filter is applied to ALL root handlers
     # (including any added by the distro/OTel setup above).
