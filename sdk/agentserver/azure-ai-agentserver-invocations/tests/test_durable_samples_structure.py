@@ -60,7 +60,6 @@ _DROPPED_SAMPLES: tuple[str, ...] = ("durable_claude",)
 _REQUIRED_FILES_PER_SAMPLE: tuple[str, ...] = (
     "agent.py",
     "app.py",
-    "README.md",
     "requirements.txt",
 )
 
