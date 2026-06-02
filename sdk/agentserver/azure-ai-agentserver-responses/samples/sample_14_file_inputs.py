@@ -50,8 +50,15 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     TextResponse,
 )
-from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
-from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
+from azure.ai.agentserver.responses._data_url import (
+    get_media_type,
+    is_data_url,
+    try_decode_bytes,
+)
+from azure.ai.agentserver.responses.models import (
+    ItemMessage,
+    MessageContentInputFileContent,
+)
 
 app = ResponsesAgentServerHost()
 
@@ -82,7 +89,9 @@ async def base64_handler(request: CreateResponse, context: ResponseContext):
             media = get_media_type(f.file_data)
             size = len(raw) if raw else 0
             results.append(f"{media or 'unknown'} ({size} bytes)")
-    return TextResponse(context, request, text=f"Decoded {len(results)} file(s): {'; '.join(results)}")
+    return TextResponse(
+        context, request, text=f"Decoded {len(results)} file(s): {'; '.join(results)}"
+    )
 
 
 # ── Handler 2: File URL ─────────────────────────────────────────────────
@@ -93,7 +102,9 @@ async def url_handler(request: CreateResponse, context: ResponseContext):
     files = _extract_files(items)
 
     urls = [f.file_url for f in files if f.file_url]
-    return TextResponse(context, request, text=f"Received {len(urls)} file URL(s): {', '.join(urls)}")
+    return TextResponse(
+        context, request, text=f"Received {len(urls)} file URL(s): {', '.join(urls)}"
+    )
 
 
 # ── Handler 3: File ID ──────────────────────────────────────────────────
@@ -104,7 +115,11 @@ async def file_id_handler(request: CreateResponse, context: ResponseContext):
     files = _extract_files(items)
 
     file_ids = [f.file_id for f in files if f.file_id]
-    return TextResponse(context, request, text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}")
+    return TextResponse(
+        context,
+        request,
+        text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}",
+    )
 
 
 if __name__ == "__main__":

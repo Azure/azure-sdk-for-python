@@ -16,6 +16,7 @@ from .models._helpers import (
     get_input_expanded,
     to_output_item,
 )
+from .models.runtime import CancellationReason
 from .store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from .store._foundry_errors import (
     FoundryApiError,
@@ -32,6 +33,7 @@ from .streaming._text_response import TextResponse
 __all__ = [
     "__version__",
     "data_url",  # pylint: disable=naming-mismatch
+    "CancellationReason",
     "ResponsesAgentServerHost",
     "ResponseContext",
     "IsolationContext",

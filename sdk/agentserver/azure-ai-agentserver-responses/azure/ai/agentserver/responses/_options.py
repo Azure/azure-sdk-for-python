@@ -23,6 +23,11 @@ class ResponsesServerOptions:
         sse_keep_alive_interval_seconds: int | None = None,
         shutdown_grace_period_seconds: int = 10,
         create_span_hook: "CreateSpanHook | None" = None,
+        durable_background: bool = True,
+        steerable_conversations: bool = False,
+        store_disabled: bool = False,
+        max_pending: int = 10,
+        replay_event_ttl_seconds: float = 600,
     ) -> None:
         if additional_server_version is not None:
             normalized = additional_server_version.strip()
@@ -34,7 +39,10 @@ class ResponsesServerOptions:
             default_model = normalized_model or None
         self.default_model = default_model
 
-        if sse_keep_alive_interval_seconds is not None and sse_keep_alive_interval_seconds <= 0:
+        if (
+            sse_keep_alive_interval_seconds is not None
+            and sse_keep_alive_interval_seconds <= 0
+        ):
             raise ValueError("sse_keep_alive_interval_seconds must be > 0 when set")
         self.sse_keep_alive_interval_seconds = sse_keep_alive_interval_seconds
 
@@ -48,8 +56,30 @@ class ResponsesServerOptions:
 
         self.create_span_hook = create_span_hook
 
+        # Durability options (developer-controlled, baked into container image)
+        if steerable_conversations and store_disabled:
+            raise ValueError(
+                "steerable_conversations=True requires store to be enabled "
+                "(store_disabled must be False)"
+            )
+        if steerable_conversations and not durable_background:
+            raise ValueError(
+                "steerable_conversations=True requires durable_background=True "
+                "for background responses"
+            )
+        if max_pending <= 0:
+            raise ValueError("max_pending must be > 0")
+
+        self.durable_background = durable_background
+        self.steerable_conversations = steerable_conversations
+        self.store_disabled = store_disabled
+        self.max_pending = max_pending
+        self.replay_event_ttl_seconds = replay_event_ttl_seconds
+
     @classmethod
-    def from_env(cls, environ: Mapping[str, str] | None = None) -> "ResponsesServerOptions":
+    def from_env(
+        cls, environ: Mapping[str, str] | None = None
+    ) -> "ResponsesServerOptions":
         """Create options from environment variables.
 
         :param environ: Optional mapping of environment variables. Defaults to ``os.environ``.

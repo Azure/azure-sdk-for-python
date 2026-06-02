@@ -15,7 +15,7 @@ from .._response_context import IsolationContext
 from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
-from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol, ResponseStreamProviderProtocol
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
 """Minimum per-event replay TTL (10 minutes) per spec B35."""
@@ -92,13 +92,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :rtype: None
-        :raises ValueError: If a non-deleted response with the same ID already exists.
+        :raises ResponseAlreadyExistsError: If a non-deleted response with the same ID already exists.
         """
         response_id = str(getattr(response, "id"))
         async with self._locked():
             entry = self._entries.get(response_id)
             if entry is not None and not entry.deleted:
-                raise ValueError(f"response '{response_id}' already exists")
+                raise ResponseAlreadyExistsError(response_id)
 
             input_ids: list[str] = []
             if input_items is not None:

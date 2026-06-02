@@ -12,6 +12,24 @@ if TYPE_CHECKING:
     from .._response_context import IsolationContext
 
 
+class ResponseAlreadyExistsError(Exception):
+    """Raised by a response-store provider when ``create_response`` is called for
+    a ``response_id`` that already has a non-deleted entry.
+
+    Callers should treat this as the idempotent-create signal: the response is
+    already persisted from a prior attempt (typically a recovered handler
+    re-emitting ``response.created``), and there is no need to write again.
+    Continue execution toward the terminal ``update_response``.
+
+    :param response_id: The response identifier that already exists.
+    :type response_id: str
+    """
+
+    def __init__(self, response_id: str) -> None:
+        super().__init__(f"response '{response_id}' already exists")
+        self.response_id = response_id
+
+
 @runtime_checkable
 class ResponseProviderProtocol(Protocol):
     """Protocol for response storage providers.
@@ -45,7 +63,9 @@ class ResponseProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
+    async def get_response(
+        self, response_id: str, *, isolation: IsolationContext | None = None
+    ) -> ResponseObject:
         """Load one response envelope by ID.
 
         :param response_id: The unique identifier of the response to retrieve.
@@ -58,7 +78,9 @@ class ResponseProviderProtocol(Protocol):
         """
         ...
 
-    async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
+    async def update_response(
+        self, response: ResponseObject, *, isolation: IsolationContext | None = None
+    ) -> None:
         """Persist an updated response envelope.
 
         :param response: The response envelope with updated fields to persist.
@@ -68,7 +90,9 @@ class ResponseProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
+    async def delete_response(
+        self, response_id: str, *, isolation: IsolationContext | None = None
+    ) -> None:
         """Delete a response envelope by ID.
 
         :param response_id: The unique identifier of the response to delete.
@@ -205,6 +229,60 @@ class ResponseStreamProviderProtocol(Protocol):
         response. No-op if no events exist for the ID.
 
         :param response_id: The unique identifier of the response whose events to remove.
+        :type response_id: str
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :rtype: None
+        """
+
+
+@runtime_checkable
+class DurableStreamProviderProtocol(Protocol):
+    """Extended protocol for providers that support incremental event persistence.
+
+    Providers implementing this protocol enable crash-recoverable streaming by
+    appending events as they are produced (rather than batching at terminal state)
+    and tracking TTL-based expiry after stream completion.
+
+    Implement this alongside :class:`ResponseStreamProviderProtocol` for full
+    durable streaming support.
+    """
+
+    async def append_stream_event(
+        self,
+        response_id: str,
+        event: ResponseStreamEvent,
+        *,
+        isolation: IsolationContext | None = None,
+    ) -> None:
+        """Append a single event to the response's persisted stream.
+
+        Called for each SSE event as it is produced during streaming. This
+        enables crash recovery: events persisted before a crash can be replayed
+        to reconnecting clients.
+
+        :param response_id: The unique identifier of the response.
+        :type response_id: str
+        :param event: The event instance to append.
+        :type event: ResponseStreamEvent
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :rtype: None
+        """
+
+    async def mark_terminal(
+        self,
+        response_id: str,
+        *,
+        isolation: IsolationContext | None = None,
+    ) -> None:
+        """Mark a response stream as having reached terminal state.
+
+        After this call, the TTL countdown begins. Events remain available
+        for replay until the configured TTL expires. Once expired, the
+        provider may delete the event data.
+
+        :param response_id: The unique identifier of the response.
         :type response_id: str
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None

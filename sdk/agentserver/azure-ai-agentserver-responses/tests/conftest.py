@@ -3,7 +3,10 @@
 """Root conftest — ensures the project root is on sys.path so that
 ``from tests._helpers import …`` works regardless of how pytest is invoked."""
 
+import os
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -12,6 +15,41 @@ import pytest
 _PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
+
+
+def pytest_configure(config):
+    """Register custom pytest markers used by this package."""
+    config.addinivalue_line(
+        "markers",
+        "live: end-to-end tests that hit a real external SDK (e.g. gh copilot). "
+        "Skipped by default; opt in with `-m live` or `--run-live`.",
+    )
+
+
+@pytest.fixture(autouse=True)
+def _isolated_durable_tasks_root(tmp_path):
+    """Isolate the LocalFileTaskProvider's default storage per test.
+
+    (Spec 013) Without this, the LocalFileTaskProvider defaults to
+    ``~/.durable-tasks`` which is shared across all test runs and lets
+    in-progress task state leak between tests — when durable_background
+    actually works, recovery on startup fires for these stale tasks and
+    breaks tests that assume a clean slate.
+
+    Per-test scope (autouse) so every test starts with a clean durable
+    task store.
+    """
+    root = tmp_path / "durable-tasks-isolated"
+    root.mkdir(parents=True, exist_ok=True)
+    prior = os.environ.get("AGENTSERVER_DURABLE_TASKS_PATH")
+    os.environ["AGENTSERVER_DURABLE_TASKS_PATH"] = str(root)
+    try:
+        yield
+    finally:
+        if prior is None:
+            os.environ.pop("AGENTSERVER_DURABLE_TASKS_PATH", None)
+        else:
+            os.environ["AGENTSERVER_DURABLE_TASKS_PATH"] = prior
 
 
 @pytest.fixture(autouse=True, scope="session")
