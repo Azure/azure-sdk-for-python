@@ -26,10 +26,8 @@ Running into issues? This section should contain details as to what to do there.
 
 # Next steps
 
-More sample code should go here, along with links out to the appropriate example tests.
+More sample code should go here, along with links out to the appropriate example tests. And more. 
 
 # Contributing
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
-
-
