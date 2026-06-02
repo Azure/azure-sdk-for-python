@@ -1,11 +1,10 @@
 {
-  "commit": "b7fdf7f42665de0a0e24b13c38e80bb09439e096",
+  "apiVersion": "2024-07-01",
+  "apiVersions": {
+    "Microsoft.SerialConsole": "2024-07-01"
+  },
+  "commit": "91ee1a8b4f3d8c6debc751bd26a70722bfdf6fa4",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/serialconsole/resource-manager/Microsoft.SerialConsole/SerialConsole/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\azure-sdk-for-python\\sdk --tag=package-2018-05 --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/serialconsole/resource-manager/Microsoft.SerialConsole/SerialConsole/readme.md"
+  "typespec_src": "specification/serialconsole/resource-manager/Microsoft.SerialConsole/SerialConsole",
+  "emitterVersion": "0.62.1"
 }

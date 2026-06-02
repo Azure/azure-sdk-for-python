@@ -48,7 +48,6 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
 
-# [START agent_evaluation_basic]
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
@@ -82,14 +81,14 @@ with (
             type="azure_ai_evaluator",
             name="fluency",
             evaluator_name="builtin.fluency",
-            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            initialization_parameters={"model": f"{model_deployment_name}"},
             data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         ),
         TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="task_adherence",
             evaluator_name="builtin.task_adherence",
-            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            initialization_parameters={"model": f"{model_deployment_name}"},
             data_mapping={"query": "{{item.query}}", "response": "{{sample.output_items}}"},
         ),
     ]
@@ -126,7 +125,6 @@ with (
         eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
-    # [END agent_evaluation_basic]
 
     while agent_eval_run.status not in ["completed", "failed"]:
         agent_eval_run = openai_client.evals.runs.retrieve(run_id=agent_eval_run.id, eval_id=eval_object.id)

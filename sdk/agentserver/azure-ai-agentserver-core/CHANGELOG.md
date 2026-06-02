@@ -1,6 +1,12 @@
 # Release History
 
-## 2.0.0b4 (Unreleased)
+## 2.0.0b5 (2026-05-25)
+
+### Bugs Fixed
+
+- Fixed the blueprint telemetry attribute key name from `gen_ai.agent.blueprint.id` to `microsoft.a365.agent.blueprint.id` to align with A365 schema and cross-SDK behavior.
+
+## 2.0.0b4 (2026-05-21)
 
 The durable-task primitive (`@task`, `TaskContext`, `TaskRun`, `TaskResult`,
 `TaskManager`) ships in this release. The shape below is the **initial-release
