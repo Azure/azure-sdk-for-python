@@ -50,20 +50,6 @@
   - Model `EventHubDataConnectionWithManagedIdentity` moved instance variable `event_hub_resource_id_for_managed_identity`, `consumer_group`, `table_name`, `mapping_rule_name`, `data_format`, `event_system_properties`, `compression`, `provisioning_state`, `managed_identity_resource_id`, `managed_identity_object_id`, `database_routing` and `retrieval_start_date` under property `properties` whose type is `EventHubConnectionWithManagedIdentityProperties`
   - Model `FollowerDatabaseDefinitionGet` moved instance variable `cluster_resource_id`, `attached_database_configuration_name`, `database_name`, `table_level_sharing_properties` and `database_share_origin` under property `properties` whose type is `FollowerDatabaseProperties`
   - Model `IotHubDataConnection` moved instance variable `iot_hub_resource_id`, `consumer_group`, `table_name`, `mapping_rule_name`, `data_format`, `event_system_properties`, `shared_access_policy_name`, `database_routing`, `retrieval_start_date` and `provisioning_state` under property `properties` whose type is `IotHubConnectionProperties`
-  - Deleted or renamed model `IssueType`
-  - Deleted or renamed model `NetworkSecurityPerimeter`
-  - Deleted or renamed model `NetworkSecurityPerimeterConfiguration`
-  - Deleted or renamed model `NetworkSecurityPerimeterConfigurationPropertiesProfile`
-  - Deleted or renamed model `NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation`
-  - Deleted or renamed model `NetworkSecurityPerimeterConfigurationProvisioningState`
-  - Deleted or renamed model `NspAccessRule`
-  - Deleted or renamed model `NspAccessRuleDirection`
-  - Deleted or renamed model `NspAccessRuleProperties`
-  - Deleted or renamed model `NspAccessRulePropertiesSubscriptionsItem`
-  - Deleted or renamed model `ProvisioningIssue`
-  - Deleted or renamed model `ProvisioningIssueProperties`
-  - Deleted or renamed model `ResourceAssociationAccessMode`
-  - Deleted or renamed model `Severity`
   - Method `ClustersOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` with keyword_only parameters `etag`/`match_condition`
   - Method `ClustersOperations.begin_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
   - Parameter `caller_role` of method `DatabasesOperations.begin_create_or_update` is now optional
@@ -75,6 +61,7 @@
 ### Other Changes
 
   - Deleted model `FollowerDatabaseListResultGet`/`ListResourceSkusResult`/`NetworkSecurityPerimeterConfigurationList`/`SkuDescriptionList` which actually were not used by SDK users
+  - Deleted model/enum `IssueType`/`NetworkSecurityPerimeter`/`NetworkSecurityPerimeterConfiguration`/`NetworkSecurityPerimeterConfigurationPropertiesProfile`/`NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation`/`NetworkSecurityPerimeterConfigurationProvisioningState`/`NspAccessRule`/`NspAccessRuleDirection`/`NspAccessRuleProperties`/`NspAccessRulePropertiesSubscriptionsItem`/`ProvisioningIssue`/`ProvisioningIssueProperties`/`ResourceAssociationAccessMode`/`Severity` which actually were not used by SDK users (Network Security Perimeter graph, not reachable from any operation in the previous SDK)
 
 ## 3.4.0 (2024-01-24)
 
