@@ -24,12 +24,12 @@
 ### Breaking Changes
 
   - Method `ResourceGraphClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
-  - Renamed operation group `ResourceGraphClientOperationsMixin` to `_ResourceGraphClientOperationsMixin`
-  - Method `ResourceGraphClient.resources_history` changed return type from `JSON` to `Any`
 
 ### Other Changes
 
   - Deleted model `Column`/`ColumnDataType`/`Table` which actually was not used by SDK users
+  - Method `ResourceGraphClient.resources_history` changed return type from `JSON` to `Any`
+  - Renamed operation group `ResourceGraphClientOperationsMixin` to `_ResourceGraphClientOperationsMixin`
 
 ## 8.0.1 (2025-11-24)
 
