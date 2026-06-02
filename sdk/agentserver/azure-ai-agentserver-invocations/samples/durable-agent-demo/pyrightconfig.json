@@ -1,0 +1,14 @@
+{
+  "include": [
+    "src"
+  ],
+  "venvPath": "../../../../..",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "reportMissingImports": "none",
+  "reportAttributeAccessIssue": "none",
+  "reportOptionalMemberAccess": "warning",
+  "reportArgumentType": "warning",
+  "reportGeneralTypeIssues": "warning",
+  "reportReturnType": "warning"
+}
