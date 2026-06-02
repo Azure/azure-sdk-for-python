@@ -65,9 +65,11 @@ def mock_span():
 class TestVoiceLiveInstrumentorLifecycle:
     """Tests for instrument/uninstrument/is_instrumented."""
 
-    def test_instrument_requires_env_gate(self):
+    def test_instrument_requires_env_gate(self, monkeypatch):
         """instrument() is a no-op when env gate is not set."""
         from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+        monkeypatch.delenv("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", raising=False)
 
         inst = VoiceLiveInstrumentor()
         inst.instrument()
@@ -1468,7 +1470,7 @@ class TestExtractSendEventIds:
             },
         }
 
-        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(event, span)
 
         span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_xyz")
 
@@ -1488,7 +1490,7 @@ class TestExtractSendEventIds:
             },
         }
 
-        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(event, span)
 
         span.add_attribute.assert_any_call("gen_ai.voice.previous_item_id", "item_prev_send")
         span.add_attribute.assert_any_call("gen_ai.voice.call_id", "call_xyz")
@@ -1504,7 +1506,7 @@ class TestExtractSendEventIds:
             "response_id": "resp_cancel",
         }
 
-        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(event, span)
 
         span.add_attribute.assert_any_call("gen_ai.response.id", "resp_cancel")
 
@@ -1519,7 +1521,7 @@ class TestExtractSendEventIds:
             "audio": "base64data",
         }
 
-        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(event, span)
 
         span.add_attribute.assert_not_called()
 
@@ -1728,7 +1730,7 @@ class TestMCPSendEventExtraction:
             },
         }
 
-        _VoiceLiveInstrumentorPreview._extract_send_event_ids(conn, event, span)
+        _VoiceLiveInstrumentorPreview._extract_send_event_ids(event, span)
 
         span.add_attribute.assert_any_call("gen_ai.voice.mcp.approval_request_id", "apr_send_001")
         span.add_attribute.assert_any_call("gen_ai.voice.mcp.approve", False)

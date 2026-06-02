@@ -28,13 +28,13 @@ class TestSuiteValidation:
     def test_can_import_all_test_modules(self):
         """Test that all our test modules can be imported."""
         test_modules = [
-            "tests.test_unit_enums",
-            "tests.test_unit_models",
-            "tests.test_unit_serialization",
-            "tests.test_unit_connection",
-            "tests.test_unit_client_events",
-            "tests.test_unit_voice_config",
-            "tests.test_unit_message_handling",
+            "tests.unit.test_unit_enums",
+            "tests.unit.test_unit_models",
+            "tests.unit.test_unit_serialization",
+            "tests.unit.test_unit_connection",
+            "tests.unit.test_unit_client_events",
+            "tests.unit.test_unit_voice_config",
+            "tests.unit.test_unit_message_handling",
         ]
 
         for module_name in test_modules:
