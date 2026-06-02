@@ -88,6 +88,48 @@ _PERIODIC_RECOVERY_INTERVAL_SECONDS: float = 300.0
 _RECLAIM_MAX_RETRIES: int = 3
 _RECLAIM_BACKOFF_BASE_SECONDS: float = 0.2
 
+# Spec 016 FR-023 (US7) + gap-list §FR-023: top-level payload field
+# storing the ISO-8601 UTC timestamp of when the current turn started.
+# Persisted at every turn-start boundary (fresh entry,
+# suspended-to-in_progress resume, steering drain re-entry); NOT
+# re-stamped on crash recovery so the watchdog can compute remaining
+# budget = max(0, opts.timeout - (now - _turn_started_at)).
+_TURN_STARTED_AT_KEY: str = "_turn_started_at"
+
+
+def _utc_now_iso() -> str:
+    """Return current UTC time as an ISO-8601 string with Z suffix.
+
+    Spec 016 FR-023: persisted turn-start timestamps use this format.
+    Z suffix matches `datetime.fromisoformat`'s expectations from
+    Python 3.11+ (older Pythons need the `+00:00` form).
+    """
+    from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
+
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f") + "Z"
+
+
+def _parse_turn_started_at(value: Any) -> float | None:
+    """Parse a persisted ``_turn_started_at`` value to a POSIX timestamp.
+
+    Returns ``None`` if the value is missing, malformed, or empty —
+    the caller falls back to "spawn watchdog with full budget" in
+    that case (graceful degradation during the rollout window where
+    pre-spec-016 records may not have the field yet).
+    """
+    from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
+
+    if not value or not isinstance(value, str):
+        return None
+    try:
+        normalized = value.replace("Z", "+00:00") if value.endswith("Z") else value
+        dt = datetime.fromisoformat(normalized)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.timestamp()
+    except (ValueError, TypeError):
+        return None
+
 
 def _resolve_queued_steerers_on_terminal(
     pending_steering_futures: dict[str, list["asyncio.Future[Any]"]],
@@ -740,6 +782,13 @@ class TaskManager:
         # the per-task `store_input` knob is dropped).
         payload: dict[str, Any] = {"input": _serialize_input(input_val)}
         payload["metadata"] = {}
+        # Spec 016 FR-023 (US7): persist a turn-start timestamp at every
+        # turn-start boundary so the per-turn watchdog can compute
+        # remaining = max(0, opts.timeout - (now - turn_started_at))
+        # across crashes. Field name + format chosen per
+        # conformance-gap-list.md §FR-023: top-level _turn_started_at,
+        # ISO-8601 UTC with Z suffix.
+        payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
 
         # (Spec 013 US2 / Spec 015 FR-004) Framework-reserved top-level slots
         # (e.g., `_last_input_id`) supplied by `Task.start(input_id=...)`.
@@ -1087,6 +1136,15 @@ class TaskManager:
         resolved_opts = opts or TaskOptions(name=fn_name, ephemeral=False)
         lease_duration = _DEFAULT_LEASE_SECONDS
 
+        # Spec 016 FR-023 (US7): write a new turn-start timestamp for
+        # every NEW turn boundary — fresh entry from suspended/pending
+        # and developer-initiated resume. EXCEPTION: do NOT re-stamp
+        # on recovery (entry_mode == "recovered") so the watchdog's
+        # remaining-budget computation honors the original turn-start.
+        turn_start_payload: dict[str, Any] = {}
+        if entry_mode != "recovered":
+            turn_start_payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
+
         # Transition to in_progress with new lease
         await self._provider.update(
             task_id,
@@ -1095,6 +1153,7 @@ class TaskManager:
                 lease_owner=self._lease_owner,
                 lease_instance_id=self._instance_id,
                 lease_duration_seconds=lease_duration,
+                payload=turn_start_payload if turn_start_payload else None,
             ),
         )
 
@@ -1276,6 +1335,8 @@ class TaskManager:
         timeout_seconds: float,
         cancel_event: asyncio.Event,
         ctx: "TaskContext[Any] | None" = None,
+        *,
+        remaining_seconds: float | None = None,
     ) -> None:
         """Spec 016 FR-025 / FR-026 (US7): per-turn timeout watchdog.
 
@@ -1284,28 +1345,38 @@ class TaskManager:
         renewal or force-stop the handler. An ignoring handler runs
         until process death or external :meth:`TaskRun.cancel`.
 
-        The misleading legacy claim "the lease will eventually expire
-        and the task will be recovered" was wrong and is removed per
-        spec 016 FR-026: the watchdog never expires the lease.
-
-        :param timeout_seconds: Seconds before cooperative cancel.
-        :type timeout_seconds: float
+        :param timeout_seconds: Total per-turn timeout budget (used as
+            the clock-skew clamp ceiling).
         :param cancel_event: Event to set for cooperative cancel.
-        :type cancel_event: asyncio.Event
-        :param ctx: The task context whose ``timeout_exceeded`` is set
-            BEFORE ``cancel_event`` (FR-018 ordering invariant). If
-            None (e.g., during a refactor transition), only the
-            cancel_event is set.
-        :type ctx: TaskContext | None
+        :param ctx: TaskContext to set ``timeout_exceeded`` on BEFORE
+            ``cancel_event`` (FR-018 ordering invariant).
+        :keyword remaining_seconds: Optional override for "time left in
+            this turn" — used on recovery to honor the persisted
+            turn-start timestamp per FR-023. Clamped to
+            ``[0, timeout_seconds]`` for clock-skew safety (FR-023).
+            When ``None``, the watchdog uses ``timeout_seconds`` directly
+            (fresh-entry / drain-re-entry case).
         """
-        await asyncio.sleep(timeout_seconds)
+        if remaining_seconds is None:
+            sleep_for = timeout_seconds
+        else:
+            # FR-023: clamp to [0, timeout_seconds] in both directions.
+            sleep_for = max(0.0, min(remaining_seconds, timeout_seconds))
+
+        # FR-025: if remaining == 0 (recovered watchdog with budget
+        # already exceeded), fire IMMEDIATELY so the recovered handler
+        # sees the cause from its first checkpoint.
+        if sleep_for > 0:
+            await asyncio.sleep(sleep_for)
         # Spec 016 FR-018 ordering: cause boolean FIRST, then cancel.
         if ctx is not None:
             ctx.timeout_exceeded = True
         cancel_event.set()
         logger.info(
-            "Timeout watchdog fired cooperative cancel after %.1fs (cooperative-only; "
-            "handler must check ctx.cancel.is_set() and ctx.timeout_exceeded to wind down)",
+            "Timeout watchdog fired cooperative cancel (slept %.3fs of "
+            "%.3fs budget; cooperative-only — handler must check "
+            "ctx.cancel.is_set() and ctx.timeout_exceeded to wind down)",
+            sleep_for,
             timeout_seconds,
         )
 
@@ -1349,14 +1420,24 @@ class TaskManager:
         """
         resolved_terminate = terminate_event or asyncio.Event()
 
-        # Start timeout watchdog if configured
+        # Spec 016 FR-023/FR-024 (US7): per-turn watchdog with durable
+        # budget. Read the persisted _turn_started_at to compute the
+        # remaining budget for THIS turn. On recovery this gives the
+        # correct "time left since the original turn started"; on fresh
+        # entry / drain re-entry the timestamp was just written so
+        # remaining ≈ full budget.
         watchdog_task: asyncio.Task[None] | None = None
         if opts.timeout is not None:
+            timeout_seconds = opts.timeout.total_seconds()
+            remaining = await self._compute_remaining_for_watchdog(
+                task_id, timeout_seconds, ctx
+            )
             watchdog_task = asyncio.create_task(
                 self._timeout_watchdog(
-                    timeout_seconds=opts.timeout.total_seconds(),
+                    timeout_seconds=timeout_seconds,
                     cancel_event=ctx.cancel,
                     ctx=ctx,
+                    remaining_seconds=remaining,
                 )
             )
 
@@ -1380,6 +1461,52 @@ class TaskManager:
                     await watchdog_task
                 except asyncio.CancelledError:
                     pass
+
+    async def _compute_remaining_for_watchdog(
+        self,
+        task_id: str,
+        timeout_seconds: float,
+        ctx: "TaskContext[Any]",
+    ) -> float:
+        """Spec 016 FR-023 (US7): compute the remaining per-turn budget.
+
+        Reads the persisted ``_turn_started_at`` for ``task_id`` and
+        returns ``max(0, timeout_seconds - (now - turn_started_at))``
+        clamped to ``[0, timeout_seconds]``. If the timestamp is
+        missing or unparseable (e.g., a pre-spec-016 record during
+        rollout), returns ``timeout_seconds`` so the watchdog spawns
+        with a fresh budget (graceful degradation).
+
+        FR-025 immediate-fire-on-recovery: if remaining == 0, also
+        pre-set ``ctx.timeout_exceeded = True`` and ``ctx.cancel`` so
+        the recovered handler sees the cause from its first checkpoint.
+        """
+        try:
+            task_info = await self._provider.get(task_id)
+        except Exception:  # pylint: disable=broad-exception-caught
+            return timeout_seconds
+        if task_info is None or not task_info.payload:
+            return timeout_seconds
+        started_ts = _parse_turn_started_at(
+            task_info.payload.get(_TURN_STARTED_AT_KEY)
+        )
+        if started_ts is None:
+            return timeout_seconds
+        import time  # pylint: disable=import-outside-toplevel
+
+        elapsed = time.time() - started_ts
+        # FR-023 clock-skew clamping: clamp to [0, timeout_seconds] in
+        # both directions (backward skew → elapsed negative → remaining
+        # > timeout; forward skew → elapsed huge → remaining < 0).
+        remaining = max(0.0, min(timeout_seconds - elapsed, timeout_seconds))
+
+        # FR-025 immediate-fire: if recovered watchdog computes
+        # remaining == 0, pre-set the cause boolean + cancel before
+        # the handler even runs its first checkpoint.
+        if remaining == 0.0:
+            ctx.timeout_exceeded = True
+            ctx.cancel.set()
+        return remaining
 
     async def _execute_task_loop(  # pylint: disable=too-many-statements,too-many-branches,too-many-nested-blocks
         self,
@@ -1751,6 +1878,10 @@ class TaskManager:
         # IS the generation advance — no separate counter needed.
         steering["cancel_requested"] = len(pending) > 0
         steering["drain_in_progress"] = True
+        # Spec 016 FR-023 (US7): the steering drain re-entry is a NEW
+        # turn-start boundary — write a fresh _turn_started_at so the
+        # respawned watchdog computes a full per-turn budget.
+        payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
 
         # (Spec 013 US4 scenario 11) Previously this site captured handler output
         # into `_steering["generation_results"]` as forward-compat durable backup

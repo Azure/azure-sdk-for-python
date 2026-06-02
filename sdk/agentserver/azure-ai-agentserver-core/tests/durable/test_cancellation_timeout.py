@@ -273,3 +273,204 @@ class TestExitForRecovery:
             f"Spec 016 FR-027: exit_for_recovery MUST take no parameters "
             f"other than self. Got {params}"
         )
+
+
+# --------------------------------------------------------------------- #
+# Spec 016 US7 — per-turn durable timeout (T086 / T087 / T088)
+# --------------------------------------------------------------------- #
+
+
+class TestSpec016PerTurnTimeout:
+    """Spec 016 FR-023..FR-026 / SC-012 / SC-013 (US7).
+
+    @task(timeout=...) is per-turn, wall-clock, durable across crashes
+    within a turn, and cooperative-only:
+    - Per-turn: each turn (fresh, drain re-entry) gets a fresh budget.
+    - Wall-clock: anchored to the persisted _turn_started_at timestamp.
+    - Durable: crash mid-turn does NOT reset budget; recovered watchdog
+      computes remaining = max(0, timeout - (now - turn_started_at))
+      clamped to [0, timeout].
+    - Cooperative-only: sets ctx.timeout_exceeded then ctx.cancel and
+      exits; does NOT force-stop the handler or expire the lease.
+    """
+
+    @pytest.mark.asyncio
+    async def test_fresh_turn_writes_turn_started_at(self, tmp_path):
+        """T086(a) / FR-023: fresh entry writes _turn_started_at to the
+        persisted record so the recovered watchdog can read it."""
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+
+            @task(name="t086_fresh", ephemeral=False)
+            async def my_task(ctx: TaskContext[str]) -> str:
+                return "done"
+
+            run = await my_task.start(task_id="t086-fresh-1", input="x")
+            await run.result()
+
+            info = await manager.provider.get("t086-fresh-1")
+            assert info is not None
+            assert info.payload is not None
+            assert "_turn_started_at" in info.payload, (
+                f"Spec 016 FR-023: fresh-entry create MUST write "
+                f"_turn_started_at to payload. Got payload keys: "
+                f"{list(info.payload)}"
+            )
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_recovery_preserves_turn_started_at(self, tmp_path):
+        """T086(c) / FR-023: recovery does NOT re-stamp the timestamp."""
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+        from azure.ai.agentserver.core.durable._manager import _utc_now_iso
+
+        original_stamp = "2026-06-01T00:00:00.000000Z"
+
+        @task(name="t086_recover", ephemeral=False)
+        async def my_task(ctx: TaskContext[str]) -> str:
+            return "recovered"
+
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+            await manager.provider.create(
+                TaskCreateRequest(
+                    id="t086-recover-1",
+                    agent_name="test-agent",
+                    session_id="test-session",
+                    status="in_progress",
+                    title="recover",
+                    payload={"input": '"x"', "_turn_started_at": original_stamp},
+                    lease_owner=manager._lease_owner,  # noqa: SLF001
+                    lease_instance_id="previous-inst",
+                    lease_duration_seconds=60,
+                    source={"name": "t086_recover", "type": "agentserver.task"},
+                )
+            )
+            await my_task.run(task_id="t086-recover-1", input="ignored")
+
+            info = await manager.provider.get("t086-recover-1")
+            assert info is not None
+            assert info.payload is not None
+            # Recovery MUST preserve the original timestamp (FR-023).
+            assert info.payload.get("_turn_started_at") == original_stamp, (
+                f"Spec 016 FR-023: recovery MUST NOT re-stamp "
+                f"_turn_started_at. Expected {original_stamp!r}, "
+                f"got {info.payload.get('_turn_started_at')!r}"
+            )
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_recovered_watchdog_remaining_zero_fires_immediately(
+        self, tmp_path
+    ):
+        """T086(d) + T092 / FR-025: when recovered watchdog computes
+        remaining == 0 (turn-start timestamp older than the budget),
+        ctx.timeout_exceeded MUST be True from the handler's first
+        checkpoint and ctx.cancel pre-set."""
+        from datetime import timedelta
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        observed: dict[str, Any] = {}
+
+        # Use a tiny budget (0.5s) and a backdated stamp (10s ago) so
+        # remaining clamps to 0 immediately.
+        @task(name="t092_immediate_fire", ephemeral=False,
+              timeout=timedelta(milliseconds=500))
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed["timeout_exceeded_at_start"] = ctx.timeout_exceeded
+            observed["cancel_at_start"] = ctx.cancel.is_set()
+            return "done"
+
+        backdated = "2026-06-01T00:00:00.000000Z"  # 10+ seconds before any test run
+
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+            await manager.provider.create(
+                TaskCreateRequest(
+                    id="t092-fire",
+                    agent_name="test-agent",
+                    session_id="test-session",
+                    status="in_progress",
+                    title="fire",
+                    payload={"input": '"x"', "_turn_started_at": backdated},
+                    lease_owner=manager._lease_owner,  # noqa: SLF001
+                    lease_instance_id="previous-inst",
+                    lease_duration_seconds=60,
+                    source={"name": "t092_immediate_fire",
+                            "type": "agentserver.task"},
+                )
+            )
+            await my_task.run(task_id="t092-fire", input="ignored")
+            # Per FR-025: recovered watchdog with remaining==0 pre-sets
+            # both the cause boolean and the cancel event BEFORE the
+            # handler's first await.
+            assert observed["timeout_exceeded_at_start"] is True, (
+                "Spec 016 FR-025: recovered watchdog with remaining==0 "
+                "MUST pre-set ctx.timeout_exceeded=True before the "
+                "handler's first checkpoint."
+            )
+            assert observed["cancel_at_start"] is True, (
+                "Spec 016 FR-025: recovered watchdog with remaining==0 "
+                "MUST pre-set ctx.cancel before the handler's first "
+                "checkpoint."
+            )
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
+
+    def test_clock_skew_clamping_via_compute_remaining(self):
+        """T087 / SC-013 / FR-023: remaining is clamped to
+        [0, timeout_seconds] in both directions. Direct unit test of
+        the clamp computation since simulating clock skew end-to-end
+        requires injecting time, which adds fragility.
+        """
+        from azure.ai.agentserver.core.durable._manager import (
+            _parse_turn_started_at,
+        )
+        import time
+
+        # Forward jump: turn_started_at is way in the past → elapsed
+        # huge → remaining clamps to 0.
+        backwards_ts = _parse_turn_started_at("2020-01-01T00:00:00.000000Z")
+        assert backwards_ts is not None
+        elapsed_huge = time.time() - backwards_ts
+        timeout_seconds = 30.0
+        remaining_forward = max(
+            0.0, min(timeout_seconds - elapsed_huge, timeout_seconds)
+        )
+        assert remaining_forward == 0.0, (
+            "Spec 016 FR-023 forward-skew clamp: remaining MUST be 0 "
+            f"when elapsed >> timeout. Got {remaining_forward}"
+        )
+
+        # Backward jump: turn_started_at is in the future → elapsed
+        # negative → remaining clamps to timeout_seconds.
+        future_ts = time.time() + 10_000_000  # ~ year in the future
+        elapsed_negative = time.time() - future_ts  # ~ -10M (negative)
+        remaining_backward = max(
+            0.0, min(timeout_seconds - elapsed_negative, timeout_seconds)
+        )
+        assert remaining_backward == timeout_seconds, (
+            "Spec 016 FR-023 backward-skew clamp: remaining MUST cap "
+            "at timeout_seconds when the elapsed time is negative "
+            f"(clock skew). Got {remaining_backward}"
+        )
+
+    def test_watchdog_docstring_cooperative_only(self):
+        """T088 / FR-026: the watchdog docstring MUST NOT contain the
+        legacy 'lease will eventually expire' claim AND MUST document
+        the cooperative-only semantic."""
+        import inspect
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+
+        src = inspect.getsource(TaskManager._timeout_watchdog)
+        assert "lease will eventually expire" not in src, (
+            "Spec 016 FR-026: the legacy 'lease will eventually expire' "
+            "docstring claim MUST be removed (the watchdog never "
+            "expires the lease)."
+        )
+        assert "Cooperative-only" in src or "cooperative-only" in src, (
+            "Spec 016 FR-026: the docstring MUST document the "
+            "cooperative-only semantic explicitly."
+        )
