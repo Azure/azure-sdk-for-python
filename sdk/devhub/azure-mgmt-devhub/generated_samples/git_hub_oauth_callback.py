@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devhub import DevHubMgmtClient
 
 """
@@ -26,7 +28,7 @@ from azure.mgmt.devhub import DevHubMgmtClient
 def main():
     client = DevHubMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.git_hub_o_auth_callback(
@@ -37,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/developerhub/resource-manager/Microsoft.DevHub/preview/2022-10-11-preview/examples/GitHubOAuthCallback.json
+# x-ms-original-file: specification/developerhub/resource-manager/Microsoft.DevHub/DeveloperHub/preview/2025-03-01-preview/examples/GitHubOAuthCallback.json
 if __name__ == "__main__":
     main()
