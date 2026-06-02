@@ -155,7 +155,7 @@ def configure_observability(
     # Suppress noisy Azure Monitor exporter loggers BEFORE tracing setup,
     # so the level is already set when the distro creates handlers/threads.
     # Preserve visibility when user explicitly requests DEBUG.
-    if resolved_level > logging.DEBUG:
+    if logging.getLevelName(resolved_level) > logging.DEBUG:
         for _noisy in (
             "azure.monitor.opentelemetry.exporter",
             "azure.monitor.opentelemetry.exporter.export",
