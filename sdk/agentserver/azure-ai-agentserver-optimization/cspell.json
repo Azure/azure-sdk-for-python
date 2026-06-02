@@ -1,0 +1,16 @@
+{
+    "ignoreWords": [
+        "agentserver",
+        "autouse",
+        "cand",
+        "dataclass",
+        "frontmatter",
+        "paramtype",
+        "pathlib",
+        "rtype"
+    ],
+    "ignorePaths": [
+        "*.json",
+        "*.rst"
+    ]
+}

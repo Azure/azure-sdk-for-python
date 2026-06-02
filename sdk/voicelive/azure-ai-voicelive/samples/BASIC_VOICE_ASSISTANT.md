@@ -14,7 +14,7 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 
 ## Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - Microphone and speakers/headphones
 - Azure AI VoiceLive endpoint
 - An Entra ID identity with access to Azure AI VoiceLive, or a VoiceLive API key
@@ -22,9 +22,9 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 ## Installation
 
 1. **Install the SDK**:
-   ```bash
-    pip install azure-ai-voicelive azure-identity python-dotenv
-   ```
+    ```bash
+    python -m pip install --pre "azure-ai-voicelive[aiohttp]" azure-identity python-dotenv
+    ```
 
 2. **Install PyAudio** (required for audio capture/playback):
 
@@ -47,12 +47,12 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 
 ## Configuration
 
-Create a `.env` file. By default, the sample uses Entra ID via `DefaultAzureCredential`:
+Create a `.env` file. By default, the sample uses Entra ID via `DefaultAzureCredential`. For local development, `az login` is the easiest way to satisfy that credential chain:
 
 ```bash
 AZURE_VOICELIVE_ENDPOINT=your-endpoint
 AZURE_VOICELIVE_MODEL=gpt-realtime
-AZURE_VOICELIVE_VOICE=en-US-AvaNeural
+AZURE_VOICELIVE_VOICE=en-US-Ava:DragonHDLatestNeural
 AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful AI assistant. Respond naturally and conversationally.
 ```
 
@@ -68,6 +68,8 @@ AZURE_VOICELIVE_API_KEY=your-api-key
 ```bash
 python basic_voice_assistant_async.py
 ```
+
+The sample writes logs to standard output and does not create log files.
 
 Optional command-line arguments:
 
@@ -109,6 +111,7 @@ session_config = RequestSession(
     voice=voice_config,
     input_audio_format=InputAudioFormat.PCM16,
     output_audio_format=OutputAudioFormat.PCM16,
+    input_audio_echo_cancellation=AudioEchoCancellation(),
     turn_detection=ServerVad(
         threshold=0.5,
         prefix_padding_ms=300,
@@ -116,6 +119,10 @@ session_config = RequestSession(
     ),
 )
 ```
+
+The sample keeps echo cancellation on the default server loopback path. If your application captures
+stereo PCM16 input with the microphone on channel 0 and a client-provided echo reference on channel 1,
+you can switch to `AudioEchoCancellation(reference_source="client", channels=2)`.
 
 ### 3. Audio Processing
 - **Input**: Captures microphone audio in real-time using PyAudio
@@ -177,7 +184,7 @@ Main application class that coordinates WebSocket connection, session management
 - **Network timeouts**: Check firewall settings and network connectivity
 
 ### Authentication Issues
-- **Default auth failures**: Confirm `DefaultAzureCredential` can get a token and your identity can access the VoiceLive resource
+- **Default auth failures**: Run `az login` or otherwise confirm `DefaultAzureCredential` can get a token and your identity can access the VoiceLive resource
 - **API key auth failures**: Set `AZURE_VOICELIVE_USE_API_KEY=true` and verify `AZURE_VOICELIVE_API_KEY`
 
 ### PyAudio Installation Issues

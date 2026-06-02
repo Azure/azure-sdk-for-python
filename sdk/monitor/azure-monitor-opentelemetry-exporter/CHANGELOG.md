@@ -3,9 +3,14 @@
 ## 1.0.0b53 (Unreleased)
 
 ### Features Added
+
 - Read for global feature sdkstats bitmap and add a 15 second delay timer
   ([#47031](https://github.com/Azure/azure-sdk-for-python/pull/47031))
-
+- Use `APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE` environment variable in `_is_attach_enabled` to
+  reliably detect successful auto-instrumentation attach, with fallback to legacy path-based detection
+  ([#46955](https://github.com/Azure/azure-sdk-for-python/pull/46955))
+- Safeguard URL redirection issues
+  ([#47265](https://github.com/Azure/azure-sdk-for-python/pull/47265))
 ### Breaking Changes
 
 ### Bugs Fixed
