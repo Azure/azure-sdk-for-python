@@ -134,6 +134,9 @@ def main() -> None:
             if final_run:
                 print("Final run:")
                 print(json.dumps(final_run.as_dict(), indent=2, default=str))
+                # Note: retrieving the response body produced by a routine-dispatched
+                # run via `openai_client.responses.retrieve(final_run.response_id)` is
+                # not yet supported by the service for this scenario.
             else:
                 print("Schedule did not produce a terminal run within the deadline.")
         except KeyboardInterrupt:
