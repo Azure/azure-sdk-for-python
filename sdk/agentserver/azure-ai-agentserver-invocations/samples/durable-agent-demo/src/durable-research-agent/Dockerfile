@@ -10,15 +10,13 @@ RUN pip install --no-cache-dir /tmp/wheels/*.whl && rm -rf /tmp/wheels
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py agent.py supervisor.py entrypoint.sh ./
-RUN chmod +x entrypoint.sh
-
-# Enable Task Storage API integration
-ENV FOUNDRY_TASK_API_ENABLED=1
-ENV STAGE_DURATION=5
+COPY app.py agent.py ./
 
 EXPOSE 8088
 
-# supervisor.py is PID 1: keeps /readiness alive, proxies to app, restarts on crash
-CMD ["python", "supervisor.py"]
+# This is a demo image — enables the "crash" sentinel handling.
+# A production image would leave this off (default).
+ENV DEMO_MODE=1
 
+# Platform nanny worker handles restart on crash; we just run the agent.
+CMD ["python", "app.py"]

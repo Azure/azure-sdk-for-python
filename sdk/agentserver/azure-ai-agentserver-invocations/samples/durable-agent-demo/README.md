@@ -1,294 +1,214 @@
-# Durable Research Agent — Crash-Resilient Demo
+# Durable Research Agent — Demo
 
-This sample demonstrates a **long-running research agent** that survives process
-crashes and automatically resumes from its last checkpoint. It uses the
-`@task` decorator from `azure-ai-agentserver-core` to provide built-in
-crash resilience without any manual state management.
+A `@task`-decorated long-running research agent that demonstrates three
+platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 
-## What it showcases
+1. **Long-running tasks (>15 min)** — the sandbox stays alive without
+   client ingress because the durable-task framework's lease-renewal cycle
+   internally exercises the readiness probe. As long as a `@task` handler
+   is executing, the platform keeps the container alive.
+2. **Crash recovery via the platform nanny** — when the agent process
+   exits unexpectedly the platform nanny worker restarts the container
+   within ~5-10 minutes. On restart the durable task resumes from its
+   last checkpoint via `ctx.entry_mode == "recovered"`.
+3. **Steering** — sending a new turn on a running steerable task queues
+   the input and signals cooperative cancel. The agent winds down the
+   current turn at the next checkpoint boundary and re-enters with the
+   queued input as a fresh turn.
 
-1. **12-stage deep research pipeline** — each stage is a distinct LLM call with real-time token streaming
-2. **Crash resilience** — send `{"message": "crash"}` to kill the process; the supervisor
-   restarts it, and the task resumes from its last checkpoint
-3. **Fire-and-forget POST** — `POST /invocations` dispatches the task and returns 202 immediately
-4. **GET streaming with resume** — `GET /invocations/{id}?last_event_id=N` streams SSE, skipping already-seen events
-5. **Cancel support** — `POST /invocations/{id}/cancel` stops the task gracefully
-6. **File-backed streaming** — stream items persist to disk for replay after crashes
+## What the agent does
 
-## Architecture
+12-to-15 logical research phases on a topic the caller supplies. Each phase
+runs a small agent loop (research → critique → refine → synthesize) against
+`gpt-4.1-mini`, streaming every token to the consumer as it arrives.
 
-```
-┌────────────────────────────────────────────────────────────┐
-│  Hosted Agent Sandbox (port 8088)                          │
-│                                                            │
-│  supervisor.py (PID 1 — always responds to /readiness)     │
-│    └── python app.py (port 8089, restarted on crash)       │
-│                                                            │
-│  POST /invocations  (fire-and-forget)                      │
-│    ├── {"message": "crash"} → 202, then exit 💥            │
-│    └── {"message": "<topic>"} →                            │
-│          deep_research.start() → 202 JSON response         │
-│          { invocation_id, session_id, task_id, status }    │
-│                                                            │
-│  GET /invocations/{id}?last_event_id=N                     │
-│    └── Streams SSE from active task (skips first N events) │
-│        or replays from persisted file                      │
-│                                                            │
-│  POST /invocations/{id}/cancel                             │
-│    └── Signals cancellation to running task                │
-│                                                            │
-│  Local disk: ~/.durable-tasks/ (persists across restarts)  │
-└────────────────────────────────────────────────────────────┘
-```
+After each phase the handler checkpoints to `ctx.metadata` and flushes — so a
+crash mid-run picks up at the next un-completed phase, and a steerer that
+arrives mid-phase causes the handler to wind down at the *next* phase
+boundary, not abruptly.
+
+Defaults are tuned for a ~45-minute run (15 phases × ~3 minutes each); env
+vars can shorten this for fast development iteration.
+
+## Server-wall-clock timestamps in every stream event
+
+Every `phase_start`, `phase_end`, `recovered`, `winding_down`, and
+`run_complete` event carries two fields:
+
+- `server_time_utc` — the wall clock on the agent container at the moment the
+  event was emitted.
+- `server_uptime_sec` — seconds since the Python process started. **Resets
+  to ~0 after the platform nanny restarts the container** — making crash
+  recovery unambiguously observable.
+
+These let a viewer prove the server kept executing during a window when no
+client ingress was happening: disconnect, wait 15+ minutes, reconnect, and
+look at the timestamps on phases that finished while you were dead.
 
 ## Prerequisites
 
 - Python 3.11+
 - Azure subscription with AI Foundry access
-- [Azure Developer CLI (azd)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
+- [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
 - `azd` AI agents extension: `azd extension install azure.ai.agents`
 
-## Quick Start (Deploy to Foundry)
+## Quick start (deploy)
 
 ```bash
-# 1. Build wheels (included in Docker image)
+# 1. Build local wheels (so the Docker image carries pre-release SDK bits)
 ./build.sh
 
-# 2. Login and deploy
+# 2. Login + deploy
 azd auth login
 azd up
 ```
 
-## Demo Script — Crash Recovery & Reconnection
+The deploy outputs the invocations endpoint. `demo-client.sh` already points
+at the canonical e2e-tests-westus2 deployment; edit `ENDPOINT=` in
+`demo-client.sh` if you deployed elsewhere.
 
-This walkthrough demonstrates the full durability story. Total time: ~3 minutes.
+## Demo workflows
 
-### Quick Demo (recommended)
+### A. Long-running run + no-ingress verification (~45 min)
 
-Use the included `demo-client.sh` which handles token refresh, session sharing,
-auto-reconnection, and event resumption:
+Proves capability #1 — the sandbox stays alive without our HTTP traffic
+because the durable-task lease renewal extends its lifetime.
 
 ```bash
-# Terminal 1 — start research (auto-reconnects after crashes)
-./demo-client.sh start "quantum computing"
+# t = 0:00   Start a fresh run.
+./demo-client.sh start "the future of quantum computing"
+# Watch phase 1 and phase 2 stream.
+# Note the server_time_utc on each event.
 
-# Terminal 2 — crash the agent while it's running
+# t = 5:00   Disconnect — close the terminal entirely.
+#            Zero ingress from this machine for the next 15-20 minutes.
+
+# t = 20:00  Open a new terminal:
+./demo-client.sh stream
+# Scroll back. You should see phase headers timestamped at every ~3 min
+# during the window you were disconnected — proof that the server kept
+# running the task without your traffic to extend the sandbox lifetime.
+```
+
+### B. Crash + recovery (~10 min downtime)
+
+Proves capability #2 — the platform nanny restarts the container and the
+durable task resumes.
+
+```bash
+# Terminal 1: start a fresh run, leave it streaming.
+./demo-client.sh start "fusion energy research priorities"
+# Wait until 3-4 phases have completed.
+
+# Terminal 2: force a crash.
 ./demo-client.sh crash
+# Server returns 202 then exits. Your stream in Terminal 1 will disconnect.
 
-# Watch Terminal 1 auto-reconnect and resume from where it left off!
-# Crash again, as many times as you want:
-./demo-client.sh crash
+# Wait ~5-10 minutes for the platform nanny to restart the container.
 
-# Terminal 3 — stream container logs (optional)
-./demo-client.sh logs
-
-# Or cancel:
-./demo-client.sh cancel
-
-# Reset session to start fresh:
-./demo-client.sh reset
+# Terminal 1 (or new terminal):
+./demo-client.sh stream
+# You should see:
+#   🔁 Recovered from crash   resuming from phase 4/15
+#   server_uptime_sec=2.4    ← fresh container; uptime started over
+# ...and the stream picks up at phase 4, NOT phase 1.
 ```
 
-### How it works (client flow)
+### C. Steering (mid-run topic switch)
 
-1. **POST** `/invocations?agent_session_id=X` → returns 202 with `invocation_id`
-2. **GET** `/invocations/{inv_id}` → streams SSE events (`id: N\ndata: {...}\n\n`)
-3. Client tracks `last_event_id` (the `id:` field of the last received event)
-4. On disconnect (crash): **POST** same session → new `invocation_id` → **GET** with `?last_event_id=N`
-5. Server skips first N events → client sees only new content from the recovery point
-
-### Manual Demo (curl)
+Proves capability #3 — the steerable task winds down at the next checkpoint
+boundary and re-enters with the new input.
 
 ```bash
-# Get access token
-TOKEN=$(az account get-access-token --resource https://ai.azure.com --query accessToken -o tsv)
+# Terminal 1:
+./demo-client.sh start "deep learning interpretability"
+# Wait until phase 2 starts streaming.
 
-# Endpoint
-ENDPOINT="https://e2e-tests-westus2-account.services.ai.azure.com/api/projects/e2e-tests-westus2/agents/durable-research-agent/endpoint/protocols"
+# Terminal 2:
+./demo-client.sh steer "alignment of frontier models"
+# Server queues the new input.
 
-# Generate a unique session ID (reuse across all calls in this demo)
-SESSION_ID="demo-$(uuidgen | tr '[:upper:]' '[:lower:]')"
-echo "Session: $SESSION_ID"
+# Terminal 1 will show (within ~3 min, at the next phase boundary):
+#   ↓ Winding down   cause=steering   completed=2/15   pending_steers=1
+#   ▶ Run start    topic=alignment of frontier models  (steered from prior topic: deep learning interpretability)
+#   ▶ Phase 1/15 — Decomposing topic into focused research questions
+#   ...
 ```
 
-### Step 1: Start the research task (fire-and-forget)
+## Architecture
 
-```bash
-# POST dispatches the task and returns immediately with IDs
-curl -s -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Research the history and future of quantum computing"}'
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  Hosted-agent sandbox (port 8088)                                     │
+│                                                                       │
+│    python app.py            (InvocationAgentServerHost)               │
+│      ├── POST /invocations                                            │
+│      │     → deep_research.start(task_id, input={"topic": ...})       │
+│      │     → on already-active steerable task: queues steering input  │
+│      ├── GET  /invocations/{id}?last_event_id=N                       │
+│      │     → SSE stream from get_active_run(task_id)                  │
+│      ├── POST /invocations/{id}/cancel                                │
+│      │     → run.cancel()                                             │
+│      └── POST /demo/crash    (only when DEMO_MODE=1)                  │
+│            → os._exit(137)                                            │
+│                                                                       │
+│    deep_research  (in agent.py)                                       │
+│      @task(steerable=True, stream_handler_factory=file_stream_factory)│
+│      Loop 1..NUM_PHASES:                                              │
+│        for each phase:                                                │
+│          emit phase_start with server_time_utc + server_uptime_sec    │
+│          run CALLS_PER_PHASE LLM sub-calls (research → critique → …)  │
+│          ctx.metadata["completed_phases"] = i+1                       │
+│          await ctx.metadata.flush()                                   │
+│          emit phase_end                                               │
+│          if ctx.cancel.is_set():                                      │
+│            wind down → return await ctx.suspend(...)                  │
+└──────────────────────────────────────────────────────────────────────┘
+
+Platform-managed:
+  • nanny worker: restarts the container within ~5-10 min on crash
+  • lease-renewal ingress: framework pings /readiness for each renewal,
+    keeping the sandbox alive as long as a @task is executing
 ```
 
-Response (202):
-```json
-{"status": "started", "invocation_id": "inv_abc123...", "session_id": "demo-..."}
-```
+There is **no application-level supervisor or auto-restart wrapper** — those
+were necessary in an older platform model and have been removed.
 
-Save the invocation ID:
-```bash
-INV_ID="inv_abc123..."  # from response above
-```
+## Environment variables
 
-### Step 2: Stream results via GET
-
-```bash
-curl -N -X GET "${ENDPOINT}/invocations/${INV_ID}?api-version=2025-11-15-preview" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-You'll see SSE events with sequential IDs:
-```
-id: 1
-data: {"type": "token", "content": "\n\n**[Stage 1/12]** Decomposing topic...\n"}
-
-id: 2
-data: {"type": "token", "content": "Quantum"}
-
-id: 3
-data: {"type": "token", "content": " computing"}
-...
-```
-
-### Step 3: Crash the agent! 💥
-
-While the research is running, send a crash trigger (same session):
-
-```bash
-curl -s -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "crash"}'
-```
-
-Response (202):
-```json
-{"status": "crashing", "message": "💥 Process will crash now"}
-```
-
-The process exits. The supervisor immediately restarts it and recovers the task.
-
-### Step 4: Reconnect with resume
-
-Wait ~10 seconds, then POST again to get a new invocation ID, and GET with `last_event_id`:
-
-```bash
-# Get new invocation ID (task is already in progress)
-NEW_RESPONSE=$(curl -s -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "quantum computing"}')
-NEW_INV_ID=$(echo "$NEW_RESPONSE" | python3 -c "import sys,json; print(json.loads(sys.stdin.read())['invocation_id'])")
-
-# Resume from where we left off (e.g., last_event_id=370)
-curl -N -X GET "${ENDPOINT}/invocations/${NEW_INV_ID}?api-version=2025-11-15-preview&last_event_id=370" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-You'll see only NEW events (stages after the crash):
-```
-id: 371
-data: {"type": "token", "content": "\n\n⚡ **Recovered from crash!** Resuming from stage 5/12...\n\n"}
-
-id: 372
-data: {"type": "token", "content": "\n\n**[Stage 5/12]** Examining competing theories...\n"}
-...
-```
-
-### Step 5: Cancel the task (optional)
-
-```bash
-curl -X POST "${ENDPOINT}/invocations/${NEW_INV_ID}/cancel?api-version=2025-11-15-preview" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{}'
-```
-
-Response:
-```json
-{"status": "cancelled", "message": "Task cancellation requested."}
-```
-
-## Container Logs
-
-Stream real-time container logs (stdout/stderr) in a separate terminal:
-
-```bash
-# Via demo-client.sh (uses session from .demo-session file)
-./demo-client.sh logs
-
-# Or directly via azd:
-azd ai agent monitor --session-id <session-id> --follow
-
-# Recent logs (last 20 lines):
-azd ai agent monitor --tail 20
-
-# System events (container start/stop):
-azd ai agent monitor --type system
-```
-
-## How it works
-
-The `@task` decorator provides:
-
-- **Automatic persistence** — task state is checkpointed after each stage via
-  `ctx.metadata.flush()`
-- **Crash recovery** — on startup, stale (in-flight) tasks are automatically
-  detected by lease owner and re-executed, with `ctx.metadata` containing all
-  previously saved progress
-- **Entry mode awareness** — `ctx.entry_mode` tells the function why it was
-  called: `"fresh"`, `"resumed"`, or `"recovered"`
-- **File-backed streaming** — stream items are persisted to disk via a custom
-  `FileStreamHandler` so GET can replay them after a crash
-- **Event IDs** — each SSE event has a sequential `id:` field; clients use
-  `last_event_id` query param to skip already-seen events on reconnect
-
-Key code pattern:
-```python
-@task(name="deep_research", stream_handler_factory=file_stream_factory)
-async def deep_research(ctx: TaskContext[dict]) -> dict:
-    completed = ctx.metadata.get("completed_stages", 0)
-
-    if ctx.entry_mode == "recovered":
-        await ctx.stream(json.dumps({"type": "token", "content": "⚡ Recovered!"}))
-
-    for i in range(completed, len(STAGES)):
-        # Stream LLM tokens in real-time
-        async for event in llm_stream:
-            await ctx.stream(json.dumps({"type": "token", "content": event.delta}))
-
-        # CHECKPOINT — survives crashes
-        ctx.metadata["completed_stages"] = i + 1
-        await ctx.metadata.flush()
-
-    return final_result
-```
-
-## Environment Variables
-
-| Variable | Description | Default |
+| Variable | Default | Description |
 |---|---|---|
-| `FOUNDRY_PROJECT_ENDPOINT` | AI Foundry project endpoint (set by platform) | Required |
-| `AZURE_AI_MODEL_DEPLOYMENT_NAME` | Model deployment to use | `gpt-4.1-mini` |
-| `FOUNDRY_TASK_API_ENABLED` | Use platform Task Storage (vs local file) | `0` (local) |
-| `STAGE_DURATION` | Seconds between stages (for demo pacing) | `5` |
+| `FOUNDRY_PROJECT_ENDPOINT` | (required) | Foundry project endpoint (set by platform). |
+| `AZURE_AI_MODEL_DEPLOYMENT_NAME` | `gpt-4.1-mini` | Responses-API model deployment. |
+| `NUM_PHASES` | `15` | Number of research phases. |
+| `CALLS_PER_PHASE` | `4` | Sub-calls per phase (research, critique, refine, synthesize). |
+| `TARGET_OUTPUT_TOKENS` | `1500` | Max tokens per LLM sub-call. |
+| `INTRA_PHASE_COOLDOWN_SEC` | `10` | Seconds between sub-calls within a phase. |
+| `INTER_PHASE_COOLDOWN_SEC` | `20` | Seconds between phases. |
+| `DEMO_MODE` | `0` | When `1`, enables `POST /demo/crash`. |
 
-## File Structure
+For a **fast** development loop (~2 min total instead of ~45 min):
+
+```bash
+NUM_PHASES=3 CALLS_PER_PHASE=1 INTRA_PHASE_COOLDOWN_SEC=2 \
+  INTER_PHASE_COOLDOWN_SEC=2 TARGET_OUTPUT_TOKENS=200 \
+  python app.py
+```
+
+## File structure
 
 ```
 durable-agent-demo/
-├── demo-client.sh          # ⭐ Demo client (handles sessions, reconnect, crash)
+├── demo-client.sh          # bash CLI: start, stream, steer, crash, cancel, …
 ├── azure.yaml              # azd service config
-├── build.sh                # Build local wheels for Docker
+├── build.sh                # builds local agentserver wheels for the Docker image
 ├── infra/                  # Bicep templates
 ├── src/durable-research-agent/
-│   ├── agent.py            # ⭐ The durable task (12-stage research pipeline)
-│   ├── app.py              # HTTP handlers (POST fire-and-forget, GET stream, cancel)
-│   ├── supervisor.py       # PID 1 reverse proxy (keeps /readiness alive)
-│   ├── agent.yaml          # Agent definition for Foundry
-│   ├── Dockerfile
+│   ├── agent.py            # @task deep_research — the durability + steering logic
+│   ├── app.py              # InvocationAgentServerHost — minimal HTTP plumbing
+│   ├── agent.yaml          # Foundry agent definition
+│   ├── Dockerfile          # python:3.12-slim → python app.py
 │   ├── requirements.txt
-│   └── wheels/             # Local package wheels (built by build.sh)
+│   └── wheels/             # built by build.sh; carries pre-release agentserver SDKs
 └── README.md
 ```
