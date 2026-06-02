@@ -1415,6 +1415,62 @@ class TaskManager:
             try:
                 result = await fn(ctx)
 
+                # Spec 016 FR-027 (US8): the handler returned the
+                # _ExitForRecovery sentinel via ``ctx.exit_for_recovery()``.
+                # Flush metadata, release the lease, leave the stored
+                # status as 'in_progress' (do NOT write terminal),
+                # preserve queued steering inputs (FR-028), and signal
+                # awaiters with TaskCancelled.
+                from ._context import _ExitForRecovery as _ExitSentinel  # pylint: disable=import-outside-toplevel
+                if isinstance(result, _ExitSentinel):
+                    from ._exceptions import (  # pylint: disable=import-outside-toplevel
+                        TaskCancelled,
+                    )
+                    renewal_cancel.set()
+                    # (a) Flush metadata (FR-015 auto-flush).
+                    await ctx.metadata.flush_all()
+                    # (b) Release the lease: clear ownership claim. The
+                    #     CAS write may fail with eviction — in that
+                    #     case the local cleanup sequence already
+                    #     handled it; just log and proceed.
+                    try:
+                        await self._provider.update(
+                            task_id,
+                            TaskPatchRequest(
+                                lease_owner="",
+                                lease_instance_id="",
+                                lease_duration_seconds=0,
+                            ),
+                        )
+                    except TransportClassifiedError as exc:
+                        if not _is_evicted(exc):
+                            logger.warning(
+                                "exit_for_recovery: lease release for task "
+                                "%s failed with classification=%s; the next "
+                                "process startup recovery will reclaim",
+                                task_id,
+                                getattr(exc, "classification", None),
+                            )
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning(
+                            "exit_for_recovery: lease release for task %s "
+                            "failed; the next process startup recovery will "
+                            "reclaim",
+                            task_id,
+                            exc_info=True,
+                        )
+                    # (c) Do NOT write a terminal record — status MUST
+                    #     remain 'in_progress' so the recovery scan picks
+                    #     it up next process start.
+                    # (d) Signal awaiters with TaskCancelled (same shape
+                    #     as cooperative cancel).
+                    if not current_result_future.done():
+                        current_result_future.set_exception(TaskCancelled(task_id))
+                    # (e) Queued steerers (per FR-028): preserved in
+                    #     persisted state — already untouched here, so
+                    #     no action needed.
+                    break
+
                 if isinstance(result, Suspended):
                     # Spec 016 FR-011 (US5): the current turn's caller's
                     # result_future MUST be set to TaskResult(status="suspended",

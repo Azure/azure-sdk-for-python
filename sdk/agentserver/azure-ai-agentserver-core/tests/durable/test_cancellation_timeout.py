@@ -180,3 +180,87 @@ class TestTerminate:
             "Spec 016 FR-022: TaskTerminated removed from the public "
             "__all__ as part of the cancel-cause boolean rewrite."
         )
+
+
+class TestExitForRecovery:
+    """Spec 016 US8 / FR-027 / FR-028 / SC-015.
+
+    ctx.exit_for_recovery() is the prescribed shutdown shape:
+    - Callable only when ctx.shutdown.is_set() (else RuntimeError).
+    - Flushes metadata, releases lease, leaves status in_progress.
+    - Signals awaiters with TaskCancelled.
+    - Preserves queued steering inputs.
+    """
+
+    @pytest.mark.asyncio
+    async def test_exit_for_recovery_raises_outside_shutdown(self, tmp_path):
+        """T094 (c) / FR-027: misuse outside shutdown raises RuntimeError."""
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+            from azure.ai.agentserver.core.durable._exceptions import TaskFailed
+
+            @task(name="exit_misuse", ephemeral=False)
+            async def misuse(ctx: TaskContext[str]) -> str:
+                # ctx.shutdown is NOT set — calling exit_for_recovery
+                # must raise RuntimeError immediately.
+                return await ctx.exit_for_recovery()
+
+            run = await misuse.start(task_id=uuid.uuid4().hex, input="x")
+            with pytest.raises(TaskFailed) as exc_info:
+                await run.result()
+            # The RuntimeError is wrapped in TaskFailed since it
+            # propagated as an unhandled exception.
+            assert "RuntimeError" in exc_info.value.error["type"] or (
+                "exit_for_recovery" in str(exc_info.value.error.get("message", ""))
+            )
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_exit_for_recovery_preserves_in_progress(self, tmp_path):
+        """T094 (a) / FR-027 / SC-015: handler calls exit_for_recovery
+        during shutdown. Stored status MUST remain in_progress; result
+        future receives TaskCancelled."""
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+            from azure.ai.agentserver.core.durable._exceptions import TaskCancelled
+
+            shutdown_triggered = asyncio.Event()
+
+            @task(name="exit_shutdown", ephemeral=False)
+            async def shutdown_aware(ctx: TaskContext[str]) -> str:
+                # Wait for the test to signal "shutdown is happening".
+                await shutdown_triggered.wait()
+                # Simulate the framework setting ctx.shutdown
+                # (in production this is set by TaskManager.shutdown()).
+                ctx.shutdown.set()
+                return await ctx.exit_for_recovery()
+
+            task_id = uuid.uuid4().hex
+            run = await shutdown_aware.start(task_id=task_id, input="x")
+            await asyncio.sleep(0.05)
+            shutdown_triggered.set()
+
+            with pytest.raises(TaskCancelled):
+                await asyncio.wait_for(run.result(), timeout=2.0)
+
+            # Stored status MUST remain in_progress per FR-027(c).
+            info = await manager.provider.get(task_id)
+            assert info is not None
+            assert info.status == "in_progress", (
+                f"Spec 016 FR-027(c): status MUST remain in_progress; "
+                f"got {info.status!r}"
+            )
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
+
+    def test_exit_for_recovery_signature(self) -> None:
+        """T095 / SC-015 / FR-027: inspect.signature contains only self."""
+        import inspect
+
+        sig = inspect.signature(TaskContext.exit_for_recovery)
+        params = list(sig.parameters)
+        assert params == ["self"], (
+            f"Spec 016 FR-027: exit_for_recovery MUST take no parameters "
+            f"other than self. Got {params}"
+        )
