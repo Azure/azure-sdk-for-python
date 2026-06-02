@@ -2890,6 +2890,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert blob1_data == blob1_actual
         assert captured["c1_download3"].startswith("Session ")
         assert session1 != session_token_from(captured["c1_download3"])
+        assert session2 != session_token_from(captured["c1_download3"])
 
     @BlobPreparer()
     def test_sessions_disabled(self, **kwargs):
