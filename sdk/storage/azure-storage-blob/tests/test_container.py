@@ -2812,6 +2812,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         credential = self.get_credential(BlobServiceClient)
         captured = {}
+
         def make_capture(label):
             def _hook(response):
                 auth = response.http_request.headers.get("Authorization", "")
@@ -2828,44 +2829,80 @@ class TestStorageContainer(StorageRecordedTestCase):
             credential=credential,
             use_session=True,
         )
-        container1 = service.get_container_client("container1")
+        container1 = service.get_container_client(self.get_resource_name("utcontainer1"))
         try:
             container1.create_container()
         except ResourceExistsError:
             pass
 
-        c1b1_name, c1b1_data = "c1b1", b"abc123"
-        container1.upload_blob(c1b1_name, c1b1_data, overwrite=True, raw_response_hook=make_capture("c1_upload"))
+        blob1_name, blob1_data = self.get_resource_name("blob1"), b"abc123"
+        container1.upload_blob(
+            blob1_name, blob1_data, overwrite=True, raw_response_hook=make_capture("c1_upload")
+        )
         assert captured["c1_upload"].startswith("Bearer ")
 
-        c1b1_actual = container1.download_blob(c1b1_name, raw_response_hook=make_capture("c1_download")).readall()
-        assert c1b1_data == c1b1_actual
+        blob1_actual = container1.download_blob(
+            blob1_name, raw_response_hook=make_capture("c1_download")
+        ).readall()
+        assert blob1_data == blob1_actual
         assert captured["c1_download"].startswith("Session ")
         session1 = session_token_from(captured["c1_download"])
 
-        container2 = service.get_container_client("container2")
+        container2 = service.get_container_client(self.get_resource_name("utcontainer2"))
         try:
             container2.create_container()
         except ResourceExistsError:
             pass
 
-        c2b2_name, c2b2_data = "c2b2", b"def456"
-        container2.upload_blob(c2b2_name, c2b2_data, overwrite=True, raw_response_hook=make_capture("c2_upload"))
+        blob2_name, blob2_data = self.get_resource_name("blob2"), b"def456"
+        container2.upload_blob(blob2_name, blob2_data, overwrite=True, raw_response_hook=make_capture("c2_upload"))
         assert captured["c2_upload"].startswith("Bearer ")
 
-        c2b2_actual = container2.download_blob(c2b2_name, raw_response_hook=make_capture("c2_download")).readall()
-        assert c2b2_data == c2b2_actual
+        blob2_actual = container2.download_blob(blob2_name, raw_response_hook=make_capture("c2_download")).readall()
+        assert blob2_data == blob2_actual
         assert captured["c2_download"].startswith("Session ")
         session2 = session_token_from(captured["c2_download"])
 
         assert session1 != session2
 
-        c1b1_actual = container1.download_blob(c1b1_name, raw_response_hook=make_capture("c1_download")).readall()
-        assert c1b1_data == c1b1_actual
-        assert captured["c1_download"].startswith("Session ")
-        assert session1 == session_token_from(captured["c1_download"])
+        blob1_actual = container1.download_blob(blob1_name, raw_response_hook=make_capture("c1_download2")).readall()
+        assert blob1_data == blob1_actual
+        assert captured["c1_download2"].startswith("Session ")
+        assert session1 == session_token_from(captured["c1_download2"])
 
-        c2b2_actual = container2.download_blob(c2b2_name, raw_response_hook=make_capture("c2_download")).readall()
-        assert c2b2_data == c2b2_actual
-        assert captured["c2_download"].startswith("Session ")
-        assert session2 == session_token_from(captured["c2_download"])
+        blob2_actual = container2.download_blob(blob2_name, raw_response_hook=make_capture("c2_download2")).readall()
+        assert blob2_data == blob2_actual
+        assert captured["c2_download2"].startswith("Session ")
+        assert session2 == session_token_from(captured["c2_download2"])
+
+    @BlobPreparer()
+    def test_sessions_disabled(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient)
+        captured = {}
+
+        def make_capture(label):
+            def _hook(response):
+                auth = response.http_request.headers.get("Authorization", "")
+                captured[label] = auth
+            return _hook
+
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=False,
+        )
+        container = service.get_container_client(self.get_resource_name("utcontainer"))
+        try:
+            container.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob_name, blob_data = self.get_resource_name("blob"), b"abc123"
+        container.upload_blob(blob_name, blob_data, overwrite=True, raw_response_hook=make_capture("upload"))
+        assert captured["upload"].startswith("Bearer ")
+
+        blob_actual = container.download_blob(blob_name, raw_response_hook=make_capture("download")).readall()
+        assert blob_data == blob_actual
+        assert captured["download"].startswith("Bearer ")

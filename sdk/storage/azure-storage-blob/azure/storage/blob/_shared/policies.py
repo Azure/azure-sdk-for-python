@@ -1061,9 +1061,7 @@ class StorageSessionPolicy(HTTPPolicy):
             f"\n{n.lower()}:{unquote(v)}" for n, v in sorted(http_request.query.items()) if v is not None
         )
 
-        string_to_sign = (
-            http_request.method + "\n" + signed_headers + canonicalized_headers + canonicalized_resource
-        )
+        string_to_sign = http_request.method + "\n" + signed_headers + canonicalized_headers + canonicalized_resource
 
         try:
             signature = sign_string(session_key, string_to_sign)
