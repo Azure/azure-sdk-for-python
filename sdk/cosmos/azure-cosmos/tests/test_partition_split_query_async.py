@@ -612,6 +612,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             }
 
             async def mock_read_ranges(*args, **kwargs):
+                # Mirror the production wire-up: _asynchronous_request populates
+                # this sidecar with the real HTTP status. Without it, the drain
+                # loop's status==304 termination contract can't trip and the
+                # loop would run unbounded (OOM in CI).
+                status_capture = kwargs.get('_internal_response_status_capture')
+                if status_capture is not None:
+                    status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
                 yield incomplete_range
 
             with patch.object(
@@ -851,7 +858,14 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 if call_count['count'] <= 2:
                     # First two calls are incremental attempts; return a child
                     # with a missing parent so merge is incomplete and fallback
-                    # path is exercised.
+                    # path is exercised. Mirror the production wire-up:
+                    # _asynchronous_request populates this sidecar with the real
+                    # HTTP status. Without it, the drain loop's status==304
+                    # termination contract can't trip and evaluate_drain_page
+                    # raises RuntimeError.
+                    status_capture = kwargs.get('_internal_response_status_capture')
+                    if status_capture is not None:
+                        status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
                     fake_child = {
                         'id': f'child_{call_count["count"]}',
                         'minInclusive': '',
@@ -879,20 +893,33 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
                 assert result is not None
 
-                # Verify 3 calls: incremental + incremental retry + full fallback.
-                assert call_count['count'] == 3, \
-                    f"Expected 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
+                # Expected call sequence:
+                #   1. incremental attempt        (IfNoneMatch = stale etag)
+                #   2. incremental retry          (IfNoneMatch = stale etag)
+                #   3. full-load fallback page 1  (no IfNoneMatch -- the cleanup we are testing)
+                #   4. full-load fallback page 2  (IfNoneMatch = FRESH etag from page 1,
+                #                                  to receive the 304 terminator that ends
+                #                                  the drain loop -- peer-SDK parity)
+                stale_etag = cached_map.change_feed_etag
+                assert call_count['count'] >= 3, \
+                    f"Expected at least 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
 
-                # First two calls should be incremental and include IfNoneMatch.
+                # First two calls should be incremental and carry the stale IfNoneMatch.
                 first_headers = captured_headers_list[0]
-                assert http_constants.HttpHeaders.IfNoneMatch in first_headers, \
-                    "First call (incremental) should have IfNoneMatch header"
+                assert first_headers.get(http_constants.HttpHeaders.IfNoneMatch) == stale_etag, \
+                    "First call (incremental) should have stale IfNoneMatch header"
 
                 second_headers = captured_headers_list[1]
-                assert http_constants.HttpHeaders.IfNoneMatch in second_headers, \
-                    "Second call (incremental retry) should have IfNoneMatch header"
+                assert second_headers.get(http_constants.HttpHeaders.IfNoneMatch) == stale_etag, \
+                    "Second call (incremental retry) should have stale IfNoneMatch header"
 
-                # Third call is full-load fallback and should drop IfNoneMatch.
+                # Third call is full-load fallback and MUST drop IfNoneMatch -- this is
+                # the bug fix's whole point. Any post-fallback drain pages (call 4+)
+                # legitimately reuse the etag returned by call 3 as their If-None-Match
+                # to receive the 304 terminator; that fresh etag may coincidentally equal
+                # the original stale etag if nothing changed server-side between caching
+                # and fallback, so we cannot assert "!= stale_etag" on those drain pages.
+                # The call-3 assertion is the actual production contract.
                 third_headers = captured_headers_list[2]
                 assert http_constants.HttpHeaders.IfNoneMatch not in third_headers, \
                     "Third call (full load fallback) should NOT have IfNoneMatch header"

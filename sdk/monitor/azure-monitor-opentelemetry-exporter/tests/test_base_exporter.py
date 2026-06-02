@@ -747,7 +747,11 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmit_http_error_redirect(self):
         response = HttpResponse(None, None)
         response.status_code = 307
-        response.headers = {"location": "https://example.com"}
+        # Redirect target whose host differs from the default ingestion host
+        # (`dc.services.visualstudio.com`) only in the leftmost DNS label, with
+        # the same number of labels and a 3-label shared suffix, so the
+        # cross-origin redirect guard permits it.
+        response.headers = {"location": "https://westus.services.visualstudio.com"}
         prev_redirects = self._base.client._config.redirect_policy.max_redirects
         self._base.client._config.redirect_policy.max_redirects = 2
         prev_host = self._base.client._config.host
@@ -757,9 +761,56 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
             self.assertEqual(post.call_count, 2)
-            self.assertEqual(self._base.client._config.host, "https://example.com")
+            self.assertEqual(
+                self._base.client._config.host,
+                "https://westus.services.visualstudio.com",
+            )
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
+
+    def test_transmit_http_error_redirect_refuses_cross_origin(self):
+        """A redirect to a different registered domain must be refused so the
+        auth policy does not attach a bearer token for a foreign host on the
+        recursive _transmit call."""
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "https://attacker.example.com"}
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 1)
+            self.assertEqual(self._base.client._config.host, prev_host)
+
+    def test_is_same_registered_domain(self):
+        same = self._base._is_same_registered_domain
+        # Same host (exact match) is always safe, even when not under a
+        # trusted ingestion suffix (e.g. customer-configured custom host).
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("custom-ingestion.example.invalid", "custom-ingestion.example.invalid"))
+        # Both hosts under the same trusted Azure Monitor ingestion suffix
+        # are permitted -- this is the cross-region case.
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com", "eastus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("dc.services.visualstudio.com", "westus.services.visualstudio.com"))
+        self.assertTrue(same("foo.applicationinsights.azure.us", "bar.applicationinsights.azure.us"))
+        # Different registered domain entirely is rejected.
+        self.assertFalse(same("westus-0.in.applicationinsights.azure.com", "attacker.com"))
+        self.assertFalse(same("foo.example.com", "foo.example.org"))
+        # Sibling subdomains under an untrusted parent are rejected -- this
+        # is the cross-origin-leak PoC scenario.
+        self.assertFalse(same("legit-ingestion.example.invalid", "attacker.example.invalid"))
+        self.assertFalse(same("foo.azure.com", "bar.azure.com"))
+        # A trusted host cannot be redirected to a host under an untrusted
+        # suffix (and vice versa).
+        self.assertFalse(same("dc.services.visualstudio.com", "attacker.example.invalid"))
+        self.assertFalse(same("legit-ingestion.example.invalid", "dc.services.visualstudio.com"))
+        # Mixing two different trusted suffixes is rejected.
+        self.assertFalse(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        # Empty inputs are treated as not-same.
+        self.assertFalse(same("", "applicationinsights.azure.com"))
+        self.assertFalse(same("applicationinsights.azure.com", ""))
 
     def test_transmit_http_error_redirect_missing_headers(self):
         response = HttpResponse(None, None)

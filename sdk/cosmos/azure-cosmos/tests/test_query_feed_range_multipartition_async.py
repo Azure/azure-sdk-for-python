@@ -570,6 +570,7 @@ class TestFeedRangeMultiPartitionAsync:
     # Post-split resume (slow)
     # ------------------------------------------------------------------ #
     @pytest.mark.cosmosSplit
+    @pytest.mark.cosmosAADSplit
     async def test_post_split_resume_async(self):
         client = _client()
         try:

@@ -1,5 +1,15 @@
 # Release History
 
+## 2.3.0 (Unreleased)
+
+### Sample updates
+
+* Added `sample_routines_crud.py` to demonstrate CRUD operations.
+* Added `sample_routines_with_timer_trigger.py` to demonstrate triggering a routine with a timer.
+* Added `sample_routines_with_schedule_trigger.py` to demonstrate triggering a routine on a recurring cron schedule via `ScheduleRoutineTrigger`.
+* Updated `sample_dataset_generation_job_traces_for_evaluation.py` and `sample_dataset_generation_job_traces_for_finetuning.py` to create a temporary agent, seed conversations, retry the data generation job over the trace window, and clean up all created resources.
+* Updated `sample_memory_crud.py` and `sample_memory_crud_async.py` to demonstrate memory item CRUD (`create_memory`, `get_memory`, `update_memory`, `list_memories`, `delete_memory`) in addition to memory store CRUD.
+
 ## 2.2.0 (2026-05-29)
 
 ### Features Added
@@ -28,7 +38,7 @@
 ### Breaking Changes
 
 Breaking changes in beta methods:
-* Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
+* Argument `isolation_key` in methods `.beta.agents.create_session()` and `.beta.agents.delete_session()` renamed to `user_isolation_key`.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
 * Argument `body` in method `.beta.skills.create_from_files()` renamed to `content`.
 * Method `.beta.agents.get_session_files` renamed to `.beta.agents.list_session_files`.
