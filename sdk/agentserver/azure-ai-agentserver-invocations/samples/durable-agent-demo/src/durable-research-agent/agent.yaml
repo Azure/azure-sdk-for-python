@@ -23,3 +23,12 @@ environment_variables:
       value: gpt-4.1-mini
     - name: STAGE_DURATION
       value: "10"
+    # Opt in to the hosted Task Storage API. Without this, the framework
+    # silently falls back to LocalFileTaskProvider (file-backed under
+    # ~/.durable-tasks) and no /tasks HTTP calls are made — meaning
+    # lease/renewal/readiness traffic won't appear in container logs.
+    # Note: this lives in the AGENTSERVER_* namespace (not FOUNDRY_*)
+    # because the hosting platform reserves and rejects FOUNDRY_* and
+    # AGENT_* env vars at deploy time.
+    - name: AGENTSERVER_TASK_API_ENABLED
+      value: "1"
