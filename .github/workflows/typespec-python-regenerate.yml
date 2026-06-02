@@ -200,6 +200,9 @@ jobs:
             --base "$TARGET_BRANCH" --head "$SOURCE_BRANCH" --label "typespec-python" \
             --state open --json number -q '.[0].number')
 
+          # Clean up untracked generated files so checkout doesn't conflict.
+          rm -rf "$GENERATED_DIR"
+
           # Create source branch based on the target branch.
           git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
 
