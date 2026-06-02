@@ -44,8 +44,10 @@ from .policies_async import (
     AsyncStorageBearerTokenCredentialPolicy,
     AsyncContentValidationPolicy,
     AsyncStorageResponseHook,
+    AsyncStorageSessionPolicy,
 )
 from .response_handlers import PartialBatchErrorException, process_storage_error
+from .._generated.aio import AzureBlobStorage
 from .._shared_access_signature import _is_credential_sastoken
 
 if TYPE_CHECKING:
@@ -141,11 +143,44 @@ class AsyncStorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
+        ]
+        use_session = bool(kwargs.pop("use_session", False))
+        if use_session:
+            if not hasattr(credential, "get_token"):
+                raise ValueError(
+                    "use_session=True requires a TokenCredential; received "
+                    f"{type(credential).__name__ if credential is not None else 'None'}."
+                )
+
+            def _session_client_factory(container_url: str) -> AzureBlobStorage:
+                sub_kwargs = dict(kwargs)
+                sub_kwargs.pop("_pipeline", None)
+                sub_kwargs.pop("_configuration", None)
+                sub_kwargs.pop("pipeline", None)
+                sub_kwargs.pop("sdk_moniker", None)
+                sub_kwargs["use_session"] = False
+                sub_kwargs["transport"] = transport
+
+                _, session_pipeline = self._create_pipeline(
+                    credential, sdk_moniker=self._sdk_moniker, **sub_kwargs
+                )
+                generated = AzureBlobStorage(container_url, self.api_version, base_url=container_url)
+                generated._client._pipeline = session_pipeline  # pylint: disable=protected-access
+                return generated
+
+            policies.append(
+                AsyncStorageSessionPolicy(
+                    account_name=self.account_name,
+                    session_client_factory=_session_client_factory,
+                    use_session=True,
+                )
+            )
+        policies.extend([
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
-        ]
+        ])
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore

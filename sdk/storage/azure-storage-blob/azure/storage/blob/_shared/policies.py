@@ -9,7 +9,7 @@ import logging
 import random
 import re
 import uuid
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, timedelta, timezone
 from io import BytesIO, SEEK_SET, UnsupportedOperation
 from time import time
 from threading import Lock
@@ -69,6 +69,7 @@ SM_LENGTH_HEADER = "x-ms-structured-content-length"
 SESSION_ELIGIBLE_CONTEXT_KEY = "_session_eligible"
 SESSION_RETRIED_CONTEXT_KEY = "_session_retried"
 SESSION_TOKEN_HEADER = "x-ms-session-token"
+UTC = timezone.utc
 
 
 def encode_base64(data: Union[bytes, str]) -> str:
@@ -884,11 +885,11 @@ class SessionCache:
 
     Concurrency model
     -----------------
-    * Reads (`get`) are lock-free. They perform a single ``dict.get`` and never
+    * Reads (`get`) are lock-free. They perform a single dict.get and never
       mutate the cache, so concurrent readers never need to coordinate.
     * Writes (`put` / `put_fallback`) and the CreateSession single-flight are
       serialized per-container via the lock returned by :meth:`lock_container`.
-    * A single ``_locks_guard`` serializes only the *creation* of per-container
+    * A single _locks_guard serializes only the *creation* of per-container
       locks, so two threads racing on a brand-new container can't build two
       different lock objects.
     """
@@ -917,7 +918,7 @@ class SessionCache:
             return self._locks.setdefault(container_name, Lock())
 
     def get(self, container_name: str) -> Optional[Session]:
-        """Return a live session for the container, or ``None``.
+        """Return a live session for the container, or None.
 
         Lock-free and non-mutating. Expired entries are NOT deleted.
         Instead, they are simply treated as a cache miss and overwritten on the next refresh.
@@ -932,7 +933,9 @@ class SessionCache:
         return cached
 
     def put(self, container_name: str, session_token: str, session_key: str, expires_at: datetime) -> None:
-        """Install a real session entry. Caller must hold ``lock_container``.
+        """Install a real session entry.
+
+        Caller must hold the lock at the container-level.
 
         :param str container_name: The container the session belongs to.
         :param str session_token: The session token to send as a header.
@@ -944,7 +947,7 @@ class SessionCache:
     def put_fallback(self, container_name: str) -> None:
         """Install a fallback-to-bearer sentinel for the cooldown window.
 
-        Caller must hold SessionCache.lock_container().
+        Caller must hold the lock at the container-level.
 
         :param str container_name: The container to mark for bearer fallback.
         """
@@ -1130,7 +1133,7 @@ class StorageSessionPolicy(HTTPPolicy):
         """Stamp session auth if eligible, otherwise leave the bearer header intact.
 
         :param ~azure.core.pipeline.PipelineRequest request: The request to (maybe) sign.
-        :return: The container name if a session was applied, else ``None``.
+        :return: The container name if a session was applied, else None.
         :rtype: str or None
         """
         if not self._is_eligible(request):
@@ -1186,9 +1189,9 @@ class StorageSessionPolicy(HTTPPolicy):
         if status == 401 and not request.context.options.get(SESSION_RETRIED_CONTEXT_KEY):
             _LOGGER.info("Session authentication: HTTP 401 on '%s'; re-acquiring once.", container_name)
             with self._cache.lock_container(container_name):
-                self._cache.put_fallback(container_name)  # drop the stale entry
+                self._cache.put_fallback(container_name)
             request.context.options[SESSION_RETRIED_CONTEXT_KEY] = True
-            retried_container = self.on_request(request)   # re-stamp (or fall to bearer)
+            retried_container = self.on_request(request)
             retried_response = self.next.send(request)
             return self.on_response(request, retried_response, retried_container)
 
