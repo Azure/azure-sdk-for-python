@@ -387,9 +387,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         The Task Storage API is not yet generally available. To avoid
         failures in hosted environments, the local file-based provider
         is used by default even when ``FOUNDRY_HOSTING_ENVIRONMENT`` is
-        set.  Set the ``FOUNDRY_TASK_API_ENABLED=1`` environment variable
-        to opt in to the HTTP-backed provider for testing once the APIs
-        are lit up.
+        set.  Set the ``AGENTSERVER_TASK_API_ENABLED=1`` environment
+        variable to opt in to the HTTP-backed provider for testing once
+        the APIs are lit up.
+
+        Note: the ``FOUNDRY_*`` and ``AGENT_*`` env-var namespaces are
+        reserved by the hosting platform and rejected at deploy time —
+        so the opt-in flag intentionally lives in the user-writable
+        ``AGENTSERVER_*`` namespace.
 
         :param config: The agent configuration.
         :type config: AgentConfig
@@ -398,7 +403,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         """
         import os  # pylint: disable=import-outside-toplevel
 
-        task_api_enabled = os.environ.get("FOUNDRY_TASK_API_ENABLED", "").strip()
+        task_api_enabled = os.environ.get("AGENTSERVER_TASK_API_ENABLED", "").strip()
 
         if config.is_hosted and task_api_enabled in ("1", "true", "yes"):
             from ._client import (  # pylint: disable=import-outside-toplevel
@@ -416,7 +421,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 ) from exc
 
             logger.info(
-                "Task Storage API enabled via FOUNDRY_TASK_API_ENABLED; "  # pylint: disable=implicit-str-concat
+                "Task Storage API enabled via AGENTSERVER_TASK_API_ENABLED; "  # pylint: disable=implicit-str-concat
                 "using HostedTaskProvider"
             )
             return HostedTaskProvider(
@@ -427,7 +432,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         if config.is_hosted and not task_api_enabled:
             logger.info(
                 "Hosted environment detected but Task Storage API not yet enabled. "
-                "Using local file provider. Set FOUNDRY_TASK_API_ENABLED=1 to use "
+                "Using local file provider. Set AGENTSERVER_TASK_API_ENABLED=1 to use "
                 "the HTTP-backed provider when the APIs are available."
             )
 
