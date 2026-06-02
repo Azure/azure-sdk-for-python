@@ -8499,10 +8499,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         *,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
-        after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentsPagedResultOptimizationCandidate:
+    ) -> ItemPaged["_models.OptimizationCandidate"]:
         """Returns a list of candidates for an optimization job.
 
         List candidates produced by a job.
@@ -8517,23 +8516,21 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
          ascending order and``desc``
          for descending order. Known values are: "asc" and "desc". Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword after: A cursor for use in pagination. ``after`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include after=obj_foo in order to fetch the next page of the list. Default
-         value is None.
-        :paramtype after: str
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
          For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: AgentsPagedResultOptimizationCandidate. The AgentsPagedResultOptimizationCandidate is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentsPagedResultOptimizationCandidate
+        :return: An iterator like instance of OptimizationCandidate
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.OptimizationCandidate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.OptimizationCandidate]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8542,56 +8539,54 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(_continuation_token=None):
 
-        cls: ClsType[_models.AgentsPagedResultOptimizationCandidate] = kwargs.pop("cls", None)
-
-        _request = build_beta_agents_list_optimization_candidates_request(
-            job_id=job_id,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
+            _request = build_beta_agents_list_optimization_candidates_request(
+                job_id=job_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
             )
-            raise HttpResponseError(response=response, model=error)
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentsPagedResultOptimizationCandidate, response.json())
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.OptimizationCandidate],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
-        return deserialized  # type: ignore
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def get_optimization_candidate(self, job_id: str, candidate_id: str, **kwargs: Any) -> _models.CandidateMetadata:

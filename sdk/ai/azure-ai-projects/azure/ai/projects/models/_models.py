@@ -1013,51 +1013,6 @@ class AgentSessionResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentsPagedResultOptimizationCandidate(_Model):
-    """The response data for a requested list of items.
-
-    :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.projects.models.OptimizationCandidate]
-    :ivar first_id: The first ID represented in this list.
-    :vartype first_id: str
-    :ivar last_id: The last ID represented in this list.
-    :vartype last_id: str
-    :ivar has_more: A value indicating whether there are additional values available not captured
-     in this list. Required.
-    :vartype has_more: bool
-    """
-
-    data: list["_models.OptimizationCandidate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The requested list of items. Required."""
-    first_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The first ID represented in this list."""
-    last_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The last ID represented in this list."""
-    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A value indicating whether there are additional values available not captured in this list.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        data: list["_models.OptimizationCandidate"],
-        has_more: bool,
-        first_id: Optional[str] = None,
-        last_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EvaluationTaxonomyInput(_Model):
     """Input configuration for the evaluation taxonomy.
 
@@ -6422,14 +6377,14 @@ class EvaluationScheduleTask(ScheduleTask, discriminator="Evaluation"):
     :ivar eval_id: Identifier of the evaluation group. Required.
     :vartype eval_id: str
     :ivar eval_run: The evaluation run payload. Required.
-    :vartype eval_run: any
+    :vartype eval_run: dict[str, any]
     """
 
     type: Literal[ScheduleTaskType.EVALUATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Evaluation task."""
     eval_id: str = rest_field(name="evalId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier of the evaluation group. Required."""
-    eval_run: Any = rest_field(name="evalRun", visibility=["read", "create", "update", "delete", "query"])
+    eval_run: dict[str, Any] = rest_field(name="evalRun", visibility=["read", "create", "update", "delete", "query"])
     """The evaluation run payload. Required."""
 
     @overload
@@ -6437,7 +6392,7 @@ class EvaluationScheduleTask(ScheduleTask, discriminator="Evaluation"):
         self,
         *,
         eval_id: str,
-        eval_run: Any,
+        eval_run: dict[str, Any],
         configuration: Optional[dict[str, str]] = None,
     ) -> None: ...
 
