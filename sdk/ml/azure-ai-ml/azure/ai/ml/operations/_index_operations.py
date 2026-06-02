@@ -126,9 +126,7 @@ class IndexOperations(_ScopeDependentOperations):
             # for DeploymentTemplate operations, but the Index service returns HTTP 500 on
             # the v2.0 path for write operations. Override the base URL to use the legacy path.
             base_url = self.__azure_ai_assets_client._client._base_url
-            self.__azure_ai_assets_client._client._base_url = base_url.replace(
-                "/genericasset/v2.0/", "/genericasset/"
-            )
+            self.__azure_ai_assets_client._client._base_url = base_url.replace("/genericasset/v2.0/", "/genericasset/")
 
         return self.__azure_ai_assets_client
 
