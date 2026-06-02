@@ -9,7 +9,8 @@
   `durable_multiturn` (suspend/resume conversation),
   `durable_langgraph` (LangGraph integration), and
   `durable_research` (multi-stage research loop with checkpointing).
-  See `samples/DURABLE_SAMPLES.md` for an overview and the
+  Each sample's `agent.py` / `app.py` module docstring covers what it
+  demonstrates; see the
   [core developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
   for the underlying `@task` API.
 

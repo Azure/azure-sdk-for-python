@@ -21,8 +21,9 @@
 ### Other Changes
 
 - The hosted task-store transport is now built on
-  `azure.core.AsyncPipelineClient` instead of `httpx`; `httpx` is no
-  longer a production dependency.
+  `azure.core.AsyncPipelineClient` instead of `httpx` / `aiohttp`;
+  neither `httpx` nor `aiohttp` is a production dependency of this
+  package anymore.
 
 ## 2.0.0b5 (2026-05-25)
 
