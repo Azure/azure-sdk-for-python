@@ -2841,9 +2841,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         )
         assert captured["c1_upload"].startswith("Bearer ")
 
-        blob1_actual = container1.download_blob(
-            blob1_name, raw_response_hook=make_capture("c1_download")
-        ).readall()
+        blob1_actual = container1.download_blob(blob1_name, raw_response_hook=make_capture("c1_download")).readall()
         assert blob1_data == blob1_actual
         assert captured["c1_download"].startswith("Session ")
         session1 = session_token_from(captured["c1_download"])
