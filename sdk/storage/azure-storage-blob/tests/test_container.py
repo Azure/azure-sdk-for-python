@@ -2824,12 +2824,20 @@ class TestStorageContainer(StorageRecordedTestCase):
             assert auth.startswith("Session ")
             return auth[len("Session "):].split(":", 1)[0]
 
+        def find_session_policy(pipeline):
+            # Match by class name to avoid importing internals into the test module.
+            for p in getattr(pipeline, "_impl_policies", []):
+                if type(p).__name__ == "StorageSessionPolicy":
+                    return p
+            raise AssertionError("StorageSessionPolicy not found on the pipeline")
+
         service = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=credential,
             use_session=True,
         )
-        container1 = service.get_container_client(self.get_resource_name("utcontainer1"))
+        container1_name = self.get_resource_name("utcontainer1")
+        container1 = service.get_container_client(container1_name)
         try:
             container1.create_container()
         except ResourceExistsError:
@@ -2846,7 +2854,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert captured["c1_download"].startswith("Session ")
         session1 = session_token_from(captured["c1_download"])
 
-        container2 = service.get_container_client(self.get_resource_name("utcontainer2"))
+        container2_name = self.get_resource_name("utcontainer2")
+        container2 = service.get_container_client(container2_name)
         try:
             container2.create_container()
         except ResourceExistsError:
@@ -2872,6 +2881,15 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert blob2_data == blob2_actual
         assert captured["c2_download2"].startswith("Session ")
         assert session2 == session_token_from(captured["c2_download2"])
+
+        policy = find_session_policy(service._pipeline)
+        cached = policy._cache._entry[container1_name]
+        cached.expires_at = datetime.fromtimestamp(0, tz=cached.expires_at.tzinfo)
+
+        blob1_actual = container1.download_blob(blob1_name, raw_response_hook=make_capture("c1_download3")).readall()
+        assert blob1_data == blob1_actual
+        assert captured["c1_download3"].startswith("Session ")
+        assert session1 != session_token_from(captured["c1_download3"])
 
     @BlobPreparer()
     def test_sessions_disabled(self, **kwargs):
