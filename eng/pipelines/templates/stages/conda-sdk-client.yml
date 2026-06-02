@@ -860,7 +860,7 @@ extends:
                         - package: azure-mgmt-orbital
                           version: 2.0.0
                         - package: azure-mgmt-paloaltonetworksngfw
-                          version: 1.0.0
+                          version: 1.1.0
                         - package: azure-mgmt-peering
                           version: 1.0.1
                         - package: azure-mgmt-planetarycomputer
@@ -874,7 +874,7 @@ extends:
                         - package: azure-mgmt-portal
                           version: 1.0.1
                         - package: azure-mgmt-postgresqlflexibleservers
-                          version: 1.1.0
+                          version: 2.0.0
                         - package: azure-mgmt-powerbidedicated
                           version: 1.0.1
                         - package: azure-mgmt-privatedns
