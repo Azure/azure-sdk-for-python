@@ -1,4 +1,4 @@
-# Azure Planetarycomputer client library for Python (conda)
+# Azure Planetary Computer client library for Python (conda)
 
 ## 2026.06.01
 

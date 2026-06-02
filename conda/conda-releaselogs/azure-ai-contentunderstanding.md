@@ -1,4 +1,4 @@
-# Azure Ai Contentunderstanding client library for Python (conda)
+# Azure AI Content Understanding client library for Python (conda)
 
 ## 2026.06.01
 

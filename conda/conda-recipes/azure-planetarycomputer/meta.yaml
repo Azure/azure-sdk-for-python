@@ -44,9 +44,9 @@ about:
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "Microsoft Azure Planetarycomputer Client Library for Python"
+  summary: "Microsoft Azure Planetary Computer Client Library for Python"
   description: |
-    This is the Microsoft Azure Planetarycomputer Client Library for Python.
+    This is the Microsoft Azure Planetary Computer Client Library for Python.
     Please see https://aka.ms/azsdk/conda/releases/planetarycomputer for version details.
   doc_url: 
   dev_url: 

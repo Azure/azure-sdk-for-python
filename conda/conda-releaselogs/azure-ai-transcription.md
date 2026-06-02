@@ -1,4 +1,4 @@
-# Azure Ai Transcription client library for Python (conda)
+# Azure AI Speech Transcription client library for Python (conda)
 
 ## 2026.06.01
 

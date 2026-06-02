@@ -1,4 +1,4 @@
-# Azure Postgresql Auth client library for Python (conda)
+# Azure PostgreSQL Auth client library for Python (conda)
 
 ## 2026.06.01
 

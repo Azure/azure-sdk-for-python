@@ -38,9 +38,9 @@ about:
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "Microsoft Azure Contentunderstanding Client Library for Python"
+  summary: "Microsoft Azure Content Understanding Client Library for Python"
   description: |
-    This is the Microsoft Azure Contentunderstanding Client Library for Python.
+    This is the Microsoft Azure Content Understanding Client Library for Python.
     Please see https://aka.ms/azsdk/conda/releases/contentunderstanding for version details.
   doc_url: 
   dev_url: 
