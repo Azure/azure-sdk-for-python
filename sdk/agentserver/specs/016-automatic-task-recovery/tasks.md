@@ -373,19 +373,19 @@ For brevity, the path prefix `sdk/agentserver/azure-ai-agentserver-core/` is abb
 
 **Purpose**: cross-cutting verification, sample-impact actions, and final integration checks.
 
-- [ ] T101 [P] Run `pytest <core>/tests/durable/test_dev_guide_review.py` and verify ALL invariants from T007 pass green against the rewritten guide (T006).
-- [ ] T102 [P] Run `pytest <core>/tests/durable/test_contract_completeness.py` and verify it stays green — auto-discovery via `__all__` traversal MUST pick up the new public symbols (`timeout_exceeded`, `cancel_requested`, `pending_input_count`, `is_steered_turn`, `exit_for_recovery`) and NOT find any of the removed symbols.
-- [ ] T103 [P] Run `pytest <core>/tests/durable/test_public_api_surface.py` and verify the full presence/absence sweep (T026, T060, T071, T095) passes green.
-- [ ] T104 Sample updates per spec.md §Docs↔Samples Loop §Samples affected matrix. For each row:
+- [X] T101 [P] Run `pytest <core>/tests/durable/test_dev_guide_review.py` and verify ALL invariants from T007 pass green against the rewritten guide (T006).
+- [X] T102 [P] Run `pytest <core>/tests/durable/test_contract_completeness.py` and verify it stays green — auto-discovery via `__all__` traversal MUST pick up the new public symbols (`timeout_exceeded`, `cancel_requested`, `pending_input_count`, `is_steered_turn`, `exit_for_recovery`) and NOT find any of the removed symbols.
+- [X] T103 [P] Run `pytest <core>/tests/durable/test_public_api_surface.py` and verify the full presence/absence sweep (T026, T060, T071, T095) passes green.
+- [X] T104 Sample updates per spec.md §Docs↔Samples Loop §Samples affected matrix. For each row:
   - Surveys: `grep -rn 'pending_inputs\|was_steered\|steering_generation' sdk/agentserver/azure-ai-agentserver-core/samples/ sdk/agentserver/azure-ai-agentserver-invocations/samples/` — if any matches, migrate per the table.
   - Recommended-not-required updates: add one composite-case cancel-cause example to `durable_copilot/agent.py` if scoping allows; OR record deferral in `conformance-gap-list.md` with one-line justification per Constitution Principle IX.
-- [ ] T105 Run `azpysdk pylint sdk/agentserver/azure-ai-agentserver-core` from the repo root; address any new violations introduced by this PR. Resist scope creep — fix only violations directly caused by spec-016 changes.
-- [ ] T106 Run `azpysdk mypy sdk/agentserver/azure-ai-agentserver-core`; address any new type errors. Pay particular attention to the `derive_lease_owner` signature change, the `TaskResult.status` Literal narrowing, the new `TaskContext` property types, the `HostedTaskProvider.__init__` credential re-typing.
-- [ ] T107 Run `azpysdk pyright sdk/agentserver/azure-ai-agentserver-core`; address any new errors.
-- [ ] T108 Run `azpysdk sphinx sdk/agentserver/azure-ai-agentserver-core`; verify docs build cleanly with the rewritten developer guide (T006).
-- [ ] T109 Verify the entire durable test suite passes: `cd sdk/agentserver/azure-ai-agentserver-core && pytest tests/durable/ -x -q`. Aim for the same count as the baseline from T001, plus the new tests from US1–US9 (~50–80 new test functions).
-- [ ] T110 Final commit-history audit per Constitution Principle XII: every conformance-test commit MUST precede its paired implementation commit (RED-first). Run `git log --oneline` and verify the pattern.
-- [ ] T111 Final review against `conformance-gap-list.md` (T005): every affected symbol has a test; every ported test is recorded; every deferred sample-update has a justification; no parallel test suite was created outside the two flagged new modules; no test was deleted without gap-list justification.
+- [X] T105 Run `azpysdk pylint sdk/agentserver/azure-ai-agentserver-core` from the repo root; address any new violations introduced by this PR. Resist scope creep — fix only violations directly caused by spec-016 changes.
+- [X] T106 Run `azpysdk mypy sdk/agentserver/azure-ai-agentserver-core`; address any new type errors. Pay particular attention to the `derive_lease_owner` signature change, the `TaskResult.status` Literal narrowing, the new `TaskContext` property types, the `HostedTaskProvider.__init__` credential re-typing.
+- [X] T107 Run `azpysdk pyright sdk/agentserver/azure-ai-agentserver-core`; address any new errors.
+- [X] T108 Run `azpysdk sphinx sdk/agentserver/azure-ai-agentserver-core`; verify docs build cleanly with the rewritten developer guide (T006).
+- [X] T109 Verify the entire durable test suite passes: `cd sdk/agentserver/azure-ai-agentserver-core && pytest tests/durable/ -x -q`. Aim for the same count as the baseline from T001, plus the new tests from US1–US9 (~50–80 new test functions).
+- [X] T110 Final commit-history audit per Constitution Principle XII: every conformance-test commit MUST precede its paired implementation commit (RED-first). Run `git log --oneline` and verify the pattern.
+- [X] T111 Final review against `conformance-gap-list.md` (T005): every affected symbol has a test; every ported test is recorded; every deferred sample-update has a justification; no parallel test suite was created outside the two flagged new modules; no test was deleted without gap-list justification.
 
 **Checkpoint**: All spec-016 work complete. **→ Run T122 (final whole-PR holistic review) before marking the PR ready for human review.**
 

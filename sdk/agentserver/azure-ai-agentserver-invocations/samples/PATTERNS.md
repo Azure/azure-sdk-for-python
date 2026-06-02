@@ -77,9 +77,11 @@ async def my_agent(ctx: TaskContext) -> None:
 
 ## 5. Steering / multi-turn
 
-Use `ctx.pending_inputs` to drain queued inputs in steerable-conversation
-patterns. See the `multiturn_invoke_agent` and `durable_multiturn` samples
-for the canonical shape.
+Use `ctx.pending_input_count` to detect queued steering inputs in
+steerable-conversation patterns (spec 016 FR-019 renamed the legacy
+`ctx.pending_inputs` snapshot to a live count). See the
+`multiturn_invoke_agent` and `durable_multiturn` samples for the
+canonical shape.
 
 ## 6. What this is NOT
 

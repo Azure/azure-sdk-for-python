@@ -180,9 +180,9 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     await ctx.stream({"type": "lifecycle", "status": "running"})
 
     logger.info(
-        "Copilot session %s gen=%d invocation=%s entry=%s",
+        "Copilot session %s steered=%s invocation=%s entry=%s",
         session_id,
-        ctx.steering_generation,
+        ctx.is_steered_turn,
         invocation_id,
         ctx.entry_mode,
     )
@@ -210,7 +210,9 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
 
         # ── Phase 1: Pre-entry cancel (rapid-fire steering) ────────
         if ctx.cancel.is_set():
-            logger.info("Skipping gen=%d — cancel pre-set", ctx.steering_generation)
+            logger.info(
+                "Skipping steered=%s — cancel pre-set", ctx.is_steered_turn
+            )
             # Still send so the message is preserved in upstream history —
             # but go through dedup so we don't double-send on recovery.
             if not await _last_user_message_matches(session, message):
