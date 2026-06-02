@@ -533,9 +533,7 @@ def run_conda_command(command: List[str], cwd: str) -> None:
             print("----- stderr -----")
             print(result.stderr)
             print("------------------")
-        raise subprocess.CalledProcessError(
-            result.returncode, command, output=result.stdout, stderr=result.stderr
-        )
+        raise subprocess.CalledProcessError(result.returncode, command, output=result.stdout, stderr=result.stderr)
 
 
 def prep_and_create_environment(environment_dir: str) -> None:
