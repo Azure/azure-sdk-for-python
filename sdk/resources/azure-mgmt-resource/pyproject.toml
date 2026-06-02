@@ -6,7 +6,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-mgmt-resource-resources"
+name = "azure-mgmt-resource"
 authors = [
     { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
