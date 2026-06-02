@@ -291,6 +291,28 @@ class TestLifecycle:
             await self._teardown_manager(manager, mgr_mod)
 
     @pytest.mark.asyncio
+    async def test_task_run_is_awaitable(self, tmp_path) -> None:
+        """``await task_run`` returns the same TaskResult as ``await task_run.result()``."""
+
+        @task(title="awaitable")
+        async def my_task(ctx: TaskContext[str]) -> str:
+            return f"echo: {ctx.input}"
+
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            # Direct-await the TaskRun handle.
+            handle = await my_task.start(task_id="awaitable-1", input="hello")
+            result = await handle  # ← exercising __await__
+            assert result.output == "echo: hello"
+
+            # And confirm the explicit .result() path still works identically.
+            handle2 = await my_task.start(task_id="awaitable-2", input="world")
+            result_via_method = await handle2.result()
+            assert result_via_method.output == "echo: world"
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
     async def test_stale_timeout_kwarg_removed_spec_016(self, tmp_path) -> None:
         """Spec 016 FR-001 / US1: stale_timeout removed from developer surface.
 

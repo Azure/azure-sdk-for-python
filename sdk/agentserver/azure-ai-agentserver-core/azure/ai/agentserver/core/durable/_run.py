@@ -243,3 +243,23 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         if self._stream_handler is None:
             raise StopAsyncIteration
         return await self._stream_handler.get()
+
+    def __await__(self) -> Any:
+        """Awaiting a :class:`TaskRun` returns its :meth:`result`.
+
+        Lets callers write ``result = await run`` as shorthand for
+        ``result = await run.result()``. Useful when you already have
+        a ``TaskRun`` handle (e.g. from :meth:`Task.start` or
+        :meth:`Task.get_active_run`) and just want the terminal
+        outcome.
+
+        Usage::
+
+            run = await my_task.start(task_id="t1", input=...)
+            ...
+            result = await run
+
+        :return: The :class:`TaskResult` for this run.
+        :rtype: TaskResult[Output]
+        """
+        return self.result().__await__()
