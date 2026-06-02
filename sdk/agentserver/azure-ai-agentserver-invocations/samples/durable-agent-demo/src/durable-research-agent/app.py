@@ -15,7 +15,7 @@ import os
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core.durable import TaskCancelled, TaskConflictError, TaskFailed, TaskTerminated
+from azure.ai.agentserver.core.durable import TaskCancelled, TaskConflictError, TaskFailed
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 from agent import deep_research
@@ -78,7 +78,6 @@ async def handle_invoke(request: Request) -> Response:
         await deep_research.start(
             task_id=task_id,
             input={"topic": topic, "invocation_id": invocation_id},
-            session_id=session_id,
         )
     except TaskConflictError:
         # Task already running (recovered after crash)
@@ -116,7 +115,7 @@ async def handle_get(request: Request) -> Response:
     skip_count = int(last_event_id) if last_event_id.isdigit() else 0
     logger.info(f"GET handler: session_id={session_id!r}, task_id={task_id!r}, skip={skip_count}")
 
-    run = deep_research.get_active_run(task_id)
+    run = await deep_research.get_active_run(task_id)
     logger.info(f"GET handler: get_active_run({task_id!r}) -> {run}")
 
     if run is not None:
@@ -132,7 +131,7 @@ async def handle_get(request: Request) -> Response:
                 result = await run.result()
                 event_id += 1
                 yield f"id: {event_id}\ndata: {json.dumps({'type': 'done', 'full_text': result.output.get('report', '')})}\n\n"
-            except (TaskCancelled, TaskTerminated):
+            except TaskCancelled:
                 event_id += 1
                 yield f"id: {event_id}\ndata: {json.dumps({'type': 'done', 'full_text': '[Task was cancelled]'})}\n\n"
             except TaskFailed as exc:
@@ -187,7 +186,7 @@ async def handle_cancel(request: Request) -> Response:
     task_id = invocation_id
     logger.info(f"CANCEL handler: invocation_id={invocation_id!r}, task_id={task_id!r}")
 
-    run = deep_research.get_active_run(task_id)
+    run = await deep_research.get_active_run(task_id)
     if run is None:
         return JSONResponse({"status": "not_found", "message": "No active task to cancel."})
 
