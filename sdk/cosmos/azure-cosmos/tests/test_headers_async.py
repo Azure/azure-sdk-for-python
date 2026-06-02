@@ -20,19 +20,19 @@ request_throughput_bucket_number = 3
 client_priority = "Low"
 request_priority = "High"
 
-async def client_raw_response_hook(response):
+def client_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(client_throughput_bucket_number))
 
-async def request_raw_response_hook(response):
+def request_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(request_throughput_bucket_number))
 
-async def client_priority_raw_response_hook(response):
+def client_priority_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]
             == client_priority)
 
-async def request_priority_raw_response_hook(response):
+def request_priority_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]
             == request_priority)
 
