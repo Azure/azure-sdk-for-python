@@ -24,7 +24,6 @@
         "azure.ai.projects.models.AgentIdentity": "Azure.AI.Projects.AgentIdentity",
         "azure.ai.projects.models.AgentObjectVersions": "Azure.AI.Projects.AgentObject.versions.anonymous",
         "azure.ai.projects.models.AgentSessionResource": "Azure.AI.Projects.AgentSessionResource",
-        "azure.ai.projects.models.AgentsPagedResultOptimizationCandidate": "Azure.AI.Projects.AgentsPagedResult",
         "azure.ai.projects.models.EvaluationTaxonomyInput": "Azure.AI.Projects.EvaluationTaxonomyInput",
         "azure.ai.projects.models.AgentTaxonomyInput": "Azure.AI.Projects.AgentTaxonomyInput",
         "azure.ai.projects.models.AgentVersionDetails": "Azure.AI.Projects.AgentVersionObject",
@@ -475,5 +474,5 @@
         "azure.ai.projects.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
         "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion"
     },
-    "CrossLanguageVersion": "c44eac94eea1"
+    "CrossLanguageVersion": "3ae42dbde611"
 }
