@@ -2807,7 +2807,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_create_session_same_policy(self, **kwargs):
+    def test_create_session(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
         credential = self.get_credential(BlobServiceClient)
@@ -2893,6 +2893,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert session2 != session_token_from(captured["c1_download3"])
 
     @BlobPreparer()
+    @recorded_by_proxy
     def test_sessions_disabled(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
