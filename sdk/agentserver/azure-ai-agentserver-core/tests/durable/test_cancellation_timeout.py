@@ -474,3 +474,160 @@ class TestSpec016PerTurnTimeout:
             "Spec 016 FR-026: the docstring MUST document the "
             "cooperative-only semantic explicitly."
         )
+
+
+class TestSpec016ExitForRecoveryExtended:
+    """Spec 016 US8 (FR-027 b / FR-028) — coverage for the recovery
+    re-entry and queued-input preservation paths that the basic
+    TestExitForRecovery class doesn't cover (T094(b), T096).
+    """
+
+    @pytest.mark.asyncio
+    async def test_exit_for_recovery_recovered_handler_reentry(self, tmp_path):
+        """T094(b) / FR-027(b) / SC-015: after exit_for_recovery, a
+        fresh process (simulated by re-creating the manager) recovers
+        the task; handler re-enters with entry_mode='recovered'.
+        """
+        from azure.ai.agentserver.core.durable._exceptions import TaskCancelled
+        from azure.ai.agentserver.core.durable._local_provider import (
+            LocalFileTaskProvider,
+        )
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+        import azure.ai.agentserver.core.durable._manager as mgr_mod_local
+
+        observed: list[str] = []
+        triggered = asyncio.Event()
+
+        @task(name="t094b_recover", ephemeral=False)
+        async def handler(ctx: TaskContext[str]) -> str:
+            observed.append(ctx.entry_mode)
+            if ctx.entry_mode == "recovered":
+                return "recovered-completed"
+            await triggered.wait()
+            ctx.shutdown.set()
+            return await ctx.exit_for_recovery()
+
+        # Phase 1: handler exits for recovery; status remains in_progress
+        # with our lease owner stamped.
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager1 = TaskManager(config=config, provider=provider)
+        mgr_mod_local._manager = manager1
+        await manager1.startup()
+        try:
+            run = await handler.start(task_id="t094b-rec", input="x")
+            await asyncio.sleep(0.05)
+            triggered.set()
+            with pytest.raises(TaskCancelled):
+                await asyncio.wait_for(run.result(), timeout=2.0)
+            # Verify the task is preserved as in_progress with our owner.
+            info = await provider.get("t094b-rec")
+            assert info is not None
+            assert info.status == "in_progress"
+        finally:
+            await manager1.shutdown()
+            mgr_mod_local._manager = None
+
+        # Phase 2: new manager re-enters via startup-scan recovery.
+        # Need to stamp the record with our lease owner so the scan picks
+        # it up. exit_for_recovery cleared the owner — restore it now
+        # to simulate "next process startup with same owner" (which is
+        # what happens because derive_lease_owner is deterministic for
+        # the same agent+session).
+        from azure.ai.agentserver.core.durable._models import TaskPatchRequest
+        # Stamp the record with the same lease_owner the new manager
+        # will derive so the startup scan finds it.
+        new_manager = TaskManager(config=config, provider=provider)
+        await provider.update(
+            "t094b-rec",
+            TaskPatchRequest(
+                lease_owner=new_manager._lease_owner,  # noqa: SLF001
+                lease_instance_id="prev-incarnation",
+                lease_duration_seconds=60,
+            ),
+        )
+        mgr_mod_local._manager = new_manager
+        await new_manager.startup()
+        # Layer 1 recovery scan should have re-entered the handler.
+        try:
+            # Wait briefly for the recovery to take effect.
+            deadline = asyncio.get_event_loop().time() + 2.0
+            while "recovered" not in observed and (
+                asyncio.get_event_loop().time() < deadline
+            ):
+                await asyncio.sleep(0.05)
+            assert "recovered" in observed, (
+                "Spec 016 FR-027(b) / SC-015: a fresh TaskManager MUST "
+                "re-enter the handler with entry_mode='recovered' after "
+                "exit_for_recovery left the record in_progress."
+            )
+        finally:
+            await new_manager.shutdown()
+            mgr_mod_local._manager = None
+
+    @pytest.mark.asyncio
+    async def test_exit_for_recovery_preserves_queued_steering_inputs(
+        self, tmp_path
+    ):
+        """T096 / FR-028: queued steering inputs at the time
+        exit_for_recovery() is called MUST be preserved in the
+        persisted state — the framework does NOT drain them during
+        shutdown."""
+        from azure.ai.agentserver.core.durable._exceptions import TaskCancelled
+
+        gate = asyncio.Event()
+
+        @task(name="t096_preserve_queue", steerable=True, ephemeral=False)
+        async def handler(ctx: TaskContext[dict]) -> dict:
+            # Wait for the test to queue a steering input + signal.
+            await gate.wait()
+            # Now simulate shutdown.
+            ctx.shutdown.set()
+            return await ctx.exit_for_recovery()
+
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+            run1 = await handler.start(task_id="t096-preserve", input={"msg": "first"})
+            await asyncio.sleep(0.05)
+            # Queue a steering input — this writes pending_inputs to the
+            # record's _steering payload.
+            run2 = await handler.start(task_id="t096-preserve", input={"msg": "queued"})
+            assert run2 is not None
+            # Verify the steering input is in the persisted state.
+            info_before = await manager.provider.get("t096-preserve")
+            assert info_before is not None
+            steering_before = (info_before.payload or {}).get("_steering", {})
+            pending_before = steering_before.get("pending_inputs", [])
+            assert len(pending_before) >= 1, (
+                f"Test setup: queued steering input should be in "
+                f"pending_inputs. Got {pending_before}"
+            )
+
+            # Trigger shutdown — handler calls exit_for_recovery.
+            gate.set()
+            with pytest.raises(TaskCancelled):
+                await asyncio.wait_for(run1.result(), timeout=2.0)
+
+            # FR-028: pending_inputs MUST be preserved in the persisted
+            # state across exit_for_recovery — NOT drained.
+            info_after = await manager.provider.get("t096-preserve")
+            assert info_after is not None
+            steering_after = (info_after.payload or {}).get("_steering", {})
+            pending_after = steering_after.get("pending_inputs", [])
+            assert len(pending_after) >= 1, (
+                f"Spec 016 FR-028: exit_for_recovery MUST preserve "
+                f"queued steering inputs (NOT drain them during "
+                f"shutdown). Pending before={len(pending_before)}, "
+                f"after={len(pending_after)}; got {pending_after}"
+            )
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
