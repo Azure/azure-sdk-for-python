@@ -47,9 +47,15 @@ tests/
 ## Validation
 
 ```bash
-# Run package checks
+# Run targeted local checks
 azpysdk pytest .
 azpysdk pylint .
 azpysdk mypy .
 azpysdk sphinx .
+```
+
+For full package validation through the Azure SDK release tooling, run:
+
+```
+azsdk_package_run_check with packagePath="sdk/identity/azure-identity" and checkType="All"
 ```

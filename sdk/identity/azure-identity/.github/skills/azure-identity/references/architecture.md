@@ -6,13 +6,13 @@
 
 This is the OAuth/MSAL distinction that drives most of the credential design.
 
-**Public client application** — cannot keep a secret; authenticates a _user_ interactively. Backed by `msal.PublicClientApplication`:
+**Public client application** — cannot keep a secret; authenticates a _user_. This is the OAuth category; implementation varies by credential, so check the MSAL tiers below before changing internals:
 - `InteractiveBrowserCredential`, `DeviceCodeCredential`, `UsernamePasswordCredential`
 - `AuthorizationCodeCredential`, `SharedTokenCacheCredential`
 - `VisualStudioCodeCredential` (delegates to broker)
 - `InteractiveBrowserBrokerCredential` (broker package)
 
-**Confidential client application** — runs on a server, holds a secret/certificate/assertion. Backed by `msal.ConfidentialClientApplication`:
+**Confidential client application** — runs on a server, holds a secret/certificate/assertion. This is the OAuth category; not every credential here instantiates `msal.ConfidentialClientApplication` directly:
 - `ClientSecretCredential`, `CertificateCredential`, `ClientAssertionCredential`
 - `OnBehalfOfCredential`
 - `WorkloadIdentityCredential` (built on `ClientAssertionCredential`)
@@ -68,7 +68,7 @@ Subprocess-based credentials that parse stdout JSON:
 - Async managed-identity sources hit IMDS/app-host endpoints directly
 - MSAL's `TokenCache` data structure IS reused for cache compatibility
 
-So every Tier 1 sync credential drops to Tier 2 in its async counterpart.
+So Tier 1 sync credentials do not stay Tier 1 in async: their async counterparts either use `AadClient` / `TokenCache` compatibility or direct async managed-identity HTTP.
 
 ## Managed Identity Backends
 
@@ -81,7 +81,7 @@ So every Tier 1 sync credential drops to Tier 2 in its async counterpart.
 | Azure Arc | `IDENTITY_ENDPOINT` + `IMDS_ENDPOINT` | Yes |
 | Azure ML | `MSI_ENDPOINT` + `MSI_SECRET` | Yes |
 | Cloud Shell | `MSI_ENDPOINT` (no secret) | **No** — uses in-house client |
-| Workload Identity | `AZURE_FEDERATED_TOKEN_FILE` + `AZURE_TENANT_ID` + `AZURE_CLIENT_ID` | Yes |
+| Workload Identity | `AZURE_FEDERATED_TOKEN_FILE` + `AZURE_TENANT_ID` + `AZURE_CLIENT_ID` | No — dispatches to `WorkloadIdentityCredential` / `AadClient` |
 | IMDS (fallback) | None of the above | Yes |
 
 ## DefaultAzureCredential Chain
