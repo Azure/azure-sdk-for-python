@@ -20,7 +20,6 @@
 - Fix retry amplification storm in Azure Monitor OpenTelemetry exporter
   ([#47002](https://github.com/Azure/azure-sdk-for-python/pull/47002))
 
-
 ## 1.0.0b52 (2026-05-12)
 
 ### Features Added
