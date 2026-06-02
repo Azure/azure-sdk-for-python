@@ -14,28 +14,16 @@ load_dotenv()
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    reservationsmgmt_subscription_id = os.environ.get(
-        "AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    reservationsmgmt_tenant_id = os.environ.get(
-        "AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    reservationsmgmt_client_id = os.environ.get(
-        "AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    reservationsmgmt_client_secret = os.environ.get(
-        "AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
-    )
+    reservationsmgmt_subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    reservationsmgmt_tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    reservationsmgmt_client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    reservationsmgmt_client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(
         regex=reservationsmgmt_subscription_id,
         value="00000000-0000-0000-0000-000000000000",
     )
-    add_general_regex_sanitizer(
-        regex=reservationsmgmt_tenant_id, value="00000000-0000-0000-0000-000000000000"
-    )
-    add_general_regex_sanitizer(
-        regex=reservationsmgmt_client_id, value="00000000-0000-0000-0000-000000000000"
-    )
+    add_general_regex_sanitizer(regex=reservationsmgmt_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=reservationsmgmt_client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(
         regex=reservationsmgmt_client_secret,
         value="00000000-0000-0000-0000-000000000000",
