@@ -165,12 +165,15 @@ jobs:
           set -euo pipefail
           TARGET_BRANCH="typespec-python-generated-tests"
           RUN_ID="${{ github.run_id }}"
-          SOURCE_BRANCH="regen/typespec-python-${RUN_ID}"
+          RUN_ATTEMPT="${{ github.run_attempt }}"
+          SOURCE_BRANCH="regen/typespec-python-${RUN_ID}-${RUN_ATTEMPT}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          GENERATED_DIR="eng/tools/azure-sdk-tools/emitter/generated"
+
           # Quick check: skip if regeneration produced no changes vs HEAD.
-          if [ -z "$(git status --porcelain -- eng/tools/azure-sdk-tools/emitter/generated/)" ]; then
+          if [ -z "$(git status --porcelain -- "$GENERATED_DIR")" ]; then
             echo "No changes to commit"
             exit 0
           fi
@@ -182,6 +185,11 @@ jobs:
             SOURCE_LABEL="microsoft/typespec@main"
           fi
 
+          # Save regenerated files to a temp dir before switching branches,
+          # since they are untracked and would be lost on checkout.
+          TMPDIR=$(mktemp -d)
+          cp -r "$GENERATED_DIR"/. "$TMPDIR"
+
           # Ensure the target branch exists; create from origin/main if not.
           git fetch --no-tags --depth=1 origin main
           if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null; then
@@ -192,9 +200,12 @@ jobs:
           # Create source branch based on the target branch.
           git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
 
-          # Apply regenerated files on top.
-          git checkout HEAD@{1} -- eng/tools/azure-sdk-tools/emitter/generated
-          git add -f eng/tools/azure-sdk-tools/emitter/generated/
+          # Restore regenerated files from the temp dir.
+          mkdir -p "$GENERATED_DIR"
+          rm -rf "$GENERATED_DIR"/*
+          cp -r "$TMPDIR"/. "$GENERATED_DIR"
+          rm -rf "$TMPDIR"
+          git add -f "$GENERATED_DIR"/
 
           if git diff --cached --quiet; then
             echo "No changes vs $TARGET_BRANCH"
