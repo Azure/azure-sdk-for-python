@@ -48,10 +48,11 @@ async def handle_invoke(request: Request) -> Response:
     Two special behaviors driven by the request body:
 
     * ``{"message": "crash"}`` (when the container has ``DEMO_MODE=1``) forces
-      ``os._exit(137)`` shortly after returning ``202``. The platform nanny
-      worker restarts the container within ~5-10 minutes; the durable task
-      auto-resumes from its last checkpoint. This is gated by ``DEMO_MODE``
-      so a stray request can't accidentally kill a production agent.
+      ``os._exit(137)`` shortly after returning ``202``. The container stays
+      down until the next ingress request — at which point the platform
+      brings it back in ~10 sec and the durable task auto-resumes from
+      its last checkpoint. This is gated by ``DEMO_MODE`` so a stray
+      request can't accidentally kill a production agent.
 
     * Any other ``{"message": "<topic>"}`` dispatches a normal research run.
       If a steerable run is already in progress on this session, the input is
@@ -80,9 +81,10 @@ async def handle_invoke(request: Request) -> Response:
             {
                 "status": "crashing",
                 "message": (
-                    "Process will exit. The platform nanny worker will restart "
-                    "the container within ~5-10 minutes; the durable task will "
-                    "automatically resume from its last checkpoint."
+                    "Process will exit. The container stays down until the "
+                    "next ingress request — the platform brings it back in "
+                    "~10 sec and the durable task auto-resumes from its "
+                    "last checkpoint."
                 ),
             },
             status_code=202,

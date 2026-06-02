@@ -365,12 +365,12 @@ cmd_crash() {
         "${ENDPOINT}/invocations?api-version=${API_VERSION}&agent_session_id=${SESSION_ID}")
     echo -e "${DIM}Response: ${response}${RESET}"
     echo ""
-    echo -e "${YELLOW}The container will exit. The platform nanny worker will${RESET}"
-    echo -e "${YELLOW}restart it in ~5-10 minutes. When it comes back the durable${RESET}"
-    echo -e "${YELLOW}task resumes from its last checkpoint.${RESET}"
+    echo -e "${YELLOW}The container will exit. It stays down until the next ingress${RESET}"
+    echo -e "${YELLOW}request — at which point the platform brings it back in ~10 sec${RESET}"
+    echo -e "${YELLOW}and the durable task auto-recovers from its last checkpoint.${RESET}"
     echo ""
-    echo -e "${DIM}Run './demo-client.sh stream' periodically to attach to the${RESET}"
-    echo -e "${DIM}restored run; look for a 'Recovered from crash' marker.${RESET}"
+    echo -e "${DIM}Run './demo-client.sh stream' whenever you're ready to reconnect.${RESET}"
+    echo -e "${DIM}Look for a 'Recovered from crash' marker (uptime resets to ~0).${RESET}"
 }
 
 cmd_cancel() {

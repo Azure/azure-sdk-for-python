@@ -258,14 +258,15 @@ async def _wind_down(
     ctx: TaskContext, completed_phases: int, results: list,
 ) -> Any:
     """Cooperative wind-down at a phase boundary."""
-    if ctx.pending_input_count > 0:
-        cause = "steering"
-    elif ctx.timeout_exceeded:
+    # Cause-detection: steering events drain pending_input_count by the
+    # time we reach here, so detect by exclusion. If neither timeout nor
+    # operator cancel fired, it's steering.
+    if ctx.timeout_exceeded:
         cause = "timeout"
     elif ctx.cancel_requested:
         cause = "operator_cancel"
     else:
-        cause = "unknown"
+        cause = "steering"
 
     await ctx.stream(json.dumps({
         "type": "winding_down",

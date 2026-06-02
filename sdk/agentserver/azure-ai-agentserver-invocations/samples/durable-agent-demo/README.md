@@ -7,10 +7,12 @@ platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
    client ingress because the durable-task framework's lease-renewal cycle
    internally exercises the readiness probe. As long as a `@task` handler
    is executing, the platform keeps the container alive.
-2. **Crash recovery via the platform nanny** — when the agent process
-   exits unexpectedly the platform nanny worker restarts the container
-   within ~5-10 minutes. On restart the durable task resumes from its
-   last checkpoint via `ctx.entry_mode == "recovered"`.
+2. **Crash recovery** — when the container dies, the platform brings it
+   back **as soon as the next ingress request arrives** (in ~10 seconds
+   in our measurements). The durable task auto-resumes from its last
+   checkpoint via `ctx.entry_mode == "recovered"`. Note: crashed
+   containers are NOT autonomously restarted on a timer; the wake-up is
+   triggered by the next incoming request.
 3. **Steering** — sending a new turn on a running steerable task queues
    the input and signals cooperative cancel. The agent winds down the
    current turn at the next checkpoint boundary and re-enters with the
@@ -90,10 +92,10 @@ because the durable-task lease renewal extends its lifetime.
 # running the task without your traffic to extend the sandbox lifetime.
 ```
 
-### B. Crash + recovery (~10 min downtime)
+### B. Crash + recovery (next-ingress wake-up)
 
-Proves capability #2 — the platform nanny restarts the container and the
-durable task resumes.
+Proves capability #2 — when a crashed container receives a new request,
+the platform brings it back in ~10 sec and the durable task auto-resumes.
 
 ```bash
 # Terminal 1: start a fresh run, leave it streaming.
@@ -104,11 +106,13 @@ durable task resumes.
 ./demo-client.sh crash
 # Server returns 202 then exits. Your stream in Terminal 1 will disconnect.
 
-# Wait ~5-10 minutes for the platform nanny to restart the container.
+# Wait as long as you like — the container stays down with NO ingress.
+# Crashed containers are NOT autonomously restarted by a background
+# nanny; the platform brings them back on the next inbound request.
 
-# Terminal 1 (or new terminal):
+# When you want to reconnect:
 ./demo-client.sh stream
-# You should see:
+# The container is brought back in ~10 sec, and you see:
 #   🔁 Recovered from crash   resuming from phase 4/15
 #   server_uptime_sec=2.4    ← fresh container; uptime started over
 # ...and the stream picks up at phase 4, NOT phase 1.
@@ -166,9 +170,11 @@ boundary and re-enters with the new input.
 └──────────────────────────────────────────────────────────────────────┘
 
 Platform-managed:
-  • nanny worker: restarts the container within ~5-10 min on crash
   • lease-renewal ingress: framework pings /readiness for each renewal,
     keeping the sandbox alive as long as a @task is executing
+  • on-ingress wake-up: when a crashed container receives a new request,
+    the platform brings it back in ~10 sec; the durable task auto-recovers
+    from its last checkpoint
 ```
 
 There is **no application-level supervisor or auto-restart wrapper** — those
