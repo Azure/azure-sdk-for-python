@@ -4,34 +4,14 @@
 
 ### Samples
 
-The durable-task primitive ships in `azure-ai-agentserver-core` 2.0.0b6.
-This release adds the matching invocations-protocol sample suite that
-demonstrates the primitive end-to-end against the invocations transport:
-
-- `samples/durable_copilot` — full-streaming chat agent with crash recovery.
-  Demonstrates `streaming=True` on session create/resume, live `text_delta`
-  chunks via `AssistantMessageDeltaData`, `SessionIdleData` to unblock the
-  idle event, upstream-history dedup, and recovery replay of the last
-  assistant text via `entry_mode == "recovered"`.
-- `samples/durable_multiturn` — demonstrates the callable namespace
-  facility (`ctx.metadata("session")` for session-level state vs. the
-  default per-invocation namespace). The primitive owns persistence — no
-  external checkpointing.
-- `samples/durable_langgraph` — single `@task` body + LangGraph
-  `SqliteSaver` + `thread_id` for graph-shaped agents. Shows how durable
-  tasks compose with an external orchestration library without needing a
-  separate `DurabilityContext`.
-- `samples/durable_research` — 12-stage research loop with
-  checkpoint-and-resume via `ctx.metadata()`, SSE streaming, and an
-  async-poll fallback. ~280-line `agent.py` + ~115-line `app.py` — fits
-  the standard invocations sample shape.
-
-Each shipped sample includes a `README.md` (setup, run, observability,
-crash-recovery checklist). `samples/SHIPPABLE.md` enumerates the shipped
-samples and any reference-only exemptions. `samples/DURABLE_SAMPLES.md`
-is a cross-sample operational guide (selector matrix, concepts primer,
-production checklist). `tests/test_samples_shippable_bar.py` keeps these
-honest on every PR.
+- Added durable-task samples for the invocations protocol:
+  `durable_copilot` (streaming chat with crash recovery),
+  `durable_multiturn` (suspend/resume conversation),
+  `durable_langgraph` (LangGraph integration), and
+  `durable_research` (multi-stage research loop with checkpointing).
+  See `samples/DURABLE_SAMPLES.md` for an overview and the
+  [core developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
+  for the underlying `@task` API.
 
 ### Other Changes
 

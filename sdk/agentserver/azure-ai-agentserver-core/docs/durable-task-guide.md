@@ -659,7 +659,6 @@ changing it strands existing tasks.
 |--------------------------|-------------------------------------------|---------|-------------|
 | `name`                   | `str`                                     | `fn.__qualname__` | Stable identity for recovery routing. Always set this explicitly for production tasks. |
 | `title`                  | `str \| Callable[[T, str], str] \| None`  | `None`  | Human-readable title (template or callable). |
-| `tags`                   | `dict[str, str] \| Callable[[T, str], dict[str, str]] \| None` | `None` | Default tags (static dict or callable factory). |
 | `timeout`                | `timedelta \| None`                       | `None`  | Execution timeout. When elapsed, `ctx.cancel` is set cooperatively. |
 | `ephemeral`              | `bool`                                    | `True`  | Delete the persisted record on terminal exit. |
 | `retry`                  | `RetryPolicy \| None`                     | `None`  | Retry policy for handler-raised exceptions. Recovery-safe (applied on every entry, including post-crash). |
@@ -695,7 +694,7 @@ you can stream from or `await handle.result()` on. Both accept the
 same `input_id` / `if_last_input_id` sequential-input preconditions
 (see §4).
 
-Everything else that characterises a task — `title`, `tags`, `retry`,
+Everything else that characterises a task — `title`, `retry`,
 `stream_handler_factory`, `steerable`, `ephemeral`,
 `timeout` — is configured once on the `@task(...)` decorator (or via
 `Task.options(...)` for a derived `Task`). There is no per-call

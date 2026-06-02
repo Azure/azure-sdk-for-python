@@ -1126,7 +1126,6 @@ class Task(Generic[Input, Output]):
         self,
         *,
         title: str | Callable[[Any, str], str] | None = None,
-        tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None = None,
         timeout: timedelta | None = None,
         ephemeral: bool | None = None,
         retry: RetryPolicy | None = None,
@@ -1138,8 +1137,6 @@ class Task(Generic[Input, Output]):
 
         :keyword title: Title override.
         :paramtype title: str | Callable[[Any, str], str] | None
-        :keyword tags: Tag overrides.
-        :paramtype tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None
         :keyword timeout: Execution timeout override.
         :paramtype timeout: timedelta | None
         :keyword ephemeral: Whether to delete task on terminal exit.
@@ -1151,27 +1148,10 @@ class Task(Generic[Input, Output]):
         :return: A new Task with overridden options.
         :rtype: Task[Input, Output]
         """
-        # For tags: if both old and new are dicts, merge them.
-        # Mixing callable and dict is not supported — use one or the other.
-        resolved_tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None
-        if tags is not None:
-            if callable(tags) != callable(self._opts.tags) and self._opts.tags:
-                raise TypeError(
-                    "Cannot mix callable and dict tags in options(). "
-                    "Pass a callable to replace a callable, or a dict to merge with a dict."
-                )
-            if callable(tags):
-                resolved_tags = tags
-            else:
-                existing = self._opts.tags if isinstance(self._opts.tags, dict) else {}
-                resolved_tags = _strip_reserved_tags({**existing, **(tags or {})})
-        else:
-            resolved_tags = self._opts.tags
-
         new_opts = TaskOptions(
             name=self._opts.name,
             title=title if title is not None else self._opts.title,
-            tags=resolved_tags,
+            tags=self._opts.tags,
             timeout=timeout if timeout is not None else self._opts.timeout,
             ephemeral=(ephemeral if ephemeral is not None else self._opts.ephemeral),
             retry=retry if retry is not None else self._opts.retry,
@@ -1197,7 +1177,6 @@ def task(
     *,
     name: str | None = ...,
     title: str | Callable[[Any, str], str] | None = ...,
-    tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None = ...,
     timeout: timedelta | None = ...,
     ephemeral: bool = ...,
     retry: RetryPolicy | None = ...,
@@ -1214,7 +1193,6 @@ def task(
     *,
     name: str | None = None,
     title: str | Callable[[Any, str], str] | None = None,
-    tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None = None,
     timeout: timedelta | None = None,
     ephemeral: bool = True,
     retry: RetryPolicy | None = None,
@@ -1239,8 +1217,6 @@ def task(
         existing in-flight tasks are still recovered correctly because the
         framework matches on this name, not the Python function name.
     :keyword title: Human-readable title (string or callable).
-    :keyword tags: Default tags (static dict or callable factory receiving
-        ``(input, task_id)``).
     :keyword timeout: Per-turn, wall-clock, durable, cooperative-only
         execution budget. When the budget elapses for the current turn,
         ``ctx.timeout_exceeded`` is set then ``ctx.cancel`` is set; the
@@ -1275,15 +1251,10 @@ def task(
 
         input_type, output_type = _extract_generic_args(func)
 
-        # Preserve callable tags as-is (stripped at resolve time); strip static dicts now
-        resolved_tags = (
-            tags if callable(tags) else _strip_reserved_tags(dict(tags) if tags else {})
-        )
-
         opts = TaskOptions(
             name=name or func.__qualname__,
             title=title,
-            tags=resolved_tags,
+            tags={},
             timeout=timeout,
             ephemeral=ephemeral,
             retry=retry,

@@ -118,48 +118,23 @@ python my_agent.py
 The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
 
 ```python
-from datetime import timedelta
-from azure.ai.agentserver.core.durable import task, TaskContext, RetryPolicy
+from azure.ai.agentserver.core.durable import task, TaskContext
 
-@task(
-    timeout=timedelta(minutes=30),
-    retry=RetryPolicy.exponential_backoff(max_attempts=3),
-    tags={"priority": "high"},
-)
+@task
 async def process_document(ctx: TaskContext[dict]) -> dict:
-    ctx.metadata["phase"] = "processing"
-    result = await analyze(ctx.input["document_url"])
-    ctx.metadata["phase"] = "complete"
-    return {"summary": result}
-```
+    # ctx.entry_mode is "fresh" | "resumed" | "recovered".
+    # The framework re-invokes the handler from the top after a
+    # crash; ctx.input survives, so the handler picks up.
+    summary = await analyze(ctx.input["document_url"])
+    return {"summary": summary}
 
-**Start and await a task:**
-
-```python
-result = await process_document.run(task_id="doc-42", input={"document_url": "..."})
+result = await process_document.run(
+    task_id="doc-42", input={"document_url": "..."},
+)
 print(result.output)  # {"summary": "..."}
 ```
 
-**Multi-turn suspend/resume (e.g., conversational agents):**
-
-```python
-@task()
-async def chat_session(ctx: TaskContext[dict]) -> dict:
-    message = ctx.input["message"]
-    history = ctx.metadata.get("history", [])
-    reply = await generate_reply(message, history)
-    history.append({"role": "user", "content": message})
-    history.append({"role": "assistant", "content": reply})
-    ctx.metadata["history"] = history
-    return await ctx.suspend(output={"reply": reply})
-
-# Each call resumes the same session:
-result = await chat_session.run(task_id="session-1", input={"message": "Hello"})
-print(result.output)          # {"reply": "Hi! How can I help?"}
-print(result.is_suspended)    # True
-```
-
-See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md) for the full API reference.
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 
 ## Troubleshooting
 

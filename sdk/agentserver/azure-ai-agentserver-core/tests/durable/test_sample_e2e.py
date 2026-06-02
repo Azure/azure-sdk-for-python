@@ -330,39 +330,6 @@ class TestListE2E:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
-    @pytest.mark.asyncio
-    async def test_reserved_tag_cannot_be_overridden(self, tmp_path):
-        """Developer-provided _task_ tags are stripped; framework wins."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-            task_id = uuid.uuid4().hex
-
-            @task(
-                name="e2e_reserved_tag",
-                ephemeral=False,
-                tags={
-                    "_task_name": "evil_override",
-                    "_task_custom": "should_be_stripped",
-                    "user_tag": "kept",
-                },
-            )
-            async def protected(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            await protected.run(task_id=task_id, input=None)
-
-            task_info = await manager.provider.get(task_id)
-            assert task_info is not None
-            assert task_info.tags is not None
-            # Framework-stamped tag wins
-            assert task_info.tags["_task_name"] == "e2e_reserved_tag"
-            # Other reserved tags are stripped
-            assert "_task_custom" not in task_info.tags
-            # User tag is preserved
-            assert task_info.tags["user_tag"] == "kept"
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
 
 # ---------------------------------------------------------------------------
 # Sample 4: Multi-turn durable session (durable_multiturn)

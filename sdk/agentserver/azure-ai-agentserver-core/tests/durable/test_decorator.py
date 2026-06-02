@@ -52,7 +52,6 @@ class TestTaskDecorator:
             name="full",
             ephemeral=False,
             title="My Title",
-            tags={"env": "test"},
             timeout=timedelta(minutes=5),
         )
         async def my_task(ctx: TaskContext[dict]) -> str:
@@ -61,7 +60,6 @@ class TestTaskDecorator:
         assert my_task.name == "full"
         assert my_task._opts.ephemeral is False
         assert my_task._opts.title == "My Title"
-        assert my_task._opts.tags == {"env": "test"}
         assert my_task._opts.timeout == timedelta(minutes=5)
 
     def test_rejects_sync_function(self) -> None:
@@ -94,15 +92,16 @@ class TestTaskDecorator:
             "store_input",
             "lease_duration_seconds",
             "max_pending",
+            "tags",
         ],
     )
     def test_task_decorator_rejects_retired_args(self, kwarg: str) -> None:
-        """FR-006: ``@task`` rejects the four retired decorator options.
+        """FR-006: ``@task`` rejects the retired decorator options.
 
-        These were removed in Spec 015 Phase 3 because zero developer code
-        relied on them; their behavior is now fixed at internal defaults
-        (lease=60s, max_pending=10, input is always persisted, description
-        is no longer modeled on the public surface).
+        These were removed because zero developer code relied on them;
+        their behavior is now fixed at internal defaults (lease=60s,
+        max_pending=10, input is always persisted, description is no
+        longer modeled on the public surface, tags is internal-only).
         """
         with pytest.raises(TypeError):
             task(**{kwarg: 1})  # type: ignore[arg-type]
@@ -124,14 +123,14 @@ class TestTaskOptionsMerge:
         assert my_task._opts.ephemeral is True
 
     def test_options_merges_tags(self) -> None:
-        """options() merges tags with existing ones."""
+        """options() no longer accepts ``tags=`` (internal-only field)."""
 
-        @task(tags={"a": "1"})
+        @task()
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 
-        updated = my_task.options(tags={"b": "2"})
-        assert updated._opts.tags == {"a": "1", "b": "2"}
+        with pytest.raises(TypeError):
+            my_task.options(tags={"b": "2"})  # type: ignore[call-arg]
 
     def test_options_overrides_title(self) -> None:
         """options() overrides title."""

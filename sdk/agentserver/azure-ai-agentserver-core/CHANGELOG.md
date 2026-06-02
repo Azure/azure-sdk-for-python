@@ -4,126 +4,25 @@
 
 ### Features Added
 
-**Durable tasks — new primitive.** This release introduces the durable-task
-primitive: a small decorator-driven API that lets a hosted agent run long
-operations as **named tasks** that survive process crashes, OOM kills, and
-container redeployments. Tasks pick up exactly where they were after recovery,
-without the developer writing any explicit checkpoint or replay code.
+- **Durable tasks** — new `@task` decorator and supporting types
+  (`TaskContext`, `TaskResult`, `TaskRun`, `RetryPolicy`,
+  `TaskConflictError`, `TaskFailed`, `TaskCancelled`) for
+  crash-resilient long-running agents. Tasks survive container
+  restarts, OOM kills, and redeployments; the framework re-enters the
+  handler with `ctx.entry_mode == "recovered"` and a populated
+  `ctx.metadata` after a crash. Supports streaming output via
+  `ctx.stream()`, multi-turn suspend/resume via `ctx.suspend()`,
+  cooperative cancel via `ctx.cancel`, per-turn wall-clock timeout via
+  `@task(timeout=...)`, and steering of in-flight tasks via
+  `@task(steerable=True)`. See the
+  [developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
+  for the full API and patterns reference.
 
-The full developer learning arc lives in
-[`docs/durable-task-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md).
-A short tour:
+### Other Changes
 
-```python
-from azure.ai.agentserver.core.durable import task
-
-@task(name="long_research")
-async def do_research(ctx, prompt: str) -> dict:
-    # ctx.entry_mode tells you "fresh" | "resumed" | "recovered"
-    if ctx.entry_mode == "recovered":
-        # Pick up from where you were, using ctx.metadata
-        ...
-    await ctx.stream({"phase": "searching"})
-    ...
-    return {"summary": "..."}
-
-# In your handler:
-run = await do_research.run(task_id="task-123", input={"prompt": "..."})
-async for chunk in run:
-    ...
-result = await run.result()
-```
-
-**Concepts shipping in this release**
-
-- `@task(...)` decorator + `Task` returned object with `.run()`, `.start()`,
-  `.options(...)`, `.get_active_run(task_id)`.
-- `TaskContext` — passed to every handler invocation. Exposes `entry_mode`,
-  `input`, `metadata` (with auto-flush at lifecycle boundaries), `cancel`
-  (an `asyncio.Event`), the cause booleans `timeout_exceeded` and
-  `cancel_requested`, the steering signals `pending_input_count` and
-  `is_steered_turn`, the shutdown signal `shutdown`, the retry counter
-  `retry_attempt`, and the recovery counter `recovery_count`. Provides
-  `ctx.suspend(output=...)`, `ctx.stream(chunk)`, and
-  `ctx.exit_for_recovery()` (used during graceful shutdown to leave the
-  stored status `in_progress` so the next process recovers the task).
-- `TaskResult.status` — `Literal["completed", "suspended"]`. Failure paths
-  surface as exceptions (`TaskFailed`, `TaskCancelled`,
-  `TaskConflictError`); the stored status is `"completed"` plus an error
-  payload.
-- `TaskConflictError` — single error type for any "task is busy / not
-  available" state (live elsewhere, recovered elsewhere, evicted under
-  split-brain protection, terminal with queued steerer). Carries
-  `current_status` so callers can branch.
-- `RetryPolicy` — exponential / fixed / linear backoff presets, durable
-  across crash and recovery (failures-only; crash recovery does not
-  consume retry budget).
-- `EntryMode` Literal: `"fresh" | "resumed" | "recovered"`.
-- `Suspended` (sentinel for `.run()` of a suspended task),
-  `TaskStatus` Literal (`"pending" | "in_progress" | "suspended" | "completed"`),
-  `TaskMetadata`, `StreamHandler`, `StreamHandlerFactory`, `QueueStreamHandler`.
-
-**Behavior shipping in this release**
-
-- **Automatic recovery.** Crashed-mid-task records are detected at three
-  layers — startup scan, periodic background scan, and inline reclaim at
-  every scheduling primitive (`.run`, `.start`, `.get_active_run`). The
-  developer sees `ctx.entry_mode == "recovered"` and otherwise the same
-  `TaskContext` surface as on a fresh entry.
-- **Split-brain protection.** A new agent process that takes over a session
-  cancels stranded executions in the previous process cleanly via
-  `HTTP 409 binding_mismatch`. The previous process classifies this as
-  *evicted*, cancels its execution, suppresses its terminal write, and
-  signals its awaiters with `TaskConflictError`. Caller-observable behavior
-  matches the live-elsewhere case.
-- **Steering as plain multi-turn.** `Task.start(...)` on an already-active
-  steerable task queues the new input. The first turn's `ctx.suspend(...)`
-  call resolves the steerer's `.result()` with the *next* turn's outcome,
-  delivering plain pipelined-handler semantics with no separate "superseded"
-  status. The first turn's caller observes the natural outcome of the first
-  turn unchanged.
-- **Per-turn wall-clock timeout.** `@task(timeout=...)` is anchored to a
-  persisted per-turn-start timestamp. A crash mid-turn does NOT reset the
-  budget; the recovered watchdog computes
-  `remaining = max(0, timeout - (now - turn_started_at))`. The watchdog is
-  cooperative-only: it sets `ctx.timeout_exceeded = True` then
-  `ctx.cancel.set()` — handlers that ignore both run until the process ends
-  or `TaskRun.cancel()` is called externally.
-- **Metadata auto-flush at lifecycle boundaries.** `ctx.metadata` is
-  flushed automatically at every terminal-of-turn boundary (suspend,
-  complete, cooperative cancel, exception, suspend-with-queued-steering,
-  return-with-queued-steering, raise-with-queued-steering, shutdown via
-  `exit_for_recovery`). Explicit `ctx.metadata.flush()` remains available
-  as a fence before at-most-once side effects.
-- **Bookkeeping is durable.** Suspended-resume input patches are
-  ETag-protected. Steerable input data is cleared from the stored record at
-  the suspend transition (data minimization). The lease owner string
-  incorporates both `FOUNDRY_AGENT_NAME` and session ID, so two different
-  agents sharing a session ID cannot collide on lease ownership.
-
-**Transport**
-
-- `HostedTaskProvider` is built on `azure.core.AsyncPipelineClient` with
-  the standard policy chain (request-id, headers, user-agent, retry,
-  `AsyncBearerTokenCredentialPolicy`, task-API logging, distributed
-  tracing). `ContentDecodePolicy` is intentionally excluded; body parsing
-  happens at the call site with defensive error handling. The retry policy
-  retries on 5xx / 408 / 429 only — never on 409 regardless of body. The
-  `credential` parameter on `HostedTaskProvider.__init__` is typed
-  `AsyncTokenCredential`.
-- `httpx` is no longer a production dependency.
-
-**Documentation & tests**
-
-- New developer guide at `docs/durable-task-guide.md` is the end-to-end
-  learning arc for the primitive (concepts → reference → patterns →
-  troubleshooting).
-- New doc-review meta-test (`tests/durable/test_dev_guide_review.py`) keeps
-  the guide and the public surface in sync.
-- The durable-task test suite (`tests/durable/`) covers the public surface
-  contract, recovery in all three layers, eviction, steering as
-  multi-turn, the per-turn-wall-clock-durable timeout, and metadata
-  auto-flush invariants.
+- The hosted task-store transport is now built on
+  `azure.core.AsyncPipelineClient` instead of `httpx`; `httpx` is no
+  longer a production dependency.
 
 ## 2.0.0b5 (2026-05-25)
 

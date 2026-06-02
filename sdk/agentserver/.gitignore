@@ -3,3 +3,6 @@ specs/
 .specify/
 .github/
 .vscode/
+
+# Demo session state — regenerated each time the demo runs
+.demo-session
