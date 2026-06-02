@@ -23,15 +23,17 @@ USAGE:
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
-import os
 import base64
-from PIL import Image
-from io import BytesIO
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
+import os
 import time
+from io import BytesIO
 from pprint import pprint
+
+from PIL import Image
+from dotenv import load_dotenv
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
+from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.create_eval_completions_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
@@ -40,8 +42,6 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
     InputMessagesTemplateTemplateEvalItemContentInputImage,
 )
 from openai.types.responses import EasyInputMessageParam
-from openai.types.eval_create_params import DataSourceConfigCustom
-from dotenv import load_dotenv
 
 load_dotenv()
 file_path = os.path.abspath(__file__)
@@ -51,8 +51,8 @@ endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 
 
-def image_to_data_uri(image_path: str) -> str:
-    with Image.open(image_path) as img:
+def image_to_data_uri(image_file_path: str) -> str:
+    with Image.open(image_file_path) as img:
         buffered = BytesIO()
         img.save(buffered, format=img.format or "PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
@@ -186,7 +186,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status == "completed" or run.status == "failed":
+        if run.status in {"completed", "failed"}:
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Eval Run Report URL: {run.report_url}")
