@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -22,6 +22,7 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AutoUpgradeProfileOperationsOperations,
     AutoUpgradeProfilesOperations,
+    ClusterMeshProfilesOperations,
     FleetManagedNamespacesOperations,
     FleetMembersOperations,
     FleetUpdateStrategiesOperations,
@@ -30,6 +31,11 @@ from .operations import (
     Operations,
     UpdateRunsOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -41,6 +47,9 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerservicefleet.operations.Operations
+    :ivar cluster_mesh_profiles: ClusterMeshProfilesOperations operations
+    :vartype cluster_mesh_profiles:
+     azure.mgmt.containerservicefleet.operations.ClusterMeshProfilesOperations
     :ivar fleets: FleetsOperations operations
     :vartype fleets: azure.mgmt.containerservicefleet.operations.FleetsOperations
     :ivar fleet_members: FleetMembersOperations operations
@@ -71,8 +80,9 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-01-preview" and None. Default value is "2026-02-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+     "2026-03-02-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -126,6 +136,9 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.cluster_mesh_profiles = ClusterMeshProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.fleets = FleetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleet_members = FleetMembersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleet_managed_namespaces = FleetManagedNamespacesOperations(

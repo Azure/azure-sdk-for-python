@@ -105,7 +105,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", None)
         if self._feature_flag_selectors is None:
             self._feature_flag_selectors = [SettingSelector(key_filter="*")]
-        self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         refresh_enabled = kwargs.pop("refresh_enabled", None)
@@ -115,6 +114,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             refresh_enabled = True
         self._refresh_enabled = refresh_enabled
         self._page_etags: List[List[str]] = []
+        self._feature_flag_page_etags: List[List[str]] = []
         self._tracing_context = _RequestTracingContext(kwargs.pop("load_balancing_enabled", False))
         self._update_lock = Lock()
         self._refresh_lock = Lock()
@@ -374,7 +374,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             # Reset feature flag usage
             self._tracing_context.reset_feature_filter_usage()
             processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]
-            self._watched_feature_flags = self._update_watched_feature_flags(feature_flags)
 
         if self._feature_flag_enabled:
             processed_settings[FEATURE_MANAGEMENT_KEY] = {}
@@ -405,20 +404,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             if (config.key, config.label) in self._watched_settings:
                 watched_settings[(config.key, config.label)] = config.etag
         return watched_settings
-
-    def _update_watched_feature_flags(
-        self, feature_flags: List[FeatureFlagConfigurationSetting]
-    ) -> Dict[Tuple[str, str], Optional[str]]:
-        """
-        Updates the etags of watched feature flags that are part of the configuration
-        :param List[FeatureFlagConfigurationSetting] feature_flags: The list of feature flags to update
-        :return: A dictionary mapping (key, label) tuples to their updated etags
-        :rtype: Dict[Tuple[str, str], Optional[str]]
-        """
-        watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
-        for feature_flag in feature_flags:
-            watched_feature_flags[(feature_flag.key, feature_flag.label)] = feature_flag.etag
-        return watched_feature_flags
 
     def _update_correlation_context_header(
         self,

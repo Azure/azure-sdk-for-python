@@ -95,7 +95,7 @@ def main() -> None:  # pylint: disable=too-many-statements
             description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
         )
 
-        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
+        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, taxonomy=eval_taxonomy_input)
         taxonomy_path = os.path.join(tempfile.gettempdir(), f"taxonomy_{agent_name}.json")
         with open(taxonomy_path, "w", encoding="utf-8") as f:
             f.write(json.dumps(_to_json_primitive(taxonomy), indent=2))
