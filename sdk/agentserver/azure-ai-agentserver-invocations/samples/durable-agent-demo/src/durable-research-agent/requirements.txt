@@ -1,0 +1,10 @@
+# Azure AI packages (installed from local wheels during build)
+azure-ai-agentserver-core
+azure-ai-agentserver-invocations
+
+# Azure SDKs
+azure-ai-projects>=1.0.0b10
+azure-identity>=1.17.0
+
+# Supervisor proxy (also a transitive dep of core)
+aiohttp>=3.9.0
