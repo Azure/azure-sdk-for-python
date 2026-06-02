@@ -49,6 +49,17 @@ _REDIRECT_STATUS_CODES = (
     308,  # Permanent redirect
 )
 
+_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = (
+    ".livediagnostics.monitor.azure.com",
+    ".monitor.azure.com",
+    ".services.visualstudio.com",
+    ".applicationinsights.azure.com",
+    ".monitor.azure.us",
+    ".applicationinsights.azure.us",
+    ".monitor.azure.cn",
+    ".applicationinsights.azure.cn",
+)
+
 _RETRYABLE_STATUS_CODES = (
     401,  # Unauthorized
     403,  # Forbidden
