@@ -152,15 +152,19 @@ def configure_observability(
     # Suppress the noisy Azure Core HTTP logging policy logger.
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
+    # Suppress noisy Azure Monitor exporter loggers BEFORE tracing setup,
+    # so the level is already set when the distro creates handlers/threads.
+    # Preserve visibility when user explicitly requests DEBUG.
+    if resolved_level > logging.DEBUG:
+        for _noisy in (
+            "azure.monitor.opentelemetry.exporter",
+            "azure.monitor.opentelemetry.exporter.export",
+            "azure.monitor.opentelemetry.exporter.export._base",
+        ):
+            logging.getLogger(_noisy).setLevel(logging.WARNING)
+
     # Tracing and OTel export
     _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
-
-    # Best-effort suppression via logger level (may be overridden by distro).
-    for _noisy in (
-        "azure.monitor.opentelemetry.exporter",
-        "azure.monitor.opentelemetry.exporter.export._base",
-    ):
-        logging.getLogger(_noisy).setLevel(logging.WARNING)
 
     # Ensure the noisy-logger filter is applied to ALL root handlers
     # (including any added by the distro/OTel setup above).
