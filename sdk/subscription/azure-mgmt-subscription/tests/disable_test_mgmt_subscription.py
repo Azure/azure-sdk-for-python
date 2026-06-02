@@ -6,12 +6,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
 
 import azure.mgmt.subscription
 from azure.mgmt.subscription.models import *
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
-
+@pytest.mark.skip("method deleted")
 class TestMgmtSubscription(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
