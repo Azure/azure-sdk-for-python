@@ -1,6 +1,6 @@
 # Release History
 
-## 26.0.0b1 (2026-05-27)
+## 26.0.0b1 (2026-06-02)
 
 ### Features Added
 
@@ -12,6 +12,7 @@
   - Model `Operation` added property `action_type`
   - Model `Resource` added property `system_data`
   - Model `ResourceGroup` added property `system_data`
+  - Model `TagDetails` added property `values_property`
   - Model `TagsResource` added property `system_data`
   - Added enum `ActionType`
   - Added model `CloudError`
@@ -24,12 +25,14 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `Resource` deleted or renamed its instance variable `location`
   - Model `Resource` deleted or renamed its instance variable `extended_location`
   - Model `Resource` deleted or renamed its instance variable `tags`
-  - Model `TagDetails` renamed its instance variable `values` to `values_property`
+  - Model `TagDetails` deleted or renamed its instance variable `values`
+  - Deleted or renamed model `GenericResourceFilter`
+  - Deleted or renamed model `ResourceGroupFilter`
+  - Deleted or renamed model `ResourceProviderOperationDisplayProperties`
+  - Deleted or renamed model `SubResource`
   - Method `ProviderResourceTypesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ProvidersOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ProvidersOperations.get_at_tenant_scope` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
@@ -48,14 +51,10 @@
   - Method `ResourcesOperations.get_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
   - Method `ResourcesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ResourcesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `ResourcesOperations.begin_create_or_update_by_id` re-ordered its parameters from `['self', 'resource_id', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_id', 'parameters', 'api_version', 'kwargs']`
   - Method `ResourcesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'parameters', 'api_version', 'kwargs']`
-  - Method `ResourcesOperations.begin_update_by_id` re-ordered its parameters from `['self', 'resource_id', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_id', 'parameters', 'api_version', 'kwargs']`
   - Method `ResourcesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'parameters', 'api_version', 'kwargs']`
-
-### Other Changes
-
-  - Deleted model `GenericResourceFilter`/`ResourceGroupFilter`/`ResourceProviderOperationDisplayProperties`/`SubResource` which actually were not used by SDK users
+  - Method `ResourcesOperations.begin_create_or_update_by_id` re-ordered its parameters from `['self', 'resource_id', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_id', 'parameters', 'api_version', 'kwargs']`
+  - Method `ResourcesOperations.begin_update_by_id` re-ordered its parameters from `['self', 'resource_id', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_id', 'parameters', 'api_version', 'kwargs']`
 
 ## 25.0.0 (2026-02-04)
 
