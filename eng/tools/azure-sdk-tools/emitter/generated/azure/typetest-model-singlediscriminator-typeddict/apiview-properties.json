@@ -1,0 +1,27 @@
+{
+    "CrossLanguagePackageId": "Type.Model.Inheritance.SingleDiscriminator",
+    "CrossLanguageDefinitionId": {
+        "typetest.model.singlediscriminator.typeddict.models.Bird": "Type.Model.Inheritance.SingleDiscriminator.Bird",
+        "typetest.model.singlediscriminator.typeddict.models.Dinosaur": "Type.Model.Inheritance.SingleDiscriminator.Dinosaur",
+        "typetest.model.singlediscriminator.typeddict.models.Eagle": "Type.Model.Inheritance.SingleDiscriminator.Eagle",
+        "typetest.model.singlediscriminator.typeddict.models.Goose": "Type.Model.Inheritance.SingleDiscriminator.Goose",
+        "typetest.model.singlediscriminator.typeddict.models.SeaGull": "Type.Model.Inheritance.SingleDiscriminator.SeaGull",
+        "typetest.model.singlediscriminator.typeddict.models.Sparrow": "Type.Model.Inheritance.SingleDiscriminator.Sparrow",
+        "typetest.model.singlediscriminator.typeddict.models.TRex": "Type.Model.Inheritance.SingleDiscriminator.TRex",
+        "typetest.model.singlediscriminator.typeddict.SingleDiscriminatorClient.get_model": "Type.Model.Inheritance.SingleDiscriminator.getModel",
+        "typetest.model.singlediscriminator.typeddict.aio.SingleDiscriminatorClient.get_model": "Type.Model.Inheritance.SingleDiscriminator.getModel",
+        "typetest.model.singlediscriminator.typeddict.SingleDiscriminatorClient.put_model": "Type.Model.Inheritance.SingleDiscriminator.putModel",
+        "typetest.model.singlediscriminator.typeddict.aio.SingleDiscriminatorClient.put_model": "Type.Model.Inheritance.SingleDiscriminator.putModel",
+        "typetest.model.singlediscriminator.typeddict.SingleDiscriminatorClient.get_recursive_model": "Type.Model.Inheritance.SingleDiscriminator.getRecursiveModel",
+        "typetest.model.singlediscriminator.typeddict.aio.SingleDiscriminatorClient.get_recursive_model": "Type.Model.Inheritance.SingleDiscriminator.getRecursiveModel",
+        "typetest.model.singlediscriminator.typeddict.SingleDiscriminatorClient.put_recursive_model": "Type.Model.Inheritance.SingleDiscriminator.putRecursiveModel",
+        "typetest.model.singlediscriminator.typeddict.aio.SingleDiscriminatorClient.put_recursive_model": "Type.Model.Inheritance.SingleDiscriminator.putRecursiveModel",
+        "typetest.model.singlediscriminator.typeddict.SingleDiscriminatorClient.get_missing_discriminator": "Type.Model.Inheritance.SingleDiscriminator.getMissingDiscriminator",
+        "typetest.model.singlediscriminator.typeddict.aio.SingleDiscriminatorClient.get_missing_discriminator": "Type.Model.Inheritance.SingleDiscriminator.getMissingDiscriminator",
+        "typetest.model.singlediscriminator.typeddict.SingleDiscriminatorClient.get_wrong_discriminator": "Type.Model.Inheritance.SingleDiscriminator.getWrongDiscriminator",
+        "typetest.model.singlediscriminator.typeddict.aio.SingleDiscriminatorClient.get_wrong_discriminator": "Type.Model.Inheritance.SingleDiscriminator.getWrongDiscriminator",
+        "typetest.model.singlediscriminator.typeddict.SingleDiscriminatorClient.get_legacy_model": "Type.Model.Inheritance.SingleDiscriminator.getLegacyModel",
+        "typetest.model.singlediscriminator.typeddict.aio.SingleDiscriminatorClient.get_legacy_model": "Type.Model.Inheritance.SingleDiscriminator.getLegacyModel"
+    },
+    "CrossLanguageVersion": "301c4a3b5af0"
+}

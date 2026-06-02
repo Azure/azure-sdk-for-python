@@ -1,0 +1,12 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.ExactName",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.exactname.model.models.My_model": "_Specs_.Azure.ClientGenerator.Core.ExactName.Model.ExactModel",
+        "specs.azure.clientgenerator.core.exactname.property.models.ScopedModel": "_Specs_.Azure.ClientGenerator.Core.ExactName.Property.ScopedModel",
+        "specs.azure.clientgenerator.core.exactname.operations.ModelOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Model.send",
+        "specs.azure.clientgenerator.core.exactname.aio.operations.ModelOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Model.send",
+        "specs.azure.clientgenerator.core.exactname.operations.PropertyOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Property.send",
+        "specs.azure.clientgenerator.core.exactname.aio.operations.PropertyOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Property.send"
+    },
+    "CrossLanguageVersion": "cc4f69ca2424"
+}
