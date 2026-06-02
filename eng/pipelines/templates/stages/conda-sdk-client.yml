@@ -575,6 +575,8 @@ extends:
                       common_root: azure
                       service: planetarycomputer
                       in_batch: ${{ parameters.release_azure_planetarycomputer }}
+                      channels:
+                        - conda-forge
                       checkout:
                         - package: azure-planetarycomputer
                           version: 1.0.0
