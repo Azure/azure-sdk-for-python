@@ -1,6 +1,6 @@
 # Release History
 
-## 8.1.0b4 (2026-05-28)
+## 8.1.0b4 (2026-06-02)
 
 ### Features Added
 
@@ -19,17 +19,16 @@
   - Added model `Resource`
   - Added enum `ResultKind`
   - Added model `SystemData`
-  - Added operation group `GraphQueryOperations`
+  - Added model `GraphQueryOperations`
 
 ### Breaking Changes
 
   - Method `ResourceGraphClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
-  - Renamed operation group `ResourceGraphClientOperationsMixin` to `_ResourceGraphClientOperationsMixin`
+  - Deleted or renamed model `Column`
+  - Deleted or renamed model `ColumnDataType`
+  - Deleted or renamed model `Table`
+  - Deleted or renamed model `ResourceGraphClientOperationsMixin`
   - Method `ResourceGraphClient.resources_history` changed return type from `JSON` to `Any`
-
-### Other Changes
-
-  - Deleted model `Column`/`ColumnDataType`/`Table` which actually was not used by SDK users
 
 ## 8.0.1 (2025-11-24)
 
