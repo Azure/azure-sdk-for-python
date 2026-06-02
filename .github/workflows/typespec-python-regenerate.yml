@@ -164,9 +164,7 @@ jobs:
         run: |
           set -euo pipefail
           TARGET_BRANCH="typespec-python-generated-tests"
-          RUN_ID="${{ github.run_id }}"
-          RUN_ATTEMPT="${{ github.run_attempt }}"
-          SOURCE_BRANCH="regen/typespec-python-${RUN_ID}-${RUN_ATTEMPT}"
+          SOURCE_BRANCH="regen/typespec-python"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -197,6 +195,11 @@ jobs:
             git fetch --no-tags --depth=1 origin "$TARGET_BRANCH"
           fi
 
+          # Check if an open regen PR already exists; reuse its branch if so.
+          EXISTING_PR=$(gh pr list --repo "${{ github.repository }}" \
+            --base "$TARGET_BRANCH" --head "$SOURCE_BRANCH" --label "typespec-python" \
+            --state open --json number -q '.[0].number')
+
           # Create source branch based on the target branch.
           git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
 
@@ -216,24 +219,17 @@ jobs:
           git commit -m "$COMMIT_MSG"
           git push origin "$SOURCE_BRANCH" --force-with-lease
 
-          # Close any existing open regen PRs against the target branch.
-          EXISTING_PRS=$(gh pr list --repo "${{ github.repository }}" \
-            --base "$TARGET_BRANCH" --label "typespec-python" \
-            --state open --json number -q '.[].number')
-          for pr in $EXISTING_PRS; do
-            echo "Closing superseded PR #${pr}"
-            gh pr close "$pr" --repo "${{ github.repository }}" \
-              --comment "Superseded by a newer regeneration run."
-          done
-
-          # Create a new PR.
-          gh pr create --repo "${{ github.repository }}" \
-            --base "$TARGET_BRANCH" \
-            --head "$SOURCE_BRANCH" \
-            --title "$COMMIT_MSG" \
-            --body "Automated regeneration from ${SOURCE_LABEL}." \
-            --label "typespec-python"
-          echo "::notice::Created PR for regenerated tests against $TARGET_BRANCH"
+          if [ -n "$EXISTING_PR" ]; then
+            echo "::notice::Updated existing PR #${EXISTING_PR} with new regeneration"
+          else
+            gh pr create --repo "${{ github.repository }}" \
+              --base "$TARGET_BRANCH" \
+              --head "$SOURCE_BRANCH" \
+              --title "$COMMIT_MSG" \
+              --body "Automated regeneration from ${SOURCE_LABEL}." \
+              --label "typespec-python"
+            echo "::notice::Created PR for regenerated tests against $TARGET_BRANCH"
+          fi
 
   notify-on-failure:
     name: "Notify on failure"
