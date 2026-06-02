@@ -155,7 +155,8 @@ def configure_observability(
     # Suppress noisy Azure Monitor exporter loggers BEFORE tracing setup,
     # so the level is already set when the distro creates handlers/threads.
     # Preserve visibility when user explicitly requests DEBUG.
-    if logging.getLevelName(resolved_level) > logging.DEBUG:
+    _suppress_noisy = logging.getLevelName(resolved_level) > logging.DEBUG
+    if _suppress_noisy:
         for _noisy in (
             "azure.monitor.opentelemetry.exporter",
             "azure.monitor.opentelemetry.exporter.export",
@@ -165,6 +166,19 @@ def configure_observability(
 
     # Tracing and OTel export
     _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
+
+    # Re-apply suppression AFTER distro setup (distro may reset levels).
+    if _suppress_noisy:
+        for _noisy in (
+            "azure.monitor.opentelemetry.exporter",
+            "azure.monitor.opentelemetry.exporter.export",
+            "azure.monitor.opentelemetry.exporter.export._base",
+        ):
+            _logger = logging.getLogger(_noisy)
+            _logger.setLevel(logging.WARNING)
+            # Remove any handlers added by the distro to this logger
+            for _h in list(_logger.handlers):
+                _logger.removeHandler(_h)
 
     # Ensure the noisy-logger filter is applied to ALL root handlers
     # (including any added by the distro/OTel setup above).
