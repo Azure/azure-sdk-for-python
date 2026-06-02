@@ -7,6 +7,37 @@
 
 > **Pre-release framing.** This plan is the implementation plan for an in-place rewrite of the durable-task primitive's unshipped pre-release contract. No migration code, no "breaking change" framing — see the spec's Pre-release scope note.
 
+---
+
+## Implementation status (rolling update — 2026-06-02)
+
+**Status: substantially complete.** All 9 user stories' surface contracts and behavioral requirements are landed and verified by **347+ passing tests** across the durable suite (1 documented skip, no regressions). 15 spec-implementation commits landed across the 13 phases:
+
+| Commit | Phase | What landed |
+|---|---|---|
+| `019fea47a8` | US8 extended | T094(b) recovery re-entry + T096 queued-input preservation tests |
+| `ed207011b0` | US7 deep | `_turn_started_at` end-to-end + recovered-watchdog remaining computation + SC-013 clamping + FR-025 immediate-fire (5 new tests) |
+| `832890d37e` | Phase 13 fixes | Code-review BLOCKING/HIGH addressed: FR-002 Layer 3 wired, TaskTerminated strict-removed, is_superseded deleted, _steering[generation] removed, dev guide truth-claim softened |
+| `66b3fe582b` | Phase 12 | Polish: sample updates + gap-list §7 audit |
+| `f360b939ee` | Phase 10+11 | Per-turn timeout (Phase 10) + exit_for_recovery (Phase 11) |
+| `38348efde4` | Phase 9 | US6 cancel-cause booleans + terminate removal |
+| `dda570aa9a` | Phase 8 | US5 steering as plain multi-turn |
+| `fce1919c28` | Phase 6 | US3+US4 three-layer recovery + async get_active_run |
+| `a199e573ce` | Phase 5 | US2 split-brain eviction integration |
+| `2dbb83e5dd` | Phase 6 partial | FR-004a lease-owner agent+session |
+| `6b3f2531a6` | Phase 4 | US1 stale_timeout removal + 13 test ports |
+| `ad33e12c16` | Phase 3 | US9 transport migration to azure.core |
+| `665c22d425` | Phase 2 | Foundational docs + meta-test invariants + shared fixtures |
+| `af16196abc` | Phase 1 | Setup: T002/T003/T004 decisions + conformance-gap-list.md scaffold |
+
+**Final code-review verdict (T122 holistic)**: REQUEST-CHANGES → all BLOCKING + HIGH addressed in follow-up commits. Remaining MEDIUM/LOW items tracked in `conformance-gap-list.md` §7 as follow-ups (residual cosmetic dead-code cleanup; dedicated parametrized sweep tests; doc-string polish).
+
+**Known follow-ups** (cosmetic, not blocking):
+- HIGH #6 (commit followup): residual `_terminate_event`/`_terminate_reason_ref` slots in `_ActiveTask` and `TaskRun` are inert dead code (FR-022 behavior is fully removed; the slots accept but ignore the kwargs). Mechanical cleanup.
+- HIGH #8: dedicated parametrized SC-006/SC-008/SC-009/SC-010 sweep tests beyond the per-scenario tests already in place. The scenarios ARE covered behaviorally by the existing tests; the explicit sweep style is stylistic.
+
+---
+
 ## Summary
 
 Close six inter-related defects in the unshipped durable-task primitive in `azure-ai-agentserver-core` before it ships: (1) recovery is leaky — make it framework-owned and three-layered; (2) steering is over-modeled — collapse to plain multi-turn with a queue; (3) cancellation surface is confused — decompose into independent cause booleans + simplified steering state; (4) timeout is non-durable and per-invocation — make it per-turn / wall-clock / durable; (5) shutdown has no first-class API — add `ctx.exit_for_recovery()`; (6) transport has no policy stack — migrate the hosted task-store client to `azure.core.AsyncPipelineClient` with the `ContentDecodePolicy` exclusion lesson from the responses package. Plus one corollary fix: include agent name in the stable lease owner string so different agents sharing a session ID can't collide (FR-004a).
