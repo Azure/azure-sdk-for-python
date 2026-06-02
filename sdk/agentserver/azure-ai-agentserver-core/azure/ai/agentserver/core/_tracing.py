@@ -152,8 +152,8 @@ def configure_observability(
     # Suppress the noisy Azure Core HTTP logging policy logger.
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
-    # Suppress noisy Azure Monitor exporter loggers BEFORE tracing setup,
-    # so the level is already set when the distro creates handlers/threads.
+    # Suppress noisy Azure Monitor exporter loggers BEFORE tracing setup.
+    # This is the same approach that works when done in main.py.
     # Preserve visibility when user explicitly requests DEBUG.
     _suppress_noisy = logging.getLevelName(resolved_level) > logging.DEBUG
     if _suppress_noisy:
@@ -163,22 +163,26 @@ def configure_observability(
             "azure.monitor.opentelemetry.exporter.export._base",
         ):
             logging.getLogger(_noisy).setLevel(logging.WARNING)
+        print(f"[agentserver] Suppressed noisy exporter loggers (resolved_level={resolved_level}, numeric={logging.getLevelName(resolved_level)})")
+    else:
+        print(f"[agentserver] NOT suppressing exporter loggers (resolved_level={resolved_level}, numeric={logging.getLevelName(resolved_level)})")
 
     # Tracing and OTel export
     _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
 
-    # Re-apply suppression AFTER distro setup (distro may reset levels).
-    if _suppress_noisy:
+    # Check if distro reset the levels
+    _post_level = logging.getLogger("azure.monitor.opentelemetry.exporter.export._base").level
+    print(f"[agentserver] After distro: exporter logger level = {_post_level} ({logging.getLevelName(_post_level)})")
+
+    # If distro reset the level, re-apply suppression
+    if _suppress_noisy and _post_level < logging.WARNING:
+        print("[agentserver] Distro reset levels! Re-applying suppression.")
         for _noisy in (
             "azure.monitor.opentelemetry.exporter",
             "azure.monitor.opentelemetry.exporter.export",
             "azure.monitor.opentelemetry.exporter.export._base",
         ):
-            _logger = logging.getLogger(_noisy)
-            _logger.setLevel(logging.WARNING)
-            # Remove any handlers added by the distro to this logger
-            for _h in list(_logger.handlers):
-                _logger.removeHandler(_h)
+            logging.getLogger(_noisy).setLevel(logging.WARNING)
 
     # Ensure the noisy-logger filter is applied to ALL root handlers
     # (including any added by the distro/OTel setup above).
