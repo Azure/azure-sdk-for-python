@@ -26,7 +26,7 @@ DESCRIPTION:
     regardless of accent).
 
     `locales` also applies to Enhanced Mode. In Enhanced Mode the service
-    operates in multi-lingual mode by default; if `locales` is specified, the
+    operates in multilingual mode by default; if `locales` is specified, the
     first locale is used as a hint to guide recognition.
 
 USAGE:

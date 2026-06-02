@@ -31,9 +31,9 @@ DESCRIPTION:
     - Diarization is not supported for the `translate` task (only speaker1
       label is returned)
     - `locales` is optional in Enhanced Mode. The service operates in
-      multi-lingual mode by default; if specified, the first locale is used as
+      multilingual mode by default; if specified, the first locale is used as
       a hint to guide recognition.
-    - `phrase_lists` options are not required or applicable with Enhanced Mode
+    - `phrase_list` is not required or applicable with Enhanced Mode
 
 USAGE:
     python sample_transcribe_with_enhanced_mode_async.py
@@ -108,7 +108,7 @@ async def sample_transcribe_with_enhanced_mode_async():
 async def sample_enhanced_mode_with_locale_async():
     """Guide Enhanced Mode recognition toward a specific language using a locale.
 
-    Enhanced Mode runs in multi-lingual mode by default, so you don't need to
+    Enhanced Mode runs in multilingual mode by default, so you don't need to
     specify the input language. Optionally, to guide recognition toward a
     specific language, set `locales` using a supported locale code (for example,
     `en-US`). The service uses the first locale as a hint to bias recognition.
