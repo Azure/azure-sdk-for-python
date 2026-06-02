@@ -53,6 +53,15 @@ function findPackageDir(repoRoot, packageName) {
   return matches[0];
 }
 
+function isPackageDir(repoRoot, packageDirRelative) {
+  const candidate = path.join(repoRoot, packageDirRelative);
+  if (!fs.existsSync(candidate) || !fs.statSync(candidate).isDirectory()) {
+    return false;
+  }
+
+  return fs.existsSync(path.join(candidate, "pyproject.toml")) || fs.existsSync(path.join(candidate, "setup.py"));
+}
+
 function* walkFiles(startDir) {
   const entries = fs.readdirSync(startDir, { withFileTypes: true });
   for (const entry of entries) {
@@ -99,9 +108,10 @@ function generateApiMdBytes({
   packageDir,
   generateScriptPath,
   exportScriptPath,
-  pythonExecutable,
+  runtimeExecutable,
   refLabel,
 }) {
+  const executable = runtimeExecutable || process.env.PYTHON || "python";
   console.log(`--- Generating API.md on ${refLabel} ---`);
   const env = {
     ...process.env,
@@ -109,7 +119,7 @@ function generateApiMdBytes({
     AZSDK_EXPORT_SCRIPT: exportScriptPath,
   };
 
-  run(pythonExecutable, [generateScriptPath, packageName], {
+  run(executable, [generateScriptPath, packageName], {
     cwd: repoRoot,
     env,
     check: true,
@@ -123,9 +133,20 @@ function generateApiMdBytes({
   return fs.readFileSync(apiMdPath);
 }
 
+function generateApiForPackage({ repoRoot, packageName, runtimeExecutable }) {
+  const executable = runtimeExecutable || process.env.PYTHON || "python";
+  const generateScriptPath = path.join(repoRoot, "scripts", "generate_api_text.py");
+  run(executable, [generateScriptPath, packageName], {
+    cwd: repoRoot,
+    check: true,
+  });
+}
+
 module.exports = {
   name: "python",
+  isPackageDir,
   findPackageDir,
   readVersion,
+  generateApiForPackage,
   generateApiMdBytes,
 };

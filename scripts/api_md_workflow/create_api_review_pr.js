@@ -4,18 +4,20 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const { loadAdapter, loadWorkflowConfig } = require("./adapter_config");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const REMOTE = "origin";
 const MAIN_REF = `${REMOTE}/main`;
 
 function parseArgs(argv) {
+  const config = loadWorkflowConfig();
   const args = {
     packageName: null,
     base: null,
     target: null,
-    adapter: process.env.API_REVIEW_ADAPTER || "python",
-    pythonExecutable: process.env.PYTHON || "python",
+    adapter: config.adapter,
+    runtimeExecutable: process.env.RUNTIME_EXECUTABLE || null,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -39,8 +41,8 @@ function parseArgs(argv) {
       args.target = value;
     } else if (key === "adapter") {
       args.adapter = value;
-    } else if (key === "python") {
-      args.pythonExecutable = value;
+    } else if (key === "python" || key === "runtime") {
+      args.runtimeExecutable = value;
     } else {
       throw new Error(`Unknown option: --${key}`);
     }
@@ -328,15 +330,6 @@ function writeBytes(filePath, bytes) {
   fs.writeFileSync(filePath, bytes);
 }
 
-function loadAdapter(name) {
-  const adapterPath = path.join(__dirname, "adapters", `${name}.js`);
-  if (!fs.existsSync(adapterPath)) {
-    throw new Error(`ERROR: adapter '${name}' not found at ${adapterPath}`);
-  }
-  // eslint-disable-next-line global-require, import/no-dynamic-require
-  return require(adapterPath);
-}
-
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const adapter = loadAdapter(args.adapter);
@@ -376,7 +369,7 @@ function main() {
         packageDir,
         generateScriptPath: cachedScript,
         exportScriptPath: cachedExport,
-        pythonExecutable: args.pythonExecutable,
+        runtimeExecutable: args.runtimeExecutable,
         refLabel: currentBranchOrSha(),
       });
     }
@@ -390,7 +383,7 @@ function main() {
       packageDir,
       generateScriptPath: cachedScript,
       exportScriptPath: cachedExport,
-      pythonExecutable: args.pythonExecutable,
+      runtimeExecutable: args.runtimeExecutable,
       refLabel: currentBranchOrSha(),
     });
 

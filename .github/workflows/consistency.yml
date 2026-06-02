@@ -16,6 +16,8 @@ jobs:
     outputs:
       changed_count: ${{ steps.changed.outputs.count || '0' }}
       mismatch_count: ${{ steps.consistency.outputs.mismatch_count || '0' }}
+      missing_count: ${{ steps.consistency.outputs.missing_count || '0' }}
+      issue_count: ${{ steps.consistency.outputs.issue_count || '0' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -27,6 +29,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+
       - name: Find changed SDK packages
         id: changed
         env:
@@ -36,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python scripts/api_md_workflow/find_affected.py
+          node scripts/api_md_workflow/find_affected.js
 
       - name: Generate API.md for affected packages
         if: ${{ steps.changed.outputs.count != '0' }}
@@ -45,159 +52,55 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install --upgrade pip
-          python scripts/api_md_workflow/regenerate.py
+          node scripts/api_md_workflow/regenerate.js
 
       - name: Check API.md consistency
         id: consistency
         env:
           API_MD_PACKAGES_FILE: .artifacts/affected_package_dirs.txt
           API_MD_MISMATCHES_FILE: .artifacts/mismatched_api_files.txt
+          API_MD_MISSING_FILE: .artifacts/missing_api_files.txt
         shell: bash
         run: |
           set -euo pipefail
           if [ "${{ steps.changed.outputs.count }}" = "0" ]; then
             echo "mismatch_count=0" >> "$GITHUB_OUTPUT"
+            echo "missing_count=0" >> "$GITHUB_OUTPUT"
+            echo "issue_count=0" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          python scripts/api_md_workflow/find_mismatches.py
-
-      - name: Upload apply context artifact
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: api-md-context
-          path: |
-            .artifacts/affected_package_dirs.txt
-            .artifacts/mismatched_api_files.txt
-          retention-days: 1
-
-      - name: Build PR comment payload
-        if: always()
-        shell: bash
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPOSITORY: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          MISMATCH_COUNT: ${{ steps.consistency.outputs.mismatch_count || '0' }}
-          CHANGED_COUNT: ${{ steps.changed.outputs.count || '0' }}
-          API_MD_MISMATCHES_FILE: .artifacts/mismatched_api_files.txt
-          API_MD_COMMENT_FILE: .artifacts/comment/comment.json
-        run: |
-          set -euo pipefail
-          python scripts/api_md_workflow/build_comment_payload.py
-
-      - name: Upload comment artifact
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: api-md-comment
-          path: .artifacts/comment/comment.json
-          retention-days: 1
+          node scripts/api_md_workflow/find_mismatches.js
 
       - name: Fail when API.md is out of date
-        if: ${{ steps.changed.outputs.count != '0' && steps.consistency.outputs.mismatch_count != '0' }}
-        shell: bash
-        run: |
-          echo "Generated API.md does not match committed API.md, or API.md is missing, for one or more affected packages."
-          echo "Re-run this workflow to apply and commit updates to the same PR branch."
-          exit 1
-
-  apply-updates:
-    name: Apply API.md updates on rerun
-    needs: consistency
-    if: >
-      github.run_attempt > 1 &&
-      needs.consistency.outputs.mismatch_count != '0' &&
-      github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Checkout PR head branch
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Download apply context
-        uses: actions/download-artifact@v8
-        with:
-          name: api-md-context
-          path: .artifacts
-
-      - name: Regenerate API.md for affected packages
-        env:
-          API_MD_PACKAGES_FILE: .artifacts/affected_package_dirs.txt
+        if: ${{ steps.changed.outputs.count != '0' && steps.consistency.outputs.issue_count != '0' }}
         shell: bash
         run: |
           set -euo pipefail
 
-          if [ ! -s .artifacts/affected_package_dirs.txt ]; then
-            echo "No affected packages found; nothing to apply."
-            exit 0
-          fi
+          print_issues() {
+            local title="$1"
+            local issues_file="$2"
 
-          python -m pip install --upgrade pip
-          python scripts/api_md_workflow/regenerate.py
-
-      - name: Commit and push API.md updates
-        id: commit
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          if [ ! -f .artifacts/mismatched_api_files.txt ] || [ ! -s .artifacts/mismatched_api_files.txt ]; then
-            echo "created=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          while IFS= read -r api_file; do
-            if [ -f "${api_file}" ] && ! git diff --quiet -- "${api_file}"; then
-              git add "${api_file}"
+            if [ ! -s "$issues_file" ]; then
+              return
             fi
-          done < .artifacts/mismatched_api_files.txt
 
-          if git diff --cached --quiet; then
-            echo "created=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+            echo "$title"
+            while IFS= read -r api_file; do
+              [ -n "$api_file" ] || continue
+              package_dir="${api_file%/API.md}"
+              package_name="$(basename "$package_dir")"
+              echo "- ${package_dir}"
+              echo "  API.md: ${api_file}"
+              echo "  Regenerate: python scripts/generate_api_text.py ${package_name}"
+            done < "$issues_file"
+            echo
+          }
 
-          git commit -m "Update API.md for PR #${{ github.event.pull_request.number }}"
-          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
-
-          echo "created=true" >> "$GITHUB_OUTPUT"
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Build apply result payload
-        shell: bash
-        env:
-          COMMIT_CREATED: ${{ steps.commit.outputs.created || 'false' }}
-          COMMIT_SHA: ${{ steps.commit.outputs.sha || '' }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          API_MD_APPLY_RESULT_FILE: .artifacts/comment/apply-result.json
-        run: |
-          set -euo pipefail
-          python scripts/api_md_workflow/build_apply_result_payload.py
-
-      - name: Post apply result comment
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMENT_FILE: .artifacts/comment/apply-result.json
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/api_md_workflow/post_comment.py
+          echo "Generated API.md does not match committed API.md, or API.md is missing, for one or more affected packages."
+          echo
+          print_issues "Mismatched packages:" ".artifacts/mismatched_api_files.txt"
+          print_issues "Missing API.md packages:" ".artifacts/missing_api_files.txt"
+          echo "To regenerate API.md locally, run the command shown for each package from the repository root."
+          exit 1
