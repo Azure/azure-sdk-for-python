@@ -132,8 +132,8 @@ class TestNonBackgroundRecovery:
         ctx = MagicMock()
         ctx.entry_mode = "recovered"
         ctx.retry_attempt = 1
-        ctx.was_steered = False
-        ctx.pending_inputs = []
+        ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.cancel = asyncio.Event()
         ctx.task_id = "non-bg-task-1"
         ctx.suspend = AsyncMock()

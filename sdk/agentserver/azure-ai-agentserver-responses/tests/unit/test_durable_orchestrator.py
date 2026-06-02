@@ -128,8 +128,8 @@ class TestDurableOrchestratorExecuteInTask:
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
-        ctx.was_steered = False
-        ctx.pending_inputs = []
+        ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -174,8 +174,8 @@ class TestDurableOrchestratorExecuteInTask:
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 1
-        ctx.was_steered = False
-        ctx.pending_inputs = ["a", "b"]
+        ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
+        ctx.pending_input_count = 2  # Spec 016 FR-019: pending_inputs Sequence renamed
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -214,8 +214,8 @@ class TestDurableOrchestratorExecuteInTask:
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
-        ctx.was_steered = False
-        ctx.pending_inputs = []
+        ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -250,8 +250,8 @@ class TestDurableOrchestratorExecuteInTask:
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
-        ctx.was_steered = False
-        ctx.pending_inputs = []
+        ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
@@ -290,8 +290,8 @@ class TestDurableOrchestratorCancellationBridge:
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
-        ctx.was_steered = False
-        ctx.pending_inputs = []
+        ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"

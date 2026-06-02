@@ -472,11 +472,14 @@ class DurableResponseOrchestrator:
         # only persisted at `response.created` and at terminal events, so
         # a between-states snapshot is never useful. Handlers build their
         # resumption response from upstream framework state.
+        # Spec 016 FR-019 / FR-020 (US6): ctx.pending_inputs renamed to
+        # ctx.pending_input_count (already an int — no len() needed);
+        # ctx.was_steered renamed to ctx.is_steered_turn.
         durability_ctx = DurabilityContext(
             entry_mode=entry_mode,
             retry_attempt=ctx.retry_attempt,
-            was_steered=ctx.was_steered,
-            pending_inputs=len(ctx.pending_inputs),
+            was_steered=ctx.is_steered_turn,
+            pending_inputs=ctx.pending_input_count,
             metadata=ctx.metadata,
         )
 
