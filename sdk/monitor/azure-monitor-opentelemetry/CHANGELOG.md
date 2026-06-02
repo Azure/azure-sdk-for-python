@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Enforce size limits on browser SDK snippet injection to guard against decompression bombs and oversized HTML response bodies (1 MiB compressed / 5 MiB decompressed caps).
+  ([#47233](https://github.com/Azure/azure-sdk-for-python/pull/47233))
 
 ### Other Changes
 

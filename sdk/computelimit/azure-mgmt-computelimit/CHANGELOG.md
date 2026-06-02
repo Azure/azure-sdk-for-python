@@ -1,5 +1,16 @@
 # Release History
 
+## 1.1.0 (2026-05-26)
+
+### Features Added
+
+  - Client `ComputeLimitMgmtClient` added operation group `vm_families`
+  - Added model `FeatureEnableRequest`
+  - Added model `VmFamily`
+  - Added model `VmFamilyProperties`
+  - Operation group `FeaturesOperations` added method `begin_disable`
+  - Added operation group `VmFamiliesOperations`
+
 ## 1.0.0 (2026-04-17)
 
 ### Features Added

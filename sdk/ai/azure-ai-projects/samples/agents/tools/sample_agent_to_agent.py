@@ -49,14 +49,12 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     tool = A2APreviewTool(
         project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
     )
     # If the connection is missing target, we need to set the A2A endpoint URL.
     if os.environ.get("A2A_ENDPOINT"):
         tool.base_url = os.environ["A2A_ENDPOINT"]
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
