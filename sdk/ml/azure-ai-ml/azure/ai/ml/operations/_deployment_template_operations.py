@@ -93,7 +93,9 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             if self._credential and self._operation_scope.registry_name:
                 # Use registry discovery API to get the primary region
                 discovery_base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
-                discovery_client = ServiceClientRegistryDiscovery(credential=self._credential, base_url=discovery_base_url)
+                discovery_client = ServiceClientRegistryDiscovery(
+                    credential=self._credential, base_url=discovery_base_url
+                )
                 response = discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(
                     self._operation_scope.registry_name
                 )
@@ -361,7 +363,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             raise ValueError("deployment_template must be a DeploymentTemplate object")
 
         rest_object = deployment_template._to_rest_object()
-        poller = self._service_client.deployment_templates.begin_create(
+        self._service_client.deployment_templates.begin_create(
             registry_name=self._operation_scope.registry_name,
             name=deployment_template.name,
             version=deployment_template.version,
