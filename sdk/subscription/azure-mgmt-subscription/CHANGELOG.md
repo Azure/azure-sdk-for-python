@@ -46,11 +46,11 @@
   - Deleted or renamed method `SubscriptionsOperations.list`
   - Deleted or renamed method `SubscriptionsOperations.list_locations`
   - Deleted or renamed operation group `TenantsOperations`
-  - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `ItemPaged[_models.SubscriptionAliasResponse]`
 
 ### Other Changes
 
   - Deleted model `GetTenantPolicyListResponse` which actually was not used by SDK users
+  - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `ItemPaged[_models.SubscriptionAliasResponse]`
 
 ## 3.2.0b1 (2022-12-27)
 
