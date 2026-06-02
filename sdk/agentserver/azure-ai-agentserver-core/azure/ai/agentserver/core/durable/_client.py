@@ -331,7 +331,7 @@ def _build_default_policies(
     """
     return [
         RequestIdPolicy(),
-        HeadersPolicy(),
+        HeadersPolicy(base_headers={"Foundry-Features": "Routines=V1Preview"}),
         UserAgentPolicy(base_user_agent=_USER_AGENT),
         # Retry on 5xx and the standard transient HTTP statuses; 409
         # is explicitly NOT in retry_on_status_codes (FR-030) because
