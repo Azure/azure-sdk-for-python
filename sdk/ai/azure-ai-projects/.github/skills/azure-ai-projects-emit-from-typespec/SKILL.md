@@ -174,18 +174,7 @@ In the folder `sdk\ai\azure-ai-projects`, run `pip install -e .` to install the 
 
 ---
 
-## Step 12: Update CHANGELOG.md
-
-Use the **`azsdk-common-generate-sdk-locally`** skill's changelog capability (`azsdk_package_update_changelog_content`) to update `CHANGELOG.md` in the `sdk/ai/azure-ai-projects` folder with a summary of changes from the TypeSpec emit. Some guidelines to follow:
-* Start by examining the public SDK API surface of the latest released version of the azure-ai-projects package. The source code for this version can be found in the Main branch of the `azure-sdk-for-python` repository, in the folder `sdk\ai\azure-ai-projects`. 
-* Then compare it to the public SDK API surface of current version in this topic branch. 
-* Look at the existing change log from the latest version (if exists) and edit or add to it to capture all the changes you see. If a change log does not exist for the current version at the top of `CHANGELOG.md`, create a new one.
-* If a new method was added, there is no need to add the list of all new classes that define the inputs and output of the method. It's enough to mention that the new method was added.
-* Show the user the proposed changelog entry and ask for confirmation or edits before saving.
-
----
-
-## Step 13: Commit and push
+## Step 12: Commit and push
 
 Stage all changes (excluding file names that start with `.env`), commit, and push the topic branch:
 
@@ -199,7 +188,7 @@ git push -u origin <topic-branch>
 
 ---
 
-## Step 14: Create a Pull Request
+## Step 13: Create a Pull Request
 
 Create a draft PR from the **topic branch** to the **base branch** (recorded in Step 2):
 
@@ -216,7 +205,7 @@ Open a new tab in the default browser and navigate to the PR URL.
 
 ---
 
-## Step 15: Optionally run tests locally
+## Step 14: Optionally run tests locally
 
 Prompt the user with this message: "Tests will run as part of the Pull Request. However, you can optionally run tests locally in a Python virtual environment, right now. It will take a few minutes. Do you want to run tests locally? (yes/no)"
 
