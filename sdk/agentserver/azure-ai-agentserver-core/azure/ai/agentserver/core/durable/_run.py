@@ -72,7 +72,8 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         "_result_future",
         "_metadata",
         "_cancel_event",
-        "_terminate_event",
+        "_cancel_ctx_ref",
+        "_terminate_event",  # Spec 016 FR-022: retained as internal-only; will be removed when callers stop passing it
         "_terminate_reason_ref",
         "_status",
         "_stream_handler",
@@ -94,6 +95,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         execution_task: asyncio.Task[Any] | None = None,
         terminate_reason_ref: list[str | None] | None = None,
         lease_expiry_count: int = 0,
+        cancel_ctx_ref: Any = None,
     ) -> None:
         self.task_id = task_id
         self._provider = provider
@@ -108,6 +110,10 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         self._stream_handler: StreamHandler | None = stream_handler
         self._execution_task: asyncio.Task[Any] | None = execution_task
         self._lease_expiry_count = lease_expiry_count
+        # Spec 016 FR-018 (US6): weak reference to the TaskContext so
+        # TaskRun.cancel() can set ctx.cancel_requested = True before
+        # setting ctx.cancel.
+        self._cancel_ctx_ref: Any = cancel_ctx_ref
 
     @property
     def status(self) -> TaskStatus:
@@ -161,25 +167,22 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
     async def cancel(self) -> None:
         """Signal cancellation to the running task.
 
-        Sets the ``cancel`` event on the task context. The function
-        should check ``ctx.cancel.is_set()`` and exit cleanly.
+        Spec 016 FR-018 (US6): sets ``ctx.cancel_requested = True``
+        BEFORE setting ``ctx.cancel``, so a handler observing
+        ``ctx.cancel.is_set() == True`` is guaranteed to see at least
+        one cause boolean already ``True``.
+
+        The handler should check ``ctx.cancel.is_set()`` (and optionally
+        branch on which cause boolean is set) to wind down cleanly.
         """
+        # The cause boolean is propagated through the framework via the
+        # _ActiveTask wiring; see _manager.py for the indirection. Here
+        # we just set the cancel event; the framework's wrapper sets the
+        # cause boolean first.
+        ctx = self._cancel_ctx_ref
+        if ctx is not None:
+            ctx.cancel_requested = True
         self._cancel_event.set()
-
-    async def terminate(self, *, reason: str | None = None) -> None:
-        """Forcefully terminate the task.
-
-        Unlike :meth:`cancel`, terminated tasks go through the failure path
-        and do NOT stay ``in_progress`` for recovery.
-
-        :keyword reason: Optional human-readable termination reason.
-        :paramtype reason: str | None
-        """
-        self._terminate_reason_ref[0] = reason
-        self._terminate_event.set()
-        self._cancel_event.set()
-        if self._execution_task is not None and not self._execution_task.done():
-            self._execution_task.cancel()
 
     async def delete(self) -> None:
         """Delete the task record from the store.

@@ -221,7 +221,10 @@ class TestSteeringCarryOver:
                 stream_handler_factory=lambda _tid: handler,
             )
             async def steerable_task(ctx: TaskContext[dict]) -> dict:
-                gen = ctx.steering_generation
+                # Spec 016 FR-021: ctx.steering_generation removed. Use
+                # ctx.is_steered_turn to distinguish the first turn from
+                # the steered re-entry.
+                gen = 1 if ctx.is_steered_turn else 0
                 await ctx.stream({"gen": gen, "event": "start"})
 
                 if gen == 0:

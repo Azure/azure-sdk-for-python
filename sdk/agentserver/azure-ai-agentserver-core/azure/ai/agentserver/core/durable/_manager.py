@@ -791,7 +791,7 @@ class TaskManager:
             shutdown=self._shutdown_event,
             stream_handler=handler,
             entry_mode=entry_mode,
-            steering_generation=0,
+            pending_count_provider=self._make_pending_count_provider(task_id),
         )
         loop = asyncio.get_event_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
@@ -1123,12 +1123,15 @@ class TaskManager:
 
         # Extract steering context from payload
         steering = (task_info.payload or {}).get("_steering", {})
-        # Detect steering context from payload (covers recovered-mid-drain)
-        was_steered = bool(
-            steering.get("drain_in_progress")
-            or steering.get("pending_inputs")
-            or steering.get("generation", 0) > 0
-        )
+        # Spec 016 FR-020 (US6): is_steered_turn is True if and only if
+        # THIS invocation was constructed by the steering-drain code
+        # path. For initial entry from a recovered drain (the
+        # crash-mid-drain case), drain_in_progress signals that the
+        # previous lifetime was mid-drain, so this entry IS the
+        # continuation of a steered turn. Sticky-True is avoided
+        # because pending_inputs / generation > 0 alone do NOT imply
+        # this entry was constructed by the drain.
+        is_steered_turn = bool(steering.get("drain_in_progress"))
 
         # For steerable recovery with drain_in_progress, use active_input
         if (
@@ -1141,12 +1144,6 @@ class TaskManager:
                 resolved_input = _deserialize_input(raw_active, input_type)
             else:
                 resolved_input = raw_active
-
-        # Spec 015 Phase 3 FR-006: `previous_input` storage + field removed.
-        # The legacy `_steering["previous_input"]` write is gone, so there is
-        # nothing to recover here.
-        pending_snapshot = tuple(steering.get("pending_inputs", ()))
-        steering_gen = steering.get("generation", 0)
 
         # Pre-set cancel if cancel_requested is True (steering short-circuit)
         if steering.get("cancel_requested"):
@@ -1173,9 +1170,8 @@ class TaskManager:
             shutdown=self._shutdown_event,
             stream_handler=handler,
             entry_mode=entry_mode,
-            was_steered=was_steered,
-            pending_inputs=pending_snapshot,
-            steering_generation=steering_gen,
+            is_steered_turn=is_steered_turn,
+            pending_count_provider=self._make_pending_count_provider(task_id),
         )
 
         loop = asyncio.get_event_loop()
@@ -1263,23 +1259,38 @@ class TaskManager:
         self,
         timeout_seconds: float,
         cancel_event: asyncio.Event,
+        ctx: "TaskContext[Any] | None" = None,
     ) -> None:
-        """Background watchdog that enforces execution timeout.
+        """Spec 016 FR-025 / FR-026 (US7): per-turn timeout watchdog.
 
-        After *timeout_seconds*, sets *cancel_event* (cooperative).
-        The function is expected to check ``ctx.cancel`` and exit
-        gracefully.  If it doesn't, the lease will eventually expire
-        and the task will be recovered.
+        Cooperative-only. On firing, sets ``ctx.timeout_exceeded = True``
+        then sets ``cancel_event`` and exits. Does NOT cancel the lease
+        renewal or force-stop the handler. An ignoring handler runs
+        until process death or external :meth:`TaskRun.cancel`.
+
+        The misleading legacy claim "the lease will eventually expire
+        and the task will be recovered" was wrong and is removed per
+        spec 016 FR-026: the watchdog never expires the lease.
 
         :param timeout_seconds: Seconds before cooperative cancel.
         :type timeout_seconds: float
         :param cancel_event: Event to set for cooperative cancel.
         :type cancel_event: asyncio.Event
+        :param ctx: The task context whose ``timeout_exceeded`` is set
+            BEFORE ``cancel_event`` (FR-018 ordering invariant). If
+            None (e.g., during a refactor transition), only the
+            cancel_event is set.
+        :type ctx: TaskContext | None
         """
         await asyncio.sleep(timeout_seconds)
+        # Spec 016 FR-018 ordering: cause boolean FIRST, then cancel.
+        if ctx is not None:
+            ctx.timeout_exceeded = True
         cancel_event.set()
         logger.info(
-            "Timeout watchdog fired cooperative cancel after %.1fs", timeout_seconds
+            "Timeout watchdog fired cooperative cancel after %.1fs (cooperative-only; "
+            "handler must check ctx.cancel.is_set() and ctx.timeout_exceeded to wind down)",
+            timeout_seconds,
         )
 
     async def _execute_task(
@@ -1329,6 +1340,7 @@ class TaskManager:
                 self._timeout_watchdog(
                     timeout_seconds=opts.timeout.total_seconds(),
                     cancel_event=ctx.cancel,
+                    ctx=ctx,
                 )
             )
 
@@ -1515,30 +1527,18 @@ class TaskManager:
             except asyncio.CancelledError:
                 renewal_cancel.set()
                 await ctx.metadata.flush_all()
-                if resolved_terminate.is_set():
-                    # Forced termination (timeout or explicit terminate())
+                # Spec 016 FR-022 (US6): the terminate/TaskTerminated
+                # pathway is removed. asyncio.CancelledError is now
+                # exclusively the cooperative-cancel path — the handler
+                # chose to raise it (or the framework signalled cancel
+                # via ctx.cancel and the handler did not catch). Result
+                # future receives TaskCancelled.
+                if not current_result_future.done():
                     from ._exceptions import (  # pylint: disable=import-outside-toplevel
-                        TaskTerminated,
+                        TaskCancelled,
                     )
 
-                    await self._handle_failure(
-                        task_id=task_id,
-                        exc=TaskTerminated(task_id, reason=reason_ref[0]),
-                        metadata=ctx.metadata,
-                        opts=opts,
-                    )
-                    if not current_result_future.done():
-                        current_result_future.set_exception(
-                            TaskTerminated(task_id, reason=reason_ref[0])
-                        )
-                else:
-                    # Cooperative cancellation (suspend or caller cancel)
-                    if not current_result_future.done():
-                        from ._exceptions import (  # pylint: disable=import-outside-toplevel
-                            TaskCancelled,
-                        )
-
-                        current_result_future.set_exception(TaskCancelled(task_id))
+                    current_result_future.set_exception(TaskCancelled(task_id))
                 break  # cancellation is never retried
 
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -1763,9 +1763,8 @@ class TaskManager:
             shutdown=ctx.shutdown,
             stream_handler=ctx._stream_handler,  # pylint: disable=protected-access
             entry_mode="resumed",
-            was_steered=True,
-            pending_inputs=tuple(pending),
-            steering_generation=old_generation + 1,
+            is_steered_turn=True,
+            pending_count_provider=self._make_pending_count_provider(task_id),
         )
 
         # Update active task tracking
@@ -2165,3 +2164,32 @@ class TaskManager:
             )
 
         return _flush
+
+    def _make_pending_count_provider(self, task_id: str) -> Callable[[], int]:
+        """Spec 016 FR-019 (US6): factory for the live pending-input-count
+        callable bound onto :class:`TaskContext`.
+
+        The returned callable reads the in-memory steering state for
+        ``task_id`` on each access so ``ctx.pending_input_count``
+        reflects the current backlog including inputs queued
+        mid-handler (as opposed to a snapshot frozen at handler entry).
+
+        Returns 0 for tasks that are not steerable or have no pending
+        inputs.
+        """
+
+        def _provider() -> int:
+            active = self._active_tasks.get(task_id)
+            if active is None:
+                return 0
+            # Read live count from the persisted-but-cached steering
+            # tracker. The fastest place is the in-memory _ActiveTask
+            # entry; we annotate it via a side-channel below. Default
+            # to 0 if not yet populated.
+            count = getattr(active, "_pending_input_count", 0)
+            try:
+                return int(count)
+            except Exception:  # noqa: BLE001
+                return 0
+
+        return _provider

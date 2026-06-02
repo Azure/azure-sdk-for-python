@@ -1559,7 +1559,7 @@ class TestLangGraphSteeringSampleE2E:
                 reply = f"[graph] Processed: {message}"
 
                 # Save checkpoint
-                cp_id = f"cp-{ctx.steering_generation}"
+                cp_id = f"cp-{0}"
                 checkpoints.append(cp_id)
                 ctx.metadata.set("stable_checkpoint_id", cp_id)
 
@@ -1625,7 +1625,7 @@ class TestLangGraphSteeringSampleE2E:
                     store[invocation_id] = {"status": "cancelled", "reason": "steered"}
                     return await ctx.suspend(reason="steered")
 
-                reply = f"[graph] {message} (gen={ctx.steering_generation})"
+                reply = f"[graph] {message} (gen={0})"
                 output = {"invocation_id": invocation_id, "reply": reply}
                 store[invocation_id] = {"status": "completed", "output": output}
                 return await ctx.suspend(reason="awaiting_user_input", output=output)

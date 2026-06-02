@@ -5,12 +5,18 @@
 
 Provides identity, typed input, mutable metadata, cancellation signals,
 and the ``suspend()`` method for pausing execution.
+
+Spec 016 (US6/US8) introduces the cancel-cause boolean surface
+(``timeout_exceeded``, ``cancel_requested``, ``pending_input_count``,
+``is_steered_turn``) and the ``exit_for_recovery()`` graceful-shutdown
+shape. The legacy fields ``was_steered`` / ``pending_inputs`` /
+``steering_generation`` are removed (FR-019/FR-020/FR-021).
 """
 
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from typing import Any, Generic, Literal, Sequence, TypeVar
+from typing import Any, Callable, Generic, Literal, TypeVar
 
 from ._metadata import TaskMetadata
 from ._stream import StreamHandler
@@ -26,11 +32,12 @@ EntryMode = Literal["fresh", "resumed", "recovered"]
   (via ``.run()``), ``ctx.input`` contains the new input. On platform-initiated
   resume (via ``/tasks/{task_id}/resume``), ``ctx.input`` contains the task's
   persisted input. Also used when a steering input drains from the queue —
-  check ``ctx.was_steered`` to distinguish steering re-entry from normal resume.
+  check ``ctx.is_steered_turn`` to distinguish steering re-entry from normal
+  resume.
 - ``"recovered"`` — Re-entered after stale task detection. The previous execution
   crashed or timed out. ``ctx.input`` contains the task's persisted input.
-  If a steerable task crashed mid-drain, ``ctx.was_steered`` will be ``True``
-  and steering context (``steering_generation``) is meaningful.
+  If a steerable task crashed mid-drain, ``ctx.is_steered_turn`` will be
+  ``True``.
 """
 
 
@@ -48,12 +55,22 @@ class _Suspended:
         self.output = output
 
 
+class _ExitForRecovery:
+    """Spec 016 FR-027 (US8): internal sentinel returned by
+    :meth:`TaskContext.exit_for_recovery` to signal the framework to
+    flush metadata, release the lease, and leave the stored status
+    as ``in_progress``.
+    """
+
+    __slots__ = ()
+
+
 class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attributes
     """The single parameter to a durable task function.
 
     Provides access to the task's identity, typed input, mutable metadata
-    for progress tracking, cancellation signals, and the ability to
-    suspend execution.
+    for progress tracking, cancellation signals (with cause booleans),
+    and the ability to suspend or exit-for-recovery.
 
     :param task_id: Unique task identifier.
     :type task_id: str
@@ -67,9 +84,12 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
     :param recovery_count: Crash-recovery counter. Increments each time the
         framework re-enters this task after a lease loss or stale detection.
     :type recovery_count: int
-    :param cancel: Request-level cancellation event.
+    :param cancel: Request-level cancellation event. The framework sets
+        this from multiple causes; observe ``timeout_exceeded``,
+        ``cancel_requested``, ``pending_input_count`` to disambiguate.
     :type cancel: asyncio.Event
-    :param shutdown: Container-level shutdown event.
+    :param shutdown: Container-level shutdown event. Precondition for
+        :meth:`exit_for_recovery`.
     :type shutdown: asyncio.Event
     """
 
@@ -85,9 +105,16 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         "_suspend_callback",
         "_stream_handler",
         "entry_mode",
-        "was_steered",
-        "pending_inputs",
-        "steering_generation",
+        # Spec 016 FR-016..FR-021 (US6) public cancel-cause / steering surface.
+        "timeout_exceeded",
+        "cancel_requested",
+        "is_steered_turn",
+        # Internal callable for the live pending_input_count property
+        # (FR-019). The framework sets this when constructing the
+        # TaskContext; the property reads it on each access so the
+        # count reflects the current backlog including inputs queued
+        # mid-handler.
+        "_pending_count_provider",
     )
 
     def __init__(
@@ -103,9 +130,8 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         shutdown: asyncio.Event | None = None,
         stream_handler: StreamHandler | None = None,
         entry_mode: EntryMode = "fresh",
-        was_steered: bool = False,
-        pending_inputs: Sequence[Any] | None = None,
-        steering_generation: int = 0,
+        is_steered_turn: bool = False,
+        pending_count_provider: Callable[[], int] | None = None,
     ) -> None:
         self.task_id = task_id
         self._session_id = session_id
@@ -118,11 +144,32 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         self._suspend_callback: Any = None
         self._stream_handler: StreamHandler | None = stream_handler
         self.entry_mode: EntryMode = entry_mode
-        self.was_steered: bool = was_steered
-        self.pending_inputs: Sequence[Any] = (
-            pending_inputs if pending_inputs is not None else ()
-        )
-        self.steering_generation: int = steering_generation
+        # Spec 016 FR-016..FR-021: public surface fields. Defaults are
+        # framework-controlled at construction; framework setters update
+        # them in place. No public setters.
+        self.timeout_exceeded: bool = False
+        self.cancel_requested: bool = False
+        self.is_steered_turn: bool = is_steered_turn
+        self._pending_count_provider = pending_count_provider
+
+    @property
+    def pending_input_count(self) -> int:
+        """Spec 016 FR-019 (US6): live count of queued steering inputs.
+
+        Reflects the current backlog including inputs queued mid-handler.
+        Reads as ``0`` for non-steerable tasks (where the provider
+        returns 0). Replaces the legacy ``ctx.pending_inputs: Sequence[Any]``
+        snapshot.
+
+        :return: Number of queued steering inputs.
+        :rtype: int
+        """
+        if self._pending_count_provider is None:
+            return 0
+        try:
+            return int(self._pending_count_provider())
+        except Exception:  # noqa: BLE001
+            return 0
 
     async def suspend(
         self,
@@ -159,3 +206,38 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         """
         if self._stream_handler is not None:
             await self._stream_handler.put(item)
+
+    async def exit_for_recovery(self) -> Any:
+        """Spec 016 FR-027 (US8): graceful-shutdown shape.
+
+        Callable ONLY when ``ctx.shutdown.is_set() == True``. Calling it
+        outside shutdown raises ``RuntimeError`` at the call site
+        (visible in user-code tracebacks; the task ends in ``failed``).
+
+        When called during shutdown, the framework:
+
+        1. Flushes ``ctx.metadata`` (FR-015 auto-flush invariant).
+        2. Releases the lease on the persisted record.
+        3. Leaves the stored ``status`` as ``in_progress`` (NOT
+           transitions to ``suspended``).
+        4. Signals in-process awaiters with the standard cooperative-
+           cancel ``TaskCancelled`` result.
+        5. Preserves any queued steering inputs in the persisted state
+           (FR-028).
+
+        The recovery scan on the next process startup re-enters the
+        handler with ``ctx.entry_mode == "recovered"``.
+
+        Use as ``return await ctx.exit_for_recovery()``.
+
+        :return: The :class:`_ExitForRecovery` sentinel.
+        :raises RuntimeError: If called outside ``ctx.shutdown.is_set() == True``.
+        """
+        if not self.shutdown.is_set():
+            raise RuntimeError(
+                "ctx.exit_for_recovery() may only be called when "
+                "ctx.shutdown.is_set() is true. The misuse-as-failed "
+                "semantic exists so operator logs surface accidental "
+                "calls loudly (spec 016 FR-027)."
+            )
+        return _ExitForRecovery()

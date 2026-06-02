@@ -18,9 +18,14 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    TaskTerminated,
     task,
 )
+# Spec 016 FR-022 (US6): TaskTerminated removed from public __all__.
+# Import via the internal _exceptions module for the absence-test below.
+try:
+    from azure.ai.agentserver.core.durable._exceptions import TaskTerminated  # noqa: F401 — retained for transitional internal-only use
+except ImportError:
+    TaskTerminated = None  # type: ignore[assignment]
 
 
 class _ManagerFixture:
@@ -116,62 +121,26 @@ class TestExecutionTimeout:
 
 
 class TestTerminate:
-    """Verify TaskRun.terminate() forces failure."""
+    """Spec 016 FR-022 (US6): TaskRun.terminate() and TaskTerminated
+    are removed from the public surface. The cancel-cause boolean
+    flow + handler-chosen terminal shape replaces them.
 
-    @pytest.mark.asyncio
-    async def test_terminate_raises_task_terminated(self, tmp_path):
-        """terminate() causes result() to raise TaskTerminated."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @task(name="terminatable")
-            async def long_task(ctx: TaskContext[Any]) -> str:
-                await asyncio.sleep(100)
-                return "never"
-
-            run = await long_task.start(task_id=uuid.uuid4().hex, input=None)
-            await asyncio.sleep(0.05)  # let it start
-
-            await run.terminate()
-            with pytest.raises(TaskTerminated):
-                await run.result()
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_terminate_sets_failure_status(self, tmp_path):
-        """Terminated task is stored as failed (not in_progress)."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @task(name="term_status", ephemeral=False)
-            async def long_task(ctx: TaskContext[Any]) -> str:
-                await asyncio.sleep(100)
-                return "never"
-
-            task_id = uuid.uuid4().hex
-            run = await long_task.start(task_id=task_id, input=None)
-            await asyncio.sleep(0.05)
-
-            await run.terminate()
-            with pytest.raises(TaskTerminated):
-                await run.result()
-
-            # Give manager time to persist failure
-            await asyncio.sleep(0.1)
-
-            info = await manager.provider.get(task_id)
-            assert info is not None
-            # Failures are stored as "completed" with an error dict
-            assert info.status == "completed"
-            assert info.error is not None
-            assert info.error["type"] == "TaskTerminated"
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
+    The old test cases (test_terminate_raises_task_terminated,
+    test_terminate_sets_failure_status, test_terminate_reason_propagated)
+    are removed because their assertions exercise functionality that
+    no longer exists. The single cooperative-cancel preservation
+    test below stands in for the cancel-vs-terminate distinction.
+    """
 
     @pytest.mark.asyncio
     async def test_cancel_vs_terminate_distinction(self, tmp_path):
-        """Cooperative cancel (ctx.cancel) raises TaskCancelled, not TaskTerminated."""
+        """Cooperative cancel (ctx.cancel) raises TaskCancelled.
+
+        Spec 016 FR-022: terminate is removed; cooperative cancel via
+        TaskRun.cancel() is the SINGLE 'stop this task' pathway. The
+        handler chooses the terminal shape (here, raises
+        asyncio.CancelledError which the framework maps to TaskCancelled).
+        """
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
             from azure.ai.agentserver.core.durable._exceptions import TaskCancelled
@@ -193,23 +162,21 @@ class TestTerminate:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
-    @pytest.mark.asyncio
-    async def test_terminate_reason_propagated(self, tmp_path):
-        """Terminate reason is propagated to TaskTerminated exception."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
+    def test_terminate_method_removed_from_taskrun(self) -> None:
+        """Spec 016 FR-022 (US6): TaskRun.terminate is gone."""
+        from azure.ai.agentserver.core.durable._run import TaskRun
 
-            @task(name="term_reason_task")
-            async def slow_task(ctx: TaskContext[Any]) -> str:
-                await asyncio.sleep(10)
-                return "never"
+        assert not hasattr(TaskRun, "terminate"), (
+            "Spec 016 FR-022: TaskRun.terminate() MUST be removed. "
+            "Use TaskRun.cancel() and let the handler choose the "
+            "terminal shape via its reaction to ctx.cancel.is_set()."
+        )
 
-            run = await slow_task.start(task_id=uuid.uuid4().hex, input=None)
-            await asyncio.sleep(0.05)
+    def test_task_terminated_removed_from_durable_all(self) -> None:
+        """Spec 016 FR-022 (US6): TaskTerminated dropped from __all__."""
+        from azure.ai.agentserver.core.durable import __all__ as durable_all
 
-            await run.terminate(reason="user requested stop")
-            with pytest.raises(TaskTerminated) as exc_info:
-                await run.result()
-            assert exc_info.value.reason == "user requested stop"
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
+        assert "TaskTerminated" not in durable_all, (
+            "Spec 016 FR-022: TaskTerminated removed from the public "
+            "__all__ as part of the cancel-cause boolean rewrite."
+        )
