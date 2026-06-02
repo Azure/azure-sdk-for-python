@@ -290,6 +290,8 @@ with open(audio_file_path, "rb") as audio_file:
 
 <!-- END SNIPPET -->
 
+> **Note:** `locales` is applied in enhanced mode. Enhanced mode operates in multi-lingual mode by default; if `locales` is specified, the first locale is used as a hint to guide recognition.
+
 ### Using async client
 
 The library also provides an async client for asynchronous operations:
