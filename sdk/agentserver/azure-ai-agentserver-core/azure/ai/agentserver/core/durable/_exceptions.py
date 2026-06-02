@@ -50,25 +50,13 @@ class TaskNotFound(Exception):
         super().__init__(f"Task {task_id!r} not found")
 
 
-class TaskTerminated(Exception):
-    """Raised when a task is forcefully terminated via ``handle.terminate()``.
-
-    Unlike :class:`TaskCancelled`, terminated tasks go through the failure
-    path and do NOT stay ``in_progress`` for recovery.
-
-    :param task_id: The identifier of the terminated task.
-    :type task_id: str
-    :param reason: Optional human-readable termination reason.
-    :type reason: str | None
-    """
-
-    __slots__ = ("task_id", "reason")
-
-    def __init__(self, task_id: str, reason: str | None = None) -> None:
-        self.task_id = task_id
-        self.reason = reason
-        suffix = f": {reason}" if reason else ""
-        super().__init__(f"Task {task_id!r} was terminated{suffix}")
+# Spec 016 FR-022 + SC-014 (US6): TaskTerminated removed.
+#
+# The legacy ``TaskTerminated`` exception and its corresponding
+# ``TaskRun.terminate()`` pathway are fully removed. Use
+# ``TaskRun.cancel()`` and let the handler choose the terminal shape
+# via its reaction to ``ctx.cancel.is_set()`` (raise to fail, return
+# to complete, ctx.suspend() to suspend).
 
 
 class TaskConflictError(RuntimeError):

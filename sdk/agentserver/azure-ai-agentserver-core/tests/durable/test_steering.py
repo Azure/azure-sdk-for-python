@@ -371,24 +371,24 @@ class TestSteering:
 
     @pytest.mark.asyncio
     async def test_task_result_is_superseded(self):
-        """Spec 016 FR-010 (US5): is_superseded is now a compat shim that
-        always returns False. The Literal status no longer includes
-        "superseded" — steering is plain multi-turn.
+        """Spec 016 FR-010 + SC-007 (US5): is_superseded property is
+        REMOVED entirely. Asserting absence per the strict-removal
+        contract.
         """
-        # The Literal is narrowed but the implementation does not enforce
-        # it at runtime; constructing with a non-Literal status still works
-        # but is_superseded never returns True.
         result = TaskResult(task_id="t1", status="completed")
-        assert result.is_superseded is False, (
-            "Spec 016 FR-010: is_superseded is a compatibility shim that "
-            "always returns False; steering is plain multi-turn."
+        assert not hasattr(result, "is_superseded"), (
+            "Spec 016 FR-010: is_superseded property MUST NOT exist on "
+            "TaskResult. Branch on is_suspended / is_completed instead "
+            "and inspect output directly."
         )
 
     @pytest.mark.asyncio
     async def test_task_result_completed_not_superseded(self):
-        """TaskResult with status=completed has is_superseded=False."""
+        """Spec 016 FR-010 (US5): TaskResult with status=completed has
+        no is_superseded attribute (property removed entirely).
+        """
         result = TaskResult(task_id="t1", status="completed", output=42)
-        assert result.is_superseded is False
+        assert not hasattr(result, "is_superseded")
         assert result.is_completed is True
 
     # ------------------------------------------------------------------

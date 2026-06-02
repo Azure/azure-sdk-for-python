@@ -474,37 +474,36 @@ async def cancellable(ctx: TaskContext[str]) -> str:
     raise RuntimeError("ctx.cancel set with no recognised cause")
 ```
 
-### Timeout: per-turn, wall-clock, durable, cooperative-only
+### Timeout: cooperative-only (per-turn / wall-clock / durable target)
 
-`@task(timeout=...)` is **per-turn**, **wall-clock**, **durable**
-across crashes within a turn, and **cooperative-only**:
+`@task(timeout=...)` is **cooperative-only**: when the budget elapses
+the framework sets `ctx.timeout_exceeded = True` then sets
+`ctx.cancel`, then exits — it does NOT cancel the lease renewal or
+force-stop the handler.
 
-- **Per-turn**: each handler turn (fresh entry, suspended-to-resume,
-  steering drain re-entry) gets a fresh budget of `timeout` seconds.
-  Multi-turn conversations don't burn the budget across turns.
-- **Wall-clock**: `now - turn_started_at` is the anchor, not the
-  amount of CPU time spent. Sleeping handlers still time out.
-- **Durable**: a crash mid-turn does NOT reset the budget. On
-  recovery, the framework reads the persisted turn-start timestamp
-  and respawns the watchdog with `remaining = max(0, timeout -
-  (now - turn_started_at))`, clamped to `[0, timeout]` for
-  clock-skew safety. If the recovered watchdog computes
-  `remaining == 0`, it fires immediately — so the recovered handler
-  sees `ctx.timeout_exceeded == True` from its first checkpoint.
-- **Cooperative-only**: when the watchdog fires it sets
-  `ctx.timeout_exceeded = True`, then sets `ctx.cancel`, then
-  exits. It does NOT cancel the lease renewal; it does NOT
-  force-stop the handler. An ignoring handler runs until process
-  death or external `TaskRun.cancel()`.
+The full **per-turn** / **wall-clock** / **durable** semantic
+(FR-023..FR-026) is the spec target: each turn (fresh entry,
+suspended-to-resume, steering drain re-entry) gets a fresh wall-clock
+budget; crash-mid-turn recovery preserves the remaining budget.
 
-Worked example — crash mid-turn:
+- **Cooperative**: handler must check `ctx.cancel.is_set()` (and
+  optionally branch on `ctx.timeout_exceeded` vs. `ctx.cancel_requested`
+  vs. `ctx.pending_input_count > 0`) to wind down.
+- **Lifetime-anchored** (current implementation): the watchdog spawns
+  at handler entry with the full `timeout` budget. Note that the
+  **per-turn, durable-across-crashes** semantic with persisted
+  turn-start timestamps and recovered-watchdog budget preservation is
+  the spec target (FR-023..FR-026) but is not yet wired end-to-end —
+  the current behavior is "cooperative-only watchdog spawned at every
+  handler entry". Crash-mid-turn recovery currently respawns the
+  watchdog with the FULL budget, not the remaining budget. This is a
+  known follow-up tracked in the spec 016 conformance gap-list §7.
+
+Worked example — cooperative cancel via timeout:
 
 ```python
 @task(name="long_op", timeout=timedelta(seconds=30))
 async def long_op(ctx: TaskContext[str]) -> str:
-    # Lifetime 1: handler runs for 25 seconds, then container crashes.
-    # Lifetime 2 (recovery, ~3 seconds later): turn_started_at is preserved;
-    #   watchdog spawns with remaining ≈ 2 seconds (30 - 28).
     while not ctx.cancel.is_set():
         await do_unit()
     if ctx.timeout_exceeded:

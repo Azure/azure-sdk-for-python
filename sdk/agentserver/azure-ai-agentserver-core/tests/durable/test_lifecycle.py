@@ -152,7 +152,12 @@ class TestLifecycle:
 
     @pytest.mark.asyncio
     async def test_run_in_progress_not_stale_raises(self, tmp_path) -> None:
-        """run() on in_progress (not stale) task → TaskConflictError."""
+        """run() on in_progress (live elsewhere) task → TaskConflictError.
+
+        Spec 016 FR-004 (US3): live-elsewhere is signalled by a foreign
+        ``lease_owner`` (different agent or session). This test seeds
+        such a record to exercise the conflict shape per Invariant 1.
+        """
 
         @task(title="lifecycle-conflict")
         async def my_task(ctx: TaskContext[str]) -> str:
@@ -170,6 +175,9 @@ class TestLifecycle:
                     status="in_progress",
                     title="running-test",
                     payload={},
+                    lease_owner="other-agent|session:other-session",
+                    lease_instance_id="other-inst",
+                    lease_duration_seconds=60,
                 )
             )
             with pytest.raises(TaskConflictError) as exc_info:
@@ -260,7 +268,8 @@ class TestLifecycle:
             assert result.output == "started"
             assert observed_mode == ["fresh"]
 
-            # Conflict: create in_progress task and try .start()
+            # Conflict: create in_progress task owned by another agent
+            # and try .start() — should raise TaskConflictError per FR-004a.
             from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
             await manager.provider.create(
@@ -271,6 +280,9 @@ class TestLifecycle:
                     status="in_progress",
                     title="running",
                     payload={},
+                    lease_owner="other-agent|session:other-session",
+                    lease_instance_id="other-inst",
+                    lease_duration_seconds=60,
                 )
             )
             with pytest.raises(TaskConflictError):

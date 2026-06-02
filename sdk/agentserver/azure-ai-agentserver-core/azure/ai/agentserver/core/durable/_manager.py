@@ -123,37 +123,53 @@ def _lease_is_dead(
 ) -> bool:
     """Determine whether an in-progress record's lease is dead per FR-004.
 
-    Spec 016 FR-004: a lease is "live" only if EITHER ownership matches
-    this process AND an in-memory active entry tracks it (so we know
-    the local execution is running), OR the lease ownership belongs to
-    this process AND the expiry has not passed. A lease is "dead"
-    otherwise — i.e., the previous lifetime is no longer authoritative
-    and the record is eligible for reclaim.
+    Spec 016 FR-004 + FR-004a: a lease is "live" only if EITHER ownership
+    matches this process AND an in-memory active entry tracks it (so we
+    know the local execution is running), OR the lease ownership belongs
+    to this process AND the expiry has not passed.
+
+    "Dead" means the framework should reclaim. "Live" means the record
+    is either currently being executed (here or elsewhere) and the
+    caller should observe the conflict shape.
+
+    Per FR-004a (lease owner includes agent_name + session_id), a record
+    whose owner differs from ours belongs to a different agent — the
+    framework MUST NOT reclaim it (that would steal another agent's
+    work). Such records appear "dead from this process's perspective"
+    but should NOT be subject to reclaim; the scheduling primitive
+    raises TaskConflictError instead.
 
     For the LocalFileTaskProvider used in tests (no real expiry
-    tracking), absence of a local in-memory entry combined with a
-    backdated ``updated_at`` suffices.
+    tracking), absence of a local in-memory entry combined with
+    matching ownership suffices to detect a previous-lifetime crash.
 
     :param task_info: The persisted record.
-    :keyword this_lease_owner: This process's lease-owner string
-        (from :class:`TaskManager`).
+    :keyword this_lease_owner: This process's lease-owner string.
     :keyword active_locally: True if this process has an in-memory
         ``_ActiveTask`` entry tracking the record.
-    :return: True if the lease is dead.
+    :return: True if the lease is dead AND eligible for reclaim by us.
     """
     if active_locally:
         # We are actively executing it; lease is definitely live in
         # this process.
         return False
-    # Ownership mismatch: previous lifetime owned the record.
-    owner = getattr(task_info, "lease_owner", None) or ""
+    # TaskInfo carries lease state as a nested LeaseInfo object.
+    lease = getattr(task_info, "lease", None)
+    owner = getattr(lease, "owner", None) if lease is not None else None
+    owner = owner or ""
+    # Owner matches ours but no local in-memory entry → previous
+    # lifetime owned by THIS (agent, session) pair crashed; lease
+    # is dead and eligible for reclaim.
+    if owner and owner == this_lease_owner:
+        return True
+    # Foreign owner: this record belongs to a different agent OR a
+    # different session. We MUST NOT reclaim it (FR-004a). Caller
+    # observes the live-elsewhere conflict shape.
     if owner and owner != this_lease_owner:
-        return True
-    # Same owner but no local in-memory entry → previous lifetime
-    # crashed; lease is dead by inference (no live executor).
-    if owner == this_lease_owner and not active_locally:
-        return True
-    # No owner recorded → dead by definition.
+        return False
+    # No owner recorded — treat as dead since no live executor
+    # claims it. (Empty owner happens for freshly-created records
+    # before lease assignment.)
     return True
 
 
@@ -1730,8 +1746,9 @@ class TaskManager:
         # state need to survive a crash mid-drain.)
         steering["active_input"] = next_input_raw
         steering["pending_inputs"] = pending
-        old_generation = steering.get("generation", 0)
-        steering["generation"] = old_generation + 1
+        # Spec 016 FR-021 + gap-list §FR-021-internal (US6): internal
+        # _steering["generation"] writes removed. The drain transition
+        # IS the generation advance — no separate counter needed.
         steering["cancel_requested"] = len(pending) > 0
         steering["drain_in_progress"] = True
 
@@ -1846,10 +1863,8 @@ class TaskManager:
             logger.debug("Failed to clear drain_in_progress for %s", task_id)
 
         logger.info(
-            "Steering drain: task %s generation %d → %d",
+            "Steering drain: task %s drained next input",
             task_id,
-            old_generation,
-            old_generation + 1,
         )
         return new_ctx
 

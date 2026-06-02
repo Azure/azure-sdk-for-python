@@ -20,12 +20,12 @@ from azure.ai.agentserver.core.durable import (
     TaskContext,
     task,
 )
-# Spec 016 FR-022 (US6): TaskTerminated removed from public __all__.
-# Import via the internal _exceptions module for the absence-test below.
-try:
-    from azure.ai.agentserver.core.durable._exceptions import TaskTerminated  # noqa: F401 — retained for transitional internal-only use
-except ImportError:
-    TaskTerminated = None  # type: ignore[assignment]
+
+# Spec 016 FR-022 + SC-014 (US6): TaskTerminated is REMOVED — importing
+# it from the public package now raises ImportError (verified by
+# test_task_terminated_removed_from_durable_package below). The legacy
+# import line that used to live here is intentionally absent.
+TaskTerminated = None  # type: ignore[assignment]
 
 
 class _ManagerFixture:
@@ -173,13 +173,22 @@ class TestTerminate:
         )
 
     def test_task_terminated_removed_from_durable_all(self) -> None:
-        """Spec 016 FR-022 (US6): TaskTerminated dropped from __all__."""
-        from azure.ai.agentserver.core.durable import __all__ as durable_all
+        """Spec 016 FR-022 + SC-014 (US6): importing TaskTerminated from
+        the public durable package raises ImportError (strict removal,
+        not just __all__ absence).
+        """
+        import importlib
 
-        assert "TaskTerminated" not in durable_all, (
-            "Spec 016 FR-022: TaskTerminated removed from the public "
-            "__all__ as part of the cancel-cause boolean rewrite."
+        durable_mod = importlib.import_module(
+            "azure.ai.agentserver.core.durable"
         )
+        assert not hasattr(durable_mod, "TaskTerminated"), (
+            "Spec 016 SC-014: TaskTerminated MUST NOT be importable "
+            "from azure.ai.agentserver.core.durable."
+        )
+        with pytest.raises(ImportError):
+            # Explicit import binding — must raise ImportError per SC-014.
+            from azure.ai.agentserver.core.durable import TaskTerminated  # noqa: F401, PLC0415
 
 
 class TestExitForRecovery:

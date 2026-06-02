@@ -778,8 +778,9 @@ class Task(Generic[Input, Output]):
             pending.append(serialized)
             steering["pending_inputs"] = pending
             steering["cancel_requested"] = True
-            if "generation" not in steering:
-                steering["generation"] = 0
+            # Spec 016 FR-021 + gap-list §FR-021-internal (US6): the
+            # internal _steering["generation"] payload field is removed
+            # alongside the public ctx.steering_generation surface.
             payload["_steering"] = steering
 
             # (Spec 013 US2 / Spec 015 FR-004) When the caller opted in via
@@ -1018,16 +1019,43 @@ class Task(Generic[Input, Output]):
             )
 
         if existing.status == "in_progress":
-            if _in_progress_was_abandoned_legacy(
-                existing.updated_at, _LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS
-            ):
-                # Stale — check for steering recovery state first
+            # Spec 016 FR-002 Layer 3 + FR-004 (US3): consult the lease
+            # state to decide recovery vs. conflict. The legacy
+            # _LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS wall-clock
+            # heuristic over updated_at is replaced by the proper
+            # lease-state determination via _lease_is_dead. If the
+            # lease is dead, inline-reclaim via _reclaim_one and
+            # re-enter as recovered (FR-002 Layer 3); if alive,
+            # either queue the steering input or raise TaskConflictError.
+            from ._manager import (  # pylint: disable=import-outside-toplevel
+                _lease_is_dead,
+            )
+
+            active_locally = manager._active_tasks.get(task_id) is not None  # pylint: disable=protected-access
+            lease_dead = _lease_is_dead(
+                existing,
+                this_lease_owner=manager._lease_owner,  # pylint: disable=protected-access
+                active_locally=active_locally,
+            )
+
+            if lease_dead:
+                # Inline reclaim per FR-002 layer (c). On race-lost /
+                # eviction the TransportClassifiedError propagates and
+                # the outer _lifecycle_start wrapper converts it to
+                # TaskConflictError (FR-008 Invariant 1 shape).
+                try:
+                    await manager._reclaim_one(existing)  # pylint: disable=protected-access
+                except _TransportClassifiedError as exc:
+                    if getattr(exc, "classification", None) == "evicted":
+                        raise TaskConflictError(task_id, "in_progress") from exc
+                    raise
+
+                # Stale with steering recovery state — recover via steered path
                 if self._opts.steerable and existing.payload:
                     steering = existing.payload.get("_steering", {})
                     if steering.get("drain_in_progress") or steering.get(
                         "pending_inputs"
                     ):
-                        # Stale with steering state — recover via steered path
                         return await manager._start_existing_task(  # pylint: disable=protected-access
                             fn=self._fn,
                             fn_name=self.name,
@@ -1039,7 +1067,7 @@ class Task(Generic[Input, Output]):
                             retry=resolved_retry,
                             stream_handler=None,
                         )
-                # Normal stale recovery
+                # Normal recovery
                 return await manager._start_existing_task(  # pylint: disable=protected-access
                     fn=self._fn,
                     fn_name=self.name,

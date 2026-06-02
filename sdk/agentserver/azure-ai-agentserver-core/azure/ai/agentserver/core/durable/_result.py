@@ -70,23 +70,11 @@ class TaskResult(Generic[Output]):
         """
         return self.status == "suspended"
 
-    @property
-    def is_superseded(self) -> bool:
-        """**DEPRECATED**: always returns False after spec 016 (US5 / FR-010).
-
-        Steering is now plain multi-turn — the displaced caller observes
-        the natural ``status="suspended"`` outcome with the handler's
-        emitted output, not a separate ``"superseded"`` value. This
-        property is retained as a compatibility shim that always returns
-        False so existing callers do not crash on attribute access;
-        callers MUST update to branch on ``is_suspended`` / ``is_completed``
-        and inspect ``output`` directly. The property will be removed
-        in a future release.
-
-        :return: Always False.
-        :rtype: bool
-        """
-        return False
+    # Spec 016 FR-010 + SC-007 (US5): is_superseded property removed.
+    # Steering is plain multi-turn; the displaced caller observes the
+    # natural status="suspended" outcome with the handler's emitted
+    # output. Callers must branch on is_suspended / is_completed and
+    # inspect output directly.
 
     def __repr__(self) -> str:
         output_repr = repr(self.output)
