@@ -57,8 +57,6 @@ _REQUIRED_DURABLE_SAMPLES: tuple[str, ...] = (
 
 _DROPPED_SAMPLES: tuple[str, ...] = ("durable_claude",)
 
-_PRESERVED_DEMO: str = "durable-agent-demo"
-
 _REQUIRED_FILES_PER_SAMPLE: tuple[str, ...] = (
     "agent.py",
     "app.py",
@@ -206,18 +204,11 @@ def test_durable_copilot_closes_the_five_implementation_gaps() -> None:
 
 
 # ---------------------------------------------------------------------------
-# 5. durable-agent-demo preserved (T073)
+# 5. (intentionally removed)
 # ---------------------------------------------------------------------------
-
-
-def test_durable_agent_demo_preserved() -> None:
-    """T073: ``durable-agent-demo`` MUST remain structurally intact."""
-
-    demo = _sample_path(_PRESERVED_DEMO)
-    assert demo.is_dir(), (
-        f"{_PRESERVED_DEMO} must remain in place per spec promise; "
-        f"directory missing at {demo}."
-    )
-    # Spot-check the durable-research-agent sub-sample (the donor for the
-    # new distilled durable_research sample) is still there.
-    assert (demo / "src" / "durable-research-agent" / "agent.py").is_file()
+#
+# The earlier ``test_durable_agent_demo_preserved`` assertion lived here while
+# the ``durable-agent-demo`` azd-deployable sample was tracked alongside the
+# core/invocations packages. The demo has been split into its own branch
+# (``feature/agentserver-durable-agent-demo``) and is no longer part of this
+# package's shipping surface, so the structural guard is no longer relevant.
