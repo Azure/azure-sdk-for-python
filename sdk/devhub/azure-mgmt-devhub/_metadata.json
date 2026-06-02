@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.DevHub": "2025-03-01-preview"
   },
-  "commit": "8966e4942153329571a093034f4808cc06b4c9df",
+  "commit": "a427dd4d108b1fb93340dfeca3994de1c695b53b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/developerhub/resource-manager/Microsoft.DevHub/DeveloperHub",
   "emitterVersion": "0.62.1"

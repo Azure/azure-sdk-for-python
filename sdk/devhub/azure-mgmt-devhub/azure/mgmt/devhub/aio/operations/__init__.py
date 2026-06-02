@@ -18,7 +18,7 @@ from ._operations import WorkflowOperations  # type: ignore
 from ._operations import ADOOAuthOperations  # type: ignore
 from ._operations import TemplateOperations  # type: ignore
 from ._operations import VersionedTemplateOperations  # type: ignore
-from ._operations import _DevHubClientOperationsMixin  # type: ignore # pylint: disable=unused-import
+from ._operations import _DevHubMgmtClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *

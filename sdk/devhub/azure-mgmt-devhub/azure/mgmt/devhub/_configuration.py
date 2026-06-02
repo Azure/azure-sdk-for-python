@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DevHubClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for DevHubClient.
+class DevHubMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for DevHubMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

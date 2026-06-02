@@ -120,16 +120,16 @@
         "azure.mgmt.devhub.aio.operations.VersionedTemplateOperations.list": "Microsoft.DevHub.VersionedTemplates.list",
         "azure.mgmt.devhub.operations.VersionedTemplateOperations.generate": "Microsoft.DevHub.VersionedTemplates.generate",
         "azure.mgmt.devhub.aio.operations.VersionedTemplateOperations.generate": "Microsoft.DevHub.VersionedTemplates.generate",
-        "azure.mgmt.devhub.DevHubClient.generate_preview_artifacts": "Microsoft.DevHub.generatePreviewArtifacts",
-        "azure.mgmt.devhub.aio.DevHubClient.generate_preview_artifacts": "Microsoft.DevHub.generatePreviewArtifacts",
-        "azure.mgmt.devhub.DevHubClient.git_hub_o_auth_callback": "Microsoft.DevHub.GitHubOAuthResponses.gitHubOAuthCallback",
-        "azure.mgmt.devhub.aio.DevHubClient.git_hub_o_auth_callback": "Microsoft.DevHub.GitHubOAuthResponses.gitHubOAuthCallback",
-        "azure.mgmt.devhub.DevHubClient.list_git_hub_o_auth": "Microsoft.DevHub.GitHubOAuthResponses.listGitHubOAuth",
-        "azure.mgmt.devhub.aio.DevHubClient.list_git_hub_o_auth": "Microsoft.DevHub.GitHubOAuthResponses.listGitHubOAuth",
-        "azure.mgmt.devhub.DevHubClient.git_hub_o_auth": "Microsoft.DevHub.GitHubOAuthResponses.gitHubOAuth",
-        "azure.mgmt.devhub.aio.DevHubClient.git_hub_o_auth": "Microsoft.DevHub.GitHubOAuthResponses.gitHubOAuth",
-        "azure.mgmt.devhub.DevHubClient.get_adoo_auth_info": "Microsoft.DevHub.AdooAuthResponses.getADOOAuthInfo",
-        "azure.mgmt.devhub.aio.DevHubClient.get_adoo_auth_info": "Microsoft.DevHub.AdooAuthResponses.getADOOAuthInfo"
+        "azure.mgmt.devhub.DevHubMgmtClient.generate_preview_artifacts": "Microsoft.DevHub.generatePreviewArtifacts",
+        "azure.mgmt.devhub.aio.DevHubMgmtClient.generate_preview_artifacts": "Microsoft.DevHub.generatePreviewArtifacts",
+        "azure.mgmt.devhub.DevHubMgmtClient.git_hub_o_auth_callback": "Microsoft.DevHub.GitHubOAuthResponses.gitHubOAuthCallback",
+        "azure.mgmt.devhub.aio.DevHubMgmtClient.git_hub_o_auth_callback": "Microsoft.DevHub.GitHubOAuthResponses.gitHubOAuthCallback",
+        "azure.mgmt.devhub.DevHubMgmtClient.list_git_hub_o_auth": "Microsoft.DevHub.GitHubOAuthResponses.listGitHubOAuth",
+        "azure.mgmt.devhub.aio.DevHubMgmtClient.list_git_hub_o_auth": "Microsoft.DevHub.GitHubOAuthResponses.listGitHubOAuth",
+        "azure.mgmt.devhub.DevHubMgmtClient.git_hub_o_auth": "Microsoft.DevHub.GitHubOAuthResponses.gitHubOAuth",
+        "azure.mgmt.devhub.aio.DevHubMgmtClient.git_hub_o_auth": "Microsoft.DevHub.GitHubOAuthResponses.gitHubOAuth",
+        "azure.mgmt.devhub.DevHubMgmtClient.get_adoo_auth_info": "Microsoft.DevHub.AdooAuthResponses.getADOOAuthInfo",
+        "azure.mgmt.devhub.aio.DevHubMgmtClient.get_adoo_auth_info": "Microsoft.DevHub.AdooAuthResponses.getADOOAuthInfo"
     },
-    "CrossLanguageVersion": "f41486f2c950"
+    "CrossLanguageVersion": "791815fd7dba"
 }

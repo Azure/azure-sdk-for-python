@@ -6,34 +6,33 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.devhub import DevHubClient
+from azure.mgmt.devhub.aio import DevHubMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDevHubADOOAuthOperations(AzureMgmtRecordedTestCase):
+class TestDevHubMgmtTemplateOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DevHubClient)
+        self.client = self.create_mgmt_client(DevHubMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_adoo_auth_get(self, resource_group):
-        response = self.client.adoo_auth.get(
-            location="str",
+    @recorded_by_proxy_async
+    async def test_template_get(self, resource_group):
+        response = await self.client.template.get(
+            template_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_adoo_auth_list(self, resource_group):
-        response = self.client.adoo_auth.list(
-            location="str",
-        )
-        result = [r for r in response]
+    @recorded_by_proxy_async
+    async def test_template_list(self, resource_group):
+        response = self.client.template.list()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

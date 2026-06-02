@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.devhub import DevHubClient
+from azure.mgmt.devhub import DevHubMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.devhub import DevHubClient
 
 
 def main():
-    client = DevHubClient(
+    client = DevHubMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

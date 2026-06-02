@@ -1,9 +1,16 @@
 # Release History
 
-## 1.0.0b2 (2026-05-28)
+## 1.0.0b2 (2026-06-02)
 
 ### Features Added
 
+  - Client `DevHubMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DevHubMgmtClient` added method `get_adoo_auth_info`
+  - Client `DevHubMgmtClient` added method `send_request`
+  - Client `DevHubMgmtClient` added operation group `iac_profiles`
+  - Client `DevHubMgmtClient` added operation group `adoo_auth`
+  - Client `DevHubMgmtClient` added operation group `template`
+  - Client `DevHubMgmtClient` added operation group `versioned_template`
   - Model `GitHubOAuthResponse` added property `properties`
   - Enum `ManifestType` added member `KUSTOMIZE`
   - Added model `ADOOAuth`
@@ -53,7 +60,8 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed client `DevHubMgmtClient`
+  - Method `DevHubMgmtClient.git_hub_o_auth_callback` changed its parameter `code` from `positional_or_keyword` to `keyword_only`
+  - Method `DevHubMgmtClient.git_hub_o_auth_callback` changed its parameter `state` from `positional_or_keyword` to `keyword_only`
   - Model `GitHubOAuthResponse` deleted or renamed its instance variable `username`
   - Deleted or renamed model `DeploymentProperties`
   - Method `WorkflowOperations.list_by_resource_group` changed its parameter `managed_cluster_resource` from `positional_or_keyword` to `keyword_only`

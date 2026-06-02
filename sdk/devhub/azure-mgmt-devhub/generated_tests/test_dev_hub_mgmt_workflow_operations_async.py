@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.devhub import DevHubClient
+from azure.mgmt.devhub.aio import DevHubMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDevHubWorkflowOperations(AzureMgmtRecordedTestCase):
+class TestDevHubMgmtWorkflowOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DevHubClient)
+        self.client = self.create_mgmt_client(DevHubMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_workflow_get(self, resource_group):
-        response = self.client.workflow.get(
+    @recorded_by_proxy_async
+    async def test_workflow_get(self, resource_group):
+        response = await self.client.workflow.get(
             resource_group_name=resource_group.name,
             workflow_name="str",
         )
@@ -30,9 +31,9 @@ class TestDevHubWorkflowOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_workflow_create_or_update(self, resource_group):
-        response = self.client.workflow.create_or_update(
+    @recorded_by_proxy_async
+    async def test_workflow_create_or_update(self, resource_group):
+        response = await self.client.workflow.create_or_update(
             resource_group_name=resource_group.name,
             workflow_name="str",
             parameters={
@@ -166,9 +167,9 @@ class TestDevHubWorkflowOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_workflow_update_tags(self, resource_group):
-        response = self.client.workflow.update_tags(
+    @recorded_by_proxy_async
+    async def test_workflow_update_tags(self, resource_group):
+        response = await self.client.workflow.update_tags(
             resource_group_name=resource_group.name,
             workflow_name="str",
             parameters={"tags": {"str": "str"}},
@@ -178,9 +179,9 @@ class TestDevHubWorkflowOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_workflow_delete(self, resource_group):
-        response = self.client.workflow.delete(
+    @recorded_by_proxy_async
+    async def test_workflow_delete(self, resource_group):
+        response = await self.client.workflow.delete(
             resource_group_name=resource_group.name,
             workflow_name="str",
         )
@@ -189,19 +190,19 @@ class TestDevHubWorkflowOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_workflow_list_by_resource_group(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_workflow_list_by_resource_group(self, resource_group):
         response = self.client.workflow.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_workflow_list(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_workflow_list(self, resource_group):
         response = self.client.workflow.list()
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

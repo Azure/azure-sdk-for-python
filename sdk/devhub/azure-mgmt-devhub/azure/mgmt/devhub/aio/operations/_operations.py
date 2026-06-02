@@ -38,11 +38,11 @@ from ..._utils.utils import ClientMixinABC
 from ...operations._operations import (
     build_adoo_auth_get_request,
     build_adoo_auth_list_request,
-    build_dev_hub_generate_preview_artifacts_request,
-    build_dev_hub_get_adoo_auth_info_request,
-    build_dev_hub_git_hub_o_auth_callback_request,
-    build_dev_hub_git_hub_o_auth_request,
-    build_dev_hub_list_git_hub_o_auth_request,
+    build_dev_hub_mgmt_generate_preview_artifacts_request,
+    build_dev_hub_mgmt_get_adoo_auth_info_request,
+    build_dev_hub_mgmt_git_hub_o_auth_callback_request,
+    build_dev_hub_mgmt_git_hub_o_auth_request,
+    build_dev_hub_mgmt_list_git_hub_o_auth_request,
     build_iac_profiles_create_or_update_request,
     build_iac_profiles_delete_request,
     build_iac_profiles_export_request,
@@ -65,7 +65,7 @@ from ...operations._operations import (
     build_workflow_list_request,
     build_workflow_update_tags_request,
 )
-from .._configuration import DevHubClientConfiguration
+from .._configuration import DevHubMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -79,14 +79,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.devhub.aio.DevHubClient`'s
+        :class:`~azure.mgmt.devhub.aio.DevHubMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DevHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -161,14 +161,14 @@ class IacProfilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.devhub.aio.DevHubClient`'s
+        :class:`~azure.mgmt.devhub.aio.DevHubMgmtClient`'s
         :attr:`iac_profiles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DevHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1274,14 +1274,14 @@ class WorkflowOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.devhub.aio.DevHubClient`'s
+        :class:`~azure.mgmt.devhub.aio.DevHubMgmtClient`'s
         :attr:`workflow` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DevHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1996,14 +1996,14 @@ class ADOOAuthOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.devhub.aio.DevHubClient`'s
+        :class:`~azure.mgmt.devhub.aio.DevHubMgmtClient`'s
         :attr:`adoo_auth` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DevHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2180,14 +2180,14 @@ class TemplateOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.devhub.aio.DevHubClient`'s
+        :class:`~azure.mgmt.devhub.aio.DevHubMgmtClient`'s
         :attr:`template` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DevHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2361,14 +2361,14 @@ class VersionedTemplateOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.devhub.aio.DevHubClient`'s
+        :class:`~azure.mgmt.devhub.aio.DevHubMgmtClient`'s
         :attr:`versioned_template` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DevHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2686,8 +2686,8 @@ class VersionedTemplateOperations:
         return deserialized  # type: ignore
 
 
-class _DevHubClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], DevHubClientConfiguration]
+class _DevHubMgmtClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], DevHubMgmtClientConfiguration]
 ):
 
     @overload
@@ -2793,7 +2793,7 @@ class _DevHubClientOperationsMixin(
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_dev_hub_generate_preview_artifacts_request(
+        _request = build_dev_hub_mgmt_generate_preview_artifacts_request(
             location=location,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
@@ -2871,7 +2871,7 @@ class _DevHubClientOperationsMixin(
 
         cls: ClsType[_models.GitHubOAuthResponse] = kwargs.pop("cls", None)
 
-        _request = build_dev_hub_git_hub_o_auth_callback_request(
+        _request = build_dev_hub_mgmt_git_hub_o_auth_callback_request(
             location=location,
             subscription_id=self._config.subscription_id,
             code=code,
@@ -2943,7 +2943,7 @@ class _DevHubClientOperationsMixin(
 
         cls: ClsType[_models.GitHubOAuthListResponse] = kwargs.pop("cls", None)
 
-        _request = build_dev_hub_list_git_hub_o_auth_request(
+        _request = build_dev_hub_mgmt_list_git_hub_o_auth_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
@@ -3101,7 +3101,7 @@ class _DevHubClientOperationsMixin(
             else:
                 _content = None
 
-        _request = build_dev_hub_git_hub_o_auth_request(
+        _request = build_dev_hub_mgmt_git_hub_o_auth_request(
             location=location,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
@@ -3261,7 +3261,7 @@ class _DevHubClientOperationsMixin(
             else:
                 _content = None
 
-        _request = build_dev_hub_get_adoo_auth_info_request(
+        _request = build_dev_hub_mgmt_get_adoo_auth_info_request(
             location=location,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
