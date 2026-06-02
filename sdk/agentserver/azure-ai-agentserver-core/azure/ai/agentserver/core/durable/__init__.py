@@ -17,8 +17,6 @@ Key features:
   backoff (see :class:`RetryPolicy` presets).
 - **Streaming** — emit incremental output via ``ctx.stream()`` and consume
   with ``async for chunk in task_run``.
-- **Source tracking** — attach immutable provenance metadata at task
-  creation time via the ``source`` parameter.
 
 Public API::
 
@@ -43,7 +41,6 @@ Public API::
 from ._context import EntryMode, TaskContext
 from ._decorator import Task, task
 from ._exceptions import (
-    EtagConflict,
     LastInputIdPreconditionFailed,
     SteeringQueueFull,
     TaskCancelled,

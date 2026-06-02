@@ -22,9 +22,10 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from azure.ai.agentserver.core import AgentServerHost
-from azure.ai.agentserver.core.durable import RetryPolicy, task
+from azure.ai.agentserver.core import AgentServerHost  # noqa: F401  # pulled in for side effects
+from azure.ai.agentserver.core.durable import task
 from azure.ai.agentserver.core.durable._context import TaskContext
+from azure.ai.agentserver.core.durable._manager import get_task_manager
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,15 +41,13 @@ async def stream_numbers(ctx: TaskContext[None]) -> str:
 
 
 async def main():
-    host = AgentServerHost()
-    manager = host._task_manager  # noqa: SLF001
-
-    # Start the manager
+    AgentServerHost()  # triggers TaskManager init via lifespan setup
+    manager = get_task_manager()
     await manager.startup()
 
     try:
         # Start the task (non-blocking — returns a TaskRun handle)
-        run = await stream_numbers.start(input=None)
+        run = await stream_numbers.start(task_id="stream-demo", input=None)
 
         # Consume streamed items as they arrive
         items = []

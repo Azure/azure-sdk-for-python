@@ -68,18 +68,25 @@ def _redact_headers(headers: Any, allowed: frozenset[str]) -> dict[str, str]:
     Anything not in the allow-list is replaced with ``"<redacted>"``
     so the log line still shows the header was present without exposing
     the value.
+
+    :param headers: Header collection to copy (any mapping-like object).
+    :type headers: Any
+    :param allowed: Lower-cased header names that may be logged in full.
+    :type allowed: frozenset[str]
+    :return: A redacted copy of the headers.
+    :rtype: dict[str, str]
     """
     if not headers:
         return {}
     out: dict[str, str] = {}
     try:
         items = list(headers.items())
-    except Exception:  # noqa: BLE001
+    except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
         return {}
     for name, value in items:
         try:
             key = str(name).lower()
-        except Exception:  # noqa: BLE001
+        except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
             continue
         if key in allowed:
             out[name] = str(value)

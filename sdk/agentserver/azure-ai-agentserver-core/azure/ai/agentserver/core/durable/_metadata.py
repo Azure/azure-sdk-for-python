@@ -129,9 +129,9 @@ class TaskMetadata(collections.abc.MutableMapping):
 
         :param payload: The task's payload dict (or ``None``).
         :type payload: dict[str, Any] | None
-        :param flush_callback: Per-namespace flush callback to wire into
+        :keyword flush_callback: Per-namespace flush callback to wire into
             every restored namespace.
-        :type flush_callback: NamespaceFlushCallback | None
+        :paramtype flush_callback: NamespaceFlushCallback | None
         :return: A fully populated :class:`TaskMetadata` with all named
             namespaces pre-vivified to their recovered state.
         :rtype: TaskMetadata
@@ -150,8 +150,8 @@ class TaskMetadata(collections.abc.MutableMapping):
                 continue
             # Auto-vivify and seed
             ns = root(name)
-            ns._data = dict(value)
-            ns._dirty = False
+            ns._data = dict(value)  # pylint: disable=protected-access
+            ns._dirty = False  # pylint: disable=protected-access
         return root
 
     # -- Typed mutation methods (operate on THIS namespace) ---------------- #
@@ -299,7 +299,7 @@ class TaskMetadata(collections.abc.MutableMapping):
         mutations land in the task payload before the task transitions.
         """
         for ns in list(self._registry.values()):
-            await ns._do_flush_one()
+            await ns._do_flush_one()  # pylint: disable=protected-access
 
     def _mark_dirty(self) -> None:
         self._dirty = True

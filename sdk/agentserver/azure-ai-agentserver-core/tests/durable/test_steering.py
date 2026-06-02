@@ -15,10 +15,10 @@ from azure.ai.agentserver.core.durable import (
     TaskResult,
     task,
     EntryMode,
-    EtagConflict,
     SteeringQueueFull,
     TaskConflictError,
 )
+from azure.ai.agentserver.core.durable._exceptions import EtagConflict
 
 
 class TestSteering:

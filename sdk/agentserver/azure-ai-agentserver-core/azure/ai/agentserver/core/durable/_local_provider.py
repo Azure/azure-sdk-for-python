@@ -121,7 +121,7 @@ class LocalFileTaskProvider:
 
         lease: LeaseInfo | None = None
         started_at: str | None = None
-        status: TaskStatus = request.status
+        status: TaskStatus = request.status  # type: ignore[assignment]
 
         if (
             request.lease_owner
@@ -174,9 +174,9 @@ class LocalFileTaskProvider:
             return None
         return self._read_task(path)
 
-    async def update(
+    async def update(  # pylint: disable=too-many-branches,too-many-statements
         self, task_id: str, patch: TaskPatchRequest
-    ) -> TaskInfo:  # pylint: disable=too-many-branches,too-many-statements
+    ) -> TaskInfo:
         """Update a task via PATCH semantics.
 
         :param task_id: The task identifier.

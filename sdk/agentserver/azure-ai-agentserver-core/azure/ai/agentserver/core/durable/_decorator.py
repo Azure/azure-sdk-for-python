@@ -39,7 +39,7 @@ from ._context import TaskContext
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import TaskRun
-from ._stream import StreamHandler, StreamHandlerFactory
+from ._stream import StreamHandler, StreamHandlerFactory  # noqa: F401  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from ._models import TaskStatus
@@ -133,7 +133,7 @@ def _extract_generic_args(
 
     ctx_hint = hints[ctx_param.name]
     args = get_args(ctx_hint)
-    input_type: type[Any] = args[0] if args else Any
+    input_type: type[Any] = args[0] if args else Any  # type: ignore[assignment]
 
     return_hint = hints.get("return", Any)
     # Unwrap Optional, Awaitable, etc.
@@ -817,7 +817,17 @@ class Task(Generic[Input, Output]):
         task_id: str,
         future: Any,
     ) -> TaskRun[Output]:
-        """Create a TaskRun for a queued steering input."""
+        """Create a TaskRun for a queued steering input.
+
+        :param manager: The task manager owning the active execution.
+        :type manager: Any
+        :param task_id: Stable task identifier.
+        :type task_id: str
+        :param future: Future that will resolve with the next-turn outcome.
+        :type future: Any
+        :return: A :class:`TaskRun` whose result resolves with the queued turn.
+        :rtype: TaskRun[Output]
+        """
         return TaskRun(
             task_id=task_id,
             provider=manager.provider,
@@ -857,9 +867,6 @@ class Task(Generic[Input, Output]):
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskConflictError,
         )
-        from ._manager import (  # pylint: disable=import-outside-toplevel
-            get_task_manager,
-        )
 
         # Spec 016 FR-008 (US2): orphan-sandbox eviction at scheduling
         # entry points MUST surface as TaskConflictError(current_status=
@@ -879,7 +886,7 @@ class Task(Generic[Input, Output]):
                 raise TaskConflictError(task_id, "in_progress") from exc
             raise
 
-    async def _lifecycle_start_inner(  # pylint: disable=too-many-locals
+    async def _lifecycle_start_inner(  # pylint: disable=too-many-locals,too-many-statements
         self,
         *,
         task_id: str,
@@ -891,6 +898,19 @@ class Task(Generic[Input, Output]):
 
         Split out so the outer wrapper can convert spec 016 FR-008 evictions
         to ``TaskConflictError`` without indenting the entire body.
+
+        :keyword task_id: Stable task identifier (same as outer method).
+        :paramtype task_id: str
+        :keyword input: Input value for the task (same as outer method).
+        :paramtype input: Input
+        :keyword input_id: Optional input identifier for sequential-input
+            acceptance preconditions (same as outer method).
+        :paramtype input_id: str | None
+        :keyword if_last_input_id: Optional if-match precondition on the
+            last persisted ``input_id`` (same as outer method).
+        :paramtype if_last_input_id: str | None
+        :return: A :class:`TaskRun` handle for the started task.
+        :rtype: TaskRun[Output]
         """
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskConflictError,
@@ -1081,9 +1101,8 @@ class Task(Generic[Input, Output]):
                 )
             if self._opts.steerable:
                 # Steering path: append input to queue, signal cancel, return ack
-                ack_future = manager._register_steering_future(
-                    task_id
-                )  # pylint: disable=protected-access
+                # pylint: disable=protected-access
+                ack_future = manager._register_steering_future(task_id)
                 await self._append_steering_input(
                     manager,
                     task_id=task_id,
@@ -1093,9 +1112,8 @@ class Task(Generic[Input, Output]):
                     if_last_input_id=if_last_input_id,
                 )
                 # Set cancel on in-memory context if task runs in this process
-                active = manager._active_tasks.get(
-                    task_id
-                )  # pylint: disable=protected-access
+                active = manager._active_tasks.get(task_id)
+                # pylint: enable=protected-access
                 if active:
                     active.context.cancel.set()
                 return self._create_steering_ack_run(manager, task_id, ack_future)

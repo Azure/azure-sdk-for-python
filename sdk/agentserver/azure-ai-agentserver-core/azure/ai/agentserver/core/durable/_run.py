@@ -106,7 +106,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         self._terminate_reason_ref: list[str | None] = (
             terminate_reason_ref if terminate_reason_ref is not None else [None]
         )
-        self._status = status
+        self._status: TaskStatus = status
         self._stream_handler: StreamHandler | None = stream_handler
         self._execution_task: asyncio.Task[Any] | None = execution_task
         self._lease_expiry_count = lease_expiry_count

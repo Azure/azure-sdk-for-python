@@ -168,7 +168,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
             return 0
         try:
             return int(self._pending_count_provider())
-        except Exception:  # noqa: BLE001
+        except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
             return 0
 
     async def suspend(
@@ -231,6 +231,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         Use as ``return await ctx.exit_for_recovery()``.
 
         :return: The :class:`_ExitForRecovery` sentinel.
+        :rtype: Any
         :raises RuntimeError: If called outside ``ctx.shutdown.is_set() == True``.
         """
         if not self.shutdown.is_set():

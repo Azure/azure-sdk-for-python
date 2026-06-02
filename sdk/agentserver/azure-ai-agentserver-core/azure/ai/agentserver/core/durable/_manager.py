@@ -68,6 +68,11 @@ def _is_evicted(exc: BaseException) -> bool:
     pipeline classifier maps an HTTP 409 + ``binding_mismatch`` body;
     in-test stubs raise the same typed exception so the framework's
     cleanup runs identically against both.
+
+    :param exc: The exception to classify.
+    :type exc: BaseException
+    :return: True if the exception is an eviction-classified rejection.
+    :rtype: bool
     """
     return (
         isinstance(exc, TransportClassifiedError)
@@ -103,6 +108,9 @@ def _utc_now_iso() -> str:
     Spec 016 FR-023: persisted turn-start timestamps use this format.
     Z suffix matches `datetime.fromisoformat`'s expectations from
     Python 3.11+ (older Pythons need the `+00:00` form).
+
+    :return: An ISO-8601 UTC timestamp ending in ``Z``.
+    :rtype: str
     """
     from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
 
@@ -116,6 +124,11 @@ def _parse_turn_started_at(value: Any) -> float | None:
     the caller falls back to "spawn watchdog with full budget" in
     that case (graceful degradation during the rollout window where
     pre-spec-016 records may not have the field yet).
+
+    :param value: Raw persisted value (typically a string).
+    :type value: Any
+    :return: POSIX timestamp, or ``None`` if the value is invalid.
+    :rtype: float | None
     """
     from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
 
@@ -148,8 +161,17 @@ def _resolve_queued_steerers_on_terminal(
 
     Pops every queued steerer future for ``task_id`` and resolves
     each with ``TaskConflictError(current_status=current_status)``.
+
+    :param pending_steering_futures: Per-task list of pending steerer
+        futures (mutated in-place — emptied for the given ``task_id``).
+    :type pending_steering_futures: dict[str, list[asyncio.Future[Any]]]
+    :param task_id: The task whose queued steerers should be resolved.
+    :type task_id: str
+    :keyword current_status: Status string to carry on
+        ``TaskConflictError`` so callers can branch.
+    :paramtype current_status: str
     """
-    from ._exceptions import TaskConflictError  # local to avoid cycle
+    # TaskConflictError is already imported at module top-level (line 24).
 
     queued = pending_steering_futures.pop(task_id, [])
     for fut in queued:
@@ -185,11 +207,16 @@ def _lease_is_dead(
     tracking), absence of a local in-memory entry combined with
     matching ownership suffices to detect a previous-lifetime crash.
 
-    :param task_info: The persisted record.
-    :keyword this_lease_owner: This process's lease-owner string.
+    :param task_info: The persisted task record (any object exposing
+        ``lease.owner`` and ``lease.expires_at``).
+    :type task_info: Any
+    :keyword this_lease_owner: Lease-owner string for this process.
+    :paramtype this_lease_owner: str
     :keyword active_locally: True if this process has an in-memory
         ``_ActiveTask`` entry tracking the record.
+    :paramtype active_locally: bool
     :return: True if the lease is dead AND eligible for reclaim by us.
+    :rtype: bool
     """
     if active_locally:
         # We are actively executing it; lease is definitely live in
@@ -289,7 +316,7 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         self.retry = retry
 
 
-class TaskManager:
+class TaskManager:  # pylint: disable=too-many-instance-attributes
     """Lifecycle orchestrator for durable tasks.
 
     Manages provider selection, task creation, lease management,
@@ -975,7 +1002,9 @@ class TaskManager:
 
         logger.info("Resumed task %s", task_id)
 
-    async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:
+    async def get_active_run(  # pylint: disable=too-many-return-statements
+        self, task_id: str
+    ) -> TaskRun[Any] | None:
         """Return a TaskRun handle for an active (in-progress) task.
 
         Spec 016 FR-005 (US3 / US4): consults the store, not only
@@ -1347,15 +1376,19 @@ class TaskManager:
 
         :param timeout_seconds: Total per-turn timeout budget (used as
             the clock-skew clamp ceiling).
+        :type timeout_seconds: float
         :param cancel_event: Event to set for cooperative cancel.
+        :type cancel_event: asyncio.Event
         :param ctx: TaskContext to set ``timeout_exceeded`` on BEFORE
             ``cancel_event`` (FR-018 ordering invariant).
+        :type ctx: TaskContext[Any] | None
         :keyword remaining_seconds: Optional override for "time left in
             this turn" — used on recovery to honor the persisted
             turn-start timestamp per FR-023. Clamped to
             ``[0, timeout_seconds]`` for clock-skew safety (FR-023).
             When ``None``, the watchdog uses ``timeout_seconds`` directly
             (fresh-entry / drain-re-entry case).
+        :paramtype remaining_seconds: float | None
         """
         if remaining_seconds is None:
             sleep_for = timeout_seconds
@@ -1480,6 +1513,17 @@ class TaskManager:
         FR-025 immediate-fire-on-recovery: if remaining == 0, also
         pre-set ``ctx.timeout_exceeded = True`` and ``ctx.cancel`` so
         the recovered handler sees the cause from its first checkpoint.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :param timeout_seconds: The per-turn budget configured on the
+            decorator (also the clock-skew clamp ceiling).
+        :type timeout_seconds: float
+        :param ctx: TaskContext used to surface the recovered cause when
+            the remaining budget is zero.
+        :type ctx: TaskContext[Any]
+        :return: Remaining seconds clamped to ``[0, timeout_seconds]``.
+        :rtype: float
         """
         try:
             task_info = await self._provider.get(task_id)
@@ -1508,7 +1552,7 @@ class TaskManager:
             ctx.cancel.set()
         return remaining
 
-    async def _execute_task_loop(  # pylint: disable=too-many-statements,too-many-branches,too-many-nested-blocks
+    async def _execute_task_loop(  # pylint: disable=too-many-statements,too-many-branches,too-many-nested-blocks,unused-argument
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
@@ -1537,15 +1581,12 @@ class TaskManager:
         :paramtype renewal_cancel: asyncio.Event
         :keyword retry: Optional retry policy.
         :paramtype retry: RetryPolicy | None
-        :keyword terminate_event: Optional terminate event.
+        :keyword terminate_event: Optional terminate event (currently unused).
         :paramtype terminate_event: asyncio.Event | None
-        :keyword terminate_reason_ref: Mutable ref for terminate reason.
+        :keyword terminate_reason_ref: Mutable ref for terminate reason
+            (currently unused).
         :paramtype terminate_reason_ref: list[str | None] | None
         """
-        resolved_terminate = terminate_event or asyncio.Event()
-        reason_ref = (
-            terminate_reason_ref if terminate_reason_ref is not None else [None]
-        )
         # Spec 015 Phase 4 FR-001: honor the persisted retry_attempt so the
         # cross-lifetime budget is respected. ``_start_existing_task`` and
         # ``create_and_start`` populate ``ctx.retry_attempt`` from
@@ -1825,7 +1866,7 @@ class TaskManager:
                     exc_info=True,
                 )
 
-    async def _try_drain_steering(  # pylint: disable=too-many-branches
+    async def _try_drain_steering(  # pylint: disable=too-many-branches,too-many-statements
         self,
         *,
         task_id: str,
@@ -1916,11 +1957,9 @@ class TaskManager:
 
         # Pop and bind the next pending steering future (if any)
         new_future: asyncio.Future[Any] | None = None
-        had_registered_future = False
         steering_futures = self._pending_steering_futures.get(task_id, [])
         if steering_futures:
             new_future = steering_futures.pop(0)
-            had_registered_future = True
 
         # Resolve the queued steerer's future binding for the new turn.
         # Spec 016 FR-013 / FR-014 (US5): the OLD result_future is NOT
@@ -2128,8 +2167,8 @@ class TaskManager:
         if opts.ephemeral:
             try:
                 await self._provider.delete(task_id, force=True)
-            except TransportClassifiedError as exc:
-                if _is_evicted(exc):
+            except TransportClassifiedError as transport_exc:
+                if _is_evicted(transport_exc):
                     logger.warning(
                         "Eviction (binding_mismatch) on failed-task delete for "
                         "task %s (session=%s) — suppressing delete, signalling "
@@ -2137,7 +2176,7 @@ class TaskManager:
                         task_id,
                         self._config.session_id or "local",
                     )
-                    raise TaskConflictError(task_id, "in_progress") from exc
+                    raise TaskConflictError(task_id, "in_progress") from transport_exc
                 raise
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
@@ -2155,8 +2194,8 @@ class TaskManager:
                         payload={"metadata": metadata.to_dict()},
                     ),
                 )
-            except TransportClassifiedError as exc:
-                if _is_evicted(exc):
+            except TransportClassifiedError as transport_exc:
+                if _is_evicted(transport_exc):
                     logger.warning(
                         "Eviction (binding_mismatch) on terminal failure write "
                         "for task %s (session=%s) — suppressing terminal write, "
@@ -2164,7 +2203,7 @@ class TaskManager:
                         task_id,
                         self._config.session_id or "local",
                     )
-                    raise TaskConflictError(task_id, "in_progress") from exc
+                    raise TaskConflictError(task_id, "in_progress") from transport_exc
                 raise
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
@@ -2378,6 +2417,11 @@ class TaskManager:
 
         Returns 0 for tasks that are not steerable or have no pending
         inputs.
+
+        :param task_id: The task identifier the callable should track.
+        :type task_id: str
+        :return: A callable returning the current pending-input count.
+        :rtype: Callable[[], int]
         """
 
         def _provider() -> int:
@@ -2391,7 +2435,7 @@ class TaskManager:
             count = getattr(active, "_pending_input_count", 0)
             try:
                 return int(count)
-            except Exception:  # noqa: BLE001
+            except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
                 return 0
 
         return _provider

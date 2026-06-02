@@ -48,6 +48,9 @@ def _read_task_manager_shutdown_grace() -> float:
     handlers need to checkpoint — for example the conformance suite
     runs with a 1s grace so the in-process shutdown marker fires
     before the handler completes naturally.
+
+    :return: Grace period in seconds (non-negative).
+    :rtype: float
     """
     raw = (
         os.environ.get("AGENTSERVER_TASK_MANAGER_SHUTDOWN_GRACE_SECONDS")
@@ -184,7 +187,7 @@ class AgentServerHost(Starlette):
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-statements
         self,
         *,
         applicationinsights_connection_string: Optional[str] = None,
@@ -516,11 +519,8 @@ class AgentServerHost(Starlette):
             get to fire pre-shutdown callbacks synchronously on signal
             receipt, before Hypercorn begins its graceful drain.
             """
-            import asyncio as _asyncio  # pylint: disable=do-not-import-asyncio,import-outside-toplevel
-            import signal as _signal  # pylint: disable=import-outside-toplevel
-
-            loop = _asyncio.get_event_loop()
-            signal_event = _asyncio.Event()
+            loop = asyncio.get_event_loop()
+            signal_event = asyncio.Event()
 
             def _on_signal() -> None:
                 # Run pre-shutdown callbacks BEFORE setting the event so
@@ -533,12 +533,12 @@ class AgentServerHost(Starlette):
                 signal_event.set()
 
             for signal_name in ("SIGINT", "SIGTERM", "SIGBREAK"):
-                if hasattr(_signal, signal_name):
+                if hasattr(signal, signal_name):
                     try:
-                        loop.add_signal_handler(getattr(_signal, signal_name), _on_signal)
+                        loop.add_signal_handler(getattr(signal, signal_name), _on_signal)
                     except NotImplementedError:
                         # Windows fallback — install via signal.signal directly.
-                        _signal.signal(getattr(_signal, signal_name), lambda *_: _on_signal())
+                        signal.signal(getattr(signal, signal_name), lambda *_: _on_signal())
 
             await _hypercorn_serve(self, config, shutdown_trigger=signal_event.wait)  # type: ignore[arg-type]
 

@@ -21,9 +21,9 @@ from starlette.routing import Route
 logger = logging.getLogger("azure.ai.agentserver.durable")
 
 
-async def _handle_resume_request(
+async def _handle_resume_request(  # pylint: disable=too-many-return-statements
     request: Request,
-) -> Response:  # pylint: disable=too-many-return-statements
+) -> Response:
     """Handle POST /tasks/resume.
 
     Expects a JSON body with ``{"task_id": "..."}`` and dispatches the

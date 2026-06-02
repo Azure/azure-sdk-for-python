@@ -21,9 +21,10 @@ import asyncio
 import logging
 from datetime import timedelta
 
-from azure.ai.agentserver.core import AgentServerHost
+from azure.ai.agentserver.core import AgentServerHost  # noqa: F401  # pulled in for side effects
 from azure.ai.agentserver.core.durable import RetryPolicy, task
 from azure.ai.agentserver.core.durable._context import TaskContext
+from azure.ai.agentserver.core.durable._manager import get_task_manager
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -78,20 +79,19 @@ async def selective_retry_task(ctx: TaskContext[None]) -> str:
 
 
 async def main():
-    host = AgentServerHost()
-    manager = host._task_manager  # noqa: SLF001
-
+    AgentServerHost()  # triggers TaskManager init via lifespan setup
+    manager = get_task_manager()
     await manager.startup()
 
     try:
         # Run with exponential backoff
         logger.info("--- Exponential backoff demo ---")
-        result = await flaky_task.run(input=None)
+        result = await flaky_task.run(task_id="flaky-1", input=None)
         logger.info("Result: %s", result.output)
 
         # Run with selective retry
         logger.info("--- Selective retry demo ---")
-        result2 = await selective_retry_task.run(input=None)
+        result2 = await selective_retry_task.run(task_id="selective-1", input=None)
         logger.info("Result: %s", result2.output)
 
         # Show available presets

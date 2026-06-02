@@ -93,7 +93,7 @@ class TransportClassifiedError(Exception):
         self.body_prefix = body_prefix
 
 
-def _classify_store_write_error(
+def _classify_store_write_error(  # pylint: disable=too-many-return-statements
     status_code: int, body: bytes | None
 ) -> ClassifiedOutcome:
     """Classify a non-success task-store response per spec 016 FR-006.
@@ -106,6 +106,13 @@ def _classify_store_write_error(
     raises from inside the classifier; misshapen evictions are downgraded
     to ``"conflict"`` so the framework never invents an eviction event
     from noise (guard against false-positive evictions).
+
+    :param status_code: HTTP status code from the response.
+    :type status_code: int
+    :param body: Raw response body bytes, or ``None`` if no body.
+    :type body: bytes | None
+    :return: Classification outcome for the response.
+    :rtype: ClassifiedOutcome
     """
     # Transient: server-side problems, throttling, timeouts.
     if status_code in (408, 429) or 500 <= status_code < 600:
@@ -145,12 +152,19 @@ def _body_prefix(body: bytes | None, limit: int = _BODY_PREFIX_LIMIT) -> str | N
     Tolerant of non-UTF-8 (uses ``errors="replace"``) and non-bytes input.
     Used by the classified-error path so operators can see the start of a
     non-JSON response without dumping the whole body to logs.
+
+    :param body: Raw bytes from the response, or ``None``.
+    :type body: bytes | None
+    :param limit: Maximum characters to include in the prefix.
+    :type limit: int
+    :return: A truncated decoded prefix, or ``None`` if ``body`` is empty.
+    :rtype: str | None
     """
     if not body:
         return None
     try:
         text = bytes(body).decode("utf-8", errors="replace")
-    except Exception:  # noqa: BLE001
+    except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
         return None
     if len(text) > limit:
         return text[:limit] + "…"
@@ -164,12 +178,19 @@ def _maybe_decompress(body: bytes | None, headers: Any) -> bytes | None:
     pipeline (FR-030), each call site is responsible for honoring
     ``Content-Encoding``. Returns ``body`` unchanged for other encodings
     so the caller's defensive JSON-parse can produce a useful error.
+
+    :param body: Raw response bytes, or ``None``.
+    :type body: bytes | None
+    :param headers: Response headers (any mapping-like object).
+    :type headers: Any
+    :return: Decompressed body if applicable, otherwise ``body`` unchanged.
+    :rtype: bytes | None
     """
     if not body or not headers:
         return body
     try:
         encoding = headers.get("Content-Encoding") or headers.get("content-encoding")
-    except Exception:  # noqa: BLE001
+    except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
         return body
     if not encoding:
         return body
@@ -195,7 +216,14 @@ def _parse_json_body(
     :class:`TransportClassifiedError` carrying the classification, the
     request id (if any), and a truncated body prefix.
 
-    Returns the parsed JSON value on success.
+    :param response: The pipeline response object.
+    :type response: Any
+    :keyword method: HTTP method of the originating request (for error context).
+    :paramtype method: str
+    :keyword url: Request URL (for error context).
+    :paramtype url: str
+    :return: The parsed JSON value on success.
+    :rtype: Any
     """
     status = getattr(response, "status_code", 0)
     headers = getattr(response, "headers", {}) or {}
@@ -251,12 +279,19 @@ def _raise_classified(
     Replaces the legacy ``response.raise_for_status()`` call sites
     (spec 016 FR-032) so every non-success response funnels through
     the FR-006 classifier and carries the canonical outcome label.
+
+    :param response: The pipeline response object.
+    :type response: Any
+    :keyword method: HTTP method of the originating request (for error context).
+    :paramtype method: str
+    :keyword url: Request URL (for error context).
+    :paramtype url: str
     """
     status = getattr(response, "status_code", 0)
     headers = getattr(response, "headers", {}) or {}
     try:
         raw = response.body()
-    except Exception:  # noqa: BLE001
+    except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
         raw = None
     body = _maybe_decompress(raw, headers) if raw else None
     classification = _classify_store_write_error(status, body)
@@ -288,6 +323,11 @@ def _build_default_policies(
 
     ``ContentDecodePolicy`` is intentionally NOT included — see module
     docstring for the responses-storage gzip lesson.
+
+    :param credential: Async token credential for the bearer-token policy.
+    :type credential: AsyncTokenCredential
+    :return: The default ordered policy chain.
+    :rtype: list[Any]
     """
     return [
         RequestIdPolicy(),
@@ -337,7 +377,7 @@ class HostedTaskProvider:
     ) -> None:
         self._base_url = f"{project_endpoint.rstrip('/')}/tasks"
         self._credential = credential
-        config = Configuration()
+        config: Configuration = Configuration()
         config.user_agent_policy = UserAgentPolicy(base_user_agent=_USER_AGENT)
         self._policies: list[Any] = _build_default_policies(credential)
         self._client: AsyncPipelineClient = AsyncPipelineClient(
@@ -349,7 +389,11 @@ class HostedTaskProvider:
 
     @property
     def policies(self) -> list[Any]:
-        """The policy chain in order — used by tests for composition assertions."""
+        """The policy chain in order — used by tests for composition assertions.
+
+        :return: A shallow copy of the configured policy chain.
+        :rtype: list[Any]
+        """
         return list(self._policies)
 
     async def _send(self, request: HttpRequest) -> Any:
@@ -357,8 +401,13 @@ class HostedTaskProvider:
 
         The pipeline returns a ``PipelineResponse`` whose
         ``http_response`` is the wire response we operate on.
+
+        :param request: The HTTP request to send.
+        :type request: HttpRequest
+        :return: The wire HTTP response.
+        :rtype: Any
         """
-        pipeline_response = await self._client._pipeline.run(request)  # noqa: SLF001
+        pipeline_response = await self._client._pipeline.run(request)  # pylint: disable=protected-access  # noqa: SLF001
         return pipeline_response.http_response
 
     async def create(self, request: TaskCreateRequest) -> TaskInfo:
@@ -523,7 +572,25 @@ class HostedTaskProvider:
         tag: dict[str, str] | None = None,
         source_type: str | None = None,
     ) -> list[TaskInfo]:
-        """List tasks via GET /tasks with automatic cursor pagination."""
+        """List tasks via GET /tasks with automatic cursor pagination.
+
+        :keyword agent_name: Filter to tasks owned by this agent name.
+        :paramtype agent_name: str
+        :keyword session_id: Filter to tasks for this session ID.
+        :paramtype session_id: str
+        :keyword status: Optional status filter (``pending``,
+            ``in_progress``, ``suspended``, ``completed``).
+        :paramtype status: TaskStatus | None
+        :keyword lease_owner: Optional lease-owner string filter.
+        :paramtype lease_owner: str | None
+        :keyword tag: Optional tag-equality filter (all key/value pairs
+            must match).
+        :paramtype tag: dict[str, str] | None
+        :keyword source_type: Optional source-type filter.
+        :paramtype source_type: str | None
+        :return: All matching tasks across all pages.
+        :rtype: list[TaskInfo]
+        """
         params: dict[str, str] = {
             "api-version": _API_VERSION,
             "agent_name": agent_name,
