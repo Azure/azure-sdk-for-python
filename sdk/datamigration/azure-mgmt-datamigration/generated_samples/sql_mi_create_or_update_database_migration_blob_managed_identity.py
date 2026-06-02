@@ -57,12 +57,13 @@ def main():
                 "offlineConfiguration": {"lastBackupName": "last_backup_file_name", "offline": True},
                 "scope": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Sql/managedInstances/instance",
                 "sourceDatabaseName": "aaa",
+                "sqlServerInstanceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.AzureArcData/SqlServerInstances/instanceName",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/stable/2025-06-30/examples/SqlMiCreateOrUpdateDatabaseMigrationBlobManagedIdentity.json
+# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/DataMigration/preview/2025-09-01-preview/examples/SqlMiCreateOrUpdateDatabaseMigrationBlobManagedIdentity.json
 if __name__ == "__main__":
     main()

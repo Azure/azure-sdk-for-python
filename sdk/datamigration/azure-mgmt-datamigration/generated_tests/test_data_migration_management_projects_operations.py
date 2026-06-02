@@ -24,7 +24,7 @@ class TestDataMigrationManagementProjectsOperations(AzureMgmtRecordedTestCase):
         response = self.client.projects.list(
             group_name="str",
             service_name="str",
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestDataMigrationManagementProjectsOperations(AzureMgmtRecordedTestCase):
                 "targetPlatform": "str",
                 "type": "str",
             },
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestDataMigrationManagementProjectsOperations(AzureMgmtRecordedTestCase):
             group_name="str",
             service_name="str",
             project_name="str",
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestDataMigrationManagementProjectsOperations(AzureMgmtRecordedTestCase):
             group_name="str",
             service_name="str",
             project_name="str",
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -134,7 +134,7 @@ class TestDataMigrationManagementProjectsOperations(AzureMgmtRecordedTestCase):
                 "targetPlatform": "str",
                 "type": "str",
             },
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself

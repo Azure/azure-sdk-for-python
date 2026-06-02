@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -430,7 +430,7 @@ class BackupSetInfo(_serialization.Model):
         last_lsn: Optional[str] = None,
         last_modified_time: Optional[datetime.datetime] = None,
         backup_type: Optional[Union[str, "_models.BackupType"]] = None,
-        list_of_backup_files: Optional[List["_models.BackupFileInfo"]] = None,
+        list_of_backup_files: Optional[list["_models.BackupFileInfo"]] = None,
         database_name: Optional[str] = None,
         backup_start_date: Optional[datetime.datetime] = None,
         backup_finished_date: Optional[datetime.datetime] = None,
@@ -541,7 +541,7 @@ class CheckOCIDriverTaskOutput(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.installed_driver = installed_driver
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ProjectTaskProperties(_serialization.Model):
@@ -665,16 +665,16 @@ class ProjectTaskProperties(_serialization.Model):
         }
     }
 
-    def __init__(self, *, client_data: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, client_data: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword client_data: Key value pairs of client data to attach meta data information to task.
         :paramtype client_data: dict[str, str]
         """
         super().__init__(**kwargs)
         self.task_type: Optional[str] = None
-        self.errors: Optional[List["_models.ODataError"]] = None
+        self.errors: Optional[list["_models.ODataError"]] = None
         self.state: Optional[Union[str, "_models.TaskState"]] = None
-        self.commands: Optional[List["_models.CommandProperties"]] = None
+        self.commands: Optional[list["_models.CommandProperties"]] = None
         self.client_data = client_data
 
 
@@ -740,7 +740,7 @@ class CheckOCIDriverTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.CheckOCIDriverTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -753,7 +753,7 @@ class CheckOCIDriverTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Service.Check.OCI"
         self.input = input
-        self.output: Optional[List["_models.CheckOCIDriverTaskOutput"]] = None
+        self.output: Optional[list["_models.CheckOCIDriverTaskOutput"]] = None
 
 
 class CommandProperties(_serialization.Model):
@@ -804,7 +804,7 @@ class CommandProperties(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.command_type: Optional[str] = None
-        self.errors: Optional[List["_models.ODataError"]] = None
+        self.errors: Optional[list["_models.ODataError"]] = None
         self.state: Optional[Union[str, "_models.CommandState"]] = None
 
 
@@ -922,7 +922,7 @@ class ConnectToMongoDbTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MongoDbConnectionInfo"] = None,
         **kwargs: Any
     ) -> None:
@@ -935,7 +935,7 @@ class ConnectToMongoDbTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Connect.MongoDb"
         self.input = input
-        self.output: Optional[List["_models.MongoDbClusterInfo"]] = None
+        self.output: Optional[list["_models.MongoDbClusterInfo"]] = None
 
 
 class ConnectToSourceMySqlTaskInput(_serialization.Model):
@@ -1060,7 +1060,7 @@ class ConnectToSourceMySqlTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToSourceMySqlTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -1073,7 +1073,7 @@ class ConnectToSourceMySqlTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToSource.MySql"
         self.input = input
-        self.output: Optional[List["_models.ConnectToSourceNonSqlTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToSourceNonSqlTaskOutput"]] = None
 
 
 class ConnectToSourceNonSqlTaskOutput(_serialization.Model):
@@ -1115,8 +1115,8 @@ class ConnectToSourceNonSqlTaskOutput(_serialization.Model):
         self.id: Optional[str] = None
         self.source_server_brand_version: Optional[str] = None
         self.server_properties: Optional["_models.ServerProperties"] = None
-        self.databases: Optional[List[str]] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.databases: Optional[list[str]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ConnectToSourceOracleSyncTaskInput(_serialization.Model):
@@ -1178,9 +1178,9 @@ class ConnectToSourceOracleSyncTaskOutput(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.source_server_version: Optional[str] = None
-        self.databases: Optional[List[str]] = None
+        self.databases: Optional[list[str]] = None
         self.source_server_brand_version: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ConnectToSourceOracleSyncTaskProperties(ProjectTaskProperties):
@@ -1245,7 +1245,7 @@ class ConnectToSourceOracleSyncTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToSourceOracleSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -1258,7 +1258,7 @@ class ConnectToSourceOracleSyncTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToSource.Oracle.Sync"
         self.input = input
-        self.output: Optional[List["_models.ConnectToSourceOracleSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToSourceOracleSyncTaskOutput"]] = None
 
 
 class ConnectToSourcePostgreSqlSyncTaskInput(_serialization.Model):
@@ -1325,9 +1325,9 @@ class ConnectToSourcePostgreSqlSyncTaskOutput(_serialization.Model):
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.source_server_version: Optional[str] = None
-        self.databases: Optional[List[str]] = None
+        self.databases: Optional[list[str]] = None
         self.source_server_brand_version: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ConnectToSourcePostgreSqlSyncTaskProperties(ProjectTaskProperties):  # pylint: disable=name-too-long
@@ -1393,7 +1393,7 @@ class ConnectToSourcePostgreSqlSyncTaskProperties(ProjectTaskProperties):  # pyl
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToSourcePostgreSqlSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -1406,7 +1406,7 @@ class ConnectToSourcePostgreSqlSyncTaskProperties(ProjectTaskProperties):  # pyl
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToSource.PostgreSql.Sync"
         self.input = input
-        self.output: Optional[List["_models.ConnectToSourcePostgreSqlSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToSourcePostgreSqlSyncTaskOutput"]] = None
 
 
 class ConnectToSourceSqlServerSyncTaskProperties(ProjectTaskProperties):  # pylint: disable=name-too-long
@@ -1472,7 +1472,7 @@ class ConnectToSourceSqlServerSyncTaskProperties(ProjectTaskProperties):  # pyli
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToSourceSqlServerTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -1485,7 +1485,7 @@ class ConnectToSourceSqlServerSyncTaskProperties(ProjectTaskProperties):  # pyli
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToSource.SqlServer.Sync"
         self.input = input
-        self.output: Optional[List["_models.ConnectToSourceSqlServerTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToSourceSqlServerTaskOutput"]] = None
 
 
 class ConnectToSourceSqlServerTaskInput(_serialization.Model):
@@ -1687,7 +1687,7 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(
         self.is_enabled: Optional[bool] = None
         self.job_owner: Optional[str] = None
         self.last_executed_on: Optional[datetime.datetime] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
         self.migration_eligibility: Optional["_models.MigrationEligibilityInfo"] = None
 
 
@@ -1747,7 +1747,7 @@ class ConnectToSourceSqlServerTaskOutputDatabaseLevel(
         self.result_type: str = "DatabaseLevelOutput"
         self.name: Optional[str] = None
         self.size_mb: Optional[float] = None
-        self.database_files: Optional[List["_models.DatabaseFileInfo"]] = None
+        self.database_files: Optional[list["_models.DatabaseFileInfo"]] = None
         self.compatibility_level: Optional[Union[str, "_models.DatabaseCompatLevel"]] = None
         self.database_state: Optional[Union[str, "_models.DatabaseState"]] = None
 
@@ -1871,7 +1871,7 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
         self.database_tde_certificate_mapping: Optional[str] = None
         self.source_server_version: Optional[str] = None
         self.source_server_brand_version: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
@@ -1940,7 +1940,7 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToSourceSqlServerTaskInput"] = None,
         task_id: Optional[str] = None,
         **kwargs: Any
@@ -1956,7 +1956,7 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToSource.SqlServer"
         self.input = input
-        self.output: Optional[List["_models.ConnectToSourceSqlServerTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToSourceSqlServerTaskOutput"]] = None
         self.task_id = task_id
 
 
@@ -2048,9 +2048,9 @@ class ConnectToTargetAzureDbForMySqlTaskOutput(_serialization.Model):
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.server_version: Optional[str] = None
-        self.databases: Optional[List[str]] = None
+        self.databases: Optional[list[str]] = None
         self.target_server_brand_version: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ConnectToTargetAzureDbForMySqlTaskProperties(ProjectTaskProperties):  # pylint: disable=name-too-long
@@ -2117,7 +2117,7 @@ class ConnectToTargetAzureDbForMySqlTaskProperties(ProjectTaskProperties):  # py
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToTargetAzureDbForMySqlTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -2130,7 +2130,7 @@ class ConnectToTargetAzureDbForMySqlTaskProperties(ProjectTaskProperties):  # py
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToTarget.AzureDbForMySql"
         self.input = input
-        self.output: Optional[List["_models.ConnectToTargetAzureDbForMySqlTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToTargetAzureDbForMySqlTaskOutput"]] = None
 
 
 class ConnectToTargetAzureDbForPostgreSqlSyncTaskInput(_serialization.Model):  # pylint: disable=name-too-long
@@ -2214,9 +2214,9 @@ class ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput(_serialization.Model):  
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.target_server_version: Optional[str] = None
-        self.databases: Optional[List[str]] = None
+        self.databases: Optional[list[str]] = None
         self.target_server_brand_version: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties):  # pylint: disable=name-too-long
@@ -2284,7 +2284,7 @@ class ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskPropertie
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToTargetAzureDbForPostgreSqlSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -2298,7 +2298,7 @@ class ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskPropertie
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToTarget.AzureDbForPostgreSql.Sync"
         self.input = input
-        self.output: Optional[List["_models.ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput"]] = None
 
 
 class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput(_serialization.Model):  # pylint: disable=name-too-long
@@ -2371,7 +2371,7 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput(_serialization.Mod
         self,
         *,
         database_schema_map: Optional[
-            List["_models.ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem"]
+            list["_models.ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem"]
         ] = None,
         **kwargs: Any
     ) -> None:
@@ -2382,9 +2382,9 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput(_serialization.Mod
         """
         super().__init__(**kwargs)
         self.target_server_version: Optional[str] = None
-        self.databases: Optional[List[str]] = None
+        self.databases: Optional[list[str]] = None
         self.target_server_brand_version: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
         self.database_schema_map = database_schema_map
 
 
@@ -2404,7 +2404,7 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapIt
         "schemas": {"key": "schemas", "type": "[str]"},
     }
 
-    def __init__(self, *, database: Optional[str] = None, schemas: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, database: Optional[str] = None, schemas: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword database:
         :paramtype database: str
@@ -2483,7 +2483,7 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties(
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -2497,7 +2497,7 @@ class ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties(
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync"
         self.input = input
-        self.output: Optional[List["_models.ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput"]] = None
 
 
 class ConnectToTargetSqlDbSyncTaskInput(_serialization.Model):
@@ -2602,7 +2602,7 @@ class ConnectToTargetSqlDbSyncTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToTargetSqlDbSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -2615,7 +2615,7 @@ class ConnectToTargetSqlDbSyncTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToTarget.SqlDb.Sync"
         self.input = input
-        self.output: Optional[List["_models.ConnectToTargetSqlDbTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToTargetSqlDbTaskOutput"]] = None
 
 
 class ConnectToTargetSqlDbTaskInput(_serialization.Model):
@@ -2761,7 +2761,7 @@ class ConnectToTargetSqlDbTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToTargetSqlDbTaskInput"] = None,
         created_on: Optional[str] = None,
         **kwargs: Any
@@ -2777,7 +2777,7 @@ class ConnectToTargetSqlDbTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToTarget.SqlDb"
         self.input = input
-        self.output: Optional[List["_models.ConnectToTargetSqlDbTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToTargetSqlDbTaskOutput"]] = None
         self.created_on = created_on
 
 
@@ -2857,7 +2857,7 @@ class ConnectToTargetSqlMISyncTaskOutput(_serialization.Model):
         super().__init__(**kwargs)
         self.target_server_version: Optional[str] = None
         self.target_server_brand_version: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ConnectToTargetSqlMISyncTaskProperties(ProjectTaskProperties):
@@ -2922,7 +2922,7 @@ class ConnectToTargetSqlMISyncTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToTargetSqlMISyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -2935,7 +2935,7 @@ class ConnectToTargetSqlMISyncTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToTarget.AzureSqlDbMI.Sync.LRS"
         self.input = input
-        self.output: Optional[List["_models.ConnectToTargetSqlMISyncTaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToTargetSqlMISyncTaskOutput"]] = None
 
 
 class ConnectToTargetSqlMITaskInput(_serialization.Model):
@@ -3035,9 +3035,9 @@ class ConnectToTargetSqlMITaskOutput(_serialization.Model):
         self.id: Optional[str] = None
         self.target_server_version: Optional[str] = None
         self.target_server_brand_version: Optional[str] = None
-        self.logins: Optional[List[str]] = None
-        self.agent_jobs: Optional[List[str]] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.logins: Optional[list[str]] = None
+        self.agent_jobs: Optional[list[str]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ConnectToTargetSqlMITaskProperties(ProjectTaskProperties):
@@ -3102,7 +3102,7 @@ class ConnectToTargetSqlMITaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ConnectToTargetSqlMITaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -3115,7 +3115,7 @@ class ConnectToTargetSqlMITaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ConnectToTarget.AzureSqlDbMI"
         self.input = input
-        self.output: Optional[List["_models.ConnectToTargetSqlMITaskOutput"]] = None
+        self.output: Optional[list["_models.ConnectToTargetSqlMITaskOutput"]] = None
 
 
 class CopyProgressDetails(_serialization.Model):
@@ -3390,7 +3390,7 @@ class DatabaseBackupInfo(_serialization.Model):
         super().__init__(**kwargs)
         self.database_name: Optional[str] = None
         self.backup_type: Optional[Union[str, "_models.BackupType"]] = None
-        self.backup_files: Optional[List[str]] = None
+        self.backup_files: Optional[list[str]] = None
         self.position: Optional[int] = None
         self.is_damaged: Optional[bool] = None
         self.is_compressed: Optional[bool] = None
@@ -3723,7 +3723,7 @@ class DatabaseMigrationBaseListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.DatabaseMigrationBase"]] = None
+        self.value: Optional[list["_models.DatabaseMigrationBase"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3909,7 +3909,7 @@ class DatabaseMigrationCosmosDbMongo(ProxyResource):
         provisioning_error: Optional[str] = None,
         source_mongo_connection: Optional["_models.MongoConnectionInformation"] = None,
         target_mongo_connection: Optional["_models.MongoConnectionInformation"] = None,
-        collection_list: Optional[List["_models.MongoMigrationCollection"]] = None,
+        collection_list: Optional[list["_models.MongoMigrationCollection"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3968,7 +3968,7 @@ class DatabaseMigrationCosmosDbMongoListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.DatabaseMigrationCosmosDbMongo"]] = None
+        self.value: Optional[list["_models.DatabaseMigrationCosmosDbMongo"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3996,7 +3996,7 @@ class DatabaseMigrationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.DatabaseMigration"]] = None
+        self.value: Optional[list["_models.DatabaseMigration"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -4041,6 +4041,10 @@ class DatabaseMigrationProperties(DatabaseMigrationBaseProperties):
     :vartype source_server_name: str
     :ivar target_database_collation: Database collation to be used for the target database.
     :vartype target_database_collation: str
+    :ivar sql_server_instance_id: Optional property - Resource Id for the source Sql server
+     instance. Validations are performed on this property to ensure that it follows the correct
+     format.
+    :vartype sql_server_instance_id: str
     """
 
     _validation = {
@@ -4068,6 +4072,7 @@ class DatabaseMigrationProperties(DatabaseMigrationBaseProperties):
         "source_database_name": {"key": "sourceDatabaseName", "type": "str"},
         "source_server_name": {"key": "sourceServerName", "type": "str"},
         "target_database_collation": {"key": "targetDatabaseCollation", "type": "str"},
+        "sql_server_instance_id": {"key": "sqlServerInstanceId", "type": "str"},
     }
 
     _subtype_map = {
@@ -4088,6 +4093,7 @@ class DatabaseMigrationProperties(DatabaseMigrationBaseProperties):
         source_sql_connection: Optional["_models.SqlConnectionInformation"] = None,
         source_database_name: Optional[str] = None,
         target_database_collation: Optional[str] = None,
+        sql_server_instance_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4105,6 +4111,10 @@ class DatabaseMigrationProperties(DatabaseMigrationBaseProperties):
         :paramtype source_database_name: str
         :keyword target_database_collation: Database collation to be used for the target database.
         :paramtype target_database_collation: str
+        :keyword sql_server_instance_id: Optional property - Resource Id for the source Sql server
+         instance. Validations are performed on this property to ensure that it follows the correct
+         format.
+        :paramtype sql_server_instance_id: str
         """
         super().__init__(
             scope=scope,
@@ -4118,6 +4128,7 @@ class DatabaseMigrationProperties(DatabaseMigrationBaseProperties):
         self.source_database_name = source_database_name
         self.source_server_name: Optional[str] = None
         self.target_database_collation = target_database_collation
+        self.sql_server_instance_id = sql_server_instance_id
 
 
 class DatabaseMigrationPropertiesCosmosDbMongo(DatabaseMigrationBaseProperties):
@@ -4191,7 +4202,7 @@ class DatabaseMigrationPropertiesCosmosDbMongo(DatabaseMigrationBaseProperties):
         provisioning_error: Optional[str] = None,
         source_mongo_connection: Optional["_models.MongoConnectionInformation"] = None,
         target_mongo_connection: Optional["_models.MongoConnectionInformation"] = None,
-        collection_list: Optional[List["_models.MongoMigrationCollection"]] = None,
+        collection_list: Optional[list["_models.MongoMigrationCollection"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4260,6 +4271,10 @@ class DatabaseMigrationPropertiesSqlDb(DatabaseMigrationProperties):
     :vartype source_server_name: str
     :ivar target_database_collation: Database collation to be used for the target database.
     :vartype target_database_collation: str
+    :ivar sql_server_instance_id: Optional property - Resource Id for the source Sql server
+     instance. Validations are performed on this property to ensure that it follows the correct
+     format.
+    :vartype sql_server_instance_id: str
     :ivar migration_status_details: Detailed migration status. Not included by default.
     :vartype migration_status_details: ~azure.mgmt.datamigration.models.SqlDbMigrationStatusDetails
     :ivar target_sql_connection: Target SQL DB connection details.
@@ -4297,6 +4312,7 @@ class DatabaseMigrationPropertiesSqlDb(DatabaseMigrationProperties):
         "source_database_name": {"key": "sourceDatabaseName", "type": "str"},
         "source_server_name": {"key": "sourceServerName", "type": "str"},
         "target_database_collation": {"key": "targetDatabaseCollation", "type": "str"},
+        "sql_server_instance_id": {"key": "sqlServerInstanceId", "type": "str"},
         "migration_status_details": {"key": "migrationStatusDetails", "type": "SqlDbMigrationStatusDetails"},
         "target_sql_connection": {"key": "targetSqlConnection", "type": "SqlConnectionInformation"},
         "offline_configuration": {"key": "offlineConfiguration", "type": "SqlDbOfflineConfiguration"},
@@ -4313,8 +4329,9 @@ class DatabaseMigrationPropertiesSqlDb(DatabaseMigrationProperties):
         source_sql_connection: Optional["_models.SqlConnectionInformation"] = None,
         source_database_name: Optional[str] = None,
         target_database_collation: Optional[str] = None,
+        sql_server_instance_id: Optional[str] = None,
         target_sql_connection: Optional["_models.SqlConnectionInformation"] = None,
-        table_list: Optional[List[str]] = None,
+        table_list: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4332,6 +4349,10 @@ class DatabaseMigrationPropertiesSqlDb(DatabaseMigrationProperties):
         :paramtype source_database_name: str
         :keyword target_database_collation: Database collation to be used for the target database.
         :paramtype target_database_collation: str
+        :keyword sql_server_instance_id: Optional property - Resource Id for the source Sql server
+         instance. Validations are performed on this property to ensure that it follows the correct
+         format.
+        :paramtype sql_server_instance_id: str
         :keyword target_sql_connection: Target SQL DB connection details.
         :paramtype target_sql_connection: ~azure.mgmt.datamigration.models.SqlConnectionInformation
         :keyword table_list: List of tables to copy.
@@ -4345,6 +4366,7 @@ class DatabaseMigrationPropertiesSqlDb(DatabaseMigrationProperties):
             source_sql_connection=source_sql_connection,
             source_database_name=source_database_name,
             target_database_collation=target_database_collation,
+            sql_server_instance_id=sql_server_instance_id,
             **kwargs
         )
         self.kind: str = "SqlDb"
@@ -4391,6 +4413,10 @@ class DatabaseMigrationPropertiesSqlMi(DatabaseMigrationProperties):
     :vartype source_server_name: str
     :ivar target_database_collation: Database collation to be used for the target database.
     :vartype target_database_collation: str
+    :ivar sql_server_instance_id: Optional property - Resource Id for the source Sql server
+     instance. Validations are performed on this property to ensure that it follows the correct
+     format.
+    :vartype sql_server_instance_id: str
     :ivar migration_status_details: Detailed migration status. Not included by default.
     :vartype migration_status_details: ~azure.mgmt.datamigration.models.MigrationStatusDetails
     :ivar backup_configuration: Backup configuration info.
@@ -4425,6 +4451,7 @@ class DatabaseMigrationPropertiesSqlMi(DatabaseMigrationProperties):
         "source_database_name": {"key": "sourceDatabaseName", "type": "str"},
         "source_server_name": {"key": "sourceServerName", "type": "str"},
         "target_database_collation": {"key": "targetDatabaseCollation", "type": "str"},
+        "sql_server_instance_id": {"key": "sqlServerInstanceId", "type": "str"},
         "migration_status_details": {"key": "migrationStatusDetails", "type": "MigrationStatusDetails"},
         "backup_configuration": {"key": "backupConfiguration", "type": "BackupConfiguration"},
         "offline_configuration": {"key": "offlineConfiguration", "type": "OfflineConfiguration"},
@@ -4440,6 +4467,7 @@ class DatabaseMigrationPropertiesSqlMi(DatabaseMigrationProperties):
         source_sql_connection: Optional["_models.SqlConnectionInformation"] = None,
         source_database_name: Optional[str] = None,
         target_database_collation: Optional[str] = None,
+        sql_server_instance_id: Optional[str] = None,
         backup_configuration: Optional["_models.BackupConfiguration"] = None,
         offline_configuration: Optional["_models.OfflineConfiguration"] = None,
         **kwargs: Any
@@ -4459,6 +4487,10 @@ class DatabaseMigrationPropertiesSqlMi(DatabaseMigrationProperties):
         :paramtype source_database_name: str
         :keyword target_database_collation: Database collation to be used for the target database.
         :paramtype target_database_collation: str
+        :keyword sql_server_instance_id: Optional property - Resource Id for the source Sql server
+         instance. Validations are performed on this property to ensure that it follows the correct
+         format.
+        :paramtype sql_server_instance_id: str
         :keyword backup_configuration: Backup configuration info.
         :paramtype backup_configuration: ~azure.mgmt.datamigration.models.BackupConfiguration
         :keyword offline_configuration: Offline configuration.
@@ -4472,6 +4504,7 @@ class DatabaseMigrationPropertiesSqlMi(DatabaseMigrationProperties):
             source_sql_connection=source_sql_connection,
             source_database_name=source_database_name,
             target_database_collation=target_database_collation,
+            sql_server_instance_id=sql_server_instance_id,
             **kwargs
         )
         self.kind: str = "SqlMi"
@@ -4517,6 +4550,10 @@ class DatabaseMigrationPropertiesSqlVm(DatabaseMigrationProperties):
     :vartype source_server_name: str
     :ivar target_database_collation: Database collation to be used for the target database.
     :vartype target_database_collation: str
+    :ivar sql_server_instance_id: Optional property - Resource Id for the source Sql server
+     instance. Validations are performed on this property to ensure that it follows the correct
+     format.
+    :vartype sql_server_instance_id: str
     :ivar migration_status_details: Detailed migration status. Not included by default.
     :vartype migration_status_details: ~azure.mgmt.datamigration.models.MigrationStatusDetails
     :ivar backup_configuration: Backup configuration info.
@@ -4551,6 +4588,7 @@ class DatabaseMigrationPropertiesSqlVm(DatabaseMigrationProperties):
         "source_database_name": {"key": "sourceDatabaseName", "type": "str"},
         "source_server_name": {"key": "sourceServerName", "type": "str"},
         "target_database_collation": {"key": "targetDatabaseCollation", "type": "str"},
+        "sql_server_instance_id": {"key": "sqlServerInstanceId", "type": "str"},
         "migration_status_details": {"key": "migrationStatusDetails", "type": "MigrationStatusDetails"},
         "backup_configuration": {"key": "backupConfiguration", "type": "BackupConfiguration"},
         "offline_configuration": {"key": "offlineConfiguration", "type": "OfflineConfiguration"},
@@ -4566,6 +4604,7 @@ class DatabaseMigrationPropertiesSqlVm(DatabaseMigrationProperties):
         source_sql_connection: Optional["_models.SqlConnectionInformation"] = None,
         source_database_name: Optional[str] = None,
         target_database_collation: Optional[str] = None,
+        sql_server_instance_id: Optional[str] = None,
         backup_configuration: Optional["_models.BackupConfiguration"] = None,
         offline_configuration: Optional["_models.OfflineConfiguration"] = None,
         **kwargs: Any
@@ -4585,6 +4624,10 @@ class DatabaseMigrationPropertiesSqlVm(DatabaseMigrationProperties):
         :paramtype source_database_name: str
         :keyword target_database_collation: Database collation to be used for the target database.
         :paramtype target_database_collation: str
+        :keyword sql_server_instance_id: Optional property - Resource Id for the source Sql server
+         instance. Validations are performed on this property to ensure that it follows the correct
+         format.
+        :paramtype sql_server_instance_id: str
         :keyword backup_configuration: Backup configuration info.
         :paramtype backup_configuration: ~azure.mgmt.datamigration.models.BackupConfiguration
         :keyword offline_configuration: Offline configuration.
@@ -4598,6 +4641,7 @@ class DatabaseMigrationPropertiesSqlVm(DatabaseMigrationProperties):
             source_sql_connection=source_sql_connection,
             source_database_name=source_database_name,
             target_database_collation=target_database_collation,
+            sql_server_instance_id=sql_server_instance_id,
             **kwargs
         )
         self.kind: str = "SqlVm"
@@ -4987,7 +5031,7 @@ class DataIntegrityValidationResult(_serialization.Model):
     def __init__(
         self,
         *,
-        failed_objects: Optional[Dict[str, str]] = None,
+        failed_objects: Optional[dict[str, str]] = None,
         validation_errors: Optional["_models.ValidationError"] = None,
         **kwargs: Any
     ) -> None:
@@ -5089,7 +5133,7 @@ class DataMigrationProjectMetadata(_serialization.Model):
         self.target_username: Optional[str] = None
         self.target_db_name: Optional[str] = None
         self.target_using_win_auth: Optional[bool] = None
-        self.selected_migration_tables: Optional[List["_models.MigrationTableMetadata"]] = None
+        self.selected_migration_tables: Optional[list["_models.MigrationTableMetadata"]] = None
 
 
 class TrackedResourceAutoGenerated(_serialization.Model):
@@ -5127,7 +5171,7 @@ class TrackedResourceAutoGenerated(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemDataAutoGenerated"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location:
         :paramtype location: str
@@ -5215,7 +5259,7 @@ class DataMigrationService(TrackedResourceAutoGenerated):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         kind: Optional[str] = None,
         sku: Optional["_models.ServiceSku"] = None,
@@ -5281,7 +5325,7 @@ class DataMigrationServiceList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.DataMigrationService"]] = None,
+        value: Optional[list["_models.DataMigrationService"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5328,7 +5372,7 @@ class DataMigrationServiceStatusResponse(_serialization.Model):
         agent_configuration: Optional[JSON] = None,
         status: Optional[str] = None,
         vm_size: Optional[str] = None,
-        supported_task_types: Optional[List[str]] = None,
+        supported_task_types: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5448,8 +5492,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorInfo(_serialization.Model):
@@ -5533,9 +5577,9 @@ class ExecutionStatistics(_serialization.Model):
         execution_count: Optional[int] = None,
         cpu_time_ms: Optional[float] = None,
         elapsed_time_ms: Optional[float] = None,
-        wait_stats: Optional[Dict[str, "_models.WaitStatistics"]] = None,
+        wait_stats: Optional[dict[str, "_models.WaitStatistics"]] = None,
         has_errors: Optional[bool] = None,
-        sql_errors: Optional[List[str]] = None,
+        sql_errors: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5577,7 +5621,7 @@ class FileList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ProjectFile"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ProjectFile"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of files.
@@ -5644,7 +5688,7 @@ class FileStorageInfo(_serialization.Model):
         "headers": {"key": "headers", "type": "{str}"},
     }
 
-    def __init__(self, *, uri: Optional[str] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, uri: Optional[str] = None, headers: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword uri: A URI that can be used to access the file content.
         :paramtype uri: str
@@ -5723,7 +5767,7 @@ class GetTdeCertificatesSqlTaskInput(_serialization.Model):
         *,
         connection_info: "_models.SqlConnectionInfo",
         backup_file_share: "_models.FileShare",
-        selected_certificates: List["_models.SelectedCertificateInput"],
+        selected_certificates: list["_models.SelectedCertificateInput"],
         **kwargs: Any
     ) -> None:
         """
@@ -5768,7 +5812,7 @@ class GetTdeCertificatesSqlTaskOutput(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.base64_encoded_certificates: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class GetTdeCertificatesSqlTaskProperties(ProjectTaskProperties):
@@ -5833,7 +5877,7 @@ class GetTdeCertificatesSqlTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.GetTdeCertificatesSqlTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -5846,7 +5890,7 @@ class GetTdeCertificatesSqlTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "GetTDECertificates.Sql"
         self.input = input
-        self.output: Optional[List["_models.GetTdeCertificatesSqlTaskOutput"]] = None
+        self.output: Optional[list["_models.GetTdeCertificatesSqlTaskOutput"]] = None
 
 
 class GetUserTablesMySqlTaskInput(_serialization.Model):
@@ -5871,7 +5915,7 @@ class GetUserTablesMySqlTaskInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, connection_info: "_models.MySqlConnectionInfo", selected_databases: List[str], **kwargs: Any
+        self, *, connection_info: "_models.MySqlConnectionInfo", selected_databases: list[str], **kwargs: Any
     ) -> None:
         """
         :keyword connection_info: Connection information for SQL Server. Required.
@@ -5914,7 +5958,7 @@ class GetUserTablesMySqlTaskOutput(_serialization.Model):
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.databases_to_tables: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class GetUserTablesMySqlTaskProperties(ProjectTaskProperties):
@@ -5979,7 +6023,7 @@ class GetUserTablesMySqlTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.GetUserTablesMySqlTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -5992,7 +6036,7 @@ class GetUserTablesMySqlTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "GetUserTablesMySql"
         self.input = input
-        self.output: Optional[List["_models.GetUserTablesMySqlTaskOutput"]] = None
+        self.output: Optional[list["_models.GetUserTablesMySqlTaskOutput"]] = None
 
 
 class GetUserTablesOracleTaskInput(_serialization.Model):
@@ -6018,7 +6062,7 @@ class GetUserTablesOracleTaskInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, connection_info: "_models.OracleConnectionInfo", selected_schemas: List[str], **kwargs: Any
+        self, *, connection_info: "_models.OracleConnectionInfo", selected_schemas: list[str], **kwargs: Any
     ) -> None:
         """
         :keyword connection_info: Information for connecting to Oracle source. Required.
@@ -6061,8 +6105,8 @@ class GetUserTablesOracleTaskOutput(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.schema_name: Optional[str] = None
-        self.tables: Optional[List["_models.DatabaseTable"]] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.tables: Optional[list["_models.DatabaseTable"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class GetUserTablesOracleTaskProperties(ProjectTaskProperties):
@@ -6127,7 +6171,7 @@ class GetUserTablesOracleTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.GetUserTablesOracleTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -6140,7 +6184,7 @@ class GetUserTablesOracleTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "GetUserTablesOracle"
         self.input = input
-        self.output: Optional[List["_models.GetUserTablesOracleTaskOutput"]] = None
+        self.output: Optional[list["_models.GetUserTablesOracleTaskOutput"]] = None
 
 
 class GetUserTablesPostgreSqlTaskInput(_serialization.Model):
@@ -6165,7 +6209,7 @@ class GetUserTablesPostgreSqlTaskInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, connection_info: "_models.PostgreSqlConnectionInfo", selected_databases: List[str], **kwargs: Any
+        self, *, connection_info: "_models.PostgreSqlConnectionInfo", selected_databases: list[str], **kwargs: Any
     ) -> None:
         """
         :keyword connection_info: Information for connecting to PostgreSQL source. Required.
@@ -6208,8 +6252,8 @@ class GetUserTablesPostgreSqlTaskOutput(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.database_name: Optional[str] = None
-        self.tables: Optional[List["_models.DatabaseTable"]] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.tables: Optional[list["_models.DatabaseTable"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class GetUserTablesPostgreSqlTaskProperties(ProjectTaskProperties):
@@ -6274,7 +6318,7 @@ class GetUserTablesPostgreSqlTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.GetUserTablesPostgreSqlTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -6287,7 +6331,7 @@ class GetUserTablesPostgreSqlTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "GetUserTablesPostgreSql"
         self.input = input
-        self.output: Optional[List["_models.GetUserTablesPostgreSqlTaskOutput"]] = None
+        self.output: Optional[list["_models.GetUserTablesPostgreSqlTaskOutput"]] = None
 
 
 class GetUserTablesSqlSyncTaskInput(_serialization.Model):
@@ -6324,8 +6368,8 @@ class GetUserTablesSqlSyncTaskInput(_serialization.Model):
         *,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.SqlConnectionInfo",
-        selected_source_databases: List[str],
-        selected_target_databases: List[str],
+        selected_source_databases: list[str],
+        selected_target_databases: list[str],
         **kwargs: Any
     ) -> None:
         """
@@ -6382,7 +6426,7 @@ class GetUserTablesSqlSyncTaskOutput(_serialization.Model):
         self.databases_to_source_tables: Optional[str] = None
         self.databases_to_target_tables: Optional[str] = None
         self.table_validation_errors: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class GetUserTablesSqlSyncTaskProperties(ProjectTaskProperties):
@@ -6447,7 +6491,7 @@ class GetUserTablesSqlSyncTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.GetUserTablesSqlSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -6460,7 +6504,7 @@ class GetUserTablesSqlSyncTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "GetUserTables.AzureSqlDb.Sync"
         self.input = input
-        self.output: Optional[List["_models.GetUserTablesSqlSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.GetUserTablesSqlSyncTaskOutput"]] = None
 
 
 class GetUserTablesSqlTaskInput(_serialization.Model):
@@ -6491,7 +6535,7 @@ class GetUserTablesSqlTaskInput(_serialization.Model):
         self,
         *,
         connection_info: "_models.SqlConnectionInfo",
-        selected_databases: List[str],
+        selected_databases: list[str],
         encrypted_key_for_secure_fields: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -6539,7 +6583,7 @@ class GetUserTablesSqlTaskOutput(_serialization.Model):
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.databases_to_tables: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class GetUserTablesSqlTaskProperties(ProjectTaskProperties):
@@ -6607,7 +6651,7 @@ class GetUserTablesSqlTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.GetUserTablesSqlTaskInput"] = None,
         task_id: Optional[str] = None,
         **kwargs: Any
@@ -6623,7 +6667,7 @@ class GetUserTablesSqlTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "GetUserTables.Sql"
         self.input = input
-        self.output: Optional[List["_models.GetUserTablesSqlTaskOutput"]] = None
+        self.output: Optional[list["_models.GetUserTablesSqlTaskOutput"]] = None
         self.task_id = task_id
 
 
@@ -6667,7 +6711,7 @@ class InstallOCIDriverTaskOutput(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class InstallOCIDriverTaskProperties(ProjectTaskProperties):
@@ -6732,7 +6776,7 @@ class InstallOCIDriverTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.InstallOCIDriverTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -6745,7 +6789,7 @@ class InstallOCIDriverTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Service.Install.OCI"
         self.input = input
-        self.output: Optional[List["_models.InstallOCIDriverTaskOutput"]] = None
+        self.output: Optional[list["_models.InstallOCIDriverTaskOutput"]] = None
 
 
 class IntegrationRuntimeMonitoringData(_serialization.Model):
@@ -6773,7 +6817,7 @@ class IntegrationRuntimeMonitoringData(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.name: Optional[str] = None
-        self.nodes: Optional[List["_models.NodeMonitoringData"]] = None
+        self.nodes: Optional[list["_models.NodeMonitoringData"]] = None
 
 
 class ManagedServiceIdentity(_serialization.Model):
@@ -6818,7 +6862,7 @@ class ManagedServiceIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6877,7 +6921,7 @@ class MigrateMISyncCompleteCommandOutput(_serialization.Model):
         "errors": {"key": "errors", "type": "[ReportableException]"},
     }
 
-    def __init__(self, *, errors: Optional[List["_models.ReportableException"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, errors: Optional[list["_models.ReportableException"]] = None, **kwargs: Any) -> None:
         """
         :keyword errors: List of errors that happened during the command execution.
         :paramtype errors: list[~azure.mgmt.datamigration.models.ReportableException]
@@ -6996,7 +7040,7 @@ class MigrateMongoDbTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MongoDbMigrationSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -7009,7 +7053,7 @@ class MigrateMongoDbTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.MongoDb"
         self.input = input
-        self.output: Optional[List["_models.MongoDbProgress"]] = None
+        self.output: Optional[list["_models.MongoDbProgress"]] = None
 
 
 class MigrateMySqlAzureDbForMySqlOfflineDatabaseInput(_serialization.Model):  # pylint: disable=name-too-long
@@ -7036,7 +7080,7 @@ class MigrateMySqlAzureDbForMySqlOfflineDatabaseInput(_serialization.Model):  # 
         *,
         name: Optional[str] = None,
         target_database_name: Optional[str] = None,
-        table_map: Optional[Dict[str, str]] = None,
+        table_map: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7100,10 +7144,10 @@ class MigrateMySqlAzureDbForMySqlOfflineTaskInput(_serialization.Model):  # pyli
         *,
         source_connection_info: "_models.MySqlConnectionInfo",
         target_connection_info: "_models.MySqlConnectionInfo",
-        selected_databases: List["_models.MigrateMySqlAzureDbForMySqlOfflineDatabaseInput"],
+        selected_databases: list["_models.MigrateMySqlAzureDbForMySqlOfflineDatabaseInput"],
         make_source_server_read_only: bool = False,
         started_on: Optional[datetime.datetime] = None,
-        optional_agent_settings: Optional[Dict[str, str]] = None,
+        optional_agent_settings: Optional[dict[str, str]] = None,
         encrypted_key_for_secure_fields: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7286,7 +7330,7 @@ class MigrateMySqlAzureDbForMySqlOfflineTaskOutputDatabaseLevel(
         self.error_count: Optional[int] = None
         self.error_prefix: Optional[str] = None
         self.result_prefix: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
         self.last_storage_update: Optional[datetime.datetime] = None
         self.object_summary: Optional[str] = None
 
@@ -7442,7 +7486,7 @@ class MigrateMySqlAzureDbForMySqlOfflineTaskOutputMigrationLevel(
         self.source_server_brand_version: Optional[str] = None
         self.target_server_version: Optional[str] = None
         self.target_server_brand_version: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
         self.last_storage_update: Optional[datetime.datetime] = None
 
 
@@ -7599,7 +7643,7 @@ class MigrateMySqlAzureDbForMySqlOfflineTaskProperties(ProjectTaskProperties):  
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateMySqlAzureDbForMySqlOfflineTaskInput"] = None,
         is_cloneable: Optional[bool] = None,
         task_id: Optional[str] = None,
@@ -7618,7 +7662,7 @@ class MigrateMySqlAzureDbForMySqlOfflineTaskProperties(ProjectTaskProperties):  
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.MySql.AzureDbForMySql"
         self.input = input
-        self.output: Optional[List["_models.MigrateMySqlAzureDbForMySqlOfflineTaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateMySqlAzureDbForMySqlOfflineTaskOutput"]] = None
         self.is_cloneable = is_cloneable
         self.task_id = task_id
 
@@ -7655,10 +7699,10 @@ class MigrateMySqlAzureDbForMySqlSyncDatabaseInput(_serialization.Model):  # pyl
         *,
         name: Optional[str] = None,
         target_database_name: Optional[str] = None,
-        migration_setting: Optional[Dict[str, str]] = None,
-        source_setting: Optional[Dict[str, str]] = None,
-        target_setting: Optional[Dict[str, str]] = None,
-        table_map: Optional[Dict[str, str]] = None,
+        migration_setting: Optional[dict[str, str]] = None,
+        source_setting: Optional[dict[str, str]] = None,
+        target_setting: Optional[dict[str, str]] = None,
+        table_map: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7718,7 +7762,7 @@ class MigrateMySqlAzureDbForMySqlSyncTaskInput(_serialization.Model):
         *,
         source_connection_info: "_models.MySqlConnectionInfo",
         target_connection_info: "_models.MySqlConnectionInfo",
-        selected_databases: List["_models.MigrateMySqlAzureDbForMySqlSyncDatabaseInput"],
+        selected_databases: list["_models.MigrateMySqlAzureDbForMySqlSyncDatabaseInput"],
         **kwargs: Any
     ) -> None:
         """
@@ -7820,7 +7864,7 @@ class MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError(
         self,
         *,
         error_message: Optional[str] = None,
-        events: Optional[List["_models.SyncMigrationDatabaseErrorEvent"]] = None,
+        events: Optional[list["_models.SyncMigrationDatabaseErrorEvent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8204,7 +8248,7 @@ class MigrateMySqlAzureDbForMySqlSyncTaskProperties(ProjectTaskProperties):  # p
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateMySqlAzureDbForMySqlSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -8217,7 +8261,7 @@ class MigrateMySqlAzureDbForMySqlSyncTaskProperties(ProjectTaskProperties):  # p
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.MySql.AzureDbForMySql.Sync"
         self.input = input
-        self.output: Optional[List["_models.MigrateMySqlAzureDbForMySqlSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateMySqlAzureDbForMySqlSyncTaskOutput"]] = None
 
 
 class MigrateOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties):  # pylint: disable=name-too-long
@@ -8284,7 +8328,7 @@ class MigrateOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties)
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateOracleAzureDbPostgreSqlSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -8297,7 +8341,7 @@ class MigrateOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties)
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.Oracle.AzureDbForPostgreSql.Sync"
         self.input = input
-        self.output: Optional[List["_models.MigrateOracleAzureDbPostgreSqlSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateOracleAzureDbPostgreSqlSyncTaskOutput"]] = None
 
 
 class MigrateOracleAzureDbPostgreSqlSyncDatabaseInput(_serialization.Model):  # pylint: disable=name-too-long
@@ -8340,11 +8384,11 @@ class MigrateOracleAzureDbPostgreSqlSyncDatabaseInput(_serialization.Model):  # 
         case_manipulation: Optional[str] = None,
         name: Optional[str] = None,
         schema_name: Optional[str] = None,
-        table_map: Optional[Dict[str, str]] = None,
+        table_map: Optional[dict[str, str]] = None,
         target_database_name: Optional[str] = None,
-        migration_setting: Optional[Dict[str, str]] = None,
-        source_setting: Optional[Dict[str, str]] = None,
-        target_setting: Optional[Dict[str, str]] = None,
+        migration_setting: Optional[dict[str, str]] = None,
+        source_setting: Optional[dict[str, str]] = None,
+        target_setting: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8408,7 +8452,7 @@ class MigrateOracleAzureDbPostgreSqlSyncTaskInput(_serialization.Model):  # pyli
     def __init__(
         self,
         *,
-        selected_databases: List["_models.MigrateOracleAzureDbPostgreSqlSyncDatabaseInput"],
+        selected_databases: list["_models.MigrateOracleAzureDbPostgreSqlSyncDatabaseInput"],
         target_connection_info: "_models.PostgreSqlConnectionInfo",
         source_connection_info: "_models.OracleConnectionInfo",
         **kwargs: Any
@@ -8512,7 +8556,7 @@ class MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseError(
         self,
         *,
         error_message: Optional[str] = None,
-        events: Optional[List["_models.SyncMigrationDatabaseErrorEvent"]] = None,
+        events: Optional[list["_models.SyncMigrationDatabaseErrorEvent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8878,10 +8922,10 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput(_serialization.Mode
         *,
         name: Optional[str] = None,
         target_database_name: Optional[str] = None,
-        migration_setting: Optional[Dict[str, Any]] = None,
-        source_setting: Optional[Dict[str, str]] = None,
-        target_setting: Optional[Dict[str, str]] = None,
-        selected_tables: Optional[List["_models.MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseTableInput"]] = None,
+        migration_setting: Optional[dict[str, Any]] = None,
+        source_setting: Optional[dict[str, str]] = None,
+        target_setting: Optional[dict[str, str]] = None,
+        selected_tables: Optional[list["_models.MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseTableInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8975,7 +9019,7 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput(_serialization.Model): 
     def __init__(
         self,
         *,
-        selected_databases: List["_models.MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput"],
+        selected_databases: list["_models.MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput"],
         target_connection_info: "_models.PostgreSqlConnectionInfo",
         source_connection_info: "_models.PostgreSqlConnectionInfo",
         encrypted_key_for_secure_fields: Optional[str] = None,
@@ -9084,7 +9128,7 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError(
         self,
         *,
         error_message: Optional[str] = None,
-        events: Optional[List["_models.SyncMigrationDatabaseErrorEvent"]] = None,
+        events: Optional[list["_models.SyncMigrationDatabaseErrorEvent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9243,7 +9287,7 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError(
     }
 
     def __init__(
-        self, *, events: Optional[List["_models.SyncMigrationDatabaseErrorEvent"]] = None, **kwargs: Any
+        self, *, events: Optional[list["_models.SyncMigrationDatabaseErrorEvent"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword events: List of error events.
@@ -9512,7 +9556,7 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskPropert
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput"] = None,
         task_id: Optional[str] = None,
         created_on: Optional[str] = None,
@@ -9535,7 +9579,7 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskPropert
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2"
         self.input = input
-        self.output: Optional[List["_models.MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput"]] = None
         self.task_id = task_id
         self.created_on = created_on
         self.is_cloneable = is_cloneable
@@ -9663,7 +9707,7 @@ class MigrateSchemaSqlServerSqlDbTaskInput(SqlMigrationTaskInput):
         *,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.SqlConnectionInfo",
-        selected_databases: List["_models.MigrateSchemaSqlServerSqlDbDatabaseInput"],
+        selected_databases: list["_models.MigrateSchemaSqlServerSqlDbDatabaseInput"],
         encrypted_key_for_secure_fields: Optional[str] = None,
         started_on: Optional[str] = None,
         **kwargs: Any
@@ -9996,7 +10040,7 @@ class MigrateSchemaSqlServerSqlDbTaskProperties(ProjectTaskProperties):  # pylin
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateSchemaSqlServerSqlDbTaskInput"] = None,
         created_on: Optional[str] = None,
         task_id: Optional[str] = None,
@@ -10018,7 +10062,7 @@ class MigrateSchemaSqlServerSqlDbTaskProperties(ProjectTaskProperties):  # pylin
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "MigrateSchemaSqlServerSqlDb"
         self.input = input
-        self.output: Optional[List["_models.MigrateSchemaSqlServerSqlDbTaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateSchemaSqlServerSqlDbTaskOutput"]] = None
         self.created_on = created_on
         self.task_id = task_id
         self.is_cloneable = is_cloneable
@@ -10084,7 +10128,7 @@ class MigrateSqlServerDatabaseInput(_serialization.Model):
         name: Optional[str] = None,
         restore_database_name: Optional[str] = None,
         backup_and_restore_folder: Optional[str] = None,
-        database_files: Optional[List["_models.DatabaseFileInput"]] = None,
+        database_files: Optional[list["_models.DatabaseFileInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10137,7 +10181,7 @@ class MigrateSqlServerSqlDbDatabaseInput(_serialization.Model):
         name: Optional[str] = None,
         target_database_name: Optional[str] = None,
         make_source_db_read_only: Optional[bool] = None,
-        table_map: Optional[Dict[str, str]] = None,
+        table_map: Optional[dict[str, str]] = None,
         schema_setting: Optional[JSON] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
@@ -10205,10 +10249,10 @@ class MigrateSqlServerSqlDbSyncDatabaseInput(_serialization.Model):
         name: Optional[str] = None,
         target_database_name: Optional[str] = None,
         schema_name: Optional[str] = None,
-        table_map: Optional[Dict[str, str]] = None,
-        migration_setting: Optional[Dict[str, str]] = None,
-        source_setting: Optional[Dict[str, str]] = None,
-        target_setting: Optional[Dict[str, str]] = None,
+        table_map: Optional[dict[str, str]] = None,
+        migration_setting: Optional[dict[str, str]] = None,
+        source_setting: Optional[dict[str, str]] = None,
+        target_setting: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10275,7 +10319,7 @@ class MigrateSqlServerSqlDbSyncTaskInput(SqlMigrationTaskInput):
         *,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.SqlConnectionInfo",
-        selected_databases: List["_models.MigrateSqlServerSqlDbSyncDatabaseInput"],
+        selected_databases: list["_models.MigrateSqlServerSqlDbSyncDatabaseInput"],
         validation_options: Optional["_models.MigrationValidationOptions"] = None,
         **kwargs: Any
     ) -> None:
@@ -10379,7 +10423,7 @@ class MigrateSqlServerSqlDbSyncTaskOutputDatabaseError(
         self,
         *,
         error_message: Optional[str] = None,
-        events: Optional[List["_models.SyncMigrationDatabaseErrorEvent"]] = None,
+        events: Optional[list["_models.SyncMigrationDatabaseErrorEvent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10765,7 +10809,7 @@ class MigrateSqlServerSqlDbSyncTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateSqlServerSqlDbSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -10778,7 +10822,7 @@ class MigrateSqlServerSqlDbSyncTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.SqlServer.AzureSqlDb.Sync"
         self.input = input
-        self.output: Optional[List["_models.MigrateSqlServerSqlDbSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateSqlServerSqlDbSyncTaskOutput"]] = None
 
 
 class MigrateSqlServerSqlDbTaskInput(SqlMigrationTaskInput):
@@ -10794,14 +10838,12 @@ class MigrateSqlServerSqlDbTaskInput(SqlMigrationTaskInput):
     :vartype selected_databases:
      list[~azure.mgmt.datamigration.models.MigrateSqlServerSqlDbDatabaseInput]
     :ivar validation_options: Options for enabling various post migration validations. Available
-     options,
-      1.) Data Integrity Check: Performs a checksum based comparison on source and target tables
-     after the migration to ensure the correctness of the data.
-      2.) Schema Validation: Performs a thorough schema comparison between the source and target
-     tables and provides a list of differences between the source and target database, 3.) Query
-     Analysis: Executes a set of queries picked up automatically either from the Query Plan Cache or
-     Query Store and execute them and compares the execution time between the source and target
-     database.
+     options, 1.) Data Integrity Check: Performs a checksum based comparison on source and target
+     tables after the migration to ensure the correctness of the data. 2.) Schema Validation:
+     Performs a thorough schema comparison between the source and target tables and provides a list
+     of differences between the source and target database, 3.) Query Analysis: Executes a set of
+     queries picked up automatically either from the Query Plan Cache or Query Store and execute
+     them and compares the execution time between the source and target database.
     :vartype validation_options: ~azure.mgmt.datamigration.models.MigrationValidationOptions
     :ivar started_on: Date and time relative to UTC when the migration was started on.
     :vartype started_on: str
@@ -10829,7 +10871,7 @@ class MigrateSqlServerSqlDbTaskInput(SqlMigrationTaskInput):
         *,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.SqlConnectionInfo",
-        selected_databases: List["_models.MigrateSqlServerSqlDbDatabaseInput"],
+        selected_databases: list["_models.MigrateSqlServerSqlDbDatabaseInput"],
         validation_options: Optional["_models.MigrationValidationOptions"] = None,
         started_on: Optional[str] = None,
         encrypted_key_for_secure_fields: Optional[str] = None,
@@ -10844,14 +10886,12 @@ class MigrateSqlServerSqlDbTaskInput(SqlMigrationTaskInput):
         :paramtype selected_databases:
          list[~azure.mgmt.datamigration.models.MigrateSqlServerSqlDbDatabaseInput]
         :keyword validation_options: Options for enabling various post migration validations. Available
-         options,
-          1.) Data Integrity Check: Performs a checksum based comparison on source and target tables
-         after the migration to ensure the correctness of the data.
-          2.) Schema Validation: Performs a thorough schema comparison between the source and target
-         tables and provides a list of differences between the source and target database, 3.) Query
-         Analysis: Executes a set of queries picked up automatically either from the Query Plan Cache or
-         Query Store and execute them and compares the execution time between the source and target
-         database.
+         options, 1.) Data Integrity Check: Performs a checksum based comparison on source and target
+         tables after the migration to ensure the correctness of the data. 2.) Schema Validation:
+         Performs a thorough schema comparison between the source and target tables and provides a list
+         of differences between the source and target database, 3.) Query Analysis: Executes a set of
+         queries picked up automatically either from the Query Plan Cache or Query Store and execute
+         them and compares the execution time between the source and target database.
         :paramtype validation_options: ~azure.mgmt.datamigration.models.MigrationValidationOptions
         :keyword started_on: Date and time relative to UTC when the migration was started on.
         :paramtype started_on: str
@@ -11012,7 +11052,7 @@ class MigrateSqlServerSqlDbTaskOutputDatabaseLevel(MigrateSqlServerSqlDbTaskOutp
         self.error_count: Optional[int] = None
         self.error_prefix: Optional[str] = None
         self.result_prefix: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
         self.object_summary: Optional[str] = None
 
 
@@ -11339,7 +11379,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         self.source_server_brand_version: Optional[str] = None
         self.target_server_version: Optional[str] = None
         self.target_server_brand_version: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
 
 
 class MigrateSqlServerSqlDbTaskOutputTableLevel(MigrateSqlServerSqlDbTaskOutput):  # pylint: disable=name-too-long
@@ -11452,7 +11492,7 @@ class MigrationValidationResult(_serialization.Model):
     def __init__(
         self,
         *,
-        summary_results: Optional[Dict[str, "_models.MigrationValidationDatabaseSummaryResult"]] = None,
+        summary_results: Optional[dict[str, "_models.MigrationValidationDatabaseSummaryResult"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11509,7 +11549,7 @@ class MigrateSqlServerSqlDbTaskOutputValidationResult(
     def __init__(
         self,
         *,
-        summary_results: Optional[Dict[str, "_models.MigrationValidationDatabaseSummaryResult"]] = None,
+        summary_results: Optional[dict[str, "_models.MigrationValidationDatabaseSummaryResult"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11596,7 +11636,7 @@ class MigrateSqlServerSqlDbTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateSqlServerSqlDbTaskInput"] = None,
         task_id: Optional[str] = None,
         is_cloneable: Optional[bool] = None,
@@ -11618,7 +11658,7 @@ class MigrateSqlServerSqlDbTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.SqlServer.SqlDb"
         self.input = input
-        self.output: Optional[List["_models.MigrateSqlServerSqlDbTaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateSqlServerSqlDbTaskOutput"]] = None
         self.task_id = task_id
         self.is_cloneable = is_cloneable
         self.created_on = created_on
@@ -11660,7 +11700,7 @@ class MigrateSqlServerSqlMIDatabaseInput(_serialization.Model):
         name: str,
         restore_database_name: str,
         backup_file_share: Optional["_models.FileShare"] = None,
-        backup_file_paths: Optional[List[str]] = None,
+        backup_file_paths: Optional[list[str]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
@@ -11728,7 +11768,7 @@ class SqlServerSqlMISyncTaskInput(_serialization.Model):
     def __init__(
         self,
         *,
-        selected_databases: List["_models.MigrateSqlServerSqlMIDatabaseInput"],
+        selected_databases: list["_models.MigrateSqlServerSqlMIDatabaseInput"],
         storage_resource_id: str,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.MiSqlConnectionInfo",
@@ -11811,7 +11851,7 @@ class MigrateSqlServerSqlMISyncTaskInput(SqlServerSqlMISyncTaskInput):
     def __init__(
         self,
         *,
-        selected_databases: List["_models.MigrateSqlServerSqlMIDatabaseInput"],
+        selected_databases: list["_models.MigrateSqlServerSqlMIDatabaseInput"],
         storage_resource_id: str,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.MiSqlConnectionInfo",
@@ -11980,11 +12020,11 @@ class MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel(
         self.ended_on: Optional[datetime.datetime] = None
         self.full_backup_set_info: Optional["_models.BackupSetInfo"] = None
         self.last_restored_backup_set_info: Optional["_models.BackupSetInfo"] = None
-        self.active_backup_sets: Optional[List["_models.BackupSetInfo"]] = None
+        self.active_backup_sets: Optional[list["_models.BackupSetInfo"]] = None
         self.container_name: Optional[str] = None
         self.error_prefix: Optional[str] = None
         self.is_full_backup_restored: Optional[bool] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
 
 
 class MigrateSqlServerSqlMISyncTaskOutputError(MigrateSqlServerSqlMISyncTaskOutput):
@@ -12174,7 +12214,7 @@ class MigrateSqlServerSqlMISyncTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateSqlServerSqlMISyncTaskInput"] = None,
         created_on: Optional[str] = None,
         **kwargs: Any
@@ -12190,7 +12230,7 @@ class MigrateSqlServerSqlMISyncTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.SqlServer.AzureSqlDbMI.Sync.LRS"
         self.input = input
-        self.output: Optional[List["_models.MigrateSqlServerSqlMISyncTaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateSqlServerSqlMISyncTaskOutput"]] = None
         self.created_on = created_on
 
 
@@ -12255,11 +12295,11 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         *,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.SqlConnectionInfo",
-        selected_databases: List["_models.MigrateSqlServerSqlMIDatabaseInput"],
+        selected_databases: list["_models.MigrateSqlServerSqlMIDatabaseInput"],
         backup_blob_share: "_models.BlobShare",
         started_on: Optional[str] = None,
-        selected_logins: Optional[List[str]] = None,
-        selected_agent_jobs: Optional[List[str]] = None,
+        selected_logins: Optional[list[str]] = None,
+        selected_agent_jobs: Optional[list[str]] = None,
         backup_file_share: Optional["_models.FileShare"] = None,
         backup_mode: Optional[Union[str, "_models.BackupMode"]] = None,
         aad_domain_name: Optional[str] = None,
@@ -12417,7 +12457,7 @@ class MigrateSqlServerSqlMITaskOutputAgentJobLevel(MigrateSqlServerSqlMITaskOutp
         self.started_on: Optional[datetime.datetime] = None
         self.ended_on: Optional[datetime.datetime] = None
         self.message: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
 
 
 class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutput):  # pylint: disable=name-too-long
@@ -12488,7 +12528,7 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
         self.started_on: Optional[datetime.datetime] = None
         self.ended_on: Optional[datetime.datetime] = None
         self.message: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
 
 
 class MigrateSqlServerSqlMITaskOutputError(MigrateSqlServerSqlMITaskOutput):
@@ -12589,7 +12629,7 @@ class MigrateSqlServerSqlMITaskOutputLoginLevel(MigrateSqlServerSqlMITaskOutput)
         self.started_on: Optional[datetime.datetime] = None
         self.ended_on: Optional[datetime.datetime] = None
         self.message: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
 
 
 class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOutput):  # pylint: disable=name-too-long
@@ -12690,13 +12730,13 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
         self.logins: Optional[str] = None
         self.message: Optional[str] = None
         self.server_role_results: Optional[str] = None
-        self.orphaned_users_info: Optional[List["_models.OrphanedUserInfo"]] = None
+        self.orphaned_users_info: Optional[list["_models.OrphanedUserInfo"]] = None
         self.databases: Optional[str] = None
         self.source_server_version: Optional[str] = None
         self.source_server_brand_version: Optional[str] = None
         self.target_server_version: Optional[str] = None
         self.target_server_brand_version: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
 
 
 class MigrateSqlServerSqlMITaskProperties(ProjectTaskProperties):
@@ -12773,7 +12813,7 @@ class MigrateSqlServerSqlMITaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateSqlServerSqlMITaskInput"] = None,
         task_id: Optional[str] = None,
         created_on: Optional[str] = None,
@@ -12798,7 +12838,7 @@ class MigrateSqlServerSqlMITaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.SqlServer.AzureSqlDbMI"
         self.input = input
-        self.output: Optional[List["_models.MigrateSqlServerSqlMITaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateSqlServerSqlMITaskOutput"]] = None
         self.task_id = task_id
         self.created_on = created_on
         self.parent_task_id = parent_task_id
@@ -12972,7 +13012,7 @@ class MigrateSsisTaskOutputMigrationLevel(MigrateSsisTaskOutput):
         self.source_server_brand_version: Optional[str] = None
         self.target_server_version: Optional[str] = None
         self.target_server_brand_version: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
         self.stage: Optional[Union[str, "_models.SsisMigrationStage"]] = None
 
 
@@ -13044,7 +13084,7 @@ class MigrateSsisTaskOutputProjectLevel(MigrateSsisTaskOutput):
         self.started_on: Optional[datetime.datetime] = None
         self.ended_on: Optional[datetime.datetime] = None
         self.message: Optional[str] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
 
 
 class MigrateSsisTaskProperties(ProjectTaskProperties):
@@ -13110,7 +13150,7 @@ class MigrateSsisTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateSsisTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -13123,7 +13163,7 @@ class MigrateSsisTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Migrate.Ssis"
         self.input = input
-        self.output: Optional[List["_models.MigrateSsisTaskOutput"]] = None
+        self.output: Optional[list["_models.MigrateSsisTaskOutput"]] = None
 
 
 class MigrateSyncCompleteCommandInput(_serialization.Model):
@@ -13185,7 +13225,7 @@ class MigrateSyncCompleteCommandOutput(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
-        self.errors: Optional[List["_models.ReportableException"]] = None
+        self.errors: Optional[list["_models.ReportableException"]] = None
 
 
 class MigrateSyncCompleteCommandProperties(CommandProperties):
@@ -13272,7 +13312,7 @@ class MigrationEligibilityInfo(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.is_eligible_for_migration: Optional[bool] = None
-        self.validation_messages: Optional[List[str]] = None
+        self.validation_messages: Optional[list[str]] = None
 
 
 class MigrationOperationInput(_serialization.Model):
@@ -13369,7 +13409,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -13431,7 +13471,7 @@ class MigrationService(TrackedResource):
         "integration_runtime_state": {"key": "properties.integrationRuntimeState", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -13467,7 +13507,7 @@ class MigrationServiceListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.MigrationService"]] = None
+        self.value: Optional[list["_models.MigrationService"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -13482,7 +13522,7 @@ class MigrationServiceUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
@@ -13563,13 +13603,13 @@ class MigrationStatusDetails(_serialization.Model):
         self.migration_state: Optional[str] = None
         self.full_backup_set_info: Optional["_models.SqlBackupSetInfo"] = None
         self.last_restored_backup_set_info: Optional["_models.SqlBackupSetInfo"] = None
-        self.active_backup_sets: Optional[List["_models.SqlBackupSetInfo"]] = None
-        self.invalid_files: Optional[List[str]] = None
+        self.active_backup_sets: Optional[list["_models.SqlBackupSetInfo"]] = None
+        self.invalid_files: Optional[list[str]] = None
         self.blob_container_name: Optional[str] = None
         self.is_full_backup_restored: Optional[bool] = None
         self.restore_blocking_reason: Optional[str] = None
         self.complete_restore_error_message: Optional[str] = None
-        self.file_upload_blocking_errors: Optional[List[str]] = None
+        self.file_upload_blocking_errors: Optional[list[str]] = None
         self.current_restoring_filename: Optional[str] = None
         self.last_restored_filename: Optional[str] = None
         self.pending_log_backups_count: Optional[int] = None
@@ -13893,7 +13933,7 @@ class MongoDbClusterInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        databases: List["_models.MongoDbDatabaseInfo"],
+        databases: list["_models.MongoDbDatabaseInfo"],
         supports_sharding: bool,
         type: Union[str, "_models.MongoDbClusterType"],
         version: str,
@@ -14215,7 +14255,7 @@ class MongoDbProgress(_serialization.Model):
         bytes_copied: int,
         documents_copied: int,
         elapsed_time: str,
-        errors: Dict[str, "_models.MongoDbError"],
+        errors: dict[str, "_models.MongoDbError"],
         events_pending: int,
         events_replayed: int,
         state: Union[str, "_models.MongoDbMigrationState"],
@@ -14368,7 +14408,7 @@ class MongoDbCollectionProgress(MongoDbProgress):
         bytes_copied: int,
         documents_copied: int,
         elapsed_time: str,
-        errors: Dict[str, "_models.MongoDbError"],
+        errors: dict[str, "_models.MongoDbError"],
         events_pending: int,
         events_replayed: int,
         state: Union[str, "_models.MongoDbMigrationState"],
@@ -14682,7 +14722,7 @@ class MongoDbDatabaseInfo(MongoDbObjectInfo):
         document_count: int,
         name: str,
         qualified_name: str,
-        collections: List["_models.MongoDbCollectionInfo"],
+        collections: list["_models.MongoDbCollectionInfo"],
         supports_sharding: bool,
         **kwargs: Any
     ) -> None:
@@ -14807,7 +14847,7 @@ class MongoDbDatabaseProgress(MongoDbProgress):
         bytes_copied: int,
         documents_copied: int,
         elapsed_time: str,
-        errors: Dict[str, "_models.MongoDbError"],
+        errors: dict[str, "_models.MongoDbError"],
         events_pending: int,
         events_replayed: int,
         state: Union[str, "_models.MongoDbMigrationState"],
@@ -14817,7 +14857,7 @@ class MongoDbDatabaseProgress(MongoDbProgress):
         last_replay_time: Optional[datetime.datetime] = None,
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
-        collections: Optional[Dict[str, "_models.MongoDbCollectionProgress"]] = None,
+        collections: Optional[dict[str, "_models.MongoDbCollectionProgress"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14909,7 +14949,7 @@ class MongoDbDatabaseSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        collections: Dict[str, "_models.MongoDbCollectionSettings"],
+        collections: dict[str, "_models.MongoDbCollectionSettings"],
         target_r_us: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -15142,7 +15182,7 @@ class MongoDbMigrationProgress(MongoDbProgress):
         bytes_copied: int,
         documents_copied: int,
         elapsed_time: str,
-        errors: Dict[str, "_models.MongoDbError"],
+        errors: dict[str, "_models.MongoDbError"],
         events_pending: int,
         events_replayed: int,
         state: Union[str, "_models.MongoDbMigrationState"],
@@ -15152,7 +15192,7 @@ class MongoDbMigrationProgress(MongoDbProgress):
         last_replay_time: Optional[datetime.datetime] = None,
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
-        databases: Optional[Dict[str, "_models.MongoDbDatabaseProgress"]] = None,
+        databases: Optional[dict[str, "_models.MongoDbDatabaseProgress"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15260,7 +15300,7 @@ class MongoDbMigrationSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        databases: Dict[str, "_models.MongoDbDatabaseSettings"],
+        databases: dict[str, "_models.MongoDbDatabaseSettings"],
         source: "_models.MongoDbConnectionInfo",
         target: "_models.MongoDbConnectionInfo",
         boost_r_us: Optional[int] = None,
@@ -15394,7 +15434,7 @@ class MongoDbShardKeyInfo(_serialization.Model):
         "is_unique": {"key": "isUnique", "type": "bool"},
     }
 
-    def __init__(self, *, fields: List["_models.MongoDbShardKeyField"], is_unique: bool, **kwargs: Any) -> None:
+    def __init__(self, *, fields: list["_models.MongoDbShardKeyField"], is_unique: bool, **kwargs: Any) -> None:
         """
         :keyword fields: The fields within the shard key. Required.
         :paramtype fields: list[~azure.mgmt.datamigration.models.MongoDbShardKeyField]
@@ -15427,7 +15467,7 @@ class MongoDbShardKeySetting(_serialization.Model):
     }
 
     def __init__(
-        self, *, fields: List["_models.MongoDbShardKeyField"], is_unique: Optional[bool] = None, **kwargs: Any
+        self, *, fields: list["_models.MongoDbShardKeyField"], is_unique: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """
         :keyword fields: The fields within the shard key. Required.
@@ -15798,7 +15838,7 @@ class NodeMonitoringData(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.additional_properties: Optional[Dict[str, JSON]] = None
+        self.additional_properties: Optional[dict[str, JSON]] = None
         self.node_name: Optional[str] = None
         self.available_memory_in_mb: Optional[int] = None
         self.cpu_utilization: Optional[int] = None
@@ -15881,7 +15921,7 @@ class NonSqlDataMigrationTableResult(_serialization.Model):
         self.source_row_count: Optional[int] = None
         self.target_row_count: Optional[int] = None
         self.elapsed_time_in_miliseconds: Optional[float] = None
-        self.errors: Optional[List["_models.DataMigrationError"]] = None
+        self.errors: Optional[list["_models.DataMigrationError"]] = None
 
 
 class NonSqlMigrationTaskInput(_serialization.Model):
@@ -15925,7 +15965,7 @@ class NonSqlMigrationTaskInput(_serialization.Model):
         target_database_name: str,
         project_name: str,
         project_location: str,
-        selected_tables: List["_models.NonSqlDataMigrationTable"],
+        selected_tables: list["_models.NonSqlDataMigrationTable"],
         **kwargs: Any
     ) -> None:
         """
@@ -16033,7 +16073,7 @@ class ODataError(_serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["_models.ODataError"]] = None,
+        details: Optional[list["_models.ODataError"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -16107,7 +16147,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.OperationsDefinition"]] = None
+        self.value: Optional[list["_models.OperationsDefinition"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -16153,7 +16193,7 @@ class OperationsDefinition(_serialization.Model):
         self.is_data_action = is_data_action
         self.display: Optional["_models.OperationsDisplayDefinition"] = None
         self.origin: Optional[Union[str, "_models.OperationOrigin"]] = None
-        self.properties: Optional[Dict[str, JSON]] = None
+        self.properties: Optional[dict[str, JSON]] = None
 
 
 class OperationsDisplayDefinition(_serialization.Model):
@@ -16320,7 +16360,7 @@ class OracleOCIDriverInfo(_serialization.Model):
         self.archive_checksum: Optional[str] = None
         self.oracle_checksum: Optional[str] = None
         self.assembly_version: Optional[str] = None
-        self.supported_oracle_versions: Optional[List[str]] = None
+        self.supported_oracle_versions: Optional[list[str]] = None
 
 
 class OrphanedUserInfo(_serialization.Model):
@@ -16537,14 +16577,14 @@ class Project(TrackedResourceAutoGenerated):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         source_platform: Optional[Union[str, "_models.ProjectSourcePlatform"]] = None,
         azure_authentication_info: Optional["_models.AzureActiveDirectoryApp"] = None,
         target_platform: Optional[Union[str, "_models.ProjectTargetPlatform"]] = None,
         source_connection_info: Optional["_models.ConnectionInfo"] = None,
         target_connection_info: Optional["_models.ConnectionInfo"] = None,
-        databases_info: Optional[List["_models.DatabaseInfo"]] = None,
+        databases_info: Optional[list["_models.DatabaseInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -16740,7 +16780,7 @@ class ProjectList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Project"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Project"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of projects.
@@ -16955,7 +16995,7 @@ class QuotaList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Quota"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Quota"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of quotas.
@@ -17166,11 +17206,11 @@ class ResourceSku(_serialization.Model):
         self.family: Optional[str] = None
         self.kind: Optional[str] = None
         self.capacity: Optional["_models.ResourceSkuCapacity"] = None
-        self.locations: Optional[List[str]] = None
-        self.api_versions: Optional[List[str]] = None
-        self.costs: Optional[List["_models.ResourceSkuCosts"]] = None
-        self.capabilities: Optional[List["_models.ResourceSkuCapabilities"]] = None
-        self.restrictions: Optional[List["_models.ResourceSkuRestrictions"]] = None
+        self.locations: Optional[list[str]] = None
+        self.api_versions: Optional[list[str]] = None
+        self.costs: Optional[list["_models.ResourceSkuCosts"]] = None
+        self.capabilities: Optional[list["_models.ResourceSkuCapabilities"]] = None
+        self.restrictions: Optional[list["_models.ResourceSkuRestrictions"]] = None
 
 
 class ResourceSkuCapabilities(_serialization.Model):
@@ -17304,7 +17344,7 @@ class ResourceSkuRestrictions(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.type: Optional[Union[str, "_models.ResourceSkuRestrictionsType"]] = None
-        self.values: Optional[List[str]] = None
+        self.values: Optional[list[str]] = None
         self.reason_code: Optional[Union[str, "_models.ResourceSkuRestrictionsReasonCode"]] = None
 
 
@@ -17329,7 +17369,7 @@ class ResourceSkusResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ResourceSku"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ResourceSku"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of SKUs available for the subscription. Required.
         :paramtype value: list[~azure.mgmt.datamigration.models.ResourceSku]
@@ -17369,8 +17409,8 @@ class SchemaComparisonValidationResult(_serialization.Model):
         *,
         schema_differences: Optional["_models.SchemaComparisonValidationResultType"] = None,
         validation_errors: Optional["_models.ValidationError"] = None,
-        source_database_object_count: Optional[Dict[str, int]] = None,
-        target_database_object_count: Optional[Dict[str, int]] = None,
+        source_database_object_count: Optional[dict[str, int]] = None,
+        target_database_object_count: Optional[dict[str, int]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -17651,7 +17691,7 @@ class ServiceOperationList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ServiceOperation"]] = None,
+        value: Optional[list["_models.ServiceOperation"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -17740,7 +17780,7 @@ class ServiceSkuList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AvailableServiceSku"]] = None,
+        value: Optional[list["_models.AvailableServiceSku"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -17920,13 +17960,13 @@ class SqlBackupSetInfo(_serialization.Model):
         self.first_lsn: Optional[str] = None
         self.last_lsn: Optional[str] = None
         self.backup_type: Optional[str] = None
-        self.list_of_backup_files: Optional[List["_models.SqlBackupFileInfo"]] = None
+        self.list_of_backup_files: Optional[list["_models.SqlBackupFileInfo"]] = None
         self.backup_start_date: Optional[datetime.datetime] = None
         self.backup_finish_date: Optional[datetime.datetime] = None
         self.is_backup_restored: Optional[bool] = None
         self.has_backup_checksums: Optional[bool] = None
         self.family_count: Optional[int] = None
-        self.ignore_reasons: Optional[List[str]] = None
+        self.ignore_reasons: Optional[list[str]] = None
 
 
 class SqlConnectionInfo(ConnectionInfo):
@@ -18145,8 +18185,8 @@ class SqlDbMigrationStatusDetails(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.migration_state: Optional[str] = None
-        self.sql_data_copy_errors: Optional[List[str]] = None
-        self.list_of_copy_progress_details: Optional[List["_models.CopyProgressDetails"]] = None
+        self.sql_data_copy_errors: Optional[list[str]] = None
+        self.list_of_copy_progress_details: Optional[list["_models.CopyProgressDetails"]] = None
 
 
 class SqlDbOfflineConfiguration(_serialization.Model):
@@ -18235,7 +18275,7 @@ class SqlMigrationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SqlMigrationService"]] = None
+        self.value: Optional[list["_models.SqlMigrationService"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -18282,7 +18322,7 @@ class SqlMigrationService(TrackedResourceAutoGenerated):
         "integration_runtime_state": {"key": "properties.integrationRuntimeState", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location:
         :paramtype location: str
@@ -18305,7 +18345,7 @@ class SqlMigrationServiceUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
@@ -18394,7 +18434,7 @@ class StartMigrationScenarioServerRoleResult(_serialization.Model):
         super().__init__(**kwargs)
         self.name: Optional[str] = None
         self.state: Optional[Union[str, "_models.MigrationState"]] = None
-        self.exceptions_and_warnings: Optional[List["_models.ReportableException"]] = None
+        self.exceptions_and_warnings: Optional[list["_models.ReportableException"]] = None
 
 
 class SyncMigrationDatabaseErrorEvent(_serialization.Model):
@@ -18601,7 +18641,7 @@ class TaskList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ProjectTask"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ProjectTask"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of tasks.
@@ -18659,7 +18699,7 @@ class UploadOCIDriverTaskOutput(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.driver_package_name: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class UploadOCIDriverTaskProperties(ProjectTaskProperties):
@@ -18724,7 +18764,7 @@ class UploadOCIDriverTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.UploadOCIDriverTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -18737,7 +18777,7 @@ class UploadOCIDriverTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Service.Upload.OCI"
         self.input = input
-        self.output: Optional[List["_models.UploadOCIDriverTaskOutput"]] = None
+        self.output: Optional[list["_models.UploadOCIDriverTaskOutput"]] = None
 
 
 class UserAssignedIdentity(_serialization.Model):
@@ -18831,7 +18871,7 @@ class ValidateMigrationInputSqlServerSqlDbSyncTaskProperties(ProjectTaskProperti
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ValidateSyncMigrationInputSqlServerTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -18844,7 +18884,7 @@ class ValidateMigrationInputSqlServerSqlDbSyncTaskProperties(ProjectTaskProperti
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ValidateMigrationInput.SqlServer.SqlDb.Sync"
         self.input = input
-        self.output: Optional[List["_models.ValidateSyncMigrationInputSqlServerTaskOutput"]] = None
+        self.output: Optional[list["_models.ValidateSyncMigrationInputSqlServerTaskOutput"]] = None
 
 
 class ValidateMigrationInputSqlServerSqlMISyncTaskInput(SqlServerSqlMISyncTaskInput):  # pylint: disable=name-too-long
@@ -18903,7 +18943,7 @@ class ValidateMigrationInputSqlServerSqlMISyncTaskOutput(_serialization.Model): 
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.name: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ValidateMigrationInputSqlServerSqlMISyncTaskProperties(ProjectTaskProperties):  # pylint: disable=name-too-long
@@ -18971,7 +19011,7 @@ class ValidateMigrationInputSqlServerSqlMISyncTaskProperties(ProjectTaskProperti
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ValidateMigrationInputSqlServerSqlMISyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -18985,7 +19025,7 @@ class ValidateMigrationInputSqlServerSqlMISyncTaskProperties(ProjectTaskProperti
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS"
         self.input = input
-        self.output: Optional[List["_models.ValidateMigrationInputSqlServerSqlMISyncTaskOutput"]] = None
+        self.output: Optional[list["_models.ValidateMigrationInputSqlServerSqlMISyncTaskOutput"]] = None
 
 
 class ValidateMigrationInputSqlServerSqlMITaskInput(_serialization.Model):  # pylint: disable=name-too-long
@@ -19034,9 +19074,9 @@ class ValidateMigrationInputSqlServerSqlMITaskInput(_serialization.Model):  # py
         *,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.SqlConnectionInfo",
-        selected_databases: List["_models.MigrateSqlServerSqlMIDatabaseInput"],
+        selected_databases: list["_models.MigrateSqlServerSqlMIDatabaseInput"],
         backup_blob_share: "_models.BlobShare",
-        selected_logins: Optional[List[str]] = None,
+        selected_logins: Optional[list[str]] = None,
         backup_file_share: Optional["_models.FileShare"] = None,
         backup_mode: Optional[Union[str, "_models.BackupMode"]] = None,
         **kwargs: Any
@@ -19128,11 +19168,11 @@ class ValidateMigrationInputSqlServerSqlMITaskOutput(_serialization.Model):  # p
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.name: Optional[str] = None
-        self.restore_database_name_errors: Optional[List["_models.ReportableException"]] = None
-        self.backup_folder_errors: Optional[List["_models.ReportableException"]] = None
-        self.backup_share_credentials_errors: Optional[List["_models.ReportableException"]] = None
-        self.backup_storage_account_errors: Optional[List["_models.ReportableException"]] = None
-        self.existing_backup_errors: Optional[List["_models.ReportableException"]] = None
+        self.restore_database_name_errors: Optional[list["_models.ReportableException"]] = None
+        self.backup_folder_errors: Optional[list["_models.ReportableException"]] = None
+        self.backup_share_credentials_errors: Optional[list["_models.ReportableException"]] = None
+        self.backup_storage_account_errors: Optional[list["_models.ReportableException"]] = None
+        self.existing_backup_errors: Optional[list["_models.ReportableException"]] = None
         self.database_backup_info = database_backup_info
 
 
@@ -19200,7 +19240,7 @@ class ValidateMigrationInputSqlServerSqlMITaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.ValidateMigrationInputSqlServerSqlMITaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -19214,7 +19254,7 @@ class ValidateMigrationInputSqlServerSqlMITaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "ValidateMigrationInput.SqlServer.AzureSqlDbMI"
         self.input = input
-        self.output: Optional[List["_models.ValidateMigrationInputSqlServerSqlMITaskOutput"]] = None
+        self.output: Optional[list["_models.ValidateMigrationInputSqlServerSqlMITaskOutput"]] = None
 
 
 class ValidateMongoDbTaskProperties(ProjectTaskProperties):
@@ -19279,7 +19319,7 @@ class ValidateMongoDbTaskProperties(ProjectTaskProperties):
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MongoDbMigrationSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -19292,7 +19332,7 @@ class ValidateMongoDbTaskProperties(ProjectTaskProperties):
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Validate.MongoDb"
         self.input = input
-        self.output: Optional[List["_models.MongoDbMigrationProgress"]] = None
+        self.output: Optional[list["_models.MongoDbMigrationProgress"]] = None
 
 
 class ValidateOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties):  # pylint: disable=name-too-long
@@ -19360,7 +19400,7 @@ class ValidateOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties
     def __init__(
         self,
         *,
-        client_data: Optional[Dict[str, str]] = None,
+        client_data: Optional[dict[str, str]] = None,
         input: Optional["_models.MigrateOracleAzureDbPostgreSqlSyncTaskInput"] = None,
         **kwargs: Any
     ) -> None:
@@ -19374,7 +19414,7 @@ class ValidateOracleAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskProperties
         super().__init__(client_data=client_data, **kwargs)
         self.task_type: str = "Validate.Oracle.AzureDbPostgreSql.Sync"
         self.input = input
-        self.output: Optional[List["_models.ValidateOracleAzureDbPostgreSqlSyncTaskOutput"]] = None
+        self.output: Optional[list["_models.ValidateOracleAzureDbPostgreSqlSyncTaskOutput"]] = None
 
 
 class ValidateOracleAzureDbPostgreSqlSyncTaskOutput(_serialization.Model):  # pylint: disable=name-too-long
@@ -19398,7 +19438,7 @@ class ValidateOracleAzureDbPostgreSqlSyncTaskOutput(_serialization.Model):  # py
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ValidateSyncMigrationInputSqlServerTaskInput(_serialization.Model):  # pylint: disable=name-too-long
@@ -19432,7 +19472,7 @@ class ValidateSyncMigrationInputSqlServerTaskInput(_serialization.Model):  # pyl
         *,
         source_connection_info: "_models.SqlConnectionInfo",
         target_connection_info: "_models.SqlConnectionInfo",
-        selected_databases: List["_models.MigrateSqlServerSqlDbSyncDatabaseInput"],
+        selected_databases: list["_models.MigrateSqlServerSqlDbSyncDatabaseInput"],
         **kwargs: Any
     ) -> None:
         """
@@ -19480,7 +19520,7 @@ class ValidateSyncMigrationInputSqlServerTaskOutput(_serialization.Model):  # py
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.name: Optional[str] = None
-        self.validation_errors: Optional[List["_models.ReportableException"]] = None
+        self.validation_errors: Optional[list["_models.ReportableException"]] = None
 
 
 class ValidationError(_serialization.Model):

@@ -23,7 +23,7 @@ class TestDataMigrationManagementUsagesOperations(AzureMgmtRecordedTestCase):
     def test_usages_list(self, resource_group):
         response = self.client.usages.list(
             location="str",
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
