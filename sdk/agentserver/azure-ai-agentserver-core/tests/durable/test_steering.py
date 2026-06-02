@@ -93,7 +93,7 @@ class TestSteering:
 
             # run1 should be superseded (A was cancelled)
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert result1.is_superseded
+            assert result1.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
 
             # run2 should complete (B runs after drain)
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
@@ -193,7 +193,7 @@ class TestSteering:
 
             # run1 should be superseded
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert result1.is_superseded
+            assert result1.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
 
             # run2 should complete
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
@@ -238,10 +238,10 @@ class TestSteering:
 
             # B and C should be superseded
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-            assert result_b.is_superseded
+            assert result_b.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
 
             result_c = await asyncio.wait_for(run_c.result(), timeout=5.0)
-            assert result_c.is_superseded
+            assert result_c.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
 
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -371,12 +371,18 @@ class TestSteering:
 
     @pytest.mark.asyncio
     async def test_task_result_is_superseded(self):
-        """TaskResult with status=superseded has is_superseded=True."""
-        result = TaskResult(task_id="t1", status="superseded")
-        assert result.is_superseded is True
-        assert result.is_completed is False
-        assert result.is_suspended is False
-        assert result.output is None
+        """Spec 016 FR-010 (US5): is_superseded is now a compat shim that
+        always returns False. The Literal status no longer includes
+        "superseded" — steering is plain multi-turn.
+        """
+        # The Literal is narrowed but the implementation does not enforce
+        # it at runtime; constructing with a non-Literal status still works
+        # but is_superseded never returns True.
+        result = TaskResult(task_id="t1", status="completed")
+        assert result.is_superseded is False, (
+            "Spec 016 FR-010: is_superseded is a compatibility shim that "
+            "always returns False; steering is plain multi-turn."
+        )
 
     @pytest.mark.asyncio
     async def test_task_result_completed_not_superseded(self):
@@ -683,9 +689,24 @@ class TestSteeringRecovery:
         run2 = await chat.start(task_id="t2", input={"msg": "recover"})
         result = await asyncio.wait_for(run2.result(), timeout=5.0)
 
-        # Should have drained through X (cancel set) → Y (cancel set) → Z (complete)
-        assert result.output == {"msg": "Z"}
-        assert "Z" in inputs_seen
+        # Spec 016 FR-011 (US5): the .start() caller is the first-turn caller.
+        # The recovered handler runs with input X (pending[0]) and suspends
+        # because cancel is set (pending Y, Z remain). The caller sees the
+        # natural multi-turn suspend outcome — NOT the eventual Z output
+        # (that was the legacy superseded-result semantic).
+        assert result.is_suspended, (
+            f"Spec 016 FR-011: first-turn caller sees natural multi-turn "
+            f"suspend outcome (was 'superseded' returning Z's output). Got "
+            f"{result!r}"
+        )
+        # The framework still drains through Y → Z; verify the handler did
+        # eventually see Z even though the .start() caller only observed turn-1.
+        deadline = asyncio.get_event_loop().time() + 2.0
+        while "Z" not in inputs_seen and asyncio.get_event_loop().time() < deadline:
+            await asyncio.sleep(0.05)
+        assert "Z" in inputs_seen, (
+            f"Recovery should drain through X → Y → Z; observed {inputs_seen}"
+        )
 
         await manager2.shutdown()
         mgr_mod._manager = None

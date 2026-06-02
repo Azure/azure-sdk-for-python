@@ -1184,7 +1184,7 @@ class TestClaudeSteeringSampleE2E:
             assert store["inv-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-            assert result_a.is_superseded
+            assert result_a.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
             assert result_b.is_suspended
@@ -1498,7 +1498,7 @@ class TestCopilotSteeringSampleE2E:
             assert store["inv-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-            assert result_a.is_superseded
+            assert result_a.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
             assert result_b.is_suspended
@@ -1590,7 +1590,7 @@ class TestLangGraphSteeringSampleE2E:
             assert store["lg-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-            assert result_a.is_superseded
+            assert result_a.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
             assert result_b.is_suspended
@@ -1655,7 +1655,7 @@ class TestLangGraphSteeringSampleE2E:
             assert store["mt-3"]["status"] == "queued"
 
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-            assert result2.is_superseded
+            assert result2.is_suspended  # Spec 016 FR-013
 
             result3 = await asyncio.wait_for(run3.result(), timeout=5.0)
             assert result3.is_suspended
@@ -1773,7 +1773,7 @@ class TestSSEStreamingE2E:
 
             # Turn 1 should have been superseded
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert result1.is_superseded
+            assert result1.is_suspended  # Spec 016 FR-013
             assert store["inv-s1"]["status"] in ("superseded", "cancelled")
 
             # First chunk was lifecycle:running

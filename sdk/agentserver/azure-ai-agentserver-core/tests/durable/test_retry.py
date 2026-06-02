@@ -619,10 +619,13 @@ class TestRetryAttemptDurability:
         )
         async def steer_handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
-            # Single-shot: just record and return — no Suspended dance needed
-            # for this assertion. The reset happens at the drain transition,
-            # which is exercised by seeding the steering state below.
-            return f"observed@{ctx.retry_attempt}"
+            # Spec 016 FR-012 (US5): the completion path no longer drains
+            # queued steerers — they receive TaskConflictError. To exercise
+            # the steering-drain reset of _retry_attempt, the handler MUST
+            # suspend rather than return so the drain re-enters for the
+            # queued input.
+            from azure.ai.agentserver.core.durable._run import Suspended  # noqa: PLC0415
+            return await ctx.suspend(reason=f"observed@{ctx.retry_attempt}")
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:

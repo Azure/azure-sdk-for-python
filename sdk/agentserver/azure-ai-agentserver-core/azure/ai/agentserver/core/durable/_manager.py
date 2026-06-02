@@ -89,6 +89,32 @@ _RECLAIM_MAX_RETRIES: int = 3
 _RECLAIM_BACKOFF_BASE_SECONDS: float = 0.2
 
 
+def _resolve_queued_steerers_on_terminal(
+    pending_steering_futures: dict[str, list["asyncio.Future[Any]"]],
+    task_id: str,
+    *,
+    current_status: str,
+) -> None:
+    """Spec 016 FR-012 (US5) helper.
+
+    When a steerable task terminates (handler returned a value or
+    raised), any callers that queued a steering input via
+    ``.start()`` (and got back a TaskRun bound to a future from
+    ``_pending_steering_futures``) MUST receive ``TaskConflictError``
+    on their ``.result()`` — the same shape a fresh ``.start()``
+    against an already-terminal task would raise.
+
+    Pops every queued steerer future for ``task_id`` and resolves
+    each with ``TaskConflictError(current_status=current_status)``.
+    """
+    from ._exceptions import TaskConflictError  # local to avoid cycle
+
+    queued = pending_steering_futures.pop(task_id, [])
+    for fut in queued:
+        if not fut.done():
+            fut.set_exception(TaskConflictError(task_id, current_status))
+
+
 def _lease_is_dead(
     task_info: Any,
     *,
@@ -1378,28 +1404,12 @@ class TaskManager:
                 result = await fn(ctx)
 
                 if isinstance(result, Suspended):
-                    # STEERING: check for pending inputs BEFORE persisting suspend
-                    if opts.steerable:
-                        new_ctx = await self._try_drain_steering(
-                            task_id=task_id,
-                            ctx=ctx,
-                            opts=opts,
-                            result_future=current_result_future,
-                        )
-                        if new_ctx is not None:
-                            # Drain found pending input — loop with new context
-                            ctx = new_ctx
-                            attempt = 0
-                            # Update result future to the new generation's future
-                            active = self._active_tasks.get(task_id)
-                            if (
-                                active
-                                and active.result_future is not current_result_future
-                            ):
-                                current_result_future = active.result_future
-                            continue
-
-                    # No pending steering — normal suspend flow
+                    # Spec 016 FR-011 (US5): the current turn's caller's
+                    # result_future MUST be set to TaskResult(status="suspended",
+                    # output=X, suspension_reason=R) UNCONDITIONALLY — whether
+                    # or not a steering input is queued. The handler's emitted
+                    # output is delivered unchanged. The framework auto-flushes
+                    # metadata at this terminal-of-turn boundary (FR-015).
                     renewal_cancel.set()
                     await ctx.metadata.flush_all()
                     await self._handle_suspend(
@@ -1418,23 +1428,20 @@ class TaskManager:
                                 suspension_reason=result.reason,
                             )
                         )
-                else:
-                    # Guard: task functions must return raw output, not TaskResult
-                    if isinstance(result, TaskResult):
-                        raise TypeError(
-                            "Task function returned TaskResult directly. "
-                            "Return raw output instead — the framework wraps "
-                            "it in TaskResult automatically."
-                        )
 
-                    # STEERING: check for pending before completing
+                    # Spec 016 FR-014 (US5): after the suspend is durably
+                    # persisted AND the current caller's future is resolved,
+                    # check for a queued steering input and re-enter the
+                    # handler for it. The steerer's future (if any) gets
+                    # rotated in as the new current_result_future for the
+                    # next turn.
                     if opts.steerable:
+                        renewal_cancel = asyncio.Event()  # reset for next turn
                         new_ctx = await self._try_drain_steering(
                             task_id=task_id,
                             ctx=ctx,
                             opts=opts,
                             result_future=current_result_future,
-                            partial_output=result,
                         )
                         if new_ctx is not None:
                             ctx = new_ctx
@@ -1446,6 +1453,23 @@ class TaskManager:
                             ):
                                 current_result_future = active.result_future
                             continue
+                else:
+                    # Guard: task functions must return raw output, not TaskResult
+                    if isinstance(result, TaskResult):
+                        raise TypeError(
+                            "Task function returned TaskResult directly. "
+                            "Return raw output instead — the framework wraps "
+                            "it in TaskResult automatically."
+                        )
+
+                    # Spec 016 FR-012 (US5): when the handler returns a
+                    # value, the task transitions to terminal in a single
+                    # store write that clears the queued steering inputs.
+                    # The handler chose to finish (strategy C from §4
+                    # Steering); the queued steerers all receive
+                    # TaskConflictError. There is NO drain on the
+                    # completion path — that was the legacy behavior
+                    # before spec 016.
 
                     # Success flow
                     renewal_cancel.set()
@@ -1456,27 +1480,13 @@ class TaskManager:
                         metadata=ctx.metadata,
                         opts=opts,
                     )
-                    if not completed:
-                        # Etag conflict on steerable completion — re-drain
-                        renewal_cancel = asyncio.Event()  # reset for next iteration
-                        new_ctx = await self._try_drain_steering(
-                            task_id=task_id,
-                            ctx=ctx,
-                            opts=opts,
-                            result_future=current_result_future,
-                            partial_output=result,
-                        )
-                        if new_ctx is not None:
-                            ctx = new_ctx
-                            attempt = 0
-                            active = self._active_tasks.get(task_id)
-                            if (
-                                active
-                                and active.result_future is not current_result_future
-                            ):
-                                current_result_future = active.result_future
-                            continue
-                        # No pending found despite conflict — complete anyway
+                    # Spec 016 FR-012 (US5): set the current turn's caller's
+                    # result_future to the completion outcome FIRST, then
+                    # resolve any queued steerers with TaskConflictError
+                    # (since the task has now terminated). The handler's
+                    # return value is delivered unchanged to the current
+                    # caller; the queued steerers see the "task is busy /
+                    # terminal" shape per Invariant 1.
                     if not current_result_future.done():
                         current_result_future.set_result(
                             TaskResult(
@@ -1485,6 +1495,20 @@ class TaskManager:
                                 status="completed",
                             )
                         )
+                    # Spec 016 FR-012: queued steerers (registered via
+                    # _register_steering_future) get TaskConflictError on
+                    # terminal completion since the task is now done.
+                    _resolve_queued_steerers_on_terminal(
+                        self._pending_steering_futures,
+                        task_id,
+                        current_status="completed",
+                    )
+                    if not completed:
+                        # Etag conflict on steerable completion — but the
+                        # caller's future is now resolved with the completion
+                        # outcome (per FR-012), so we don't re-drain; the
+                        # next .start() will pick up any queued state.
+                        pass
 
                 break  # exit retry loop on success or suspend
 
@@ -1581,6 +1605,13 @@ class TaskManager:
                 )
                 if not current_result_future.done():
                     current_result_future.set_exception(TaskFailed(task_id, error_dict))
+                # Spec 016 FR-012 (US5): queued steerers see TaskConflictError
+                # on terminal failure since the task is now done.
+                _resolve_queued_steerers_on_terminal(
+                    self._pending_steering_futures,
+                    task_id,
+                    current_status="failed",
+                )
                 break
 
         self._active_tasks.pop(task_id, None)
@@ -1687,11 +1718,22 @@ class TaskManager:
             new_future = steering_futures.pop(0)
             had_registered_future = True
 
-        # Resolve the superseded generation's future (only for external steer callers)
-        if had_registered_future and not result_future.done():
-            result_future.set_result(
-                TaskResult(task_id=task_id, output=partial_output, status="superseded")
-            )
+        # Resolve the queued steerer's future binding for the new turn.
+        # Spec 016 FR-013 / FR-014 (US5): the OLD result_future is NOT
+        # set to "superseded" here — the suspend path (or completion
+        # path) above has ALREADY set it to the natural multi-turn
+        # outcome before this drain runs. The drain just rotates the
+        # active result_future so the next turn's handler invocation
+        # is bound to the steerer's future (the caller that queued the
+        # input via .start()) if one was registered.
+        if new_future is None:
+            # No registered steerer for this drain — reuse the OLD
+            # result_future as the new turn's future. This is the rare
+            # case where the drain was triggered by a poll-based
+            # backlog rather than a fresh .start() call. The future
+            # may already be done (from the suspend resolution above);
+            # if so, leave it.
+            new_future = result_future
 
         # Update active generation future
         if new_future is not None:
