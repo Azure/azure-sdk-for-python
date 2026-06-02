@@ -1,22 +1,33 @@
 # Durable Research Agent — Demo
 
-A `@task`-decorated long-running research agent that demonstrates three
+A `@task`-decorated long-running research agent that demonstrates two
 platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 
-1. **Long-running tasks (>15 min)** — the sandbox stays alive without
-   client ingress because the durable-task framework's lease-renewal cycle
-   internally exercises the readiness probe. As long as a `@task` handler
-   is executing, the platform keeps the container alive.
-2. **Crash recovery** — when the container dies, the platform brings it
-   back **as soon as the next ingress request arrives** (in ~10 seconds
-   in our measurements). The durable task auto-resumes from its last
-   checkpoint via `ctx.entry_mode == "recovered"`. Note: crashed
-   containers are NOT autonomously restarted on a timer; the wake-up is
-   triggered by the next incoming request.
-3. **Steering** — sending a new turn on a running steerable task queues
+1. **Crash + idle recovery** — when the container dies (whether from an
+   intentional crash, OOM, or platform-driven idle reclaim after the
+   ~15-min idle window expires), the platform brings it back **on the
+   next ingress request** (in ~10 seconds in our measurements). The
+   durable task then auto-resumes from its last checkpoint via
+   `ctx.entry_mode == "recovered"`. The user-visible experience: any
+   reconnect attempt seamlessly continues the run.
+
+2. **Steering** — sending a new turn on a running steerable task queues
    the input and signals cooperative cancel. The agent winds down the
    current turn at the next checkpoint boundary and re-enters with the
    queued input as a fresh turn.
+
+> **Note on long-running tasks.** Empirically on the current platform
+> deployment, the sandbox is reclaimed ~15 minutes after the last
+> *user-facing* ingress, regardless of whether a `@task` handler is
+> still executing. The framework's lease-renewal cycle (intended to
+> count as `/readiness` ingress and extend the lifetime) does **not**
+> appear to extend the idle window on this deployment. Long-running
+> tasks therefore complete by being reclaimed-and-recovered repeatedly,
+> not by running uninterrupted on a single container — which is the
+> whole point of `@task` durability. (If/when the lease-renewal
+> readiness-ingress story lands on the platform, long-running tasks
+> will additionally be able to run uninterrupted on a single
+> container.)
 
 ## What the agent does
 
@@ -71,31 +82,34 @@ at the canonical e2e-tests-westus2 deployment; edit `ENDPOINT=` in
 
 ## Demo workflows
 
-### A. Long-running run + no-ingress verification (~45 min)
+### A. Long-running run + crash-recovery story (~45 min total wall time)
 
-Proves capability #1 — the sandbox stays alive without our HTTP traffic
-because the durable-task lease renewal extends its lifetime.
+Proves capability #1 — even though the sandbox is reclaimed at the
+~15-min idle mark, the durable task picks up where it left off when you
+reconnect.
 
 ```bash
-# t = 0:00   Start a fresh run.
-./demo-client.sh start "the future of quantum computing"
-# Watch phase 1 and phase 2 stream.
-# Note the server_time_utc on each event.
+# t = 0:00   Dispatch the run. Default config = 15 phases × ~3 min ≈ 45 min wall time.
+./demo-client.sh start "the future of nuclear fusion"
+# Watch a few phases stream. Note server_time_utc on each event.
 
-# t = 5:00   Disconnect — close the terminal entirely.
-#            Zero ingress from this machine for the next 15-20 minutes.
+# t = 5:00   Close the terminal entirely.
 
 # t = 20:00  Open a new terminal:
 ./demo-client.sh stream
-# Scroll back. You should see phase headers timestamped at every ~3 min
-# during the window you were disconnected — proof that the server kept
-# running the task without your traffic to extend the sandbox lifetime.
+# The container was reclaimed during your dead window. Your reconnect
+# triggers the platform to bring it back (~10 sec). You'll see:
+#   🔁 Recovered from crash   resuming from phase N/15
+#   server_uptime_sec=1.3    ← fresh container
+# ...and the stream continues. Repeat any number of times; each
+# reconnect brings the container back and resumes from the latest
+# checkpoint.
 ```
 
-### B. Crash + recovery (next-ingress wake-up)
+### B. Explicit crash + recovery (faster version of A)
 
-Proves capability #2 — when a crashed container receives a new request,
-the platform brings it back in ~10 sec and the durable task auto-resumes.
+Same recovery story as A but triggered explicitly with the demo crash
+sentinel rather than waiting for the natural ~15-min idle reclaim.
 
 ```bash
 # Terminal 1: start a fresh run, leave it streaming.
