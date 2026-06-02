@@ -59,7 +59,7 @@ class MachineLearningServicesClient:
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/genericasset/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices"
+        _endpoint = "{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices"
         self._config = MachineLearningServicesClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,

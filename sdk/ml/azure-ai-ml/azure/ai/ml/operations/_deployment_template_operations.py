@@ -56,12 +56,18 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         """
         if self.__service_client is None:
             endpoint = self._get_registry_endpoint()
+            # Only pass through kwargs that the TypeSpec-generated AzureAiAssetsClient
+            # can handle. MLClient injects kwargs like 'cloud', 'credential_scopes',
+            # 'client_request_id', 'request_id' which break the client's HTTP pipeline
+            # when passed through to its policies.
+            _allowed_kwargs = ("user_agent", "logging_enable")
+            client_kwargs = {k: v for k, v in self._service_client_kwargs.items() if k in _allowed_kwargs}
             self.__service_client = AzureAiAssetsClient(
                 endpoint=endpoint,
                 subscription_id=self._operation_scope.subscription_id,
                 resource_group_name=self._operation_scope.resource_group_name,
                 credential=self._credential,
-                **self._service_client_kwargs,
+                **client_kwargs,
             )
         return self.__service_client
 
@@ -84,17 +90,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                 RegistryDiscoveryClient as ServiceClientRegistryDiscovery,
             )
 
-            # Try to get credential from service client or operation config
-            credential = None
-            if hasattr(self._service_client, "_config") and hasattr(self._service_client._config, "credential"):
-                credential = self._service_client._config.credential
-            elif hasattr(self._operation_config, "credential"):
-                credential = self._operation_config.credential
-
-            if credential and self._operation_scope.registry_name:
+            if self._credential and self._operation_scope.registry_name:
                 # Use registry discovery API to get the primary region
                 discovery_base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
-                discovery_client = ServiceClientRegistryDiscovery(credential=credential, base_url=discovery_base_url)
+                discovery_client = ServiceClientRegistryDiscovery(credential=self._credential, base_url=discovery_base_url)
                 response = discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(
                     self._operation_scope.registry_name
                 )
@@ -106,7 +105,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             module_logger.debug("Could not determine registry region dynamically: %s. Using default.", e)
 
         # Fallback to default region if unable to determine dynamically
-        return "https://int.experiments.azureml-test.net"
+        return "https://eastus.api.azureml.ms"
 
     def _convert_dict_to_deployment_template(self, dict_data: Dict[str, Any]) -> DeploymentTemplate:
         """Convert dictionary format to DeploymentTemplate object.
@@ -362,14 +361,20 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             raise ValueError("deployment_template must be a DeploymentTemplate object")
 
         rest_object = deployment_template._to_rest_object()
-        self._service_client.deployment_templates.begin_create(
+        poller = self._service_client.deployment_templates.begin_create(
             registry_name=self._operation_scope.registry_name,
             name=deployment_template.name,
             version=deployment_template.version,
             body=rest_object,
+            polling=False,
             **kwargs,
         )
-        return deployment_template
+        # Fire the LRO but don't wait for polling — the asset is available immediately.
+        # Fetch the created/updated resource to return the server-side state.
+        try:
+            return self.get(deployment_template.name, deployment_template.version)
+        except Exception:
+            return deployment_template
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Delete", ActivityType.PUBLICAPI)
