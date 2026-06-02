@@ -2,7 +2,7 @@
 
 ## 1.0.2 (2026-06-01)
 
-### Deprecation
+### Other Changes
 
 - This package has been deprecated and will no longer be maintained after 10-31-2025. The underlying service has been retired.
 
