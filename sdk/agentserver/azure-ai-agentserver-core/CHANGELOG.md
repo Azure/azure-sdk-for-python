@@ -1,5 +1,130 @@
 # Release History
 
+## 2.0.0b6 (Unreleased)
+
+### Features Added
+
+**Durable tasks — new primitive.** This release introduces the durable-task
+primitive: a small decorator-driven API that lets a hosted agent run long
+operations as **named tasks** that survive process crashes, OOM kills, and
+container redeployments. Tasks pick up exactly where they were after recovery,
+without the developer writing any explicit checkpoint or replay code.
+
+The full developer learning arc lives in
+[`docs/durable-task-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md).
+A short tour:
+
+```python
+from azure.ai.agentserver.core.durable import task
+
+@task(name="long_research")
+async def do_research(ctx, prompt: str) -> dict:
+    # ctx.entry_mode tells you "fresh" | "resumed" | "recovered"
+    if ctx.entry_mode == "recovered":
+        # Pick up from where you were, using ctx.metadata
+        ...
+    await ctx.stream({"phase": "searching"})
+    ...
+    return {"summary": "..."}
+
+# In your handler:
+run = await do_research.run(task_id="task-123", input={"prompt": "..."})
+async for chunk in run:
+    ...
+result = await run.result()
+```
+
+**Concepts shipping in this release**
+
+- `@task(...)` decorator + `Task` returned object with `.run()`, `.start()`,
+  `.options(...)`, `.get_active_run(task_id)`.
+- `TaskContext` — passed to every handler invocation. Exposes `entry_mode`,
+  `input`, `metadata` (with auto-flush at lifecycle boundaries), `cancel`
+  (an `asyncio.Event`), the cause booleans `timeout_exceeded` and
+  `cancel_requested`, the steering signals `pending_input_count` and
+  `is_steered_turn`, the shutdown signal `shutdown`, the retry counter
+  `retry_attempt`, and the recovery counter `recovery_count`. Provides
+  `ctx.suspend(output=...)`, `ctx.stream(chunk)`, and
+  `ctx.exit_for_recovery()` (used during graceful shutdown to leave the
+  stored status `in_progress` so the next process recovers the task).
+- `TaskResult.status` — `Literal["completed", "suspended"]`. Failure paths
+  surface as exceptions (`TaskFailed`, `TaskCancelled`,
+  `TaskConflictError`); the stored status is `"completed"` plus an error
+  payload.
+- `TaskConflictError` — single error type for any "task is busy / not
+  available" state (live elsewhere, recovered elsewhere, evicted under
+  split-brain protection, terminal with queued steerer). Carries
+  `current_status` so callers can branch.
+- `RetryPolicy` — exponential / fixed / linear backoff presets, durable
+  across crash and recovery (failures-only; crash recovery does not
+  consume retry budget).
+- `EntryMode` Literal: `"fresh" | "resumed" | "recovered"`.
+- `Suspended` (sentinel for `.run()` of a suspended task),
+  `TaskStatus` Literal (`"pending" | "in_progress" | "suspended" | "completed"`),
+  `TaskMetadata`, `StreamHandler`, `StreamHandlerFactory`, `QueueStreamHandler`.
+
+**Behavior shipping in this release**
+
+- **Automatic recovery.** Crashed-mid-task records are detected at three
+  layers — startup scan, periodic background scan, and inline reclaim at
+  every scheduling primitive (`.run`, `.start`, `.get_active_run`). The
+  developer sees `ctx.entry_mode == "recovered"` and otherwise the same
+  `TaskContext` surface as on a fresh entry.
+- **Split-brain protection.** A new agent process that takes over a session
+  cancels stranded executions in the previous process cleanly via
+  `HTTP 409 binding_mismatch`. The previous process classifies this as
+  *evicted*, cancels its execution, suppresses its terminal write, and
+  signals its awaiters with `TaskConflictError`. Caller-observable behavior
+  matches the live-elsewhere case.
+- **Steering as plain multi-turn.** `Task.start(...)` on an already-active
+  steerable task queues the new input. The first turn's `ctx.suspend(...)`
+  call resolves the steerer's `.result()` with the *next* turn's outcome,
+  delivering plain pipelined-handler semantics with no separate "superseded"
+  status. The first turn's caller observes the natural outcome of the first
+  turn unchanged.
+- **Per-turn wall-clock timeout.** `@task(timeout=...)` is anchored to a
+  persisted per-turn-start timestamp. A crash mid-turn does NOT reset the
+  budget; the recovered watchdog computes
+  `remaining = max(0, timeout - (now - turn_started_at))`. The watchdog is
+  cooperative-only: it sets `ctx.timeout_exceeded = True` then
+  `ctx.cancel.set()` — handlers that ignore both run until the process ends
+  or `TaskRun.cancel()` is called externally.
+- **Metadata auto-flush at lifecycle boundaries.** `ctx.metadata` is
+  flushed automatically at every terminal-of-turn boundary (suspend,
+  complete, cooperative cancel, exception, suspend-with-queued-steering,
+  return-with-queued-steering, raise-with-queued-steering, shutdown via
+  `exit_for_recovery`). Explicit `ctx.metadata.flush()` remains available
+  as a fence before at-most-once side effects.
+- **Bookkeeping is durable.** Suspended-resume input patches are
+  ETag-protected. Steerable input data is cleared from the stored record at
+  the suspend transition (data minimization). The lease owner string
+  incorporates both `FOUNDRY_AGENT_NAME` and session ID, so two different
+  agents sharing a session ID cannot collide on lease ownership.
+
+**Transport**
+
+- `HostedTaskProvider` is built on `azure.core.AsyncPipelineClient` with
+  the standard policy chain (request-id, headers, user-agent, retry,
+  `AsyncBearerTokenCredentialPolicy`, task-API logging, distributed
+  tracing). `ContentDecodePolicy` is intentionally excluded; body parsing
+  happens at the call site with defensive error handling. The retry policy
+  retries on 5xx / 408 / 429 only — never on 409 regardless of body. The
+  `credential` parameter on `HostedTaskProvider.__init__` is typed
+  `AsyncTokenCredential`.
+- `httpx` is no longer a production dependency.
+
+**Documentation & tests**
+
+- New developer guide at `docs/durable-task-guide.md` is the end-to-end
+  learning arc for the primitive (concepts → reference → patterns →
+  troubleshooting).
+- New doc-review meta-test (`tests/durable/test_dev_guide_review.py`) keeps
+  the guide and the public surface in sync.
+- The durable-task test suite (`tests/durable/`) covers the public surface
+  contract, recovery in all three layers, eviction, steering as
+  multi-turn, the per-turn-wall-clock-durable timeout, and metadata
+  auto-flush invariants.
+
 ## 2.0.0b5 (2026-05-25)
 
 ### Bugs Fixed
@@ -8,164 +133,19 @@
 
 ## 2.0.0b4 (2026-05-21)
 
-The durable-task primitive (`@task`, `TaskContext`, `TaskRun`, `TaskResult`,
-`TaskManager`) ships in this release. The shape below is the **initial-release
-contract** for the primitive; nothing here is a delta against a prior release
-of the primitive (it has not shipped before). For non-durable-task changes in
-this release (developer-guide tightening, transport-layer policies, observability,
-config), see the subsections after "Public surface".
+### Features Added
 
-### Public surface — durable-task primitive
+- Added `_platform_headers` module with cross-cutting protocol header name constants (`x-request-id`, `x-platform-server`, `x-agent-session-id`, `x-platform-error-source`, `x-platform-error-detail`, and others). Protocol packages now import shared header name strings from core instead of maintaining their own copies.
+- Added `TraceContextMiddleware` — a lightweight pure-ASGI middleware that propagates W3C trace context (`traceparent`, `tracestate`) and baggage from incoming HTTP requests. Any spans created by downstream frameworks (e.g. MAF / agent-framework) are automatically children of the caller's trace without additional framework spans.
+- Added `enable_sensitive_data` parameter to `configure_observability()` to control whether prompts, tool arguments, and results are recorded in telemetry. Respects `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable.
+- Added A365 tracing export support — when `FOUNDRY_HOSTING_ENVIRONMENT` and `FOUNDRY_AGENT365_TRACING_ENABLED` are set, telemetry is exported via the A365 observability pipeline.
+- Added `resolve_agent_id()`, `resolve_agent_blueprint_id()`, and `resolve_agent_tenant_id()` config helpers for new Foundry environment variables (`FOUNDRY_AGENT_INSTANCE_CLIENT_ID`, `FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID`, `FOUNDRY_AGENT_TENANT_ID`).
+- Added `gen_ai.agent.blueprint.id` and `microsoft.tenant.id` span attributes to the `FoundryEnrichmentSpanProcessor`.
+- `AgentConfig.ws_ping_interval` — new field resolved from the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers). `0` disables; negative/non-finite values raise `ValueError` at startup. `AgentServerHost._build_hypercorn_config` wires this into Hypercorn's `websocket_ping_interval` so any protocol package serving WebSocket routes inherits keep-alive without per-package wiring.
 
-**Top-level package** (`from azure.ai.agentserver.core.durable import ...`):
+### Breaking Changes
 
-`task`, `Task`, `RetryPolicy`, `TaskContext`, `TaskMetadata`, `TaskResult`,
-`TaskRun`, `Suspended`, `TaskStatus`, `EntryMode`, `TaskFailed`,
-`TaskCancelled`, `TaskNotFound`, `TaskConflictError`,
-`LastInputIdPreconditionFailed`, `SteeringQueueFull`, `TaskPreconditionFailed`,
-`StreamHandler`, `StreamHandlerFactory`, `QueueStreamHandler`.
-
-**`@task(...)` decorator keywords**: `name`, `title`, `tags`, `timeout`,
-`ephemeral`, `retry`, `steerable`, `stream_handler_factory`. The same keywords
-are accepted by `Task.options(...)` to derive a variant with overrides.
-
-**`Task.run()` / `Task.start()` call-site keywords**: `task_id`, `input`,
-`input_id`, `if_last_input_id`.
-
-**`TaskResult.status`** is `Literal["completed", "suspended"]` — two values only.
-There is no third status. Steering is plain multi-turn (see §4 Steering of the
-dev guide): the first turn's caller observes the natural outcome; the steerer's
-`.result()` resolves with the next turn's outcome (or raises `TaskConflictError`
-if the handler ended the task).
-
-**`TaskConflictError`** is the **single error type** for any "task is busy / not
-available" state. It carries `current_status` so the caller can branch on which
-flavor of conflict it is: live-elsewhere non-steerable, dead-evicted
-(split-brain protection), or terminal-with-queued-steerer.
-
-**`TaskContext`** public properties: `input`, `entry_mode`, `task_id`,
-`metadata`, `cancel` (bare `asyncio.Event`), `timeout_exceeded` (`bool`),
-`cancel_requested` (`bool`), `pending_input_count` (`int`, live), `is_steered_turn`
-(`bool`), `shutdown` (`asyncio.Event`), `retry_attempt`, `recovery_count`.
-Public methods: `await ctx.suspend(output=...)`, `await ctx.stream(chunk)`,
-`await ctx.exit_for_recovery()`.
-
-**`@task(timeout=...)`** is **per-turn**, **wall-clock**, **durable** across
-crashes within a turn, and **cooperative-only**. Each handler turn (fresh entry,
-suspended-to-resume, steering drain re-entry) gets a fresh budget. A crash
-mid-turn does NOT reset the budget; the recovered watchdog computes
-`remaining = max(0, timeout - (now - turn_started_at))` clamped to
-`[0, timeout]`. The watchdog sets `ctx.timeout_exceeded = True` then
-`ctx.cancel.set()` then exits — it does NOT force-stop the handler.
-
-**`ctx.exit_for_recovery()`** is the prescribed shutdown shape. Callable only
-when `ctx.shutdown.is_set() == True`; misuse raises `RuntimeError` at the call
-site. The framework flushes metadata, releases the lease, leaves the stored
-status as `in_progress`, signals the caller with `TaskCancelled`, and preserves
-queued steering inputs. The recovery scan on next process startup re-enters the
-handler with `ctx.entry_mode == "recovered"`.
-
-**`ctx.metadata`** auto-flushes at every terminal-of-turn boundary
-(normal-suspend, normal-complete, cooperative-cancel, exception,
-suspend-with-queued-steering, return-with-queued-steering,
-raise-with-queued-steering, shutdown-via-`exit_for_recovery`). Explicit
-`ctx.metadata.flush()` calls remain available as a fence before at-most-once
-side effects but are NOT required for durability across graceful boundaries.
-
-**Recovery** is framework-managed and observable only via
-`ctx.entry_mode == "recovered"`. Three internal layers — hardened startup
-scan, periodic background scan, inline reclaim on scheduling primitives —
-share a single reclaim helper guarded by ETag CAS. The lease owner string
-incorporates both agent name (`FOUNDRY_AGENT_NAME`) and session ID, so two
-different agents sharing a session ID cannot collide on lease ownership.
-
-**Eviction (split-brain protection)** is handled silently by the framework.
-Store-write rejections of `HTTP 409` with body `$.error.code == "binding_mismatch"`
-are classified as `evicted`; the local cleanup sequence (cancel execution,
-suppress terminal write, signal awaiters with `TaskConflictError`) runs
-atomically. Caller-observable outcomes at scheduling primitives are identical
-to the live-elsewhere case — only operator WARNING logs differentiate.
-
-### Public surface — transport layer
-
-**`HostedTaskProvider`** is built on `azure.core.AsyncPipelineClient` with the
-standard policy chain (request-id, headers, user-agent, retry,
-`AsyncBearerTokenCredentialPolicy`, task-API logging, distributed tracing).
-`ContentDecodePolicy` is intentionally excluded — body parsing happens at the
-call site with defensive error handling (the responses-storage gzip lesson).
-The retry policy is configured to retry on 5xx / 408 / 429 only; never on 409
-regardless of body. The `credential` parameter on `HostedTaskProvider.__init__`
-is typed `AsyncTokenCredential`.
-
-The `httpx` package is no longer a production dependency of
-`azure-ai-agentserver-core`.
-
-### Documentation
-
-- **Consolidated developer guide** (`docs/durable-task-guide.md`) is the
-  end-to-end learning arc for the durable-task primitive. New §4 subsections:
-  Cancellation (independent cause booleans), Timeout (per-turn / wall-clock /
-  durable / cooperative-only), Shutdown (`ctx.exit_for_recovery()`). The
-  Steering subsection is rewritten for plain multi-turn semantics. The
-  Reference section enumerates the final `TaskContext` surface. The
-  Stale-task-recovery section is gone — recovery is framework-managed with
-  no developer knob.
-- **Doc-review meta-test** (`tests/durable/test_dev_guide_review.py`) is
-  extended with the spec 016 presence/absence invariants — guide will fail
-  CI if `stale_timeout` / `superseded` / `is_superseded` /
-  `_pending_steering_futures` / `was_steered` / `pending_inputs` /
-  `steering_generation` / `CancelSignal` / `TaskTerminated` / `.terminate(`
-  reappear in the guide body, or if `ctx.timeout_exceeded` /
-  `ctx.cancel_requested` / `ctx.pending_input_count` / `ctx.is_steered_turn` /
-  `ctx.exit_for_recovery` go missing from §4 Concepts or §5 Reference.
-
-### Bugs Fixed
-
-- **Input data cleared at suspend for steerable tasks** (privacy / data
-  minimization). The framework clears `payload["input"]` and
-  `_steering["active_input"]` at the suspend transition.
-- **Suspended-resume input patch is now etag-protected**. Concurrent resumes
-  of the same suspended task race safely under the standard etag retry loop.
-- **TaskManager shutdown tolerates lifespan cancellation**. The graceful
-  shutdown sleep and lease-expire steps are wrapped to catch
-  `asyncio.CancelledError` so handlers always reach the
-  `execution_task.cancel()` step.
-- **Lease owner string includes agent name AND session ID**. Two different
-  agents sharing a session ID no longer collide on lease ownership.
-- **Steering surface is plain multi-turn**. Removed the dead
-  `_steering["generation_results"]` write block and the parallel
-  `_pending_steering_futures` tracking; steerers now bind through the same
-  result-future mechanism as the first-turn caller. The first turn's
-  `ctx.suspend(output=X)` emission is delivered unconditionally — never
-  replaced by what a later turn produces.
-- **Per-turn timeout durability**. `@task(timeout=...)` is anchored to a
-  persisted per-turn-start timestamp; crash recovery resumes the watchdog
-  with the correct remaining budget; clock-skew is clamped to
-  `[0, timeout]`.
-- **Watchdog docstring corrected**. The previous claim that the timeout
-  watchdog would "eventually expire the lease and the task will be
-  recovered" was false; the watchdog is cooperative-only and an ignoring
-  handler runs until process death or external `TaskRun.cancel()`.
-
-### Features Added — non-durable-task
-
-- **Input acceptance preconditions on `Task.start(...)`**. New optional
-  `input_id` and `if_last_input_id` keyword arguments model HTTP
-  `If-Match: <etag>` semantics on a task's input queue. Mismatch raises
-  `LastInputIdPreconditionFailed` (subclass of `TaskPreconditionFailed`).
-- Added `_platform_headers` module with cross-cutting protocol header name
-  constants.
-- Added `TraceContextMiddleware` — pure-ASGI middleware that propagates
-  W3C trace context from incoming HTTP requests.
-- Added `enable_sensitive_data` parameter to `configure_observability()`.
-- Added A365 tracing export support.
-- Added `resolve_agent_id()`, `resolve_agent_blueprint_id()`,
-  `resolve_agent_tenant_id()` config helpers.
-- Added `gen_ai.agent.blueprint.id` and `microsoft.tenant.id` span
-  attributes to `FoundryEnrichmentSpanProcessor`.
-- `AgentConfig.ws_ping_interval` from `WS_KEEPALIVE_INTERVAL` env var.
-- Removed `request_span()` from `AgentServerHost` (handled automatically by
-  `TraceContextMiddleware`).
+- Removed `request_span()` method from `AgentServerHost`. Trace context propagation is now handled automatically by `TraceContextMiddleware`.
 
 ## 2.0.0b3 (2026-04-22)
 

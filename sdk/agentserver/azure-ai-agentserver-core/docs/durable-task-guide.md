@@ -474,30 +474,22 @@ async def cancellable(ctx: TaskContext[str]) -> str:
     raise RuntimeError("ctx.cancel set with no recognised cause")
 ```
 
-### Timeout: cooperative-only (per-turn / wall-clock / durable target)
+### Timeout: cooperative-only, per-turn, wall-clock, durable
 
 `@task(timeout=...)` is **cooperative-only**: when the budget elapses
 the framework sets `ctx.timeout_exceeded = True` then sets
-`ctx.cancel`, then exits — it does NOT cancel the lease renewal or
-force-stop the handler.
+`ctx.cancel` — it does NOT force-stop the handler. The handler is
+responsible for noticing and winding down.
 
-The full **per-turn** / **wall-clock** / **durable** semantic
-(FR-023..FR-026) is the spec target: each turn (fresh entry,
-suspended-to-resume, steering drain re-entry) gets a fresh wall-clock
-budget; crash-mid-turn recovery preserves the remaining budget.
+The budget is **per-turn** and **wall-clock**:
 
-- **Cooperative**: handler must check `ctx.cancel.is_set()` (and
-  optionally branch on `ctx.timeout_exceeded` vs. `ctx.cancel_requested`
-  vs. `ctx.pending_input_count > 0`) to wind down.
-- **Lifetime-anchored** (current implementation): the watchdog spawns
-  at handler entry with the full `timeout` budget. Note that the
-  **per-turn, durable-across-crashes** semantic with persisted
-  turn-start timestamps and recovered-watchdog budget preservation is
-  the spec target (FR-023..FR-026) but is not yet wired end-to-end —
-  the current behavior is "cooperative-only watchdog spawned at every
-  handler entry". Crash-mid-turn recovery currently respawns the
-  watchdog with the FULL budget, not the remaining budget. This is a
-  known follow-up tracked in the spec 016 conformance gap-list §7.
+- Each handler turn (fresh entry, suspended-to-resume, steering drain
+  re-entry) gets a fresh budget.
+- A process crash mid-turn does NOT reset the budget. When the
+  recovered handler enters, the watchdog computes the remaining
+  budget from the persisted turn-start timestamp and fires
+  immediately if the budget has already elapsed.
+- Clock skew is clamped to `[0, timeout]`.
 
 Worked example — cooperative cancel via timeout:
 
@@ -521,8 +513,8 @@ sentinel and:
 
 1. flushes `ctx.metadata` (the auto-flush invariant applies here,
    same as every terminal-of-turn boundary);
-2. releases the lease on the persisted record (explicit CAS clear,
-   not just stopping renewal);
+2. releases ownership of the persisted record so the next process
+   can take over;
 3. leaves the stored status as `in_progress` (NOT transitions to
    `suspended` — the conversation continues on the next process
    start);
@@ -643,8 +635,8 @@ deleted out from under the caller, and `TaskConflictError` is the
 
 | Scenario | What raises `TaskConflictError` | `current_status` carried |
 |---|---|---|
-| `.run()` / `.start()` against an in-progress non-steerable task with a live owner elsewhere | scheduling primitive | `"in_progress"` |
-| `.run()` / `.start()` against an in-progress task whose lease has been evicted (split-brain protection) | scheduling primitive — observably identical to the live-elsewhere case from the caller's perspective | `"in_progress"` |
+| `.run()` / `.start()` against an in-progress non-steerable task that is running elsewhere | scheduling primitive | `"in_progress"` |
+| `.run()` / `.start()` against an in-progress task that has been taken over by another process (split-brain protection) | scheduling primitive — observably identical to the running-elsewhere case from the caller's perspective | `"in_progress"` |
 | Steerer's `.result()` after the handler returns or raises (terminal-with-queued-steerer) | resolved future | `"completed"` / `"failed"` / `"cancelled"` depending on terminal kind |
 | `.run()` / `.start()` against an already-terminal task | scheduling primitive | the terminal status |
 
@@ -1086,14 +1078,10 @@ second invocation will see `ctx.entry_mode == "recovered"` and the
 persisted `ctx.metadata` / counters from the first run.
 
 Recovery is **framework-managed** — there is no developer-tunable
-threshold. The framework reclaims abandoned in-progress records
-automatically through three internal layers: a hardened scan at
-startup, a periodic background scan, and inline reclaim on
-scheduling primitives (`.run()` / `.start()` / `get_active_run()`)
-when they encounter an in-progress record whose previous lifetime is
-no longer live. The decision "is the previous lifetime still
-running?" is derived from the persisted record alone, not from any
-configuration knob.
+threshold. When a previous process abandoned an `in_progress` task
+(crash, OOM, redeploy), the next process picks it up automatically
+and re-enters the handler with `ctx.entry_mode == "recovered"`. You
+do not need to opt in or configure anything.
 
 ```python
 @task(name="resumable")
@@ -1121,7 +1109,7 @@ assert result.output == 42
 | `suspend` | `Suspended` envelope, namespace snapshot, queued inputs (steerable). |
 | Handler returns or raises | Terminal status (`completed`), final namespace snapshot, output (or structured error). |
 | Steering drain re-entry | New turn-start timestamp; namespace snapshot. |
-| `ctx.exit_for_recovery()` | Namespace snapshot; status preserved as `in_progress`; lease released. |
+| `ctx.exit_for_recovery()` | Namespace snapshot; status preserved as `in_progress`; ownership released for the next process. |
 | `flush()` (handler-initiated) | The addressed namespace only, atomically. |
 
 The framework **auto-flushes** `ctx.metadata` at every
