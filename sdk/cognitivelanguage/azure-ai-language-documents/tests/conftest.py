@@ -30,6 +30,7 @@ def add_sanitizers(test_proxy):
     analyzedocuments_client_secret = os.environ.get(
         "ANALYZEDOCUMENTS_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
     )
+    analyzedocuments_endpoint = os.environ.get("ANALYZEDOCUMENTS_ENDPOINT")
     analyzedocuments_source_location = os.environ.get(
         "ANALYZEDOCUMENTS_SOURCE_LOCATION",
         "https://fakeaccount.blob.core.windows.net/input/fake.docx",
@@ -43,6 +44,17 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=analyzedocuments_tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=analyzedocuments_client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=analyzedocuments_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    if analyzedocuments_endpoint:
+        normalized_endpoint = analyzedocuments_endpoint.rstrip("/")
+        add_general_regex_sanitizer(
+            regex=re.escape(normalized_endpoint),
+            value="https://fake_analyzedocuments_endpoint.com",
+        )
+        add_general_regex_sanitizer(
+            regex=re.escape(normalized_endpoint + "/"),
+            value="https://fake_analyzedocuments_endpoint.com/",
+        )
 
     add_general_regex_sanitizer(
         regex=re.escape(analyzedocuments_source_location),
