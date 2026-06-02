@@ -31,10 +31,25 @@ from azure.cosmos._routing.routing_map_provider import (
 class TestRoutingMapProvider(unittest.TestCase):
     @staticmethod
     def _capture_internal_headers(kwargs, etag):
+        """Capture ETag header and HTTP status into the drain-loop sidecars.
+
+        Returns ``True`` when this call should behave like a wire 304 — i.e.
+        the drain loop's ``If-None-Match`` matches the etag this mock is
+        about to return. Mocks that simulate a stable snapshot pass a stable
+        etag here so the drain terminates after one data page + one 304.
+        Mocks that simulate a snapshot change advance to a new etag value
+        on the next "logical" drain so the previous INM no longer matches.
+        """
+        inm = (kwargs.get('headers') or {}).get('If-None-Match')
+        is_304 = inm is not None and inm == etag
         captured_headers = kwargs.get('_internal_response_headers_capture')
         if captured_headers is not None:
             captured_headers.clear()
             captured_headers.update({'ETag': etag})
+        status_capture = kwargs.get('_internal_response_status_capture')
+        if status_capture is not None:
+            status_capture[0] = 304 if is_304 else 200
+        return is_304
 
     class MockedCosmosClientConnection(object):
 
@@ -43,7 +58,8 @@ class TestRoutingMapProvider(unittest.TestCase):
             self.url_connection = "https://mock-test.documents.azure.com:443/"
 
         def _ReadPartitionKeyRanges(self, _collection_link: str, _feed_options: Optional[Mapping[str, Any]] = None, **kwargs):
-            TestRoutingMapProvider._capture_internal_headers(kwargs, '"test-etag-1"')
+            if TestRoutingMapProvider._capture_internal_headers(kwargs, '"test-etag-1"'):
+                return []
             return self.partition_key_ranges
 
     def tearDown(self):
@@ -246,7 +262,8 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         class HookAwareClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                TestRoutingMapProvider._capture_internal_headers(kwargs, expected_internal_etag)
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, expected_internal_etag):
+                    return []
                 response_hook = kwargs.get('response_hook')
                 if response_hook:
                     response_hook({'ETag': '"user-hook-etag"'}, None)
@@ -275,7 +292,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                TestRoutingMapProvider._capture_internal_headers(kwargs, '"test-etag-1"')
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, '"test-etag-1"'):
+                    return []
                 return original_ranges
 
         provider = PartitionKeyRangeCache(CountingClient())
@@ -285,7 +303,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         result2 = provider.get_routing_map(collection_link, feed_options={})
 
         self.assertIs(result1, result2, "Second call should return the exact same cached object")
-        self.assertEqual(call_count['count'], 1, "Service should only be called once")
+        # One logical drain == data page + final 304 page (matches peer SDKs).
+        self.assertEqual(call_count['count'], 2, "Service should only be called once (data page + 304)")
 
     def test_get_routing_map_force_refresh(self):
         """force_refresh=True causes a re-fetch even when cache is populated.
@@ -308,8 +327,13 @@ class TestRoutingMapProvider(unittest.TestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
-                if call_count['count'] == 1:
+                # Two logical phases: initial load (calls 1-2) and force_refresh (calls 3-4).
+                # Each phase uses a stable etag so the drain terminates after data + 304.
+                phase = (call_count['count'] + 1) // 2
+                etag = f'"test-etag-{phase}"'
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, etag):
+                    return []
+                if phase == 1:
                     return original_ranges
                 return split_ranges
 
@@ -317,13 +341,13 @@ class TestRoutingMapProvider(unittest.TestCase):
         collection_link = "dbs/db/colls/container"
 
         result1 = provider.get_routing_map(collection_link, feed_options={})
-        self.assertEqual(call_count['count'], 1)
+        self.assertEqual(call_count['count'], 2)
 
         result2 = provider.get_routing_map(
             collection_link, feed_options={},
             force_refresh=True, previous_routing_map=result1
         )
-        self.assertEqual(call_count['count'], 2, "force_refresh should trigger one incremental fetch")
+        self.assertEqual(call_count['count'], 4, "force_refresh should trigger one incremental fetch (data + 304)")
         self.assertIsNotNone(result2)
         # Verify the split was applied: should now have 6 ranges (original 5 minus '0' plus '5' and '6')
         self.assertEqual(len(list(result2._orderedPartitionKeyRanges)), 6)
@@ -369,7 +393,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         class IncompleteClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                TestRoutingMapProvider._capture_internal_headers(kwargs, '"incomplete-etag"')
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, '"incomplete-etag"'):
+                    return []
                 return incomplete_ranges
 
         provider = PartitionKeyRangeCache(IncompleteClient())
@@ -387,8 +412,9 @@ class TestRoutingMapProvider(unittest.TestCase):
                 )
         self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
         # Source the expected attempt count from the production constant so a
-        # future tuning change updates both sides in lockstep.
-        self.assertEqual(call_count['count'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS)
+        # future tuning change updates both sides in lockstep. Each retry now
+        # drains to a literal 304, so per attempt the mock sees data + 304 = 2 calls.
+        self.assertEqual(call_count['count'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS * 2)
 
     def test_fetch_routing_map_incremental_with_parents(self):
         """Incremental update correctly merges child ranges that reference a parent."""
@@ -411,7 +437,8 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         class DeltaClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"')
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"'):
+                    return []
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(DeltaClient())
@@ -455,8 +482,15 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 headers = kwargs.get('headers', {})
                 captured_headers_list.append(headers.copy())
-                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
-                if call_count['count'] <= 2:
+                # Three logical phases (each = data page + 304):
+                #   phase 1 (calls 1-2): initial incremental
+                #   phase 2 (calls 3-4): incremental retry (same prev map)
+                #   phase 3 (calls 5-6): full-load fallback
+                phase = (call_count['count'] + 1) // 2
+                etag = f'"etag-{phase}"'
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, etag):
+                    return []
+                if phase <= 2:
                     # Return a child with missing parent to force incremental retry,
                     # then full-load fallback.
                     return [{'id': '99', 'minInclusive': '', 'maxExclusive': 'FF', 'parents': ['MISSING']}]
@@ -475,16 +509,17 @@ class TestRoutingMapProvider(unittest.TestCase):
         )
 
         self.assertIsNotNone(result)
-        self.assertEqual(len(captured_headers_list), 3)
+        # 3 logical drains x (data + 304) = 6 wire calls.
+        self.assertEqual(len(captured_headers_list), 6)
 
-        # First call (incremental) should have IfNoneMatch
+        # Call 1 (incremental, first data page) should have IfNoneMatch seeded from the prev map.
         self.assertIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[0])
 
-        # Second call is incremental retry, so it should still carry IfNoneMatch.
-        self.assertIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[1])
+        # Call 3 is incremental retry (same prev map), so it should still carry IfNoneMatch.
+        self.assertIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[2])
 
-        # Third call is full-load fallback and must clear stale IfNoneMatch.
-        self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[2])
+        # Call 5 is full-load fallback and must clear stale IfNoneMatch.
+        self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[4])
 
     def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached(self):
         """Merge where parents[0] is an evicted grandparent but a later parent IS in cache.
@@ -517,7 +552,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-C"')
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-C"'):
+                    return []
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -533,7 +569,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         )
 
         self.assertIsNotNone(result, "Should succeed incrementally — parents[1] is in cache")
-        self.assertEqual(call_count['count'], 1, "Should only call service once (no fallback needed)")
+        # One logical drain = data page + 304.
+        self.assertEqual(call_count['count'], 2, "Should only call service once logically (data + 304)")
         ranges = list(result._orderedPartitionKeyRanges)
         self.assertEqual(len(ranges), 3)
         ids = [r['id'] for r in ranges]
@@ -564,7 +601,8 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"')
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"'):
+                    return []
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -634,8 +672,12 @@ class TestRoutingMapProvider(unittest.TestCase):
         class RapidSplitClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
-                if call_count['count'] == 1:
+                # Three logical phases: incremental (1) -> incremental retry (2) -> full fallback (3).
+                phase = (call_count['count'] + 1) // 2
+                etag = f'"etag-{phase}"'
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, etag):
+                    return []
+                if phase <= 2:
                     return delta_ranges
                 return full_ranges
 
@@ -652,10 +694,11 @@ class TestRoutingMapProvider(unittest.TestCase):
         )
 
         self.assertIsNotNone(result, "Should succeed via full refresh fallback")
+        # 3 logical drains x (data + 304) = 6 wire calls.
         self.assertEqual(
             call_count['count'],
-            3,
-            "Should call service three times (incremental + incremental retry + full fallback)",
+            6,
+            "Should drain three times (incremental + incremental retry + full fallback), data + 304 each",
         )
         ranges = list(result._orderedPartitionKeyRanges)
         self.assertEqual(len(ranges), 5)
@@ -692,7 +735,8 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         class MergeClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"')
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, '"etag-2"'):
+                    return []
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
@@ -728,7 +772,12 @@ class TestRoutingMapProvider(unittest.TestCase):
         class CountingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
+                # Two logical phases (initial load, targeted force_refresh fetch);
+                # phase-stable etags so each drain terminates after data + 304.
+                phase = (call_count['count'] + 1) // 2
+                etag = f'"test-etag-{phase}"'
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, etag):
+                    return []
                 return original_ranges
 
         provider = PartitionKeyRangeCache(CountingClient())
@@ -736,7 +785,7 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         # Initial load
         result1 = provider.get_routing_map(collection_link, feed_options={})
-        self.assertEqual(call_count['count'], 1)
+        self.assertEqual(call_count['count'], 2)
         self.assertIsNotNone(result1)
 
         # force_refresh=True without previous_routing_map should still fetch once.
@@ -744,7 +793,10 @@ class TestRoutingMapProvider(unittest.TestCase):
             collection_link, feed_options={},
             force_refresh=True
         )
-        self.assertEqual(call_count['count'], 2, "force_refresh=True without previous_routing_map should trigger fetch")
+        self.assertEqual(
+            call_count['count'], 4,
+            "force_refresh=True without previous_routing_map should trigger one drain (data + 304)",
+        )
         self.assertIsNotNone(result2)
 
     def test_concurrent_refresh_serialized_by_lock(self):
@@ -763,7 +815,11 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 # Simulate a slow service call to widen the contention window
                 fetch_event.wait(timeout=2)
-                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"test-etag-{call_count["count"]}"')
+                # Phase-stable etag so each drain terminates after data + 304.
+                phase = (call_count['count'] + 1) // 2
+                etag = f'"test-etag-{phase}"'
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, etag):
+                    return []
                 return original_ranges
 
         provider = PartitionKeyRangeCache(SlowCountingClient())
@@ -772,7 +828,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         # Populate cache with initial map
         fetch_event.set()  # Let the initial load go fast
         initial_map = provider.get_routing_map(collection_link, feed_options={})
-        self.assertEqual(call_count['count'], 1)
+        # One logical drain = data page + 304.
+        self.assertEqual(call_count['count'], 2)
         fetch_event.clear()  # Now make subsequent fetches slow
 
         results = [None] * 5
@@ -819,7 +876,11 @@ class TestRoutingMapProvider(unittest.TestCase):
                 call_count['count'] += 1
                 import time
                 time.sleep(0.1)  # Simulate network delay
-                TestRoutingMapProvider._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
+                # Phase-stable etag so each drain terminates after data + 304.
+                phase = (call_count['count'] + 1) // 2
+                etag = f'"etag-{phase}"'
+                if TestRoutingMapProvider._capture_internal_headers(kwargs, etag):
+                    return []
                 return original_ranges
 
         provider = PartitionKeyRangeCache(SlowClient())

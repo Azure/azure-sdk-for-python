@@ -1,0 +1,26 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/conversations/00000000-0000-0000-0000-000000000000?api-version=2026-02-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Date": "Fri, 15 May 2026 23:55:04 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

@@ -171,6 +171,7 @@ def _handle_transient_snapshot_retry_decision(
         )
         raise CosmosHttpResponseError(
             status_code=http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+            sub_status=http_constants.SubStatusCodes.ROUTING_MAP_SNAPSHOT_INCONSISTENT,
             message=(
                 "Routing-map fetch for collection '{}' returned overlapping "
                 "or gapped ranges on {} attempt(s)."
@@ -293,6 +294,86 @@ def _resolve_endpoint(client: Any) -> str:
         return client.url_connection
     except AttributeError:
         return f"__unknown_{id(client)}__"
+
+
+
+
+# ---------------------------------------------------------------------------
+# /pkranges change-feed drain helpers (shared by sync + async providers)
+# ---------------------------------------------------------------------------
+#
+# These helpers hoist the *pure decision logic* of the routing-map change-feed
+# drain out of the sync and async providers so a future bug-fix lands in one
+# place. The providers still own the I/O-shaped parts that genuinely differ:
+#   - sync   uses ``ranges.extend(list(generator))``
+#   - async  uses ``async for item in generator: ...``
+# Everything else (per-page state transitions) lives here.
+
+
+class _DrainPageDecision:
+    """Outcome of evaluating a single /pkranges drain page."""
+
+    CONTINUE = "continue"
+    STOP_DRAINED = "stop_drained"
+
+
+def evaluate_drain_page(
+    *,
+    page_new_etag: Optional[str],
+    current_if_none_match: Optional[str],
+    new_etag: Optional[str],
+    seen_any_etag: bool,
+    status_code: Optional[int],
+) -> Tuple[str, Optional[str], Optional[str], bool]:
+    """Decide whether to keep draining the /pkranges change feed.
+
+    Pure function: no I/O. The sole termination signal is literal HTTP
+    ``304 Not Modified`` (matching Java, .NET v3, and Go). ``status_code``
+    is required: production callers wire it via the
+    ``_internal_response_status_capture`` sidecar populated by
+    ``_synchronized_request`` / ``_asynchronous_request`` before any
+    return, so it is always a concrete int by the time we land here.
+    There is intentionally no secondary safety net (e.g. a page cap)
+    here -- peer SDKs (.NET v3, Java, Go) all rely solely on the 304
+    termination predicate and we mirror that contract.
+
+    :keyword page_new_etag: ETag header from the current page response, if any.
+    :paramtype page_new_etag: str or None
+    :keyword current_if_none_match: The ``If-None-Match`` we sent for this page.
+    :paramtype current_if_none_match: str or None
+    :keyword new_etag: Running accumulator for the final etag to publish.
+    :paramtype new_etag: str or None
+    :keyword bool seen_any_etag: Whether the service has ever surfaced an ETag
+        across the drain so far.
+    :keyword status_code: HTTP status code of the page response. Required at runtime;
+        ``None`` indicates the response-status sidecar was not wired by the caller and
+        raises ``RuntimeError``. Typed as ``Optional[int]`` so callers that read the
+        status from a sidecar list typed as ``List[Optional[int]]`` (whose first slot
+        is ``None`` until populated by ``_synchronized_request`` /
+        ``_asynchronous_request``) satisfy mypy without an extra cast.
+    :paramtype status_code: int or None
+
+    :returns: ``(decision, new_etag, next_if_none_match, seen_any_etag)``.
+        ``next_if_none_match`` is only meaningful when ``decision == CONTINUE``.
+    :rtype: tuple
+    """
+    if status_code is None:
+        raise RuntimeError(
+            "evaluate_drain_page invoked with status_code=None. The /pkranges "
+            "drain loop requires the _internal_response_status_capture sidecar "
+            "to be wired by the caller; this indicates a programming error in "
+            "the routing-map provider."
+        )
+
+    if page_new_etag:
+        seen_any_etag = True
+        new_etag = page_new_etag
+
+    if status_code == http_constants.StatusCodes.NOT_MODIFIED:
+        return (_DrainPageDecision.STOP_DRAINED, new_etag, current_if_none_match, seen_any_etag)
+
+    next_inm = page_new_etag if page_new_etag else current_if_none_match
+    return (_DrainPageDecision.CONTINUE, new_etag, next_inm, seen_any_etag)
 
 
 class _IncrementalMergeFailed(Exception):
