@@ -485,7 +485,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings, _ModelBackCompatMixi
     nfs: Optional[ShareNfsSettings]
     """Sets the NFS settings."""
 
-    def __init__(  # pylint: disable=unused-argument
+    def __init__(
         self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
     ) -> None:
         super().__init__(smb=smb, nfs=nfs)
@@ -1346,9 +1346,14 @@ class DirectoryPropertiesPaged(PageIterator):
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items]
-        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items])
-        # pylint: enable=protected-access
+        self.current_page = [
+            DirectoryProperties._from_generated(i)  # pylint: disable = protected-access
+            for i in self._response.segment.directory_items
+        ]
+        self.current_page.extend(
+            FileProperties._from_generated(i)  # pylint: disable = protected-access
+            for i in self._response.segment.file_items
+        )
         return self._response.next_marker or None, self.current_page
 
 

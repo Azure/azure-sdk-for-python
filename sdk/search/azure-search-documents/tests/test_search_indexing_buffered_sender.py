@@ -77,8 +77,7 @@ class TestSearchIndexingBufferedSenderConstructor:
         assert sender._auto_flush is False
         assert sender._client._config.api_version == API_VERSION
         assert repr(sender) == (
-            "<SearchIndexingBufferedSender "
-            f"[endpoint='{SEARCH_ENDPOINT}', index='{INDEX_NAME}']>"
+            "<SearchIndexingBufferedSender " f"[endpoint='{SEARCH_ENDPOINT}', index='{INDEX_NAME}']>"
         )
 
     def test_constructor_rejects_non_positive_auto_flush_interval(self):
@@ -266,9 +265,13 @@ class TestSearchIndexingBufferedSenderIndexing:
     def test_context_manager_enters_client_and_closes_on_exit(self):
         sender = create_sender()
 
-        with mock.patch.object(sender._client, "__enter__", return_value=sender._client) as mock_enter, mock.patch.object(
+        with mock.patch.object(
+            sender._client, "__enter__", return_value=sender._client
+        ) as mock_enter, mock.patch.object(
             sender._client, "__exit__", return_value=None
-        ) as mock_exit, mock.patch.object(sender, "close") as mock_close:
+        ) as mock_exit, mock.patch.object(
+            sender, "close"
+        ) as mock_close:
             with sender as result:
                 assert result is sender
 

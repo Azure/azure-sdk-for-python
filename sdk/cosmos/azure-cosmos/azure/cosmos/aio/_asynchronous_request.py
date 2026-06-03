@@ -35,6 +35,7 @@ from .. import http_constants
 from .._availability_strategy_config import CrossRegionHedgingStrategy
 from .._constants import _Constants
 from .._request_object import RequestObject
+from .._response_decoding import decode_response_body_for_status
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 from ..documents import _OperationType
 
@@ -58,6 +59,13 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     kwargs.pop(_Constants.OperationStartTime, None)
     # Pop internal flags that should not be passed to the HTTP layer
     kwargs.pop("_internal_pk_range_fetch", None)
+    # Sidecar mutable list (length 1) used by the /pkranges change-feed drain
+    # loop in ``routing_map_provider`` to observe the raw HTTP status without
+    # parsing headers. We populate ``status_capture[0]`` after the response is
+    # received, so callers can implement a literal ``status == 304`` drain
+    # termination check (matching peer SDKs) instead of relying on
+    # ``AsyncItemPaged`` materializing 304 as an empty page.
+    status_capture = kwargs.pop("_internal_response_status_capture", None)
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
@@ -137,11 +145,33 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         )
 
     response = response.http_response
+    if status_capture is not None:
+        # Length-1 list pattern: written-into by _Request, read by caller
+        # after _ReadPartitionKeyRanges returns. Set before any raise so a
+        # 304 (which never raises -- only >= 400 does) and a 4xx/5xx both
+        # surface the wire status to drain-loop observers.
+        status_capture[0] = response.status_code
     headers = copy.copy(response.headers)
 
     data = response.body()
     if data:
-        data = data.decode("utf-8")
+        try:
+            data = decode_response_body_for_status(
+                data, response.status_code, request_params.operation_type
+            )
+        except UnicodeDecodeError as decode_err:
+            # Only reachable when status is < 400 and strict decode is
+            # still in effect. ``decode_response_body_for_status`` never
+            # lets malformed UTF-8 escape on status >= 400, and it honors
+            # REPLACE/IGNORE env fallback before this point. Surface as a
+            # typed SDK decode exception so wire status (e.g. 200) and
+            # response metadata are preserved verbatim; the decoder error
+            # remains available via __cause__.
+            raise DecodeError(
+                message="Failed to decode response body as UTF-8: {0}".format(decode_err.reason),
+                response=response,
+                error=decode_err,
+            ) from decode_err
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
@@ -210,7 +240,10 @@ async def AsynchronousRequest(
     """
     request.data = _request_body_from_data(request_data)
     if request.data and isinstance(request.data, str):
-        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+        # Use UTF-8 byte length, not str length (code-point count), so the
+        # header matches the bytes the transport actually writes for any
+        # non-ASCII payload.
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data.encode("utf-8"))
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 

@@ -155,6 +155,130 @@ class TestInferenceServiceTimeout(unittest.TestCase):
 
         asyncio.run(run_test())
 
+    def test_sync_inference_uses_shared_response_decoder(self):
+        """Test that sync inference service decodes response bytes via the
+        shared decode_response_body_for_status helper. Locks in the wiring
+        so a regression that reverts to inline data.decode("utf-8") would fail."""
+        from azure.cosmos._inference_service import _InferenceService
+
+        mock_connection = self._create_mock_connection()
+        service = _InferenceService(mock_connection)
+
+        raw_response_data = b'{"Scores": []}'
+        mock_response = MagicMock()
+        mock_response.http_response.status_code = 200
+        mock_response.http_response.headers = {}
+        mock_response.http_response.body.return_value = raw_response_data
+
+        with patch.object(
+            service._inference_pipeline_client._pipeline, "run",
+            return_value=mock_response
+        ), patch(
+            "azure.cosmos._inference_service.decode_response_body_for_status",
+            return_value='{"Scores": []}'
+        ) as mock_decode:
+            service.rerank(
+                reranking_context="test query",
+                documents=["doc1"]
+            )
+            mock_decode.assert_called_once_with(raw_response_data, 200, "inference_request")
+
+    def test_async_inference_uses_shared_response_decoder(self):
+        """Test that async inference service decodes response bytes via the
+        shared decode_response_body_for_status helper."""
+        async def run_test():
+            from azure.cosmos.aio._inference_service_async import _InferenceService
+
+            mock_connection = self._create_mock_connection()
+            mock_connection.connection_policy.DisableSSLVerification = False
+            service = _InferenceService(mock_connection)
+
+            raw_response_data = b'{"Scores": []}'
+            mock_response = MagicMock()
+            mock_response.http_response.status_code = 200
+            mock_response.http_response.headers = {}
+            mock_response.http_response.body.return_value = raw_response_data
+
+            with patch.object(
+                service._inference_pipeline_client._pipeline, "run",
+                return_value=mock_response
+            ), patch(
+                "azure.cosmos.aio._inference_service_async.decode_response_body_for_status",
+                return_value='{"Scores": []}'
+            ) as mock_decode:
+                await service.rerank(
+                    reranking_context="test query",
+                    documents=["doc1"]
+                )
+                mock_decode.assert_called_once_with(raw_response_data, 200, "inference_request")
+
+        asyncio.run(run_test())
+
+    def test_sync_inference_2xx_with_invalid_utf8_raises_decode_error(self):
+        """A successful (2xx) inference response carrying invalid UTF-8
+        in default strict mode must surface as
+        ``azure.core.exceptions.DecodeError`` with the original wire
+        status (200) preserved on ``e.response``, not as a stdlib
+        ``UnicodeDecodeError``. Mirrors the contract enforced for the
+        core request paths in ``test_request_response_decoding``."""
+        from azure.core.exceptions import DecodeError
+        from azure.cosmos._inference_service import _InferenceService
+
+        mock_connection = self._create_mock_connection()
+        service = _InferenceService(mock_connection)
+
+        # Same textbook-invalid UTF-8 used in the core decode tests.
+        invalid_utf8 = b'{"Scores": "caf\xc3\x28"}'
+        mock_response = MagicMock()
+        mock_response.http_response.status_code = 200
+        mock_response.http_response.headers = {}
+        mock_response.http_response.body.return_value = invalid_utf8
+
+        with patch.object(
+            service._inference_pipeline_client._pipeline, "run",
+            return_value=mock_response
+        ):
+            with self.assertRaises(DecodeError) as ctx:
+                service.rerank(
+                    reranking_context="test query",
+                    documents=["doc1"]
+                )
+
+        self.assertEqual(ctx.exception.response.status_code, 200)
+        self.assertIsInstance(ctx.exception.__cause__, UnicodeDecodeError)
+
+    def test_async_inference_2xx_with_invalid_utf8_raises_decode_error(self):
+        """Async counterpart to the sync 2xx-malformed-UTF-8 test."""
+        from azure.core.exceptions import DecodeError
+
+        async def run_test():
+            from azure.cosmos.aio._inference_service_async import _InferenceService
+
+            mock_connection = self._create_mock_connection()
+            mock_connection.connection_policy.DisableSSLVerification = False
+            service = _InferenceService(mock_connection)
+
+            invalid_utf8 = b'{"Scores": "caf\xc3\x28"}'
+            mock_response = MagicMock()
+            mock_response.http_response.status_code = 200
+            mock_response.http_response.headers = {}
+            mock_response.http_response.body.return_value = invalid_utf8
+
+            with patch.object(
+                service._inference_pipeline_client._pipeline, "run",
+                return_value=mock_response
+            ):
+                with self.assertRaises(DecodeError) as ctx:
+                    await service.rerank(
+                        reranking_context="test query",
+                        documents=["doc1"]
+                    )
+
+            self.assertEqual(ctx.exception.response.status_code, 200)
+            self.assertIsInstance(ctx.exception.__cause__, UnicodeDecodeError)
+
+        asyncio.run(run_test())
+
     def test_sync_inference_response_timeout_raises_408(self):
         """Test that sync inference service converts ServiceResponseError to 408."""
         from azure.cosmos._inference_service import _InferenceService

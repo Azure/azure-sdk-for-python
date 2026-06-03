@@ -79,15 +79,15 @@ def deserialize_file_stream(
 
 
 # Extracts out file permission
-def deserialize_permission(  # pylint: disable=unused-argument
-    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
+def deserialize_permission(
+    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]  # pylint: disable=unused-argument
 ) -> Optional[str]:
     return cast(Optional[str], obj.permission)
 
 
 # Extracts out file permission key
-def deserialize_permission_key(  # pylint: disable=unused-argument
-    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
+def deserialize_permission_key(
+    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]  # pylint: disable=unused-argument
 ) -> Optional[str]:
     if response is None or headers is None:
         return None
