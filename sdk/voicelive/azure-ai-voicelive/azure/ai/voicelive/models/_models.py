@@ -409,6 +409,7 @@ class AudioEchoCancellation(_Model):
      * `1`: Mono input (default).
      * `2`: Interleaved stereo input where channel 0 is the microphone signal and channel 1 is
        the echo reference signal.
+
      When set to 2, `reference_source` must be `client` and `input_audio_format` must be
      `pcm16`.
     :vartype channels: int
@@ -428,10 +429,11 @@ class AudioEchoCancellation(_Model):
         TTS loopback is skipped. Known values are: \"server\" and \"client\"."""
     channels: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of input audio channels.
- 
+
       * `1`: Mono input (default).
       * `2`: Interleaved stereo input where channel 0 is the microphone signal and channel 1 is
         the echo reference signal.
+
       When set to 2, `reference_source` must be `client` and `input_audio_format` must be
       `pcm16`."""
 
@@ -5356,13 +5358,13 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
     event:
 
     * The server is generating a Response, which if successful will produce
-    either one or two Items, which will be of type `message`
-    (role `assistant`) or type `function_call`.
+      either one or two Items, which will be of type `message`
+      (role `assistant`) or type `function_call`.
     * The input audio buffer has been committed, either by the client or the
-    server (in `server_vad` mode). The server will take the content of the
-    input audio buffer and add it to a new user message Item.
+      server (in `server_vad` mode). The server will take the content of the
+      input audio buffer and add it to a new user message Item.
     * The client has sent a `conversation.item.create` event to add a new Item
-    to the Conversation.
+      to the Conversation.
 
     :ivar event_id:
     :vartype event_id: str

@@ -5,7 +5,7 @@ import asyncio
 import base64
 
 from pathlib import Path
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Iterator, Optional
 
 from azure.ai.voicelive.models import (
     AudioInputTranscriptionOptions,
@@ -69,7 +69,7 @@ async def _wait_for_match(
     return await asyncio.wait_for(_next(), timeout=timeout_s)
 
 
-async def _collect_event(conn, *, event_type: ServerEventType, timeout: int = 10):
+async def _collect_event(conn, *, event_type: Optional[ServerEventType], timeout: int = 10):
     events = 0
     audio_bytes = 0
     loop = asyncio.get_event_loop()
@@ -94,7 +94,7 @@ async def _collect_event(conn, *, event_type: ServerEventType, timeout: int = 10
     return events, audio_bytes
 
 
-async def _collect_audio_trans_outputs(conn, duration_s: float) -> int:
+async def _collect_audio_trans_outputs(conn, duration_s: float) -> tuple[int, int]:
     trans_events = 0
     audio_events = 0
     loop = asyncio.get_event_loop()
