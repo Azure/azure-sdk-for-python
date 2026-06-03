@@ -175,7 +175,16 @@ def _phase_title(i: int) -> str:
     stream_handler_factory=file_stream_factory,
 )
 async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
-    """Long-running deep-research task: crash-resilient, steerable."""
+    """Long-running deep-research task: crash-resilient, steerable.
+
+    Checkpointing is **per subcall**, not just per phase. After each
+    LLM subcall finishes we persist {completed_phases, results,
+    in_progress_phase, completed_subcalls, current_text} to
+    ctx.metadata.  On recovery we resume the in-progress phase at the
+    next un-finished subcall, re-using the text we had streamed before
+    the crash — so the worst case is one wasted subcall (the one that
+    was actively streaming when the container died).
+    """
     topic: str = ctx.input["topic"]
     stored_topic = ctx.metadata.get("topic")
 
@@ -183,6 +192,9 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
         ctx.metadata["topic"] = topic
         ctx.metadata["completed_phases"] = 0
         ctx.metadata["results"] = []
+        ctx.metadata["in_progress_phase"] = None
+        ctx.metadata["completed_subcalls"] = 0
+        ctx.metadata["current_text"] = ""
         await ctx.metadata.flush()
         await _emit_run_start(ctx, topic=topic, prior_topic=stored_topic)
     else:
@@ -216,12 +228,18 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
             "server_uptime_sec": _server_uptime_sec(),
         }))
 
-        phase_text = await _run_phase(ctx, topic, title, prior_results=results[-3:])
+        phase_text = await _run_phase(
+            ctx, phase_idx, topic, title, prior_results=results[-3:],
+        )
         results.append({"phase": phase_idx + 1, "title": title, "text": phase_text})
 
-        # --- CHECKPOINT ---
+        # --- PHASE-COMPLETE CHECKPOINT ---
+        # Clear in-progress subcall state once the phase is done.
         ctx.metadata["completed_phases"] = phase_idx + 1
         ctx.metadata["results"] = results
+        ctx.metadata["in_progress_phase"] = None
+        ctx.metadata["completed_subcalls"] = 0
+        ctx.metadata["current_text"] = ""
         await ctx.metadata.flush()
 
         phase_duration = round(time.monotonic() - phase_started_mono, 1)
@@ -239,13 +257,14 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
             return await _wind_down(ctx, phase_idx + 1, results)
 
         if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
-            try:
-                await asyncio.wait_for(
-                    ctx.cancel.wait(), timeout=INTER_PHASE_COOLDOWN_SEC,
-                )
+            await _cooldown(
+                ctx, INTER_PHASE_COOLDOWN_SEC,
+                stage="inter_phase",
+                phase=phase_idx + 2,
+                total=NUM_PHASES,
+            )
+            if ctx.cancel.is_set():
                 return await _wind_down(ctx, phase_idx + 1, results)
-            except asyncio.TimeoutError:
-                pass
 
     await ctx.stream(json.dumps({
         "type": "run_complete",
@@ -308,22 +327,80 @@ async def _wind_down(
     })
 
 
+async def _cooldown(
+    ctx: TaskContext,
+    duration_sec: float,
+    *,
+    stage: str,
+    phase: int,
+    total: int,
+    subcall: int | None = None,
+    of: int | None = None,
+) -> None:
+    """Cooldown wait with a visible client-side marker.
+
+    Emits a single ``cooldown`` SSE event before sleeping so the terminal
+    is not silent during the pause, and the client can render a low-key
+    progress indicator. The wait is cancel-aware: if ``ctx.cancel`` fires
+    we return early.
+    """
+    payload: dict[str, Any] = {
+        "type": "cooldown",
+        "duration_sec": duration_sec,
+        "stage": stage,
+        "phase": phase,
+        "total": total,
+        "server_time_utc": _now_iso(),
+        "server_uptime_sec": _server_uptime_sec(),
+    }
+    if subcall is not None:
+        payload["subcall"] = subcall
+    if of is not None:
+        payload["of"] = of
+    await ctx.stream(json.dumps(payload))
+    try:
+        await asyncio.wait_for(ctx.cancel.wait(), timeout=duration_sec)
+    except asyncio.TimeoutError:
+        pass
+
+
 async def _run_phase(
     ctx: TaskContext,
+    phase_idx: int,
     topic: str,
     phase_title: str,
     *,
     prior_results: list,
 ) -> str:
-    """Run the sub-call loop for one phase. Returns the final synthesized text."""
+    """Run the sub-call loop for one phase. Returns the final synthesized text.
+
+    Checkpoints after each completed subcall so a crash mid-phase
+    recovers at the next un-finished subcall (loses at most the one
+    that was actively streaming).
+    """
     prior_summary = ""
     if prior_results:
         prior_summary = "\n\nPrior phases (for context):\n" + "\n".join(
             f"- {r['title']}: {r['text'][:200]}..." for r in prior_results
         )
 
-    current_text = ""
-    for sub_idx in range(CALLS_PER_PHASE):
+    # Resume in-phase state if we crashed mid-phase. The outer loop
+    # already advanced phase_idx to the right phase via
+    # completed_phases; here we figure out how many subcalls of *this*
+    # phase already finished.
+    in_progress = ctx.metadata.get("in_progress_phase")
+    if in_progress == phase_idx:
+        start_sub = int(ctx.metadata.get("completed_subcalls", 0) or 0)
+        current_text: str = ctx.metadata.get("current_text", "") or ""
+    else:
+        start_sub = 0
+        current_text = ""
+        ctx.metadata["in_progress_phase"] = phase_idx
+        ctx.metadata["completed_subcalls"] = 0
+        ctx.metadata["current_text"] = ""
+        await ctx.metadata.flush()
+
+    for sub_idx in range(start_sub, CALLS_PER_PHASE):
         role_name, role_prompt = _SUB_CALL_ROLES[sub_idx]
         instructions = (
             f"You are a research analyst working on the topic: '{topic}'.\n"
@@ -361,18 +438,28 @@ async def _run_phase(
 
         current_text = sub_text
 
-        # Intra-phase cooldown (also a steer / cancel responsiveness window).
+        # --- SUBCALL-LEVEL CHECKPOINT ---
+        # Persist what we just produced so a mid-phase crash recovers
+        # at the next subcall, not at subcall 1.
+        ctx.metadata["completed_subcalls"] = sub_idx + 1
+        ctx.metadata["current_text"] = current_text
+        await ctx.metadata.flush()
+
+        # Intra-phase cooldown — emits cooldown event + cancel-aware wait.
         if sub_idx + 1 < CALLS_PER_PHASE and INTRA_PHASE_COOLDOWN_SEC > 0:
-            try:
-                await asyncio.wait_for(
-                    ctx.cancel.wait(), timeout=INTRA_PHASE_COOLDOWN_SEC,
-                )
-                # Cancel observed within a phase — finish the phase quickly
-                # by skipping any remaining sub-calls. Wind-down happens at
-                # the next checkpoint boundary in the outer loop.
+            await _cooldown(
+                ctx, INTRA_PHASE_COOLDOWN_SEC,
+                stage="intra_phase",
+                phase=phase_idx + 1,
+                total=NUM_PHASES,
+                subcall=sub_idx + 2,
+                of=CALLS_PER_PHASE,
+            )
+            if ctx.cancel.is_set():
+                # Cancel observed within a phase — finish the phase
+                # quickly by skipping remaining sub-calls; wind-down
+                # happens at the next checkpoint boundary in the outer loop.
                 break
-            except asyncio.TimeoutError:
-                pass
 
     return current_text
 

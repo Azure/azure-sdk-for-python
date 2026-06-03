@@ -28,14 +28,22 @@ platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 What the agent actually does: 15 logical research phases on whatever
 topic the caller supplies. Each phase runs a small agent loop
 (research → critique → refine → synthesize) against `gpt-4.1-mini`,
-streaming every token to the consumer. After each phase the handler
-checkpoints to `ctx.metadata` and flushes — so a crash mid-run picks up
-at the next un-completed phase, and a steerer that arrives mid-phase
-causes the handler to wind down at the *next* phase boundary, not
-abruptly. Hosted defaults target a ~33-min wall-time run (spanning 2x
-the sandbox-eviction window so every demo run actually exercises the
-lease keep-alive path); local `agent.py` defaults are shorter for dev
+streaming every token to the consumer. The handler checkpoints to
+`ctx.metadata` and flushes **after each subcall** — so a crash
+mid-phase recovers at the next un-finished subcall (worst case: the
+one that was actively streaming is replayed). A steerer that arrives
+mid-phase causes the handler to wind down at the next phase boundary,
+not abruptly. Hosted defaults target a ~33-min wall-time run (spanning
+2x the sandbox-eviction window so every demo run exercises the lease
+keep-alive path); local `agent.py` defaults are shorter for dev
 iteration.
+
+Between subcalls and between phases the agent sleeps for
+`INTRA_PHASE_COOLDOWN_SEC` / `INTER_PHASE_COOLDOWN_SEC` (30s each in
+the hosted defaults). A `cooldown` SSE event is emitted at the start
+of each pause so the terminal shows a low-key
+`...cooling down 30s (between subcalls) — next: subcall 3/4 in phase 2/15`
+line instead of going silent.
 
 ## Prerequisites
 

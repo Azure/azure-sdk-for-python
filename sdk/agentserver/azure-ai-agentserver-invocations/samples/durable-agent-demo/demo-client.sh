@@ -204,6 +204,26 @@ def render_block(evt):
         srv, uptime = evt.get("server_time_utc", ""), evt.get("server_uptime_sec", "")
         write(f"\n{DIM}[{n}]{RESET} {BOLD}{MAGENTA}\u2193 Winding down{RESET}   cause={cause}   completed={c}/{total}   pending_steers={pend}\n")
         write(f"  \u23f0 server_time={srv}   uptime={uptime}s\n")
+    elif t == "cooldown":
+        # Server is intentionally sleeping (between subcalls or phases).
+        # Render a single low-key line so the terminal is not silent.
+        try:
+            dur_str = f"{float(evt.get('duration_sec', 0)):.0f}"
+        except (TypeError, ValueError):
+            dur_str = str(evt.get("duration_sec", "?"))
+        stage = evt.get("stage", "")
+        ph    = evt.get("phase", "")
+        total = evt.get("total", "")
+        sub   = evt.get("subcall")
+        of    = evt.get("of")
+        label = "between phases" if stage == "inter_phase" else "between subcalls"
+        if stage == "inter_phase":
+            detail = f"next: phase {ph}/{total}"
+        elif sub is not None and of is not None:
+            detail = f"next: subcall {sub}/{of} in phase {ph}/{total}"
+        else:
+            detail = f"phase {ph}/{total}"
+        write(f"{DIM}[{n}]   ...cooling down {dur_str}s ({label}) \u2014 {detail}{RESET}\n")
     elif t == "run_complete":
         total = evt.get("phases_completed", "")
         srv, uptime = evt.get("server_time_utc", ""), evt.get("server_uptime_sec", "")
