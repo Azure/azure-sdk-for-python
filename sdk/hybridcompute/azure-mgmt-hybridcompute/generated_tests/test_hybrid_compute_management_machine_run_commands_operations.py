@@ -75,7 +75,7 @@ class TestHybridComputeManagementMachineRunCommandsOperations(AzureMgmtRecordedT
                 "timeoutInSeconds": 0,
                 "type": "str",
             },
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestHybridComputeManagementMachineRunCommandsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             machine_name="str",
             run_command_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestHybridComputeManagementMachineRunCommandsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             machine_name="str",
             run_command_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
 
         # please add some check logic here by yourself
@@ -113,7 +113,7 @@ class TestHybridComputeManagementMachineRunCommandsOperations(AzureMgmtRecordedT
         response = self.client.machine_run_commands.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

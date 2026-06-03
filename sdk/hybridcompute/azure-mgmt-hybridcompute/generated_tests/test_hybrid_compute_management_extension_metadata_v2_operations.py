@@ -26,7 +26,7 @@ class TestHybridComputeManagementExtensionMetadataV2Operations(AzureMgmtRecorded
             publisher="str",
             extension_type="str",
             version="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestHybridComputeManagementExtensionMetadataV2Operations(AzureMgmtRecorded
             location="str",
             publisher="str",
             extension_type="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

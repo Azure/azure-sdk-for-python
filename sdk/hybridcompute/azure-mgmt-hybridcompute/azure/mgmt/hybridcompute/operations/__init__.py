@@ -17,7 +17,7 @@ from ._licenses_operations import LicensesOperations  # type: ignore
 from ._machines_operations import MachinesOperations  # type: ignore
 from ._license_profiles_operations import LicenseProfilesOperations  # type: ignore
 from ._machine_extensions_operations import MachineExtensionsOperations  # type: ignore
-from ._hybrid_compute_management_client_operations import HybridComputeManagementClientOperationsMixin  # type: ignore
+from ._hybrid_compute_management_client_operations import _HybridComputeManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._extension_metadata_operations import ExtensionMetadataOperations  # type: ignore
 from ._extension_metadata_v2_operations import ExtensionMetadataV2Operations  # type: ignore
 from ._extension_type_operations import ExtensionTypeOperations  # type: ignore
@@ -41,7 +41,6 @@ __all__ = [
     "MachinesOperations",
     "LicenseProfilesOperations",
     "MachineExtensionsOperations",
-    "HybridComputeManagementClientOperationsMixin",
     "ExtensionMetadataOperations",
     "ExtensionMetadataV2Operations",
     "ExtensionTypeOperations",

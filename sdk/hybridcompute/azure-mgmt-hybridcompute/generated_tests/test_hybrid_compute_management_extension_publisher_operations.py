@@ -23,7 +23,7 @@ class TestHybridComputeManagementExtensionPublisherOperations(AzureMgmtRecordedT
     def test_extension_publisher_list(self, resource_group):
         response = self.client.extension_publisher.list(
             location="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -25,7 +25,7 @@ class TestHybridComputeManagementExtensionTypeOperationsAsync(AzureMgmtRecordedT
         response = self.client.extension_type.list(
             location="str",
             publisher="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

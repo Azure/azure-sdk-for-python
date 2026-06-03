@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2025-02-19-preview/examples/license/License_ListByResourceGroup.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/HybridCompute/preview/2025-09-16-preview/examples/license/License_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

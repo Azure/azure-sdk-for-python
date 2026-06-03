@@ -16,7 +16,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python private_link_scopes_list_by_resource_group.py
+    python private_link_scopes_update_tags_only.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,17 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
 def main():
     client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="86dc51d3-92ed-4d7e-947a-775ea79b4919",
+        subscription_id="subid",
     )
 
-    response = client.private_link_scopes.list_by_resource_group(
+    response = client.private_link_scopes.update_tags(
         resource_group_name="my-resource-group",
+        scope_name="my-privatelinkscope",
+        private_link_scope_tags={"tags": {"str": "str"}},
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/HybridCompute/preview/2025-09-16-preview/examples/privateLinkScope/PrivateLinkScopes_ListByResourceGroup.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/HybridCompute/preview/2025-09-16-preview/examples/privateLinkScope/PrivateLinkScopes_UpdateTagsOnly.json
 if __name__ == "__main__":
     main()
