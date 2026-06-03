@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,docstring-missing-param,docstring-missing-return,docstring-missing-rtype,unused-argument
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,75 +6,98 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to run Azure AI Evaluations
-    against agent traces collected in Azure Application Insights.
+    Self-contained sample that runs Azure AI built-in evaluators against agent
+    traces resolved server-side by `agent_id`.
 
-    Supports three modes:
-      - Default mode (no flags): Queries Application Insights client-side for trace IDs
-        using the AGENT_ID environment variable, then passes them to the eval service.
-      - Agent ID mode (--agent-id): Passes the agent ID directly to the eval service,
-        which resolves traces server-side from Application Insights.
-      - Trace ID mode (--trace-ids): Passes explicit trace IDs to the eval service.
+    Steps:
+      1. Creates a transient agent.
+      2. Seeds a few single-turn prompts so the service emits traces into
+         Application Insights.
+      3. Creates a trace-based evaluation group with single-turn evaluators.
+      4. Submits an evaluation run that uses the `azure_ai_traces` data source
+         with `agent_id="<name>:<version>"`; the service resolves traces
+         server-side. Retries the run if Application Insights ingestion is
+         still in flight.
+      5. Cleans up the evaluation, seeded conversations, and agent.
+
+    Prerequisite: the project must have an Application Insights resource
+    connected so the agent emits server-side traces. No `APPINSIGHTS_RESOURCE_ID`
+    or `AGENT_ID` env vars are required - everything is self-contained.
 
 USAGE:
     python sample_evaluations_builtin_with_traces.py
-    python sample_evaluations_builtin_with_traces.py --agent-id "my-agent:1"
-    python sample_evaluations_builtin_with_traces.py --trace-ids abc123 def456
-    python sample_evaluations_builtin_with_traces.py --agent-id "my-agent:1" --lookback-hours 48 --max-traces 20
-    python sample_evaluations_builtin_with_traces.py --no-cleanup
+    python sample_evaluations_builtin_with_traces.py --max-traces 10
+    python sample_evaluations_builtin_with_traces.py --lookback-hours 2
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv azure-monitor-query
+    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) APPINSIGHTS_RESOURCE_ID - Required (for default mode). The Azure Application Insights resource ID that stores
-       agent traces. Not needed when using --agent-id or --trace-ids.
-       It has the form: /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>.
-    3) AGENT_ID - Required. The agent identifier emitted by the Azure tracing integration, used to filter traces.
-    4) FOUNDRY_MODEL_NAME - Required. The Azure OpenAI deployment name to use with the built-in evaluators.
-    5) TRACE_LOOKBACK_HOURS - Optional. Number of hours to look back when querying traces and in the evaluation run.
-       Defaults to 1.
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as
+       found in the overview page of your Microsoft Foundry project.
+    2) FOUNDRY_MODEL_NAME - Required. The model deployment name used both to
+       drive the agent during trace seeding and to power the AI-assisted
+       evaluators.
 """
 
 import argparse
 import os
 import time
-from datetime import datetime, timedelta, timezone
+import uuid
+from datetime import datetime, timezone
 from pprint import pprint
-from typing import Any, Dict, List, Optional
+from typing import List
+
 from dotenv import load_dotenv
+
 from azure.identity import DefaultAzureCredential
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    TestingCriterionAzureAIEvaluator,
-)
+from azure.ai.projects.models import PromptAgentDefinition, TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
 
+AGENT_INSTRUCTIONS = (
+    "Widgets & Gizmos support agent. Be concise, empathetic, and resolve the "
+    "customer's issue when possible. Policies you can quote:\n"
+    " - Refunds: unopened 30 days; defective up to 90 days; refunds take 5-7 business days.\n"
+    " - Exchanges: same window as refunds; exchanges do not include store credit.\n"
+    " - Replacement parts: available for gizmos; flat $4.99 shipping for small parts.\n"
+    " - You cannot place orders or process refunds directly; direct the customer to the website "
+    "   or store. Always close with a confirmation that the customer's question is answered."
+)
+# Single-turn prompts: each prompt is seeded as its own one-turn conversation so
+# the service emits one trace span per item.
+SINGLE_TURN_PROMPTS: List[str] = [
+    "I bought a widget last week and it stopped working - what are my options?",
+    "What is the return window for unopened widgets?",
+    "Can I get store credit if I exchange a defective gizmo?",
+    "How much does shipping cost for a small replacement part?",
+    "How long does a refund take to show up on my card?",
+]
+
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-appinsights_resource_id = os.environ[
-    "APPINSIGHTS_RESOURCE_ID"
-]  # Sample : /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>
-agent_id = os.environ["AGENT_ID"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
-default_lookback_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "1"))
+
+POLL_INTERVAL_SECONDS = 5
+INITIAL_INGEST_WAIT_SECONDS = 60
+MAX_EVAL_ATTEMPTS = 5
+RETRY_WAIT_SECONDS = 60
+
+TERMINAL_STATUSES = {"completed", "failed", "canceled"}
 
 
-def _build_evaluator_config(name: str, evaluator_name: str) -> TestingCriterionAzureAIEvaluator:
-    """Create a standard Azure AI evaluator configuration block for trace evaluations."""
+def _build_evaluator(name: str, evaluator_name: str) -> TestingCriterionAzureAIEvaluator:
+    """Standard single-turn evaluator config for the `azure_ai_traces` data source."""
     return TestingCriterionAzureAIEvaluator(
         type="azure_ai_evaluator",
         name=name,
         evaluator_name=evaluator_name,
         data_mapping={
-            "query": "{{sample.query}}",
-            "response": "{{sample.response}}",
-            "tool_definitions": "{{sample.tool_definitions}}",
+            "query": "{{item.query}}",
+            "response": "{{item.response}}",
+            "tool_definitions": "{{item.tool_definitions}}",
         },
         initialization_parameters={
             "deployment_name": model_deployment_name,
@@ -82,181 +105,163 @@ def _build_evaluator_config(name: str, evaluator_name: str) -> TestingCriterionA
     )
 
 
-def get_trace_ids(
-    appinsight_resource_id: str, tracked_agent_id: str, start_time: datetime, end_time: datetime
-) -> List[str]:
-    """
-    Query Application Insights for trace IDs (operation_Id) based on agent ID and time range.
-
-    Args:
-        appinsight_resource_id: The resource ID of the Application Insights instance.
-        tracked_agent_id: The agent ID to filter by.
-        start_time: Start time for the query.
-        end_time: End time for the query.
-
-    Returns:
-        List of distinct operation IDs (trace IDs).
-    """
-    query = """
-dependencies
-| where timestamp between (datetime({start_time.isoformat()}) .. datetime({end_time.isoformat()}))
-| extend agent_id = tostring(customDimensions["gen_ai.agent.id"])
-| where agent_id == "{tracked_agent_id}"
-| distinct operation_Id
-"""
-
-    try:
-        with DefaultAzureCredential() as credential:
-            client = LogsQueryClient(credential)
-            response = client.query_resource(
-                appinsight_resource_id,
-                query=query,
-                timespan=None,  # Time range is specified in the query itself.
-            )
-    except Exception as exc:  # pylint: disable=broad-except
-        print(f"Error executing query: {exc}")
-        return []
-
-    if response.status == LogsQueryStatus.SUCCESS:
-        trace_ids: List[str] = []
-        for table in response.tables:
-            for row in table.rows:
-                trace_ids.append(row[0])
-        return trace_ids
-
-    print(f"Query failed with status: {response.status}")
-    if response.partial_error:
-        print(f"Partial error: {response.partial_error}")
-    return []
-
-
 def main() -> None:  # pylint: disable=too-many-statements
-    parser = argparse.ArgumentParser(description="Run Azure AI trace evaluations against agent traces.")
-    mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--agent-id", default=None, help="Agent ID for server-side trace resolution")
-    mode.add_argument("--trace-ids", nargs="+", default=None, help="Explicit trace IDs to evaluate")
-    parser.add_argument("--lookback-hours", type=int, default=None, help="Lookback window in hours")
-    parser.add_argument("--max-traces", type=int, default=50, help="Max traces in agent-id mode (default: 50)")
-    parser.add_argument("--no-cleanup", action="store_true", help="Keep eval group after run")
+    parser = argparse.ArgumentParser(
+        description="Run built-in trace evaluators against an agent's traces (self-contained)."
+    )
+    parser.add_argument(
+        "--max-traces",
+        type=int,
+        default=len(SINGLE_TURN_PROMPTS),
+        help=f"Max traces to evaluate (default: {len(SINGLE_TURN_PROMPTS)} = one per seeded prompt).",
+    )
+    parser.add_argument(
+        "--lookback-hours",
+        type=int,
+        default=1,
+        help="Hours to look back when resolving traces server-side (default: 1).",
+    )
     args = parser.parse_args()
 
-    lookback_hours = args.lookback_hours or default_lookback_hours
-    trace_ids: Optional[List[str]] = None
-    agent_id_for_server: Optional[str] = None
-    metadata: Dict[str, str] = {}
+    run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
+    agent_name = f"builtin-traces-{run_id}"
 
-    if args.agent_id:
-        agent_id_for_server = args.agent_id
-        print("Mode: Server-side agent ID resolution")
-        print(f"Agent ID: {args.agent_id}")
-        print(f"Lookback: {lookback_hours}h, Max traces: {args.max_traces}")
-        metadata["agent_id"] = args.agent_id
+    with (
+        DefaultAzureCredential() as credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as client,
+    ):
 
-    elif args.trace_ids:
-        trace_ids = list(args.trace_ids)
-        print(f"Mode: Explicit trace IDs ({len(trace_ids)} provided)")
+        created_agent = None
+        created_conversation_ids: List[str] = []
+        eval_object = None
 
-    else:
-        end_time = datetime.now(tz=timezone.utc)
-        start_time = end_time - timedelta(hours=lookback_hours)
+        try:
+            # 1. Create an agent that traces will be filtered to.
+            print(f"Create agent `{agent_name}` (model: `{model_deployment_name}`).")
+            created_agent = project_client.agents.create_version(
+                agent_name=agent_name,
+                definition=PromptAgentDefinition(model=model_deployment_name, instructions=AGENT_INSTRUCTIONS),
+            )
+            print(f"Agent created (id: {created_agent.id}, version: {created_agent.version}).")
 
-        print("Querying Application Insights for trace identifiers...")
-        print(f"Agent ID: {agent_id}")
-        print(f"Time range: {start_time.isoformat()} to {end_time.isoformat()}")
+            # 2. Seed single-turn prompts so the service emits traces.
+            print(f"Seed {len(SINGLE_TURN_PROMPTS)} single-turn prompt(s) against the agent.")
+            for prompt in SINGLE_TURN_PROMPTS:
+                conversation = client.conversations.create()
+                created_conversation_ids.append(conversation.id)
+                print(f"  - conversation id: {conversation.id} (prompt: {prompt!r})")
+                client.responses.create(
+                    conversation=conversation.id,
+                    input=prompt,
+                    extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
+                )
 
-        trace_ids = get_trace_ids(appinsights_resource_id, agent_id, start_time, end_time)
+            print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
+            time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
-        if not trace_ids:
-            print("No trace IDs found for the provided agent and time window.")
-            return
-
-        print(f"\nFound {len(trace_ids)} trace IDs:")
-        for tid in trace_ids:
-            print(f"  - {tid}")
-
-        metadata["agent_id"] = agent_id
-        metadata["start_time"] = start_time.isoformat()
-        metadata["end_time"] = end_time.isoformat()
-
-    with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-            client = project_client.get_openai_client()
-
+            # 3. Create the trace-based evaluation group (single-turn evaluators).
             data_source_config = {
                 "type": "azure_ai_source",
                 "scenario": "traces",
             }
 
             testing_criteria = [
-                _build_evaluator_config(
-                    name="intent_resolution",
-                    evaluator_name="builtin.intent_resolution",
-                ),
-                _build_evaluator_config(
-                    name="task_adherence",
-                    evaluator_name="builtin.task_adherence",
-                ),
+                _build_evaluator(name="intent_resolution", evaluator_name="builtin.intent_resolution"),
+                _build_evaluator(name="task_adherence", evaluator_name="builtin.task_adherence"),
             ]
 
-            print("\nCreating evaluation")
+            print("Create trace-based evaluation group.")
             eval_object = client.evals.create(
-                name="agent_trace_eval_group",
+                name=f"Builtin Trace Evaluation {run_id}",
                 data_source_config=data_source_config,  # type: ignore
                 testing_criteria=testing_criteria,  # type: ignore
             )
-            print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
+            print(f"Evaluation created (id: {eval_object.id}).")
 
-            print("\nGet Evaluation by Id")
-            eval_object_response = client.evals.retrieve(eval_object.id)
-            print("Evaluation Response:")
-            pprint(eval_object_response)
-
-            # Build data source based on mode
-            if agent_id_for_server:
-                data_source: Dict[str, Any] = {
-                    "type": "azure_ai_traces",
-                    "agent_id": agent_id_for_server,
-                    "lookback_hours": lookback_hours,
-                    "max_traces": args.max_traces,
-                }
-            else:
-                assert trace_ids is not None
+            # 4. Submit eval runs using the `azure_ai_traces` data source with
+            # agent_id set to "<name>:<version>"; the service resolves matching
+            # traces server-side from Application Insights.
+            agent_id_for_server = f"{created_agent.name}:{created_agent.version}"
+            run = None
+            for attempt in range(1, MAX_EVAL_ATTEMPTS + 1):
                 data_source = {
                     "type": "azure_ai_traces",
-                    "trace_ids": trace_ids,
-                    "lookback_hours": lookback_hours,
+                    "agent_id": agent_id_for_server,
+                    "lookback_hours": args.lookback_hours,
+                    "max_traces": args.max_traces,
                 }
 
-            print("\nCreating Eval Run")
-            run_name = f"agent_trace_eval_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            eval_run_object = client.evals.runs.create(
-                eval_id=eval_object.id,
-                name=run_name,
-                metadata=metadata if metadata else None,
-                data_source=data_source,  # type: ignore
-            )
-            print("Eval Run created")
-            pprint(eval_run_object)
+                print(
+                    f"Create eval run (attempt {attempt}/{MAX_EVAL_ATTEMPTS}) for agent_id "
+                    f"`{agent_id_for_server}` (lookback_hours={args.lookback_hours}, "
+                    f"max_traces={args.max_traces})."
+                )
+                eval_run = client.evals.runs.create(
+                    eval_id=eval_object.id,
+                    name=f"builtin-traces-{run_id}-a{attempt}",
+                    metadata={"agent_id": agent_id_for_server},
+                    data_source=data_source,  # type: ignore
+                )
+                print(f"Eval run created (id: {eval_run.id}).")
 
-            print("\nMonitoring Eval Run status...")
-            while True:
-                run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-                print(f"Status: {run.status}")
+                print("Poll eval run until terminal.", end="", flush=True)
+                while True:
+                    run = client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
+                    if run.status in TERMINAL_STATUSES:
+                        break
+                    time.sleep(POLL_INTERVAL_SECONDS)
+                    print(".", end="", flush=True)
+                print()
+                print(f"Final run status: `{run.status}`.")
 
-                if run.status in {"completed", "failed", "canceled"}:
-                    print("\nEval Run finished!")
-                    print("Final Eval Run Response:")
-                    pprint(run)
-                    break
+                if run.status == "completed":
+                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
+                    if output_items:
+                        print(f"Run produced {len(output_items)} output item(s).")
+                        print(f"Result counts: {run.result_counts}")
+                        print(f"{'-' * 60}")
+                        pprint(output_items)
+                        print(f"{'-' * 60}")
+                        print(f"Eval run report URL: {run.report_url}")
+                        break
+                    print(
+                        f"Run completed but produced 0 output items "
+                        f"(result counts: {run.result_counts}); traces likely not yet ingested."
+                    )
+                else:
+                    print(f"Run did not complete (status: `{run.status}`, error: {run.error}).")
 
-                time.sleep(5)
-                print("Waiting for eval run to complete...")
+                if attempt == MAX_EVAL_ATTEMPTS:
+                    raise RuntimeError(f"Eval run did not produce results after {MAX_EVAL_ATTEMPTS} attempts.")
+                print(f"Wait {RETRY_WAIT_SECONDS}s and retry.", flush=True)
+                time.sleep(RETRY_WAIT_SECONDS)
 
-            if not args.no_cleanup:
-                client.evals.delete(eval_id=eval_object.id)
-                print("Evaluation deleted")
-            else:
-                print(f"Skipping cleanup (--no-cleanup). Eval ID: {eval_object.id}")
+        finally:
+            # Best-effort cleanup: eval object -> seeded conversations -> agent.
+            if eval_object is not None:
+                try:
+                    client.evals.delete(eval_id=eval_object.id)
+                    print(f"Deleted evaluation `{eval_object.id}`.")
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    print(f"  (warning) could not delete evaluation: {exc}")
+
+            for cid in created_conversation_ids:
+                try:
+                    client.conversations.delete(conversation_id=cid)
+                    print(f"Deleted seeded conversation `{cid}`.")
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    print(f"  (warning) could not delete conversation `{cid}`: {exc}")
+
+            if created_agent is not None:
+                try:
+                    project_client.agents.delete_version(
+                        agent_name=created_agent.name,
+                        agent_version=created_agent.version,
+                    )
+                    print(f"Deleted agent `{created_agent.name}` v{created_agent.version}.")
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    print(f"  (warning) could not delete agent: {exc}")
 
 
 if __name__ == "__main__":
