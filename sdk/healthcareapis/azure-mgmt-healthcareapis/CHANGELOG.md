@@ -1,5 +1,52 @@
 # Release History
 
+## 3.0.0b1 (2026-06-03)
+
+### Features Added
+
+  - Client `HealthcareApisManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `HealthcareApisManagementClient` added method `send_request`
+  - Model `IotFhirDestination` added property `properties`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateEndpointConnectionDescription` added property `properties`
+  - Model `PrivateLinkResourceDescription` added property `properties`
+  - Model `PrivateLinkResourceListResultDescription` added property `next_link`
+  - Model `Resource` added property `system_data`
+  - Model `ServicesPatchDescription` added property `properties`
+  - Model `StorageConfiguration` added property `storage_indexing_configuration`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `ProxyResource`
+  - Added model `ServicesPropertiesUpdateParameters`
+  - Added model `StorageIndexingConfiguration`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Model `IotFhirDestination` deleted or renamed its instance variable `provisioning_state`
+  - Model `IotFhirDestination` deleted or renamed its instance variable `resource_identity_resolution_type`
+  - Model `IotFhirDestination` deleted or renamed its instance variable `fhir_service_resource_id`
+  - Model `IotFhirDestination` deleted or renamed its instance variable `fhir_mapping`
+  - Model `PrivateEndpointConnectionDescription` deleted or renamed its instance variable `private_endpoint`
+  - Model `PrivateEndpointConnectionDescription` deleted or renamed its instance variable `private_link_service_connection_state`
+  - Model `PrivateEndpointConnectionDescription` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateLinkResourceDescription` deleted or renamed its instance variable `group_id`
+  - Model `PrivateLinkResourceDescription` deleted or renamed its instance variable `required_members`
+  - Model `PrivateLinkResourceDescription` deleted or renamed its instance variable `required_zone_names`
+  - Model `ServicesPatchDescription` deleted or renamed its instance variable `public_network_access`
+  - Deleted or renamed model `DicomServiceCollection`
+  - Deleted or renamed model `FhirServiceCollection`
+  - Deleted or renamed model `IotConnectorCollection`
+  - Deleted or renamed model `IotFhirDestinationCollection`
+  - Deleted or renamed model `ListOperations`
+  - Deleted or renamed model `LocationBasedResource`
+  - Deleted or renamed model `PrivateEndpointConnectionListResultDescription`
+  - Deleted or renamed model `PrivateLinkResource`
+  - Deleted or renamed model `ResourceCore`
+  - Deleted or renamed model `ServiceManagedIdentity`
+  - Deleted or renamed model `ServicesResource`
+  - Deleted or renamed model `TaggedResource`
+  - Deleted or renamed model `WorkspaceList`
+
 ## 2.1.0 (2024-04-22)
 
 ### Features Added
