@@ -17,7 +17,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models2, types
+from ... import models as _models2
 from ..._operations._operations import (
     build_body_optionality_required_explicit_request,
     build_body_optionality_required_implicit_request,
@@ -53,13 +53,11 @@ class _BodyOptionalityClientOperationsMixin(
         """
 
     @overload
-    async def required_explicit(
-        self, body: types.BodyModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def required_explicit(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """required_explicit.
 
         :param body: Required.
-        :type body: ~parameters.bodyoptionality.types.BodyModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -84,14 +82,11 @@ class _BodyOptionalityClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def required_explicit(
-        self, body: Union[_models2.BodyModel, types.BodyModel, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def required_explicit(self, body: Union[_models2.BodyModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """required_explicit.
 
-        :param body: Is either a BodyModel type or a IO[bytes] type. Required.
-        :type body: ~parameters.bodyoptionality.models.BodyModel or
-         ~parameters.bodyoptionality.types.BodyModel or IO[bytes]
+        :param body: Is one of the following types: BodyModel, JSON, IO[bytes] Required.
+        :type body: ~parameters.bodyoptionality.models.BodyModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

@@ -26,7 +26,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -38,6 +38,7 @@ from ...operations._operations import (
 )
 from .._configuration import ScalarClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -188,12 +189,12 @@ class AzureLocationScalarOperations:
 
     @overload
     async def post(
-        self, body: types.AzureLocationModel, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AzureLocationModel:
         """post a model which has azureLocation property.
 
         :param body: _. Required.
-        :type body: ~specs.azure.core.scalar.types.AzureLocationModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -220,13 +221,12 @@ class AzureLocationScalarOperations:
 
     @distributed_trace_async
     async def post(
-        self, body: Union[_models.AzureLocationModel, types.AzureLocationModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AzureLocationModel, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AzureLocationModel:
         """post a model which has azureLocation property.
 
-        :param body: _. Is either a AzureLocationModel type or a IO[bytes] type. Required.
-        :type body: ~specs.azure.core.scalar.models.AzureLocationModel or
-         ~specs.azure.core.scalar.types.AzureLocationModel or IO[bytes]
+        :param body: _. Is one of the following types: AzureLocationModel, JSON, IO[bytes] Required.
+        :type body: ~specs.azure.core.scalar.models.AzureLocationModel or JSON or IO[bytes]
         :return: AzureLocationModel. The AzureLocationModel is compatible with MutableMapping
         :rtype: ~specs.azure.core.scalar.models.AzureLocationModel
         :raises ~azure.core.exceptions.HttpResponseError:

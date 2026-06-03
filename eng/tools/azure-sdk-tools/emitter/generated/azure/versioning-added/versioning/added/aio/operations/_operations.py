@@ -27,7 +27,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -39,6 +39,7 @@ from ...operations._operations import (
 )
 from .._configuration import AddedClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -78,12 +79,12 @@ class InterfaceV2Operations:
 
     @overload
     async def v2_in_interface(
-        self, body: types.ModelV2, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ModelV2:
         """v2_in_interface.
 
         :param body: Required.
-        :type body: ~versioning.added.types.ModelV2
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -114,13 +115,11 @@ class InterfaceV2Operations:
         params_added_on={"v2": ["content_type", "accept"]},
         api_versions_list=["v2"],
     )
-    async def v2_in_interface(
-        self, body: Union[_models.ModelV2, types.ModelV2, IO[bytes]], **kwargs: Any
-    ) -> _models.ModelV2:
+    async def v2_in_interface(self, body: Union[_models.ModelV2, JSON, IO[bytes]], **kwargs: Any) -> _models.ModelV2:
         """v2_in_interface.
 
-        :param body: Is either a ModelV2 type or a IO[bytes] type. Required.
-        :type body: ~versioning.added.models.ModelV2 or ~versioning.added.types.ModelV2 or IO[bytes]
+        :param body: Is one of the following types: ModelV2, JSON, IO[bytes] Required.
+        :type body: ~versioning.added.models.ModelV2 or JSON or IO[bytes]
         :return: ModelV2. The ModelV2 is compatible with MutableMapping
         :rtype: ~versioning.added.models.ModelV2
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -210,12 +209,12 @@ class _AddedClientOperationsMixin(
 
     @overload
     async def v1(
-        self, body: types.ModelV1, *, header_v2: str, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, header_v2: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ModelV1:
         """v1.
 
         :param body: Required.
-        :type body: ~versioning.added.types.ModelV1
+        :type body: JSON
         :keyword header_v2: Required.
         :paramtype header_v2: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -250,12 +249,12 @@ class _AddedClientOperationsMixin(
         api_versions_list=["v1", "v2"],
     )
     async def v1(
-        self, body: Union[_models.ModelV1, types.ModelV1, IO[bytes]], *, header_v2: str, **kwargs: Any
+        self, body: Union[_models.ModelV1, JSON, IO[bytes]], *, header_v2: str, **kwargs: Any
     ) -> _models.ModelV1:
         """v1.
 
-        :param body: Is either a ModelV1 type or a IO[bytes] type. Required.
-        :type body: ~versioning.added.models.ModelV1 or ~versioning.added.types.ModelV1 or IO[bytes]
+        :param body: Is one of the following types: ModelV1, JSON, IO[bytes] Required.
+        :type body: ~versioning.added.models.ModelV1 or JSON or IO[bytes]
         :keyword header_v2: Required.
         :paramtype header_v2: str
         :return: ModelV1. The ModelV1 is compatible with MutableMapping
@@ -340,13 +339,11 @@ class _AddedClientOperationsMixin(
         """
 
     @overload
-    async def v2(
-        self, body: types.ModelV2, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ModelV2:
+    async def v2(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.ModelV2:
         """v2.
 
         :param body: Required.
-        :type body: ~versioning.added.types.ModelV2
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -375,11 +372,11 @@ class _AddedClientOperationsMixin(
         params_added_on={"v2": ["content_type", "accept"]},
         api_versions_list=["v2"],
     )
-    async def v2(self, body: Union[_models.ModelV2, types.ModelV2, IO[bytes]], **kwargs: Any) -> _models.ModelV2:
+    async def v2(self, body: Union[_models.ModelV2, JSON, IO[bytes]], **kwargs: Any) -> _models.ModelV2:
         """v2.
 
-        :param body: Is either a ModelV2 type or a IO[bytes] type. Required.
-        :type body: ~versioning.added.models.ModelV2 or ~versioning.added.types.ModelV2 or IO[bytes]
+        :param body: Is one of the following types: ModelV2, JSON, IO[bytes] Required.
+        :type body: ~versioning.added.models.ModelV2 or JSON or IO[bytes]
         :return: ModelV2. The ModelV2 is compatible with MutableMapping
         :rtype: ~versioning.added.models.ModelV2
         :raises ~azure.core.exceptions.HttpResponseError:

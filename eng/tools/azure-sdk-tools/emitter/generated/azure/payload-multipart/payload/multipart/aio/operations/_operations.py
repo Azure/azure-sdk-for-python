@@ -22,7 +22,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import Model as _Model
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
@@ -47,6 +47,7 @@ from ...operations._operations import (
 )
 from .._configuration import MultiPartClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -83,23 +84,22 @@ class FormDataOperations:
         """
 
     @overload
-    async def basic(self, body: types.MultiPartRequest, **kwargs: Any) -> None:
+    async def basic(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiPartRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def basic(self, body: Union[_models.MultiPartRequest, types.MultiPartRequest], **kwargs: Any) -> None:
+    async def basic(self, body: Union[_models.MultiPartRequest, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: MultiPartRequest Required.
-        :type body: ~payload.multipart.models.MultiPartRequest or
-         ~payload.multipart.types.MultiPartRequest
+        :param body: Is either a MultiPartRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiPartRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -158,25 +158,22 @@ class FormDataOperations:
         """
 
     @overload
-    async def with_wire_name(self, body: types.MultiPartRequestWithWireName, **kwargs: Any) -> None:
+    async def with_wire_name(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data with wire names.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiPartRequestWithWireName
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def with_wire_name(
-        self, body: Union[_models.MultiPartRequestWithWireName, types.MultiPartRequestWithWireName], **kwargs: Any
-    ) -> None:
+    async def with_wire_name(self, body: Union[_models.MultiPartRequestWithWireName, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data with wire names.
 
-        :param body: Is one of the following types: MultiPartRequestWithWireName Required.
-        :type body: ~payload.multipart.models.MultiPartRequestWithWireName or
-         ~payload.multipart.types.MultiPartRequestWithWireName
+        :param body: Is either a MultiPartRequestWithWireName type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiPartRequestWithWireName or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -235,25 +232,22 @@ class FormDataOperations:
         """
 
     @overload
-    async def optional_parts(self, body: types.MultiPartOptionalRequest, **kwargs: Any) -> None:
+    async def optional_parts(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data with optional parts.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiPartOptionalRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def optional_parts(
-        self, body: Union[_models.MultiPartOptionalRequest, types.MultiPartOptionalRequest], **kwargs: Any
-    ) -> None:
+    async def optional_parts(self, body: Union[_models.MultiPartOptionalRequest, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data with optional parts.
 
-        :param body: Is one of the following types: MultiPartOptionalRequest Required.
-        :type body: ~payload.multipart.models.MultiPartOptionalRequest or
-         ~payload.multipart.types.MultiPartOptionalRequest
+        :param body: Is either a MultiPartOptionalRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiPartOptionalRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -312,25 +306,22 @@ class FormDataOperations:
         """
 
     @overload
-    async def file_array_and_basic(self, body: types.ComplexPartsRequest, **kwargs: Any) -> None:
+    async def file_array_and_basic(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for mixed scenarios.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.ComplexPartsRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def file_array_and_basic(
-        self, body: Union[_models.ComplexPartsRequest, types.ComplexPartsRequest], **kwargs: Any
-    ) -> None:
+    async def file_array_and_basic(self, body: Union[_models.ComplexPartsRequest, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for mixed scenarios.
 
-        :param body: Is one of the following types: ComplexPartsRequest Required.
-        :type body: ~payload.multipart.models.ComplexPartsRequest or
-         ~payload.multipart.types.ComplexPartsRequest
+        :param body: Is either a ComplexPartsRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.ComplexPartsRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -389,23 +380,22 @@ class FormDataOperations:
         """
 
     @overload
-    async def json_part(self, body: types.JsonPartRequest, **kwargs: Any) -> None:
+    async def json_part(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains json part and binary part.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.JsonPartRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def json_part(self, body: Union[_models.JsonPartRequest, types.JsonPartRequest], **kwargs: Any) -> None:
+    async def json_part(self, body: Union[_models.JsonPartRequest, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains json part and binary part.
 
-        :param body: Is one of the following types: JsonPartRequest Required.
-        :type body: ~payload.multipart.models.JsonPartRequest or
-         ~payload.multipart.types.JsonPartRequest
+        :param body: Is either a JsonPartRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.JsonPartRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -464,25 +454,22 @@ class FormDataOperations:
         """
 
     @overload
-    async def binary_array_parts(self, body: types.BinaryArrayPartsRequest, **kwargs: Any) -> None:
+    async def binary_array_parts(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains multi binary parts.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.BinaryArrayPartsRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def binary_array_parts(
-        self, body: Union[_models.BinaryArrayPartsRequest, types.BinaryArrayPartsRequest], **kwargs: Any
-    ) -> None:
+    async def binary_array_parts(self, body: Union[_models.BinaryArrayPartsRequest, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains multi binary parts.
 
-        :param body: Is one of the following types: BinaryArrayPartsRequest Required.
-        :type body: ~payload.multipart.models.BinaryArrayPartsRequest or
-         ~payload.multipart.types.BinaryArrayPartsRequest
+        :param body: Is either a BinaryArrayPartsRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.BinaryArrayPartsRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -541,25 +528,22 @@ class FormDataOperations:
         """
 
     @overload
-    async def multi_binary_parts(self, body: types.MultiBinaryPartsRequest, **kwargs: Any) -> None:
+    async def multi_binary_parts(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains multi binary parts.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiBinaryPartsRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def multi_binary_parts(
-        self, body: Union[_models.MultiBinaryPartsRequest, types.MultiBinaryPartsRequest], **kwargs: Any
-    ) -> None:
+    async def multi_binary_parts(self, body: Union[_models.MultiBinaryPartsRequest, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains multi binary parts.
 
-        :param body: Is one of the following types: MultiBinaryPartsRequest Required.
-        :type body: ~payload.multipart.models.MultiBinaryPartsRequest or
-         ~payload.multipart.types.MultiBinaryPartsRequest
+        :param body: Is either a MultiBinaryPartsRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiBinaryPartsRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -618,11 +602,11 @@ class FormDataOperations:
         """
 
     @overload
-    async def check_file_name_and_content_type(self, body: types.MultiPartRequest, **kwargs: Any) -> None:
+    async def check_file_name_and_content_type(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiPartRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -630,13 +614,12 @@ class FormDataOperations:
 
     @distributed_trace_async
     async def check_file_name_and_content_type(
-        self, body: Union[_models.MultiPartRequest, types.MultiPartRequest], **kwargs: Any
+        self, body: Union[_models.MultiPartRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: MultiPartRequest Required.
-        :type body: ~payload.multipart.models.MultiPartRequest or
-         ~payload.multipart.types.MultiPartRequest
+        :param body: Is either a MultiPartRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiPartRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -695,25 +678,22 @@ class FormDataOperations:
         """
 
     @overload
-    async def anonymous_model(self, body: types.AnonymousModelRequest, **kwargs: Any) -> None:
+    async def anonymous_model(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.AnonymousModelRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def anonymous_model(
-        self, body: Union[_models.AnonymousModelRequest, types.AnonymousModelRequest], **kwargs: Any
-    ) -> None:
+    async def anonymous_model(self, body: Union[_models.AnonymousModelRequest, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: AnonymousModelRequest Required.
-        :type body: ~payload.multipart.models.AnonymousModelRequest or
-         ~payload.multipart.types.AnonymousModelRequest
+        :param body: Is either a AnonymousModelRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.AnonymousModelRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -797,11 +777,11 @@ class FormDataHttpPartsOperations:
         """
 
     @overload
-    async def json_array_and_file_array(self, body: types.ComplexHttpPartsModelRequest, **kwargs: Any) -> None:
+    async def json_array_and_file_array(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for mixed scenarios.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.ComplexHttpPartsModelRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -809,13 +789,12 @@ class FormDataHttpPartsOperations:
 
     @distributed_trace_async
     async def json_array_and_file_array(
-        self, body: Union[_models.ComplexHttpPartsModelRequest, types.ComplexHttpPartsModelRequest], **kwargs: Any
+        self, body: Union[_models.ComplexHttpPartsModelRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for mixed scenarios.
 
-        :param body: Is one of the following types: ComplexHttpPartsModelRequest Required.
-        :type body: ~payload.multipart.models.ComplexHttpPartsModelRequest or
-         ~payload.multipart.types.ComplexHttpPartsModelRequest
+        :param body: Is either a ComplexHttpPartsModelRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.ComplexHttpPartsModelRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -894,13 +873,11 @@ class FormDataFileOperations:
         """
 
     @overload
-    async def upload_file_specific_content_type(
-        self, body: types.UploadFileSpecificContentTypeRequest, **kwargs: Any
-    ) -> None:
+    async def upload_file_specific_content_type(self, body: JSON, **kwargs: Any) -> None:
         """upload_file_specific_content_type.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.UploadFileSpecificContentTypeRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -908,15 +885,12 @@ class FormDataFileOperations:
 
     @distributed_trace_async
     async def upload_file_specific_content_type(
-        self,
-        body: Union[_models.UploadFileSpecificContentTypeRequest, types.UploadFileSpecificContentTypeRequest],
-        **kwargs: Any
+        self, body: Union[_models.UploadFileSpecificContentTypeRequest, JSON], **kwargs: Any
     ) -> None:
         """upload_file_specific_content_type.
 
-        :param body: Is one of the following types: UploadFileSpecificContentTypeRequest Required.
-        :type body: ~payload.multipart.models.UploadFileSpecificContentTypeRequest or
-         ~payload.multipart.types.UploadFileSpecificContentTypeRequest
+        :param body: Is either a UploadFileSpecificContentTypeRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.UploadFileSpecificContentTypeRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -977,11 +951,11 @@ class FormDataFileOperations:
         """
 
     @overload
-    async def upload_file_required_filename(self, body: types.UploadFileRequiredFilenameRequest, **kwargs: Any) -> None:
+    async def upload_file_required_filename(self, body: JSON, **kwargs: Any) -> None:
         """upload_file_required_filename.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.UploadFileRequiredFilenameRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -989,15 +963,12 @@ class FormDataFileOperations:
 
     @distributed_trace_async
     async def upload_file_required_filename(
-        self,
-        body: Union[_models.UploadFileRequiredFilenameRequest, types.UploadFileRequiredFilenameRequest],
-        **kwargs: Any
+        self, body: Union[_models.UploadFileRequiredFilenameRequest, JSON], **kwargs: Any
     ) -> None:
         """upload_file_required_filename.
 
-        :param body: Is one of the following types: UploadFileRequiredFilenameRequest Required.
-        :type body: ~payload.multipart.models.UploadFileRequiredFilenameRequest or
-         ~payload.multipart.types.UploadFileRequiredFilenameRequest
+        :param body: Is either a UploadFileRequiredFilenameRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.UploadFileRequiredFilenameRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1056,25 +1027,22 @@ class FormDataFileOperations:
         """
 
     @overload
-    async def upload_file_array(self, body: types.UploadFileArrayRequest, **kwargs: Any) -> None:
+    async def upload_file_array(self, body: JSON, **kwargs: Any) -> None:
         """upload_file_array.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.UploadFileArrayRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def upload_file_array(
-        self, body: Union[_models.UploadFileArrayRequest, types.UploadFileArrayRequest], **kwargs: Any
-    ) -> None:
+    async def upload_file_array(self, body: Union[_models.UploadFileArrayRequest, JSON], **kwargs: Any) -> None:
         """upload_file_array.
 
-        :param body: Is one of the following types: UploadFileArrayRequest Required.
-        :type body: ~payload.multipart.models.UploadFileArrayRequest or
-         ~payload.multipart.types.UploadFileArrayRequest
+        :param body: Is either a UploadFileArrayRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.UploadFileArrayRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1153,13 +1121,11 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    async def image_jpeg_content_type(
-        self, body: types.FileWithHttpPartSpecificContentTypeRequest, **kwargs: Any
-    ) -> None:
+    async def image_jpeg_content_type(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.FileWithHttpPartSpecificContentTypeRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1167,18 +1133,13 @@ class FormDataHttpPartsContentTypeOperations:
 
     @distributed_trace_async
     async def image_jpeg_content_type(
-        self,
-        body: Union[
-            _models.FileWithHttpPartSpecificContentTypeRequest, types.FileWithHttpPartSpecificContentTypeRequest
-        ],
-        **kwargs: Any
+        self, body: Union[_models.FileWithHttpPartSpecificContentTypeRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: FileWithHttpPartSpecificContentTypeRequest
+        :param body: Is either a FileWithHttpPartSpecificContentTypeRequest type or a JSON type.
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartSpecificContentTypeRequest or
-         ~payload.multipart.types.FileWithHttpPartSpecificContentTypeRequest
+        :type body: ~payload.multipart.models.FileWithHttpPartSpecificContentTypeRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1239,13 +1200,11 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    async def required_content_type(
-        self, body: types.FileWithHttpPartRequiredContentTypeRequest, **kwargs: Any
-    ) -> None:
+    async def required_content_type(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.FileWithHttpPartRequiredContentTypeRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1253,18 +1212,13 @@ class FormDataHttpPartsContentTypeOperations:
 
     @distributed_trace_async
     async def required_content_type(
-        self,
-        body: Union[
-            _models.FileWithHttpPartRequiredContentTypeRequest, types.FileWithHttpPartRequiredContentTypeRequest
-        ],
-        **kwargs: Any
+        self, body: Union[_models.FileWithHttpPartRequiredContentTypeRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: FileWithHttpPartRequiredContentTypeRequest
+        :param body: Is either a FileWithHttpPartRequiredContentTypeRequest type or a JSON type.
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartRequiredContentTypeRequest or
-         ~payload.multipart.types.FileWithHttpPartRequiredContentTypeRequest
+        :type body: ~payload.multipart.models.FileWithHttpPartRequiredContentTypeRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1325,13 +1279,11 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    async def optional_content_type(
-        self, body: types.FileWithHttpPartOptionalContentTypeRequest, **kwargs: Any
-    ) -> None:
+    async def optional_content_type(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for optional content type.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.FileWithHttpPartOptionalContentTypeRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1339,18 +1291,13 @@ class FormDataHttpPartsContentTypeOperations:
 
     @distributed_trace_async
     async def optional_content_type(
-        self,
-        body: Union[
-            _models.FileWithHttpPartOptionalContentTypeRequest, types.FileWithHttpPartOptionalContentTypeRequest
-        ],
-        **kwargs: Any
+        self, body: Union[_models.FileWithHttpPartOptionalContentTypeRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for optional content type.
 
-        :param body: Is one of the following types: FileWithHttpPartOptionalContentTypeRequest
+        :param body: Is either a FileWithHttpPartOptionalContentTypeRequest type or a JSON type.
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartOptionalContentTypeRequest or
-         ~payload.multipart.types.FileWithHttpPartOptionalContentTypeRequest
+        :type body: ~payload.multipart.models.FileWithHttpPartOptionalContentTypeRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1427,22 +1374,22 @@ class FormDataHttpPartsNonStringOperations:
         """
 
     @overload
-    async def float(self, body: types.FloatRequest, **kwargs: Any) -> None:
+    async def float(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for non string.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.FloatRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def float(self, body: Union[_models.FloatRequest, types.FloatRequest], **kwargs: Any) -> None:
+    async def float(self, body: Union[_models.FloatRequest, JSON], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for non string.
 
-        :param body: Is one of the following types: FloatRequest Required.
-        :type body: ~payload.multipart.models.FloatRequest or ~payload.multipart.types.FloatRequest
+        :param body: Is either a FloatRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.FloatRequest or JSON
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

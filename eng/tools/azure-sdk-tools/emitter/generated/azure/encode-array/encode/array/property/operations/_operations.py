@@ -27,11 +27,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2, types
+from ... import models as _models2
 from ..._configuration import ArrayClientConfiguration
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -287,12 +288,12 @@ class PropertyOperations:
 
     @overload
     def comma_delimited(
-        self, body: types.CommaDelimitedArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.CommaDelimitedArrayProperty:
         """comma_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.CommaDelimitedArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -321,15 +322,13 @@ class PropertyOperations:
 
     @distributed_trace
     def comma_delimited(
-        self,
-        body: Union[_models2.CommaDelimitedArrayProperty, types.CommaDelimitedArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models2.CommaDelimitedArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.CommaDelimitedArrayProperty:
         """comma_delimited.
 
-        :param body: Is either a CommaDelimitedArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.array.models.CommaDelimitedArrayProperty or
-         ~encode.array.types.CommaDelimitedArrayProperty or IO[bytes]
+        :param body: Is one of the following types: CommaDelimitedArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.array.models.CommaDelimitedArrayProperty or JSON or IO[bytes]
         :return: CommaDelimitedArrayProperty. The CommaDelimitedArrayProperty is compatible with
          MutableMapping
         :rtype: ~encode.array.models.CommaDelimitedArrayProperty
@@ -413,12 +412,12 @@ class PropertyOperations:
 
     @overload
     def space_delimited(
-        self, body: types.SpaceDelimitedArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.SpaceDelimitedArrayProperty:
         """space_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.SpaceDelimitedArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -447,15 +446,13 @@ class PropertyOperations:
 
     @distributed_trace
     def space_delimited(
-        self,
-        body: Union[_models2.SpaceDelimitedArrayProperty, types.SpaceDelimitedArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models2.SpaceDelimitedArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.SpaceDelimitedArrayProperty:
         """space_delimited.
 
-        :param body: Is either a SpaceDelimitedArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.array.models.SpaceDelimitedArrayProperty or
-         ~encode.array.types.SpaceDelimitedArrayProperty or IO[bytes]
+        :param body: Is one of the following types: SpaceDelimitedArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.array.models.SpaceDelimitedArrayProperty or JSON or IO[bytes]
         :return: SpaceDelimitedArrayProperty. The SpaceDelimitedArrayProperty is compatible with
          MutableMapping
         :rtype: ~encode.array.models.SpaceDelimitedArrayProperty
@@ -539,12 +536,12 @@ class PropertyOperations:
 
     @overload
     def pipe_delimited(
-        self, body: types.PipeDelimitedArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.PipeDelimitedArrayProperty:
         """pipe_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.PipeDelimitedArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -573,15 +570,13 @@ class PropertyOperations:
 
     @distributed_trace
     def pipe_delimited(
-        self,
-        body: Union[_models2.PipeDelimitedArrayProperty, types.PipeDelimitedArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models2.PipeDelimitedArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.PipeDelimitedArrayProperty:
         """pipe_delimited.
 
-        :param body: Is either a PipeDelimitedArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.array.models.PipeDelimitedArrayProperty or
-         ~encode.array.types.PipeDelimitedArrayProperty or IO[bytes]
+        :param body: Is one of the following types: PipeDelimitedArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.array.models.PipeDelimitedArrayProperty or JSON or IO[bytes]
         :return: PipeDelimitedArrayProperty. The PipeDelimitedArrayProperty is compatible with
          MutableMapping
         :rtype: ~encode.array.models.PipeDelimitedArrayProperty
@@ -665,12 +660,12 @@ class PropertyOperations:
 
     @overload
     def newline_delimited(
-        self, body: types.NewlineDelimitedArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.NewlineDelimitedArrayProperty:
         """newline_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.NewlineDelimitedArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -699,15 +694,13 @@ class PropertyOperations:
 
     @distributed_trace
     def newline_delimited(
-        self,
-        body: Union[_models2.NewlineDelimitedArrayProperty, types.NewlineDelimitedArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models2.NewlineDelimitedArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.NewlineDelimitedArrayProperty:
         """newline_delimited.
 
-        :param body: Is either a NewlineDelimitedArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.array.models.NewlineDelimitedArrayProperty or
-         ~encode.array.types.NewlineDelimitedArrayProperty or IO[bytes]
+        :param body: Is one of the following types: NewlineDelimitedArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.array.models.NewlineDelimitedArrayProperty or JSON or IO[bytes]
         :return: NewlineDelimitedArrayProperty. The NewlineDelimitedArrayProperty is compatible with
          MutableMapping
         :rtype: ~encode.array.models.NewlineDelimitedArrayProperty
@@ -791,12 +784,12 @@ class PropertyOperations:
 
     @overload
     def enum_comma_delimited(
-        self, body: types.CommaDelimitedEnumArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.CommaDelimitedEnumArrayProperty:
         """enum_comma_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.CommaDelimitedEnumArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -825,15 +818,13 @@ class PropertyOperations:
 
     @distributed_trace
     def enum_comma_delimited(
-        self,
-        body: Union[_models2.CommaDelimitedEnumArrayProperty, types.CommaDelimitedEnumArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models2.CommaDelimitedEnumArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.CommaDelimitedEnumArrayProperty:
         """enum_comma_delimited.
 
-        :param body: Is either a CommaDelimitedEnumArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.array.models.CommaDelimitedEnumArrayProperty or
-         ~encode.array.types.CommaDelimitedEnumArrayProperty or IO[bytes]
+        :param body: Is one of the following types: CommaDelimitedEnumArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.array.models.CommaDelimitedEnumArrayProperty or JSON or IO[bytes]
         :return: CommaDelimitedEnumArrayProperty. The CommaDelimitedEnumArrayProperty is compatible
          with MutableMapping
         :rtype: ~encode.array.models.CommaDelimitedEnumArrayProperty
@@ -917,12 +908,12 @@ class PropertyOperations:
 
     @overload
     def enum_space_delimited(
-        self, body: types.SpaceDelimitedEnumArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.SpaceDelimitedEnumArrayProperty:
         """enum_space_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.SpaceDelimitedEnumArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -951,15 +942,13 @@ class PropertyOperations:
 
     @distributed_trace
     def enum_space_delimited(
-        self,
-        body: Union[_models2.SpaceDelimitedEnumArrayProperty, types.SpaceDelimitedEnumArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models2.SpaceDelimitedEnumArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.SpaceDelimitedEnumArrayProperty:
         """enum_space_delimited.
 
-        :param body: Is either a SpaceDelimitedEnumArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.array.models.SpaceDelimitedEnumArrayProperty or
-         ~encode.array.types.SpaceDelimitedEnumArrayProperty or IO[bytes]
+        :param body: Is one of the following types: SpaceDelimitedEnumArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.array.models.SpaceDelimitedEnumArrayProperty or JSON or IO[bytes]
         :return: SpaceDelimitedEnumArrayProperty. The SpaceDelimitedEnumArrayProperty is compatible
          with MutableMapping
         :rtype: ~encode.array.models.SpaceDelimitedEnumArrayProperty
@@ -1043,12 +1032,12 @@ class PropertyOperations:
 
     @overload
     def enum_pipe_delimited(
-        self, body: types.PipeDelimitedEnumArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.PipeDelimitedEnumArrayProperty:
         """enum_pipe_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.PipeDelimitedEnumArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1077,15 +1066,13 @@ class PropertyOperations:
 
     @distributed_trace
     def enum_pipe_delimited(
-        self,
-        body: Union[_models2.PipeDelimitedEnumArrayProperty, types.PipeDelimitedEnumArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models2.PipeDelimitedEnumArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.PipeDelimitedEnumArrayProperty:
         """enum_pipe_delimited.
 
-        :param body: Is either a PipeDelimitedEnumArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.array.models.PipeDelimitedEnumArrayProperty or
-         ~encode.array.types.PipeDelimitedEnumArrayProperty or IO[bytes]
+        :param body: Is one of the following types: PipeDelimitedEnumArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.array.models.PipeDelimitedEnumArrayProperty or JSON or IO[bytes]
         :return: PipeDelimitedEnumArrayProperty. The PipeDelimitedEnumArrayProperty is compatible with
          MutableMapping
         :rtype: ~encode.array.models.PipeDelimitedEnumArrayProperty
@@ -1169,12 +1156,12 @@ class PropertyOperations:
 
     @overload
     def enum_newline_delimited(
-        self, body: types.NewlineDelimitedEnumArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.NewlineDelimitedEnumArrayProperty:
         """enum_newline_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.NewlineDelimitedEnumArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1203,15 +1190,13 @@ class PropertyOperations:
 
     @distributed_trace
     def enum_newline_delimited(
-        self,
-        body: Union[_models2.NewlineDelimitedEnumArrayProperty, types.NewlineDelimitedEnumArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models2.NewlineDelimitedEnumArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.NewlineDelimitedEnumArrayProperty:
         """enum_newline_delimited.
 
-        :param body: Is either a NewlineDelimitedEnumArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.array.models.NewlineDelimitedEnumArrayProperty or
-         ~encode.array.types.NewlineDelimitedEnumArrayProperty or IO[bytes]
+        :param body: Is one of the following types: NewlineDelimitedEnumArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.array.models.NewlineDelimitedEnumArrayProperty or JSON or IO[bytes]
         :return: NewlineDelimitedEnumArrayProperty. The NewlineDelimitedEnumArrayProperty is compatible
          with MutableMapping
         :rtype: ~encode.array.models.NewlineDelimitedEnumArrayProperty
@@ -1299,16 +1284,12 @@ class PropertyOperations:
 
     @overload
     def extensible_enum_comma_delimited(
-        self,
-        body: types.CommaDelimitedExtensibleEnumArrayProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.CommaDelimitedExtensibleEnumArrayProperty:
         """extensible_enum_comma_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.CommaDelimitedExtensibleEnumArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1337,20 +1318,13 @@ class PropertyOperations:
 
     @distributed_trace
     def extensible_enum_comma_delimited(
-        self,
-        body: Union[
-            _models2.CommaDelimitedExtensibleEnumArrayProperty,
-            types.CommaDelimitedExtensibleEnumArrayProperty,
-            IO[bytes],
-        ],
-        **kwargs: Any,
+        self, body: Union[_models2.CommaDelimitedExtensibleEnumArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.CommaDelimitedExtensibleEnumArrayProperty:
         """extensible_enum_comma_delimited.
 
-        :param body: Is either a CommaDelimitedExtensibleEnumArrayProperty type or a IO[bytes] type.
-         Required.
-        :type body: ~encode.array.models.CommaDelimitedExtensibleEnumArrayProperty or
-         ~encode.array.types.CommaDelimitedExtensibleEnumArrayProperty or IO[bytes]
+        :param body: Is one of the following types: CommaDelimitedExtensibleEnumArrayProperty, JSON,
+         IO[bytes] Required.
+        :type body: ~encode.array.models.CommaDelimitedExtensibleEnumArrayProperty or JSON or IO[bytes]
         :return: CommaDelimitedExtensibleEnumArrayProperty. The
          CommaDelimitedExtensibleEnumArrayProperty is compatible with MutableMapping
         :rtype: ~encode.array.models.CommaDelimitedExtensibleEnumArrayProperty
@@ -1438,16 +1412,12 @@ class PropertyOperations:
 
     @overload
     def extensible_enum_space_delimited(
-        self,
-        body: types.SpaceDelimitedExtensibleEnumArrayProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.SpaceDelimitedExtensibleEnumArrayProperty:
         """extensible_enum_space_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.SpaceDelimitedExtensibleEnumArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1476,20 +1446,13 @@ class PropertyOperations:
 
     @distributed_trace
     def extensible_enum_space_delimited(
-        self,
-        body: Union[
-            _models2.SpaceDelimitedExtensibleEnumArrayProperty,
-            types.SpaceDelimitedExtensibleEnumArrayProperty,
-            IO[bytes],
-        ],
-        **kwargs: Any,
+        self, body: Union[_models2.SpaceDelimitedExtensibleEnumArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.SpaceDelimitedExtensibleEnumArrayProperty:
         """extensible_enum_space_delimited.
 
-        :param body: Is either a SpaceDelimitedExtensibleEnumArrayProperty type or a IO[bytes] type.
-         Required.
-        :type body: ~encode.array.models.SpaceDelimitedExtensibleEnumArrayProperty or
-         ~encode.array.types.SpaceDelimitedExtensibleEnumArrayProperty or IO[bytes]
+        :param body: Is one of the following types: SpaceDelimitedExtensibleEnumArrayProperty, JSON,
+         IO[bytes] Required.
+        :type body: ~encode.array.models.SpaceDelimitedExtensibleEnumArrayProperty or JSON or IO[bytes]
         :return: SpaceDelimitedExtensibleEnumArrayProperty. The
          SpaceDelimitedExtensibleEnumArrayProperty is compatible with MutableMapping
         :rtype: ~encode.array.models.SpaceDelimitedExtensibleEnumArrayProperty
@@ -1577,16 +1540,12 @@ class PropertyOperations:
 
     @overload
     def extensible_enum_pipe_delimited(
-        self,
-        body: types.PipeDelimitedExtensibleEnumArrayProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.PipeDelimitedExtensibleEnumArrayProperty:
         """extensible_enum_pipe_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.PipeDelimitedExtensibleEnumArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1615,18 +1574,13 @@ class PropertyOperations:
 
     @distributed_trace
     def extensible_enum_pipe_delimited(
-        self,
-        body: Union[
-            _models2.PipeDelimitedExtensibleEnumArrayProperty, types.PipeDelimitedExtensibleEnumArrayProperty, IO[bytes]
-        ],
-        **kwargs: Any,
+        self, body: Union[_models2.PipeDelimitedExtensibleEnumArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.PipeDelimitedExtensibleEnumArrayProperty:
         """extensible_enum_pipe_delimited.
 
-        :param body: Is either a PipeDelimitedExtensibleEnumArrayProperty type or a IO[bytes] type.
-         Required.
-        :type body: ~encode.array.models.PipeDelimitedExtensibleEnumArrayProperty or
-         ~encode.array.types.PipeDelimitedExtensibleEnumArrayProperty or IO[bytes]
+        :param body: Is one of the following types: PipeDelimitedExtensibleEnumArrayProperty, JSON,
+         IO[bytes] Required.
+        :type body: ~encode.array.models.PipeDelimitedExtensibleEnumArrayProperty or JSON or IO[bytes]
         :return: PipeDelimitedExtensibleEnumArrayProperty. The PipeDelimitedExtensibleEnumArrayProperty
          is compatible with MutableMapping
         :rtype: ~encode.array.models.PipeDelimitedExtensibleEnumArrayProperty
@@ -1714,16 +1668,12 @@ class PropertyOperations:
 
     @overload
     def extensible_enum_newline_delimited(
-        self,
-        body: types.NewlineDelimitedExtensibleEnumArrayProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.NewlineDelimitedExtensibleEnumArrayProperty:
         """extensible_enum_newline_delimited.
 
         :param body: Required.
-        :type body: ~encode.array.types.NewlineDelimitedExtensibleEnumArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1752,20 +1702,14 @@ class PropertyOperations:
 
     @distributed_trace
     def extensible_enum_newline_delimited(
-        self,
-        body: Union[
-            _models2.NewlineDelimitedExtensibleEnumArrayProperty,
-            types.NewlineDelimitedExtensibleEnumArrayProperty,
-            IO[bytes],
-        ],
-        **kwargs: Any,
+        self, body: Union[_models2.NewlineDelimitedExtensibleEnumArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models2.NewlineDelimitedExtensibleEnumArrayProperty:
         """extensible_enum_newline_delimited.
 
-        :param body: Is either a NewlineDelimitedExtensibleEnumArrayProperty type or a IO[bytes] type.
-         Required.
-        :type body: ~encode.array.models.NewlineDelimitedExtensibleEnumArrayProperty or
-         ~encode.array.types.NewlineDelimitedExtensibleEnumArrayProperty or IO[bytes]
+        :param body: Is one of the following types: NewlineDelimitedExtensibleEnumArrayProperty, JSON,
+         IO[bytes] Required.
+        :type body: ~encode.array.models.NewlineDelimitedExtensibleEnumArrayProperty or JSON or
+         IO[bytes]
         :return: NewlineDelimitedExtensibleEnumArrayProperty. The
          NewlineDelimitedExtensibleEnumArrayProperty is compatible with MutableMapping
         :rtype: ~encode.array.models.NewlineDelimitedExtensibleEnumArrayProperty

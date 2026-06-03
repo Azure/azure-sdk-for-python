@@ -19,12 +19,13 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._operations._operations import build_removed_model_v3_request, build_removed_v2_request
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import RemovedClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -50,13 +51,11 @@ class _RemovedClientOperationsMixin(
         """
 
     @overload
-    async def v2(
-        self, body: types.ModelV2, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ModelV2:
+    async def v2(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.ModelV2:
         """v2.
 
         :param body: Required.
-        :type body: ~versioning.removed.types.ModelV2
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -79,12 +78,11 @@ class _RemovedClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def v2(self, body: Union[_models.ModelV2, types.ModelV2, IO[bytes]], **kwargs: Any) -> _models.ModelV2:
+    async def v2(self, body: Union[_models.ModelV2, JSON, IO[bytes]], **kwargs: Any) -> _models.ModelV2:
         """v2.
 
-        :param body: Is either a ModelV2 type or a IO[bytes] type. Required.
-        :type body: ~versioning.removed.models.ModelV2 or ~versioning.removed.types.ModelV2 or
-         IO[bytes]
+        :param body: Is one of the following types: ModelV2, JSON, IO[bytes] Required.
+        :type body: ~versioning.removed.models.ModelV2 or JSON or IO[bytes]
         :return: ModelV2. The ModelV2 is compatible with MutableMapping
         :rtype: ~versioning.removed.models.ModelV2
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -167,14 +165,12 @@ class _RemovedClientOperationsMixin(
         """
 
     @overload
-    async def model_v3(
-        self, body: types.ModelV3, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ModelV3:
+    async def model_v3(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.ModelV3:
         """This operation will pass different paths and different request bodies based on different
         versions.
 
         :param body: Required.
-        :type body: ~versioning.removed.types.ModelV3
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -200,13 +196,12 @@ class _RemovedClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def model_v3(self, body: Union[_models.ModelV3, types.ModelV3, IO[bytes]], **kwargs: Any) -> _models.ModelV3:
+    async def model_v3(self, body: Union[_models.ModelV3, JSON, IO[bytes]], **kwargs: Any) -> _models.ModelV3:
         """This operation will pass different paths and different request bodies based on different
         versions.
 
-        :param body: Is either a ModelV3 type or a IO[bytes] type. Required.
-        :type body: ~versioning.removed.models.ModelV3 or ~versioning.removed.types.ModelV3 or
-         IO[bytes]
+        :param body: Is one of the following types: ModelV3, JSON, IO[bytes] Required.
+        :type body: ~versioning.removed.models.ModelV3 or JSON or IO[bytes]
         :return: ModelV3. The ModelV3 is compatible with MutableMapping
         :rtype: ~versioning.removed.models.ModelV3
         :raises ~corehttp.exceptions.HttpResponseError:

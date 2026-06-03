@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -66,6 +66,7 @@ from ...operations._operations import (
 )
 from .._configuration import ResourcesClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -163,7 +164,7 @@ class TopLevelOperations:
         self,
         resource_group_name: str,
         top_level_tracked_resource_name: str,
-        resource: Union[_models.TopLevelTrackedResource, types.TopLevelTrackedResource, IO[bytes]],
+        resource: Union[_models.TopLevelTrackedResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -270,7 +271,7 @@ class TopLevelOperations:
         self,
         resource_group_name: str,
         top_level_tracked_resource_name: str,
-        resource: types.TopLevelTrackedResource,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -283,7 +284,7 @@ class TopLevelOperations:
         :param top_level_tracked_resource_name: arm resource name for path. Required.
         :type top_level_tracked_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.resources.types.TopLevelTrackedResource
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -328,7 +329,7 @@ class TopLevelOperations:
         self,
         resource_group_name: str,
         top_level_tracked_resource_name: str,
-        resource: Union[_models.TopLevelTrackedResource, types.TopLevelTrackedResource, IO[bytes]],
+        resource: Union[_models.TopLevelTrackedResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TopLevelTrackedResource]:
         """Create a TopLevelTrackedResource.
@@ -338,10 +339,10 @@ class TopLevelOperations:
         :type resource_group_name: str
         :param top_level_tracked_resource_name: arm resource name for path. Required.
         :type top_level_tracked_resource_name: str
-        :param resource: Resource create parameters. Is either a TopLevelTrackedResource type or a
-         IO[bytes] type. Required.
-        :type resource: ~azure.resourcemanager.resources.models.TopLevelTrackedResource or
-         ~azure.resourcemanager.resources.types.TopLevelTrackedResource or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types:
+         TopLevelTrackedResource, JSON, IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.resources.models.TopLevelTrackedResource or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns TopLevelTrackedResource. The
          TopLevelTrackedResource is compatible with MutableMapping
         :rtype:
@@ -404,7 +405,7 @@ class TopLevelOperations:
         self,
         resource_group_name: str,
         top_level_tracked_resource_name: str,
-        properties: Union[_models.TopLevelTrackedResource, types.TopLevelTrackedResource, IO[bytes]],
+        properties: Union[_models.TopLevelTrackedResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -509,7 +510,7 @@ class TopLevelOperations:
         self,
         resource_group_name: str,
         top_level_tracked_resource_name: str,
-        properties: types.TopLevelTrackedResource,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -522,7 +523,7 @@ class TopLevelOperations:
         :param top_level_tracked_resource_name: arm resource name for path. Required.
         :type top_level_tracked_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.resourcemanager.resources.types.TopLevelTrackedResource
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -567,7 +568,7 @@ class TopLevelOperations:
         self,
         resource_group_name: str,
         top_level_tracked_resource_name: str,
-        properties: Union[_models.TopLevelTrackedResource, types.TopLevelTrackedResource, IO[bytes]],
+        properties: Union[_models.TopLevelTrackedResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TopLevelTrackedResource]:
         """Update a TopLevelTrackedResource.
@@ -577,10 +578,10 @@ class TopLevelOperations:
         :type resource_group_name: str
         :param top_level_tracked_resource_name: arm resource name for path. Required.
         :type top_level_tracked_resource_name: str
-        :param properties: The resource properties to be updated. Is either a TopLevelTrackedResource
-         type or a IO[bytes] type. Required.
-        :type properties: ~azure.resourcemanager.resources.models.TopLevelTrackedResource or
-         ~azure.resourcemanager.resources.types.TopLevelTrackedResource or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         TopLevelTrackedResource, JSON, IO[bytes] Required.
+        :type properties: ~azure.resourcemanager.resources.models.TopLevelTrackedResource or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns TopLevelTrackedResource. The
          TopLevelTrackedResource is compatible with MutableMapping
         :rtype:
@@ -985,7 +986,7 @@ class TopLevelOperations:
         self,
         resource_group_name: str,
         top_level_tracked_resource_name: str,
-        body: types.NotificationDetails,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -998,7 +999,7 @@ class TopLevelOperations:
         :param top_level_tracked_resource_name: arm resource name for path. Required.
         :type top_level_tracked_resource_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.resourcemanager.resources.types.NotificationDetails
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1039,7 +1040,7 @@ class TopLevelOperations:
         self,
         resource_group_name: str,
         top_level_tracked_resource_name: str,
-        body: Union[_models.NotificationDetails, types.NotificationDetails, IO[bytes]],
+        body: Union[_models.NotificationDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """A synchronous resource action that returns no content.
@@ -1049,10 +1050,9 @@ class TopLevelOperations:
         :type resource_group_name: str
         :param top_level_tracked_resource_name: arm resource name for path. Required.
         :type top_level_tracked_resource_name: str
-        :param body: The content of the action request. Is either a NotificationDetails type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.resourcemanager.resources.models.NotificationDetails or
-         ~azure.resourcemanager.resources.types.NotificationDetails or IO[bytes]
+        :param body: The content of the action request. Is one of the following types:
+         NotificationDetails, JSON, IO[bytes] Required.
+        :type body: ~azure.resourcemanager.resources.models.NotificationDetails or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1213,7 +1213,7 @@ class NestedOperations:
         resource_group_name: str,
         top_level_tracked_resource_name: str,
         nexted_proxy_resource_name: str,
-        resource: Union[_models.NestedProxyResource, types.NestedProxyResource, IO[bytes]],
+        resource: Union[_models.NestedProxyResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1325,7 +1325,7 @@ class NestedOperations:
         resource_group_name: str,
         top_level_tracked_resource_name: str,
         nexted_proxy_resource_name: str,
-        resource: types.NestedProxyResource,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1340,7 +1340,7 @@ class NestedOperations:
         :param nexted_proxy_resource_name: Name of the nested resource. Required.
         :type nexted_proxy_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.resources.types.NestedProxyResource
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1389,7 +1389,7 @@ class NestedOperations:
         resource_group_name: str,
         top_level_tracked_resource_name: str,
         nexted_proxy_resource_name: str,
-        resource: Union[_models.NestedProxyResource, types.NestedProxyResource, IO[bytes]],
+        resource: Union[_models.NestedProxyResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NestedProxyResource]:
         """Create a NestedProxyResource.
@@ -1401,10 +1401,10 @@ class NestedOperations:
         :type top_level_tracked_resource_name: str
         :param nexted_proxy_resource_name: Name of the nested resource. Required.
         :type nexted_proxy_resource_name: str
-        :param resource: Resource create parameters. Is either a NestedProxyResource type or a
-         IO[bytes] type. Required.
-        :type resource: ~azure.resourcemanager.resources.models.NestedProxyResource or
-         ~azure.resourcemanager.resources.types.NestedProxyResource or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types:
+         NestedProxyResource, JSON, IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.resources.models.NestedProxyResource or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns NestedProxyResource. The
          NestedProxyResource is compatible with MutableMapping
         :rtype:
@@ -1469,7 +1469,7 @@ class NestedOperations:
         resource_group_name: str,
         top_level_tracked_resource_name: str,
         nexted_proxy_resource_name: str,
-        properties: Union[_models.NestedProxyResource, types.NestedProxyResource, IO[bytes]],
+        properties: Union[_models.NestedProxyResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1579,7 +1579,7 @@ class NestedOperations:
         resource_group_name: str,
         top_level_tracked_resource_name: str,
         nexted_proxy_resource_name: str,
-        properties: types.NestedProxyResource,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1594,7 +1594,7 @@ class NestedOperations:
         :param nexted_proxy_resource_name: Name of the nested resource. Required.
         :type nexted_proxy_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.resourcemanager.resources.types.NestedProxyResource
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1643,7 +1643,7 @@ class NestedOperations:
         resource_group_name: str,
         top_level_tracked_resource_name: str,
         nexted_proxy_resource_name: str,
-        properties: Union[_models.NestedProxyResource, types.NestedProxyResource, IO[bytes]],
+        properties: Union[_models.NestedProxyResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NestedProxyResource]:
         """Update a NestedProxyResource.
@@ -1655,10 +1655,10 @@ class NestedOperations:
         :type top_level_tracked_resource_name: str
         :param nexted_proxy_resource_name: Name of the nested resource. Required.
         :type nexted_proxy_resource_name: str
-        :param properties: The resource properties to be updated. Is either a NestedProxyResource type
-         or a IO[bytes] type. Required.
-        :type properties: ~azure.resourcemanager.resources.models.NestedProxyResource or
-         ~azure.resourcemanager.resources.types.NestedProxyResource or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         NestedProxyResource, JSON, IO[bytes] Required.
+        :type properties: ~azure.resourcemanager.resources.models.NestedProxyResource or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns NestedProxyResource. The
          NestedProxyResource is compatible with MutableMapping
         :rtype:
@@ -2042,7 +2042,7 @@ class SingletonOperations:
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
-        resource: Union[_models.SingletonTrackedResource, types.SingletonTrackedResource, IO[bytes]],
+        resource: Union[_models.SingletonTrackedResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2142,12 +2142,7 @@ class SingletonOperations:
 
     @overload
     async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        resource: types.SingletonTrackedResource,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, resource_group_name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.SingletonTrackedResource]:
         """Create a SingletonTrackedResource.
 
@@ -2155,7 +2150,7 @@ class SingletonOperations:
          Required.
         :type resource_group_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.resources.types.SingletonTrackedResource
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2191,7 +2186,7 @@ class SingletonOperations:
     async def begin_create_or_update(
         self,
         resource_group_name: str,
-        resource: Union[_models.SingletonTrackedResource, types.SingletonTrackedResource, IO[bytes]],
+        resource: Union[_models.SingletonTrackedResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SingletonTrackedResource]:
         """Create a SingletonTrackedResource.
@@ -2199,10 +2194,10 @@ class SingletonOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param resource: Resource create parameters. Is either a SingletonTrackedResource type or a
-         IO[bytes] type. Required.
-        :type resource: ~azure.resourcemanager.resources.models.SingletonTrackedResource or
-         ~azure.resourcemanager.resources.types.SingletonTrackedResource or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types:
+         SingletonTrackedResource, JSON, IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.resources.models.SingletonTrackedResource or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns SingletonTrackedResource. The
          SingletonTrackedResource is compatible with MutableMapping
         :rtype:
@@ -2287,12 +2282,7 @@ class SingletonOperations:
 
     @overload
     async def update(
-        self,
-        resource_group_name: str,
-        properties: types.SingletonTrackedResource,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, resource_group_name: str, properties: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SingletonTrackedResource:
         """Update a SingletonTrackedResource.
 
@@ -2300,7 +2290,7 @@ class SingletonOperations:
          Required.
         :type resource_group_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.resourcemanager.resources.types.SingletonTrackedResource
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2334,7 +2324,7 @@ class SingletonOperations:
     async def update(
         self,
         resource_group_name: str,
-        properties: Union[_models.SingletonTrackedResource, types.SingletonTrackedResource, IO[bytes]],
+        properties: Union[_models.SingletonTrackedResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.SingletonTrackedResource:
         """Update a SingletonTrackedResource.
@@ -2342,10 +2332,10 @@ class SingletonOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param properties: The resource properties to be updated. Is either a SingletonTrackedResource
-         type or a IO[bytes] type. Required.
-        :type properties: ~azure.resourcemanager.resources.models.SingletonTrackedResource or
-         ~azure.resourcemanager.resources.types.SingletonTrackedResource or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         SingletonTrackedResource, JSON, IO[bytes] Required.
+        :type properties: ~azure.resourcemanager.resources.models.SingletonTrackedResource or JSON or
+         IO[bytes]
         :return: SingletonTrackedResource. The SingletonTrackedResource is compatible with
          MutableMapping
         :rtype: ~azure.resourcemanager.resources.models.SingletonTrackedResource
@@ -2608,7 +2598,7 @@ class ExtensionsResourcesOperations:
         self,
         resource_uri: str,
         extensions_resource_name: str,
-        resource: Union[_models.ExtensionsResource, types.ExtensionsResource, IO[bytes]],
+        resource: Union[_models.ExtensionsResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2714,7 +2704,7 @@ class ExtensionsResourcesOperations:
         self,
         resource_uri: str,
         extensions_resource_name: str,
-        resource: types.ExtensionsResource,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2727,7 +2717,7 @@ class ExtensionsResourcesOperations:
         :param extensions_resource_name: The name of the ExtensionsResource. Required.
         :type extensions_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.resources.types.ExtensionsResource
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2772,7 +2762,7 @@ class ExtensionsResourcesOperations:
         self,
         resource_uri: str,
         extensions_resource_name: str,
-        resource: Union[_models.ExtensionsResource, types.ExtensionsResource, IO[bytes]],
+        resource: Union[_models.ExtensionsResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExtensionsResource]:
         """Create a ExtensionsResource.
@@ -2782,10 +2772,9 @@ class ExtensionsResourcesOperations:
         :type resource_uri: str
         :param extensions_resource_name: The name of the ExtensionsResource. Required.
         :type extensions_resource_name: str
-        :param resource: Resource create parameters. Is either a ExtensionsResource type or a IO[bytes]
-         type. Required.
-        :type resource: ~azure.resourcemanager.resources.models.ExtensionsResource or
-         ~azure.resourcemanager.resources.types.ExtensionsResource or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: ExtensionsResource,
+         JSON, IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.resources.models.ExtensionsResource or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExtensionsResource. The ExtensionsResource
          is compatible with MutableMapping
         :rtype:
@@ -2876,7 +2865,7 @@ class ExtensionsResourcesOperations:
         self,
         resource_uri: str,
         extensions_resource_name: str,
-        properties: types.ExtensionsResource,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2889,7 +2878,7 @@ class ExtensionsResourcesOperations:
         :param extensions_resource_name: The name of the ExtensionsResource. Required.
         :type extensions_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.resourcemanager.resources.types.ExtensionsResource
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2930,7 +2919,7 @@ class ExtensionsResourcesOperations:
         self,
         resource_uri: str,
         extensions_resource_name: str,
-        properties: Union[_models.ExtensionsResource, types.ExtensionsResource, IO[bytes]],
+        properties: Union[_models.ExtensionsResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExtensionsResource:
         """Update a ExtensionsResource.
@@ -2940,10 +2929,10 @@ class ExtensionsResourcesOperations:
         :type resource_uri: str
         :param extensions_resource_name: The name of the ExtensionsResource. Required.
         :type extensions_resource_name: str
-        :param properties: The resource properties to be updated. Is either a ExtensionsResource type
-         or a IO[bytes] type. Required.
-        :type properties: ~azure.resourcemanager.resources.models.ExtensionsResource or
-         ~azure.resourcemanager.resources.types.ExtensionsResource or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         ExtensionsResource, JSON, IO[bytes] Required.
+        :type properties: ~azure.resourcemanager.resources.models.ExtensionsResource or JSON or
+         IO[bytes]
         :return: ExtensionsResource. The ExtensionsResource is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.resources.models.ExtensionsResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3285,7 +3274,7 @@ class LocationResourcesOperations:
         self,
         location: str,
         location_resource_name: str,
-        resource: types.LocationResource,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3297,7 +3286,7 @@ class LocationResourcesOperations:
         :param location_resource_name: The name of the LocationResource. Required.
         :type location_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.resources.types.LocationResource
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3337,7 +3326,7 @@ class LocationResourcesOperations:
         self,
         location: str,
         location_resource_name: str,
-        resource: Union[_models.LocationResource, types.LocationResource, IO[bytes]],
+        resource: Union[_models.LocationResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.LocationResource:
         """Create a LocationResource.
@@ -3346,10 +3335,9 @@ class LocationResourcesOperations:
         :type location: str
         :param location_resource_name: The name of the LocationResource. Required.
         :type location_resource_name: str
-        :param resource: Resource create parameters. Is either a LocationResource type or a IO[bytes]
-         type. Required.
-        :type resource: ~azure.resourcemanager.resources.models.LocationResource or
-         ~azure.resourcemanager.resources.types.LocationResource or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: LocationResource,
+         JSON, IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.resources.models.LocationResource or JSON or IO[bytes]
         :return: LocationResource. The LocationResource is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.resources.models.LocationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3452,7 +3440,7 @@ class LocationResourcesOperations:
         self,
         location: str,
         location_resource_name: str,
-        properties: types.LocationResource,
+        properties: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3464,7 +3452,7 @@ class LocationResourcesOperations:
         :param location_resource_name: The name of the LocationResource. Required.
         :type location_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.resourcemanager.resources.types.LocationResource
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3504,7 +3492,7 @@ class LocationResourcesOperations:
         self,
         location: str,
         location_resource_name: str,
-        properties: Union[_models.LocationResource, types.LocationResource, IO[bytes]],
+        properties: Union[_models.LocationResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.LocationResource:
         """Update a LocationResource.
@@ -3513,10 +3501,9 @@ class LocationResourcesOperations:
         :type location: str
         :param location_resource_name: The name of the LocationResource. Required.
         :type location_resource_name: str
-        :param properties: The resource properties to be updated. Is either a LocationResource type or
-         a IO[bytes] type. Required.
-        :type properties: ~azure.resourcemanager.resources.models.LocationResource or
-         ~azure.resourcemanager.resources.types.LocationResource or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         LocationResource, JSON, IO[bytes] Required.
+        :type properties: ~azure.resourcemanager.resources.models.LocationResource or JSON or IO[bytes]
         :return: LocationResource. The LocationResource is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.resources.models.LocationResource
         :raises ~azure.core.exceptions.HttpResponseError:

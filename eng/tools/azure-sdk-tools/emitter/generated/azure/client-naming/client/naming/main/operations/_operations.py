@@ -25,12 +25,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import NamingClientConfiguration
 from .._utils.model_base import SdkJSONEncoder
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -204,11 +205,11 @@ class PropertyOperations:
         """
 
     @overload
-    def client(self, body: types.ClientNameModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def client(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """client.
 
         :param body: Required.
-        :type body: ~client.naming.main.types.ClientNameModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -233,13 +234,12 @@ class PropertyOperations:
 
     @distributed_trace
     def client(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.ClientNameModel, types.ClientNameModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ClientNameModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """client.
 
-        :param body: Is either a ClientNameModel type or a IO[bytes] type. Required.
-        :type body: ~client.naming.main.models.ClientNameModel or
-         ~client.naming.main.types.ClientNameModel or IO[bytes]
+        :param body: Is one of the following types: ClientNameModel, JSON, IO[bytes] Required.
+        :type body: ~client.naming.main.models.ClientNameModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -307,13 +307,11 @@ class PropertyOperations:
         """
 
     @overload
-    def language(
-        self, body: types.LanguageClientNameModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    def language(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """language.
 
         :param body: Required.
-        :type body: ~client.naming.main.types.LanguageClientNameModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -338,13 +336,12 @@ class PropertyOperations:
 
     @distributed_trace
     def language(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.LanguageClientNameModel, types.LanguageClientNameModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.LanguageClientNameModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """language.
 
-        :param body: Is either a LanguageClientNameModel type or a IO[bytes] type. Required.
-        :type body: ~client.naming.main.models.LanguageClientNameModel or
-         ~client.naming.main.types.LanguageClientNameModel or IO[bytes]
+        :param body: Is one of the following types: LanguageClientNameModel, JSON, IO[bytes] Required.
+        :type body: ~client.naming.main.models.LanguageClientNameModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -413,12 +410,12 @@ class PropertyOperations:
 
     @overload
     def compatible_with_encoded_name(
-        self, body: types.ClientNameAndJsonEncodedNameModel, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """compatible_with_encoded_name.
 
         :param body: Required.
-        :type body: ~client.naming.main.types.ClientNameAndJsonEncodedNameModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -445,15 +442,13 @@ class PropertyOperations:
 
     @distributed_trace
     def compatible_with_encoded_name(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: Union[_models.ClientNameAndJsonEncodedNameModel, types.ClientNameAndJsonEncodedNameModel, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.ClientNameAndJsonEncodedNameModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """compatible_with_encoded_name.
 
-        :param body: Is either a ClientNameAndJsonEncodedNameModel type or a IO[bytes] type. Required.
-        :type body: ~client.naming.main.models.ClientNameAndJsonEncodedNameModel or
-         ~client.naming.main.types.ClientNameAndJsonEncodedNameModel or IO[bytes]
+        :param body: Is one of the following types: ClientNameAndJsonEncodedNameModel, JSON, IO[bytes]
+         Required.
+        :type body: ~client.naming.main.models.ClientNameAndJsonEncodedNameModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -649,11 +644,11 @@ class ModelClientOperations:
         """
 
     @overload
-    def client(self, body: types.ClientModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def client(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """client.
 
         :param body: Required.
-        :type body: ~client.naming.main.types.ClientModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -678,13 +673,12 @@ class ModelClientOperations:
 
     @distributed_trace
     def client(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.ClientModel, types.ClientModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ClientModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """client.
 
-        :param body: Is either a ClientModel type or a IO[bytes] type. Required.
-        :type body: ~client.naming.main.models.ClientModel or ~client.naming.main.types.ClientModel or
-         IO[bytes]
+        :param body: Is one of the following types: ClientModel, JSON, IO[bytes] Required.
+        :type body: ~client.naming.main.models.ClientModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -750,11 +744,11 @@ class ModelClientOperations:
         """
 
     @overload
-    def language(self, body: types.PythonModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def language(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """language.
 
         :param body: Required.
-        :type body: ~client.naming.main.types.PythonModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -779,13 +773,12 @@ class ModelClientOperations:
 
     @distributed_trace
     def language(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.PythonModel, types.PythonModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.PythonModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """language.
 
-        :param body: Is either a PythonModel type or a IO[bytes] type. Required.
-        :type body: ~client.naming.main.models.PythonModel or ~client.naming.main.types.PythonModel or
-         IO[bytes]
+        :param body: Is one of the following types: PythonModel, JSON, IO[bytes] Required.
+        :type body: ~client.naming.main.models.PythonModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

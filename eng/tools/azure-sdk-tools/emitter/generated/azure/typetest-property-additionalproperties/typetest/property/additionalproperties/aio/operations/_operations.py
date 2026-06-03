@@ -27,7 +27,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -96,6 +96,7 @@ from ...operations._operations import (
 )
 from .._configuration import AdditionalPropertiesClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -194,13 +195,11 @@ class ExtendsUnknownOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.ExtendsUnknownAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.ExtendsUnknownAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -225,17 +224,14 @@ class ExtendsUnknownOperations:
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[_models.ExtendsUnknownAdditionalProperties, types.ExtendsUnknownAdditionalProperties, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.ExtendsUnknownAdditionalProperties, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a ExtendsUnknownAdditionalProperties type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: ExtendsUnknownAdditionalProperties, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.ExtendsUnknownAdditionalProperties
-         or ~typetest.property.additionalproperties.types.ExtendsUnknownAdditionalProperties or
-         IO[bytes]
+         or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -387,18 +383,11 @@ class ExtendsUnknownDerivedOperations:
         """
 
     @overload
-    async def put(
-        self,
-        body: types.ExtendsUnknownAdditionalPropertiesDerived,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body:
-         ~typetest.property.additionalproperties.types.ExtendsUnknownAdditionalPropertiesDerived
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -423,22 +412,15 @@ class ExtendsUnknownDerivedOperations:
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[
-            _models.ExtendsUnknownAdditionalPropertiesDerived,
-            types.ExtendsUnknownAdditionalPropertiesDerived,
-            IO[bytes],
-        ],
-        **kwargs: Any
+        self, body: Union[_models.ExtendsUnknownAdditionalPropertiesDerived, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a ExtendsUnknownAdditionalPropertiesDerived type or a IO[bytes]
-         type. Required.
+        :param body: body. Is one of the following types: ExtendsUnknownAdditionalPropertiesDerived,
+         JSON, IO[bytes] Required.
         :type body:
          ~typetest.property.additionalproperties.models.ExtendsUnknownAdditionalPropertiesDerived or
-         ~typetest.property.additionalproperties.types.ExtendsUnknownAdditionalPropertiesDerived or
-         IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -590,18 +572,11 @@ class ExtendsUnknownDiscriminatedOperations:
         """
 
     @overload
-    async def put(
-        self,
-        body: types.ExtendsUnknownAdditionalPropertiesDiscriminated,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body:
-         ~typetest.property.additionalproperties.types.ExtendsUnknownAdditionalPropertiesDiscriminated
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -626,23 +601,15 @@ class ExtendsUnknownDiscriminatedOperations:
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[
-            _models.ExtendsUnknownAdditionalPropertiesDiscriminated,
-            types.ExtendsUnknownAdditionalPropertiesDiscriminated,
-            IO[bytes],
-        ],
-        **kwargs: Any
+        self, body: Union[_models.ExtendsUnknownAdditionalPropertiesDiscriminated, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a ExtendsUnknownAdditionalPropertiesDiscriminated type or a
-         IO[bytes] type. Required.
+        :param body: body. Is one of the following types:
+         ExtendsUnknownAdditionalPropertiesDiscriminated, JSON, IO[bytes] Required.
         :type body:
          ~typetest.property.additionalproperties.models.ExtendsUnknownAdditionalPropertiesDiscriminated
-         or
-         ~typetest.property.additionalproperties.types.ExtendsUnknownAdditionalPropertiesDiscriminated
-         or IO[bytes]
+         or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -788,13 +755,11 @@ class IsUnknownOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.IsUnknownAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.IsUnknownAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -818,17 +783,13 @@ class IsUnknownOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.IsUnknownAdditionalProperties, types.IsUnknownAdditionalProperties, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.IsUnknownAdditionalProperties, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a IsUnknownAdditionalProperties type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: IsUnknownAdditionalProperties, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.IsUnknownAdditionalProperties or
-         ~typetest.property.additionalproperties.types.IsUnknownAdditionalProperties or IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -978,13 +939,11 @@ class IsUnknownDerivedOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.IsUnknownAdditionalPropertiesDerived, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.IsUnknownAdditionalPropertiesDerived
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1009,19 +968,14 @@ class IsUnknownDerivedOperations:
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[
-            _models.IsUnknownAdditionalPropertiesDerived, types.IsUnknownAdditionalPropertiesDerived, IO[bytes]
-        ],
-        **kwargs: Any
+        self, body: Union[_models.IsUnknownAdditionalPropertiesDerived, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a IsUnknownAdditionalPropertiesDerived type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: IsUnknownAdditionalPropertiesDerived, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.IsUnknownAdditionalPropertiesDerived
-         or ~typetest.property.additionalproperties.types.IsUnknownAdditionalPropertiesDerived or
-         IO[bytes]
+         or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1173,18 +1127,11 @@ class IsUnknownDiscriminatedOperations:
         """
 
     @overload
-    async def put(
-        self,
-        body: types.IsUnknownAdditionalPropertiesDiscriminated,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body:
-         ~typetest.property.additionalproperties.types.IsUnknownAdditionalPropertiesDiscriminated
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1209,22 +1156,15 @@ class IsUnknownDiscriminatedOperations:
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[
-            _models.IsUnknownAdditionalPropertiesDiscriminated,
-            types.IsUnknownAdditionalPropertiesDiscriminated,
-            IO[bytes],
-        ],
-        **kwargs: Any
+        self, body: Union[_models.IsUnknownAdditionalPropertiesDiscriminated, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a IsUnknownAdditionalPropertiesDiscriminated type or a IO[bytes]
-         type. Required.
+        :param body: body. Is one of the following types: IsUnknownAdditionalPropertiesDiscriminated,
+         JSON, IO[bytes] Required.
         :type body:
          ~typetest.property.additionalproperties.models.IsUnknownAdditionalPropertiesDiscriminated or
-         ~typetest.property.additionalproperties.types.IsUnknownAdditionalPropertiesDiscriminated or
-         IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1370,13 +1310,11 @@ class ExtendsStringOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.ExtendsStringAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.ExtendsStringAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1400,17 +1338,13 @@ class ExtendsStringOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.ExtendsStringAdditionalProperties, types.ExtendsStringAdditionalProperties, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.ExtendsStringAdditionalProperties, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a ExtendsStringAdditionalProperties type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: ExtendsStringAdditionalProperties, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.ExtendsStringAdditionalProperties or
-         ~typetest.property.additionalproperties.types.ExtendsStringAdditionalProperties or IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1556,13 +1490,11 @@ class IsStringOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.IsStringAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.IsStringAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1586,16 +1518,13 @@ class IsStringOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.IsStringAdditionalProperties, types.IsStringAdditionalProperties, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.IsStringAdditionalProperties, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a IsStringAdditionalProperties type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.IsStringAdditionalProperties or
-         ~typetest.property.additionalproperties.types.IsStringAdditionalProperties or IO[bytes]
+        :param body: body. Is one of the following types: IsStringAdditionalProperties, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.IsStringAdditionalProperties or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1740,13 +1669,11 @@ class SpreadStringOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.SpreadStringRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.SpreadStringRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1770,14 +1697,12 @@ class SpreadStringOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self, body: Union[_models.SpreadStringRecord, types.SpreadStringRecord, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.SpreadStringRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a SpreadStringRecord type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.SpreadStringRecord or
-         ~typetest.property.additionalproperties.types.SpreadStringRecord or IO[bytes]
+        :param body: body. Is one of the following types: SpreadStringRecord, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.additionalproperties.models.SpreadStringRecord or JSON or
+         IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1923,13 +1848,11 @@ class ExtendsFloatOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.ExtendsFloatAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.ExtendsFloatAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1953,17 +1876,13 @@ class ExtendsFloatOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.ExtendsFloatAdditionalProperties, types.ExtendsFloatAdditionalProperties, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.ExtendsFloatAdditionalProperties, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a ExtendsFloatAdditionalProperties type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: ExtendsFloatAdditionalProperties, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.ExtendsFloatAdditionalProperties or
-         ~typetest.property.additionalproperties.types.ExtendsFloatAdditionalProperties or IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2109,13 +2028,11 @@ class IsFloatOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.IsFloatAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.IsFloatAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2139,16 +2056,13 @@ class IsFloatOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.IsFloatAdditionalProperties, types.IsFloatAdditionalProperties, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.IsFloatAdditionalProperties, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a IsFloatAdditionalProperties type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.IsFloatAdditionalProperties or
-         ~typetest.property.additionalproperties.types.IsFloatAdditionalProperties or IO[bytes]
+        :param body: body. Is one of the following types: IsFloatAdditionalProperties, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.IsFloatAdditionalProperties or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2293,13 +2207,11 @@ class SpreadFloatOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.SpreadFloatRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.SpreadFloatRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2323,14 +2235,12 @@ class SpreadFloatOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self, body: Union[_models.SpreadFloatRecord, types.SpreadFloatRecord, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.SpreadFloatRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a SpreadFloatRecord type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.SpreadFloatRecord or
-         ~typetest.property.additionalproperties.types.SpreadFloatRecord or IO[bytes]
+        :param body: body. Is one of the following types: SpreadFloatRecord, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.additionalproperties.models.SpreadFloatRecord or JSON or
+         IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2476,13 +2386,11 @@ class ExtendsModelOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.ExtendsModelAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.ExtendsModelAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2506,17 +2414,13 @@ class ExtendsModelOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.ExtendsModelAdditionalProperties, types.ExtendsModelAdditionalProperties, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.ExtendsModelAdditionalProperties, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a ExtendsModelAdditionalProperties type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: ExtendsModelAdditionalProperties, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.ExtendsModelAdditionalProperties or
-         ~typetest.property.additionalproperties.types.ExtendsModelAdditionalProperties or IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2662,13 +2566,11 @@ class IsModelOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.IsModelAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.IsModelAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2692,16 +2594,13 @@ class IsModelOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.IsModelAdditionalProperties, types.IsModelAdditionalProperties, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.IsModelAdditionalProperties, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a IsModelAdditionalProperties type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.IsModelAdditionalProperties or
-         ~typetest.property.additionalproperties.types.IsModelAdditionalProperties or IO[bytes]
+        :param body: body. Is one of the following types: IsModelAdditionalProperties, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.IsModelAdditionalProperties or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2846,13 +2745,11 @@ class SpreadModelOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.SpreadModelRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.SpreadModelRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2876,14 +2773,12 @@ class SpreadModelOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self, body: Union[_models.SpreadModelRecord, types.SpreadModelRecord, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.SpreadModelRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a SpreadModelRecord type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.SpreadModelRecord or
-         ~typetest.property.additionalproperties.types.SpreadModelRecord or IO[bytes]
+        :param body: body. Is one of the following types: SpreadModelRecord, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.additionalproperties.models.SpreadModelRecord or JSON or
+         IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3034,17 +2929,11 @@ class ExtendsModelArrayOperations:
         """
 
     @overload
-    async def put(
-        self,
-        body: types.ExtendsModelArrayAdditionalProperties,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.ExtendsModelArrayAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3069,19 +2958,14 @@ class ExtendsModelArrayOperations:
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[
-            _models.ExtendsModelArrayAdditionalProperties, types.ExtendsModelArrayAdditionalProperties, IO[bytes]
-        ],
-        **kwargs: Any
+        self, body: Union[_models.ExtendsModelArrayAdditionalProperties, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a ExtendsModelArrayAdditionalProperties type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: ExtendsModelArrayAdditionalProperties, JSON,
+         IO[bytes] Required.
         :type body:
-         ~typetest.property.additionalproperties.models.ExtendsModelArrayAdditionalProperties or
-         ~typetest.property.additionalproperties.types.ExtendsModelArrayAdditionalProperties or
+         ~typetest.property.additionalproperties.models.ExtendsModelArrayAdditionalProperties or JSON or
          IO[bytes]
         :return: None
         :rtype: None
@@ -3228,13 +3112,11 @@ class IsModelArrayOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.IsModelArrayAdditionalProperties, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.IsModelArrayAdditionalProperties
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3258,17 +3140,13 @@ class IsModelArrayOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.IsModelArrayAdditionalProperties, types.IsModelArrayAdditionalProperties, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.IsModelArrayAdditionalProperties, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a IsModelArrayAdditionalProperties type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: IsModelArrayAdditionalProperties, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.IsModelArrayAdditionalProperties or
-         ~typetest.property.additionalproperties.types.IsModelArrayAdditionalProperties or IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3413,13 +3291,11 @@ class SpreadModelArrayOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.SpreadModelArrayRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.SpreadModelArrayRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3443,14 +3319,13 @@ class SpreadModelArrayOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self, body: Union[_models.SpreadModelArrayRecord, types.SpreadModelArrayRecord, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.SpreadModelArrayRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a SpreadModelArrayRecord type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.SpreadModelArrayRecord or
-         ~typetest.property.additionalproperties.types.SpreadModelArrayRecord or IO[bytes]
+        :param body: body. Is one of the following types: SpreadModelArrayRecord, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.SpreadModelArrayRecord or JSON or
+         IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3596,13 +3471,11 @@ class SpreadDifferentStringOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.DifferentSpreadStringRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.DifferentSpreadStringRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3626,16 +3499,13 @@ class SpreadDifferentStringOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.DifferentSpreadStringRecord, types.DifferentSpreadStringRecord, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.DifferentSpreadStringRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a DifferentSpreadStringRecord type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadStringRecord or
-         ~typetest.property.additionalproperties.types.DifferentSpreadStringRecord or IO[bytes]
+        :param body: body. Is one of the following types: DifferentSpreadStringRecord, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadStringRecord or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3781,13 +3651,11 @@ class SpreadDifferentFloatOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.DifferentSpreadFloatRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.DifferentSpreadFloatRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3811,16 +3679,13 @@ class SpreadDifferentFloatOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.DifferentSpreadFloatRecord, types.DifferentSpreadFloatRecord, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.DifferentSpreadFloatRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a DifferentSpreadFloatRecord type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadFloatRecord or
-         ~typetest.property.additionalproperties.types.DifferentSpreadFloatRecord or IO[bytes]
+        :param body: body. Is one of the following types: DifferentSpreadFloatRecord, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadFloatRecord or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3966,13 +3831,11 @@ class SpreadDifferentModelOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.DifferentSpreadModelRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.DifferentSpreadModelRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3996,16 +3859,13 @@ class SpreadDifferentModelOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.DifferentSpreadModelRecord, types.DifferentSpreadModelRecord, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.DifferentSpreadModelRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a DifferentSpreadModelRecord type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadModelRecord or
-         ~typetest.property.additionalproperties.types.DifferentSpreadModelRecord or IO[bytes]
+        :param body: body. Is one of the following types: DifferentSpreadModelRecord, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadModelRecord or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4151,13 +4011,11 @@ class SpreadDifferentModelArrayOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.DifferentSpreadModelArrayRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.DifferentSpreadModelArrayRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4181,17 +4039,13 @@ class SpreadDifferentModelArrayOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.DifferentSpreadModelArrayRecord, types.DifferentSpreadModelArrayRecord, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.DifferentSpreadModelArrayRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a DifferentSpreadModelArrayRecord type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: DifferentSpreadModelArrayRecord, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.DifferentSpreadModelArrayRecord or
-         ~typetest.property.additionalproperties.types.DifferentSpreadModelArrayRecord or IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4337,13 +4191,11 @@ class ExtendsDifferentSpreadStringOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.DifferentSpreadStringDerived, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.DifferentSpreadStringDerived
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4367,16 +4219,13 @@ class ExtendsDifferentSpreadStringOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.DifferentSpreadStringDerived, types.DifferentSpreadStringDerived, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.DifferentSpreadStringDerived, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a DifferentSpreadStringDerived type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadStringDerived or
-         ~typetest.property.additionalproperties.types.DifferentSpreadStringDerived or IO[bytes]
+        :param body: body. Is one of the following types: DifferentSpreadStringDerived, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadStringDerived or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4522,13 +4371,11 @@ class ExtendsDifferentSpreadFloatOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.DifferentSpreadFloatDerived, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.DifferentSpreadFloatDerived
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4552,16 +4399,13 @@ class ExtendsDifferentSpreadFloatOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.DifferentSpreadFloatDerived, types.DifferentSpreadFloatDerived, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.DifferentSpreadFloatDerived, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a DifferentSpreadFloatDerived type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadFloatDerived or
-         ~typetest.property.additionalproperties.types.DifferentSpreadFloatDerived or IO[bytes]
+        :param body: body. Is one of the following types: DifferentSpreadFloatDerived, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadFloatDerived or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4707,13 +4551,11 @@ class ExtendsDifferentSpreadModelOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.DifferentSpreadModelDerived, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.DifferentSpreadModelDerived
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4737,16 +4579,13 @@ class ExtendsDifferentSpreadModelOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.DifferentSpreadModelDerived, types.DifferentSpreadModelDerived, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.DifferentSpreadModelDerived, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a DifferentSpreadModelDerived type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadModelDerived or
-         ~typetest.property.additionalproperties.types.DifferentSpreadModelDerived or IO[bytes]
+        :param body: body. Is one of the following types: DifferentSpreadModelDerived, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.DifferentSpreadModelDerived or JSON
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4892,13 +4731,11 @@ class ExtendsDifferentSpreadModelArrayOperations:  # pylint: disable=name-too-lo
         """
 
     @overload
-    async def put(
-        self, body: types.DifferentSpreadModelArrayDerived, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.DifferentSpreadModelArrayDerived
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4922,17 +4759,13 @@ class ExtendsDifferentSpreadModelArrayOperations:  # pylint: disable=name-too-lo
         """
 
     @distributed_trace_async
-    async def put(
-        self,
-        body: Union[_models.DifferentSpreadModelArrayDerived, types.DifferentSpreadModelArrayDerived, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.DifferentSpreadModelArrayDerived, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a DifferentSpreadModelArrayDerived type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: DifferentSpreadModelArrayDerived, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.DifferentSpreadModelArrayDerived or
-         ~typetest.property.additionalproperties.types.DifferentSpreadModelArrayDerived or IO[bytes]
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5077,13 +4910,11 @@ class MultipleSpreadOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.MultipleSpreadRecord, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.MultipleSpreadRecord
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5107,14 +4938,13 @@ class MultipleSpreadOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self, body: Union[_models.MultipleSpreadRecord, types.MultipleSpreadRecord, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.MultipleSpreadRecord, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a MultipleSpreadRecord type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.MultipleSpreadRecord or
-         ~typetest.property.additionalproperties.types.MultipleSpreadRecord or IO[bytes]
+        :param body: body. Is one of the following types: MultipleSpreadRecord, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.MultipleSpreadRecord or JSON or
+         IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5259,13 +5089,11 @@ class SpreadRecordUnionOperations:
         """
 
     @overload
-    async def put(
-        self, body: types.SpreadRecordForUnion, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.SpreadRecordForUnion
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5289,14 +5117,13 @@ class SpreadRecordUnionOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self, body: Union[_models.SpreadRecordForUnion, types.SpreadRecordForUnion, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[_models.SpreadRecordForUnion, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put operation.
 
-        :param body: body. Is either a SpreadRecordForUnion type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.additionalproperties.models.SpreadRecordForUnion or
-         ~typetest.property.additionalproperties.types.SpreadRecordForUnion or IO[bytes]
+        :param body: body. Is one of the following types: SpreadRecordForUnion, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.additionalproperties.models.SpreadRecordForUnion or JSON or
+         IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5446,13 +5273,11 @@ class SpreadRecordNonDiscriminatedUnionOperations:  # pylint: disable=name-too-l
         """
 
     @overload
-    async def put(
-        self, body: types.SpreadRecordForNonDiscriminatedUnion, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.SpreadRecordForNonDiscriminatedUnion
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5477,19 +5302,14 @@ class SpreadRecordNonDiscriminatedUnionOperations:  # pylint: disable=name-too-l
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[
-            _models.SpreadRecordForNonDiscriminatedUnion, types.SpreadRecordForNonDiscriminatedUnion, IO[bytes]
-        ],
-        **kwargs: Any
+        self, body: Union[_models.SpreadRecordForNonDiscriminatedUnion, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a SpreadRecordForNonDiscriminatedUnion type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: SpreadRecordForNonDiscriminatedUnion, JSON,
+         IO[bytes] Required.
         :type body: ~typetest.property.additionalproperties.models.SpreadRecordForNonDiscriminatedUnion
-         or ~typetest.property.additionalproperties.types.SpreadRecordForNonDiscriminatedUnion or
-         IO[bytes]
+         or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5640,17 +5460,11 @@ class SpreadRecordNonDiscriminatedUnion2Operations:  # pylint: disable=name-too-
         """
 
     @overload
-    async def put(
-        self,
-        body: types.SpreadRecordForNonDiscriminatedUnion2,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.SpreadRecordForNonDiscriminatedUnion2
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5675,19 +5489,14 @@ class SpreadRecordNonDiscriminatedUnion2Operations:  # pylint: disable=name-too-
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[
-            _models.SpreadRecordForNonDiscriminatedUnion2, types.SpreadRecordForNonDiscriminatedUnion2, IO[bytes]
-        ],
-        **kwargs: Any
+        self, body: Union[_models.SpreadRecordForNonDiscriminatedUnion2, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a SpreadRecordForNonDiscriminatedUnion2 type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: SpreadRecordForNonDiscriminatedUnion2, JSON,
+         IO[bytes] Required.
         :type body:
-         ~typetest.property.additionalproperties.models.SpreadRecordForNonDiscriminatedUnion2 or
-         ~typetest.property.additionalproperties.types.SpreadRecordForNonDiscriminatedUnion2 or
+         ~typetest.property.additionalproperties.models.SpreadRecordForNonDiscriminatedUnion2 or JSON or
          IO[bytes]
         :return: None
         :rtype: None
@@ -5839,17 +5648,11 @@ class SpreadRecordNonDiscriminatedUnion3Operations:  # pylint: disable=name-too-
         """
 
     @overload
-    async def put(
-        self,
-        body: types.SpreadRecordForNonDiscriminatedUnion3,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
+    async def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: ~typetest.property.additionalproperties.types.SpreadRecordForNonDiscriminatedUnion3
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5874,19 +5677,14 @@ class SpreadRecordNonDiscriminatedUnion3Operations:  # pylint: disable=name-too-
 
     @distributed_trace_async
     async def put(
-        self,
-        body: Union[
-            _models.SpreadRecordForNonDiscriminatedUnion3, types.SpreadRecordForNonDiscriminatedUnion3, IO[bytes]
-        ],
-        **kwargs: Any
+        self, body: Union[_models.SpreadRecordForNonDiscriminatedUnion3, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is either a SpreadRecordForNonDiscriminatedUnion3 type or a IO[bytes] type.
-         Required.
+        :param body: body. Is one of the following types: SpreadRecordForNonDiscriminatedUnion3, JSON,
+         IO[bytes] Required.
         :type body:
-         ~typetest.property.additionalproperties.models.SpreadRecordForNonDiscriminatedUnion3 or
-         ~typetest.property.additionalproperties.types.SpreadRecordForNonDiscriminatedUnion3 or
+         ~typetest.property.additionalproperties.models.SpreadRecordForNonDiscriminatedUnion3 or JSON or
          IO[bytes]
         :return: None
         :rtype: None

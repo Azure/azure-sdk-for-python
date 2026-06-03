@@ -32,13 +32,14 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import OperationTemplatesClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -528,12 +529,12 @@ class CheckNameAvailabilityOperations:
 
     @overload
     def check_global(
-        self, body: types.CheckNameAvailabilityRequest, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Implements global CheckNameAvailability operations.
 
         :param body: The CheckAvailability request. Required.
-        :type body: ~azure.resourcemanager.operationtemplates.types.CheckNameAvailabilityRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -562,16 +563,14 @@ class CheckNameAvailabilityOperations:
 
     @distributed_trace
     def check_global(
-        self,
-        body: Union[_models.CheckNameAvailabilityRequest, types.CheckNameAvailabilityRequest, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Implements global CheckNameAvailability operations.
 
-        :param body: The CheckAvailability request. Is either a CheckNameAvailabilityRequest type or a
-         IO[bytes] type. Required.
+        :param body: The CheckAvailability request. Is one of the following types:
+         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
         :type body: ~azure.resourcemanager.operationtemplates.models.CheckNameAvailabilityRequest or
-         ~azure.resourcemanager.operationtemplates.types.CheckNameAvailabilityRequest or IO[bytes]
+         JSON or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.resourcemanager.operationtemplates.models.CheckNameAvailabilityResponse
@@ -668,19 +667,14 @@ class CheckNameAvailabilityOperations:
 
     @overload
     def check_local(
-        self,
-        location: str,
-        body: types.CheckNameAvailabilityRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Implements local CheckNameAvailability operations.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The CheckAvailability request. Required.
-        :type body: ~azure.resourcemanager.operationtemplates.types.CheckNameAvailabilityRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -711,19 +705,16 @@ class CheckNameAvailabilityOperations:
 
     @distributed_trace
     def check_local(
-        self,
-        location: str,
-        body: Union[_models.CheckNameAvailabilityRequest, types.CheckNameAvailabilityRequest, IO[bytes]],
-        **kwargs: Any
+        self, location: str, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Implements local CheckNameAvailability operations.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The CheckAvailability request. Is either a CheckNameAvailabilityRequest type or a
-         IO[bytes] type. Required.
+        :param body: The CheckAvailability request. Is one of the following types:
+         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
         :type body: ~azure.resourcemanager.operationtemplates.models.CheckNameAvailabilityRequest or
-         ~azure.resourcemanager.operationtemplates.types.CheckNameAvailabilityRequest or IO[bytes]
+         JSON or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.resourcemanager.operationtemplates.models.CheckNameAvailabilityResponse
@@ -814,11 +805,7 @@ class LroOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _create_or_replace_initial(
-        self,
-        resource_group_name: str,
-        order_name: str,
-        resource: Union[_models.Order, types.Order, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, order_name: str, resource: Union[_models.Order, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -923,7 +910,7 @@ class LroOperations:
         self,
         resource_group_name: str,
         order_name: str,
-        resource: types.Order,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -936,7 +923,7 @@ class LroOperations:
         :param order_name: The name of the Order. Required.
         :type order_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.operationtemplates.types.Order
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -976,11 +963,7 @@ class LroOperations:
 
     @distributed_trace
     def begin_create_or_replace(
-        self,
-        resource_group_name: str,
-        order_name: str,
-        resource: Union[_models.Order, types.Order, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, order_name: str, resource: Union[_models.Order, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Order]:
         """Create a Order.
 
@@ -989,10 +972,9 @@ class LroOperations:
         :type resource_group_name: str
         :param order_name: The name of the Order. Required.
         :type order_name: str
-        :param resource: Resource create parameters. Is either a Order type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.resourcemanager.operationtemplates.models.Order or
-         ~azure.resourcemanager.operationtemplates.types.Order or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: Order, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.operationtemplates.models.Order or JSON or IO[bytes]
         :return: An instance of LROPoller that returns Order. The Order is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.resourcemanager.operationtemplates.models.Order]
@@ -1054,7 +1036,7 @@ class LroOperations:
         self,
         resource_group_name: str,
         order_name: str,
-        body: Union[_models.ExportRequest, types.ExportRequest, IO[bytes]],
+        body: Union[_models.ExportRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1162,7 +1144,7 @@ class LroOperations:
         self,
         resource_group_name: str,
         order_name: str,
-        body: types.ExportRequest,
+        body: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1175,7 +1157,7 @@ class LroOperations:
         :param order_name: The name of the Order. Required.
         :type order_name: str
         :param body: The content of the action request. Required.
-        :type body: ~azure.resourcemanager.operationtemplates.types.ExportRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1220,7 +1202,7 @@ class LroOperations:
         self,
         resource_group_name: str,
         order_name: str,
-        body: Union[_models.ExportRequest, types.ExportRequest, IO[bytes]],
+        body: Union[_models.ExportRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ExportResult]:
         """A long-running resource action.
@@ -1230,10 +1212,9 @@ class LroOperations:
         :type resource_group_name: str
         :param order_name: The name of the Order. Required.
         :type order_name: str
-        :param body: The content of the action request. Is either a ExportRequest type or a IO[bytes]
-         type. Required.
-        :type body: ~azure.resourcemanager.operationtemplates.models.ExportRequest or
-         ~azure.resourcemanager.operationtemplates.types.ExportRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types: ExportRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.resourcemanager.operationtemplates.models.ExportRequest or JSON or IO[bytes]
         :return: An instance of LROPoller that returns ExportResult. The ExportResult is compatible
          with MutableMapping
         :rtype:
@@ -1409,7 +1390,7 @@ class LroOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _export_array_initial(
-        self, body: Union[_models.ExportRequest, types.ExportRequest, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ExportRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1499,12 +1480,12 @@ class LroOperations:
 
     @overload
     def begin_export_array(
-        self, body: types.ExportRequest, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[List[_models.ExportResult]]:
         """export_array.
 
         :param body: The request body. Required.
-        :type body: ~azure.resourcemanager.operationtemplates.types.ExportRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1533,13 +1514,13 @@ class LroOperations:
 
     @distributed_trace
     def begin_export_array(
-        self, body: Union[_models.ExportRequest, types.ExportRequest, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ExportRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[List[_models.ExportResult]]:
         """export_array.
 
-        :param body: The request body. Is either a ExportRequest type or a IO[bytes] type. Required.
-        :type body: ~azure.resourcemanager.operationtemplates.models.ExportRequest or
-         ~azure.resourcemanager.operationtemplates.types.ExportRequest or IO[bytes]
+        :param body: The request body. Is one of the following types: ExportRequest, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.resourcemanager.operationtemplates.models.ExportRequest or JSON or IO[bytes]
         :return: An instance of LROPoller that returns list of ExportResult
         :rtype:
          ~azure.core.polling.LROPoller[list[~azure.resourcemanager.operationtemplates.models.ExportResult]]
@@ -1935,7 +1916,7 @@ class OptionalBodyOperations:
         self,
         resource_group_name: str,
         widget_name: str,
-        properties: Optional[types.Widget] = None,
+        properties: Optional[JSON] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1948,7 +1929,7 @@ class OptionalBodyOperations:
         :param widget_name: The name of the Widget. Required.
         :type widget_name: str
         :param properties: The resource properties to be updated. Default value is None.
-        :type properties: ~azure.resourcemanager.operationtemplates.types.Widget
+        :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1989,7 +1970,7 @@ class OptionalBodyOperations:
         self,
         resource_group_name: str,
         widget_name: str,
-        properties: Optional[Union[_models.Widget, types.Widget, IO[bytes]]] = None,
+        properties: Optional[Union[_models.Widget, JSON, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.Widget:
         """Update a Widget.
@@ -1999,10 +1980,9 @@ class OptionalBodyOperations:
         :type resource_group_name: str
         :param widget_name: The name of the Widget. Required.
         :type widget_name: str
-        :param properties: The resource properties to be updated. Is either a Widget type or a
-         IO[bytes] type. Default value is None.
-        :type properties: ~azure.resourcemanager.operationtemplates.models.Widget or
-         ~azure.resourcemanager.operationtemplates.types.Widget or IO[bytes]
+        :param properties: The resource properties to be updated. Is one of the following types:
+         Widget, JSON, IO[bytes] Default value is None.
+        :type properties: ~azure.resourcemanager.operationtemplates.models.Widget or JSON or IO[bytes]
         :return: Widget. The Widget is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.operationtemplates.models.Widget
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2110,7 +2090,7 @@ class OptionalBodyOperations:
         self,
         resource_group_name: str,
         widget_name: str,
-        body: Optional[types.ActionRequest] = None,
+        body: Optional[JSON] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2123,7 +2103,7 @@ class OptionalBodyOperations:
         :param widget_name: The name of the Widget. Required.
         :type widget_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: ~azure.resourcemanager.operationtemplates.types.ActionRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2164,7 +2144,7 @@ class OptionalBodyOperations:
         self,
         resource_group_name: str,
         widget_name: str,
-        body: Optional[Union[_models.ActionRequest, types.ActionRequest, IO[bytes]]] = None,
+        body: Optional[Union[_models.ActionRequest, JSON, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ActionResult:
         """A synchronous resource action.
@@ -2174,10 +2154,9 @@ class OptionalBodyOperations:
         :type resource_group_name: str
         :param widget_name: The name of the Widget. Required.
         :type widget_name: str
-        :param body: The content of the action request. Is either a ActionRequest type or a IO[bytes]
-         type. Default value is None.
-        :type body: ~azure.resourcemanager.operationtemplates.models.ActionRequest or
-         ~azure.resourcemanager.operationtemplates.types.ActionRequest or IO[bytes]
+        :param body: The content of the action request. Is one of the following types: ActionRequest,
+         JSON, IO[bytes] Default value is None.
+        :type body: ~azure.resourcemanager.operationtemplates.models.ActionRequest or JSON or IO[bytes]
         :return: ActionResult. The ActionResult is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.operationtemplates.models.ActionResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2275,16 +2254,12 @@ class OptionalBodyOperations:
 
     @overload
     def provider_post(
-        self,
-        body: Optional[types.ChangeAllowanceRequest] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChangeAllowanceResult:
         """provider_post.
 
         :param body: The request body. Default value is None.
-        :type body: ~azure.resourcemanager.operationtemplates.types.ChangeAllowanceRequest
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2311,16 +2286,14 @@ class OptionalBodyOperations:
 
     @distributed_trace
     def provider_post(
-        self,
-        body: Optional[Union[_models.ChangeAllowanceRequest, types.ChangeAllowanceRequest, IO[bytes]]] = None,
-        **kwargs: Any
+        self, body: Optional[Union[_models.ChangeAllowanceRequest, JSON, IO[bytes]]] = None, **kwargs: Any
     ) -> _models.ChangeAllowanceResult:
         """provider_post.
 
-        :param body: The request body. Is either a ChangeAllowanceRequest type or a IO[bytes] type.
-         Default value is None.
-        :type body: ~azure.resourcemanager.operationtemplates.models.ChangeAllowanceRequest or
-         ~azure.resourcemanager.operationtemplates.types.ChangeAllowanceRequest or IO[bytes]
+        :param body: The request body. Is one of the following types: ChangeAllowanceRequest, JSON,
+         IO[bytes] Default value is None.
+        :type body: ~azure.resourcemanager.operationtemplates.models.ChangeAllowanceRequest or JSON or
+         IO[bytes]
         :return: ChangeAllowanceResult. The ChangeAllowanceResult is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.operationtemplates.models.ChangeAllowanceResult
         :raises ~azure.core.exceptions.HttpResponseError:

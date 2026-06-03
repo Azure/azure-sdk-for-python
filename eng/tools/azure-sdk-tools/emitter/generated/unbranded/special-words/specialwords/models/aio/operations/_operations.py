@@ -18,7 +18,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models2, types
+from ... import models as _models2
 from ...._utils.model_base import SdkJSONEncoder
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import SpecialWordsClientConfiguration
@@ -58,6 +58,7 @@ from ...operations._operations import (
     build_models_with_yield_request,
 )
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -94,11 +95,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_and(self, body: types.AndModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_and(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_and.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.AndModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -121,12 +122,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_and(self, body: Union[_models2.AndModel, types.AndModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_and(self, body: Union[_models2.AndModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_and.
 
-        :param body: Is either a AndModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.AndModel or ~specialwords.models.types.AndModel or
-         IO[bytes]
+        :param body: Is one of the following types: AndModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.AndModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -190,11 +190,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_as(self, body: types.AsModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_as(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_as.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.AsModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -217,12 +217,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_as(self, body: Union[_models2.AsModel, types.AsModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_as(self, body: Union[_models2.AsModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_as.
 
-        :param body: Is either a AsModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.AsModel or ~specialwords.models.types.AsModel or
-         IO[bytes]
+        :param body: Is one of the following types: AsModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.AsModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -288,13 +287,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_assert(
-        self, body: types.AssertModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_assert(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_assert.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.AssertModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -317,12 +314,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_assert(self, body: Union[_models2.AssertModel, types.AssertModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_assert(self, body: Union[_models2.AssertModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_assert.
 
-        :param body: Is either a AssertModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.AssertModel or ~specialwords.models.types.AssertModel
-         or IO[bytes]
+        :param body: Is one of the following types: AssertModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.AssertModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -388,13 +384,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_async(
-        self, body: types.AsyncModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_async(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_async.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.AsyncModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -417,12 +411,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_async(self, body: Union[_models2.AsyncModel, types.AsyncModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_async(self, body: Union[_models2.AsyncModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_async.
 
-        :param body: Is either a AsyncModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.AsyncModel or ~specialwords.models.types.AsyncModel or
-         IO[bytes]
+        :param body: Is one of the following types: AsyncModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.AsyncModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -488,13 +481,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_await(
-        self, body: types.AwaitModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_await(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_await.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.AwaitModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -517,12 +508,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_await(self, body: Union[_models2.AwaitModel, types.AwaitModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_await(self, body: Union[_models2.AwaitModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_await.
 
-        :param body: Is either a AwaitModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.AwaitModel or ~specialwords.models.types.AwaitModel or
-         IO[bytes]
+        :param body: Is one of the following types: AwaitModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.AwaitModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -588,13 +578,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_break(
-        self, body: types.BreakModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_break(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_break.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.BreakModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -617,12 +605,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_break(self, body: Union[_models2.BreakModel, types.BreakModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_break(self, body: Union[_models2.BreakModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_break.
 
-        :param body: Is either a BreakModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.BreakModel or ~specialwords.models.types.BreakModel or
-         IO[bytes]
+        :param body: Is one of the following types: BreakModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.BreakModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -688,13 +675,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_class(
-        self, body: types.ClassModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_class(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_class.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ClassModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -717,12 +702,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_class(self, body: Union[_models2.ClassModel, types.ClassModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_class(self, body: Union[_models2.ClassModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_class.
 
-        :param body: Is either a ClassModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ClassModel or ~specialwords.models.types.ClassModel or
-         IO[bytes]
+        :param body: Is one of the following types: ClassModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ClassModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -788,13 +772,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_constructor(
-        self, body: types.Constructor, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_constructor(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_constructor.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.Constructor
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -817,14 +799,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_constructor(
-        self, body: Union[_models2.Constructor, types.Constructor, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def with_constructor(self, body: Union[_models2.Constructor, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_constructor.
 
-        :param body: Is either a Constructor type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.Constructor or ~specialwords.models.types.Constructor
-         or IO[bytes]
+        :param body: Is one of the following types: Constructor, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.Constructor or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -890,13 +869,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_continue(
-        self, body: types.ContinueModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_continue(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_continue.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ContinueModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -919,14 +896,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_continue(
-        self, body: Union[_models2.ContinueModel, types.ContinueModel, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def with_continue(self, body: Union[_models2.ContinueModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_continue.
 
-        :param body: Is either a ContinueModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ContinueModel or
-         ~specialwords.models.types.ContinueModel or IO[bytes]
+        :param body: Is one of the following types: ContinueModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ContinueModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -990,11 +964,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_def(self, body: types.DefModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_def(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_def.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.DefModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1017,12 +991,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_def(self, body: Union[_models2.DefModel, types.DefModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_def(self, body: Union[_models2.DefModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_def.
 
-        :param body: Is either a DefModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.DefModel or ~specialwords.models.types.DefModel or
-         IO[bytes]
+        :param body: Is one of the following types: DefModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.DefModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1086,11 +1059,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_del(self, body: types.DelModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_del(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_del.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.DelModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1113,12 +1086,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_del(self, body: Union[_models2.DelModel, types.DelModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_del(self, body: Union[_models2.DelModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_del.
 
-        :param body: Is either a DelModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.DelModel or ~specialwords.models.types.DelModel or
-         IO[bytes]
+        :param body: Is one of the following types: DelModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.DelModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1184,11 +1156,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_elif(self, body: types.ElifModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_elif(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_elif.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ElifModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1211,12 +1183,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_elif(self, body: Union[_models2.ElifModel, types.ElifModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_elif(self, body: Union[_models2.ElifModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_elif.
 
-        :param body: Is either a ElifModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ElifModel or ~specialwords.models.types.ElifModel or
-         IO[bytes]
+        :param body: Is one of the following types: ElifModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ElifModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1282,11 +1253,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_else(self, body: types.ElseModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_else(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_else.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ElseModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1309,12 +1280,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_else(self, body: Union[_models2.ElseModel, types.ElseModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_else(self, body: Union[_models2.ElseModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_else.
 
-        :param body: Is either a ElseModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ElseModel or ~specialwords.models.types.ElseModel or
-         IO[bytes]
+        :param body: Is one of the following types: ElseModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ElseModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1380,13 +1350,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_except(
-        self, body: types.ExceptModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_except(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_except.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ExceptModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1409,12 +1377,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_except(self, body: Union[_models2.ExceptModel, types.ExceptModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_except(self, body: Union[_models2.ExceptModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_except.
 
-        :param body: Is either a ExceptModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ExceptModel or ~specialwords.models.types.ExceptModel
-         or IO[bytes]
+        :param body: Is one of the following types: ExceptModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ExceptModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1480,11 +1447,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_exec(self, body: types.ExecModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_exec(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_exec.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ExecModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1507,12 +1474,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_exec(self, body: Union[_models2.ExecModel, types.ExecModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_exec(self, body: Union[_models2.ExecModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_exec.
 
-        :param body: Is either a ExecModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ExecModel or ~specialwords.models.types.ExecModel or
-         IO[bytes]
+        :param body: Is one of the following types: ExecModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ExecModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1578,13 +1544,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_finally(
-        self, body: types.FinallyModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_finally(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_finally.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.FinallyModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1607,14 +1571,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_finally(
-        self, body: Union[_models2.FinallyModel, types.FinallyModel, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def with_finally(self, body: Union[_models2.FinallyModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_finally.
 
-        :param body: Is either a FinallyModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.FinallyModel or ~specialwords.models.types.FinallyModel
-         or IO[bytes]
+        :param body: Is one of the following types: FinallyModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.FinallyModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1678,11 +1639,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_for(self, body: types.ForModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_for(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_for.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ForModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1705,12 +1666,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_for(self, body: Union[_models2.ForModel, types.ForModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_for(self, body: Union[_models2.ForModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_for.
 
-        :param body: Is either a ForModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ForModel or ~specialwords.models.types.ForModel or
-         IO[bytes]
+        :param body: Is one of the following types: ForModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ForModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1776,11 +1736,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_from(self, body: types.FromModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_from(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_from.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.FromModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1803,12 +1763,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_from(self, body: Union[_models2.FromModel, types.FromModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_from(self, body: Union[_models2.FromModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_from.
 
-        :param body: Is either a FromModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.FromModel or ~specialwords.models.types.FromModel or
-         IO[bytes]
+        :param body: Is one of the following types: FromModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.FromModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1874,13 +1833,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_global(
-        self, body: types.GlobalModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_global(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_global.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.GlobalModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1903,12 +1860,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_global(self, body: Union[_models2.GlobalModel, types.GlobalModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_global(self, body: Union[_models2.GlobalModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_global.
 
-        :param body: Is either a GlobalModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.GlobalModel or ~specialwords.models.types.GlobalModel
-         or IO[bytes]
+        :param body: Is one of the following types: GlobalModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.GlobalModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -1972,11 +1928,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_if(self, body: types.IfModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_if(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_if.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.IfModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1999,12 +1955,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_if(self, body: Union[_models2.IfModel, types.IfModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_if(self, body: Union[_models2.IfModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_if.
 
-        :param body: Is either a IfModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.IfModel or ~specialwords.models.types.IfModel or
-         IO[bytes]
+        :param body: Is one of the following types: IfModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.IfModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2070,13 +2025,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_import(
-        self, body: types.ImportModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_import(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_import.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ImportModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2099,12 +2052,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_import(self, body: Union[_models2.ImportModel, types.ImportModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_import(self, body: Union[_models2.ImportModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_import.
 
-        :param body: Is either a ImportModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ImportModel or ~specialwords.models.types.ImportModel
-         or IO[bytes]
+        :param body: Is one of the following types: ImportModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ImportModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2168,11 +2120,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_in(self, body: types.InModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_in(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_in.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.InModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2195,12 +2147,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_in(self, body: Union[_models2.InModel, types.InModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_in(self, body: Union[_models2.InModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_in.
 
-        :param body: Is either a InModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.InModel or ~specialwords.models.types.InModel or
-         IO[bytes]
+        :param body: Is one of the following types: InModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.InModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2264,11 +2215,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_is(self, body: types.IsModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_is(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_is.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.IsModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2291,12 +2242,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_is(self, body: Union[_models2.IsModel, types.IsModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_is(self, body: Union[_models2.IsModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_is.
 
-        :param body: Is either a IsModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.IsModel or ~specialwords.models.types.IsModel or
-         IO[bytes]
+        :param body: Is one of the following types: IsModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.IsModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2362,13 +2312,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_lambda(
-        self, body: types.LambdaModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_lambda(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_lambda.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.LambdaModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2391,12 +2339,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_lambda(self, body: Union[_models2.LambdaModel, types.LambdaModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_lambda(self, body: Union[_models2.LambdaModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_lambda.
 
-        :param body: Is either a LambdaModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.LambdaModel or ~specialwords.models.types.LambdaModel
-         or IO[bytes]
+        :param body: Is one of the following types: LambdaModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.LambdaModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2460,11 +2407,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_not(self, body: types.NotModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_not(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_not.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.NotModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2487,12 +2434,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_not(self, body: Union[_models2.NotModel, types.NotModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_not(self, body: Union[_models2.NotModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_not.
 
-        :param body: Is either a NotModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.NotModel or ~specialwords.models.types.NotModel or
-         IO[bytes]
+        :param body: Is one of the following types: NotModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.NotModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2556,11 +2502,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_or(self, body: types.OrModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_or(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_or.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.OrModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2583,12 +2529,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_or(self, body: Union[_models2.OrModel, types.OrModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_or(self, body: Union[_models2.OrModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_or.
 
-        :param body: Is either a OrModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.OrModel or ~specialwords.models.types.OrModel or
-         IO[bytes]
+        :param body: Is one of the following types: OrModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.OrModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2654,11 +2599,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_pass(self, body: types.PassModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_pass(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_pass.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.PassModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2681,12 +2626,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_pass(self, body: Union[_models2.PassModel, types.PassModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_pass(self, body: Union[_models2.PassModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_pass.
 
-        :param body: Is either a PassModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.PassModel or ~specialwords.models.types.PassModel or
-         IO[bytes]
+        :param body: Is one of the following types: PassModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.PassModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2752,13 +2696,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_raise(
-        self, body: types.RaiseModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_raise(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_raise.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.RaiseModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2781,12 +2723,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_raise(self, body: Union[_models2.RaiseModel, types.RaiseModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_raise(self, body: Union[_models2.RaiseModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_raise.
 
-        :param body: Is either a RaiseModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.RaiseModel or ~specialwords.models.types.RaiseModel or
-         IO[bytes]
+        :param body: Is one of the following types: RaiseModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.RaiseModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2852,13 +2793,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_return(
-        self, body: types.ReturnModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_return(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_return.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.ReturnModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2881,12 +2820,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_return(self, body: Union[_models2.ReturnModel, types.ReturnModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_return(self, body: Union[_models2.ReturnModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_return.
 
-        :param body: Is either a ReturnModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.ReturnModel or ~specialwords.models.types.ReturnModel
-         or IO[bytes]
+        :param body: Is one of the following types: ReturnModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.ReturnModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2950,11 +2888,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_try(self, body: types.TryModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_try(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_try.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.TryModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2977,12 +2915,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_try(self, body: Union[_models2.TryModel, types.TryModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_try(self, body: Union[_models2.TryModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_try.
 
-        :param body: Is either a TryModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.TryModel or ~specialwords.models.types.TryModel or
-         IO[bytes]
+        :param body: Is one of the following types: TryModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.TryModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -3048,13 +2985,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_while(
-        self, body: types.WhileModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_while(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_while.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.WhileModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3077,12 +3012,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_while(self, body: Union[_models2.WhileModel, types.WhileModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_while(self, body: Union[_models2.WhileModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_while.
 
-        :param body: Is either a WhileModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.WhileModel or ~specialwords.models.types.WhileModel or
-         IO[bytes]
+        :param body: Is one of the following types: WhileModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.WhileModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -3148,11 +3082,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_with(self, body: types.WithModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_with(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_with.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.WithModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3175,12 +3109,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_with(self, body: Union[_models2.WithModel, types.WithModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_with(self, body: Union[_models2.WithModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_with.
 
-        :param body: Is either a WithModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.WithModel or ~specialwords.models.types.WithModel or
-         IO[bytes]
+        :param body: Is one of the following types: WithModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.WithModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -3246,13 +3179,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def with_yield(
-        self, body: types.YieldModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def with_yield(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_yield.
 
         :param body: Required.
-        :type body: ~specialwords.models.types.YieldModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3275,12 +3206,11 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def with_yield(self, body: Union[_models2.YieldModel, types.YieldModel, IO[bytes]], **kwargs: Any) -> None:
+    async def with_yield(self, body: Union[_models2.YieldModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """with_yield.
 
-        :param body: Is either a YieldModel type or a IO[bytes] type. Required.
-        :type body: ~specialwords.models.models.YieldModel or ~specialwords.models.types.YieldModel or
-         IO[bytes]
+        :param body: Is one of the following types: YieldModel, JSON, IO[bytes] Required.
+        :type body: ~specialwords.models.models.YieldModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

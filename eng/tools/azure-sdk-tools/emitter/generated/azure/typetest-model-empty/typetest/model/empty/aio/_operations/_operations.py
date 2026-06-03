@@ -27,7 +27,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._operations._operations import (
     build_empty_get_empty_request,
     build_empty_post_round_trip_empty_request,
@@ -37,6 +37,7 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import EmptyClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -62,13 +63,11 @@ class _EmptyClientOperationsMixin(
         """
 
     @overload
-    async def put_empty(
-        self, input: types.EmptyInput, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_empty(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put_empty.
 
         :param input: Required.
-        :type input: ~typetest.model.empty.types.EmptyInput
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -92,12 +91,11 @@ class _EmptyClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def put_empty(self, input: Union[_models.EmptyInput, types.EmptyInput, IO[bytes]], **kwargs: Any) -> None:
+    async def put_empty(self, input: Union[_models.EmptyInput, JSON, IO[bytes]], **kwargs: Any) -> None:
         """put_empty.
 
-        :param input: Is either a EmptyInput type or a IO[bytes] type. Required.
-        :type input: ~typetest.model.empty.models.EmptyInput or ~typetest.model.empty.types.EmptyInput
-         or IO[bytes]
+        :param input: Is one of the following types: EmptyInput, JSON, IO[bytes] Required.
+        :type input: ~typetest.model.empty.models.EmptyInput or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -223,12 +221,12 @@ class _EmptyClientOperationsMixin(
 
     @overload
     async def post_round_trip_empty(
-        self, body: types.EmptyInputOutput, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EmptyInputOutput:
         """post_round_trip_empty.
 
         :param body: Required.
-        :type body: ~typetest.model.empty.types.EmptyInputOutput
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -255,13 +253,12 @@ class _EmptyClientOperationsMixin(
 
     @distributed_trace_async
     async def post_round_trip_empty(
-        self, body: Union[_models.EmptyInputOutput, types.EmptyInputOutput, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.EmptyInputOutput, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EmptyInputOutput:
         """post_round_trip_empty.
 
-        :param body: Is either a EmptyInputOutput type or a IO[bytes] type. Required.
-        :type body: ~typetest.model.empty.models.EmptyInputOutput or
-         ~typetest.model.empty.types.EmptyInputOutput or IO[bytes]
+        :param body: Is one of the following types: EmptyInputOutput, JSON, IO[bytes] Required.
+        :type body: ~typetest.model.empty.models.EmptyInputOutput or JSON or IO[bytes]
         :return: EmptyInputOutput. The EmptyInputOutput is compatible with MutableMapping
         :rtype: ~typetest.model.empty.models.EmptyInputOutput
         :raises ~azure.core.exceptions.HttpResponseError:

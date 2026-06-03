@@ -26,7 +26,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -37,6 +37,7 @@ from ...operations._operations import (
 )
 from .._configuration import UsageClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -81,9 +82,7 @@ class ModelInOperationOperations:
         """
 
     @overload
-    async def input_to_input_output(
-        self, body: types.InputModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def input_to_input_output(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Expected body parameter:
 
         .. code-block:: json
@@ -93,7 +92,7 @@ class ModelInOperationOperations:
            }.
 
         :param body: Required.
-        :type body: ~specs.azure.clientgenerator.core.usage.types.InputModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -125,9 +124,7 @@ class ModelInOperationOperations:
         """
 
     @distributed_trace_async
-    async def input_to_input_output(
-        self, body: Union[_models.InputModel, types.InputModel, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def input_to_input_output(self, body: Union[_models.InputModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Expected body parameter:
 
         .. code-block:: json
@@ -136,9 +133,8 @@ class ModelInOperationOperations:
              "name": "Madge"
            }.
 
-        :param body: Is either a InputModel type or a IO[bytes] type. Required.
-        :type body: ~specs.azure.clientgenerator.core.usage.models.InputModel or
-         ~specs.azure.clientgenerator.core.usage.types.InputModel or IO[bytes]
+        :param body: Is one of the following types: InputModel, JSON, IO[bytes] Required.
+        :type body: ~specs.azure.clientgenerator.core.usage.models.InputModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -287,7 +283,7 @@ class ModelInOperationOperations:
 
     @overload
     async def model_in_read_only_property(
-        self, body: types.RoundTripModel, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RoundTripModel:
         """ "ResultModel" should be usage=output, as it is read-only and does not exist in request body.
 
@@ -309,7 +305,7 @@ class ModelInOperationOperations:
            }.
 
         :param body: Required.
-        :type body: ~specs.azure.clientgenerator.core.usage.types.RoundTripModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -353,7 +349,7 @@ class ModelInOperationOperations:
 
     @distributed_trace_async
     async def model_in_read_only_property(
-        self, body: Union[_models.RoundTripModel, types.RoundTripModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.RoundTripModel, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RoundTripModel:
         """ "ResultModel" should be usage=output, as it is read-only and does not exist in request body.
 
@@ -374,9 +370,8 @@ class ModelInOperationOperations:
              }
            }.
 
-        :param body: Is either a RoundTripModel type or a IO[bytes] type. Required.
-        :type body: ~specs.azure.clientgenerator.core.usage.models.RoundTripModel or
-         ~specs.azure.clientgenerator.core.usage.types.RoundTripModel or IO[bytes]
+        :param body: Is one of the following types: RoundTripModel, JSON, IO[bytes] Required.
+        :type body: ~specs.azure.clientgenerator.core.usage.models.RoundTripModel or JSON or IO[bytes]
         :return: RoundTripModel. The RoundTripModel is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.usage.models.RoundTripModel
         :raises ~azure.core.exceptions.HttpResponseError:
