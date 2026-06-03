@@ -14,7 +14,7 @@
         "azure.mgmt.devhub.models.AzurePipelineProfile": "Microsoft.DevHub.AzurePipelineProfile",
         "azure.mgmt.devhub.models.Build": "Microsoft.DevHub.Build",
         "azure.mgmt.devhub.models.DeleteWorkflowResponse": "Microsoft.DevHub.DeleteWorkflowResponse",
-        "azure.mgmt.devhub.models.Deployment": "Microsoft.DevHub.Deployment",
+        "azure.mgmt.devhub.models.DeploymentProperties": "Microsoft.DevHub.Deployment",
         "azure.mgmt.devhub.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
         "azure.mgmt.devhub.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.devhub.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
@@ -131,5 +131,5 @@
         "azure.mgmt.devhub.DevHubMgmtClient.get_adoo_auth_info": "Microsoft.DevHub.AdooAuthResponses.getADOOAuthInfo",
         "azure.mgmt.devhub.aio.DevHubMgmtClient.get_adoo_auth_info": "Microsoft.DevHub.AdooAuthResponses.getADOOAuthInfo"
     },
-    "CrossLanguageVersion": "791815fd7dba"
+    "CrossLanguageVersion": "60e5e97b116a"
 }

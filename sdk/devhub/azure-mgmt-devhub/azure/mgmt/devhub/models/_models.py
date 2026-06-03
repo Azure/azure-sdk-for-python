@@ -468,7 +468,7 @@ class AzurePipelineProfile(_Model):
     :ivar build: Build details of the repository associated with the workflow.
     :vartype build: ~azure.mgmt.devhub.models.Build
     :ivar deployment: Deployment details of the repository associated with the workflow.
-    :vartype deployment: ~azure.mgmt.devhub.models.Deployment
+    :vartype deployment: ~azure.mgmt.devhub.models.DeploymentProperties
     :ivar namespace: Kubernetes namespace the application is deployed to.
     :vartype namespace: str
     :ivar acr: Resource identifier for azure container registry repository associated with the
@@ -495,7 +495,9 @@ class AzurePipelineProfile(_Model):
     """The name of the ARM Service Connection the pipeline is associated with."""
     build: Optional["_models.Build"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Build details of the repository associated with the workflow."""
-    deployment: Optional["_models.Deployment"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    deployment: Optional["_models.DeploymentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Deployment details of the repository associated with the workflow."""
     namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Kubernetes namespace the application is deployed to."""
@@ -523,7 +525,7 @@ class AzurePipelineProfile(_Model):
         repository: Optional["_models.ADORepository"] = None,
         arm_service_connection: Optional[str] = None,
         build: Optional["_models.Build"] = None,
-        deployment: Optional["_models.Deployment"] = None,
+        deployment: Optional["_models.DeploymentProperties"] = None,
         namespace: Optional[str] = None,
         acr: Optional[str] = None,
         cluster_id: Optional[str] = None,
@@ -605,7 +607,7 @@ class DeleteWorkflowResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Deployment(_Model):
+class DeploymentProperties(_Model):
     """Deployment details of the repository associated with the workflow.
 
     :ivar manifest_type: Determines the type of manifests within the repository. Known values are:
@@ -1075,7 +1077,7 @@ class GitHubWorkflowProfile(_Model):
     :ivar docker_build_context: Path to Dockerfile Build Context within the repository.
     :vartype docker_build_context: str
     :ivar deployment_properties: Deployment details of the repository associated with the workflow.
-    :vartype deployment_properties: ~azure.mgmt.devhub.models.Deployment
+    :vartype deployment_properties: ~azure.mgmt.devhub.models.DeploymentProperties
     :ivar namespace: The Kubernetes namespace the application is deployed to.
     :vartype namespace: str
     :ivar acr: Information on the azure container registry.
@@ -1116,7 +1118,7 @@ class GitHubWorkflowProfile(_Model):
         name="dockerBuildContext", visibility=["read", "create", "update", "delete", "query"]
     )
     """Path to Dockerfile Build Context within the repository."""
-    deployment_properties: Optional["_models.Deployment"] = rest_field(
+    deployment_properties: Optional["_models.DeploymentProperties"] = rest_field(
         name="deploymentProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Deployment details of the repository associated with the workflow."""
@@ -1157,7 +1159,7 @@ class GitHubWorkflowProfile(_Model):
         branch_name: Optional[str] = None,
         dockerfile: Optional[str] = None,
         docker_build_context: Optional[str] = None,
-        deployment_properties: Optional["_models.Deployment"] = None,
+        deployment_properties: Optional["_models.DeploymentProperties"] = None,
         namespace: Optional[str] = None,
         acr: Optional["_models.ACR"] = None,
         oidc_credentials: Optional["_models.GitHubWorkflowProfileOidcCredentials"] = None,

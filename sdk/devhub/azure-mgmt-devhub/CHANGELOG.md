@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2026-06-02)
+## 1.0.0b2 (2026-06-03)
 
 ### Features Added
 
@@ -11,6 +11,7 @@
   - Client `DevHubMgmtClient` added operation group `adoo_auth`
   - Client `DevHubMgmtClient` added operation group `template`
   - Client `DevHubMgmtClient` added operation group `versioned_template`
+  - Model `GitHubOAuthResponse` added property `properties`
   - Enum `ManifestType` added member `KUSTOMIZE`
   - Added model `ADOOAuth`
   - Added model `ADOOAuthCallRequest`
@@ -20,9 +21,9 @@
   - Added model `ADORepository`
   - Added model `AzurePipelineProfile`
   - Added model `Build`
-  - Added model `Deployment`
   - Added model `ExportTemplateRequest`
   - Added model `GenerateVersionedTemplateResponse`
+  - Added model `GitHubOAuthProperties`
   - Added model `GitHubProviderProfile`
   - Added model `GitHubRepository`
   - Added model `GitHubWorkflowProfile`
@@ -51,22 +52,18 @@
   - Added model `TerraformProfile`
   - Added model `VersionedTemplate`
   - Added model `VersionedTemplateProperties`
-  - Added operation group `ADOOAuthOperations`
-  - Added operation group `IacProfilesOperations`
-  - Added operation group `TemplateOperations`
-  - Added operation group `VersionedTemplateOperations`
+  - Added model `ADOOAuthOperations`
+  - Added model `IacProfilesOperations`
+  - Added model `TemplateOperations`
+  - Added model `VersionedTemplateOperations`
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Model `GitHubOAuthResponse` moved instance variable `username` under property `properties` whose type is `GitHubOAuthProperties`
-  - Method `DevHubMgmtClient.git_hub_o_auth_callback` changed its parameter `code`/`state` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `DeploymentProperties`
+  - Method `DevHubMgmtClient.git_hub_o_auth_callback` changed its parameter `code` from `positional_or_keyword` to `keyword_only`
+  - Method `DevHubMgmtClient.git_hub_o_auth_callback` changed its parameter `state` from `positional_or_keyword` to `keyword_only`
+  - Model `GitHubOAuthResponse` deleted or renamed its instance variable `username`
   - Method `WorkflowOperations.list_by_resource_group` changed its parameter `managed_cluster_resource` from `positional_or_keyword` to `keyword_only`
-
-### Other Changes
-  - Renamed operation group `DevHubMgmtClientOperationsMixin` to `_DevHubMgmtClientOperationsMixin`
+  - Deleted or renamed model `DevHubMgmtClientOperationsMixin`
 
 ## 1.0.0b1 (2023-05-20)
 
