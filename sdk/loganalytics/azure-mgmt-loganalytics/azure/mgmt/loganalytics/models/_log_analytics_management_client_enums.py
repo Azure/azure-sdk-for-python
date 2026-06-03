@@ -87,7 +87,6 @@ class ColumnTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATE_TIME = "dateTime"
     GUID = "guid"
     DYNAMIC = "dynamic"
-    INT_ENUM = "int"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -208,7 +207,9 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
-class NetworkSecurityPerimeterConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Provisioning state of a network security perimeter configuration that is being created or
     updated.
     """
