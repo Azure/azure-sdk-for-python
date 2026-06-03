@@ -32,3 +32,14 @@ environment_variables:
     # AGENT_* env vars at deploy time.
     - name: AGENTSERVER_TASK_API_ENABLED
       value: "1"
+    # Long-running demo: per-phase ≈ 12s LLM + 3×30s intra + 30s inter ≈ 132s,
+    # × 15 phases ≈ 33 min total. This intentionally exceeds the platform's
+    # ~15-min sandbox-eviction window so each demo run exercises the
+    # durable-task primitive's keep-alive (lease renewal + readiness) path
+    # end-to-end — the very behavior this sample exists to showcase.
+    # Local/dev runs of agent.py outside the hosted container use the
+    # agent.py defaults (10/20s = ~15 min) for faster iteration.
+    - name: INTRA_PHASE_COOLDOWN_SEC
+      value: "30"
+    - name: INTER_PHASE_COOLDOWN_SEC
+      value: "30"

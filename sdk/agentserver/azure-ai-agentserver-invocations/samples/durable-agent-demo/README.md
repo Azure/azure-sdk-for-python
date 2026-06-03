@@ -3,15 +3,22 @@
 A `@task`-decorated long-running research agent that demonstrates two
 platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 
-1. **Recovery from container reclaims / crashes.** When the agent container
-   dies (intentional crash, OOM, or the platform's ~15-min idle reclaim),
-   the platform brings it back on the next inbound request (~10 sec
-   measured) and the durable task automatically resumes from its last
-   checkpoint (`ctx.entry_mode == "recovered"`). The user-visible
-   experience: any reconnect attempt seamlessly continues the run, no
-   matter how long the container was down.
+1. **Long-running tasks survive the platform's sandbox-eviction window.**
+   The framework's internal `PATCH .../tasks/<id>` lease-renewal cycle
+   keeps the sandbox alive past the otherwise-15-min idle reclaim — so
+   a single run can stream for the full 33-min duration of the demo
+   without any client-side keepalive ingress. The keep-alive path is
+   `framework → task-store API → platform routing layer → sandbox`.
 
-2. **Steering.** Sending a new turn on a running steerable task queues
+2. **Recovery from container crashes.** When the agent container dies
+   (intentional crash or OOM), the platform's nanny worker brings it
+   back within ~1 min **without requiring any new client ingress**.
+   The durable task automatically resumes from its last checkpoint
+   (`ctx.entry_mode == "recovered"` + `recovered` SSE event with
+   `completed_phases`). User-visible: any reconnect attempt seamlessly
+   continues the run, no matter how long the container was down.
+
+3. **Steering.** Sending a new turn on a running steerable task queues
    the input and signals cooperative cancel. The agent winds down the
    current turn at the next checkpoint boundary and re-enters with the
    queued input as a fresh turn (with the prior topic surfaced for the
@@ -24,17 +31,10 @@ streaming every token to the consumer. After each phase the handler
 checkpoints to `ctx.metadata` and flushes — so a crash mid-run picks up
 at the next un-completed phase, and a steerer that arrives mid-phase
 causes the handler to wind down at the *next* phase boundary, not
-abruptly. Defaults target a ~45-min wall-time run; env vars dial it
-shorter for development.
-
-> **Note on long-running tasks.** Empirically on the current platform
-> deployment, the sandbox is reclaimed ~15 min after the *last
-> user-facing ingress* — even when a `@task` handler is still executing.
-> The framework's internal lease-renewal cycle goes to the platform's
-> task-store API, not to the agent container's `/readiness`, so it does
-> not currently extend the idle window. A 45-min run therefore reaches
-> completion by being **reclaimed and recovered repeatedly** rather than
-> running uninterrupted — which is exactly what `@task` is for.
+abruptly. Hosted defaults target a ~33-min wall-time run (intentionally
+spanning >2x the 15-min sandbox-eviction window to demonstrate the
+keep-alive path end-to-end); local agent.py defaults are shorter for
+dev iteration.
 
 ## Prerequisites
 
@@ -125,28 +125,28 @@ azd ai agent monitor --session-id "$SESSION_ID" --type system   # container star
 
 ## Three demo workflows
 
-### A. Long-running run + reclaim-and-recover (~45 min wall time)
+### A. Long-running run with no client-side keepalive (~33 min wall time)
+
+This run intentionally outlasts the platform's 15-min sandbox-eviction
+window — the framework's lease-renewal cycle keeps the sandbox warm.
 
 ```bash
 # t = 0:00
 ./demo-client.sh start "the future of nuclear fusion"
-# A few phases stream. Note server_time_utc + server_uptime_sec on each event.
+# Stream events. Note server_time_utc + server_uptime_sec on each event.
 
 # t = 5:00
-# Close the terminal. Make zero ingress for the next 15-20 min.
+# Detach (Ctrl-C). Make zero ingress for the next 20-25 min.
 
-# t = 20:00 — open a new terminal:
+# t = 25:00 — open a new terminal:
 ./demo-client.sh stream
-# The container was reclaimed during your dead window. Your reconnect
-# triggers the platform to bring it back (~10 sec). You'll see:
-#   🔁 Recovered from crash   resuming from phase N/15
-#   server_uptime_sec=1.3    ← fresh container; uptime started over
-# Stream continues from phase N. Repeat as many times as needed; each
-# reconnect brings the container back and resumes from the latest
-# checkpoint.
+# The container is the SAME instance (no reclaim happened) because the
+# framework's PATCH .../tasks/<id> lease renewals kept the platform's
+# idle timer fresh. Your reconnect resumes the live SSE stream;
+# server_uptime_sec is now ~25 min, not reset to 0.
 ```
 
-### B. Explicit crash + recovery (same story, faster to demonstrate)
+### B. Explicit crash + nanny restoration (no ingress required)
 
 ```bash
 # Terminal 1: start a run and leave it streaming.
@@ -155,14 +155,19 @@ azd ai agent monitor --session-id "$SESSION_ID" --type system   # container star
 
 # Terminal 2: force a crash.
 ./demo-client.sh crash
-# Server returns 202 then exits. Terminal 1's stream disconnects.
+# Server returns 202 then os._exit(137). Terminal 1's stream disconnects.
 
-# Wait as long as you like — the container stays down with NO ingress.
-# When you want to reconnect:
+# Wait — DO NOT send any new ingress. The platform's nanny brings the
+# container back within ~1 min entirely on its own (validated: 43 sec
+# from crash to new worker_instance_id in the e2e-tests-westus2
+# deployment). The durable task auto-resumes from the last checkpoint
+# inside the new process — you don't need to do anything.
+
+# When you want to verify recovery:
 ./demo-client.sh stream
-# Container brought back in ~10 sec:
-#   🔁 Recovered from crash   resuming from phase 4/15
-#   server_uptime_sec=2.4    ← fresh container
+# You'll see:
+#   🔁 Recovered from crash   completed_phases=3
+#   server_uptime_sec=<some-value-much-larger-than-1>
 # Stream picks up at phase 4, NOT phase 1.
 ```
 
@@ -231,55 +236,66 @@ azd ai agent monitor --session-id "$SESSION_ID" --type system   # container star
                 │    metadata, checkpoint persistence)    │
                 │  ─ Endpoint proxy: routes /invocations* │
                 │    to the sandbox; brings the container │
-                │    back up on next ingress when reclaimed│
-                │  ─ Idle-reclaim timer (~15 min since    │
-                │    last user-facing ingress)            │
+                │    back up via nanny worker after a     │
+                │    crash (no client ingress needed)     │
+                │  ─ Idle-reclaim timer: kept fresh by    │
+                │    framework lease-renewal traffic so   │
+                │    long-running tasks survive past 15min│
                 └─────────────────────────────────────────┘
 ```
 
 Notable points:
 
 - The container runs `python app.py` directly. There is **no
-  application-level supervisor or auto-restart wrapper** — the previous
-  versions of this demo needed one because the platform did not yet
-  guarantee restart-on-ingress.
+  application-level supervisor or auto-restart wrapper** — the platform's
+  nanny worker handles container restoration on crash.
 - `task_id == session_id`: one durable task per session. This is what
   routes a steering POST to the active task instead of starting a new one.
-- The framework's lease-renewal loop talks to the **task-storage API**,
-  not the agent's `/readiness`. The `/readiness` endpoint is hit only by
-  the platform's startup health probe.
-- When the platform reclaims (or the agent crashes) and ingress arrives
-  later, the platform spins up a fresh container; the framework's
-  recovery scan finds the stranded task and re-enters the handler with
-  `ctx.entry_mode == "recovered"` and `ctx.metadata` populated from the
-  last checkpoint.
+- The framework's lease-renewal loop talks to the **task-storage API**
+  every ~30s (half of the 60s lease). This traffic both (a) refreshes
+  the lease so a successor instance won't reclaim the task, and (b)
+  signals activity to the platform's routing layer so the sandbox's
+  idle-reclaim timer stays fresh — letting the run outlive the 15-min
+  eviction window without any client ingress. The `/readiness`
+  endpoint is hit only by the platform's startup health probe;
+  `/liveness` is hit continuously (~every 2s) by the platform.
+- When the platform's nanny restores the container after a crash, the
+  framework's recovery scan finds the stranded task and re-enters the
+  handler with `ctx.entry_mode == "recovered"` and `ctx.metadata`
+  populated from the last checkpoint. A `recovered` SSE event is
+  emitted to any (re)connecting clients.
 
 ## Environment variables
 
-These are set in the Dockerfile and travel with the image. Override by
-editing the Dockerfile and redeploying, or by setting them in
-`azure.yaml` per-deployment.
+These are set in `agent.yaml` (`environment_variables`) and travel with
+the deploy. Override by editing `agent.yaml` and re-deploying.
 
-| Variable | Default | Description |
-|---|---|---|
-| `FOUNDRY_PROJECT_ENDPOINT` | (required, set by platform) | Foundry project endpoint. |
-| `AZURE_AI_MODEL_DEPLOYMENT_NAME` | `gpt-4.1-mini` | Responses-API model deployment name. |
-| `DEMO_MODE` | `1` (in the demo image) | Enables the `{"message": "crash"}` sentinel on `POST /invocations`. A production image would leave this off. |
-| `NUM_PHASES` | `15` | Number of research phases. |
-| `CALLS_PER_PHASE` | `4` | Sub-calls per phase (research, critique, refine, synthesize). |
-| `TARGET_OUTPUT_TOKENS` | `1500` | Max tokens per LLM sub-call. |
-| `INTRA_PHASE_COOLDOWN_SEC` | `10` | Seconds between sub-calls within a phase. |
-| `INTER_PHASE_COOLDOWN_SEC` | `20` | Seconds between phases. |
+| Variable | Default (hosted) | Default (agent.py) | Description |
+|---|---|---|---|
+| `FOUNDRY_PROJECT_ENDPOINT` | (required, set by platform) | — | Foundry project endpoint. |
+| `AGENTSERVER_TASK_API_ENABLED` | `1` | unset | Opt in to the hosted task-storage API. Without this, the framework uses `LocalFileTaskProvider` and no `/tasks` HTTP traffic flows — required for hosted-mode lease renewal to work. |
+| `AZURE_AI_MODEL_DEPLOYMENT_NAME` | `gpt-4.1-mini` | `gpt-4.1-mini` | Responses-API model deployment name. |
+| `DEMO_MODE` | `1` (in the demo image) | unset | Enables the `{"message": "crash"}` sentinel on `POST /invocations`. A production image would leave this off. |
+| `NUM_PHASES` | `15` | `15` | Number of research phases. |
+| `CALLS_PER_PHASE` | `4` | `4` | Sub-calls per phase (research, critique, refine, synthesize). |
+| `TARGET_OUTPUT_TOKENS` | `1500` | `1500` | Max tokens per LLM sub-call. |
+| `INTRA_PHASE_COOLDOWN_SEC` | `30` | `10` | Seconds between sub-calls within a phase. Hosted default is bumped to push total wall-time past 30 min. |
+| `INTER_PHASE_COOLDOWN_SEC` | `30` | `20` | Seconds between phases. Hosted default is bumped to push total wall-time past 30 min. |
 
-For a **fast** development loop (~2 min total instead of ~45 min), add
-to the Dockerfile and redeploy:
+For a **fast** development loop (~2 min total instead of ~33 min), edit
+`agent.yaml`'s `environment_variables` block:
 
-```dockerfile
-ENV NUM_PHASES=3
-ENV CALLS_PER_PHASE=1
-ENV INTRA_PHASE_COOLDOWN_SEC=2
-ENV INTER_PHASE_COOLDOWN_SEC=2
-ENV TARGET_OUTPUT_TOKENS=200
+```yaml
+- name: NUM_PHASES
+  value: "3"
+- name: CALLS_PER_PHASE
+  value: "1"
+- name: INTRA_PHASE_COOLDOWN_SEC
+  value: "2"
+- name: INTER_PHASE_COOLDOWN_SEC
+  value: "2"
+- name: TARGET_OUTPUT_TOKENS
+  value: "200"
 ```
 
 ## File structure
