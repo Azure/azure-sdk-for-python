@@ -512,8 +512,13 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         status = response.http_response.status_code
         error_code = response.http_response.headers.get("x-ms-error-code", "")
 
+        if error_code == self.FEATURE_NOT_ENABLED:
+            _LOGGER.info("Session feature not enabled on this account; disabling session auth.")
+            self._use_session = False
+            return response
+
         # Unavailable / feature-off / 5xx → negative-cache cooldown.
-        if error_code in (self.SESSIONS_UNAVAILABLE, self.FEATURE_NOT_ENABLED) or status >= 500:
+        if error_code in self.SESSIONS_UNAVAILABLE or status >= 500:
             _LOGGER.warning(
                 "Session authentication: '%s' (HTTP %d) on container '%s'; bearer fallback for %d seconds.",
                 error_code or "5xx", status, container_name,
