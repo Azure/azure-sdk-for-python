@@ -74,6 +74,24 @@ ensure_token() {
     fi
 }
 
+# Read a top-level JSON field. Returns empty string on missing/null. Used
+# only by the one-shot POST helpers below (start / steer) to extract
+# invocation_id / session_id from the dispatch response. The SSE stream
+# path does its own parsing in the python renderer.
+_jq() {
+    local json="$1"
+    local key="$2"
+    echo "$json" | python3 -c "
+import sys, json
+try:
+    d = json.loads(sys.stdin.read())
+    v = d.get('$key')
+    print('' if v is None else v)
+except Exception:
+    print('')
+" 2>/dev/null
+}
+
 # ── SSE stream renderer (Python — see comment) ───────────────────────────────
 
 # Why a python renderer instead of bash:
