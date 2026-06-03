@@ -440,7 +440,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
             try:
                 token, key, expires_at = await self._create_session(container_url)
                 self._cache.put(container_name, token, key, expires_at)
-            except Exception:  # pylint: disable=broad-except
+            except (AzureError, ValueError):
                 _LOGGER.warning(
                     "CreateSession failed for container '%s'; falling back to bearer for %d seconds.",
                     container_name,
