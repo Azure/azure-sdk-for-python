@@ -2,11 +2,17 @@
 
 ## 2.3.0 (Unreleased)
 
+### Breaking Changes
+
+Breaking changes in beta methods:
+* Method `.beta.agents.list_optimization_candidates` now returns `ItemPaged[OptimizationCandidate]` instead of `AgentsPagedResultOptimizationCandidate`. The `after` parameter has been removed (use continuation-token-based paging instead).
+
 ### Sample updates
 
 * Added `sample_routines_crud.py` to demonstrate CRUD operations.
 * Added `sample_routines_with_timer_trigger.py` to demonstrate triggering a routine with a timer.
 * Added `sample_routines_with_schedule_trigger.py` to demonstrate triggering a routine on a recurring cron schedule via `ScheduleRoutineTrigger`.
+* Added `sample_skill_in_toolbox.py` demonstrating how to expose a Skill to a Prompt Agent via a Toolbox using `MCPTool`.
 * Updated `sample_dataset_generation_job_traces_for_evaluation.py` and `sample_dataset_generation_job_traces_for_finetuning.py` to create a temporary agent, seed conversations, retry the data generation job over the trace window, and clean up all created resources.
 * Updated `sample_memory_crud.py` and `sample_memory_crud_async.py` to demonstrate memory item CRUD (`create_memory`, `get_memory`, `update_memory`, `list_memories`, `delete_memory`) in addition to memory store CRUD.
 
