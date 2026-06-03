@@ -86,7 +86,6 @@ class TestRunOutputDirectory:
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
     )
-    @patch("azpysdk.apistub.PYTHON_VERSION_LIMIT", (99, 99))
     @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
     @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
     @patch("azpysdk.apistub.create_package_and_install")
@@ -139,7 +138,6 @@ class TestRunOutputDirectory:
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
     )
-    @patch("azpysdk.apistub.PYTHON_VERSION_LIMIT", (99, 99))
     @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
     @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
     @patch("azpysdk.apistub.create_package_and_install")
@@ -191,7 +189,6 @@ class TestRunOutputDirectory:
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
     )
-    @patch("azpysdk.apistub.PYTHON_VERSION_LIMIT", (99, 99))
     @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
     @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
     @patch("azpysdk.apistub.create_package_and_install")
@@ -235,7 +232,6 @@ class TestRunOutputDirectory:
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
     )
-    @patch("azpysdk.apistub.PYTHON_VERSION_LIMIT", (99, 99))
     @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
     @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
     @patch("azpysdk.apistub.create_package_and_install")
