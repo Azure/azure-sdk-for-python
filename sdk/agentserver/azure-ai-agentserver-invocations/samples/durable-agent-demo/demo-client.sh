@@ -122,7 +122,7 @@ from datetime import datetime, timezone
 # Bring the env-provided knobs in once.
 INITIAL_EVENT_ID = int(os.environ.get("INITIAL_EVENT_ID", "0") or "0")
 STATE_FILE       = os.environ.get("STATE_FILE", "")
-STALL_SECS       = float(os.environ.get("STALL_SECS", "10"))
+STALL_SECS       = float(os.environ.get("STALL_SECS", "60"))
 FLUSH_MS         = float(os.environ.get("FLUSH_MS", "50"))
 # CURL_PID is set by the bash wrapper. We kill it when the stall watchdog
 # fires so the script exits promptly instead of waiting on the still-open
@@ -225,6 +225,10 @@ def render_block(evt):
 
 stdin_fd = sys.stdin.fileno()
 
+# Tracks the last idle-hint we printed so we do not spam the user during a
+# legitimate cooldown silence. Reset every time data arrives.
+last_idle_hint = 0.0
+
 try:
     pending = b""
     while True:
@@ -241,6 +245,7 @@ try:
                 flush_tokens()
                 break
             last_data_at = time.monotonic()
+            last_idle_hint = 0.0
             pending += chunk
             # Process complete lines only.
             while b"\n" in pending:
@@ -287,6 +292,14 @@ try:
             # died and the platform edge proxy is still holding the TCP
             # connection. Print a one-line warning and exit so the user
             # gets a definitive signal instead of waiting on the proxy.
+            #
+            # IMPORTANT: there are legitimate quiet periods in this demo
+            # — the agent sleeps for INTRA_PHASE_COOLDOWN_SEC between
+            # subcalls and INTER_PHASE_COOLDOWN_SEC between phases (both
+            # default to 30s in the hosted agent.yaml). Default
+            # STALL_SECS=60 is set to comfortably exceed those gaps; we
+            # also print a low-key "still waiting" hint at half-window
+            # so the user sees the renderer is alive but quiet.
             idle = time.monotonic() - last_data_at
             if idle >= STALL_SECS:
                 n = now_utc()
@@ -303,6 +316,15 @@ try:
                     except OSError:
                         pass
                 break
+            elif idle >= STALL_SECS / 2 and idle - last_idle_hint >= 10:
+                # Print a single quiet hint every 10s in the second half
+                # of the watchdog window so the user has feedback during
+                # legitimate cooldown silences.
+                n = now_utc()
+                write(f"{DIM}[{n}]   ...quiet for {idle:.0f}s "
+                      f"(stall threshold {STALL_SECS:.0f}s){RESET}\n")
+                flush()
+                last_idle_hint = idle
 except StopIteration:
     pass
 except KeyboardInterrupt:
@@ -343,7 +365,7 @@ stream_sse() {
 
     INITIAL_EVENT_ID="${LAST_EVENT_ID:-0}" \
     STATE_FILE="$state_file" \
-    STALL_SECS="${STALL_SECS:-10}" \
+    STALL_SECS="${STALL_SECS:-60}" \
     FLUSH_MS="${FLUSH_MS:-50}" \
     CURL_PID="$curl_pid" \
         python3 -u -c "$_PY_RENDERER" < "$fifo"
