@@ -6,6 +6,7 @@
 """Unit tests for PlatformManaged property on CertificatePolicy (2026-03-01-preview)."""
 
 import pytest
+from azure.keyvault.certificates import CertificatePolicy as PublicCertificatePolicy, PlatformManaged
 from azure.keyvault.certificates._generated import models
 
 
@@ -96,3 +97,51 @@ class TestCertificatePolicyPlatformManaged:
         }
         policy = models.CertificatePolicy(raw)
         assert policy.platform_managed is None
+
+
+class TestPublicCertificatePolicyPlatformManaged:
+    """Tests for platform_managed on the public CertificatePolicy wrapper."""
+
+    def test_wrapper_accepts_platform_managed_kwarg(self):
+        pm = PlatformManaged(certificate_usage="tls-server", metadata={"env": "prod"})
+        policy = PublicCertificatePolicy(issuer_name="Self", platform_managed=pm)
+        assert policy.platform_managed is pm
+        assert policy.platform_managed.certificate_usage == "tls-server"
+        assert policy.platform_managed.metadata == {"env": "prod"}
+
+    def test_wrapper_platform_managed_none_by_default(self):
+        policy = PublicCertificatePolicy(issuer_name="Self")
+        assert policy.platform_managed is None
+
+    def test_wrapper_to_bundle_includes_platform_managed(self):
+        pm = PlatformManaged(certificate_usage="tls-client", metadata={"issuer": "internal-ca"})
+        policy = PublicCertificatePolicy(issuer_name="Self", platform_managed=pm)
+        bundle = policy._to_certificate_policy_bundle()
+        assert bundle.platform_managed is not None
+        assert bundle.platform_managed.certificate_usage == "tls-client"
+        assert bundle.platform_managed.metadata == {"issuer": "internal-ca"}
+
+    def test_wrapper_to_bundle_omits_platform_managed_when_unset(self):
+        policy = PublicCertificatePolicy(issuer_name="Self")
+        bundle = policy._to_certificate_policy_bundle()
+        assert bundle.platform_managed is None
+
+    def test_wrapper_from_bundle_reads_platform_managed(self):
+        pm = models.PlatformManaged(certificate_usage="tls-server", metadata={"k": "v"})
+        bundle = models.CertificatePolicy(
+            issuer_parameters=models.IssuerParameters(name="Self"),
+            platform_managed=pm,
+        )
+        policy = PublicCertificatePolicy._from_certificate_policy_bundle(bundle)
+        assert policy.platform_managed is not None
+        assert policy.platform_managed.certificate_usage == "tls-server"
+        assert policy.platform_managed.metadata == {"k": "v"}
+
+    def test_wrapper_round_trip_preserves_platform_managed(self):
+        pm = PlatformManaged(certificate_usage="tls-server", metadata={"key1": "value1", "key2": 42})
+        original = PublicCertificatePolicy(issuer_name="Self", platform_managed=pm)
+        bundle = original._to_certificate_policy_bundle()
+        restored = PublicCertificatePolicy._from_certificate_policy_bundle(bundle)
+        assert restored.platform_managed is not None
+        assert restored.platform_managed.certificate_usage == "tls-server"
+        assert restored.platform_managed.metadata == {"key1": "value1", "key2": 42}
