@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Removed a stale, no-op line from the internal challenge authentication policy for parity with the `azure-core` fix in [#45518](https://github.com/Azure/azure-sdk-for-python/pull/45518). This is an internal cleanup with no functional impact.
+
 ## 4.11.1 (2026-04-29)
 
 ### Bugs Fixed
