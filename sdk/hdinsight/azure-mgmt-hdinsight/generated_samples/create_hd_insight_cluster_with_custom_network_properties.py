@@ -83,12 +83,17 @@ def main():
                         },
                     ]
                 },
-                "networkProperties": {"privateLink": "Enabled", "resourceProviderConnection": "Outbound"},
+                "networkProperties": {
+                    "privateLink": "Enabled",
+                    "publicIpTag": {"ipTagType": "FirstPartyUsage", "tag": "/<TagName>"},
+                    "resourceProviderConnection": "Outbound",
+                },
                 "osType": "Linux",
                 "storageProfile": {
                     "storageaccounts": [
                         {
                             "container": "containername",
+                            "enableSecureChannel": True,
                             "isDefault": True,
                             "key": "storage account key",
                             "name": "mystorage",
@@ -101,6 +106,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/CreateHDInsightClusterWithCustomNetworkProperties.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsight/preview/2025-01-15-preview/examples/CreateHDInsightClusterWithCustomNetworkProperties.json
 if __name__ == "__main__":
     main()

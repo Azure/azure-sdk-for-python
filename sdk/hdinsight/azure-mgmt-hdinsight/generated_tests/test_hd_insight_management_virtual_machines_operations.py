@@ -24,7 +24,7 @@ class TestHDInsightManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase
         response = self.client.virtual_machines.list_hosts(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestHDInsightManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             cluster_name="str",
             hosts=["str"],
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestHDInsightManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             cluster_name="str",
             operation_id="str",
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself

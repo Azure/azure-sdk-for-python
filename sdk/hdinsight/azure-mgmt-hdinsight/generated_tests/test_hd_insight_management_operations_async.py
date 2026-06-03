@@ -23,7 +23,7 @@ class TestHDInsightManagementOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Hdinsight Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -78,7 +78,7 @@ verifytypes = false
 package_name = "azure-mgmt-hdinsight"
 package_pprint_name = "HDInsight Management"
 package_doc_id = "hdinsight"
-is_stable = true
+is_stable = false
 is_arm = true
 sample_link = ""
 title = "HDInsightManagementClient"

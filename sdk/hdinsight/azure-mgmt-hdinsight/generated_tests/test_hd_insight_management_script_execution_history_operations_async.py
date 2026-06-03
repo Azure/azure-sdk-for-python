@@ -25,7 +25,7 @@ class TestHDInsightManagementScriptExecutionHistoryOperationsAsync(AzureMgmtReco
         response = self.client.script_execution_history.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestHDInsightManagementScriptExecutionHistoryOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             cluster_name="str",
             script_execution_id="str",
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself

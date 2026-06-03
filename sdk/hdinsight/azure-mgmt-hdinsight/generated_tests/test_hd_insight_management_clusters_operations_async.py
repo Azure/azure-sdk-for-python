@@ -97,7 +97,12 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                             "configurationOverride": {"str": "str"},
                         },
                         "minSupportedTlsVersion": "str",
-                        "networkProperties": {"privateLink": "str", "resourceProviderConnection": "str"},
+                        "networkProperties": {
+                            "outboundDependenciesManagedType": "str",
+                            "privateLink": "str",
+                            "publicIpTag": {"ipTagType": "str", "tag": "str"},
+                            "resourceProviderConnection": "str",
+                        },
                         "osType": "str",
                         "privateLinkConfigurations": [
                             {
@@ -135,6 +140,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                             "storageaccounts": [
                                 {
                                     "container": "str",
+                                    "enableSecureChannel": bool,
                                     "fileSystem": "str",
                                     "fileshare": "str",
                                     "isDefault": bool,
@@ -151,7 +157,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "zones": ["str"],
                 },
-                api_version="2021-06-01",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -164,8 +170,16 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.clusters.update(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            parameters={"tags": {"str": "str"}},
-            api_version="2021-06-01",
+            parameters={
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str", "tenantId": "str"}},
+                },
+                "tags": {"str": "str"},
+            },
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -178,7 +192,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2021-06-01",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -191,7 +205,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.clusters.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -202,7 +216,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_clusters_list_by_resource_group(self, resource_group):
         response = self.client.clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -217,7 +231,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                 cluster_name="str",
                 role_name="str",
                 parameters={"targetInstanceCount": 0},
-                api_version="2021-06-01",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -246,7 +260,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                     }
                 },
-                api_version="2021-06-01",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -257,7 +271,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_clusters_list(self, resource_group):
         response = self.client.clusters.list(
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -271,7 +285,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 parameters={"keyName": "str", "keyVersion": "str", "vaultUri": "str"},
-                api_version="2021-06-01",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -284,7 +298,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.clusters.get_gateway_settings(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -301,8 +315,9 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "restAuthCredential.isEnabled": True,
                     "restAuthCredential.password": "str",
                     "restAuthCredential.username": "str",
+                    "restAuthEntraUsers": [{"displayName": "str", "objectId": "str", "upn": "str"}],
                 },
-                api_version="2021-06-01",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -316,7 +331,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             operation_id="str",
-            api_version="2021-06-01",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -330,7 +345,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 parameters={"applicationId": "str", "certificate": "str", "certificatePassword": "str"},
-                api_version="2021-06-01",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -350,7 +365,7 @@ class TestHDInsightManagementClustersOperationsAsync(AzureMgmtRecordedTestCase):
                         {"name": "str", "roles": ["str"], "uri": "str", "applicationName": "str", "parameters": "str"}
                     ],
                 },
-                api_version="2021-06-01",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
