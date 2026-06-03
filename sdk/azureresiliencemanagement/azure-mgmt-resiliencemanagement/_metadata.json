@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2026-04-01-preview",
+  "apiVersions": {
+    "Microsoft.AzureResilienceManagement": "2026-04-01-preview"
+  }
+}
