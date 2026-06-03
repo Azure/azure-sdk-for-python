@@ -121,10 +121,15 @@ function generateApiForPackage({
   });
 }
 
+// Fields in API.metadata.yml that must match between working tree and committed version.
+// pythonVersion is excluded because it varies across CI environments.
+const metadataFieldsToValidate = ["apiMdSha256", "parserVersion"];
+
 module.exports = {
   name: "python",
   isPackageDir,
   findPackageDir,
   readVersion,
   generateApiForPackage,
+  metadataFieldsToValidate,
 };

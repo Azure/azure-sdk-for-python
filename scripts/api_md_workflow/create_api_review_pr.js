@@ -173,6 +173,14 @@ function apiMdRel(packageDir) {
   return `${packageRelDir(packageDir)}/API.md`;
 }
 
+function metadataPath(packageDir) {
+  return path.join(packageDir, "API.metadata.yml");
+}
+
+function metadataRel(packageDir) {
+  return `${packageRelDir(packageDir)}/API.metadata.yml`;
+}
+
 function findRealGitExe() {
   if (process.platform !== "win32") {
     return null;
@@ -389,7 +397,14 @@ function generateApiBytesForPackage({
     throw new Error(`ERROR: did not produce ${outputPath}`);
   }
 
-  return fs.readFileSync(outputPath);
+  const result = { apiMd: fs.readFileSync(outputPath), metadata: null };
+
+  const metaPath = metadataPath(packageDir);
+  if (fs.existsSync(metaPath)) {
+    result.metadata = fs.readFileSync(metaPath);
+  }
+
+  return result;
 }
 
 function main() {
@@ -415,11 +430,11 @@ function main() {
   const targetRef = args.target ? resolveTargetRef(args.target) : MAIN_REF;
 
   try {
-    let baseApiBytes = null;
+    let baseResult = null;
     if (args.base) {
       logInfo(`\n=== Capturing baseline API.md from tag ${args.base} ===`);
       git(["checkout", "--detach", args.base]);
-      baseApiBytes = generateApiBytesForPackage({
+      baseResult = generateApiBytesForPackage({
         adapter,
         repoRoot: REPO_ROOT,
         packageName: args.packageName,
@@ -434,7 +449,7 @@ function main() {
     logInfo(`\n=== Capturing target API.md from ${targetRef} ===`);
     git(["checkout", "--detach", targetRef]);
     const targetVersion = adapter.readVersion(packageDir);
-    const targetApiBytes = generateApiBytesForPackage({
+    const targetResult = generateApiBytesForPackage({
       adapter,
       repoRoot: REPO_ROOT,
       packageName: args.packageName,
@@ -453,10 +468,16 @@ function main() {
 
     const apiPath = apiMdPath(packageDir);
     const apiRelative = apiMdRel(packageDir);
+    const metaFilePath = metadataPath(packageDir);
+    const metaRelative = metadataRel(packageDir);
 
-    if (baseApiBytes !== null) {
-      writeBytes(apiPath, baseApiBytes);
+    if (baseResult !== null) {
+      writeBytes(apiPath, baseResult.apiMd);
       git(["add", apiRelative]);
+      if (baseResult.metadata) {
+        writeBytes(metaFilePath, baseResult.metadata);
+        git(["add", metaRelative]);
+      }
       git(["commit", "-m", `[API Review] Baseline API.md for ${args.packageName} ${baseVersion}`]);
     } else {
       const tracked = git(["ls-files", "--error-unmatch", apiRelative], {
@@ -466,10 +487,20 @@ function main() {
 
       if (tracked.status === 0) {
         git(["rm", apiRelative]);
+        const metaTracked = git(["ls-files", "--error-unmatch", metaRelative], {
+          capture: true,
+          check: false,
+        });
+        if (metaTracked.status === 0) {
+          git(["rm", metaRelative]);
+        }
         git(["commit", "-m", `[API Review] Remove API.md for ${args.packageName} (empty baseline)`]);
       } else {
         if (fs.existsSync(apiPath)) {
           fs.unlinkSync(apiPath);
+        }
+        if (fs.existsSync(metaFilePath)) {
+          fs.unlinkSync(metaFilePath);
         }
         git(["commit", "--allow-empty", "-m", `[API Review] Empty baseline for ${args.packageName}`]);
       }
@@ -479,8 +510,12 @@ function main() {
 
     logInfo(`\n=== Creating review branch ${reviewBranch} ===`);
     git(["checkout", "-B", reviewBranch, baseBranch]);
-    writeBytes(apiPath, targetApiBytes);
+    writeBytes(apiPath, targetResult.apiMd);
     git(["add", apiRelative]);
+    if (targetResult.metadata) {
+      writeBytes(metaFilePath, targetResult.metadata);
+      git(["add", metaRelative]);
+    }
 
     const diff = git(["diff", "--cached", "--quiet"], {
       capture: true,
