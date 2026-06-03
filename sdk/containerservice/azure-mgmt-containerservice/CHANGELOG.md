@@ -14,7 +14,7 @@
   - Added model `IdentityBindingProperties`
   - Added enum `IdentityBindingProvisioningState`
   - Added model `ManagedClusterAzureMonitorProfileMetricsControlPlane`
-  - Added model `IdentityBindingsOperations`
+  - Added operation group `IdentityBindingsOperations`
 
 ## 41.3.0b1 (2026-05-18)
 
