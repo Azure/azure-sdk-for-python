@@ -10,8 +10,8 @@ pytest.importorskip(
     reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
 )
 pytest.importorskip(
-    "opentelemetry",
-    reason="Skipping telemetry tests: opentelemetry not installed.",
+    "opentelemetry.sdk",
+    reason="Skipping telemetry tests: opentelemetry-sdk not installed.",
 )
 
 from opentelemetry import trace
@@ -28,6 +28,7 @@ from azure.ai.voicelive.models import (
     ServerEventType,
 )
 from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+from azure.ai.voicelive.telemetry import _utils as telemetry_utils
 
 from devtools_testutils import AzureRecordedTestCase
 from .voicelive_preparer import VoiceLivePreparer
@@ -61,6 +62,7 @@ def in_memory_span_exporter(request, monkeypatch):
     enable_content_recording = getattr(request, "param", False)
 
     monkeypatch.setenv("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "true")
+    monkeypatch.setattr(telemetry_utils, "_span_impl_type", None)
     settings.tracing_implementation = "opentelemetry"
 
     # Reuse a real SDK TracerProvider if one is already installed globally
@@ -84,7 +86,7 @@ def in_memory_span_exporter(request, monkeypatch):
         if instrumentor.is_instrumented():
             instrumentor.uninstrument()
         processor.shutdown()
-        settings.tracing_implementation = None
+        settings.tracing_implementation.unset_value()
 
 
 class TestRealtimeServiceTelemetry(AzureRecordedTestCase):
