@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_create_ingress_profile_application_load_balancer.py
+    python agent_pools_create_crg.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,40 +31,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.managed_clusters.begin_create_or_update(
+    response = client.agent_pools.begin_create_or_update(
         resource_group_name="rg1",
         resource_name="clustername1",
+        agent_pool_name="agentpool1",
         parameters={
-            "location": "location1",
             "properties": {
-                "agentPoolProfiles": [
-                    {
-                        "count": 3,
-                        "enableNodePublicIP": True,
-                        "mode": "System",
-                        "name": "nodepool1",
-                        "osType": "Linux",
-                        "type": "VirtualMachineScaleSets",
-                        "vmSize": "Standard_DS2_v2",
-                    }
-                ],
-                "dnsPrefix": "dnsprefix1",
-                "ingressProfile": {"applicationLoadBalancer": {"enabled": True}},
-                "kubernetesVersion": "",
-                "linuxProfile": {"adminUsername": "azureuser", "ssh": {"publicKeys": [{"keyData": "keydata"}]}},
-                "networkProfile": {
-                    "loadBalancerProfile": {"managedOutboundIPs": {"count": 2}},
-                    "loadBalancerSku": "standard",
-                    "outboundType": "loadBalancer",
-                },
-            },
-            "sku": {"name": "Basic", "tier": "Free"},
-            "tags": {"archv2": "", "tier": "production"},
+                "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/CapacityReservationGroups/crg1",
+                "count": 3,
+                "orchestratorVersion": "",
+                "osType": "Linux",
+                "vmSize": "Standard_DS2_v2",
+            }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-02-preview/ManagedClustersCreate_IngressProfile_ApplicationLoadBalancer.json
+# x-ms-original-file: 2026-04-01/AgentPoolsCreate_CRG.json
 if __name__ == "__main__":
     main()
