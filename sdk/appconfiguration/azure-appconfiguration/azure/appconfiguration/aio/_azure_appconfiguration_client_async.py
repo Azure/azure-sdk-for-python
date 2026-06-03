@@ -243,7 +243,7 @@ class AzureAppConfigurationClient:
         snapshot_name = kwargs.pop("snapshot_name", None)
 
         if snapshot_name is not None:
-            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
             return AsyncConfigurationSettingPaged(
                 command,
                 snapshot=snapshot_name,
@@ -254,7 +254,7 @@ class AzureAppConfigurationClient:
         tags = kwargs.pop("tags_filter", None)
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
-        command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+        command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
         return AsyncConfigurationSettingPaged(
             command,
             key=key_filter,
@@ -308,7 +308,7 @@ class AzureAppConfigurationClient:
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
 
-        command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+        command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
         return AsyncConfigurationSettingPaged(
             command,
             key=key_filter,

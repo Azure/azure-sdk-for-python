@@ -89,7 +89,7 @@ def build_deployment_templates_create_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/registries/{registryName}/{name}/versions/{version}"
+    _url = "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}"
     path_format_arguments = {
         "registryName": _SERIALIZER.url("registry_name", registry_name, "str"),
         "name": _SERIALIZER.url("name", name, "str"),
