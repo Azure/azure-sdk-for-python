@@ -950,6 +950,15 @@ class ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Insight task."""
 
 
+class SearchContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of SearchContentType."""
+
+    TEXT = "text"
+    """TEXT."""
+    IMAGE = "image"
+    """IMAGE."""
+
+
 class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of SearchContextSize."""
 
@@ -1051,6 +1060,19 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
     """CODE_INTERPRETER."""
+    COMPUTER = "computer"
+    """COMPUTER."""
+    COMPUTER_USE = "computer_use"
+    """COMPUTER_USE."""
+
+
+class ToolSearchExecutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolSearchExecutionType."""
+
+    SERVER = "server"
+    """SERVER."""
+    CLIENT = "client"
+    """CLIENT."""
 
 
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1060,6 +1082,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FUNCTION."""
     FILE_SEARCH = "file_search"
     """FILE_SEARCH."""
+    COMPUTER = "computer"
+    """COMPUTER."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
     WEB_SEARCH = "web_search"
@@ -1076,6 +1100,10 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHELL."""
     CUSTOM = "custom"
     """CUSTOM."""
+    NAMESPACE = "namespace"
+    """NAMESPACE."""
+    TOOL_SEARCH = "tool_search"
+    """TOOL_SEARCH."""
     WEB_SEARCH_PREVIEW = "web_search_preview"
     """WEB_SEARCH_PREVIEW."""
     APPLY_PATCH = "apply_patch"

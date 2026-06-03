@@ -66,31 +66,32 @@ class Tool(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
     BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationPreviewTool,
-    CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerUsePreviewTool, CustomToolParam,
-    MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool, ImageGenTool,
-    LocalShellToolParam, MCPTool, MemorySearchPreviewTool, OpenApiTool, SharepointPreviewTool,
-    FunctionShellToolParam, ToolboxSearchPreviewTool, WebSearchTool, WebSearchPreviewTool,
-    WorkIQPreviewTool
+    CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
+    CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
+    ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
+    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam,
+    ToolboxSearchPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
-    :ivar type: Required. Known values are: "function", "file_search", "computer_use_preview",
-     "web_search", "mcp", "code_interpreter", "image_generation", "local_shell", "shell", "custom",
-     "web_search_preview", "apply_patch", "a2a_preview", "bing_custom_search_preview",
-     "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
-     "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
-     "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
-     "openapi".
+    :ivar type: Required. Known values are: "function", "file_search", "computer",
+     "computer_use_preview", "web_search", "mcp", "code_interpreter", "image_generation",
+     "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
+     "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
+     "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
+     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "azure_ai_search",
+     "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"function\", \"file_search\", \"computer_use_preview\",
-     \"web_search\", \"mcp\", \"code_interpreter\", \"image_generation\", \"local_shell\",
-     \"shell\", \"custom\", \"web_search_preview\", \"apply_patch\", \"a2a_preview\",
-     \"bing_custom_search_preview\", \"browser_automation_preview\", \"fabric_dataagent_preview\",
-     \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\",
-     \"bing_grounding\", \"capture_structured_outputs\", and \"openapi\"."""
+    """Required. Known values are: \"function\", \"file_search\", \"computer\",
+     \"computer_use_preview\", \"web_search\", \"mcp\", \"code_interpreter\", \"image_generation\",
+     \"local_shell\", \"shell\", \"custom\", \"namespace\", \"tool_search\", \"web_search_preview\",
+     \"apply_patch\", \"a2a_preview\", \"bing_custom_search_preview\",
+     \"browser_automation_preview\", \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\",
+     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
+     \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
+     \"capture_structured_outputs\", and \"openapi\"."""
 
     @overload
     def __init__(
@@ -3414,8 +3415,8 @@ class ComparisonFilter(_Model):
      * `lte`: less than or equal
      * `in`: in
      * `nin`: not in. Required. Is one of the following types: Literal["eq"], Literal["ne"],
-       Literal["gt"], Literal["gte"], Literal["lt"], Literal["lte"]
-    :vartype type: str or str or str or str or str or str
+       Literal["gt"], Literal["gte"], Literal["lt"], Literal["lte"], Literal["in"], Literal["nin"]
+    :vartype type: str or str or str or str or str or str or str or str
     :ivar key: The key to compare against the value. Required.
     :vartype key: str
     :ivar value: The value to compare against the attribute key; supports string, number, or
@@ -3423,7 +3424,7 @@ class ComparisonFilter(_Model):
     :vartype value: str or float or bool or list[str or float]
     """
 
-    type: Literal["eq", "ne", "gt", "gte", "lt", "lte"] = rest_field(
+    type: Literal["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the comparison operator: ``eq``, ``ne``, ``gt``, ``gte``, ``lt``, ``lte``, ``in``,
@@ -3437,7 +3438,8 @@ class ComparisonFilter(_Model):
       * `lte`: less than or equal
       * `in`: in
       * `nin`: not in. Required. Is one of the following types: Literal[\"eq\"],
-        Literal[\"ne\"], Literal[\"gt\"], Literal[\"gte\"], Literal[\"lt\"], Literal[\"lte\"]"""
+        Literal[\"ne\"], Literal[\"gt\"], Literal[\"gte\"], Literal[\"lt\"], Literal[\"lte\"],
+        Literal[\"in\"], Literal[\"nin\"]"""
     key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key to compare against the value. Required."""
     value: Union[str, float, bool, list[Union[str, float]]] = rest_field(
@@ -3450,7 +3452,7 @@ class ComparisonFilter(_Model):
     def __init__(
         self,
         *,
-        type: Literal["eq", "ne", "gt", "gte", "lt", "lte"],
+        type: Literal["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin"],
         key: str,
         value: Union[str, float, bool, list[Union[str, float]]],
     ) -> None: ...
@@ -3502,6 +3504,33 @@ class CompoundFilter(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ComputerTool(Tool, discriminator="computer"):
+    """Computer.
+
+    :ivar type: The type of the computer tool. Always ``computer``. Required. COMPUTER.
+    :vartype type: str or ~azure.ai.projects.models.COMPUTER
+    """
+
+    type: Literal[ToolType.COMPUTER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the computer tool. Always ``computer``. Required. COMPUTER."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.COMPUTER  # type: ignore
 
 
 class ComputerUsePreviewTool(Tool, discriminator="computer_use_preview"):
@@ -3758,7 +3787,7 @@ class ContainerNetworkPolicyAllowlistParam(ContainerNetworkPolicyParam, discrimi
     allowed_domains: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of allowed domains when type is ``allowlist``. Required."""
     domain_secrets: Optional[list["_models.ContainerNetworkPolicyDomainSecretParam"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+        visibility=["create"]
     )
     """Optional domain-scoped secrets for allowlisted domains."""
 
@@ -3922,6 +3951,10 @@ class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="contin
     :vartype eval_id: str
     :ivar max_hourly_runs: Maximum number of evaluation runs allowed per hour.
     :vartype max_hourly_runs: int
+    :ivar sampling_rate: Percentage (0-100] chance that a matching event triggers an evaluation.
+     When omitted, the service-default is to evaluate every event, which is equivalent to setting a
+     sampling rate of 100.
+    :vartype sampling_rate: float
     """
 
     type: Literal[EvaluationRuleActionType.CONTINUOUS_EVALUATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3932,6 +3965,12 @@ class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="contin
         name="maxHourlyRuns", visibility=["read", "create", "update", "delete", "query"]
     )
     """Maximum number of evaluation runs allowed per hour."""
+    sampling_rate: Optional[float] = rest_field(
+        name="samplingRate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Percentage (0-100] chance that a matching event triggers an evaluation. When omitted, the
+     service-default is to evaluate every event, which is equivalent to setting a sampling rate of
+     100."""
 
     @overload
     def __init__(
@@ -3939,6 +3978,7 @@ class ContinuousEvaluationRuleAction(EvaluationRuleAction, discriminator="contin
         *,
         eval_id: str,
         max_hourly_runs: Optional[int] = None,
+        sampling_rate: Optional[float] = None,
     ) -> None: ...
 
     @overload
@@ -4487,6 +4527,8 @@ class CustomToolParam(Tool, discriminator="custom"):
     :vartype description: str
     :ivar format: The input format for the custom tool. Default is unconstrained text.
     :vartype format: ~azure.ai.projects.models.CustomToolParamFormat
+    :ivar defer_loading: Whether this tool should be deferred and discovered via tool search.
+    :vartype defer_loading: bool
     """
 
     type: Literal[ToolType.CUSTOM] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4499,6 +4541,8 @@ class CustomToolParam(Tool, discriminator="custom"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The input format for the custom tool. Default is unconstrained text."""
+    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this tool should be deferred and discovered via tool search."""
 
     @overload
     def __init__(
@@ -4507,6 +4551,7 @@ class CustomToolParam(Tool, discriminator="custom"):
         name: str,
         description: Optional[str] = None,
         format: Optional["_models.CustomToolParamFormat"] = None,
+        defer_loading: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5652,6 +5697,10 @@ class EmbeddingConfiguration(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class EmptyModelParam(_Model):
+    """EmptyModelParam."""
 
 
 class EntraAuthorizationScheme(AgentEndpointAuthorizationScheme, discriminator="Entra"):
@@ -7601,6 +7650,8 @@ class FunctionTool(Tool, discriminator="function"):
     :vartype parameters: dict[str, any]
     :ivar strict: Required.
     :vartype strict: bool
+    :ivar defer_loading: Whether this function is deferred and loaded via tool search.
+    :vartype defer_loading: bool
     """
 
     type: Literal[ToolType.FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7612,6 +7663,8 @@ class FunctionTool(Tool, discriminator="function"):
     """Required."""
     strict: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
+    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this function is deferred and loaded via tool search."""
 
     @overload
     def __init__(
@@ -7621,6 +7674,7 @@ class FunctionTool(Tool, discriminator="function"):
         parameters: dict[str, Any],
         strict: bool,
         description: Optional[str] = None,
+        defer_loading: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -7633,6 +7687,58 @@ class FunctionTool(Tool, discriminator="function"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.FUNCTION  # type: ignore
+
+
+class FunctionToolParam(_Model):
+    """FunctionToolParam.
+
+    :ivar name: Required.
+    :vartype name: str
+    :ivar description:
+    :vartype description: str
+    :ivar parameters:
+    :vartype parameters: ~azure.ai.projects.models.EmptyModelParam
+    :ivar strict:
+    :vartype strict: bool
+    :ivar type: Required. Default value is "function".
+    :vartype type: str
+    :ivar defer_loading: Whether this function should be deferred and discovered via tool search.
+    :vartype defer_loading: bool
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: Optional["_models.EmptyModelParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal["function"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"function\"."""
+    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this function should be deferred and discovered via tool search."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        parameters: Optional["_models.EmptyModelParam"] = None,
+        strict: Optional[bool] = None,
+        defer_loading: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["function"] = "function"
 
 
 class GitHubIssueRoutineTrigger(RoutineTrigger, discriminator="github_issue"):
@@ -7993,10 +8099,18 @@ class ImageGenTool(Tool, discriminator="image_generation"):
      ``auto``. Default: ``auto``. Is one of the following types: Literal["low"], Literal["medium"],
      Literal["high"], Literal["auto"]
     :vartype quality: str or str or str or str
-    :ivar size: The size of the generated image. One of ``1024x1024``, ``1024x1536``,
-     ``1536x1024``, or ``auto``. Default: ``auto``. Is one of the following types:
-     Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"]
-    :vartype size: str or str or str or str
+    :ivar size: The size of the generated images. For ``gpt-image-2`` and
+     ``gpt-image-2-2026-04-21``, arbitrary resolutions are supported as ``WIDTHxHEIGHT`` strings,
+     for example ``1536x864``. Width and height must both be divisible by 16 and the requested
+     aspect ratio must be between 1:3 and 3:1. Resolutions above ``2560x1440`` are experimental, and
+     the maximum supported resolution is ``3840x2160``. The requested size must also satisfy the
+     model's current pixel and edge limits. The standard sizes ``1024x1024``, ``1536x1024``, and
+     ``1024x1536`` are supported by the GPT image models; ``auto`` is supported for models that
+     allow automatic sizing. For ``dall-e-2``, use one of ``256x256``, ``512x512``, or
+     ``1024x1024``. For ``dall-e-3``, use one of ``1024x1024``, ``1792x1024``, or ``1024x1792``. Is
+     one of the following types: Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"],
+     Literal["auto"], str
+    :vartype size: str or str or str or str or str
     :ivar output_format: The output format of the generated image. One of ``png``, ``webp``, or
      ``jpeg``. Default: ``png``. Is one of the following types: Literal["png"], Literal["webp"],
      Literal["jpeg"]
@@ -8044,12 +8158,19 @@ class ImageGenTool(Tool, discriminator="image_generation"):
     """The quality of the generated image. One of ``low``, ``medium``, ``high``, or ``auto``. Default:
      ``auto``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
      Literal[\"high\"], Literal[\"auto\"]"""
-    size: Optional[Literal["1024x1024", "1024x1536", "1536x1024", "auto"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
     )
-    """The size of the generated image. One of ``1024x1024``, ``1024x1536``, ``1536x1024``, or
-     ``auto``. Default: ``auto``. Is one of the following types: Literal[\"1024x1024\"],
-     Literal[\"1024x1536\"], Literal[\"1536x1024\"], Literal[\"auto\"]"""
+    """The size of the generated images. For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``, arbitrary
+     resolutions are supported as ``WIDTHxHEIGHT`` strings, for example ``1536x864``. Width and
+     height must both be divisible by 16 and the requested aspect ratio must be between 1:3 and 3:1.
+     Resolutions above ``2560x1440`` are experimental, and the maximum supported resolution is
+     ``3840x2160``. The requested size must also satisfy the model's current pixel and edge limits.
+     The standard sizes ``1024x1024``, ``1536x1024``, and ``1024x1536`` are supported by the GPT
+     image models; ``auto`` is supported for models that allow automatic sizing. For ``dall-e-2``,
+     use one of ``256x256``, ``512x512``, or ``1024x1024``. For ``dall-e-3``, use one of
+     ``1024x1024``, ``1792x1024``, or ``1024x1792``. Is one of the following types:
+     Literal[\"1024x1024\"], Literal[\"1024x1536\"], Literal[\"1536x1024\"], Literal[\"auto\"], str"""
     output_format: Optional[Literal["png", "webp", "jpeg"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8103,7 +8224,9 @@ class ImageGenTool(Tool, discriminator="image_generation"):
             Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]
         ] = None,
         quality: Optional[Literal["low", "medium", "high", "auto"]] = None,
-        size: Optional[Literal["1024x1024", "1024x1536", "1536x1024", "auto"]] = None,
+        size: Optional[
+            Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]
+        ] = None,
         output_format: Optional[Literal["png", "webp", "jpeg"]] = None,
         output_compression: Optional[int] = None,
         moderation: Optional[Literal["auto", "low"]] = None,
@@ -9024,6 +9147,8 @@ class MCPTool(Tool, discriminator="mcp"):
     :ivar require_approval: Is one of the following types: MCPToolRequireApproval,
      Literal["always"], Literal["never"]
     :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str or str
+    :ivar defer_loading: Whether this MCP tool is deferred and discovered via tool search.
+    :vartype defer_loading: bool
     :ivar project_connection_id: The connection ID in the project for the MCP server. The
      connection stores authentication and other connection details needed to connect to the MCP
      server.
@@ -9083,6 +9208,8 @@ class MCPTool(Tool, discriminator="mcp"):
         rest_field(visibility=["read", "create", "update", "delete", "query"])
     )
     """Is one of the following types: MCPToolRequireApproval, Literal[\"always\"], Literal[\"never\"]"""
+    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this MCP tool is deferred and discovered via tool search."""
     project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The connection ID in the project for the MCP server. The connection stores authentication and
      other connection details needed to connect to the MCP server."""
@@ -9116,6 +9243,7 @@ class MCPTool(Tool, discriminator="mcp"):
         headers: Optional[dict[str, str]] = None,
         allowed_tools: Optional[Union[list[str], "_models.MCPToolFilter"]] = None,
         require_approval: Optional[Union["_models.MCPToolRequireApproval", Literal["always"], Literal["never"]]] = None,
+        defer_loading: Optional[bool] = None,
         project_connection_id: Optional[str] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
@@ -10300,6 +10428,52 @@ class MonthlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Monthly"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = RecurrenceType.MONTHLY  # type: ignore
+
+
+class NamespaceToolParam(Tool, discriminator="namespace"):
+    """Namespace.
+
+    :ivar type: The type of the tool. Always ``namespace``. Required. NAMESPACE.
+    :vartype type: str or ~azure.ai.projects.models.NAMESPACE
+    :ivar name: The namespace name used in tool calls (for example, ``crm``). Required.
+    :vartype name: str
+    :ivar description: A description of the namespace shown to the model. Required.
+    :vartype description: str
+    :ivar tools: The function/custom tools available inside this namespace. Required.
+    :vartype tools: list[~azure.ai.projects.models.FunctionToolParam or
+     ~azure.ai.projects.models.CustomToolParam]
+    """
+
+    type: Literal[ToolType.NAMESPACE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``namespace``. Required. NAMESPACE."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The namespace name used in tool calls (for example, ``crm``). Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description of the namespace shown to the model. Required."""
+    tools: list[Union["_models.FunctionToolParam", "_models.CustomToolParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The function/custom tools available inside this namespace. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: str,
+        tools: list[Union["_models.FunctionToolParam", "_models.CustomToolParam"]],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.NAMESPACE  # type: ignore
 
 
 class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
@@ -13177,14 +13351,15 @@ class ToolChoiceParam(_Model):
     ``tools`` parameter to see how to specify which tools the model can call.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ToolChoiceAllowed, SpecificApplyPatchParam, ToolChoiceCodeInterpreter,
-    ToolChoiceComputerUsePreview, ToolChoiceCustom, ToolChoiceFileSearch, ToolChoiceFunction,
-    ToolChoiceImageGeneration, ToolChoiceMCP, SpecificFunctionShellParam,
+    ToolChoiceAllowed, SpecificApplyPatchParam, ToolChoiceCodeInterpreter, ToolChoiceComputer,
+    ToolChoiceComputerUse, ToolChoiceComputerUsePreview, ToolChoiceCustom, ToolChoiceFileSearch,
+    ToolChoiceFunction, ToolChoiceImageGeneration, ToolChoiceMCP, SpecificFunctionShellParam,
     ToolChoiceWebSearchPreview, ToolChoiceWebSearchPreview20250311
 
     :ivar type: Required. Known values are: "allowed_tools", "function", "mcp", "custom",
      "apply_patch", "shell", "file_search", "web_search_preview", "computer_use_preview",
-     "web_search_preview_2025_03_11", "image_generation", and "code_interpreter".
+     "web_search_preview_2025_03_11", "image_generation", "code_interpreter", "computer", and
+     "computer_use".
     :vartype type: str or ~azure.ai.projects.models.ToolChoiceParamType
     """
 
@@ -13192,7 +13367,8 @@ class ToolChoiceParam(_Model):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"allowed_tools\", \"function\", \"mcp\", \"custom\",
      \"apply_patch\", \"shell\", \"file_search\", \"web_search_preview\", \"computer_use_preview\",
-     \"web_search_preview_2025_03_11\", \"image_generation\", and \"code_interpreter\"."""
+     \"web_search_preview_2025_03_11\", \"image_generation\", \"code_interpreter\", \"computer\",
+     and \"computer_use\"."""
 
     @overload
     def __init__(
@@ -14094,6 +14270,62 @@ class ToolChoiceCodeInterpreter(ToolChoiceParam, discriminator="code_interpreter
         self.type = ToolChoiceParamType.CODE_INTERPRETER  # type: ignore
 
 
+class ToolChoiceComputer(ToolChoiceParam, discriminator="computer"):
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+
+    :ivar type: Required. COMPUTER.
+    :vartype type: str or ~azure.ai.projects.models.COMPUTER
+    """
+
+    type: Literal[ToolChoiceParamType.COMPUTER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. COMPUTER."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.COMPUTER  # type: ignore
+
+
+class ToolChoiceComputerUse(ToolChoiceParam, discriminator="computer_use"):
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+
+    :ivar type: Required. COMPUTER_USE.
+    :vartype type: str or ~azure.ai.projects.models.COMPUTER_USE
+    """
+
+    type: Literal[ToolChoiceParamType.COMPUTER_USE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. COMPUTER_USE."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolChoiceParamType.COMPUTER_USE  # type: ignore
+
+
 class ToolChoiceComputerUsePreview(ToolChoiceParam, discriminator="computer_use_preview"):
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
@@ -14436,6 +14668,53 @@ class ToolProjectConnection(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ToolSearchToolParam(Tool, discriminator="tool_search"):
+    """Tool search tool.
+
+    :ivar type: The type of the tool. Always ``tool_search``. Required. TOOL_SEARCH.
+    :vartype type: str or ~azure.ai.projects.models.TOOL_SEARCH
+    :ivar execution: Whether tool search is executed by the server or by the client. Known values
+     are: "server" and "client".
+    :vartype execution: str or ~azure.ai.projects.models.ToolSearchExecutionType
+    :ivar description:
+    :vartype description: str
+    :ivar parameters:
+    :vartype parameters: ~azure.ai.projects.models.EmptyModelParam
+    """
+
+    type: Literal[ToolType.TOOL_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``tool_search``. Required. TOOL_SEARCH."""
+    execution: Optional[Union[str, "_models.ToolSearchExecutionType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether tool search is executed by the server or by the client. Known values are: \"server\"
+     and \"client\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: Optional["_models.EmptyModelParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        execution: Optional[Union[str, "_models.ToolSearchExecutionType"]] = None,
+        description: Optional[str] = None,
+        parameters: Optional["_models.EmptyModelParam"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.TOOL_SEARCH  # type: ignore
 
 
 class ToolUseFineTuningDataGenerationJobOptions(
@@ -14959,6 +15238,8 @@ class WebSearchPreviewTool(Tool, discriminator="web_search_preview"):
      for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Known
      values are: "low", "medium", and "high".
     :vartype search_context_size: str or ~azure.ai.projects.models.SearchContextSize
+    :ivar search_content_types:
+    :vartype search_content_types: list[str or ~azure.ai.projects.models.SearchContentType]
     """
 
     type: Literal[ToolType.WEB_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -14973,6 +15254,9 @@ class WebSearchPreviewTool(Tool, discriminator="web_search_preview"):
     """High level guidance for the amount of context window space to use for the search. One of
      ``low``, ``medium``, or ``high``. ``medium`` is the default. Known values are: \"low\",
      \"medium\", and \"high\"."""
+    search_content_types: Optional[list[Union[str, "_models.SearchContentType"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
 
     @overload
     def __init__(
@@ -14980,6 +15264,7 @@ class WebSearchPreviewTool(Tool, discriminator="web_search_preview"):
         *,
         user_location: Optional["_models.ApproximateLocation"] = None,
         search_context_size: Optional[Union[str, "_models.SearchContextSize"]] = None,
+        search_content_types: Optional[list[Union[str, "_models.SearchContentType"]]] = None,
     ) -> None: ...
 
     @overload
