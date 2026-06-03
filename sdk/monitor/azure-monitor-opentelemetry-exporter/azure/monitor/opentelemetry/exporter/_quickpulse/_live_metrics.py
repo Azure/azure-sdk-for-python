@@ -71,7 +71,8 @@ def get_quickpulse_configuration_callback(settings: Dict[str, str]) -> None:
                 resource=manager._resource,  # pylint:disable=protected-access
             )
     elif live_metrics_enabled is False and manager.is_initialized():
-        # Track explicit live metrics disable for statsbeat feature reporting. (Tracking the disable live metrics feature starting 06/03/2026)
+        # Track explicit live metrics disable for statsbeat feature reporting.
+        # (Tracking the disable live metrics feature starting 06/03/2026)
         set_statsbeat_live_metrics_feature_set()
         # Disable live metrics if it's currently enabled
         manager.shutdown()
