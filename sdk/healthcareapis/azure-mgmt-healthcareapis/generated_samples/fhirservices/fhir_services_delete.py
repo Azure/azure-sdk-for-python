@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/stable/2024-03-31/examples/fhirservices/FhirServices_Delete.json
+# x-ms-original-file: specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/HealthcareApis/preview/2025-04-01-preview/examples/fhirservices/FhirServices_Delete.json
 if __name__ == "__main__":
     main()

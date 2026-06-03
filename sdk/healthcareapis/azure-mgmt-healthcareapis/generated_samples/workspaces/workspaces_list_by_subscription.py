@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/stable/2024-03-31/examples/workspaces/Workspaces_ListBySubscription.json
+# x-ms-original-file: specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/HealthcareApis/preview/2025-04-01-preview/examples/workspaces/Workspaces_ListBySubscription.json
 if __name__ == "__main__":
     main()

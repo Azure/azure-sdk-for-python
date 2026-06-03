@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class CheckNameAvailabilityParameters(_serialization.Model):
@@ -87,9 +81,9 @@ class CorsConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        origins: Optional[List[str]] = None,
-        headers: Optional[List[str]] = None,
-        methods: Optional[List[str]] = None,
+        origins: Optional[list[str]] = None,
+        headers: Optional[list[str]] = None,
+        methods: Optional[list[str]] = None,
         max_age: Optional[int] = None,
         allow_credentials: Optional[bool] = None,
         **kwargs: Any
@@ -172,9 +166,9 @@ class ResourceCore(_serialization.Model):
         :paramtype etag: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.etag = etag
 
 
@@ -233,7 +227,7 @@ class ResourceTags(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -282,7 +276,7 @@ class TaggedResource(ResourceTags, LocationBasedResource):
         *,
         etag: Optional[str] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -295,15 +289,15 @@ class TaggedResource(ResourceTags, LocationBasedResource):
         :paramtype tags: dict[str, str]
         """
         super().__init__(tags=tags, etag=etag, location=location, **kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.etag = etag
         self.location = location
         self.tags = tags
 
 
-class DicomService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=too-many-instance-attributes
+class DicomService(TaggedResource, ServiceManagedIdentity):
     """The description of Dicom Service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -399,7 +393,7 @@ class DicomService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
         identity: Optional["_models.ServiceManagedIdentityIdentity"] = None,
         etag: Optional[str] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         authentication_configuration: Optional["_models.DicomServiceAuthenticationConfiguration"] = None,
         cors_configuration: Optional["_models.CorsConfiguration"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
@@ -436,20 +430,20 @@ class DicomService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
         """
         super().__init__(etag=etag, location=location, tags=tags, identity=identity, **kwargs)
         self.identity = identity
-        self.system_data = None
-        self.provisioning_state = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.authentication_configuration = authentication_configuration
         self.cors_configuration = cors_configuration
-        self.service_url = None
-        self.private_endpoint_connections = None
+        self.service_url: Optional[str] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
         self.public_network_access = public_network_access
-        self.event_state = None
+        self.event_state: Optional[Union[str, "_models.ServiceEventState"]] = None
         self.encryption = encryption
         self.storage_configuration = storage_configuration
         self.enable_data_partitions = enable_data_partitions
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.etag = etag
         self.location = location
         self.tags = tags
@@ -479,8 +473,8 @@ class DicomServiceAuthenticationConfiguration(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.authority = None
-        self.audiences = None
+        self.authority: Optional[str] = None
+        self.audiences: Optional[list[str]] = None
 
 
 class DicomServiceCollection(_serialization.Model):
@@ -498,7 +492,7 @@ class DicomServiceCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.DicomService"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.DicomService"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of Dicom Services.
@@ -530,7 +524,7 @@ class DicomServicePatchResource(ResourceTags, ServiceManagedIdentity):
         self,
         *,
         identity: Optional["_models.ServiceManagedIdentityIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -663,12 +657,12 @@ class ErrorDetailsInternal(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
 
 
-class FhirService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=too-many-instance-attributes
+class FhirService(TaggedResource, ServiceManagedIdentity):
     """The description of Fhir Service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -780,7 +774,7 @@ class FhirService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=to
         identity: Optional["_models.ServiceManagedIdentityIdentity"] = None,
         etag: Optional[str] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         kind: Optional[Union[str, "_models.FhirServiceKind"]] = None,
         acr_configuration: Optional["_models.FhirServiceAcrConfiguration"] = None,
         authentication_configuration: Optional["_models.FhirServiceAuthenticationConfiguration"] = None,
@@ -834,22 +828,22 @@ class FhirService(TaggedResource, ServiceManagedIdentity):  # pylint: disable=to
         super().__init__(etag=etag, location=location, tags=tags, identity=identity, **kwargs)
         self.identity = identity
         self.kind = kind
-        self.system_data = None
-        self.provisioning_state = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.acr_configuration = acr_configuration
         self.authentication_configuration = authentication_configuration
         self.cors_configuration = cors_configuration
         self.export_configuration = export_configuration
-        self.private_endpoint_connections = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
         self.public_network_access = public_network_access
-        self.event_state = None
+        self.event_state: Optional[Union[str, "_models.ServiceEventState"]] = None
         self.resource_version_policy_configuration = resource_version_policy_configuration
         self.import_configuration = import_configuration
         self.implementation_guides_configuration = implementation_guides_configuration
         self.encryption = encryption
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.etag = etag
         self.location = location
         self.tags = tags
@@ -872,8 +866,8 @@ class FhirServiceAcrConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        login_servers: Optional[List[str]] = None,
-        oci_artifacts: Optional[List["_models.ServiceOciArtifactEntry"]] = None,
+        login_servers: Optional[list[str]] = None,
+        oci_artifacts: Optional[list["_models.ServiceOciArtifactEntry"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -915,7 +909,7 @@ class FhirServiceAuthenticationConfiguration(_serialization.Model):
         authority: Optional[str] = None,
         audience: Optional[str] = None,
         smart_proxy_enabled: Optional[bool] = None,
-        smart_identity_providers: Optional[List["_models.SmartIdentityProviderConfiguration"]] = None,
+        smart_identity_providers: Optional[list["_models.SmartIdentityProviderConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -952,7 +946,7 @@ class FhirServiceCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.FhirService"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.FhirService"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of Fhir Services.
@@ -995,9 +989,9 @@ class FhirServiceCorsConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        origins: Optional[List[str]] = None,
-        headers: Optional[List[str]] = None,
-        methods: Optional[List[str]] = None,
+        origins: Optional[list[str]] = None,
+        headers: Optional[list[str]] = None,
+        methods: Optional[list[str]] = None,
         max_age: Optional[int] = None,
         allow_credentials: Optional[bool] = None,
         **kwargs: Any
@@ -1100,7 +1094,7 @@ class FhirServicePatchResource(ResourceTags, ServiceManagedIdentity):
         self,
         *,
         identity: Optional["_models.ServiceManagedIdentityIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1136,7 +1130,7 @@ class ImplementationGuidesConfiguration(_serialization.Model):
         self.us_core_missing_data = us_core_missing_data
 
 
-class IotConnector(TaggedResource, ServiceManagedIdentity):  # pylint: disable=too-many-instance-attributes
+class IotConnector(TaggedResource, ServiceManagedIdentity):
     """IoT Connector definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1201,7 +1195,7 @@ class IotConnector(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
         identity: Optional["_models.ServiceManagedIdentityIdentity"] = None,
         etag: Optional[str] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         ingestion_endpoint_configuration: Optional["_models.IotEventHubIngestionEndpointConfiguration"] = None,
         device_mapping: Optional["_models.IotMappingProperties"] = None,
         **kwargs: Any
@@ -1225,13 +1219,13 @@ class IotConnector(TaggedResource, ServiceManagedIdentity):  # pylint: disable=t
         """
         super().__init__(etag=etag, location=location, tags=tags, identity=identity, **kwargs)
         self.identity = identity
-        self.system_data = None
-        self.provisioning_state = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.ingestion_endpoint_configuration = ingestion_endpoint_configuration
         self.device_mapping = device_mapping
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.etag = etag
         self.location = location
         self.tags = tags
@@ -1252,7 +1246,7 @@ class IotConnectorCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.IotConnector"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.IotConnector"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of IoT Connectors.
@@ -1284,7 +1278,7 @@ class IotConnectorPatchResource(ResourceTags, ServiceManagedIdentity):
         self,
         *,
         identity: Optional["_models.ServiceManagedIdentityIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1321,7 +1315,7 @@ class IotDestinationProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class IotEventHubIngestionEndpointConfiguration(_serialization.Model):  # pylint: disable=name-too-long
@@ -1451,8 +1445,8 @@ class IotFhirDestination(LocationBasedResource):
         :paramtype fhir_mapping: ~azure.mgmt.healthcareapis.models.IotMappingProperties
         """
         super().__init__(etag=etag, location=location, **kwargs)
-        self.system_data = None
-        self.provisioning_state = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_identity_resolution_type = resource_identity_resolution_type
         self.fhir_service_resource_id = fhir_service_resource_id
         self.fhir_mapping = fhir_mapping
@@ -1476,7 +1470,7 @@ class IotFhirDestinationCollection(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.IotFhirDestination"]] = None,
+        value: Optional[list["_models.IotFhirDestination"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1578,8 +1572,8 @@ class ListOperations(_serialization.Model):
 
     :ivar value: Collection of available operation details.
     :vartype value: list[~azure.mgmt.healthcareapis.models.OperationDetail]
-    :ivar next_link: URL client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
+    :ivar next_link: URL client should use to fetch the next page (per server side paging). It's
+     null for now, added for future use.
     :vartype next_link: str
     """
 
@@ -1594,12 +1588,12 @@ class ListOperations(_serialization.Model):
 
     def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword next_link: URL client should use to fetch the next page (per server side paging).
-         It's null for now, added for future use.
+        :keyword next_link: URL client should use to fetch the next page (per server side paging). It's
+         null for now, added for future use.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.OperationDetail"]] = None
         self.next_link = next_link
 
 
@@ -1683,7 +1677,7 @@ class MetricDimension(_serialization.Model):
         self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
-class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MetricSpecification(_serialization.Model):
     """Specifications of the Metrics for Azure Monitoring.
 
     :ivar name: Name of the metric.
@@ -1751,11 +1745,11 @@ class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-ins
         unit: Optional[str] = None,
         category: Optional[str] = None,
         aggregation_type: Optional[str] = None,
-        supported_aggregation_types: Optional[List[str]] = None,
-        supported_time_grain_types: Optional[List[str]] = None,
+        supported_aggregation_types: Optional[list[str]] = None,
+        supported_time_grain_types: Optional[list[str]] = None,
         fill_gap_with_zero: Optional[bool] = None,
         metric_filter_pattern: Optional[str] = None,
-        dimensions: Optional[List["_models.MetricDimension"]] = None,
+        dimensions: Optional[list["_models.MetricDimension"]] = None,
         is_internal: Optional[bool] = None,
         source_mdm_account: Optional[str] = None,
         source_mdm_namespace: Optional[str] = None,
@@ -1870,11 +1864,11 @@ class OperationDetail(_serialization.Model):
         :paramtype properties: ~azure.mgmt.healthcareapis.models.OperationProperties
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[str] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
         self.properties = properties
 
 
@@ -1910,10 +1904,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationProperties(_serialization.Model):
@@ -1981,11 +1975,11 @@ class OperationResultsDescription(_serialization.Model):
         :paramtype properties: JSON
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.status = None
-        self.start_time = None
-        self.end_time = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.status: Optional[Union[str, "_models.OperationResultStatus"]] = None
+        self.start_time: Optional[str] = None
+        self.end_time: Optional[str] = None
         self.properties = properties
 
 
@@ -2009,7 +2003,7 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class Resource(_serialization.Model):
@@ -2018,7 +2012,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2042,9 +2036,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class PrivateEndpointConnection(Resource):
@@ -2053,7 +2047,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2109,7 +2103,7 @@ class PrivateEndpointConnection(Resource):
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionDescription(PrivateEndpointConnection):
@@ -2118,7 +2112,7 @@ class PrivateEndpointConnectionDescription(PrivateEndpointConnection):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2180,7 +2174,7 @@ class PrivateEndpointConnectionDescription(PrivateEndpointConnection):
             private_link_service_connection_state=private_link_service_connection_state,
             **kwargs
         )
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -2194,7 +2188,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.healthcareapis.models.PrivateEndpointConnection]
@@ -2215,7 +2209,7 @@ class PrivateEndpointConnectionListResultDescription(_serialization.Model):  # p
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PrivateEndpointConnectionDescription"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.PrivateEndpointConnectionDescription"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Array of private endpoint connections.
@@ -2231,7 +2225,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2263,14 +2257,14 @@ class PrivateLinkResource(Resource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -2280,7 +2274,7 @@ class PrivateLinkResourceDescription(PrivateLinkResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2316,13 +2310,13 @@ class PrivateLinkResourceDescription(PrivateLinkResource):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(required_zone_names=required_zone_names, **kwargs)
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class PrivateLinkResourceListResultDescription(_serialization.Model):
@@ -2337,7 +2331,7 @@ class PrivateLinkResourceListResultDescription(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PrivateLinkResourceDescription"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.PrivateLinkResourceDescription"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Array of private link resources.
@@ -2413,7 +2407,7 @@ class ResourceVersionPolicyConfiguration(_serialization.Model):
         self,
         *,
         default: Optional[Union[str, "_models.FhirResourceVersionPolicy"]] = None,
-        resource_type_overrides: Optional[Dict[str, Union[str, "_models.FhirResourceVersionPolicy"]]] = None,
+        resource_type_overrides: Optional[dict[str, Union[str, "_models.FhirResourceVersionPolicy"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2477,8 +2471,8 @@ class ServiceAcrConfigurationInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        login_servers: Optional[List[str]] = None,
-        oci_artifacts: Optional[List["_models.ServiceOciArtifactEntry"]] = None,
+        login_servers: Optional[list[str]] = None,
+        oci_artifacts: Optional[list["_models.ServiceOciArtifactEntry"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2561,9 +2555,9 @@ class ServiceCorsConfigurationInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        origins: Optional[List[str]] = None,
-        headers: Optional[List[str]] = None,
-        methods: Optional[List[str]] = None,
+        origins: Optional[list[str]] = None,
+        headers: Optional[list[str]] = None,
+        methods: Optional[list[str]] = None,
         max_age: Optional[int] = None,
         allow_credentials: Optional[bool] = None,
         **kwargs: Any
@@ -2714,7 +2708,7 @@ class ServiceManagedIdentityIdentity(_serialization.Model):
     :vartype tenant_id: str
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.healthcareapis.models.UserAssignedIdentity]
@@ -2737,7 +2731,7 @@ class ServiceManagedIdentityIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.ServiceManagedIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2747,15 +2741,15 @@ class ServiceManagedIdentityIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.healthcareapis.models.ServiceManagedIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.healthcareapis.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
         self.type = type
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.user_assigned_identities = user_assigned_identities
 
 
@@ -2850,7 +2844,7 @@ class ServicesResource(_serialization.Model):
         *,
         kind: Union[str, "_models.Kind"],
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         identity: Optional["_models.ServicesResourceIdentity"] = None,
         **kwargs: Any
@@ -2871,9 +2865,9 @@ class ServicesResource(_serialization.Model):
         :paramtype identity: ~azure.mgmt.healthcareapis.models.ServicesResourceIdentity
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.kind = kind
         self.location = location
         self.tags = tags
@@ -2940,7 +2934,7 @@ class ServicesDescription(ServicesResource):
         *,
         kind: Union[str, "_models.Kind"],
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         identity: Optional["_models.ServicesResourceIdentity"] = None,
         properties: Optional["_models.ServicesProperties"] = None,
@@ -2965,7 +2959,7 @@ class ServicesDescription(ServicesResource):
         """
         super().__init__(kind=kind, location=location, tags=tags, etag=etag, identity=identity, **kwargs)
         self.properties = properties
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ServicesDescriptionListResult(_serialization.Model):
@@ -2986,7 +2980,7 @@ class ServicesDescriptionListResult(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.ServicesDescription"]] = None,
+        value: Optional[list["_models.ServicesDescription"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3030,8 +3024,8 @@ class ServicesNameAvailabilityInfo(_serialization.Model):
         :paramtype message: str
         """
         super().__init__(**kwargs)
-        self.name_available = None
-        self.reason = None
+        self.name_available: Optional[bool] = None
+        self.reason: Optional[Union[str, "_models.ServiceNameUnavailabilityReason"]] = None
         self.message = message
 
 
@@ -3053,7 +3047,7 @@ class ServicesPatchDescription(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
@@ -3086,8 +3080,8 @@ class ServiceSpecification(_serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["_models.LogSpecification"]] = None,
-        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
+        log_specifications: Optional[list["_models.LogSpecification"]] = None,
+        metric_specifications: Optional[list["_models.MetricSpecification"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3159,12 +3153,12 @@ class ServicesProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        access_policies: Optional[List["_models.ServiceAccessPolicyEntry"]] = None,
+        access_policies: Optional[list["_models.ServiceAccessPolicyEntry"]] = None,
         cosmos_db_configuration: Optional["_models.ServiceCosmosDbConfigurationInfo"] = None,
         authentication_configuration: Optional["_models.ServiceAuthenticationConfigurationInfo"] = None,
         cors_configuration: Optional["_models.ServiceCorsConfigurationInfo"] = None,
         export_configuration: Optional["_models.ServiceExportConfigurationInfo"] = None,
-        private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None,
+        private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         acr_configuration: Optional["_models.ServiceAcrConfigurationInfo"] = None,
         import_configuration: Optional["_models.ServiceImportConfigurationInfo"] = None,
@@ -3200,7 +3194,7 @@ class ServicesProperties(_serialization.Model):
          ~azure.mgmt.healthcareapis.models.ServiceImportConfigurationInfo
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.access_policies = access_policies
         self.cosmos_db_configuration = cosmos_db_configuration
         self.authentication_configuration = authentication_configuration
@@ -3246,8 +3240,8 @@ class ServicesResourceIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.healthcareapis.models.ManagedServiceIdentityType
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
@@ -3276,7 +3270,7 @@ class SmartIdentityProviderApplication(_serialization.Model):
         *,
         client_id: Optional[str] = None,
         audience: Optional[str] = None,
-        allowed_data_actions: Optional[List[Union[str, "_models.SmartDataActions"]]] = None,
+        allowed_data_actions: Optional[list[Union[str, "_models.SmartDataActions"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3317,7 +3311,7 @@ class SmartIdentityProviderConfiguration(_serialization.Model):
         self,
         *,
         authority: Optional[str] = None,
-        applications: Optional[List["_models.SmartIdentityProviderApplication"]] = None,
+        applications: Optional[list["_models.SmartIdentityProviderApplication"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3341,25 +3335,61 @@ class StorageConfiguration(_serialization.Model):
     :vartype storage_resource_id: str
     :ivar file_system_name: The filesystem name of connected storage account.
     :vartype file_system_name: str
+    :ivar storage_indexing_configuration: The configuration for indexing the connected storage.
+    :vartype storage_indexing_configuration:
+     ~azure.mgmt.healthcareapis.models.StorageIndexingConfiguration
     """
 
     _attribute_map = {
         "storage_resource_id": {"key": "storageResourceId", "type": "str"},
         "file_system_name": {"key": "fileSystemName", "type": "str"},
+        "storage_indexing_configuration": {
+            "key": "storageIndexingConfiguration",
+            "type": "StorageIndexingConfiguration",
+        },
     }
 
     def __init__(
-        self, *, storage_resource_id: Optional[str] = None, file_system_name: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        storage_resource_id: Optional[str] = None,
+        file_system_name: Optional[str] = None,
+        storage_indexing_configuration: Optional["_models.StorageIndexingConfiguration"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword storage_resource_id: The resource id of connected storage account.
         :paramtype storage_resource_id: str
         :keyword file_system_name: The filesystem name of connected storage account.
         :paramtype file_system_name: str
+        :keyword storage_indexing_configuration: The configuration for indexing the connected storage.
+        :paramtype storage_indexing_configuration:
+         ~azure.mgmt.healthcareapis.models.StorageIndexingConfiguration
         """
         super().__init__(**kwargs)
         self.storage_resource_id = storage_resource_id
         self.file_system_name = file_system_name
+        self.storage_indexing_configuration = storage_indexing_configuration
+
+
+class StorageIndexingConfiguration(_serialization.Model):
+    """The configuration for indexing the connected storage.
+
+    :ivar storage_event_queue_name: The name of the queue that contains storage cloud events.
+    :vartype storage_event_queue_name: str
+    """
+
+    _attribute_map = {
+        "storage_event_queue_name": {"key": "storageEventQueueName", "type": "str"},
+    }
+
+    def __init__(self, *, storage_event_queue_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword storage_event_queue_name: The name of the queue that contains storage cloud events.
+        :paramtype storage_event_queue_name: str
+        """
+        super().__init__(**kwargs)
+        self.storage_event_queue_name = storage_event_queue_name
 
 
 class SystemData(_serialization.Model):
@@ -3450,8 +3480,8 @@ class UserAssignedIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class Workspace(TaggedResource):
@@ -3501,7 +3531,7 @@ class Workspace(TaggedResource):
         *,
         etag: Optional[str] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.WorkspaceProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -3518,7 +3548,7 @@ class Workspace(TaggedResource):
         """
         super().__init__(etag=etag, location=location, tags=tags, **kwargs)
         self.properties = properties
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class WorkspaceList(_serialization.Model):
@@ -3536,7 +3566,7 @@ class WorkspaceList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Workspace"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.Workspace"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page.
@@ -3595,6 +3625,6 @@ class WorkspaceProperties(_serialization.Model):
         :paramtype public_network_access: str or ~azure.mgmt.healthcareapis.models.PublicNetworkAccess
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.private_endpoint_connections = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
         self.public_network_access = public_network_access
