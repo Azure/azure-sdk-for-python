@@ -6,3 +6,7 @@ specs/
 
 # Demo session state — regenerated each time the demo runs
 .demo-session
+
+# Local wheel build output — see scripts/build-wheels.sh +
+# docs/USING_PRE_RELEASE_WHEELS.md. Rebuilt on demand by each dev.
+wheels/
