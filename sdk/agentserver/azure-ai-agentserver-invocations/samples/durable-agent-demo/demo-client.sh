@@ -127,6 +127,17 @@ INITIAL_EVENT_ID = int(os.environ.get("INITIAL_EVENT_ID", "0") or "0")
 STATE_FILE       = os.environ.get("STATE_FILE", "")
 FLUSH_MS         = float(os.environ.get("FLUSH_MS", "50"))
 
+# CRITICAL: This entire block lives inside a bash heredoc delimited by
+# the apostrophe character (the bash assignment `_PY_RENDERER=` then an
+# opening apostrophe, opaque content, closing apostrophe at column 1
+# of an otherwise empty line). Any literal apostrophe in Python code
+# below will silently end the heredoc and truncate the script — debug
+# symptom is a NameError several lines later. Use double quotes for
+# every Python string literal. Keys we pull from event dicts are
+# aliased to module-level CONSTANTS up here so the per-event code
+# stays readable without inline string literals becoming a foot-gun.
+_DSEC = "duration_sec"
+
 # ANSI palette — mirrors demo-client.sh.
 BOLD, DIM = "\033[1m", "\033[2m"
 GREEN, YELLOW, RED = "\033[32m", "\033[33m", "\033[31m"
@@ -207,10 +218,14 @@ def render_block(evt):
     elif t == "cooldown":
         # Server is intentionally sleeping (between subcalls or phases).
         # Render a single low-key line so the terminal is not silent.
+        # NOTE: keep Python string literals in this heredoc strictly
+        # double-quoted. A literal apostrophe ends the surrounding
+        # bash heredoc and causes a confusing NameError several lines
+        # later when the truncated script is parsed.
         try:
-            dur_str = f"{float(evt.get('duration_sec', 0)):.0f}"
+            dur_str = f"{float(evt.get(_DSEC, 0)):.0f}"
         except (TypeError, ValueError):
-            dur_str = str(evt.get("duration_sec", "?"))
+            dur_str = str(evt.get(_DSEC, "?"))
         stage = evt.get("stage", "")
         ph    = evt.get("phase", "")
         total = evt.get("total", "")
