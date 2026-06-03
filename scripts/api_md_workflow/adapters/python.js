@@ -115,7 +115,8 @@ function generateApiForPackage({
     activeLogger.info(`--- Generating API.md on ${refLabel} ---`);
   }
 
-  run("azpysdk", ["apistub", "--md", "--extract-metadata", "--install-deps", packageName], {
+  const packageDir = findPackageDir(repoRoot, packageName);
+  run("azpysdk", ["apistub", "--md", "--extract-metadata", "--install-deps", "--dest-dir", packageDir, packageName], {
     cwd: repoRoot,
     check: true,
     logger: activeLogger,
