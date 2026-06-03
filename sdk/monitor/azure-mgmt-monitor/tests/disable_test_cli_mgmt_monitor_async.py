@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -14,7 +15,6 @@ import azure.mgmt.monitor.models
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 from _aio_testcase import AzureMgmtAsyncTestCase
-
 
 AZURE_LOCATION = "eastus"
 
