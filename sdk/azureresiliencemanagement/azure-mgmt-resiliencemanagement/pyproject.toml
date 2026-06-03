@@ -58,3 +58,23 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+
+[tool.azure-sdk-build]
+breaking = false
+mypy = false
+pyright = false
+type_check_samples = false
+verifytypes = false
+
+[packaging]
+package_name = "azure-mgmt-resiliencemanagement"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Resilience Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true
+sample_link = ""
+exclude_folders = ""
+title = "AzureResilienceManagementClient"
