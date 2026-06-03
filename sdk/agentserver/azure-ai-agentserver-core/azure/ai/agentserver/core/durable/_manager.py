@@ -384,17 +384,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
     def _create_provider(config: AgentConfig) -> TaskProvider:
         """Auto-select provider based on hosting environment.
 
-        The Task Storage API is not yet generally available. To avoid
-        failures in hosted environments, the local file-based provider
-        is used by default even when ``FOUNDRY_HOSTING_ENVIRONMENT`` is
-        set.  Set the ``AGENTSERVER_TASK_API_ENABLED=1`` environment
-        variable to opt in to the HTTP-backed provider for testing once
-        the APIs are lit up.
+        In hosted environments (``FOUNDRY_HOSTING_ENVIRONMENT`` is set),
+        the HTTP-backed ``HostedTaskProvider`` is used unconditionally —
+        the hosted task-storage API is what makes durable recovery,
+        cross-instance lease handoff, and the platform's lease/readiness
+        keep-alive path work.
 
-        Note: the ``FOUNDRY_*`` and ``AGENT_*`` env-var namespaces are
-        reserved by the hosting platform and rejected at deploy time —
-        so the opt-in flag intentionally lives in the user-writable
-        ``AGENTSERVER_*`` namespace.
+        In non-hosted environments (local dev, tests), the
+        ``LocalFileTaskProvider`` is used — file-backed under
+        ``~/.durable-tasks/`` (or ``AGENTSERVER_DURABLE_TASKS_PATH`` if
+        set). This keeps the local development loop self-contained with
+        no external dependencies.
 
         :param config: The agent configuration.
         :type config: AgentConfig
@@ -403,9 +403,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         """
         import os  # pylint: disable=import-outside-toplevel
 
-        task_api_enabled = os.environ.get("AGENTSERVER_TASK_API_ENABLED", "").strip()
-
-        if config.is_hosted and task_api_enabled in ("1", "true", "yes"):
+        if config.is_hosted:
             from ._client import (  # pylint: disable=import-outside-toplevel
                 HostedTaskProvider,
             )
@@ -421,19 +419,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 ) from exc
 
             logger.info(
-                "Task Storage API enabled via AGENTSERVER_TASK_API_ENABLED; "  # pylint: disable=implicit-str-concat
-                "using HostedTaskProvider"
+                "Hosted environment detected; using HostedTaskProvider"
             )
             return HostedTaskProvider(
                 project_endpoint=config.project_endpoint,
                 credential=DefaultAzureCredential(),
-            )
-
-        if config.is_hosted and not task_api_enabled:
-            logger.info(
-                "Hosted environment detected but Task Storage API not yet enabled. "
-                "Using local file provider. Set AGENTSERVER_TASK_API_ENABLED=1 to use "
-                "the HTTP-backed provider when the APIs are available."
             )
 
         from ._local_provider import (  # pylint: disable=import-outside-toplevel
