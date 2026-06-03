@@ -8,6 +8,7 @@
 * Added `sample_routines_with_timer_trigger.py` to demonstrate triggering a routine with a timer.
 * Added `sample_routines_with_schedule_trigger.py` to demonstrate triggering a routine on a recurring cron schedule via `ScheduleRoutineTrigger`.
 * Updated `sample_dataset_generation_job_traces_for_evaluation.py` and `sample_dataset_generation_job_traces_for_finetuning.py` to create a temporary agent, seed conversations, retry the data generation job over the trace window, and clean up all created resources.
+* Updated `sample_multiturn_trace_evaluation_by_id.py`, `sample_multiturn_trace_evaluation_agent_filter.py`, `sample_agent_trace_evaluation_smart_filter.py`, and `sample_evaluations_builtin_with_traces.py` to be self-contained: each sample now creates a temporary agent, seeds conversations, waits for App Insights ingestion, retries the eval over the trace window, and cleans up all created resources (no `FOUNDRY_AGENT_NAME`, `APPINSIGHTS_RESOURCE_ID`, or `AGENT_ID` environment variables required).
 * Updated `sample_memory_crud.py` and `sample_memory_crud_async.py` to demonstrate memory item CRUD (`create_memory`, `get_memory`, `update_memory`, `list_memories`, `delete_memory`) in addition to memory store CRUD.
 
 ## 2.2.0 (2026-05-29)
