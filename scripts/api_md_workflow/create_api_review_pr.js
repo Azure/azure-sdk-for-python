@@ -89,8 +89,40 @@ function run(cmd, args, options = {}) {
   return result;
 }
 
+let cachedGitExecutable = undefined;
+let cachedGitAwareEnv = undefined;
+
+function resolveGitExecutable() {
+  if (cachedGitExecutable !== undefined) {
+    return cachedGitExecutable;
+  }
+
+  if (process.platform !== "win32") {
+    const resolved = spawnSync("git", ["--exec-path"], {
+      cwd: REPO_ROOT,
+      encoding: "utf-8",
+      env: process.env,
+    });
+    cachedGitExecutable = resolved.status === 0 ? "git" : "git";
+    return cachedGitExecutable;
+  }
+
+  cachedGitExecutable = findPreferredGitExecutable() || "git";
+  return cachedGitExecutable;
+}
+
 function git(args, options = {}) {
-  return run("git", args, options);
+  return run(resolveGitExecutable(), args, {
+    ...options,
+    env: buildGitAwareEnv(options.env),
+  });
+}
+
+function gh(args, options = {}) {
+  return run("gh", args, {
+    ...options,
+    env: buildGitAwareEnv(options.env),
+  });
 }
 
 function gitOut(args) {
@@ -181,49 +213,117 @@ function metadataRel(packageDir) {
   return `${packageRelDir(packageDir)}/API.metadata.yml`;
 }
 
-function findRealGitExe() {
+function apiReviewBranchName(kind, packageName, version) {
+  return `apireview/${kind}_${packageName}_${version}`;
+}
+
+function scoreGitCandidate(candidate) {
+  const normalized = candidate.replace(/\//g, "\\").toLowerCase();
+  if (normalized.includes("\\program files\\git\\cmd\\git.exe")) {
+    return 0;
+  }
+
+  if (normalized.includes("\\program files\\git\\bin\\git.exe")) {
+    return 1;
+  }
+
+  if (normalized.includes("\\git\\cmd\\git.exe")) {
+    return 2;
+  }
+
+  if (normalized.includes("\\git\\bin\\git.exe")) {
+    return 3;
+  }
+
+  if (normalized.includes("\\windows\\")) {
+    return 100;
+  }
+
+  return 10;
+}
+
+function findPreferredGitExecutable() {
   if (process.platform !== "win32") {
     return null;
   }
 
-  const seen = new Set();
-  const entries = (process.env.PATH || "").split(path.delimiter);
-  for (const rawEntry of entries) {
+  const candidates = new Set();
+  const roots = [process.env.ProgramW6432, process.env.ProgramFiles, process.env["ProgramFiles(x86)"], process.env.LocalAppData];
+  for (const root of roots) {
+    if (!root) {
+      continue;
+    }
+
+    candidates.add(path.join(root, "Git", "cmd", "git.exe"));
+    candidates.add(path.join(root, "Git", "bin", "git.exe"));
+    candidates.add(path.join(root, "Programs", "Git", "cmd", "git.exe"));
+    candidates.add(path.join(root, "Programs", "Git", "bin", "git.exe"));
+  }
+
+  for (const rawEntry of (process.env.PATH || "").split(path.delimiter)) {
     const entry = rawEntry.replace(/^"|"$/g, "");
     if (!entry) {
       continue;
     }
 
-    const key = entry.toLowerCase();
-    if (seen.has(key)) {
-      continue;
-    }
-    seen.add(key);
-
-    const candidate = path.join(entry, "git.exe");
-    if (fs.existsSync(candidate)) {
-      return candidate;
-    }
+    candidates.add(path.join(entry, "git.exe"));
   }
 
-  const fallback = "C:\\Program Files\\Git\\cmd\\git.exe";
-  return fs.existsSync(fallback) ? fallback : null;
+  const existing = [...candidates].filter((candidate) => fs.existsSync(candidate));
+  existing.sort((left, right) => scoreGitCandidate(left) - scoreGitCandidate(right) || left.localeCompare(right));
+  return existing[0] || null;
 }
 
-function envWithRealGit() {
-  const env = { ...process.env };
-  const realGit = findRealGitExe();
-  if (!realGit) {
-    return env;
+function getGitExecPath(gitExecutable) {
+  if (process.platform === "win32" && !path.isAbsolute(gitExecutable)) {
+    return null;
   }
 
-  const gitDir = path.dirname(realGit);
-  const current = env.PATH || "";
-  const parts = current.split(path.delimiter);
-  const first = parts[0] || "";
-  if (first.replace(/\\+$/, "").toLowerCase() !== gitDir.replace(/\\+$/, "").toLowerCase()) {
-    env.PATH = `${gitDir}${path.delimiter}${current}`;
-    logInfo(`(prepending real git to PATH for gh: ${gitDir})`);
+  const result = spawnSync(gitExecutable, ["--exec-path"], {
+    cwd: REPO_ROOT,
+    encoding: "utf-8",
+  });
+
+  if (result.status !== 0) {
+    return null;
+  }
+
+  return result.stdout.trim() || null;
+}
+
+function samePathEntry(left, right) {
+  if (process.platform === "win32") {
+    return left.replace(/\\+$/, "").toLowerCase() === right.replace(/\\+$/, "").toLowerCase();
+  }
+
+  return left === right;
+}
+
+function buildGitAwareEnv(baseEnv = process.env) {
+  if (baseEnv === process.env && cachedGitAwareEnv) {
+    return cachedGitAwareEnv;
+  }
+
+  const env = { ...baseEnv };
+  const gitExecutable = resolveGitExecutable();
+  const gitExecPath = getGitExecPath(gitExecutable);
+
+  if (path.isAbsolute(gitExecutable)) {
+    const gitDir = path.dirname(gitExecutable);
+    const currentEntries = (env.PATH || "").split(path.delimiter).filter(Boolean);
+    const first = currentEntries[0] || "";
+    if (!first || !samePathEntry(first, gitDir)) {
+      env.PATH = [gitDir, ...currentEntries].join(path.delimiter);
+      logInfo(`(using resolved git executable: ${gitExecutable})`);
+    }
+  }
+
+  if (gitExecPath) {
+    env.GIT_EXEC_PATH = gitExecPath;
+  }
+
+  if (baseEnv === process.env) {
+    cachedGitAwareEnv = env;
   }
 
   return env;
@@ -253,7 +353,6 @@ function selectBestPr(prs) {
 }
 
 function findOpenPrForHead(headSelector) {
-  const env = envWithRealGit();
   const selectors = [headSelector];
   if (headSelector.includes(":")) {
     const branchOnly = headSelector.split(":", 2)[1];
@@ -264,8 +363,7 @@ function findOpenPrForHead(headSelector) {
 
   const allPrs = [];
   for (const selector of selectors) {
-    const direct = run(
-      "gh",
+    const direct = gh(
       [
         "pr",
         "list",
@@ -280,7 +378,7 @@ function findOpenPrForHead(headSelector) {
         "--limit",
         "50",
       ],
-      { check: false, capture: true, env },
+      { check: false, capture: true },
     );
 
     if (direct.status === 0) {
@@ -293,8 +391,7 @@ function findOpenPrForHead(headSelector) {
 
   for (const selector of selectors) {
     const searchQuery = `repo:Azure/azure-sdk-for-python head:${selector}`;
-    const search = run(
-      "gh",
+    const search = gh(
       [
         "pr",
         "list",
@@ -309,7 +406,7 @@ function findOpenPrForHead(headSelector) {
         "--limit",
         "50",
       ],
-      { check: false, capture: true, env },
+      { check: false, capture: true },
     );
 
     if (search.status === 0) {
@@ -399,7 +496,7 @@ function generateApiBytesForRef({
     // Restore the package directory to the current branch state
     git(["checkout", "HEAD", "--", packageRelative]);
     // Clean any untracked files that the generation may have left behind
-    run("git", ["clean", "-fd", "--", packageRelative], { check: false });
+    git(["clean", "-fd", "--", packageRelative], { check: false });
   }
 }
 
@@ -454,8 +551,8 @@ function main() {
     });
     const targetVersion = targetResult.version;
 
-    const baseBranch = `base_${args.packageName}_${baseVersion}`;
-    const reviewBranch = `review_${args.packageName}_${targetVersion}`;
+    const baseBranch = apiReviewBranchName("base", args.packageName, baseVersion);
+    const reviewBranch = apiReviewBranchName("review", args.packageName, targetVersion);
 
     logInfo(`\n=== Creating base branch ${baseBranch} ===`);
     git(["checkout", "-B", baseBranch, MAIN_REF]);
@@ -548,8 +645,7 @@ function main() {
 
     logInfo("\n=== Opening PR ===");
     const compareUrl = `https://github.com/Azure/azure-sdk-for-python/compare/${baseBranch}...${reviewBranch}?expand=1`;
-    const prCreate = run(
-      "gh",
+    const prCreate = gh(
       [
         "pr",
         "create",
@@ -565,7 +661,7 @@ function main() {
         body,
         "--draft",
       ],
-      { check: false, env: envWithRealGit() },
+      { check: false },
     );
 
     if (prCreate.status !== 0) {

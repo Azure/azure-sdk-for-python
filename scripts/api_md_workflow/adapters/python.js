@@ -83,6 +83,11 @@ function readVersion(packageDir) {
   for (const file of walkFiles(packageDir)) {
     const name = path.basename(file);
     if (name === "_version.py" || name === "version.py") {
+      // Skip generated code directories — they often contain stale versions
+      const relative = path.relative(packageDir, file);
+      if (relative.includes("_generated") || relative.includes("generated_")) {
+        continue;
+      }
       candidates.push(file);
     }
   }
