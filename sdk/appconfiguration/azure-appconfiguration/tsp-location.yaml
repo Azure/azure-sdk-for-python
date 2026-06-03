@@ -1,4 +1,4 @@
-commit: 809688280b9cfd5f6e1da2c645408f3a7ef3d6b8
+commit: 337bb8679bad87f26c74183095df1a0e0967d3b7
 repo: Azure/azure-rest-api-specs
 directory: specification/appconfiguration/data-plane/AppConfiguration
 additionalDirectories: 
