@@ -2,7 +2,9 @@
 
 ## 13.2.0 (2026-06-03)
 
-skip changelog generation
+### Other Changes
+
+  - Migrated from Swagger to TypeSpec
 
 ## 13.1.1 (2026-01-05)
 
