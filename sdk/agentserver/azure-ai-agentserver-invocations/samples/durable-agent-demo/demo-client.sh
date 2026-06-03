@@ -91,14 +91,22 @@ _now_utc() {
 
 render_event() {
     local json="$1"
-    local etype
-    etype=$(echo "$json" | python3 -c "import sys,json; d=json.loads(sys.stdin.read()); print(d.get('type',''))" 2>/dev/null || true)
 
-    local now
-    now=$(_now_utc)
+    # Detect event type via bash regex (~0.05ms) instead of a python3
+    # subprocess (~30ms). At LLM emit rates the per-token cost matters.
+    local etype=""
+    if [[ "$json" =~ \"type\":[[:space:]]*\"([a-z_]+)\" ]]; then
+        etype="${BASH_REMATCH[1]}"
+    fi
+
+    # `now=$(_now_utc)` is set per-case below (not once at the top)
+    # because the `date` subprocess costs ~5ms and the token hot path
+    # doesn't need it. Setting it eagerly here would dominate render
+    # cost at LLM emit rates.
 
     case "$etype" in
         run_start)
+            local now; now=$(_now_utc)
             local topic entry_mode total uptime srv
             topic=$(_jq "$json" topic)
             entry_mode=$(_jq "$json" entry_mode)
@@ -116,6 +124,7 @@ render_event() {
             echo -e "${BOLD}${CYAN}══════════════════════════════════════════════════════════════${RESET}"
             ;;
         recovered)
+            local now; now=$(_now_utc)
             local completed total srv uptime
             completed=$(_jq "$json" completed_phases)
             total=$(_jq "$json" total_phases)
@@ -126,6 +135,7 @@ render_event() {
             echo -e "  server_time=${srv}   uptime=${uptime}s  ${DIM}(uptime ~0s = fresh container)${RESET}"
             ;;
         phase_start)
+            local now; now=$(_now_utc)
             local phase total title srv uptime
             phase=$(_jq "$json" phase)
             total=$(_jq "$json" total)
@@ -139,6 +149,7 @@ render_event() {
             echo -e "${BOLD}${BLUE}──────────────────────────────────────────────────────────────${RESET}"
             ;;
         subcall_start)
+            local now; now=$(_now_utc)
             local role idx of
             role=$(_jq "$json" role)
             idx=$(_jq "$json" index)
@@ -147,14 +158,32 @@ render_event() {
             echo -e "${DIM}  [${now}]  [${role} ${idx}/${of}] ───${RESET}"
             ;;
         token)
-            local content
-            content=$(echo "$json" | python3 -c "import sys,json; d=json.loads(sys.stdin.read()); print(d.get('content',''), end='')" 2>/dev/null || true)
+            # Hot path — runs once per LLM token. Avoid spawning python3
+            # here (each subprocess is ~30-50ms; LLMs emit 50-100 tok/s,
+            # so a python3-per-token render is ~10x slower than emit and
+            # the resulting backlog hides server crashes for minutes).
+            # Bash regex + parameter expansion: ~0.1ms per token.
+            local content=""
+            if [[ "$json" =~ \"content\":[[:space:]]*\"((\\.|[^\"\\])*)\" ]]; then
+                content="${BASH_REMATCH[1]}"
+                # Unescape the JSON string. LLM token content is plain
+                # text — these four escapes cover essentially all real
+                # cases; if a token genuinely needs \uXXXX it'll print
+                # the literal escape (acceptable for a demo renderer).
+                content="${content//\\\\/$'\x01'}"  # protect literal \\ briefly
+                content="${content//\\\"/\"}"
+                content="${content//\\n/$'\n'}"
+                content="${content//\\t/$'\t'}"
+                content="${content//\\r/$'\r'}"
+                content="${content//$'\x01'/\\}"     # restore literal \\
+            fi
             printf '%s' "$content"
             ;;
         subcall_end)
             echo ""
             ;;
         phase_end)
+            local now; now=$(_now_utc)
             local phase total title srv uptime duration
             phase=$(_jq "$json" phase)
             total=$(_jq "$json" total)
@@ -167,6 +196,7 @@ render_event() {
             echo -e "  ⏰ server_time=${srv}   uptime=${uptime}s   ⏱  duration=${duration}s"
             ;;
         winding_down)
+            local now; now=$(_now_utc)
             local cause completed total pending srv uptime
             cause=$(_jq "$json" cause)
             completed=$(_jq "$json" completed_phases)
@@ -179,6 +209,7 @@ render_event() {
             echo -e "  ⏰ server_time=${srv}   uptime=${uptime}s"
             ;;
         run_complete)
+            local now; now=$(_now_utc)
             local total srv uptime
             total=$(_jq "$json" phases_completed)
             srv=$(_jq "$json" server_time_utc)
@@ -189,6 +220,7 @@ render_event() {
             echo -e "${BOLD}${GREEN}══════════════════════════════════════════════════════════════${RESET}"
             ;;
         done)
+            local now; now=$(_now_utc)
             local reason
             reason=$(_jq "$json" reason)
             echo ""
@@ -199,6 +231,7 @@ render_event() {
             fi
             ;;
         *)
+            local now; now=$(_now_utc)
             echo -e "${DIM}[${now}] [unknown event] ${json}${RESET}"
             ;;
     esac
