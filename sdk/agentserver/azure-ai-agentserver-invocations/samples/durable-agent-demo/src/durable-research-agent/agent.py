@@ -55,7 +55,18 @@ _STREAM_DIR = Path.home() / ".durable-tasks" / "_streams"
 
 
 class FileStreamHandler:
-    """Stream handler that persists every item to disk for crash-resilient replay."""
+    """Stream handler that persists every item to disk for crash-resilient replay.
+
+    Each stream item is paired with a **durable** ``event_id`` derived from
+    its 1-based line number in ``stream.jsonl``. Items go onto the queue
+    as ``(event_id, item)`` tuples so the SSE consumer (live_stream in
+    ``app.py``) can advertise the durable id to clients. This lets a
+    client reconnect with ``?last_event_id=N`` and resume at the correct
+    point — across container restarts, recovery, and (single) drained
+    queue states alike. If some items the client expected are no longer
+    in the queue (already dequeued by a prior consumer), live_stream
+    simply emits what *is* available; a small gap is acceptable.
+    """
 
     def __init__(self, task_id: str) -> None:
         self._task_id = task_id
@@ -65,18 +76,26 @@ class FileStreamHandler:
         self._queue: asyncio.Queue[Any] = asyncio.Queue()
         self._closed = False
         self._SENTINEL = object()
+        # _next_event_id is the disk-line counter; it is bumped on every
+        # written line (preload + put + __done__ sentinel). The item put
+        # onto the queue is (event_id, item) — the SSE consumer uses the
+        # event_id directly so resume semantics are durable across queue
+        # state, not tied to a per-stream-instance counter.
+        self._next_event_id = 0
 
         if self._file.exists():
             for line in self._file.read_text(encoding="utf-8").splitlines():
                 if line.strip():
+                    self._next_event_id += 1
                     data = json.loads(line)
                     if "__done__" not in data:
-                        self._queue.put_nowait(data)
+                        self._queue.put_nowait((self._next_event_id, data))
 
     async def put(self, item: Any) -> None:
         with open(self._file, "a", encoding="utf-8") as f:
             f.write(json.dumps(item) + "\n")
-        await self._queue.put(item)
+        self._next_event_id += 1
+        await self._queue.put((self._next_event_id, item))
 
     async def get(self) -> Any:
         item = await self._queue.get()
@@ -88,6 +107,10 @@ class FileStreamHandler:
         self._closed = True
         with open(self._file, "a", encoding="utf-8") as f:
             f.write(json.dumps({"__done__": True}) + "\n")
+        # __done__ also occupies a disk line; bump the counter so a
+        # subsequent get-handler call that crosses this boundary uses an
+        # id matching the disk row count.
+        self._next_event_id += 1
         await self._queue.put(self._SENTINEL)
 
 

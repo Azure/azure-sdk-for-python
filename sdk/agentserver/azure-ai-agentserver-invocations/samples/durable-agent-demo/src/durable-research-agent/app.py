@@ -151,17 +151,32 @@ async def handle_get(request: Request) -> Response:
 
     if run is not None:
         async def live_stream():
-            event_id = 0
+            # event_id is now derived durably from FileStreamHandler's disk
+            # line counter — items arrive as (event_id, chunk) tuples. We
+            # advertise that id to the client so ?last_event_id=N resume
+            # is meaningful across reconnects, recovery, and partial queue
+            # drains. If the requested id is below the queue's current
+            # head we just emit what's available (gracefully accept a
+            # small delta gap rather than erroring).
+            last_id = skip_count
             try:
-                async for chunk in run:
-                    event_id += 1
+                async for item in run:
+                    # FileStreamHandler always emits tuples; defensive
+                    # unpack handles a non-tuple chunk if some other
+                    # handler is ever swapped in.
+                    if isinstance(item, tuple) and len(item) == 2:
+                        event_id, chunk = item
+                    else:
+                        last_id += 1
+                        event_id, chunk = last_id, item
                     if event_id <= skip_count:
                         continue
+                    last_id = event_id
                     yield f"id: {event_id}\ndata: {chunk}\n\n"
                 result = await run.result()
-                event_id += 1
+                last_id += 1
                 yield (
-                    f"id: {event_id}\ndata: "
+                    f"id: {last_id}\ndata: "
                     + json.dumps({
                         "type": "done",
                         "phases_completed": result.output.get("phases_completed", 0),
@@ -169,16 +184,16 @@ async def handle_get(request: Request) -> Response:
                     + "\n\n"
                 )
             except TaskCancelled:
-                event_id += 1
+                last_id += 1
                 yield (
-                    f"id: {event_id}\ndata: "
+                    f"id: {last_id}\ndata: "
                     + json.dumps({"type": "done", "reason": "cancelled"})
                     + "\n\n"
                 )
             except TaskFailed as exc:
-                event_id += 1
+                last_id += 1
                 yield (
-                    f"id: {event_id}\ndata: "
+                    f"id: {last_id}\ndata: "
                     + json.dumps({"type": "done", "reason": "failed", "error": str(exc)})
                     + "\n\n"
                 )
