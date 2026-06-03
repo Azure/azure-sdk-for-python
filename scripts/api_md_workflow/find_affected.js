@@ -30,7 +30,7 @@ async function main() {
     cwd: REPO_ROOT,
   });
   const diff = (
-    await runAsync("git", ["diff", "--name-only", `origin/${baseRef}...HEAD`], {
+    await runAsync("git", ["diff", "--name-only", `origin/${baseRef}..HEAD`], {
       cwd: REPO_ROOT,
     })
   ).stdout;

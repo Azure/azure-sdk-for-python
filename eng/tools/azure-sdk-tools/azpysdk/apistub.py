@@ -177,9 +177,7 @@ class apistub(Check):
                 if getattr(args, "generate_md", False):
                     token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
                     md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
-                    metadata_script = os.path.join(
-                        REPO_ROOT, "eng", "scripts", "Extract-APIViewMetadata-Python.ps1"
-                    )
+                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "Extract-APIViewMetadata-Python.ps1")
                     logger.info(f"Generating api.md for {package_name}")
                     try:
                         result = run(
