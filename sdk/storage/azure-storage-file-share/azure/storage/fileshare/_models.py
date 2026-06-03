@@ -486,7 +486,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings, _ModelBackCompatMixi
     """Sets the NFS settings."""
 
     def __init__(
-        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
+        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(smb=smb, nfs=nfs)
         if self.smb is None and self.nfs is None:
