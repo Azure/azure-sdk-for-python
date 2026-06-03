@@ -23,22 +23,12 @@ environment_variables:
       value: gpt-4.1-mini
     - name: STAGE_DURATION
       value: "10"
-    # Opt in to the hosted Task Storage API. Without this, the framework
-    # silently falls back to LocalFileTaskProvider (file-backed under
-    # ~/.durable-tasks) and no /tasks HTTP calls are made — meaning
-    # lease/renewal/readiness traffic won't appear in container logs.
-    # Note: this lives in the AGENTSERVER_* namespace (not FOUNDRY_*)
-    # because the hosting platform reserves and rejects FOUNDRY_* and
-    # AGENT_* env vars at deploy time.
-    - name: AGENTSERVER_TASK_API_ENABLED
-      value: "1"
     # Long-running demo: per-phase ≈ 12s LLM + 3×30s intra + 30s inter ≈ 132s,
-    # × 15 phases ≈ 33 min total. This intentionally exceeds the platform's
-    # ~15-min sandbox-eviction window so each demo run exercises the
-    # durable-task primitive's keep-alive (lease renewal + readiness) path
-    # end-to-end — the very behavior this sample exists to showcase.
-    # Local/dev runs of agent.py outside the hosted container use the
-    # agent.py defaults (10/20s = ~15 min) for faster iteration.
+    # × 15 phases ≈ 33 min total — runs ~2x past the platform's 15-min
+    # sandbox-eviction window so each demo run exercises the durable-task
+    # primitive's lease keep-alive path end-to-end (the behavior this
+    # sample exists to showcase). Local agent.py defaults (10/20s, ~15 min)
+    # apply when running outside the hosted container for fast iteration.
     - name: INTRA_PHASE_COOLDOWN_SEC
       value: "30"
     - name: INTER_PHASE_COOLDOWN_SEC

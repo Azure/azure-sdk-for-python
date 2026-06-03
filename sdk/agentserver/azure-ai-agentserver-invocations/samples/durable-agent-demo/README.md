@@ -3,20 +3,21 @@
 A `@task`-decorated long-running research agent that demonstrates two
 platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 
-1. **Long-running tasks survive the platform's sandbox-eviction window.**
-   The framework's internal `PATCH .../tasks/<id>` lease-renewal cycle
-   keeps the sandbox alive past the otherwise-15-min idle reclaim — so
-   a single run can stream for the full 33-min duration of the demo
-   without any client-side keepalive ingress. The keep-alive path is
-   `framework → task-store API → platform routing layer → sandbox`.
+1. **Long-running tasks run uninterrupted past the platform's sandbox-eviction window.**
+   The framework's `PATCH .../tasks/<id>` lease-renewal cycle (every ~30s,
+   half of the 60s lease) signals activity through the task-storage API,
+   which refreshes the platform's sandbox idle-reclaim timer. The demo
+   runs for ~33 min with **zero client-side keepalive ingress** and the
+   sandbox stays warm the whole time. Validated end-to-end against the
+   `e2e-tests-westus2` deployment.
 
 2. **Recovery from container crashes.** When the agent container dies
    (intentional crash or OOM), the platform's nanny worker brings it
-   back within ~1 min **without requiring any new client ingress**.
+   back within ~1 min (43s measured) **without any new client ingress**.
    The durable task automatically resumes from its last checkpoint
-   (`ctx.entry_mode == "recovered"` + `recovered` SSE event with
-   `completed_phases`). User-visible: any reconnect attempt seamlessly
-   continues the run, no matter how long the container was down.
+   (`ctx.entry_mode == "recovered"` + a `recovered` SSE event with
+   `completed_phases`). User-visible: any reconnect attempt — whenever
+   the user gets around to it — seamlessly continues the run.
 
 3. **Steering.** Sending a new turn on a running steerable task queues
    the input and signals cooperative cancel. The agent winds down the
@@ -31,10 +32,10 @@ streaming every token to the consumer. After each phase the handler
 checkpoints to `ctx.metadata` and flushes — so a crash mid-run picks up
 at the next un-completed phase, and a steerer that arrives mid-phase
 causes the handler to wind down at the *next* phase boundary, not
-abruptly. Hosted defaults target a ~33-min wall-time run (intentionally
-spanning >2x the 15-min sandbox-eviction window to demonstrate the
-keep-alive path end-to-end); local agent.py defaults are shorter for
-dev iteration.
+abruptly. Hosted defaults target a ~33-min wall-time run (spanning 2x
+the sandbox-eviction window so every demo run actually exercises the
+lease keep-alive path); local `agent.py` defaults are shorter for dev
+iteration.
 
 ## Prerequisites
 
@@ -46,7 +47,10 @@ dev iteration.
 ## Deploy
 
 ```bash
-# 1. Build local wheels (so the Docker image carries the pre-release SDK)
+# 1. Build agentserver wheels into the docker build context
+#    (build.sh delegates to sdk/agentserver/scripts/build-wheels.sh and
+#    stages the output into src/durable-research-agent/wheels/, which is
+#    a gitignored docker-build staging dir — wheels are never committed)
 ./build.sh
 
 # 2. Login + deploy
@@ -59,6 +63,10 @@ invocations endpoint. `demo-client.sh` already points at the canonical
 `e2e-tests-westus2` deployment — edit `ENDPOINT=` near the top of
 `demo-client.sh` if you deployed elsewhere.
 
+> See [`sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md`](../../../../docs/USING_PRE_RELEASE_WHEELS.md)
+> for how to consume the agentserver wheels in your own project until
+> the packages publish to PyPI.
+
 ## demo-client.sh — command reference
 
 The client is a bash CLI. Each command operates on a single session
@@ -70,7 +78,7 @@ tracked locally in `.demo-session`. Run from this directory:
 | `./demo-client.sh stream` | Reuses the session + invocation from `.demo-session` and (re)attaches to the SSE stream. Passes `?last_event_id=N` so the server skips events you've already seen. |
 | `./demo-client.sh steer "<topic>"` | Reuses the current session and sends a new `POST /invocations` with the new topic. If the run is still active the framework queues this as a steering input; the agent winds down at the next checkpoint boundary and re-enters on the new topic. |
 | `./demo-client.sh cancel` | `POST /invocations/{id}/cancel` on the current invocation. The handler observes `ctx.cancel.is_set()` and winds down cooperatively. |
-| `./demo-client.sh crash` | Sends `POST /invocations` with `{"message": "crash"}`. The agent (gated by `DEMO_MODE=1`) calls `os._exit(137)`. The container stays down until the next ingress; `./demo-client.sh stream` is the easiest way to bring it back. |
+| `./demo-client.sh crash` | Sends `POST /invocations` with `{"message": "crash"}`. The agent (gated by `DEMO_MODE=1`) calls `os._exit(137)`. The platform's nanny worker brings the container back within ~1 min on its own — `./demo-client.sh stream` any time after will pick up the recovered run (no need to wait for or trigger anything). |
 | `./demo-client.sh status` | Prints the local `SESSION_ID`, `INV_ID`, and `LAST_EVENT_ID` from `.demo-session`. Useful when you forget which session you're on. |
 | `./demo-client.sh logs` | Tails the agent container's stdout/stderr via `azd ai agent monitor --session-id <current> --follow`. |
 | `./demo-client.sh reset` | Deletes `.demo-session`. The next `start` will allocate a fresh session id. |
@@ -270,10 +278,9 @@ Notable points:
 These are set in `agent.yaml` (`environment_variables`) and travel with
 the deploy. Override by editing `agent.yaml` and re-deploying.
 
-| Variable | Default (hosted) | Default (agent.py) | Description |
+| Variable | Default (hosted) | Default (`agent.py`) | Description |
 |---|---|---|---|
 | `FOUNDRY_PROJECT_ENDPOINT` | (required, set by platform) | — | Foundry project endpoint. |
-| `AGENTSERVER_TASK_API_ENABLED` | `1` | unset | Opt in to the hosted task-storage API. Without this, the framework uses `LocalFileTaskProvider` and no `/tasks` HTTP traffic flows — required for hosted-mode lease renewal to work. |
 | `AZURE_AI_MODEL_DEPLOYMENT_NAME` | `gpt-4.1-mini` | `gpt-4.1-mini` | Responses-API model deployment name. |
 | `DEMO_MODE` | `1` (in the demo image) | unset | Enables the `{"message": "crash"}` sentinel on `POST /invocations`. A production image would leave this off. |
 | `NUM_PHASES` | `15` | `15` | Number of research phases. |
@@ -281,6 +288,11 @@ the deploy. Override by editing `agent.yaml` and re-deploying.
 | `TARGET_OUTPUT_TOKENS` | `1500` | `1500` | Max tokens per LLM sub-call. |
 | `INTRA_PHASE_COOLDOWN_SEC` | `30` | `10` | Seconds between sub-calls within a phase. Hosted default is bumped to push total wall-time past 30 min. |
 | `INTER_PHASE_COOLDOWN_SEC` | `30` | `20` | Seconds between phases. Hosted default is bumped to push total wall-time past 30 min. |
+
+Note: `azure-ai-agentserver-core` automatically uses `HostedTaskProvider`
+in hosted environments (i.e. when the platform sets
+`FOUNDRY_HOSTING_ENVIRONMENT`) and `LocalFileTaskProvider` otherwise —
+no opt-in env var required.
 
 For a **fast** development loop (~2 min total instead of ~33 min), edit
 `agent.yaml`'s `environment_variables` block:
@@ -304,7 +316,7 @@ For a **fast** development loop (~2 min total instead of ~33 min), edit
 durable-agent-demo/
 ├── demo-client.sh          # bash CLI: start, stream, steer, crash, cancel, logs, status, reset
 ├── azure.yaml              # azd service config
-├── build.sh                # builds local agentserver wheels for the Docker image
+├── build.sh                # delegates to ../../../../scripts/build-wheels.sh; stages wheels into src/.../wheels/
 ├── infra/                  # Bicep templates
 ├── src/durable-research-agent/
 │   ├── agent.py            # @task deep_research — durability + steering logic
@@ -312,6 +324,14 @@ durable-agent-demo/
 │   ├── agent.yaml          # Foundry agent definition
 │   ├── Dockerfile          # python:3.12-slim → python app.py
 │   ├── requirements.txt
-│   └── wheels/             # built by build.sh; carries pre-release agentserver SDKs
+│   └── wheels/             # GITIGNORED — docker-build staging dir populated by build.sh
 └── README.md
 ```
+
+Agentserver wheels are not bundled here — they're built on demand by
+`./build.sh`, which calls
+[`sdk/agentserver/scripts/build-wheels.sh`](../../../../scripts/build-wheels.sh)
+and stages the output into the local `wheels/` directory for the Docker
+build. See
+[`sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md`](../../../../docs/USING_PRE_RELEASE_WHEELS.md)
+for the wheel-distribution workflow.

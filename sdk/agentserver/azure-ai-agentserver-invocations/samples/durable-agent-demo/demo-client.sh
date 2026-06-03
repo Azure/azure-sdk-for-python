@@ -2,16 +2,18 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # Durable Research Agent — Demo Client
 #
-# Showcases three platform capabilities of the durable-task primitive:
-#   1. LONG-RUNNING TASKS (>15 min) — sandbox stays alive without client
-#      ingress because the framework's @task lease renewal internally pings
-#      readiness.
-#   2. CRASH RECOVERY — when the container dies, the platform "nanny worker"
-#      restarts it within ~5-10 min; the durable task auto-resumes from its
-#      last checkpoint.
-#   3. STEERING — sending a new turn while a turn is still running causes
-#      the agent to wind down at the next checkpoint and start fresh on the
-#      new topic.
+# Showcases three platform capabilities of the durable-task primitive
+# (all empirically validated against e2e-tests-westus2):
+#   1. LONG-RUNNING TASKS — the framework's PATCH .../tasks/<id> lease
+#      renewals (every ~30s) keep the platform's sandbox idle-reclaim
+#      timer fresh, so a single run stays warm well past the 15-min
+#      eviction window without any client-side keepalive ingress.
+#   2. CRASH RECOVERY — when the container dies, the platform's nanny
+#      worker restarts it within ~1 min on its own (no new ingress
+#      needed); the durable task auto-resumes from its last checkpoint.
+#   3. STEERING — sending a new turn while a turn is still running
+#      causes the agent to wind down at the next checkpoint and start
+#      fresh on the new topic.
 #
 # Commands:
 #   ./demo-client.sh start "<topic>"   Dispatch and stream a fresh research run
@@ -77,11 +79,23 @@ ensure_token() {
 # Pretty-prints stream events from agent.py. Recognised types:
 #   run_start, recovered, phase_start, subcall_start, token, subcall_end,
 #   phase_end, run_complete, winding_down, done
+#
+# Every block-style event is prefixed with [HH:MM:SSZ] — the client's local
+# UTC wall-clock at render time, so you can compare against `server_time=`
+# (the server's UTC at emit time) and `uptime=` (the server process's
+# monotonic seconds-since-boot, which resets to ~0 on crash recovery).
+
+_now_utc() {
+    date -u +'%H:%M:%SZ'
+}
 
 render_event() {
     local json="$1"
     local etype
     etype=$(echo "$json" | python3 -c "import sys,json; d=json.loads(sys.stdin.read()); print(d.get('type',''))" 2>/dev/null || true)
+
+    local now
+    now=$(_now_utc)
 
     case "$etype" in
         run_start)
@@ -95,7 +109,7 @@ render_event() {
             prior=$(_jq "$json" prior_topic)
             echo ""
             echo -e "${BOLD}${CYAN}══════════════════════════════════════════════════════════════${RESET}"
-            echo -e "${BOLD}${CYAN}▶ Run start${RESET}    topic=${BOLD}${topic}${RESET}  (${total} phases)"
+            echo -e "${DIM}[${now}]${RESET} ${BOLD}${CYAN}▶ Run start${RESET}    topic=${BOLD}${topic}${RESET}  (${total} phases)"
             [[ -n "$prior" && "$prior" != "None" ]] && \
                 echo -e "  ${YELLOW}(steered from prior topic: ${prior})${RESET}"
             echo -e "  entry_mode=${entry_mode}   server_time=${srv}   uptime=${uptime}s"
@@ -108,7 +122,7 @@ render_event() {
             srv=$(_jq "$json" server_time_utc)
             uptime=$(_jq "$json" server_uptime_sec)
             echo ""
-            echo -e "${BOLD}${GREEN}🔁 Recovered from crash${RESET}   resuming from phase ${completed}/${total}"
+            echo -e "${DIM}[${now}]${RESET} ${BOLD}${GREEN}🔁 Recovered from crash${RESET}   resuming from phase ${completed}/${total}"
             echo -e "  server_time=${srv}   uptime=${uptime}s  ${DIM}(uptime ~0s = fresh container)${RESET}"
             ;;
         phase_start)
@@ -120,7 +134,7 @@ render_event() {
             uptime=$(_jq "$json" server_uptime_sec)
             echo ""
             echo -e "${BOLD}${BLUE}──────────────────────────────────────────────────────────────${RESET}"
-            echo -e "${BOLD}${BLUE}▶ Phase ${phase}/${total}${RESET} — ${title}"
+            echo -e "${DIM}[${now}]${RESET} ${BOLD}${BLUE}▶ Phase ${phase}/${total}${RESET} — ${title}"
             echo -e "  ⏰ server_time=${srv}   uptime=${uptime}s"
             echo -e "${BOLD}${BLUE}──────────────────────────────────────────────────────────────${RESET}"
             ;;
@@ -130,7 +144,7 @@ render_event() {
             idx=$(_jq "$json" index)
             of=$(_jq "$json" of)
             echo ""
-            echo -e "${DIM}  [${role} ${idx}/${of}] ───${RESET}"
+            echo -e "${DIM}  [${now}]  [${role} ${idx}/${of}] ───${RESET}"
             ;;
         token)
             local content
@@ -149,7 +163,7 @@ render_event() {
             uptime=$(_jq "$json" server_uptime_sec)
             duration=$(_jq "$json" duration_sec)
             echo ""
-            echo -e "${GREEN}✅ Phase ${phase}/${total} done${RESET} — ${title}"
+            echo -e "${DIM}[${now}]${RESET} ${GREEN}✅ Phase ${phase}/${total} done${RESET} — ${title}"
             echo -e "  ⏰ server_time=${srv}   uptime=${uptime}s   ⏱  duration=${duration}s"
             ;;
         winding_down)
@@ -161,7 +175,7 @@ render_event() {
             srv=$(_jq "$json" server_time_utc)
             uptime=$(_jq "$json" server_uptime_sec)
             echo ""
-            echo -e "${BOLD}${MAGENTA}↓ Winding down${RESET}   cause=${cause}   completed=${completed}/${total}   pending_steers=${pending}"
+            echo -e "${DIM}[${now}]${RESET} ${BOLD}${MAGENTA}↓ Winding down${RESET}   cause=${cause}   completed=${completed}/${total}   pending_steers=${pending}"
             echo -e "  ⏰ server_time=${srv}   uptime=${uptime}s"
             ;;
         run_complete)
@@ -171,7 +185,7 @@ render_event() {
             uptime=$(_jq "$json" server_uptime_sec)
             echo ""
             echo -e "${BOLD}${GREEN}══════════════════════════════════════════════════════════════${RESET}"
-            echo -e "${BOLD}${GREEN}✅ Run complete${RESET}   ${total} phases   ⏰ ${srv}   uptime=${uptime}s"
+            echo -e "${DIM}[${now}]${RESET} ${BOLD}${GREEN}✅ Run complete${RESET}   ${total} phases   ⏰ ${srv}   uptime=${uptime}s"
             echo -e "${BOLD}${GREEN}══════════════════════════════════════════════════════════════${RESET}"
             ;;
         done)
@@ -179,13 +193,13 @@ render_event() {
             reason=$(_jq "$json" reason)
             echo ""
             if [[ -n "$reason" && "$reason" != "None" ]]; then
-                echo -e "${YELLOW}══ Stream done (${reason}) ══${RESET}"
+                echo -e "${DIM}[${now}]${RESET} ${YELLOW}══ Stream done (${reason}) ══${RESET}"
             else
-                echo -e "${GREEN}══ Stream done ══${RESET}"
+                echo -e "${DIM}[${now}]${RESET} ${GREEN}══ Stream done ══${RESET}"
             fi
             ;;
         *)
-            echo -e "${DIM}[unknown event] ${json}${RESET}"
+            echo -e "${DIM}[${now}] [unknown event] ${json}${RESET}"
             ;;
     esac
 }
@@ -365,9 +379,9 @@ cmd_crash() {
         "${ENDPOINT}/invocations?api-version=${API_VERSION}&agent_session_id=${SESSION_ID}")
     echo -e "${DIM}Response: ${response}${RESET}"
     echo ""
-    echo -e "${YELLOW}The container will exit. It stays down until the next ingress${RESET}"
-    echo -e "${YELLOW}request — at which point the platform brings it back in ~10 sec${RESET}"
-    echo -e "${YELLOW}and the durable task auto-recovers from its last checkpoint.${RESET}"
+    echo -e "${YELLOW}The container will exit. The platform's nanny worker brings it back${RESET}"
+    echo -e "${YELLOW}within ~1 min on its own (no client ingress needed) and the durable${RESET}"
+    echo -e "${YELLOW}task auto-recovers from its last checkpoint.${RESET}"
     echo ""
     echo -e "${DIM}Run './demo-client.sh stream' whenever you're ready to reconnect.${RESET}"
     echo -e "${DIM}Look for a 'Recovered from crash' marker (uptime resets to ~0).${RESET}"
@@ -452,9 +466,9 @@ Commands:
   ${BOLD}reset${RESET}              Clear local session state
 
 Three-terminal workflow:
-  Terminal 1: ./demo-client.sh start "quantum computing"     # streams ~45 min of phases
+  Terminal 1: ./demo-client.sh start "quantum computing"     # streams ~33 min of phases
   Terminal 2: ./demo-client.sh logs                          # peek at server logs
-  Terminal 3: ./demo-client.sh crash                         # ~5-10 min later → recovery
+  Terminal 3: ./demo-client.sh crash                         # any time → nanny restores ~1 min later
               ./demo-client.sh steer "fusion energy"         # mid-run pivot
 EOF
 }
