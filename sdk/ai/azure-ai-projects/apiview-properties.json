@@ -482,8 +482,12 @@
         "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion"
     },
 <<<<<<< HEAD
+<<<<<<< HEAD
     "CrossLanguageVersion": "9cf16cec0d0a"
 =======
     "CrossLanguageVersion": "3ae42dbde611"
 >>>>>>> 5fce783a23 ([azure-ai-projects] Emit SDK from TypeSpec (commit 6aa89cf) (#47294))
+=======
+    "CrossLanguageVersion": "ca205130211f"
+>>>>>>> 04139a93e3 ([azure-ai-projects] Emit SDK from TypeSpec, using latest OpenAI TypeSpec package (#47318))
 }
