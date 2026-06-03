@@ -24,11 +24,14 @@
         "azure.ai.translation.text.models.TextType": "TextTranslation.TextType",
         "azure.ai.translation.text.models.ProfanityAction": "TextTranslation.ProfanityAction",
         "azure.ai.translation.text.models.ProfanityMarker": "TextTranslation.ProfanityMarker",
+        "azure.ai.translation.text.models.TranslationTone": "TextTranslation.TranslationTone",
+        "azure.ai.translation.text.models.TranslationGender": "TextTranslation.TranslationGender",
         "azure.ai.translation.text.TextTranslationClient.get_supported_languages": "TextTranslation.getSupportedLanguages",
         "azure.ai.translation.text.aio.TextTranslationClient.get_supported_languages": "TextTranslation.getSupportedLanguages",
         "azure.ai.translation.text.TextTranslationClient.translate": "TextTranslation.translate",
         "azure.ai.translation.text.aio.TextTranslationClient.translate": "TextTranslation.translate",
         "azure.ai.translation.text.TextTranslationClient.transliterate": "TextTranslation.transliterate",
         "azure.ai.translation.text.aio.TextTranslationClient.transliterate": "TextTranslation.transliterate"
-    }
+    },
+    "CrossLanguageVersion": "83074cc6cb65"
 }

@@ -43,8 +43,14 @@ def main():
                     "cpuCfsQuotaPeriod": "200ms",
                     "cpuManagerPolicy": "static",
                     "failSwapOn": False,
+                    "hardEvictionThreshold": {
+                        "memoryAvailable": "500Mi",
+                        "nodeFsAvailable": "15%",
+                        "nodeFsInodesFree": "10%",
+                    },
                     "imageGcHighThreshold": 90,
                     "imageGcLowThreshold": 70,
+                    "kubeReserved": {"cpuMillicores": 200, "memoryMB": 1024},
                     "topologyManagerPolicy": "best-effort",
                 },
                 "linuxOSConfig": {
@@ -67,6 +73,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/AgentPoolsCreate_CustomNodeConfig.json
+# x-ms-original-file: 2026-03-02-preview/AgentPoolsCreate_CustomNodeConfig.json
 if __name__ == "__main__":
     main()

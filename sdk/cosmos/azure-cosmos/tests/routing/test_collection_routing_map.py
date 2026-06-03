@@ -7,7 +7,12 @@ import logging
 import pytest
 
 import azure.cosmos._routing.routing_range as routing_range
-from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
+from azure.cosmos._routing.collection_routing_map import (
+    CollectionRoutingMap,
+    _build_routing_map_from_ranges,
+    _OverlapDetected,
+    _GapDetected,
+)
 
 
 @pytest.mark.cosmosEmulator
@@ -412,16 +417,18 @@ class TestCollectionRoutingMap(unittest.TestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['0', '1'])
 
-    def test_build_routing_map_returns_none_for_incomplete_ranges(self):
-        """_build_routing_map_from_ranges returns None when the filtered ranges
-        don't form a complete partition key space (gap exists)."""
+    def test_build_routing_map_raises_gap_detected_for_incomplete_ranges(self):
+        """``_build_routing_map_from_ranges`` raises ``_GapDetected`` when
+        the filtered ranges have a gap in the partition key space."""
         _logger = logging.getLogger("test")
         ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
             # Gap from '80' to 'FF' — incomplete
         ]
-        result = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-4"', 'dbs/db/colls/coll1', _logger)
-        self.assertIsNone(result, "Should return None for incomplete range coverage")
+        with self.assertRaises(_GapDetected):
+            _build_routing_map_from_ranges(
+                ranges, 'coll1', '"etag-4"', 'dbs/db/colls/coll1', _logger
+            )
 
     def test_build_routing_map_empty_parents_list_not_treated_as_gone(self):
         """_build_routing_map_from_ranges does NOT filter a range whose 'parents'
@@ -448,6 +455,126 @@ class TestCollectionRoutingMap(unittest.TestCase):
 
         result_none_etag = _build_routing_map_from_ranges(ranges, 'coll1', None, 'link', _logger)
         self.assertIsNone(result_none_etag.change_feed_etag)
+
+    # ==========================================================================
+    # Regression tests for transient ``/pkranges`` snapshot inconsistencies.
+    # The builder must either succeed (after deduping by id) or raise
+    # ``_OverlapDetected`` / ``_GapDetected`` -- a bare ``ValueError`` must
+    # never reach ``get_overlapping_ranges``.
+    # ==========================================================================
+
+    def test_full_load_dedups_duplicate_range_id_across_pages_mode_1(self):
+        """A duplicate range id repeated across paginated pages should be
+        deduped (last-write-wins) before validation, producing a valid map."""
+        _logger = logging.getLogger("test")
+        ranges = [
+            {'id': '0', 'minInclusive': '',   'maxExclusive': '40'},
+            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},
+            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},  # duplicate from next page
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'C0'},
+            {'id': '3', 'minInclusive': 'C0', 'maxExclusive': 'FF'},
+        ]
+        result = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-dup"', 'dbs/db/colls/coll1', _logger)
+
+        self.assertIsNotNone(
+            result,
+            "Duplicate range id across pages should be deduped, not crash the builder."
+        )
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['0', '1', '2', '3'])
+
+    def test_full_load_raises_overlap_sentinel_for_stale_parent_with_missing_child_refs_mode_2(self):
+        """A stale parent alongside children that lack ``parents`` references
+        must convert the underlying ``ValueError`` into ``_OverlapDetected``,
+        not escape as a bare ``ValueError``."""
+        _logger = logging.getLogger("test")
+        # Parent '10' was split into '10/0' and '10/1', but the children on
+        # this page lost their ``parents': ['10']`` reference. The parent
+        # filter cannot remove '10' because no surviving range names it.
+        ranges = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},  # stale parent
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},  # missing parents=['10']
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},  # missing parents=['10']
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        with self.assertRaises(_OverlapDetected):
+            _build_routing_map_from_ranges(ranges, 'coll1', '"etag-stale-parent"', 'dbs/db/colls/coll1', _logger)
+
+    def test_full_load_raises_overlap_sentinel_for_grandparent_surviving_cascade_split_mode_3(self):
+        """A grandparent that survives a cascade split because intermediate
+        parents lost their ``parents`` references must raise
+        ``_OverlapDetected``."""
+        _logger = logging.getLogger("test")
+        # '10' split into '10/0' and '10/1'; '10/0' split into '10/0/0' and
+        # '10/0/1'. The grandchildren reference '10/0' correctly, but '10/0'
+        # and '10/1' both lost their ``parents': ['10']`` reference, so the
+        # parent filter only collects {'10/0'} and leaves '10' in place.
+        ranges = [
+            {'id': 'L',       'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',      'minInclusive': '80', 'maxExclusive': 'A0'},                           # grandparent
+            {'id': '10/0',    'minInclusive': '80', 'maxExclusive': '90'},                           # missing parents=['10']
+            {'id': '10/0/0',  'minInclusive': '80', 'maxExclusive': '88', 'parents': ['10/0']},
+            {'id': '10/0/1',  'minInclusive': '88', 'maxExclusive': '90', 'parents': ['10/0']},
+            {'id': '10/1',    'minInclusive': '90', 'maxExclusive': 'A0'},                           # missing parents=['10']
+            {'id': 'R',       'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        with self.assertRaises(_OverlapDetected):
+            _build_routing_map_from_ranges(ranges, 'coll1', '"etag-cascade"', 'dbs/db/colls/coll1', _logger)
+
+    def test_full_load_raises_gap_detected_for_hole_in_key_space(self):
+        """A snapshot with a hole in the key space must raise
+        ``_GapDetected`` so the caller retries."""
+        _logger = logging.getLogger("test")
+        # Parent '10' covered "80" -> "A0" and was just deleted; its
+        # children have not yet propagated to this view.
+        ranges = [
+            {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+            # Hole "80" -> "A0" is unclaimed.
+        ]
+        with self.assertRaises(_GapDetected):
+            _build_routing_map_from_ranges(ranges, 'coll1', '"etag-gap"', 'dbs/db/colls/coll1', _logger)
+
+    def test_gap_detected_is_not_a_value_error(self):
+        """``_GapDetected`` must not inherit from ``ValueError`` so legacy
+        ``except ValueError`` blocks cannot absorb the retry signal."""
+        self.assertFalse(
+            issubclass(_GapDetected, ValueError),
+            "_GapDetected must not inherit from ValueError."
+        )
+        self.assertTrue(issubclass(_GapDetected, Exception))
+
+    def test_overlap_sentinel_is_not_a_value_error(self):
+        """``_OverlapDetected`` must not inherit from ``ValueError`` so legacy
+        ``except ValueError`` blocks cannot absorb the retry signal."""
+        self.assertFalse(
+            issubclass(_OverlapDetected, ValueError),
+            "_OverlapDetected must not inherit from ValueError."
+        )
+        self.assertTrue(issubclass(_OverlapDetected, Exception))
+
+    def test_overlap_error_message_identifies_offending_ranges(self):
+        """The ``ValueError`` raised by ``is_complete_set_of_range`` for
+        genuinely overlapping input should name the offending ranges and
+        start with the ``"Ranges overlap"`` prefix that production guards
+        match against."""
+        ranges = [
+            {'id': 'A', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'B', 'minInclusive': '40', 'maxExclusive': 'FF'},  # overlaps with A
+        ]
+        with self.assertRaises(ValueError) as ctx:
+            CollectionRoutingMap.is_complete_set_of_range(ranges)
+
+        msg = str(ctx.exception)
+        self.assertTrue(
+            msg.startswith("Ranges overlap"),
+            "Message must start with the 'Ranges overlap' prefix. Got: {!r}".format(msg),
+        )
+        self.assertIn('A', msg, "Error message should name the previous range id.")
+        self.assertIn('B', msg, "Error message should name the current range id.")
+        self.assertIn('80', msg, "Error message should include the previous range's maxExclusive.")
+        self.assertIn('40', msg, "Error message should include the current range's minInclusive.")
 
 
 if __name__ == '__main__':

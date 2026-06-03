@@ -1,10 +1,11 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -22,16 +23,15 @@ import unittest
 import azure.mgmt.servicefabric
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
+
 
 class MgmtServiceFabricTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtServiceFabricTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.servicefabric.ServiceFabricManagementClient
-        )
-    
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.servicefabric.ServiceFabricManagementClient)
+
     @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_servicefabric(self, resource_group):
@@ -51,49 +51,41 @@ class MgmtServiceFabricTest(AzureMgmtTestCase):
 
         # Put a cluster with minimum parameters[put]
         BODY = {
-          "type": "Microsoft.ServiceFabric/clusters",
-          "location": "eastus",
-          "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.ServiceFabric/clusters/" + CLUSTER_NAME + "",
-          "name": "myCluster",
-          "management_endpoint": "http://myCluster.eastus.cloudapp.azure.com:19080",
-          "fabric_settings": [
-            {
-              "name": "UpgradeService",
-              "parameters": [
+            "type": "Microsoft.ServiceFabric/clusters",
+            "location": "eastus",
+            "id": "/subscriptions/"
+            + SUBSCRIPTION_ID
+            + "/resourceGroups/"
+            + RESOURCE_GROUP
+            + "/providers/Microsoft.ServiceFabric/clusters/"
+            + CLUSTER_NAME
+            + "",
+            "name": "myCluster",
+            "management_endpoint": "http://myCluster.eastus.cloudapp.azure.com:19080",
+            "fabric_settings": [
+                {"name": "UpgradeService", "parameters": [{"name": "AppPollIntervalInSeconds", "value": "60"}]}
+            ],
+            "diagnostics_storage_account_config": {
+                "storage_account_name": "diag",
+                "protected_account_key_name": "StorageAccountKey1",
+                "blob_endpoint": "https://diag.blob.core.windows.net/",
+                "queue_endpoint": "https://diag.queue.core.windows.net/",
+                "table_endpoint": "https://diag.table.core.windows.net/",
+            },
+            "node_types": [
                 {
-                  "name": "AppPollIntervalInSeconds",
-                  "value": "60"
+                    "name": "nt1vm",
+                    "client_connection_endpoint_port": "19000",
+                    "http_gateway_endpoint_port": "19007",
+                    "application_ports": {"start_port": "20000", "end_port": "30000"},
+                    "ephemeral_ports": {"start_port": "49000", "end_port": "64000"},
+                    "is_primary": True,
+                    "vm_instance_count": "5",
+                    "durability_level": "Bronze",
                 }
-              ]
-            }
-          ],
-          "diagnostics_storage_account_config": {
-            "storage_account_name": "diag",
-            "protected_account_key_name": "StorageAccountKey1",
-            "blob_endpoint": "https://diag.blob.core.windows.net/",
-            "queue_endpoint": "https://diag.queue.core.windows.net/",
-            "table_endpoint": "https://diag.table.core.windows.net/"
-          },
-          "node_types": [
-            {
-              "name": "nt1vm",
-              "client_connection_endpoint_port": "19000",
-              "http_gateway_endpoint_port": "19007",
-              "application_ports": {
-                "start_port": "20000",
-                "end_port": "30000"
-              },
-              "ephemeral_ports": {
-                "start_port": "49000",
-                "end_port": "64000"
-              },
-              "is_primary": True,
-              "vm_instance_count": "5",
-              "durability_level": "Bronze"
-            }
-          ],
-          "reliability_level": "Silver",
-          "upgrade_mode": "Automatic"
+            ],
+            "reliability_level": "Silver",
+            "upgrade_mode": "Automatic",
         }
         result = self.mgmt_client.clusters.create_or_update(resource_group.name, CLUSTER_NAME, BODY)
         result = result.result()
@@ -527,6 +519,6 @@ class MgmtServiceFabricTest(AzureMgmtTestCase):
         result = self.mgmt_client.clusters.delete(resource_group.name, CLUSTER_NAME)
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

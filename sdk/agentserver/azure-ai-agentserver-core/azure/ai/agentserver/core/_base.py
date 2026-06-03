@@ -188,11 +188,14 @@ class AgentServerHost(Starlette):
 
         # Observability (logging + tracing) --------------------------------
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        _env_val = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+        _sensitive_data = _env_val.lower() not in ("false", "0")
         if configure_observability is not None:
             try:
                 configure_observability(
                     connection_string=_conn_str,
                     log_level=log_level,
+                    enable_sensitive_data=_sensitive_data,
                 )
             except ValueError:
                 raise  # invalid log_level etc. — user should fix their config
@@ -219,13 +222,14 @@ class AgentServerHost(Starlette):
             cfg = self.config
             logger.info(
                 "Platform environment: is_hosted=%s, agent_name=%s, agent_version=%s, "
-                "port=%s, session_id=%s, sse_keepalive_interval=%s",
+                "port=%s, session_id=%s, sse_keepalive_interval=%s, ws_ping_interval=%s",
                 cfg.is_hosted,
                 cfg.agent_name or _NOT_SET,
                 cfg.agent_version or _NOT_SET,
                 cfg.port,
                 cfg.session_id or _NOT_SET,
                 cfg.sse_keepalive_interval if cfg.sse_keepalive_interval > 0 else "disabled",
+                f"{cfg.ws_ping_interval}s" if cfg.ws_ping_interval > 0 else "disabled",
             )
             logger.info(
                 "Connectivity: project_endpoint=%s, otlp_endpoint=%s, appinsights_configured=%s",
@@ -284,6 +288,13 @@ class AgentServerHost(Starlette):
             **kwargs,
         )
 
+        # Extract W3C trace context (traceparent/tracestate) and baggage
+        # from incoming HTTP requests so that any spans created downstream
+        # (e.g. by MAF / agent-framework) are children of the caller's trace.
+        # We do NOT create a SERVER span ourselves — we only propagate context.
+        from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
+        self.add_middleware(TraceContextMiddleware)
+
     # ------------------------------------------------------------------
     # Server version (x-platform-server header)
     # ------------------------------------------------------------------
@@ -326,56 +337,6 @@ class AgentServerHost(Starlette):
     # Tracing (for protocol subclasses)
     # ------------------------------------------------------------------
 
-    #: Default instrumentation scope for tracing spans.
-    #: Protocol subclasses should override this per the spec.
-    _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer"
-
-    @contextlib.contextmanager
-    def request_span(
-        self,
-        headers: Any,
-        request_id: str,
-        operation: str,
-        *,
-        operation_name: Optional[str] = None,
-        session_id: str = "",
-        end_on_exit: bool = True,
-    ) -> Any:
-        """Create a request-scoped span with this host's identity attributes.
-
-        Delegates to :func:`_tracing.request_span` with pre-populated
-        agent identity from environment variables.
-
-        :param headers: HTTP request headers.
-        :type headers: any
-        :param request_id: The request/invocation ID.
-        :type request_id: str
-        :param operation: Span operation (e.g. ``"invoke_agent"``).
-        :type operation: str
-        :keyword operation_name: Optional ``gen_ai.operation.name`` value.
-        :paramtype operation_name: str or None
-        :keyword session_id: Session ID.
-        :paramtype session_id: str
-        :keyword end_on_exit: Whether to end the span when the context exits.
-        :paramtype end_on_exit: bool
-        :return: Context manager yielding the OTel span.
-        :rtype: any
-        """
-        with _tracing.request_span(
-            headers,
-            request_id,
-            operation,
-            agent_id=self.config.agent_id,
-            agent_name=self.config.agent_name,
-            agent_version=self.config.agent_version,
-            project_id=self.config.project_id,
-            operation_name=operation_name,
-            session_id=session_id,
-            end_on_exit=end_on_exit,
-            instrumentation_scope=self._INSTRUMENTATION_SCOPE,
-        ) as span:
-            yield span
-
     # ------------------------------------------------------------------
     # Shutdown handler (server-level lifecycle)
     # ------------------------------------------------------------------
@@ -417,6 +378,11 @@ class AgentServerHost(Starlette):
         config.graceful_timeout = float(self._graceful_shutdown_timeout)
         # Spec requires HTTP/1.1 only — disable HTTP/2
         config.h2_max_concurrent_streams = 0
+        # WebSocket Ping/Pong keep-alive (RFC 6455 opcodes 0x9/0xA).
+        # ``0`` (disabled) maps to Hypercorn's ``None`` sentinel; any
+        # positive value is sent verbatim to Hypercorn.
+        ws_ping = self.config.ws_ping_interval
+        config.websocket_ping_interval = ws_ping if ws_ping > 0 else None  # type: ignore[attr-defined]
         # Access logging
         if self._access_log is not None:
             config.accesslog = self._access_log  # type: ignore[assignment]
