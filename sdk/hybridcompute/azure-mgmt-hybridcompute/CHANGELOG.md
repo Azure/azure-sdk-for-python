@@ -6,60 +6,32 @@
 
   - Client `HybridComputeManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `HybridComputeManagementClient` added method `send_request`
-  - Model `ExtensionValue` added property `properties`
-  - Model `ExtensionValueV2` added property `properties`
   - Model `HybridComputePrivateLinkScopeProperties` added property `service_extensions`
-  - Model `LicenseProfileMachineInstanceView` added property `software_assurance`
   - Model `LicenseProfileMachineInstanceView` added property `product_profile`
   - Model `NetworkSecurityPerimeterConfiguration` added property `system_data`
   - Added model `EsuProfileUpdateProperties`
   - Added model `LicenseProfileArmProductProfileProperties`
-  - Added model `LicenseProfileMachineInstanceViewSoftwareAssurance`
   - Added model `LicenseProfilePropertiesSoftwareAssurance`
   - Added model `LicenseProfileUpdatePropertiesSoftwareAssurance`
   - Added model `LicenseUpdatePropertiesLicenseDetails`
-  - Added model `PatchSettings`
   - Added model `ProductProfileUpdateProperties`
   - Added enum `ResourceIdentityType`
   - Added model `ServiceExtension`
   - Added enum `ServiceExtensionPublicNetworkAccess`
   - Added model `SettingsGatewayProperties`
-  - Model `MachinesOperations` added method `create_or_update`
+  - Operation group `MachinesOperations` added method `create_or_update`
 
 ### Breaking Changes
 
-  - Model `ExtensionValue` deleted or renamed its instance variable `version`
-  - Model `ExtensionValue` deleted or renamed its instance variable `extension_type`
-  - Model `ExtensionValue` deleted or renamed its instance variable `publisher`
-  - Model `ExtensionValueV2` deleted or renamed its instance variable `version`
-  - Model `ExtensionValueV2` deleted or renamed its instance variable `extension_type`
-  - Model `ExtensionValueV2` deleted or renamed its instance variable `publisher`
-  - Model `ExtensionValueV2` deleted or renamed its instance variable `extension_uris`
-  - Model `ExtensionValueV2` deleted or renamed its instance variable `extension_signature_uri`
-  - Model `ExtensionValueV2` deleted or renamed its instance variable `operating_system`
-  - Model `ExtensionValueV2` deleted or renamed its instance variable `architecture`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `subscription_status`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `product_type`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `enrollment_date`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `billing_start_date`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `disenrollment_date`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `billing_end_date`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `error`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `product_features`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `software_assurance_customer`
-  - Model `OSProfileLinuxConfiguration` deleted or renamed its instance variable `assessment_mode`
-  - Model `OSProfileLinuxConfiguration` deleted or renamed its instance variable `patch_mode`
-  - Model `OSProfileLinuxConfiguration` deleted or renamed its instance variable `enable_hotpatching`
-  - Model `OSProfileLinuxConfiguration` deleted or renamed its instance variable `status`
-  - Model `OSProfileWindowsConfiguration` deleted or renamed its instance variable `assessment_mode`
-  - Model `OSProfileWindowsConfiguration` deleted or renamed its instance variable `patch_mode`
-  - Model `OSProfileWindowsConfiguration` deleted or renamed its instance variable `enable_hotpatching`
-  - Model `OSProfileWindowsConfiguration` deleted or renamed its instance variable `status`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `ExtensionValue` moved instance variable `version`, `extension_type` and `publisher` under property `properties`
+  - Model `ExtensionValueV2` moved instance variable `version`, `extension_type`, `publisher`, `extension_uris`, `extension_signature_uri`, `operating_system` and `architecture` under property `properties`
+  - Model `LicenseProfileMachineInstanceView` moved instance variable `subscription_status`, `product_type`, `enrollment_date`, `billing_start_date`, `disenrollment_date`, `billing_end_date`, `error`, `product_features` and `software_assurance_customer` under property `software_assurance` whose type is `LicenseProfileMachineInstanceViewSoftwareAssurance`
+  - Model `OSProfileLinuxConfiguration` moved instance variable `assessment_mode`, `patch_mode`, `enable_hotpatching` and `status` under property `patch_settings` whose type is `PatchSettings`
+  - Model `OSProfileWindowsConfiguration` moved instance variable `assessment_mode`, `patch_mode`, `enable_hotpatching` and `status` under property `patch_settings` whose type is `PatchSettings`
   - Deleted or renamed model `AgentVersion`
-  - Deleted or renamed model `AgentVersionsList`
-  - Deleted or renamed model `ExtensionValueListResultV2`
   - Deleted or renamed model `HybridIdentityMetadata`
-  - Deleted or renamed model `HybridIdentityMetadataList`
   - Deleted or renamed model `KeyDetails`
   - Deleted or renamed model `KeyProperties`
   - Deleted or renamed model `MachineRunCommandUpdate`
@@ -71,7 +43,11 @@
   - Method `MachineRunCommandsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `MachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `MachinesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `HybridComputeManagementClientOperationsMixin`
+
+### Other Changes
+
+  - Deleted model `AgentVersionsList`/`ExtensionValueListResultV2`/`HybridIdentityMetadataList` which actually were not used by SDK users
+  - Renamed operation group `HybridComputeManagementClientOperationsMixin` to `_HybridComputeManagementClientOperationsMixin`
 
 ## 9.1.0b2 (2025-06-16)
 
