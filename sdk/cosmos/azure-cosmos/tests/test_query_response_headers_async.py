@@ -7,8 +7,10 @@ import unittest
 import uuid
 
 import pytest
+from azure.core.utils import CaseInsensitiveDict
 
 import test_config
+from azure.cosmos._cosmos_responses import CosmosAsyncItemPaged
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
@@ -416,6 +418,99 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 assert result["request_charge"] > 0, \
                     f"Query {result['query_id']} should have positive request charge"
 
+        finally:
+            await self._delete_container_for_test(cid)
+
+    async def test_query_response_headers_before_iteration_returns_empty_async(self):
+        """Headers must be an empty dict when no async page has been fetched yet."""
+        cid = "test_headers_preiter_async_" + str(uuid.uuid4())
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
+        try:
+            await created_collection.create_item(body={"pk": "test", "id": "item_1"})
+
+            query_iterable = created_collection.query_items(
+                query="SELECT * FROM c",
+                partition_key="test",
+            )
+
+            # No iteration yet, so the dict must be empty (and not None).
+            headers = query_iterable.get_response_headers()
+            assert isinstance(headers, CaseInsensitiveDict)
+            assert len(headers) == 0
+        finally:
+            await self._delete_container_for_test(cid)
+
+    async def test_query_response_headers_match_last_response_hook_invocation_async(self):
+        """The headers returned after async iteration must match the headers
+        handed to the last response_hook call."""
+        cid = "test_headers_hookparity_async_" + str(uuid.uuid4())
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
+        try:
+            for i in range(12):
+                await created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
+
+            captured_pages = []
+
+            def hook(headers, _result):
+                captured_pages.append(dict(headers))
+
+            query_iterable = created_collection.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "test"}],
+                partition_key="test",
+                max_item_count=4,
+                response_hook=hook,
+            )
+
+            items = [item async for item in query_iterable]
+            assert len(items) == 12
+            assert len(captured_pages) > 0
+
+            final_headers = query_iterable.get_response_headers()
+            assert final_headers["x-ms-request-charge"] == captured_pages[-1]["x-ms-request-charge"]
+            assert final_headers["x-ms-activity-id"] == captured_pages[-1]["x-ms-activity-id"]
+        finally:
+            await self._delete_container_for_test(cid)
+
+    async def test_query_response_headers_return_type_is_dict_not_list_async(self):
+        """Regression guard: the getter must return a single dict, not a list,
+        and the removed get_last_response_headers must stay removed."""
+        cid = "test_headers_returntype_async_" + str(uuid.uuid4())
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
+        try:
+            await created_collection.create_item(body={"pk": "test", "id": "item_1"})
+
+            query_iterable = created_collection.query_items(
+                query="SELECT * FROM c",
+                partition_key="test",
+            )
+            assert isinstance(query_iterable, CosmosAsyncItemPaged)
+
+            _ = [item async for item in query_iterable]
+            headers = query_iterable.get_response_headers()
+
+            assert isinstance(headers, CaseInsensitiveDict)
+            assert not isinstance(headers, list)
+            assert not hasattr(query_iterable, "get_last_response_headers")
+        finally:
+            await self._delete_container_for_test(cid)
+
+    async def test_read_all_items_response_headers_async(self):
+        """read_all_items pagers expose the same headers contract as queries."""
+        cid = "test_headers_readall_async_" + str(uuid.uuid4())
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
+        try:
+            for i in range(8):
+                await created_collection.create_item(body={"pk": "test", "id": f"item_{i}"})
+
+            paged = created_collection.read_all_items(max_item_count=3)
+            items = [item async for item in paged]
+            assert len(items) == 8
+
+            if hasattr(paged, "get_response_headers"):
+                headers = paged.get_response_headers()
+                assert isinstance(headers, CaseInsensitiveDict)
+                assert "x-ms-request-charge" in headers
         finally:
             await self._delete_container_for_test(cid)
 

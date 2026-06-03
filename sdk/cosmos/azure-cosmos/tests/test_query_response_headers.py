@@ -8,10 +8,12 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pytest
+from azure.core.utils import CaseInsensitiveDict
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy
+from azure.cosmos._cosmos_responses import CosmosItemPaged
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -406,6 +408,109 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 self.assertGreater(result["request_charge"], 0,
                     f"Thread {thread_id} should have positive request charge")
 
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_query_response_headers_before_iteration_returns_empty(self):
+        """Headers must be an empty dict when no page has been fetched yet."""
+        container_id = "test_headers_preiter_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            created_collection.create_item(body={"pk": "test", "id": "item_1"})
+
+            query_iterable = created_collection.query_items(
+                query="SELECT * FROM c",
+                partition_key="test",
+            )
+
+            # No iteration yet, so the dict must be empty (and not None).
+            headers = query_iterable.get_response_headers()
+            self.assertIsInstance(headers, CaseInsensitiveDict)
+            self.assertEqual(len(headers), 0)
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_query_response_headers_match_last_response_hook_invocation(self):
+        """The headers returned after iteration must match the headers handed
+        to the last response_hook call."""
+        container_id = "test_headers_hookparity_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            for i in range(12):
+                created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
+
+            captured_pages = []
+
+            def hook(headers, _result):
+                # Snapshot the headers handed to the hook for every page.
+                captured_pages.append(dict(headers))
+
+            query_iterable = created_collection.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "test"}],
+                partition_key="test",
+                max_item_count=4,
+                response_hook=hook,
+            )
+
+            items = list(query_iterable)
+            self.assertEqual(len(items), 12)
+
+            # At least one page was fetched, so the hook fired at least once.
+            self.assertGreater(len(captured_pages), 0)
+
+            # The getter must return what the last hook invocation saw.
+            final_headers = query_iterable.get_response_headers()
+            self.assertEqual(
+                final_headers["x-ms-request-charge"],
+                captured_pages[-1]["x-ms-request-charge"],
+            )
+            self.assertEqual(
+                final_headers["x-ms-activity-id"],
+                captured_pages[-1]["x-ms-activity-id"],
+            )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_query_response_headers_return_type_is_dict_not_list(self):
+        """Regression guard: the getter must return a single dict, not a list,
+        and the removed get_last_response_headers must stay removed."""
+        container_id = "test_headers_returntype_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            created_collection.create_item(body={"pk": "test", "id": "item_1"})
+
+            query_iterable = created_collection.query_items(
+                query="SELECT * FROM c",
+                partition_key="test",
+            )
+            self.assertIsInstance(query_iterable, CosmosItemPaged)
+
+            list(query_iterable)
+            headers = query_iterable.get_response_headers()
+
+            self.assertIsInstance(headers, CaseInsensitiveDict)
+            self.assertNotIsInstance(headers, list)
+            self.assertFalse(hasattr(query_iterable, "get_last_response_headers"))
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_read_all_items_response_headers(self):
+        """read_all_items pagers expose the same headers contract as queries."""
+        container_id = "test_headers_readall_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            for i in range(8):
+                created_collection.create_item(body={"pk": "test", "id": f"item_{i}"})
+
+            paged = created_collection.read_all_items(max_item_count=3)
+            items = list(paged)
+            self.assertEqual(len(items), 8)
+
+            if hasattr(paged, "get_response_headers"):
+                headers = paged.get_response_headers()
+                self.assertIsInstance(headers, CaseInsensitiveDict)
+                self.assertIn("x-ms-request-charge", headers)
         finally:
             self._delete_container_for_test(container_id)
 
