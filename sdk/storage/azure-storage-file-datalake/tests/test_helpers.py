@@ -35,11 +35,7 @@ class ProgressTracker:
 
 class MockHttpClientResponse(Response):
     def __init__(
-        self, url: str,
-        body_bytes: bytes,
-        headers: Dict[str, Any],
-        status: int = 200,
-        reason: str = "OK"
+        self, url: str, body_bytes: bytes, headers: Dict[str, Any], status: int = 200, reason: str = "OK"
     ) -> None:
         super(MockHttpClientResponse).__init__()
         self._url = url
@@ -59,8 +55,9 @@ class MockStorageTransport(HttpTransport):
     This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
+
     def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
-        if request.method == 'GET':
+        if request.method == "GET":
             # download_file
             headers = {
                 "Content-Type": "application/octet-stream",
@@ -77,9 +74,9 @@ class MockStorageTransport(HttpTransport):
                     request.url,
                     b"Hello World!",
                     headers,
-                )
+                ),
             )
-        elif request.method == 'HEAD':
+        elif request.method == "HEAD":
             # get_file_properties
             rest_response = RequestsTransportResponse(
                 request=request,
@@ -90,9 +87,9 @@ class MockStorageTransport(HttpTransport):
                         "Content-Type": "application/octet-stream",
                         "Content-Length": "1024",
                     },
-                )
+                ),
             )
-        elif request.method == 'PUT':
+        elif request.method == "PUT":
             # upload_data
             rest_response = RequestsTransportResponse(
                 request=request,
@@ -103,10 +100,10 @@ class MockStorageTransport(HttpTransport):
                         "Content-Length": "0",
                     },
                     201,
-                    "Created"
-                )
+                    "Created",
+                ),
             )
-        elif request.method == 'PATCH':
+        elif request.method == "PATCH":
             # upload_data_chunks
             parsed = urlparse(request.url)
             if "action=flush" in parsed.query:
@@ -119,8 +116,8 @@ class MockStorageTransport(HttpTransport):
                             "Content-Length": "0",
                         },
                         200,
-                        "OK"
-                    )
+                        "OK",
+                    ),
                 )
             else:
                 rest_response = RequestsTransportResponse(
@@ -132,10 +129,10 @@ class MockStorageTransport(HttpTransport):
                             "Content-Length": "0",
                         },
                         202,
-                        "Accepted"
-                    )
+                        "Accepted",
+                    ),
                 )
-        elif request.method == 'DELETE':
+        elif request.method == "DELETE":
             # delete_file
             rest_response = RequestsTransportResponse(
                 request=request,
@@ -146,8 +143,8 @@ class MockStorageTransport(HttpTransport):
                         "Content-Length": "0",
                     },
                     202,
-                    "Accepted"
-                )
+                    "Accepted",
+                ),
             )
         else:
             raise ValueError("The request is not accepted as part of MockStorageTransport.")
