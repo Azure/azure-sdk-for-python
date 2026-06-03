@@ -5,8 +5,9 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 
 function run(cmd, args, options = {}) {
+  const logger = options.logger || console;
   const printable = [cmd, ...args].join(" ");
-  console.log(`$ ${printable}`);
+  logger.info(`$ ${printable}`);
   const result = spawnSync(cmd, args, {
     cwd: options.cwd,
     env: options.env,
@@ -102,43 +103,35 @@ function readVersion(packageDir) {
   throw new Error(`ERROR: could not find a version string in ${packageDir}`);
 }
 
-function generateApiMdBytes({
+function generateApiForPackage({
   repoRoot,
   packageName,
-  packageDir,
+  runtimeExecutable,
+  logger,
   generateScriptPath,
   exportScriptPath,
-  runtimeExecutable,
   refLabel,
 }) {
   const executable = runtimeExecutable || process.env.PYTHON || "python";
-  console.log(`--- Generating API.md on ${refLabel} ---`);
-  const env = {
-    ...process.env,
-    AZSDK_REPO_ROOT: repoRoot,
-    AZSDK_EXPORT_SCRIPT: exportScriptPath,
-  };
+  const activeLogger = logger || console;
+  const scriptPath = generateScriptPath || path.join(repoRoot, "scripts", "generate_api_text.py");
+  if (refLabel) {
+    activeLogger.info(`--- Generating API.md on ${refLabel} ---`);
+  }
 
-  run(executable, [generateScriptPath, packageName], {
+  const env = exportScriptPath
+    ? {
+        ...process.env,
+        AZSDK_REPO_ROOT: repoRoot,
+        AZSDK_EXPORT_SCRIPT: exportScriptPath,
+      }
+    : undefined;
+
+  run(executable, [scriptPath, packageName], {
     cwd: repoRoot,
     env,
     check: true,
-  });
-
-  const apiMdPath = path.join(packageDir, "API.md");
-  if (!fs.existsSync(apiMdPath)) {
-    throw new Error(`ERROR: did not produce ${apiMdPath}`);
-  }
-
-  return fs.readFileSync(apiMdPath);
-}
-
-function generateApiForPackage({ repoRoot, packageName, runtimeExecutable }) {
-  const executable = runtimeExecutable || process.env.PYTHON || "python";
-  const generateScriptPath = path.join(repoRoot, "scripts", "generate_api_text.py");
-  run(executable, [generateScriptPath, packageName], {
-    cwd: repoRoot,
-    check: true,
+    logger: activeLogger,
   });
 }
 
@@ -148,5 +141,4 @@ module.exports = {
   findPackageDir,
   readVersion,
   generateApiForPackage,
-  generateApiMdBytes,
 };

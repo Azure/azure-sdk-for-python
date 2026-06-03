@@ -2,26 +2,60 @@
 
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { pathToFileURL } = require("url");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
-const DEFAULT_CONSISTENCY_MARKER = "<!-- api-md-consistency-comment -->";
-const DEFAULT_APPLY_MARKER = "<!-- api-md-apply-result-comment -->";
+const SHARED_SRC_ROOT = path.join(REPO_ROOT, ".github", "shared", "src");
+const sharedModuleCache = new Map();
 
-function run(cmd, args, options = {}) {
-  const result = spawnSync(cmd, args, {
-    check: false,
-    cwd: options.cwd,
-    env: options.env,
-    encoding: "utf-8",
-    stdio: options.capture ? "pipe" : "inherit",
-  });
-
-  if ((options.check ?? true) && result.status !== 0) {
-    throw new Error(`Command failed (${result.status}): ${[cmd, ...args].join(" ")}`);
+async function loadSharedModule(fileName) {
+  if (sharedModuleCache.has(fileName)) {
+    return sharedModuleCache.get(fileName);
   }
 
-  return result;
+  const filePath = path.join(SHARED_SRC_ROOT, fileName);
+  const modulePromise = import(pathToFileURL(filePath).href);
+  sharedModuleCache.set(fileName, modulePromise);
+  return modulePromise;
+}
+
+async function getDefaultLogger() {
+  const { defaultLogger } = await loadSharedModule("logger.js");
+  return defaultLogger;
+}
+
+async function runAsync(cmd, args, options = {}) {
+  const { execFile, isExecError } = await loadSharedModule("exec.js");
+  const check = options.check ?? true;
+  const logger = options.logger ?? (await getDefaultLogger());
+
+  try {
+    const result = await execFile(cmd, args, {
+      cwd: options.cwd,
+      logger,
+      maxBuffer: options.maxBuffer,
+    });
+
+    return {
+      status: 0,
+      stdout: result.stdout ?? "",
+      stderr: result.stderr ?? "",
+    };
+  } catch (error) {
+    if (!isExecError(error)) {
+      throw error;
+    }
+
+    const status = Number.isInteger(error.code) ? error.code : 1;
+    const stdout = error.stdout ?? "";
+    const stderr = error.stderr ?? "";
+
+    if (!check) {
+      return { status, stdout, stderr };
+    }
+
+    throw new Error(`Command failed (${status}): ${[cmd, ...args].join(" ")}`);
+  }
 }
 
 function readLines(filePath) {
@@ -68,9 +102,9 @@ function requireEnv(name) {
 
 module.exports = {
   REPO_ROOT,
-  DEFAULT_CONSISTENCY_MARKER,
-  DEFAULT_APPLY_MARKER,
-  run,
+  loadSharedModule,
+  getDefaultLogger,
+  runAsync,
   readLines,
   writeLines,
   appendGithubOutput,

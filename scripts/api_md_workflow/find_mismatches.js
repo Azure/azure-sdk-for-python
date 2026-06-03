@@ -2,9 +2,9 @@
 
 const fs = require("fs");
 
-const { appendGithubOutput, envPath, readLines, run, writeLines } = require("./common");
+const { appendGithubOutput, envPath, getDefaultLogger, readLines, runAsync, writeLines } = require("./common");
 
-function main() {
+async function main() {
   const packagesFile = envPath("API_MD_PACKAGES_FILE", ".artifacts/affected_package_dirs.txt");
   const mismatchesFile = envPath("API_MD_MISMATCHES_FILE", ".artifacts/mismatched_api_files.txt");
   const missingFile = envPath("API_MD_MISSING_FILE", ".artifacts/missing_api_files.txt");
@@ -21,18 +21,18 @@ function main() {
       continue;
     }
 
-    const trackedResult = run("git", ["ls-files", "--error-unmatch", "--", apiFile], {
+    const diffResult = await runAsync("git", ["ls-files", "--error-unmatch", "--", apiFile], {
       check: false,
     });
-    if (trackedResult.status !== 0) {
+    if (diffResult.status !== 0) {
       missing.push(apiFile);
       continue;
     }
 
-    const diffResult = run("git", ["diff", "--quiet", "--", apiFile], {
+    const quietDiffResult = await runAsync("git", ["diff", "--quiet", "--", apiFile], {
       check: false,
     });
-    if (diffResult.status !== 0) {
+    if (quietDiffResult.status !== 0) {
       mismatches.push(apiFile);
     }
   }
@@ -44,9 +44,8 @@ function main() {
   appendGithubOutput("issue_count", mismatches.length + missing.length);
 }
 
-try {
-  main();
-} catch (error) {
-  console.error(error instanceof Error ? error.message : String(error));
+main().catch(async (error) => {
+  const logger = await getDefaultLogger();
+  logger.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
-}
+});

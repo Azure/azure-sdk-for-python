@@ -4,13 +4,17 @@ const {
   REPO_ROOT,
   appendGithubOutput,
   envPath,
+  getDefaultLogger,
+  loadSharedModule,
   requireEnv,
-  run,
+  runAsync,
   writeLines,
 } = require("./common");
 const { loadAdapter, loadWorkflowConfig } = require("./adapter_config");
 
-function main() {
+async function main() {
+  const { includesSegment } = await loadSharedModule("path.js");
+
   const config = loadWorkflowConfig();
   const adapterName = config.adapter;
   const adapter = loadAdapter(adapterName);
@@ -22,15 +26,22 @@ function main() {
   const packagesFile = envPath("API_MD_PACKAGES_FILE", ".artifacts/affected_package_dirs.txt");
   const changedFile = envPath("API_MD_CHANGED_FILE", ".artifacts/changed_package_dirs.txt");
 
-  run("git", ["fetch", "--no-tags", "--depth=1", "origin", baseRef]);
-  const diff = run("git", ["diff", "--name-only", `origin/${baseRef}...HEAD`], {
-    capture: true,
-  }).stdout;
+  await runAsync("git", ["fetch", "--no-tags", "--depth=1", "origin", baseRef], {
+    cwd: REPO_ROOT,
+  });
+  const diff = (
+    await runAsync("git", ["diff", "--name-only", `origin/${baseRef}...HEAD`], {
+      cwd: REPO_ROOT,
+    })
+  ).stdout;
 
   const changedDirs = new Set();
   for (const filePath of diff.split(/\r?\n/)) {
     const trimmed = filePath.trim();
     if (!trimmed) {
+      continue;
+    }
+    if (!includesSegment(trimmed, "sdk")) {
       continue;
     }
 
@@ -56,9 +67,8 @@ function main() {
   appendGithubOutput("count", affected.length);
 }
 
-try {
-  main();
-} catch (error) {
-  console.error(error instanceof Error ? error.message : String(error));
+main().catch(async (error) => {
+  const logger = await getDefaultLogger();
+  logger.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
-}
+});
