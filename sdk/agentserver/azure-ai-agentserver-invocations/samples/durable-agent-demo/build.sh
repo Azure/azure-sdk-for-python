@@ -8,7 +8,7 @@
 # `COPY wheels/ /tmp/wheels/` finds them at build time.
 #
 # To refresh the source wheels (maintainer-only — devs shouldn't need
-# to do this), see ../../../../docs/USING_PRE_RELEASE_WHEELS.md.
+# to do this), see ../../../../wheels/README.md.
 
 set -euo pipefail
 

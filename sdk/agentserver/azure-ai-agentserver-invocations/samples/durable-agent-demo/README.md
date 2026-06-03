@@ -65,7 +65,7 @@ invocations endpoint. `demo-client.sh` already points at the canonical
 > The `@task` durable-task primitive is in **private preview** and is
 > not on PyPI. It ships only as the pre-release wheels checked into
 > [`sdk/agentserver/wheels/`](../../../../wheels). See
-> [`sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md`](../../../../docs/USING_PRE_RELEASE_WHEELS.md)
+> [`sdk/agentserver/wheels/README.md`](../../../../wheels/README.md)
 > for the consumption workflow in your own project.
 
 ## demo-client.sh — command reference
@@ -333,5 +333,5 @@ The `@task` private-preview wheels are checked in at
 [`sdk/agentserver/wheels/`](../../../../wheels) — `./build.sh` just
 copies them into this sample's `wheels/` so the Dockerfile can `COPY`
 them at image-build time. See
-[`sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md`](../../../../docs/USING_PRE_RELEASE_WHEELS.md)
+[`sdk/agentserver/wheels/README.md`](../../../../wheels/README.md)
 for the consumer workflow.
