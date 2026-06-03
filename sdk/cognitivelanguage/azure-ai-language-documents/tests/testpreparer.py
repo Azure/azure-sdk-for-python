@@ -24,7 +24,7 @@ class AnalyzeDocumentsClientTestBase(AzureRecordedTestCase):
 AnalyzeDocumentsPreparer = functools.partial(
     PowerShellPreparer,
     "analyzedocuments",
-    analyzedocuments_endpoint="https://fake_analyzedocuments_endpoint.com",
+    analyzedocuments_endpoint="https://Sanitized.cognitiveservices.azure.com/",
     analyzedocuments_source_location="https://fakeaccount.blob.core.windows.net/input/fake.docx",
     analyzedocuments_target_location="https://fakeaccount.blob.core.windows.net/output",
 )
