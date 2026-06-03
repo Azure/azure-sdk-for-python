@@ -13,6 +13,7 @@ function run(cmd, args, options = {}) {
     env: options.env,
     encoding: "utf-8",
     stdio: options.capture ? "pipe" : "inherit",
+    shell: process.platform === "win32",
   });
 
   if ((options.check ?? true) && result.status !== 0) {
