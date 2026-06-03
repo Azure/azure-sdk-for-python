@@ -507,7 +507,11 @@
   - Deleted or renamed model `TerminalServerPatchableProperties`
   - Deleted or renamed model `VpnConfigurationPatchablePropertiesOptionAProperties`
   - Deleted or renamed model `VpnConfigurationPropertiesOptionAProperties`
-  - Method `AccessControlListsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
+
+### Other Changes
+
+  - Deleted model `ExternalNetworksList`/`InternalNetworksList`/`NetworkInterfacesList`/`NetworkToNetworkInterconnectsList` which actually were not used by SDK users
+    - Method `AccessControlListsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `ExternalNetworksOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `ExternalNetworksOperations.begin_update_static_route_bfd_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `InternalNetworksOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
@@ -561,10 +565,6 @@
   - Method `NetworkToNetworkInterconnectsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
   - Method `NetworkToNetworkInterconnectsOperations.begin_update_npb_static_route_bfd_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
   - Method `RoutePoliciesOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
-
-### Other Changes
-
-  - Deleted model `ExternalNetworksList`/`InternalNetworksList`/`NetworkInterfacesList`/`NetworkToNetworkInterconnectsList` which actually were not used by SDK users
 
 ## 1.0.0 (2023-07-19)
 
