@@ -95,40 +95,37 @@ except Exception:
 # ── SSE stream renderer (Python — see comment) ───────────────────────────────
 
 # Why a python renderer instead of bash:
-#  - We need to detect server stalls (no data for >N seconds, e.g. crash on
-#    a network with proxy buffering) quickly, and we need batched terminal
-#    writes (one tight printf for every received token can make the real
-#    interactive terminal the latency bottleneck even when the bash logic
-#    itself is fast).
-#  - Python's select() + line iteration gives us both natively: a small
-#    in-memory token buffer flushed every ~50ms, and a stall watchdog that
-#    fires after _STALL_SECS of no inbound data even if curl hasn't seen
-#    EOF yet (which surfaces a server crash within seconds instead of
-#    waiting on the platform edge proxy to drain).
+#  - At LLM emit rate (50-100 tok/s) the original bash 'while read |
+#    printf' loop made the real interactive terminal the bottleneck:
+#    one printf-per-token caused syscall thrash and built up a backlog
+#    that hid the EOF (real crash signal) behind minutes of TTY draining.
+#  - python with select() + a small in-memory token buffer (flushed
+#    every FLUSH_MS) writes the terminal in batches — ~20x fewer
+#    syscalls in steady state, no backlog, EOF is observed promptly.
+#  - The renderer trusts EOF on stdin as the authoritative crash signal.
+#    No time-based "is the stream stale?" heuristic — those mis-fire
+#    during the demo's legitimate 30s cooldowns between subcalls/phases.
+#    When curl closes (server crash, network drop, ctrl-c) the renderer
+#    sees EOF and exits. When the server emits 'done' or 'run_complete'
+#    the renderer exits cleanly. There is no third path.
 #  - Renderer formatting and color codes match the previous bash version
 #    exactly so prior demo expectations still hold.
 #
 # Contract with bash:
 #   stdin   = raw SSE frames from curl (id: N / data: ...)
 #   env     = $INITIAL_EVENT_ID (resume cursor), $STATE_FILE (path to write
-#             back LAST_EVENT_ID + STREAM_RESULT on exit), $STALL_SECS
+#             back LAST_EVENT_ID + STREAM_RESULT on exit), $FLUSH_MS
 #   stdout  = rendered output
 #   exit    = 0 normally; non-zero only on hard errors
 
 _PY_RENDERER='
-import json, os, sys, select, signal, time
+import json, os, sys, select, time
 from datetime import datetime, timezone
 
 # Bring the env-provided knobs in once.
 INITIAL_EVENT_ID = int(os.environ.get("INITIAL_EVENT_ID", "0") or "0")
 STATE_FILE       = os.environ.get("STATE_FILE", "")
-STALL_SECS       = float(os.environ.get("STALL_SECS", "60"))
 FLUSH_MS         = float(os.environ.get("FLUSH_MS", "50"))
-# CURL_PID is set by the bash wrapper. We kill it when the stall watchdog
-# fires so the script exits promptly instead of waiting on the still-open
-# socket (the platform edge proxy may hold the TCP connection open even
-# after the backend dies).
-CURL_PID         = int(os.environ.get("CURL_PID", "0") or "0")
 
 # ANSI palette — mirrors demo-client.sh.
 BOLD, DIM = "\033[1m", "\033[2m"
@@ -147,7 +144,6 @@ last_event_id = INITIAL_EVENT_ID
 result        = "disconnected"
 token_buf     = []                  # collected token content
 last_flush    = time.monotonic()
-last_data_at  = time.monotonic()    # for stall detection
 
 def flush_tokens():
     global token_buf, last_flush
@@ -225,10 +221,6 @@ def render_block(evt):
 
 stdin_fd = sys.stdin.fileno()
 
-# Tracks the last idle-hint we printed so we do not spam the user during a
-# legitimate cooldown silence. Reset every time data arrives.
-last_idle_hint = 0.0
-
 try:
     pending = b""
     while True:
@@ -241,11 +233,10 @@ try:
             except OSError:
                 chunk = b""
             if not chunk:
-                # EOF — server (or proxy) closed the SSE stream.
+                # EOF — server (or proxy) closed the SSE stream. This is
+                # the authoritative crash/disconnect signal.
                 flush_tokens()
                 break
-            last_data_at = time.monotonic()
-            last_idle_hint = 0.0
             pending += chunk
             # Process complete lines only.
             while b"\n" in pending:
@@ -288,43 +279,9 @@ try:
         else:
             # Periodic flush deadline reached with no data.
             flush_tokens()
-            # Stall watchdog: no data for STALL_SECS suggests the server
-            # died and the platform edge proxy is still holding the TCP
-            # connection. Print a one-line warning and exit so the user
-            # gets a definitive signal instead of waiting on the proxy.
-            #
-            # IMPORTANT: there are legitimate quiet periods in this demo
-            # — the agent sleeps for INTRA_PHASE_COOLDOWN_SEC between
-            # subcalls and INTER_PHASE_COOLDOWN_SEC between phases (both
-            # default to 30s in the hosted agent.yaml). Default
-            # STALL_SECS=60 is set to comfortably exceed those gaps; we
-            # also print a low-key "still waiting" hint at half-window
-            # so the user sees the renderer is alive but quiet.
-            idle = time.monotonic() - last_data_at
-            if idle >= STALL_SECS:
-                n = now_utc()
-                write(f"\n{DIM}[{n}]{RESET} {YELLOW}\u26a0 stream stalled "
-                      f"(no events for {idle:.0f}s) \u2014 likely server crash;"
-                      f" reconnect with stream{RESET}\n")
-                flush()
-                result = "disconnected"
-                # Kill curl so the bash pipeline exits promptly (the edge
-                # proxy may still be holding the TCP connection open).
-                if CURL_PID > 0:
-                    try:
-                        os.kill(CURL_PID, signal.SIGTERM)
-                    except OSError:
-                        pass
-                break
-            elif idle >= STALL_SECS / 2 and idle - last_idle_hint >= 10:
-                # Print a single quiet hint every 10s in the second half
-                # of the watchdog window so the user has feedback during
-                # legitimate cooldown silences.
-                n = now_utc()
-                write(f"{DIM}[{n}]   ...quiet for {idle:.0f}s "
-                      f"(stall threshold {STALL_SECS:.0f}s){RESET}\n")
-                flush()
-                last_idle_hint = idle
+            # No watchdog: EOF on stdin (above) is the authoritative
+            # crash/disconnect signal. The select() timeout just drives
+            # the periodic token-buffer flush.
 except StopIteration:
     pass
 except KeyboardInterrupt:
@@ -347,35 +304,22 @@ stream_sse() {
     local url="$1"
     STREAM_RESULT="disconnected"
 
-    local state_file fifo
+    local state_file
     state_file=$(mktemp)
-    fifo=$(mktemp -u)
-    mkfifo "$fifo"
 
-    # Run curl in the background so we can pass its PID to the python
-    # renderer (used to kill curl when the stall watchdog fires — the
-    # platform edge proxy may otherwise hold the TCP connection open
-    # well past a backend crash).
-    curl -sN -X GET \
-        -H "Authorization: Bearer $TOKEN" \
-        -H "Accept: text/event-stream" \
-        -H "Foundry-Features: HostedAgents=V1Preview" \
-        "$url" > "$fifo" 2>/dev/null &
-    local curl_pid=$!
-
+    # Pipe curl directly into the python renderer. EOF on the pipe is
+    # the authoritative disconnect signal — when curl sees the server
+    # close the TCP socket it closes its stdout, the renderer sees EOF
+    # on stdin, and we exit cleanly. No watchdog, no PID juggling.
     INITIAL_EVENT_ID="${LAST_EVENT_ID:-0}" \
     STATE_FILE="$state_file" \
-    STALL_SECS="${STALL_SECS:-60}" \
     FLUSH_MS="${FLUSH_MS:-50}" \
-    CURL_PID="$curl_pid" \
-        python3 -u -c "$_PY_RENDERER" < "$fifo"
+        bash -c 'curl -sN -X GET \
+            -H "Authorization: Bearer '"$TOKEN"'" \
+            -H "Accept: text/event-stream" \
+            -H "Foundry-Features: HostedAgents=V1Preview" \
+            "'"$url"'" | python3 -u -c "$1"' _ "$_PY_RENDERER"
 
-    # If curl is still running (normal exit path) wait briefly so its
-    # output is fully drained. The stall watchdog already sent SIGTERM
-    # in the cancel case.
-    wait "$curl_pid" 2>/dev/null
-
-    rm -f "$fifo"
     if [[ -f "$state_file" ]]; then
         # shellcheck disable=SC1090
         source "$state_file"
