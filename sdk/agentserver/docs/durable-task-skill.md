@@ -1,9 +1,15 @@
 ---
 name: agentserver-durable-tasks
-description: 'Build crash-resilient long-running agent handlers using the `@task` primitive from `azure-ai-agentserver-core`. WHEN: "make my agent crash-resilient", "resume after restart", "long-running agent (>15 min)", "steer / interrupt a running agent turn", "multi-turn conversation that survives container restarts", "hosted agent that needs lease + checkpoint recovery", "agent with cancel / cooperative shutdown". DO NOT USE FOR: persisting conversation history (use LangGraph / your DB), storing large checkpoints (`ctx.metadata` is intentionally small — watermarks only), workflow orchestration (use Temporal / Durable Functions), or competing-consumer queues. INTERIM: agentserver packages are not yet on PyPI — build local wheels via the script linked in the references.'
+description: 'Build crash-resilient long-running agent handlers using the `@task` primitive from `azure-ai-agentserver-core`. WHEN: "make my agent crash-resilient", "resume after restart", "long-running agent (>15 min)", "steer / interrupt a running agent turn", "multi-turn conversation that survives container restarts", "hosted agent that needs lease + checkpoint recovery", "agent with cancel / cooperative shutdown". DO NOT USE FOR: persisting conversation history (use LangGraph / your DB), storing large checkpoints (`ctx.metadata` is intentionally small — watermarks only), workflow orchestration (use Temporal / Durable Functions), or competing-consumer queues. PRIVATE PREVIEW: the `@task` primitive ships only via pre-release wheels checked into this branch (see references); the surrounding `azure-ai-agentserver-*` packages are on PyPI at stable versions.'
 ---
 
-# Agentserver Durable Tasks (`@task`) Skill
+# Agentserver Durable Tasks (`@task`) — Standalone Skill
+
+> **Standalone document.** Copy this file into your project to give your
+> AI coding agent (GitHub Copilot, etc.) the context it needs to use the
+> `@task` primitive correctly. Pair it with the checked-in pre-release
+> wheels (see *Packaging* below) — that's all your project needs to start
+> building durable agents.
 
 The `@task` decorator in `azure-ai-agentserver-core.durable` turns a single
 agent function into a **crash-resilient, steerable, long-running** primitive
@@ -142,13 +148,20 @@ In local development (no `FOUNDRY_HOSTING_ENVIRONMENT`) `@task` uses
 `AGENTSERVER_DURABLE_TASKS_PATH` for tests). No service dependency for
 local iteration.
 
-## Packaging (interim)
+## Packaging — private preview wheels
 
-The agentserver packages are not yet on PyPI. Build local wheels and
-consume them per:
+The surrounding `azure-ai-agentserver-core` and
+`azure-ai-agentserver-invocations` packages are published on PyPI at
+stable versions. **The `@task` durable primitive is in private preview**
+and ships *only* via the pre-release wheels checked into this branch.
+There is no PyPI release for the `@task` API until it goes GA — installing
+the regular PyPI version of `azure-ai-agentserver-core` will not give you
+`azure.ai.agentserver.core.durable`.
+
+Consume the checked-in wheels per:
 
 - [USING_PRE_RELEASE_WHEELS.md](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md)
-- Build script: [`sdk/agentserver/scripts/build-wheels.sh`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/scripts/build-wheels.sh)
+- Wheel directory: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/wheels)
 
 ## Authoritative references
 

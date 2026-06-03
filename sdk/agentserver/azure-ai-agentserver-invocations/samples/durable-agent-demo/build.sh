@@ -1,26 +1,31 @@
 #!/usr/bin/env bash
-# Stage agentserver wheels into the docker build context for this demo.
+# Stage agentserver @task preview wheels into the docker build context.
 # Run this BEFORE 'azd up' or 'docker build'.
 #
-# We don't bundle wheels in the sample. Instead, we (re)build them from
-# the shared script at sdk/agentserver/scripts/build-wheels.sh and copy
-# them into the local docker build context (src/durable-research-agent/wheels/).
-# The local wheels/ dir is gitignored and is just a build-time staging
-# location.
+# Wheels are checked into the repo at sdk/agentserver/wheels/ — this
+# script just copies them into a per-sample docker-build staging dir
+# (src/durable-research-agent/wheels/, gitignored) so the Dockerfile's
+# `COPY wheels/ /tmp/wheels/` finds them at build time.
+#
+# To refresh the source wheels (maintainer-only — devs shouldn't need
+# to do this), see ../../../../docs/USING_PRE_RELEASE_WHEELS.md.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
-CENTRAL_BUILD="$REPO_ROOT/sdk/agentserver/scripts/build-wheels.sh"
 CENTRAL_WHEELS="$REPO_ROOT/sdk/agentserver/wheels"
 STAGING_DIR="$SCRIPT_DIR/src/durable-research-agent/wheels"
 
-echo "==> (Re)building agentserver wheels via $CENTRAL_BUILD"
-"$CENTRAL_BUILD"
+if [[ ! -d "$CENTRAL_WHEELS" ]] || ! ls "$CENTRAL_WHEELS"/*.whl >/dev/null 2>&1; then
+    echo "ERROR: no checked-in wheels found at $CENTRAL_WHEELS" >&2
+    echo "       Did you pull the latest from feature/agentserver-durable-tasks?" >&2
+    exit 1
+fi
 
-echo ""
-echo "==> Staging wheels into docker build context: $STAGING_DIR"
+echo "==> Staging checked-in @task preview wheels into docker build context"
+echo "    src:  $CENTRAL_WHEELS"
+echo "    dst:  $STAGING_DIR"
 rm -rf "$STAGING_DIR"
 mkdir -p "$STAGING_DIR"
 cp "$CENTRAL_WHEELS"/*.whl "$STAGING_DIR"/
@@ -28,4 +33,5 @@ ls -la "$STAGING_DIR"/*.whl
 
 echo ""
 echo "Done. Now run: azd up   (or docker build)"
+
 

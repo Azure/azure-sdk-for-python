@@ -1,50 +1,54 @@
-# Using pre-release agentserver wheels
+# Using the `@task` private-preview wheels
 
-The `azure-ai-agentserver-*` packages are not yet published to PyPI. Until
-they are, consume them as local wheels built from this branch.
+## What ships where
 
-## 1. Build the wheels
+| Package | Source | Includes `@task`? |
+|---|---|---|
+| `azure-ai-agentserver-core` on PyPI (stable) | `pip install azure-ai-agentserver-core` | ❌ No |
+| `azure-ai-agentserver-invocations` on PyPI (stable) | `pip install azure-ai-agentserver-invocations` | ❌ No |
+| `azure-ai-agentserver-core` **2.0.0b6 wheel** in this repo | [`sdk/agentserver/wheels/`](../wheels) | ✅ Yes |
+| `azure-ai-agentserver-invocations` **1.0.0b5 wheel** in this repo | [`sdk/agentserver/wheels/`](../wheels) | ✅ Yes (matched pair) |
 
-From the repo root:
+The `azure-ai-agentserver-*` packages are published on PyPI at stable
+versions. **The `@task` durable-task primitive itself is in private
+preview** and ships *only* as the pre-release wheels checked into this
+branch. Until `@task` reaches GA, the stable PyPI version of the
+package will not contain `azure.ai.agentserver.core.durable` —
+installing from PyPI gives you the surrounding agentserver framework,
+not the durable-task API.
 
-```bash
-sdk/agentserver/scripts/build-wheels.sh
-```
+The wheels are committed (not built on demand) so you can consume them
+directly without running any tooling first.
 
-This produces:
-
-```
-sdk/agentserver/wheels/
-├── azure_ai_agentserver_core-<version>-py3-none-any.whl
-└── azure_ai_agentserver_invocations-<version>-py3-none-any.whl
-```
-
-The `wheels/` directory is git-ignored — re-run the script after every
-pull to refresh.
-
-## 2. Consume the wheels in your project
+## Consume the wheels in your project
 
 ### Option A — install into a virtual env (local dev)
 
 ```bash
-pip install path/to/sdk/agentserver/wheels/azure_ai_agentserver_core-*.whl
-pip install path/to/sdk/agentserver/wheels/azure_ai_agentserver_invocations-*.whl
+# Copy or clone, then point pip at the local wheel files
+pip install --upgrade \
+    /path/to/sdk/agentserver/wheels/azure_ai_agentserver_core-*.whl \
+    /path/to/sdk/agentserver/wheels/azure_ai_agentserver_invocations-*.whl
 ```
+
+`--upgrade` is important if you already have the stable PyPI version
+installed — without it, pip will refuse to "downgrade" past the version
+heuristics.
 
 ### Option B — bundle into a container image (hosted agent)
 
-Copy the wheels into your project, install them in the Dockerfile *before*
-your `requirements.txt`:
+Copy the wheels into your project and install them in the Dockerfile
+*before* the rest of your `requirements.txt`:
 
 ```dockerfile
-# Copy pre-built agentserver wheels (built via
-# sdk/agentserver/scripts/build-wheels.sh in the durable-tasks branch)
+# Bundle the @task preview wheels (copied from sdk/agentserver/wheels/
+# in the Azure/azure-sdk-for-python feature/agentserver-durable-tasks
+# branch). Install them ahead of requirements.txt so the rest of your
+# deps don't pull a non-preview version off PyPI.
 COPY wheels/azure_ai_agentserver_core-*.whl /tmp/wheels/
 COPY wheels/azure_ai_agentserver_invocations-*.whl /tmp/wheels/
-
 RUN pip install --no-cache-dir /tmp/wheels/*.whl
 
-# Then install the rest of your app dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 ```
@@ -59,25 +63,31 @@ file:///abs/path/to/sdk/agentserver/wheels/azure_ai_agentserver_core-2.0.0b6-py3
 file:///abs/path/to/sdk/agentserver/wheels/azure_ai_agentserver_invocations-1.0.0b5-py3-none-any.whl
 ```
 
-Useful when you want `pip install -r requirements.txt` to pull pre-release
-agentserver alongside other deps. Relative paths work too if `pip` is
-invoked from the right working directory.
-
-## 3. Rebuilding after a code change
-
-After pulling the latest from the `feature/agentserver-durable-tasks`
-branch (or making a local edit), re-run:
-
-```bash
-sdk/agentserver/scripts/build-wheels.sh
-pip install --force-reinstall --no-deps sdk/agentserver/wheels/*.whl
-```
-
-The `--no-deps` keeps the install fast — only the agentserver packages
-themselves change between rebuilds.
+Relative paths work too when `pip` is invoked from the right working
+directory.
 
 ## When this doc goes away
 
-Once the agentserver packages ship to PyPI, replace local wheel installs
-with the standard `pip install azure-ai-agentserver-core azure-ai-agentserver-invocations`.
-This doc is interim guidance only.
+Once `@task` reaches GA and the durable-task primitive is included in
+the regular PyPI release of `azure-ai-agentserver-core`, replace local
+wheel installs with the standard
+`pip install azure-ai-agentserver-core azure-ai-agentserver-invocations`
+and delete this doc + the `wheels/` directory.
+
+---
+
+## For maintainers — refreshing the checked-in wheels
+
+Whenever the agentserver core or invocations source changes on this
+branch, rebuild the wheels and commit them:
+
+```bash
+sdk/agentserver/scripts/build-wheels.sh
+git add sdk/agentserver/wheels/*.whl
+git commit -m "[agentserver] refresh @task preview wheels"
+```
+
+The build script is idempotent — it deletes and re-creates the wheels
+on each run. Wheel files are binary so each rebuild produces a fresh
+SHA; `git diff` won't be human-readable, but committing them keeps the
+preview surface portable.

@@ -47,10 +47,9 @@ iteration.
 ## Deploy
 
 ```bash
-# 1. Build agentserver wheels into the docker build context
-#    (build.sh delegates to sdk/agentserver/scripts/build-wheels.sh and
-#    stages the output into src/durable-research-agent/wheels/, which is
-#    a gitignored docker-build staging dir — wheels are never committed)
+# 1. Stage the checked-in @task preview wheels into the docker build context
+#    (build.sh just copies sdk/agentserver/wheels/*.whl into a per-sample
+#    gitignored staging dir — no compilation, no PyPI fetch)
 ./build.sh
 
 # 2. Login + deploy
@@ -63,9 +62,11 @@ invocations endpoint. `demo-client.sh` already points at the canonical
 `e2e-tests-westus2` deployment — edit `ENDPOINT=` near the top of
 `demo-client.sh` if you deployed elsewhere.
 
-> See [`sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md`](../../../../docs/USING_PRE_RELEASE_WHEELS.md)
-> for how to consume the agentserver wheels in your own project until
-> the packages publish to PyPI.
+> The `@task` durable-task primitive is in **private preview** and is
+> not on PyPI. It ships only as the pre-release wheels checked into
+> [`sdk/agentserver/wheels/`](../../../../wheels). See
+> [`sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md`](../../../../docs/USING_PRE_RELEASE_WHEELS.md)
+> for the consumption workflow in your own project.
 
 ## demo-client.sh — command reference
 
@@ -316,7 +317,7 @@ For a **fast** development loop (~2 min total instead of ~33 min), edit
 durable-agent-demo/
 ├── demo-client.sh          # bash CLI: start, stream, steer, crash, cancel, logs, status, reset
 ├── azure.yaml              # azd service config
-├── build.sh                # delegates to ../../../../scripts/build-wheels.sh; stages wheels into src/.../wheels/
+├── build.sh                # copies sdk/agentserver/wheels/*.whl into src/.../wheels/ for docker
 ├── infra/                  # Bicep templates
 ├── src/durable-research-agent/
 │   ├── agent.py            # @task deep_research — durability + steering logic
@@ -328,10 +329,9 @@ durable-agent-demo/
 └── README.md
 ```
 
-Agentserver wheels are not bundled here — they're built on demand by
-`./build.sh`, which calls
-[`sdk/agentserver/scripts/build-wheels.sh`](../../../../scripts/build-wheels.sh)
-and stages the output into the local `wheels/` directory for the Docker
-build. See
+The `@task` private-preview wheels are checked in at
+[`sdk/agentserver/wheels/`](../../../../wheels) — `./build.sh` just
+copies them into this sample's `wheels/` so the Dockerfile can `COPY`
+them at image-build time. See
 [`sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md`](../../../../docs/USING_PRE_RELEASE_WHEELS.md)
-for the wheel-distribution workflow.
+for the consumer workflow.
