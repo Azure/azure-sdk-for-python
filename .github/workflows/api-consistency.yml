@@ -36,7 +36,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.10"
+
+      - name: Install azpysdk
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install ./eng/tools/azure-sdk-tools
 
       - name: Setup Node.js
         uses: actions/setup-node@v6

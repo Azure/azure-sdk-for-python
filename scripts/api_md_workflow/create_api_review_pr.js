@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
-const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const { getDefaultLogger } = require("./common");
@@ -373,8 +372,6 @@ function generateApiBytesForPackage({
   repoRoot,
   packageName,
   packageDir,
-  generateScriptPath,
-  exportScriptPath,
   runtimeExecutable,
   refLabel,
   logger,
@@ -384,8 +381,6 @@ function generateApiBytesForPackage({
     packageName,
     runtimeExecutable,
     logger,
-    generateScriptPath,
-    exportScriptPath,
     refLabel,
   });
 
@@ -419,12 +414,6 @@ function main() {
 
   const targetRef = args.target ? resolveTargetRef(args.target) : MAIN_REF;
 
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "apirev_script_"));
-  const cachedScript = path.join(tempDir, "generate_api_text.py");
-  const cachedExport = path.join(tempDir, "Export-APIViewMarkdown.ps1");
-  fs.copyFileSync(path.join(REPO_ROOT, "scripts", "generate_api_text.py"), cachedScript);
-  fs.copyFileSync(path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1"), cachedExport);
-
   try {
     let baseApiBytes = null;
     if (args.base) {
@@ -435,8 +424,6 @@ function main() {
         repoRoot: REPO_ROOT,
         packageName: args.packageName,
         packageDir,
-        generateScriptPath: cachedScript,
-        exportScriptPath: cachedExport,
         runtimeExecutable: args.runtimeExecutable,
         refLabel: currentBranchOrSha(),
         logger,
@@ -452,8 +439,6 @@ function main() {
       repoRoot: REPO_ROOT,
       packageName: args.packageName,
       packageDir,
-      generateScriptPath: cachedScript,
-      exportScriptPath: cachedExport,
       runtimeExecutable: args.runtimeExecutable,
       refLabel: currentBranchOrSha(),
       logger,
@@ -564,11 +549,7 @@ function main() {
 
     return 0;
   } finally {
-    try {
-      git(["checkout", originalBranch], { check: false });
-    } finally {
-      fs.rmSync(tempDir, { recursive: true, force: true });
-    }
+    git(["checkout", originalBranch], { check: false });
   }
 }
 

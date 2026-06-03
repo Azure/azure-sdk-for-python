@@ -106,30 +106,16 @@ function readVersion(packageDir) {
 function generateApiForPackage({
   repoRoot,
   packageName,
-  runtimeExecutable,
   logger,
-  generateScriptPath,
-  exportScriptPath,
   refLabel,
 }) {
-  const executable = runtimeExecutable || process.env.PYTHON || "python";
   const activeLogger = logger || console;
-  const scriptPath = generateScriptPath || path.join(repoRoot, "scripts", "generate_api_text.py");
   if (refLabel) {
     activeLogger.info(`--- Generating API.md on ${refLabel} ---`);
   }
 
-  const env = exportScriptPath
-    ? {
-        ...process.env,
-        AZSDK_REPO_ROOT: repoRoot,
-        AZSDK_EXPORT_SCRIPT: exportScriptPath,
-      }
-    : undefined;
-
-  run(executable, [scriptPath, packageName], {
+  run("azpysdk", ["apistub", "--md", packageName], {
     cwd: repoRoot,
-    env,
     check: true,
     logger: activeLogger,
   });

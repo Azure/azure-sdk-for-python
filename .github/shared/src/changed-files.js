@@ -3,6 +3,8 @@ import { simpleGit } from "simple-git";
 import { KeyedCache } from "./cache.js";
 import { includesSegment } from "./path.js";
 
+// cSpell:ignore unshift
+
 // Enable simple-git debug logging to improve console output
 debug.enable("simple-git");
 
