@@ -1,34 +1,33 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# Build distributable wheels for the agentserver pre-release packages.
+# Maintainer-only: rebuild the checked-in @task private-preview wheels.
 #
-# Output:
-#   sdk/agentserver/wheels/azure_ai_agentserver_core-<version>-py3-none-any.whl
-#   sdk/agentserver/wheels/azure_ai_agentserver_invocations-<version>-py3-none-any.whl
+# Output: refreshes *.whl files in this directory (sdk/agentserver/wheels/)
+#         alongside this script and README.md. Devs do NOT need to run this —
+#         the wheels are checked in. See README.md for consumption.
 #
-# Use these wheels until the agentserver packages are published to PyPI.
-# See ../docs/USING_PRE_RELEASE_WHEELS.md for how to consume them.
+# When to run:
+#   - After making source changes to azure-ai-agentserver-core/durable/
+#     or azure-ai-agentserver-invocations/ that need to ship in the preview.
+#   - Before committing those source changes, so the wheels stay in sync.
 #
 # Usage (from anywhere):
-#   sdk/agentserver/scripts/build-wheels.sh
-# Or:
-#   cd sdk/agentserver && scripts/build-wheels.sh
+#   sdk/agentserver/wheels/build-wheels.sh
 # ─────────────────────────────────────────────────────────────────────────────
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-AGENTSERVER_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-WHEELS_DIR="$AGENTSERVER_ROOT/wheels"
+WHEELS_DIR="$(cd "$(dirname "$0")" && pwd)"
+AGENTSERVER_ROOT="$(cd "$WHEELS_DIR/.." && pwd)"
 
 PACKAGES=(
     "azure-ai-agentserver-core"
     "azure-ai-agentserver-invocations"
 )
 
-echo "==> Building agentserver wheels into: $WHEELS_DIR"
-rm -rf "$WHEELS_DIR"
-mkdir -p "$WHEELS_DIR"
+echo "==> Rebuilding @task preview wheels into: $WHEELS_DIR"
+# Remove any stale wheel files but preserve README.md and the script itself.
+rm -f "$WHEELS_DIR"/*.whl
 
 for pkg in "${PACKAGES[@]}"; do
     pkg_dir="$AGENTSERVER_ROOT/$pkg"
@@ -41,8 +40,8 @@ for pkg in "${PACKAGES[@]}"; do
 done
 
 echo ""
-echo "==> Built wheels:"
+echo "==> Refreshed wheels:"
 ls -la "$WHEELS_DIR"/*.whl
 
 echo ""
-echo "Next: see sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md for consumption."
+echo "Next: git add sdk/agentserver/wheels/*.whl && commit."
