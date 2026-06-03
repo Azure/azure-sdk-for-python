@@ -17,7 +17,20 @@ from azure.cosmos import exceptions
 from azure.cosmos import _retry_utility
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
-from azure.cosmos._routing.feed_range_continuation import _FIELD_VERSION, _TOKEN_VERSION, _decode_token
+from azure.cosmos._routing import routing_range
+from azure.cosmos._routing.feed_range_continuation import (
+    _FIELD_BACKEND_CONTINUATION,
+    _FIELD_COLLECTION_RID,
+    _FIELD_CONTINUATIONS,
+    _FIELD_FEEDRANGE_HASH,
+    _FIELD_QUERY_HASH,
+    _FIELD_VERSION,
+    _TOKEN_VERSION,
+    _decode_token,
+    _encode_token,
+    _hash_feed_range,
+    _hash_query_spec,
+)
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 # tracemalloc is not available in PyPy, so we import conditionally
@@ -1487,6 +1500,151 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert decoded is not None
         assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
         assert len(decoded["c"]) == 2
+
+    def test_queryfeed_v1_inbound_token_explodes_head_on_resume(self):
+        """Resume with a structured continuation token whose head range now spans
+        two partitions. The loop must send one request per child across two
+        pages and forward the parent's backend continuation to each child so
+        results are not replayed from the start.
+        """
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        child_left = {"id": "1", "minInclusive": "00", "maxExclusive": "7F"}
+        child_right = {"id": "2", "minInclusive": "7F", "maxExclusive": "FF"}
+
+        def overlap_side_effect(_rid, ranges, _opts):
+            requested = ranges[0]
+            if requested.min == "00" and requested.max == "FF":
+                return [child_left, child_right]
+            if requested.min == "00" and requested.max == "7F":
+                return [child_left]
+            if requested.min == "7F" and requested.max == "FF":
+                return [child_right]
+            return []
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        feed_range_dict = {
+            "Range": {
+                "min": "00",
+                "max": "FF",
+                "isMinInclusive": True,
+                "isMaxInclusive": False,
+            }
+        }
+        full_range = routing_range.Range(
+            range_min="00",
+            range_max="FF",
+            isMinInclusive=True,
+            isMaxInclusive=False,
+        )
+        query_text = "SELECT * FROM c"
+        # Build a structured continuation token whose single entry covers the
+        # full range and carries a backend continuation that must be forwarded
+        # to both children once the head is split.
+        inbound_token_payload = {
+            "v": 1,
+            _FIELD_COLLECTION_RID: "rid-c1",
+            _FIELD_QUERY_HASH: _hash_query_spec(query_text),
+            _FIELD_FEEDRANGE_HASH: _hash_feed_range(full_range),
+            _FIELD_CONTINUATIONS: [
+                {
+                    "min": "00",
+                    "max": "FF",
+                    "isMinInclusive": True,
+                    "isMaxInclusive": False,
+                    _FIELD_BACKEND_CONTINUATION: "parent-bc",
+                }
+            ],
+        }
+        inbound_token = _encode_token(inbound_token_payload)
+
+        seen_request_continuations = []
+        seen_pkr_ids = []
+        post_call_count = {"n": 0}
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            post_call_count["n"] += 1
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            seen_pkr_ids.append(req_headers.get(HttpHeaders.PartitionKeyRangeID))
+            # Each child returns one document and signals "drained" by
+            # returning a None continuation so the next call targets the
+            # next child.
+            return (
+                {"Documents": [{"id": f"doc-{post_call_count['n']}"}]},
+                {HttpHeaders.Continuation: None},
+            )
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    # First page: should send a request to the left child with
+                    # the original backend continuation.
+                    docs_p1, headers_p1 = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=query_text,
+                        options={"continuation": inbound_token},
+                        feed_range=feed_range_dict,
+                    )
+
+                    outbound_p1 = headers_p1.get(HttpHeaders.Continuation)
+                    decoded_p1 = _decode_token(outbound_p1)
+                    assert decoded_p1 is not None, (
+                        "Page 1 outbound continuation must be a structured "
+                        f"token after the head is split; got {outbound_p1!r}"
+                    )
+                    assert decoded_p1[_FIELD_VERSION] == _TOKEN_VERSION
+                    assert len(decoded_p1[_FIELD_CONTINUATIONS]) == 1, (
+                        "After draining the left child, only the right child "
+                        "should remain in the outbound token; got "
+                        f"{decoded_p1[_FIELD_CONTINUATIONS]!r}"
+                    )
+                    surviving = decoded_p1[_FIELD_CONTINUATIONS][0]
+                    assert surviving["min"] == "7F" and surviving["max"] == "FF", (
+                        "The remaining entry must be the right child's range; "
+                        f"got {surviving!r}"
+                    )
+                    assert surviving.get(_FIELD_BACKEND_CONTINUATION) == "parent-bc", (
+                        "The remaining child must carry the parent's backend "
+                        f"continuation forward; got bc={surviving.get(_FIELD_BACKEND_CONTINUATION)!r}"
+                    )
+
+                    # Second page: should send a request to the right child
+                    # with the same backend continuation.
+                    docs_p2, headers_p2 = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=query_text,
+                        options={"continuation": outbound_p1},
+                        feed_range=feed_range_dict,
+                    )
+
+        assert post_call_count["n"] == 2, (
+            "Expected exactly one request per child across the two pages; "
+            f"got {post_call_count['n']} request(s)"
+        )
+        assert seen_request_continuations == ["parent-bc", "parent-bc"], (
+            "Each child must receive the parent's backend continuation; "
+            f"got {seen_request_continuations!r}"
+        )
+        assert seen_pkr_ids == [child_left["id"], child_right["id"]], (
+            "Expected one request per child range id in left-to-right order; "
+            f"got {seen_pkr_ids!r}"
+        )
+        assert docs_p1 == [{"id": "doc-1"}], (
+            f"Page 1 should return only the left child's document; got {docs_p1!r}"
+        )
+        assert docs_p2 == [{"id": "doc-2"}], (
+            f"Page 2 should return only the right child's document; got {docs_p2!r}"
+        )
+        outbound_p2 = headers_p2.get(HttpHeaders.Continuation)
+        assert outbound_p2 in (None, "", b""), (
+            "Expected an empty outbound continuation after both children are "
+            f"drained; got {outbound_p2!r}"
+        )
 
 
 if __name__ == "__main__":

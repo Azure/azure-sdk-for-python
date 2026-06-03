@@ -8,6 +8,7 @@ Async unit tests for partition split (410) retry logic.
 import gc
 import time
 import unittest
+from typing import List
 from unittest.mock import patch, MagicMock, AsyncMock
 
 import pytest
@@ -20,7 +21,20 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
-from azure.cosmos._routing.feed_range_continuation import _FIELD_VERSION, _TOKEN_VERSION, _decode_token
+from azure.cosmos._routing import routing_range
+from azure.cosmos._routing.feed_range_continuation import (
+    _FIELD_BACKEND_CONTINUATION,
+    _FIELD_COLLECTION_RID,
+    _FIELD_CONTINUATIONS,
+    _FIELD_FEEDRANGE_HASH,
+    _FIELD_QUERY_HASH,
+    _FIELD_VERSION,
+    _TOKEN_VERSION,
+    _decode_token,
+    _encode_token,
+    _hash_feed_range,
+    _hash_query_spec,
+)
 
 # tracemalloc is not available in PyPy, so we import conditionally
 try:
@@ -1405,3 +1419,215 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert decoded is not None
         assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
         assert len(decoded["c"]) == 2
+
+    async def test_queryfeed_feed_range_routing_lookup_failure_stamps_checkpoint_async(self):
+        """If the routing lookup fails mid-page on the async path, a resumable
+        continuation must be saved on the client before the error is re-raised
+        so the caller can retry without losing progress.
+        """
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        single_overlap = [{"id": "0", "minInclusive": "00", "maxExclusive": "FF"}]
+        routing_call_count = {"n": 0}
+
+        async def overlap_side_effect(_rid, _ranges, _opts):
+            routing_call_count["n"] += 1
+            # First call succeeds; the next routing lookup raises so the test
+            # exercises the failure path inside the mid-page loop.
+            if routing_call_count["n"] >= 2:
+                raise RuntimeError("routing-map-down")
+            return single_overlap
+
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(side_effect=overlap_side_effect)
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        with patch("azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders", return_value={}):
+            with patch(
+                "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
+                side_effect=_noop_set_session,
+            ):
+                with patch.object(client, "_CosmosClientConnection__Post", new=AsyncMock()) as post_mock:
+                    with pytest.raises(RuntimeError, match="routing-map-down"):
+                        await client.QueryFeed(
+                            path="/dbs/db/colls/c1/docs",
+                            collection_id="rid-c1",
+                            query="SELECT * FROM c",
+                            options={"continuation": "legacy-inbound-token"},
+                            feed_range={
+                                "Range": {
+                                    "min": "00",
+                                    "max": "FF",
+                                    "isMinInclusive": True,
+                                    "isMaxInclusive": False,
+                                }
+                            },
+                        )
+                    # The routing failure must surface before any backend call.
+                    assert post_mock.await_count == 0, (
+                        "__Post must not be awaited when the routing lookup "
+                        f"raises (got {post_mock.await_count} awaits)"
+                    )
+
+        # The original inbound continuation is saved unchanged so the caller
+        # can retry from the same position.
+        continuation = client.last_response_headers.get(HttpHeaders.Continuation)
+        assert continuation == "legacy-inbound-token", (
+            "Expected the original inbound continuation to be saved on "
+            f"last_response_headers after the routing failure; got {continuation!r}"
+        )
+
+    async def test_queryfeed_v1_inbound_token_explodes_head_on_resume_async(self):
+        """Resume with a structured continuation token whose head range now spans
+        two partitions. The loop must send one request per child across two
+        pages and forward the parent's backend continuation to each child so
+        results are not replayed from the start.
+        """
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        child_left = {"id": "1", "minInclusive": "00", "maxExclusive": "7F"}
+        child_right = {"id": "2", "minInclusive": "7F", "maxExclusive": "FF"}
+
+        async def overlap_side_effect(_rid, ranges, _opts):
+            requested = ranges[0]
+            if requested.min == "00" and requested.max == "FF":
+                return [child_left, child_right]
+            if requested.min == "00" and requested.max == "7F":
+                return [child_left]
+            if requested.min == "7F" and requested.max == "FF":
+                return [child_right]
+            return []
+
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(side_effect=overlap_side_effect)
+
+        feed_range_dict = {
+            "Range": {
+                "min": "00",
+                "max": "FF",
+                "isMinInclusive": True,
+                "isMaxInclusive": False,
+            }
+        }
+        full_range = routing_range.Range(
+            range_min="00",
+            range_max="FF",
+            isMinInclusive=True,
+            isMaxInclusive=False,
+        )
+        query_text = "SELECT * FROM c"
+        # Build a structured continuation token whose single entry covers the
+        # full range and carries a backend continuation that must be forwarded
+        # to both children once the head is split.
+        inbound_token_payload = {
+            "v": 1,
+            _FIELD_COLLECTION_RID: "rid-c1",
+            _FIELD_QUERY_HASH: _hash_query_spec(query_text),
+            _FIELD_FEEDRANGE_HASH: _hash_feed_range(full_range),
+            _FIELD_CONTINUATIONS: [
+                {
+                    "min": "00",
+                    "max": "FF",
+                    "isMinInclusive": True,
+                    "isMaxInclusive": False,
+                    _FIELD_BACKEND_CONTINUATION: "parent-bc",
+                }
+            ],
+        }
+        inbound_token = _encode_token(inbound_token_payload)
+
+        seen_request_continuations: List[str] = []
+        seen_pkr_ids: List[str] = []
+        post_call_count = {"n": 0}
+
+        async def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            post_call_count["n"] += 1
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            seen_pkr_ids.append(req_headers.get(HttpHeaders.PartitionKeyRangeID))
+            return (
+                {"Documents": [{"id": f"doc-{post_call_count['n']}"}]},
+                {HttpHeaders.Continuation: None},
+            )
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        with patch("azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders", return_value={}):
+            with patch(
+                "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
+                side_effect=_noop_set_session,
+            ):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    # First page: should send a request to the left child with
+                    # the original backend continuation.
+                    docs_p1, headers_p1 = await client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=query_text,
+                        options={"continuation": inbound_token},
+                        feed_range=feed_range_dict,
+                    )
+
+                    outbound_p1 = headers_p1.get(HttpHeaders.Continuation)
+                    decoded_p1 = _decode_token(outbound_p1)
+                    assert decoded_p1 is not None, (
+                        "Page 1 outbound continuation must be a structured "
+                        f"token after the head is split; got {outbound_p1!r}"
+                    )
+                    assert decoded_p1[_FIELD_VERSION] == _TOKEN_VERSION
+                    assert len(decoded_p1["c"]) == 1, (
+                        "After draining the left child, only the right child "
+                        f"should remain in the outbound token; got {decoded_p1['c']!r}"
+                    )
+                    surviving = decoded_p1["c"][0]
+                    assert surviving["min"] == "7F" and surviving["max"] == "FF", (
+                        "The remaining entry must be the right child's range; "
+                        f"got {surviving!r}"
+                    )
+                    assert surviving.get(_FIELD_BACKEND_CONTINUATION) == "parent-bc", (
+                        "The remaining child must carry the parent's backend "
+                        f"continuation forward; got bc={surviving.get(_FIELD_BACKEND_CONTINUATION)!r}"
+                    )
+
+                    # Second page: should send a request to the right child
+                    # with the same backend continuation.
+                    docs_p2, headers_p2 = await client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=query_text,
+                        options={"continuation": outbound_p1},
+                        feed_range=feed_range_dict,
+                    )
+
+        assert post_call_count["n"] == 2, (
+            "Expected exactly one request per child across the two pages; "
+            f"got {post_call_count['n']} request(s)"
+        )
+        assert seen_request_continuations == ["parent-bc", "parent-bc"], (
+            "Each child must receive the parent's backend continuation; "
+            f"got {seen_request_continuations!r}"
+        )
+        assert seen_pkr_ids == [child_left["id"], child_right["id"]], (
+            "Expected one POST per child PKR id in left-to-right order; "
+            f"got PKR ids {seen_pkr_ids!r}"
+        )
+        assert docs_p1 == [{"id": "doc-1"}], (
+            f"Page 1 must return only child_left's doc; got {docs_p1!r}"
+        )
+        assert docs_p2 == [{"id": "doc-2"}], (
+            f"Page 2 must return only child_right's doc; got {docs_p2!r}"
+        )
+        outbound_p2 = headers_p2.get(HttpHeaders.Continuation)
+        assert outbound_p2 in (None, "", b""), (
+            "Expected empty outbound continuation after fully draining "
+            f"both children; got {outbound_p2!r}"
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
+
