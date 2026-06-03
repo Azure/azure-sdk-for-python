@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, Union
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -18,6 +18,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import TextTranslationClientConfiguration
 from ._operations import _TextTranslationClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -36,9 +41,9 @@ class TextTranslationClient(_TextTranslationClientOperationsMixin):
      credential type or a token credential type. Default value is None.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: Mandatory API version parameter. Known values are "2026-06-06". Default
-     value is "2026-06-06". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: Mandatory API version parameter. Known values are "2026-06-06" and None.
+     Default value is None. If not set, the operation's default API version will be used. Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

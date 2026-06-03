@@ -253,26 +253,27 @@ def is_stable_on_pypi(package_name: str) -> bool:
 def get_package_data_from_pypi(
     package_name: str,
 ) -> tuple[Optional[str], Optional[str]]:
-    """Fetch the latest version and download URI for a package from PyPI."""
+    """Fetch the latest version and download URI for a package from the active index.
+
+    Uses :class:`PyPIClient`, which transparently selects the backend based on
+    ``PIP_INDEX_URL``:
+
+    * Against **pypi.org**, the JSON API is used.
+    * Against an **Azure DevOps Artifacts** feed (set by ``PipAuthenticate@1`` in
+      CI), the Feed REST API resolves the latest version and the sdist URL is
+      resolved on ``pkgs.dev.azure.com``.
+    """
     try:
         client = PyPIClient()
-        data = client.project(package_name)
-
-        # Get the latest version
-        latest_version = data["info"]["version"]
-        if latest_version in data["releases"] and data["releases"][latest_version]:
-            # Get the source distribution (sdist) if available
-            files = data["releases"][latest_version]
-            source_dist = next((f for f in files if f["packagetype"] == "sdist"), None)
-            if source_dist:
-                download_url = source_dist["url"]
-                logger.info(
-                    f"Found download URL for {package_name}=={latest_version}: {download_url}"
-                )
-                return latest_version, download_url
-
+        version, download_url = client.get_latest_download_uri(package_name)
+        if version and download_url:
+            logger.info(
+                f"Found download URL for {package_name}=={version}: {download_url}"
+            )
+            return version, download_url
+        logger.error(f"No sdist download URL resolved for {package_name}")
     except Exception as e:
-        logger.error(f"Failed to fetch download URI from PyPI for {package_name}: {e}")
+        logger.error(f"Failed to fetch download URI from index for {package_name}: {e}")
     return None, None
 
 
