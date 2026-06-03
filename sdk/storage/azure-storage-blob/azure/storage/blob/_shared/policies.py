@@ -66,9 +66,7 @@ CRC64_HEADER = "x-ms-content-crc64"
 SM_HEADER = "x-ms-structured-body"
 SM_HEADER_V1_CRC64 = "XSM/1.0; properties=crc64"
 SM_LENGTH_HEADER = "x-ms-structured-content-length"
-SESSION_ELIGIBLE_CONTEXT_KEY = "_session_eligible"
 SESSION_RETRIED_CONTEXT_KEY = "_session_retried"
-SESSION_TOKEN_HEADER = "x-ms-session-token"
 UTC = timezone.utc
 
 
@@ -1004,29 +1002,20 @@ class StorageSessionPolicy(HTTPPolicy):
         self._cache = SessionCache()
 
     @staticmethod
-    def _parse_container(url: str) -> Optional[str]:
-        """Extract the container name (first path segment) from a request URL.
-
-        :param str url: The request URL.
-        :return: The container name, or `None` for service-level URLs.
-        :rtype: str or None
-        """
-        path = urlparse(url).path
-        segments = [seg for seg in path.split("/") if seg]
-        return segments[0] if segments else None
-
-    @staticmethod
-    def _container_url(request_url: str) -> str:
-        """Build the container-scoped URL (scheme://host/container) for CreateSession.
-
-        :param str request_url: The originating request URL.
-        :return: A URL pointing at the container root.
-        :rtype: str
-        """
-        parsed = urlparse(request_url)
+    def _analyze_request(request: "PipelineRequest") -> Optional[Tuple[str, str]]:
+        http_request = request.http_request
+        if http_request.method != "GET":
+            return None
+        parsed = urlparse(http_request.url)
         segments = [seg for seg in parsed.path.split("/") if seg]
-        container = segments[0] if segments else ""
-        return f"{parsed.scheme}://{parsed.netloc}/{container}"
+        if len(segments) < 2:
+            return None
+        query = http_request.query
+        if "comp" in query or query.get("restype") == "container":
+            return None
+        container_name = segments[0]
+        container_url = f"{parsed.scheme}://{parsed.netloc}/{container_name}"
+        return container_name, container_url
 
     @staticmethod
     def _extract_session(response: Any) -> Tuple[str, str, datetime]:
@@ -1072,20 +1061,13 @@ class StorageSessionPolicy(HTTPPolicy):
             raise AzureSigningError(str(ex)) from ex
         http_request.headers["Authorization"] = f"Session {session_token}:{signature}"
 
-    def _is_eligible(self, request: "PipelineRequest") -> bool:
-        if not self._use_session:
-            return False
-        http_request = request.http_request
-        if http_request.method != "GET":
-            return False
-        parsed = urlparse(http_request.url)
-        segments = [s for s in parsed.path.split("/") if s]
-        if len(segments) < 2:
-            return False
-        query = http_request.query
-        if "comp" in query or query.get("restype") == "container":
-            return False
-        return True
+    def _resolve_session(self, container_name: str, container_url: str) -> Optional[Session]:
+        session = self._cache.get(container_name)
+        if session is None:
+            session = self._refresh_session_token(container_name, container_url)
+        if session is None or session.is_fallback:
+            return None
+        return session
 
     def _create_session(self, container_url: str) -> Tuple[str, str, datetime]:
         config = CreateSessionConfiguration(authentication_type="HMAC")
@@ -1136,18 +1118,15 @@ class StorageSessionPolicy(HTTPPolicy):
         :return: The container name if a session was applied, else None.
         :rtype: str or None
         """
-        if not self._is_eligible(request):
+        if not self._use_session:
             return None
-        container_name = self._parse_container(request.http_request.url)
-        if not container_name:
+        analysis = self._analyze_request(request)
+        if analysis is None:
             return None
+        container_name, container_url = analysis
 
-        session = self._cache.get(container_name)
-        if session is None:
-            container_url = self._container_url(request.http_request.url)
-            session = self._refresh_session_token(container_name, container_url)
-
-        if session is None or session.is_fallback or not session.session_token or not session.session_key:
+        session = self._resolve_session(container_name, container_url)
+        if session is None or not session.session_token or not session.session_key:
             return None
 
         self._apply_session_auth(request, session.session_token, session.session_key)
@@ -1179,13 +1158,13 @@ class StorageSessionPolicy(HTTPPolicy):
             self._use_session = False
             return response
 
-        # Unavailable / feature-off / 5xx → negative-cache cooldown.
-        if error_code in self.SESSIONS_UNAVAILABLE or status >= 500:
+        # Unavailable / 5xx → negative-cache cooldown.
+        if error_code == self.SESSIONS_UNAVAILABLE or status >= 500:
             _LOGGER.warning(
                 "Session authentication: '%s' (HTTP %d) on container '%s'; bearer fallback for %d seconds.",
                 error_code or "5xx", status, container_name,
                 int(SessionCache.FALLBACK_COOLDOWN.total_seconds()),
-                )
+            )
             with self._cache.lock_container(container_name):
                 self._cache.put_fallback(container_name)
             return response

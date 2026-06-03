@@ -468,19 +468,17 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         :return: The container name if a session was applied, else None.
         :rtype: str or None
         """
-        if not self._signer._is_eligible(request):  # pylint: disable=protected-access
+        if not self._use_session:
             return None
-        container_name = StorageSessionPolicy._parse_container(  # pylint: disable=protected-access
-            request.http_request.url
-        )
-        if not container_name:
+        analysis = StorageSessionPolicy._analyze_request(request)  # pylint: disable=protected-access
+        if analysis is None:
             return None
+        container_name, container_url = analysis
 
         session = self._cache.get(container_name)
         if session is None:
-            container_url = StorageSessionPolicy._container_url(  # pylint: disable=protected-access
-                request.http_request.url
-            )
+            # True miss/expiry (a live fallback sentinel is returned by get(),
+            # so we never reach refresh while the cooldown is active).
             session = await self._refresh_session_token(container_name, container_url)
 
         if session is None or session.is_fallback or not session.session_token or not session.session_key:
@@ -517,8 +515,8 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
             self._use_session = False
             return response
 
-        # Unavailable / feature-off / 5xx → negative-cache cooldown.
-        if error_code in self.SESSIONS_UNAVAILABLE or status >= 500:
+        # Unavailable / 5xx → negative-cache cooldown.
+        if error_code == self.SESSIONS_UNAVAILABLE or status >= 500:
             _LOGGER.warning(
                 "Session authentication: '%s' (HTTP %d) on container '%s'; bearer fallback for %d seconds.",
                 error_code or "5xx", status, container_name,
