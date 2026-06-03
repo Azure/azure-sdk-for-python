@@ -39,7 +39,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated):
+class _AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated):
     def _build_kv_error_map(
         self,
         match_condition: Optional[MatchConditions],
@@ -347,7 +347,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
 
 
 __all__: List[str] = [
-    "AzureAppConfigurationClientOperationsMixin"
+    "_AzureAppConfigurationClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 
