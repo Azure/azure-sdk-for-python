@@ -19,5 +19,5 @@ description: Generate an API markdown file and token file using ApiView. Use thi
 1. Navigate to the desired package directory
 2. Run the command:
    ```bash
-   azpysdk apistub --md .
+   azpysdk apistub --md --extract-metadata .
 3. The command outputs the location of the generated markdown file. Provide this file to the user for review.

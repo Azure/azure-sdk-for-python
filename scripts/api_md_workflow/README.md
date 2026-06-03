@@ -5,6 +5,8 @@ This folder contains the helper scripts used by the GitHub Actions workflows tha
 ## Purpose
 
 The workflow validates that when a pull request changes one or more SDK packages, the committed `API.md` files are still up to date.
+Only `API.md` is diff-gated by this workflow; `API.metadata.yml` is intentionally excluded from mismatch checks.
+Use `API.metadata.yml` as diagnostic context when `API.md` drifts (for example, parser/runtime version differences), but it does not affect pass/fail.
 
 The logic is split between GitHub workflow YAML files and helper scripts in Python and JavaScript.
 
@@ -20,7 +22,7 @@ It runs on pull requests for changes under `sdk/**`.
 - Regenerates `API.md` for those packages.
 - Fails if the generated files differ from the committed files.
 - Fails if an affected package does not have a committed `API.md`.
-- Prints the mismatched or missing packages and the `azpysdk apistub --md` command needed to regenerate each `API.md` file.
+- Prints the mismatched or missing packages and the `azpysdk apistub --md --extract-metadata` command needed to regenerate each `API.md` file.
 
 ## Script Layout
 
@@ -47,7 +49,7 @@ Also writes `count=<n>` to `GITHUB_OUTPUT`.
 
 ### `regenerate.js`
 
-Reads package directories from `API_MD_PACKAGES_FILE` and runs `azpysdk apistub --md <package-name>` for each package.
+Reads package directories from `API_MD_PACKAGES_FILE` and runs `azpysdk apistub --md --extract-metadata <package-name>` for each package.
 
 This script is used by the consistency check.
 
@@ -59,6 +61,8 @@ Reads package directories from `API_MD_PACKAGES_FILE`, checks whether `<package>
 - missing files to `API_MD_MISSING_FILE`
 
 Also writes `mismatch_count=<n>`, `missing_count=<n>`, and `issue_count=<n>` to `GITHUB_OUTPUT`.
+
+`API.metadata.yml` is not part of this diff check.
 
 ### `create_api_review_pr.js` and adapters
 
@@ -96,4 +100,4 @@ Common variables include:
 3. `find_affected.js` determines which packages were touched.
 4. `regenerate.js` rebuilds `API.md` for those packages.
 5. `find_mismatches.js` records any `API.md` drift, including missing or untracked `API.md` files.
-6. If drift is found, the workflow fails and prints the affected packages plus the `azpysdk apistub --md <package-name>` command to regenerate each `API.md` file locally.
+6. If drift is found, the workflow fails and prints the affected packages plus the `azpysdk apistub --md --extract-metadata <package-name>` command to regenerate each `API.md` file locally.

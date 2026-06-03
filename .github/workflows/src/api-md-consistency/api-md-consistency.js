@@ -44,7 +44,7 @@ function formatIssueSection(title, apiFiles) {
     const packageName = path.basename(packageDir);
     lines.push(`- ${packageDir}`);
     lines.push(`  API.md: ${apiFile}`);
-    lines.push(`  Regenerate: azpysdk apistub --md ${packageName}`);
+    lines.push(`  Regenerate: azpysdk apistub --md --extract-metadata ${packageName}`);
   }
   lines.push("");
   return lines.join("\n");
@@ -88,6 +88,7 @@ module.exports = async function apiMdConsistency({ core }) {
   if (issueCount > 0) {
     const messageParts = [
       "Generated API.md does not match committed API.md, or API.md is missing, for one or more affected packages.",
+      "API.metadata.yml is informational only (for troubleshooting API drift, e.g., parser/runtime differences) and is not part of pass/fail gating.",
       "",
       formatIssueSection("Mismatched packages:", mismatches),
       formatIssueSection("Missing API.md packages:", missing),

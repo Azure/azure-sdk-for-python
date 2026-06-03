@@ -94,7 +94,7 @@ class TestRunOutputDirectory:
     def test_dest_dir_creates_package_subfolder(
         self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
     ):
-        """When --dest-dir is given, output should go to <dest_dir>/<package_name>/."""
+        """When --dest-dir is given, output should go directly to <dest_dir>/."""
         monkeypatch.chdir(os.getcwd())
         dest = tmp_path / "output"
         dest.mkdir()
@@ -130,7 +130,7 @@ class TestRunOutputDirectory:
 
             stub.run(self._make_args(dest_dir=str(dest), generate_md=True))
 
-        expected_out = os.path.join(str(dest), "azure-core")
+        expected_out = str(dest)
         assert os.path.isdir(expected_out)
         assert os.path.exists(os.path.join(expected_out, "api.md"))
         assert os.path.exists(os.path.join(expected_out, "azure-core_python.json"))

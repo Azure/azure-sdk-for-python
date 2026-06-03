@@ -13,6 +13,8 @@ async function main() {
   const mismatches = [];
   const missing = [];
   for (const pkgDir of packages) {
+    // Deliberately scope consistency gating to API.md only.
+    // API.metadata.yml is generated sidecar metadata and is not diff-gated here.
     const apiFile = `${pkgDir}/API.md`;
 
     // Enforce that each affected package has a committed API.md file.
