@@ -1,13 +1,17 @@
 # Release History
 
+## 1.2.0b2 (Unreleased)
+
+### Bugs Fixed
+- Filtered service-emitted `LLMStats:` telemetry entries from the rendered `rai_warnings` front matter.
+
+### Other Changes
+- Updated `to_llm_input` page markers from `<!-- page N -->` to `<!-- InputPageNumber: N -->` and avoided duplicate marker injection when the service markdown already includes `InputPageNumber` markers.
+
 ## 1.2.0b1 (2026-04-28)
 
 ### Features Added
 - Added `to_llm_input` helper function that converts `AnalysisResult` objects into LLM-friendly text with YAML front matter and markdown content. Supports documents, audio/video, and classification hierarchies.
-
-### Bugs Fixed
-- Updated `to_llm_input` page markers from `<!-- page N -->` to `<!-- InputPageNumber: N -->` and avoided duplicate marker injection when the service markdown already includes `InputPageNumber` markers.
-- Filtered service-emitted `LLMStats:` telemetry entries from the rendered `rai_warnings` front matter.
 
 ## 1.1.0 (2026-04-20)
 
