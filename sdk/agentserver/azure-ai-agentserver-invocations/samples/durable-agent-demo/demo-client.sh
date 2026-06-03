@@ -74,183 +74,230 @@ ensure_token() {
     fi
 }
 
-# ── SSE stream renderer ───────────────────────────────────────────────────────
+# ── SSE stream renderer (Python — see comment) ───────────────────────────────
 
-# Pretty-prints stream events from agent.py. Recognised types:
-#   run_start, recovered, phase_start, subcall_start, token, subcall_end,
-#   phase_end, run_complete, winding_down, done
+# Why a python renderer instead of bash:
+#  - We need to detect server stalls (no data for >N seconds, e.g. crash on
+#    a network with proxy buffering) quickly, and we need batched terminal
+#    writes (one tight printf for every received token can make the real
+#    interactive terminal the latency bottleneck even when the bash logic
+#    itself is fast).
+#  - Python's select() + line iteration gives us both natively: a small
+#    in-memory token buffer flushed every ~50ms, and a stall watchdog that
+#    fires after _STALL_SECS of no inbound data even if curl hasn't seen
+#    EOF yet (which surfaces a server crash within seconds instead of
+#    waiting on the platform edge proxy to drain).
+#  - Renderer formatting and color codes match the previous bash version
+#    exactly so prior demo expectations still hold.
 #
-# Every block-style event is prefixed with [HH:MM:SSZ] — the client's local
-# UTC wall-clock at render time, so you can compare against `server_time=`
-# (the server's UTC at emit time) and `uptime=` (the server process's
-# monotonic seconds-since-boot, which resets to ~0 on crash recovery).
+# Contract with bash:
+#   stdin   = raw SSE frames from curl (id: N / data: ...)
+#   env     = $INITIAL_EVENT_ID (resume cursor), $STATE_FILE (path to write
+#             back LAST_EVENT_ID + STREAM_RESULT on exit), $STALL_SECS
+#   stdout  = rendered output
+#   exit    = 0 normally; non-zero only on hard errors
 
-_now_utc() {
-    date -u +'%H:%M:%SZ'
-}
+_PY_RENDERER='
+import json, os, sys, select, signal, time
+from datetime import datetime, timezone
 
-render_event() {
-    local json="$1"
+# Bring the env-provided knobs in once.
+INITIAL_EVENT_ID = int(os.environ.get("INITIAL_EVENT_ID", "0") or "0")
+STATE_FILE       = os.environ.get("STATE_FILE", "")
+STALL_SECS       = float(os.environ.get("STALL_SECS", "10"))
+FLUSH_MS         = float(os.environ.get("FLUSH_MS", "50"))
+# CURL_PID is set by the bash wrapper. We kill it when the stall watchdog
+# fires so the script exits promptly instead of waiting on the still-open
+# socket (the platform edge proxy may hold the TCP connection open even
+# after the backend dies).
+CURL_PID         = int(os.environ.get("CURL_PID", "0") or "0")
 
-    # Detect event type via bash regex (~0.05ms) instead of a python3
-    # subprocess (~30ms). At LLM emit rates the per-token cost matters.
-    local etype=""
-    if [[ "$json" =~ \"type\":[[:space:]]*\"([a-z_]+)\" ]]; then
-        etype="${BASH_REMATCH[1]}"
-    fi
+# ANSI palette — mirrors demo-client.sh.
+BOLD, DIM = "\033[1m", "\033[2m"
+GREEN, YELLOW, RED = "\033[32m", "\033[33m", "\033[31m"
+CYAN, MAGENTA, BLUE = "\033[36m", "\033[35m", "\033[34m"
+RESET = "\033[0m"
 
-    # `now=$(_now_utc)` is set per-case below (not once at the top)
-    # because the `date` subprocess costs ~5ms and the token hot path
-    # doesn't need it. Setting it eagerly here would dominate render
-    # cost at LLM emit rates.
+out = sys.stdout
+def write(s): out.write(s)
+def flush(): out.flush()
 
-    case "$etype" in
-        run_start)
-            local now; now=$(_now_utc)
-            local topic entry_mode total uptime srv
-            topic=$(_jq "$json" topic)
-            entry_mode=$(_jq "$json" entry_mode)
-            total=$(_jq "$json" total_phases)
-            uptime=$(_jq "$json" server_uptime_sec)
-            srv=$(_jq "$json" server_time_utc)
-            local prior
-            prior=$(_jq "$json" prior_topic)
-            echo ""
-            echo -e "${BOLD}${CYAN}══════════════════════════════════════════════════════════════${RESET}"
-            echo -e "${DIM}[${now}]${RESET} ${BOLD}${CYAN}▶ Run start${RESET}    topic=${BOLD}${topic}${RESET}  (${total} phases)"
-            [[ -n "$prior" && "$prior" != "None" ]] && \
-                echo -e "  ${YELLOW}(steered from prior topic: ${prior})${RESET}"
-            echo -e "  entry_mode=${entry_mode}   server_time=${srv}   uptime=${uptime}s"
-            echo -e "${BOLD}${CYAN}══════════════════════════════════════════════════════════════${RESET}"
-            ;;
-        recovered)
-            local now; now=$(_now_utc)
-            local completed total srv uptime
-            completed=$(_jq "$json" completed_phases)
-            total=$(_jq "$json" total_phases)
-            srv=$(_jq "$json" server_time_utc)
-            uptime=$(_jq "$json" server_uptime_sec)
-            echo ""
-            echo -e "${DIM}[${now}]${RESET} ${BOLD}${GREEN}🔁 Recovered from crash${RESET}   resuming from phase ${completed}/${total}"
-            echo -e "  server_time=${srv}   uptime=${uptime}s  ${DIM}(uptime ~0s = fresh container)${RESET}"
-            ;;
-        phase_start)
-            local now; now=$(_now_utc)
-            local phase total title srv uptime
-            phase=$(_jq "$json" phase)
-            total=$(_jq "$json" total)
-            title=$(_jq "$json" title)
-            srv=$(_jq "$json" server_time_utc)
-            uptime=$(_jq "$json" server_uptime_sec)
-            echo ""
-            echo -e "${BOLD}${BLUE}──────────────────────────────────────────────────────────────${RESET}"
-            echo -e "${DIM}[${now}]${RESET} ${BOLD}${BLUE}▶ Phase ${phase}/${total}${RESET} — ${title}"
-            echo -e "  ⏰ server_time=${srv}   uptime=${uptime}s"
-            echo -e "${BOLD}${BLUE}──────────────────────────────────────────────────────────────${RESET}"
-            ;;
-        subcall_start)
-            local now; now=$(_now_utc)
-            local role idx of
-            role=$(_jq "$json" role)
-            idx=$(_jq "$json" index)
-            of=$(_jq "$json" of)
-            echo ""
-            echo -e "${DIM}  [${now}]  [${role} ${idx}/${of}] ───${RESET}"
-            ;;
-        token)
-            # Hot path — runs once per LLM token. Avoid spawning python3
-            # here (each subprocess is ~30-50ms; LLMs emit 50-100 tok/s,
-            # so a python3-per-token render is ~10x slower than emit and
-            # the resulting backlog hides server crashes for minutes).
-            # Bash regex + parameter expansion: ~0.1ms per token.
-            local content=""
-            if [[ "$json" =~ \"content\":[[:space:]]*\"((\\.|[^\"\\])*)\" ]]; then
-                content="${BASH_REMATCH[1]}"
-                # Unescape the JSON string. LLM token content is plain
-                # text — these four escapes cover essentially all real
-                # cases; if a token genuinely needs \uXXXX it'll print
-                # the literal escape (acceptable for a demo renderer).
-                content="${content//\\\\/$'\x01'}"  # protect literal \\ briefly
-                content="${content//\\\"/\"}"
-                content="${content//\\n/$'\n'}"
-                content="${content//\\t/$'\t'}"
-                content="${content//\\r/$'\r'}"
-                content="${content//$'\x01'/\\}"     # restore literal \\
-            fi
-            printf '%s' "$content"
-            ;;
-        subcall_end)
-            echo ""
-            ;;
-        phase_end)
-            local now; now=$(_now_utc)
-            local phase total title srv uptime duration
-            phase=$(_jq "$json" phase)
-            total=$(_jq "$json" total)
-            title=$(_jq "$json" title)
-            srv=$(_jq "$json" server_time_utc)
-            uptime=$(_jq "$json" server_uptime_sec)
-            duration=$(_jq "$json" duration_sec)
-            echo ""
-            echo -e "${DIM}[${now}]${RESET} ${GREEN}✅ Phase ${phase}/${total} done${RESET} — ${title}"
-            echo -e "  ⏰ server_time=${srv}   uptime=${uptime}s   ⏱  duration=${duration}s"
-            ;;
-        winding_down)
-            local now; now=$(_now_utc)
-            local cause completed total pending srv uptime
-            cause=$(_jq "$json" cause)
-            completed=$(_jq "$json" completed_phases)
-            total=$(_jq "$json" total_phases)
-            pending=$(_jq "$json" pending_steering_inputs)
-            srv=$(_jq "$json" server_time_utc)
-            uptime=$(_jq "$json" server_uptime_sec)
-            echo ""
-            echo -e "${DIM}[${now}]${RESET} ${BOLD}${MAGENTA}↓ Winding down${RESET}   cause=${cause}   completed=${completed}/${total}   pending_steers=${pending}"
-            echo -e "  ⏰ server_time=${srv}   uptime=${uptime}s"
-            ;;
-        run_complete)
-            local now; now=$(_now_utc)
-            local total srv uptime
-            total=$(_jq "$json" phases_completed)
-            srv=$(_jq "$json" server_time_utc)
-            uptime=$(_jq "$json" server_uptime_sec)
-            echo ""
-            echo -e "${BOLD}${GREEN}══════════════════════════════════════════════════════════════${RESET}"
-            echo -e "${DIM}[${now}]${RESET} ${BOLD}${GREEN}✅ Run complete${RESET}   ${total} phases   ⏰ ${srv}   uptime=${uptime}s"
-            echo -e "${BOLD}${GREEN}══════════════════════════════════════════════════════════════${RESET}"
-            ;;
-        done)
-            local now; now=$(_now_utc)
-            local reason
-            reason=$(_jq "$json" reason)
-            echo ""
-            if [[ -n "$reason" && "$reason" != "None" ]]; then
-                echo -e "${DIM}[${now}]${RESET} ${YELLOW}══ Stream done (${reason}) ══${RESET}"
-            else
-                echo -e "${DIM}[${now}]${RESET} ${GREEN}══ Stream done ══${RESET}"
-            fi
-            ;;
-        *)
-            local now; now=$(_now_utc)
-            echo -e "${DIM}[${now}] [unknown event] ${json}${RESET}"
-            ;;
-    esac
-}
+def now_utc():
+    return datetime.now(timezone.utc).strftime("%H:%M:%SZ")
 
-_jq() {
-    # Read a top-level JSON field. Returns empty string on missing/null.
-    local json="$1"
-    local key="$2"
-    echo "$json" | python3 -c "
-import sys, json
+last_event_id = INITIAL_EVENT_ID
+result        = "disconnected"
+token_buf     = []                  # collected token content
+last_flush    = time.monotonic()
+last_data_at  = time.monotonic()    # for stall detection
+
+def flush_tokens():
+    global token_buf, last_flush
+    if token_buf:
+        write("".join(token_buf))
+        flush()
+        token_buf = []
+    last_flush = time.monotonic()
+
+def render_block(evt):
+    """Render any non-token event with the same shape as the old bash render."""
+    t = evt.get("type", "")
+    n = now_utc()
+    if t == "run_start":
+        topic   = evt.get("topic", "")
+        em      = evt.get("entry_mode", "")
+        total   = evt.get("total_phases", "")
+        uptime  = evt.get("server_uptime_sec", "")
+        srv     = evt.get("server_time_utc", "")
+        prior   = evt.get("prior_topic")
+        write("\n")
+        write(f"{BOLD}{CYAN}{chr(0x2550)*62}{RESET}\n")
+        write(f"{DIM}[{n}]{RESET} {BOLD}{CYAN}\u25b6 Run start{RESET}    topic={BOLD}{topic}{RESET}  ({total} phases)\n")
+        if prior:
+            write(f"  {YELLOW}(steered from prior topic: {prior}){RESET}\n")
+        write(f"  entry_mode={em}   server_time={srv}   uptime={uptime}s\n")
+        write(f"{BOLD}{CYAN}{chr(0x2550)*62}{RESET}\n")
+    elif t == "recovered":
+        c, total = evt.get("completed_phases", ""), evt.get("total_phases", "")
+        srv, uptime = evt.get("server_time_utc", ""), evt.get("server_uptime_sec", "")
+        write("\n")
+        write(f"{DIM}[{n}]{RESET} {BOLD}{GREEN}\U0001f501 Recovered from crash{RESET}   resuming from phase {c}/{total}\n")
+        write(f"  server_time={srv}   uptime={uptime}s  {DIM}(uptime ~0s = fresh container){RESET}\n")
+    elif t == "phase_start":
+        ph, total = evt.get("phase", ""), evt.get("total", "")
+        title = evt.get("title", "")
+        srv, uptime = evt.get("server_time_utc", ""), evt.get("server_uptime_sec", "")
+        write("\n")
+        write(f"{BOLD}{BLUE}{chr(0x2500)*62}{RESET}\n")
+        write(f"{DIM}[{n}]{RESET} {BOLD}{BLUE}\u25b6 Phase {ph}/{total}{RESET} \u2014 {title}\n")
+        write(f"  \u23f0 server_time={srv}   uptime={uptime}s\n")
+        write(f"{BOLD}{BLUE}{chr(0x2500)*62}{RESET}\n")
+    elif t == "subcall_start":
+        role = evt.get("role", "")
+        idx, of = evt.get("index", ""), evt.get("of", "")
+        write(f"\n{DIM}  [{n}]  [{role} {idx}/{of}] \u2500\u2500\u2500{RESET}\n")
+    elif t == "subcall_end":
+        write("\n")
+    elif t == "phase_end":
+        ph, total = evt.get("phase", ""), evt.get("total", "")
+        title = evt.get("title", "")
+        srv, uptime, dur = evt.get("server_time_utc", ""), evt.get("server_uptime_sec", ""), evt.get("duration_sec", "")
+        write(f"\n{DIM}[{n}]{RESET} {GREEN}\u2705 Phase {ph}/{total} done{RESET} \u2014 {title}\n")
+        write(f"  \u23f0 server_time={srv}   uptime={uptime}s   \u23f1  duration={dur}s\n")
+    elif t == "winding_down":
+        cause = evt.get("cause", ""); c = evt.get("completed_phases", "")
+        total = evt.get("total_phases", ""); pend = evt.get("pending_steering_inputs", "")
+        srv, uptime = evt.get("server_time_utc", ""), evt.get("server_uptime_sec", "")
+        write(f"\n{DIM}[{n}]{RESET} {BOLD}{MAGENTA}\u2193 Winding down{RESET}   cause={cause}   completed={c}/{total}   pending_steers={pend}\n")
+        write(f"  \u23f0 server_time={srv}   uptime={uptime}s\n")
+    elif t == "run_complete":
+        total = evt.get("phases_completed", "")
+        srv, uptime = evt.get("server_time_utc", ""), evt.get("server_uptime_sec", "")
+        write(f"\n{BOLD}{GREEN}{chr(0x2550)*62}{RESET}\n")
+        write(f"{DIM}[{n}]{RESET} {BOLD}{GREEN}\u2705 Run complete{RESET}   {total} phases   \u23f0 {srv}   uptime={uptime}s\n")
+        write(f"{BOLD}{GREEN}{chr(0x2550)*62}{RESET}\n")
+    elif t == "done":
+        reason = evt.get("reason")
+        msg = f" ({reason})" if reason else ""
+        col = YELLOW if reason else GREEN
+        write(f"\n{DIM}[{n}]{RESET} {col}\u2550\u2550 Stream done{msg} \u2550\u2550{RESET}\n")
+    else:
+        write(f"{DIM}[{n}] [unknown event] {json.dumps(evt)}{RESET}\n")
+    flush()
+
+stdin_fd = sys.stdin.fileno()
+
 try:
-    d = json.loads(sys.stdin.read())
-    v = d.get('$key')
-    print('' if v is None else v)
-except Exception:
-    print('')
-" 2>/dev/null
-}
+    pending = b""
+    while True:
+        deadline = last_flush + FLUSH_MS / 1000.0
+        timeout = max(0.0, deadline - time.monotonic())
+        r, _, _ = select.select([stdin_fd], [], [], timeout)
+        if r:
+            try:
+                chunk = os.read(stdin_fd, 65536)
+            except OSError:
+                chunk = b""
+            if not chunk:
+                # EOF — server (or proxy) closed the SSE stream.
+                flush_tokens()
+                break
+            last_data_at = time.monotonic()
+            pending += chunk
+            # Process complete lines only.
+            while b"\n" in pending:
+                line_b, pending = pending.split(b"\n", 1)
+                line = line_b.decode("utf-8", errors="replace").rstrip("\r")
+                if not line or line.startswith(":"):
+                    continue
+                if line.startswith("id:"):
+                    try:
+                        last_event_id = int(line[3:].strip())
+                    except ValueError:
+                        pass
+                    continue
+                if not line.startswith("data:"):
+                    continue
+                payload = line[5:].lstrip()
+                try:
+                    evt = json.loads(payload)
+                except json.JSONDecodeError:
+                    continue
+                t = evt.get("type", "")
+                if t == "token":
+                    # Hot path: buffer content. Periodic flush + flush on
+                    # non-token gives smooth visual output without
+                    # per-token TTY syscall thrash.
+                    c = evt.get("content")
+                    if isinstance(c, str):
+                        token_buf.append(c)
+                else:
+                    # Flush any pending tokens BEFORE emitting block event
+                    # so they appear in the right place visually.
+                    flush_tokens()
+                    render_block(evt)
+                    if t in ("done", "run_complete"):
+                        result = "complete"
+                        # Drain any remaining buffered tokens (none if we
+                        # just flushed) and exit.
+                        flush_tokens()
+                        raise StopIteration
+        else:
+            # Periodic flush deadline reached with no data.
+            flush_tokens()
+            # Stall watchdog: no data for STALL_SECS suggests the server
+            # died and the platform edge proxy is still holding the TCP
+            # connection. Print a one-line warning and exit so the user
+            # gets a definitive signal instead of waiting on the proxy.
+            idle = time.monotonic() - last_data_at
+            if idle >= STALL_SECS:
+                n = now_utc()
+                write(f"\n{DIM}[{n}]{RESET} {YELLOW}\u26a0 stream stalled "
+                      f"(no events for {idle:.0f}s) \u2014 likely server crash;"
+                      f" reconnect with stream{RESET}\n")
+                flush()
+                result = "disconnected"
+                # Kill curl so the bash pipeline exits promptly (the edge
+                # proxy may still be holding the TCP connection open).
+                if CURL_PID > 0:
+                    try:
+                        os.kill(CURL_PID, signal.SIGTERM)
+                    except OSError:
+                        pass
+                break
+except StopIteration:
+    pass
+except KeyboardInterrupt:
+    flush_tokens()
+finally:
+    if STATE_FILE:
+        try:
+            with open(STATE_FILE, "w") as fh:
+                fh.write(f"LAST_EVENT_ID={last_event_id}\n")
+                fh.write(f"STREAM_RESULT={result}\n")
+        except OSError:
+            pass
+'
 
 # ── SSE reader ───────────────────────────────────────────────────────────────
 
@@ -260,49 +307,41 @@ stream_sse() {
     local url="$1"
     STREAM_RESULT="disconnected"
 
-    local event_id_file result_file
-    event_id_file=$(mktemp)
-    result_file=$(mktemp)
-    echo "${LAST_EVENT_ID:-0}" > "$event_id_file"
-    echo "disconnected" > "$result_file"
+    local state_file fifo
+    state_file=$(mktemp)
+    fifo=$(mktemp -u)
+    mkfifo "$fifo"
 
-    ( curl -sN -X GET \
+    # Run curl in the background so we can pass its PID to the python
+    # renderer (used to kill curl when the stall watchdog fires — the
+    # platform edge proxy may otherwise hold the TCP connection open
+    # well past a backend crash).
+    curl -sN -X GET \
         -H "Authorization: Bearer $TOKEN" \
         -H "Accept: text/event-stream" \
         -H "Foundry-Features: HostedAgents=V1Preview" \
-        "$url" || true ) | while IFS= read -r line; do
-        [[ -z "$line" || "$line" == $'\r' ]] && continue
-        [[ "$line" == :* ]] && continue
+        "$url" > "$fifo" 2>/dev/null &
+    local curl_pid=$!
 
-        if [[ "$line" == id:* ]]; then
-            local eid="${line#id: }"
-            eid="${eid%$'\r'}"
-            echo "$eid" > "$event_id_file"
-            continue
-        fi
+    INITIAL_EVENT_ID="${LAST_EVENT_ID:-0}" \
+    STATE_FILE="$state_file" \
+    STALL_SECS="${STALL_SECS:-10}" \
+    FLUSH_MS="${FLUSH_MS:-50}" \
+    CURL_PID="$curl_pid" \
+        python3 -u -c "$_PY_RENDERER" < "$fifo"
 
-        if [[ "$line" == data:* ]]; then
-            local json="${line#data: }"
-            json="${json%$'\r'}"
+    # If curl is still running (normal exit path) wait briefly so its
+    # output is fully drained. The stall watchdog already sent SIGTERM
+    # in the cancel case.
+    wait "$curl_pid" 2>/dev/null
 
-            local etype
-            etype=$(_jq "$json" type)
-
-            render_event "$json"
-
-            if [[ "$etype" == "done" || "$etype" == "run_complete" ]]; then
-                echo "complete" > "$result_file"
-                break
-            fi
-        else
-            echo -e "${DIM}[non-SSE line] ${line}${RESET}" >&2
-        fi
-    done || true
-
-    STREAM_RESULT=$(cat "$result_file")
-    LAST_EVENT_ID=$(cat "$event_id_file")
+    rm -f "$fifo"
+    if [[ -f "$state_file" ]]; then
+        # shellcheck disable=SC1090
+        source "$state_file"
+        rm -f "$state_file"
+    fi
     save_session
-    rm -f "$event_id_file" "$result_file"
 }
 
 # ── Commands ──────────────────────────────────────────────────────────────────
