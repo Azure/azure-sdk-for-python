@@ -355,56 +355,52 @@ function writeBytes(filePath, bytes) {
   fs.writeFileSync(filePath, bytes);
 }
 
-function discardTemporaryWorktreeChanges() {
-  const status = git(["status", "--porcelain"], { capture: true }).stdout.trim();
-  if (!status) {
-    return;
-  }
-
-  const marker = `api-md-workflow-temp-${Date.now()}`;
-  git(["stash", "push", "--include-untracked", "-m", marker]);
-
-  const topEntry = git(["stash", "list", "-n", "1", "--format=%gd %s"], {
-    capture: true,
-  }).stdout.trim();
-
-  if (!topEntry.includes(marker)) {
-    throw new Error("ERROR: failed to identify temporary stash entry while cleaning generated files.");
-  }
-
-  git(["stash", "drop", "stash@{0}"]);
-}
-
-function generateApiBytesForPackage({
+function generateApiBytesForRef({
   adapter,
   repoRoot,
   packageName,
   packageDir,
   runtimeExecutable,
+  ref,
   refLabel,
   logger,
 }) {
-  adapter.generateApiForPackage({
-    repoRoot,
-    packageName,
-    runtimeExecutable,
-    logger,
-    refLabel,
-  });
+  const packageRelative = packageRelDir(packageDir);
+  logInfo(`Overlaying package source from ${refLabel} (${ref})`);
 
-  const outputPath = apiMdPath(packageDir);
-  if (!fs.existsSync(outputPath)) {
-    throw new Error(`ERROR: did not produce ${outputPath}`);
+  // Overlay just the package directory from the target ref onto the working tree
+  git(["checkout", ref, "--", packageRelative]);
+
+  try {
+    const version = adapter.readVersion(packageDir);
+
+    adapter.generateApiForPackage({
+      repoRoot,
+      packageName,
+      runtimeExecutable,
+      logger,
+      refLabel,
+    });
+
+    const outputPath = apiMdPath(packageDir);
+    if (!fs.existsSync(outputPath)) {
+      throw new Error(`ERROR: did not produce ${outputPath}`);
+    }
+
+    const result = { apiMd: fs.readFileSync(outputPath), metadata: null, version };
+
+    const metaPath = metadataPath(packageDir);
+    if (fs.existsSync(metaPath)) {
+      result.metadata = fs.readFileSync(metaPath);
+    }
+
+    return result;
+  } finally {
+    // Restore the package directory to the current branch state
+    git(["checkout", "HEAD", "--", packageRelative]);
+    // Clean any untracked files that the generation may have left behind
+    run("git", ["clean", "-fd", "--", packageRelative], { check: false });
   }
-
-  const result = { apiMd: fs.readFileSync(outputPath), metadata: null };
-
-  const metaPath = metadataPath(packageDir);
-  if (fs.existsSync(metaPath)) {
-    result.metadata = fs.readFileSync(metaPath);
-  }
-
-  return result;
 }
 
 function main() {
@@ -433,32 +429,30 @@ function main() {
     let baseResult = null;
     if (args.base) {
       logInfo(`\n=== Capturing baseline API.md from tag ${args.base} ===`);
-      git(["checkout", "--detach", args.base]);
-      baseResult = generateApiBytesForPackage({
+      baseResult = generateApiBytesForRef({
         adapter,
         repoRoot: REPO_ROOT,
         packageName: args.packageName,
         packageDir,
         runtimeExecutable: args.runtimeExecutable,
-        refLabel: currentBranchOrSha(),
+        ref: args.base,
+        refLabel: args.base,
         logger,
       });
-      discardTemporaryWorktreeChanges();
     }
 
     logInfo(`\n=== Capturing target API.md from ${targetRef} ===`);
-    git(["checkout", "--detach", targetRef]);
-    const targetVersion = adapter.readVersion(packageDir);
-    const targetResult = generateApiBytesForPackage({
+    const targetResult = generateApiBytesForRef({
       adapter,
       repoRoot: REPO_ROOT,
       packageName: args.packageName,
       packageDir,
       runtimeExecutable: args.runtimeExecutable,
-      refLabel: currentBranchOrSha(),
+      ref: targetRef,
+      refLabel: targetRef,
       logger,
     });
-    discardTemporaryWorktreeChanges();
+    const targetVersion = targetResult.version;
 
     const baseBranch = `base_${args.packageName}_${baseVersion}`;
     const reviewBranch = `review_${args.packageName}_${targetVersion}`;
