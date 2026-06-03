@@ -52,16 +52,17 @@ extends:
       safeName: azurestoragefiledatalake
     - name: azure-storage-queue
       safeName: azurestoragequeue
-    - name: azure-storage-extensions
-      safeName: azurestorageextensions
-      triggeringPaths:
-        - /sdk/storage/azure-storage-blob
-        - /sdk/storage/azure-storage-file-datalake
-        - /sdk/storage/azure-storage-file-share
-        - /sdk/storage/azure-storage-queue
-      # Pure C-based storage extension package, not generating docs at this moment.
-      skipPublishDocGithubIo: true
-      skipPublishDocMs: true
+    # disable to prevent repo-wide build breaks
+    # - name: azure-storage-extensions
+    #   safeName: azurestorageextensions
+    #   triggeringPaths:
+    #     - /sdk/storage/azure-storage-blob
+    #     - /sdk/storage/azure-storage-file-datalake
+    #     - /sdk/storage/azure-storage-file-share
+    #     - /sdk/storage/azure-storage-queue
+    #   # Pure C-based storage extension package, not generating docs at this moment.
+    #   skipPublishDocGithubIo: true
+    #   skipPublishDocMs: true
     - name: azure-mgmt-storage
       safeName: azuremgmtstorage
     - name: azure-mgmt-storagecache
