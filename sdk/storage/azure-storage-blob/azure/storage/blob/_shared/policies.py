@@ -969,9 +969,17 @@ class StorageSessionPolicy(HTTPPolicy):
     FEATURE_NOT_ENABLED: str = "FeatureNotEnabled"
     """Service-reported code: the session feature is not enabled on the scale unit."""
     _SIGNED_HEADERS = (
-        "content-encoding", "content-language", "content-length", "content-md5",
-        "content-type", "date", "if-modified-since", "if-match", "if-none-match",
-        "if-unmodified-since", "byte_range",
+        "content-encoding",
+        "content-language",
+        "content-length",
+        "content-md5",
+        "content-type",
+        "date",
+        "if-modified-since",
+        "if-match",
+        "if-none-match",
+        "if-unmodified-since",
+        "byte_range",
     )
 
     def __init__(
@@ -1162,7 +1170,9 @@ class StorageSessionPolicy(HTTPPolicy):
         if error_code == self.SESSIONS_UNAVAILABLE or status >= 500:
             _LOGGER.warning(
                 "Session authentication: '%s' (HTTP %d) on container '%s'; bearer fallback for %d seconds.",
-                error_code or "5xx", status, container_name,
+                error_code or "5xx",
+                status,
+                container_name,
                 int(SessionCache.FALLBACK_COOLDOWN.total_seconds()),
             )
             with self._cache.lock_container(container_name):

@@ -347,9 +347,7 @@ class StorageAccountHostsMixin(object):
                 sub_kwargs["use_session"] = False
                 sub_kwargs["transport"] = transport
 
-                _, session_pipeline = self._create_pipeline(
-                    credential, sdk_moniker=self._sdk_moniker, **sub_kwargs
-                )
+                _, session_pipeline = self._create_pipeline(credential, sdk_moniker=self._sdk_moniker, **sub_kwargs)
                 generated = AzureBlobStorage(container_url, self.api_version, base_url=container_url)
                 generated._client._pipeline = session_pipeline  # pylint: disable=protected-access
                 return generated
@@ -361,12 +359,14 @@ class StorageAccountHostsMixin(object):
                     use_session=True,
                 )
             )
-        policies.extend([
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-        ])
+        policies.extend(
+            [
+                config.logging_policy,
+                StorageResponseHook(**kwargs),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
+            ]
+        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore

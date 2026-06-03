@@ -228,7 +228,7 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         retry_total: int = 3,
         retry_to_secondary: bool = False,
         random_jitter_range: int = 3,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Constructs an Exponential retry object. The initial_backoff is used for
@@ -288,7 +288,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
         retry_total: int = 3,
         retry_to_secondary: bool = False,
         random_jitter_range: int = 3,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """
         Constructs a Linear retry object.
@@ -519,7 +519,9 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         if error_code == self.SESSIONS_UNAVAILABLE or status >= 500:
             _LOGGER.warning(
                 "Session authentication: '%s' (HTTP %d) on container '%s'; bearer fallback for %d seconds.",
-                error_code or "5xx", status, container_name,
+                error_code or "5xx",
+                status,
+                container_name,
                 int(SessionCache.FALLBACK_COOLDOWN.total_seconds()),
             )
             async with self._cache.lock_container_async(container_name):

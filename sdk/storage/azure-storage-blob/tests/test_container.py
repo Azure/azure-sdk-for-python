@@ -2757,12 +2757,13 @@ class TestStorageContainer(StorageRecordedTestCase):
             def _hook(response):
                 auth = response.http_request.headers.get("Authorization", "")
                 captured[label] = auth
+
             return _hook
 
         def session_token_from(auth):
             # "Session {token}:{signature}" -> token
             assert auth.startswith("Session ")
-            return auth[len("Session "):].split(":", 1)[0]
+            return auth[len("Session ") :].split(":", 1)[0]
 
         def find_session_policy(pipeline):
             # Match by class name to avoid importing internals into the test module.
@@ -2784,9 +2785,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             pass
 
         blob1_name, blob1_data = self.get_resource_name("blob1"), b"abc123"
-        container1.upload_blob(
-            blob1_name, blob1_data, overwrite=True, raw_response_hook=make_capture("c1_upload")
-        )
+        container1.upload_blob(blob1_name, blob1_data, overwrite=True, raw_response_hook=make_capture("c1_upload"))
         assert captured["c1_upload"].startswith("Bearer ")
 
         blob1_actual = container1.download_blob(blob1_name, raw_response_hook=make_capture("c1_download")).readall()
@@ -2844,6 +2843,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             def _hook(response):
                 auth = response.http_request.headers.get("Authorization", "")
                 captured[label] = auth
+
             return _hook
 
         service = BlobServiceClient(

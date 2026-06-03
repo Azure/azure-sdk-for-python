@@ -2666,12 +2666,13 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             def _hook(response):
                 auth = response.http_request.headers.get("Authorization", "")
                 captured[label] = auth
+
             return _hook
 
         def session_token_from(auth):
             # "Session {token}:{signature}" -> token
             assert auth.startswith("Session ")
-            return auth[len("Session "):].split(":", 1)[0]
+            return auth[len("Session ") :].split(":", 1)[0]
 
         def find_session_policy(pipeline):
             # Match by class name to avoid importing internals into the test module.
@@ -2698,8 +2699,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         )
         assert captured["c1_upload"].startswith("Bearer ")
 
-        blob1_actual = await (await container1.download_blob(
-            blob1_name, raw_response_hook=make_capture("c1_download"))).readall()
+        blob1_actual = await (
+            await container1.download_blob(blob1_name, raw_response_hook=make_capture("c1_download"))
+        ).readall()
         assert blob1_data == blob1_actual
         assert captured["c1_download"].startswith("Session ")
         session1 = session_token_from(captured["c1_download"])
@@ -2713,25 +2715,29 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         blob2_name, blob2_data = self.get_resource_name("blob2"), b"def456"
         await container2.upload_blob(
-            blob2_name, blob2_data, overwrite=True, raw_response_hook=make_capture("c2_upload"))
+            blob2_name, blob2_data, overwrite=True, raw_response_hook=make_capture("c2_upload")
+        )
         assert captured["c2_upload"].startswith("Bearer ")
 
-        blob2_actual = await (await container2.download_blob(
-            blob2_name, raw_response_hook=make_capture("c2_download"))).readall()
+        blob2_actual = await (
+            await container2.download_blob(blob2_name, raw_response_hook=make_capture("c2_download"))
+        ).readall()
         assert blob2_data == blob2_actual
         assert captured["c2_download"].startswith("Session ")
         session2 = session_token_from(captured["c2_download"])
 
         assert session1 != session2
 
-        blob1_actual = await (await container1.download_blob(
-            blob1_name, raw_response_hook=make_capture("c1_download2"))).readall()
+        blob1_actual = await (
+            await container1.download_blob(blob1_name, raw_response_hook=make_capture("c1_download2"))
+        ).readall()
         assert blob1_data == blob1_actual
         assert captured["c1_download2"].startswith("Session ")
         assert session1 == session_token_from(captured["c1_download2"])
 
-        blob2_actual = await (await container2.download_blob(
-            blob2_name, raw_response_hook=make_capture("c2_download2"))).readall()
+        blob2_actual = await (
+            await container2.download_blob(blob2_name, raw_response_hook=make_capture("c2_download2"))
+        ).readall()
         assert blob2_data == blob2_actual
         assert captured["c2_download2"].startswith("Session ")
         assert session2 == session_token_from(captured["c2_download2"])
@@ -2740,8 +2746,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         cached = policy._cache._entry[container1_name]
         cached.expires_at = datetime.fromtimestamp(0, tz=cached.expires_at.tzinfo)
 
-        blob1_actual = await (await container1.download_blob(
-            blob1_name, raw_response_hook=make_capture("c1_download3"))).readall()
+        blob1_actual = await (
+            await container1.download_blob(blob1_name, raw_response_hook=make_capture("c1_download3"))
+        ).readall()
         assert blob1_data == blob1_actual
         assert captured["c1_download3"].startswith("Session ")
         assert session1 != session_token_from(captured["c1_download3"])
@@ -2759,6 +2766,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             def _hook(response):
                 auth = response.http_request.headers.get("Authorization", "")
                 captured[label] = auth
+
             return _hook
 
         service = BlobServiceClient(
@@ -2776,7 +2784,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await container.upload_blob(blob_name, blob_data, overwrite=True, raw_response_hook=make_capture("upload"))
         assert captured["upload"].startswith("Bearer ")
 
-        blob_actual = await (await container.download_blob(
-            blob_name, raw_response_hook=make_capture("download"))).readall()
+        blob_actual = await (
+            await container.download_blob(blob_name, raw_response_hook=make_capture("download"))
+        ).readall()
         assert blob_data == blob_actual
         assert captured["download"].startswith("Bearer ")
