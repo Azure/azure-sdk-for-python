@@ -348,6 +348,26 @@ function writeBytes(filePath, bytes) {
   fs.writeFileSync(filePath, bytes);
 }
 
+function discardTemporaryWorktreeChanges() {
+  const status = git(["status", "--porcelain"], { capture: true }).stdout.trim();
+  if (!status) {
+    return;
+  }
+
+  const marker = `api-md-workflow-temp-${Date.now()}`;
+  git(["stash", "push", "--include-untracked", "-m", marker]);
+
+  const topEntry = git(["stash", "list", "-n", "1", "--format=%gd %s"], {
+    capture: true,
+  }).stdout.trim();
+
+  if (!topEntry.includes(marker)) {
+    throw new Error("ERROR: failed to identify temporary stash entry while cleaning generated files.");
+  }
+
+  git(["stash", "drop", "stash@{0}"]);
+}
+
 function generateApiBytesForPackage({
   adapter,
   repoRoot,
@@ -421,6 +441,7 @@ function main() {
         refLabel: currentBranchOrSha(),
         logger,
       });
+      discardTemporaryWorktreeChanges();
     }
 
     logInfo(`\n=== Capturing target API.md from ${targetRef} ===`);
@@ -437,6 +458,7 @@ function main() {
       refLabel: currentBranchOrSha(),
       logger,
     });
+    discardTemporaryWorktreeChanges();
 
     const baseBranch = `base_${args.packageName}_${baseVersion}`;
     const reviewBranch = `review_${args.packageName}_${targetVersion}`;
