@@ -1,24 +1,25 @@
 # Using the `@task` private-preview wheels
 
+This directory ships the pre-release `azure-ai-agentserver-*` wheels
+containing the **private-preview `@task` durable-task primitive**. The
+wheels are checked in — there's nothing to build before you consume them.
+
 ## What ships where
 
 | Package | Source | Includes `@task`? |
 |---|---|---|
 | `azure-ai-agentserver-core` on PyPI (stable) | `pip install azure-ai-agentserver-core` | ❌ No |
 | `azure-ai-agentserver-invocations` on PyPI (stable) | `pip install azure-ai-agentserver-invocations` | ❌ No |
-| `azure-ai-agentserver-core` **2.0.0b6 wheel** in this repo | [`sdk/agentserver/wheels/`](../wheels) | ✅ Yes |
-| `azure-ai-agentserver-invocations` **1.0.0b5 wheel** in this repo | [`sdk/agentserver/wheels/`](../wheels) | ✅ Yes (matched pair) |
+| `azure-ai-agentserver-core` **2.0.0b6 wheel** in this directory | `azure_ai_agentserver_core-2.0.0b6-py3-none-any.whl` | ✅ Yes |
+| `azure-ai-agentserver-invocations` **1.0.0b5 wheel** in this directory | `azure_ai_agentserver_invocations-1.0.0b5-py3-none-any.whl` | ✅ Yes (matched pair) |
 
 The `azure-ai-agentserver-*` packages are published on PyPI at stable
 versions. **The `@task` durable-task primitive itself is in private
-preview** and ships *only* as the pre-release wheels checked into this
-branch. Until `@task` reaches GA, the stable PyPI version of the
-package will not contain `azure.ai.agentserver.core.durable` —
-installing from PyPI gives you the surrounding agentserver framework,
-not the durable-task API.
-
-The wheels are committed (not built on demand) so you can consume them
-directly without running any tooling first.
+preview** and ships *only* as the pre-release wheels in this directory.
+Until `@task` reaches GA, the stable PyPI version of the package will
+not contain `azure.ai.agentserver.core.durable` — installing from PyPI
+gives you the surrounding agentserver framework, not the durable-task
+API.
 
 ## Consume the wheels in your project
 
@@ -72,7 +73,7 @@ Once `@task` reaches GA and the durable-task primitive is included in
 the regular PyPI release of `azure-ai-agentserver-core`, replace local
 wheel installs with the standard
 `pip install azure-ai-agentserver-core azure-ai-agentserver-invocations`
-and delete this doc + the `wheels/` directory.
+and delete this directory.
 
 ---
 
@@ -82,12 +83,14 @@ Whenever the agentserver core or invocations source changes on this
 branch, rebuild the wheels and commit them:
 
 ```bash
-sdk/agentserver/scripts/build-wheels.sh
-git add sdk/agentserver/wheels/*.whl
+./build-wheels.sh           # from this directory, or
+sdk/agentserver/wheels/build-wheels.sh   # from the repo root
+
+git add *.whl
 git commit -m "[agentserver] refresh @task preview wheels"
 ```
 
-The build script is idempotent — it deletes and re-creates the wheels
-on each run. Wheel files are binary so each rebuild produces a fresh
-SHA; `git diff` won't be human-readable, but committing them keeps the
-preview surface portable.
+The build script removes only the existing `*.whl` files (it leaves
+this `README.md` and the script itself intact). Wheel files are binary
+so each rebuild produces a fresh SHA; `git diff` won't be
+human-readable, but committing them keeps the preview surface portable.

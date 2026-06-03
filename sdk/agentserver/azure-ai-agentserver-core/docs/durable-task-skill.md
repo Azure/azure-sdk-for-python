@@ -160,8 +160,7 @@ the regular PyPI version of `azure-ai-agentserver-core` will not give you
 
 Consume the checked-in wheels per:
 
-- [USING_PRE_RELEASE_WHEELS.md](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/docs/USING_PRE_RELEASE_WHEELS.md)
-- Wheel directory: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/wheels)
+- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/wheels)
 
 ## Authoritative references
 
