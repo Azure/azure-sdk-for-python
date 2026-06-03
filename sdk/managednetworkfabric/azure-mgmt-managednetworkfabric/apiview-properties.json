@@ -189,8 +189,8 @@
         "azure.mgmt.managednetworkfabric.models.ManagedResourceGroupConfiguration": "Microsoft.ManagedNetworkFabric.ManagedResourceGroupConfiguration",
         "azure.mgmt.managednetworkfabric.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.managednetworkfabric.models.ManagedServiceIdentityPatch": "Microsoft.ManagedNetworkFabric.ManagedServiceIdentityPatch",
+        "azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties": "Microsoft.ManagedNetworkFabric.ManagementNetworkPatchConfiguration",
         "azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationProperties": "Microsoft.ManagedNetworkFabric.ManagementNetworkConfigurationProperties",
-        "azure.mgmt.managednetworkfabric.models.ManagementNetworkPatchConfiguration": "Microsoft.ManagedNetworkFabric.ManagementNetworkPatchConfiguration",
         "azure.mgmt.managednetworkfabric.models.NativeIpv4PrefixLimitPatchProperties": "Microsoft.ManagedNetworkFabric.NativeIpv4PrefixLimitPatchProperties",
         "azure.mgmt.managednetworkfabric.models.NativeIpv4PrefixLimitProperties": "Microsoft.ManagedNetworkFabric.NativeIpv4PrefixLimitProperties",
         "azure.mgmt.managednetworkfabric.models.NativeIpv6PrefixLimitPatchProperties": "Microsoft.ManagedNetworkFabric.NativeIpv6PrefixLimitPatchProperties",
@@ -239,6 +239,7 @@
         "azure.mgmt.managednetworkfabric.models.NetworkFabricControllerProperties": "Microsoft.ManagedNetworkFabric.NetworkFabricControllerProperties",
         "azure.mgmt.managednetworkfabric.models.NetworkFabricLockRequest": "Microsoft.ManagedNetworkFabric.NetworkFabricLockRequest",
         "azure.mgmt.managednetworkfabric.models.NetworkFabricPatch": "Microsoft.ManagedNetworkFabric.NetworkFabricPatch",
+        "azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration": "Microsoft.ManagedNetworkFabric.TerminalServerPatchConfiguration",
         "azure.mgmt.managednetworkfabric.models.NetworkFabricPatchProperties": "Microsoft.ManagedNetworkFabric.NetworkFabricPatchProperties",
         "azure.mgmt.managednetworkfabric.models.NetworkFabricProperties": "Microsoft.ManagedNetworkFabric.NetworkFabricProperties",
         "azure.mgmt.managednetworkfabric.models.NetworkFabricResyncCertificatesResponse": "Microsoft.ManagedNetworkFabric.NetworkFabricResyncCertificatesResponse",
@@ -298,6 +299,7 @@
         "azure.mgmt.managednetworkfabric.models.OptionBLayer3ConfigurationPatchProperties": "Microsoft.ManagedNetworkFabric.OptionBLayer3ConfigurationPatchProperties",
         "azure.mgmt.managednetworkfabric.models.OptionBLayer3PrefixLimitPatchProperties": "Microsoft.ManagedNetworkFabric.OptionBLayer3PrefixLimitPatchProperties",
         "azure.mgmt.managednetworkfabric.models.OptionBLayer3PrefixLimitProperties": "Microsoft.ManagedNetworkFabric.OptionBLayer3PrefixLimitProperties",
+        "azure.mgmt.managednetworkfabric.models.OptionBProperties": "Microsoft.ManagedNetworkFabric.VpnOptionBProperties",
         "azure.mgmt.managednetworkfabric.models.PoliceRateConfigurationProperties": "Microsoft.ManagedNetworkFabric.PoliceRateConfigurationProperties",
         "azure.mgmt.managednetworkfabric.models.PortGroupPatchProperties": "Microsoft.ManagedNetworkFabric.PortGroupPatchProperties",
         "azure.mgmt.managednetworkfabric.models.PortGroupProperties": "Microsoft.ManagedNetworkFabric.PortGroupProperties",
@@ -338,7 +340,6 @@
         "azure.mgmt.managednetworkfabric.models.SupportedVersionProperties": "Microsoft.ManagedNetworkFabric.SupportedVersionProperties",
         "azure.mgmt.managednetworkfabric.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.managednetworkfabric.models.TerminalServerConfiguration": "Microsoft.ManagedNetworkFabric.TerminalServerConfiguration",
-        "azure.mgmt.managednetworkfabric.models.TerminalServerPatchConfiguration": "Microsoft.ManagedNetworkFabric.TerminalServerPatchConfiguration",
         "azure.mgmt.managednetworkfabric.models.UniqueRouteDistinguisherPatchProperties": "Microsoft.ManagedNetworkFabric.UniqueRouteDistinguisherPatchProperties",
         "azure.mgmt.managednetworkfabric.models.UniqueRouteDistinguisherProperties": "Microsoft.ManagedNetworkFabric.UniqueRouteDistinguisherProperties",
         "azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState": "Microsoft.ManagedNetworkFabric.UpdateAdministrativeState",
@@ -361,7 +362,6 @@
         "azure.mgmt.managednetworkfabric.models.VpnOptionAPatchProperties": "Microsoft.ManagedNetworkFabric.VpnOptionAPatchProperties",
         "azure.mgmt.managednetworkfabric.models.VpnOptionAProperties": "Microsoft.ManagedNetworkFabric.VpnOptionAProperties",
         "azure.mgmt.managednetworkfabric.models.VpnOptionBPatchProperties": "Microsoft.ManagedNetworkFabric.VpnOptionBPatchProperties",
-        "azure.mgmt.managednetworkfabric.models.VpnOptionBProperties": "Microsoft.ManagedNetworkFabric.VpnOptionBProperties",
         "azure.mgmt.managednetworkfabric.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
         "azure.mgmt.managednetworkfabric.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
         "azure.mgmt.managednetworkfabric.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
@@ -855,5 +855,6 @@
         "azure.mgmt.managednetworkfabric.aio.operations.NetworkBootstrapInterfacesOperations.list_by_network_bootstrap_device": "Microsoft.ManagedNetworkFabric.NetworkBootstrapInterfaces.listByNetworkBootstrapDevice",
         "azure.mgmt.managednetworkfabric.operations.NetworkBootstrapInterfacesOperations.begin_update_administrative_state": "Microsoft.ManagedNetworkFabric.NetworkBootstrapInterfaces.updateAdministrativeState",
         "azure.mgmt.managednetworkfabric.aio.operations.NetworkBootstrapInterfacesOperations.begin_update_administrative_state": "Microsoft.ManagedNetworkFabric.NetworkBootstrapInterfaces.updateAdministrativeState"
-    }
+    },
+    "CrossLanguageVersion": "d87ba2551049"
 }

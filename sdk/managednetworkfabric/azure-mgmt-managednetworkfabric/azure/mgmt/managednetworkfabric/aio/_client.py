@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ManagedNetworkFabricClientConfiguration
+from ._configuration import ManagedNetworkFabricMgmtClientConfiguration
 from .operations import (
     AccessControlListsOperations,
     ExternalNetworksOperations,
@@ -49,12 +49,17 @@ from .operations import (
     RoutePoliciesOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ManagedNetworkFabricClient:  # pylint: disable=too-many-instance-attributes
+class ManagedNetworkFabricMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Self service experience for Azure Network Fabric API.
 
     :ivar operations: Operations operations
@@ -141,9 +146,9 @@ class ManagedNetworkFabricClient:  # pylint: disable=too-many-instance-attribute
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-07-15".
-     Default value is "2025-07-15". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-07-15"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -164,7 +169,7 @@ class ManagedNetworkFabricClient:  # pylint: disable=too-many-instance-attribute
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ManagedNetworkFabricClientConfiguration(
+        self._config = ManagedNetworkFabricMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

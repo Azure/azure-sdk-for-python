@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.managednetworkfabric import ManagedNetworkFabricClient
+from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricClient
 
 
 def main():
-    client = ManagedNetworkFabricClient(
+    client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

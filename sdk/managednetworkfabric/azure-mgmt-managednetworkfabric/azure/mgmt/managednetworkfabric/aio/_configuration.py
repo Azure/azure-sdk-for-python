@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ManagedNetworkFabricClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for ManagedNetworkFabricClient.
+class ManagedNetworkFabricMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for ManagedNetworkFabricMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -33,9 +33,9 @@ class ManagedNetworkFabricClientConfiguration:  # pylint: disable=too-many-insta
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-07-15".
-     Default value is "2025-07-15". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-07-15"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

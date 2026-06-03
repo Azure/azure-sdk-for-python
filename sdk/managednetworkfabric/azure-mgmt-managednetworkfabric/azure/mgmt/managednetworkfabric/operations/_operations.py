@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import ManagedNetworkFabricClientConfiguration
+from .._configuration import ManagedNetworkFabricMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._validation import api_version_validation
@@ -6053,14 +6053,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -6113,7 +6113,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6162,14 +6165,14 @@ class AccessControlListsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`access_control_lists` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -6893,7 +6896,10 @@ class AccessControlListsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6983,7 +6989,10 @@ class AccessControlListsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7263,14 +7272,10 @@ class AccessControlListsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -7394,14 +7399,10 @@ class AccessControlListsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommonPostActionResponseForStateUpdate, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -7525,14 +7526,10 @@ class AccessControlListsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -7565,14 +7562,14 @@ class InternetGatewayRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`internet_gateway_rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -8302,7 +8299,10 @@ class InternetGatewayRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8393,7 +8393,10 @@ class InternetGatewayRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8442,14 +8445,14 @@ class InternetGatewaysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`internet_gateways` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -9163,7 +9166,10 @@ class InternetGatewaysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9253,7 +9259,10 @@ class InternetGatewaysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9302,14 +9311,14 @@ class IpCommunitiesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`ip_communities` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -10023,7 +10032,10 @@ class IpCommunitiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10113,7 +10125,10 @@ class IpCommunitiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10162,14 +10177,14 @@ class IpExtendedCommunitiesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`ip_extended_communities` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -10899,7 +10914,10 @@ class IpExtendedCommunitiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10990,7 +11008,10 @@ class IpExtendedCommunitiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11039,14 +11060,14 @@ class IpPrefixesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`ip_prefixes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -11760,7 +11781,10 @@ class IpPrefixesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11850,7 +11874,10 @@ class IpPrefixesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11899,14 +11926,14 @@ class L2IsolationDomainsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`l2_isolation_domains` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -12634,7 +12661,10 @@ class L2IsolationDomainsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12724,7 +12754,10 @@ class L2IsolationDomainsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13004,14 +13037,10 @@ class L2IsolationDomainsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -13135,14 +13164,10 @@ class L2IsolationDomainsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -13266,14 +13291,10 @@ class L2IsolationDomainsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommonPostActionResponseForStateUpdate, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -13306,14 +13327,14 @@ class L3IsolationDomainsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`l3_isolation_domains` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -14045,7 +14066,10 @@ class L3IsolationDomainsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14135,7 +14159,10 @@ class L3IsolationDomainsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14415,14 +14442,10 @@ class L3IsolationDomainsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -14546,14 +14569,10 @@ class L3IsolationDomainsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -14677,14 +14696,10 @@ class L3IsolationDomainsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommonPostActionResponseForStateUpdate, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -14717,14 +14732,14 @@ class InternalNetworksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`internal_networks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -15486,7 +15501,10 @@ class InternalNetworksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15783,14 +15801,10 @@ class InternalNetworksOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -16077,14 +16091,10 @@ class InternalNetworksOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.InternalNetworkUpdateBgpAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -16365,14 +16375,10 @@ class InternalNetworksOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -16659,14 +16665,10 @@ class InternalNetworksOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.InternalNetworkUpdateBfdAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -16699,14 +16701,14 @@ class ExternalNetworksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`external_networks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -17468,7 +17470,10 @@ class ExternalNetworksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17765,14 +17770,10 @@ class ExternalNetworksOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -18053,14 +18054,10 @@ class ExternalNetworksOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -18347,14 +18344,10 @@ class ExternalNetworksOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ExternalNetworkUpdateBfdAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -18387,14 +18380,14 @@ class NeighborGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`neighbor_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -19108,7 +19101,10 @@ class NeighborGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19198,7 +19194,10 @@ class NeighborGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19350,14 +19349,10 @@ class NeighborGroupsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NeighborGroupResyncResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -19390,14 +19385,14 @@ class NetworkDeviceSkusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_device_skus` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -19517,7 +19512,10 @@ class NetworkDeviceSkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19566,14 +19564,14 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_devices` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -20288,7 +20286,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20378,7 +20379,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20657,14 +20661,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.OperationStatusResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -20802,14 +20802,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkDeviceRefreshConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -21073,14 +21069,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkDeviceUpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -21344,14 +21336,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkDeviceUpgradeResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -21622,16 +21610,12 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(
                 _models.CommonPostActionResponseForDeviceROCommandsOperationStatusResult, response.json()
             )
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -21896,14 +21880,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkDeviceRunRwCommandResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -22044,14 +22024,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkDeviceResyncPasswordsResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -22193,14 +22169,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkFabricResyncCertificatesResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -22233,14 +22205,14 @@ class NetworkInterfacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_interfaces` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -23002,7 +22974,10 @@ class NetworkInterfacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23299,14 +23274,10 @@ class NetworkInterfacesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -23339,14 +23310,14 @@ class NetworkFabricControllersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_fabric_controllers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -24079,7 +24050,10 @@ class NetworkFabricControllersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24170,7 +24144,10 @@ class NetworkFabricControllersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24219,14 +24196,14 @@ class NetworkFabricSkusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_fabric_skus` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -24346,7 +24323,10 @@ class NetworkFabricSkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24395,14 +24375,14 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_fabrics` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -25116,7 +25096,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25206,7 +25189,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25358,14 +25344,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.OperationStatusResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -25503,14 +25485,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.OperationStatusResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -25774,14 +25752,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.OperationStatusResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -25919,14 +25893,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.OperationStatusResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -26194,14 +26164,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -26469,14 +26435,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -26712,14 +26674,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -26857,14 +26815,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.GetTopologyResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -27137,14 +27091,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommitConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -27408,14 +27358,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommitBatchStatusOperationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -27679,14 +27625,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.DiscardCommitBatchOperationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -27950,14 +27892,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.OperationStatusResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28095,14 +28033,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ViewDeviceConfigurationOperationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28240,14 +28174,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ArmConfigurationDiffOperationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28394,14 +28324,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkFabricRotatePasswordsResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28544,14 +28470,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkFabricResyncPasswordsResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28693,14 +28615,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkFabricRotateCertificatesResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28842,14 +28760,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkFabricResyncCertificatesResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28882,14 +28796,14 @@ class NetworkToNetworkInterconnectsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_to_network_interconnects` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -29685,7 +29599,10 @@ class NetworkToNetworkInterconnectsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -29986,14 +29903,10 @@ class NetworkToNetworkInterconnectsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -30278,14 +30191,10 @@ class NetworkToNetworkInterconnectsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -30570,14 +30479,10 @@ class NetworkToNetworkInterconnectsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NniUpdateBfdAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -30610,14 +30515,14 @@ class NetworkPacketBrokersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_packet_brokers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -31347,7 +31252,10 @@ class NetworkPacketBrokersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31438,7 +31346,10 @@ class NetworkPacketBrokersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31487,14 +31398,14 @@ class NetworkRacksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_racks` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -32208,7 +32119,10 @@ class NetworkRacksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32298,7 +32212,10 @@ class NetworkRacksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32347,14 +32264,14 @@ class NetworkTapRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_tap_rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -33068,7 +32985,10 @@ class NetworkTapRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33158,7 +33078,10 @@ class NetworkTapRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33410,14 +33333,10 @@ class NetworkTapRulesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommonPostActionResponseForStateUpdate, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -33553,14 +33472,10 @@ class NetworkTapRulesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkTapRuleResyncResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -33684,14 +33599,10 @@ class NetworkTapRulesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -33724,14 +33635,14 @@ class NetworkTapsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_taps` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -34445,7 +34356,10 @@ class NetworkTapsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34535,7 +34449,10 @@ class NetworkTapsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34815,14 +34732,10 @@ class NetworkTapsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -34958,14 +34871,10 @@ class NetworkTapsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkTapResyncResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -34998,14 +34907,14 @@ class RoutePoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`route_policies` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -35719,7 +35628,10 @@ class RoutePoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -35809,7 +35721,10 @@ class RoutePoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -36089,14 +36004,10 @@ class RoutePoliciesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateAdministrativeStateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -36220,14 +36131,10 @@ class RoutePoliciesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -36351,14 +36258,10 @@ class RoutePoliciesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommonPostActionResponseForStateUpdate, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -36391,14 +36294,14 @@ class NetworkMonitorsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_monitors` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -37200,7 +37103,10 @@ class NetworkMonitorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37295,7 +37201,10 @@ class NetworkMonitorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37575,14 +37484,10 @@ class NetworkMonitorsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommonPostActionResponseForDeviceUpdate, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -37615,14 +37520,14 @@ class NetworkBootstrapDevicesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_bootstrap_devices` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -38442,7 +38347,10 @@ class NetworkBootstrapDevicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38538,7 +38446,10 @@ class NetworkBootstrapDevicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38704,14 +38615,10 @@ class NetworkBootstrapDevicesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkBootstrapDeviceRebootResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -38862,14 +38769,10 @@ class NetworkBootstrapDevicesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkBootstrapDeviceRefreshConfigurationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -39132,14 +39035,10 @@ class NetworkBootstrapDevicesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkBootstrapDeviceUpgradeResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -39407,16 +39306,12 @@ class NetworkBootstrapDevicesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(
                 _models.NetworkBootstrapDeviceUpdateAdministrativeStateResponse, response.json()
             )
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -39570,14 +39465,10 @@ class NetworkBootstrapDevicesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkBootstrapDeviceResyncPasswordsResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -39610,14 +39501,14 @@ class NetworkBootstrapInterfacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricClient`'s
+        :class:`~azure.mgmt.managednetworkfabric.ManagedNetworkFabricMgmtClient`'s
         :attr:`network_bootstrap_interfaces` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedNetworkFabricClientConfiguration = (
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
@@ -40516,7 +40407,10 @@ class NetworkBootstrapInterfacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40813,14 +40707,10 @@ class NetworkBootstrapInterfacesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CommonPostActionResponseForStateUpdate, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
