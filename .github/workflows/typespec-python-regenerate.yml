@@ -289,6 +289,8 @@ jobs:
           - Branch: [\`${SOURCE_BRANCH}\`](${SERVER}/${REPO}/tree/${SOURCE_BRANCH})
           - Latest workflow run: ${RUN_URL}
 
+          > Note: the PR targets the \`${TARGET_BRANCH}\` branch, so merging it will **not** auto-close this issue. Please close this issue manually after the PR is merged.
+
           ${CC_LINE}"
           else
             # Build a "compare" URL that opens the PR creation page pre-filled.
@@ -296,8 +298,20 @@ jobs:
             # reviewer just needs to click the link to open the PR. The PR is
             # based on the dedicated target branch, not main.
             ISSUE_LINK="${SERVER}/${REPO}/issues/${ISSUE_NUMBER}"
-            PR_TITLE_ENC=$(jq -rn --arg t "$TITLE" '$t|@uri')
-            PR_BODY_RAW="Fixes ${ISSUE_LINK}
+            # For PR-sourced runs, mark the prefilled PR as do-not-merge: it only
+            # exists to surface the code diff of the upstream typespec PR.
+            PR_TITLE="$TITLE"
+            NOTE_PREFIX=""
+            DRAFT_PARAM=""
+            if [ -n "$PR_NUMBER" ]; then
+              PR_TITLE="$TITLE (DO NOT MERGE)"
+              NOTE_PREFIX=$'NOTE: This PR is just to show code diff and pls do not merge this PR\n\n'
+              # PR-sourced regenerations open the prefilled PR as a draft
+              # (draft=1 is undocumented but honored by the quick_pull form).
+              DRAFT_PARAM="&draft=1"
+            fi
+            PR_TITLE_ENC=$(jq -rn --arg t "$PR_TITLE" '$t|@uri')
+            PR_BODY_RAW="${NOTE_PREFIX}Fixes ${ISSUE_LINK}
 
           Source: ${TS_REF_URL}
 
@@ -305,9 +319,9 @@ jobs:
 
           - Workflow run: ${RUN_URL}
 
-          This PR was auto-generated."
+          This PR was auto-generated. You could click the workflow again to update the PR directly if you have new commit in your typespec PR"
             PR_BODY_ENC=$(jq -rn --arg b "$PR_BODY_RAW" '$b|@uri')
-            COMPARE_URL="${SERVER}/${REPO}/compare/${TARGET_BRANCH}...${SOURCE_BRANCH}?quick_pull=1&title=${PR_TITLE_ENC}&body=${PR_BODY_ENC}"
+            COMPARE_URL="${SERVER}/${REPO}/compare/${TARGET_BRANCH}...${SOURCE_BRANCH}?quick_pull=1${DRAFT_PARAM}&title=${PR_TITLE_ENC}&body=${PR_BODY_ENC}"
 
             ISSUE_BODY="GitHub Actions is not permitted to create pull requests in this repository, so this issue tracks the regeneration instead.
 
