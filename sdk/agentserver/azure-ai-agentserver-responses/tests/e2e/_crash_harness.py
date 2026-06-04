@@ -106,6 +106,13 @@ class CrashHarness:
 
         self._process: subprocess.Popen[bytes] | None = None
         self._client: httpx.AsyncClient | None = None
+        # Subprocess stdout/stderr go to log files in ``tmp_path`` (see
+        # ``_spawn``). Tracked so ``close()`` can release the file handles
+        # and tests can inspect the logs via :attr:`subprocess_log_paths`
+        # on failure.
+        self._next_log_index: int = 0
+        self._subprocess_log_handles: list[Any] = []
+        self._subprocess_log_paths: list[Path] = []
 
     @staticmethod
     def _pick_ephemeral_port() -> int:
@@ -182,11 +189,26 @@ class CrashHarness:
             cmd = [sys.executable, "-m", self._sample_target]
         else:
             cmd = [sys.executable, self._sample_target]
+        # Redirect stdout/stderr to per-process log files in tmp_path
+        # rather than ``subprocess.PIPE``. PIPE buffers are bounded by the
+        # OS (~64 KB on Linux); if nobody drains them, the subprocess
+        # blocks on write — fatal for samples that emit debug logging or
+        # spawn their own chatty children (e.g. the github-copilot-sdk
+        # subprocess). The file route is unbounded and non-blocking, and
+        # the test can ``read_text()`` it for diagnostics on failure.
+        log_index = self._next_log_index
+        self._next_log_index += 1
+        log_path = self._tmp_path / f"subprocess-{log_index}.log"
+        # Open in append mode so a restart concatenates to the same file
+        # without truncating the previous lifetime's tail.
+        log_fh = open(log_path, "ab", buffering=0)  # pylint: disable=consider-using-with
+        self._subprocess_log_handles.append(log_fh)
+        self._subprocess_log_paths.append(log_path)
         return subprocess.Popen(
             cmd,
             env=self._build_env(),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stdout=log_fh,
+            stderr=subprocess.STDOUT,
             start_new_session=True,
         )
 
@@ -200,10 +222,17 @@ class CrashHarness:
         while asyncio.get_event_loop().time() < deadline:
             # Subprocess may have crashed already.
             if self._process is not None and self._process.poll() is not None:
-                stdout, stderr = self._process.communicate()
+                # stdout/stderr are in the log file (we no longer pipe them).
+                # Read the most recent log for diagnostics.
+                tail = b""
+                if self._subprocess_log_paths:
+                    try:
+                        tail = self._subprocess_log_paths[-1].read_bytes()[-4096:]
+                    except OSError:
+                        pass
                 raise RuntimeError(
                     "CrashHarness subprocess exited during startup. "
-                    f"stdout={stdout!r} stderr={stderr!r}"
+                    f"log_tail={tail!r}"
                 )
             try:
                 async with httpx.AsyncClient(timeout=1.0) as probe:
@@ -356,6 +385,26 @@ class CrashHarness:
         if self._process is not None and self._process.poll() is None:
             await self.kill()
         self._process = None
+        # Close subprocess log file handles. Path list is retained so
+        # tests/helpers can inspect logs after close (debug aid).
+        for fh in self._subprocess_log_handles:
+            try:
+                fh.close()
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass
+        self._subprocess_log_handles = []
+
+    @property
+    def subprocess_log_paths(self) -> list[Path]:
+        """Paths to the subprocess stdout+stderr log files (one per spawn).
+
+        Useful for diagnostics on a failed test. The harness keeps the
+        log files in ``tmp_path`` so they're cleaned up by pytest after
+        the test session.
+
+        :rtype: list[~pathlib.Path]
+        """
+        return list(self._subprocess_log_paths)
 
     async def __aenter__(self) -> "CrashHarness":
         await self.start()
