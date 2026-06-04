@@ -43,7 +43,7 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
                 params=_params,
                 **kwargs
             )
-            raw_result.http_response.read()
+            raw_result.http_response.read() # type: ignore[attr-defined]
 
         kwargs.pop("error_map", None)
 
@@ -98,7 +98,7 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
                 params=_params,
                 **kwargs
             )
-            raw_result.http_response.read()
+            raw_result.http_response.read() # type: ignore[attr-defined]
 
         kwargs.pop("error_map", None)
 

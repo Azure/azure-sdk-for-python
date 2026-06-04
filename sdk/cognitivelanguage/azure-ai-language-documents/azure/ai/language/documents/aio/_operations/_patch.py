@@ -8,21 +8,44 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Optional, Union, cast
+from collections.abc import MutableMapping
+from typing import Any, IO, Optional, Union, cast, overload
 
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
+from ... import models as _models
 from ._operations import _AnalyzeDocumentsClientOperationsMixin as GeneratedAnalyzeDocumentsClientOperationsMixin
 from .._lro import AnalyzeDocumentsAsyncLROPollingMethod
 
+JSON = MutableMapping[str, Any]
+
 
 class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOperationsMixin):
+    @overload
+    async def begin_submit_job(
+        self, body: _models.AnalyzeDocumentsJob, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        ...
+
+    @overload
+    async def begin_submit_job(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        ...
+
+    @overload
+    async def begin_submit_job(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        ...
+
     @distributed_trace_async
     async def begin_submit_job(
         self,
-        body: Any,
+        body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -43,7 +66,7 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()
+            await raw_result.http_response.read() # type: ignore[attr-defined]
 
         kwargs.pop("error_map", None)
 
@@ -98,7 +121,7 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()
+            await raw_result.http_response.read() # type: ignore[attr-defined]
 
         kwargs.pop("error_map", None)
 
