@@ -9,8 +9,6 @@
   - Model `ResourceOperationDetails` added property `fallback_operation_info`
   - Enum `ResourceOperationType` added member `CREATE`
   - Enum `ResourceOperationType` added member `DELETE`
-  - Model `ResourceProvisionPayload` added property `virtual_machine_base_profile`
-  - Model `ResourceProvisionPayload` added property `virtual_machine_overrides`
   - Model `RetryPolicy` added property `on_failure_action`
   - Added model `AdditionalCapabilities`
   - Added model `AdditionalUnattendContent`
@@ -141,8 +139,8 @@
   - Deleted or renamed enum value `ActionType.DEALLOCATE`
   - Deleted or renamed enum value `ActionType.HIBERNATE`
   - Deleted or renamed enum value `ActionType.START`
-  - Model `ResourceProvisionPayload` deleted or renamed its instance variable `base_profile`
-  - Model `ResourceProvisionPayload` deleted or renamed its instance variable `resource_overrides`
+  - Model `ResourceProvisionPayload` renamed its instance variable `base_profile` to `virtual_machine_base_profile`
+  - Model `ResourceProvisionPayload` renamed its instance variable `resource_overrides` to `virtual_machine_overrides`
 
 ## 1.2.0b1 (2025-07-24)
 
