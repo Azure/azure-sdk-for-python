@@ -305,7 +305,7 @@ jobs:
             DRAFT_PARAM=""
             if [ -n "$PR_NUMBER" ]; then
               PR_TITLE="$TITLE (DO NOT MERGE)"
-              NOTE_PREFIX=$'NOTE: This PR is just to show code diff and pls do not merge this PR\n\n'
+              NOTE_PREFIX=$'NOTE: This PR exists only to display the code diff. Please do not merge it.\n\n'
               # PR-sourced regenerations open the prefilled PR as a draft
               # (draft=1 is undocumented but honored by the quick_pull form).
               DRAFT_PARAM="&draft=1"
