@@ -2781,7 +2781,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             pass
 
         blob_name, blob_data = self.get_resource_name("blob"), b"abc123"
-        await container.upload_blob(blob_name, blob_data, overwrite=True, raw_response_hook=capture_auth_header("upload"))
+        await container.upload_blob(
+            blob_name, blob_data, overwrite=True, raw_response_hook=capture_auth_header("upload")
+        )
         assert captured["upload"].startswith("Bearer ")
 
         blob_actual = await (

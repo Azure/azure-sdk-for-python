@@ -159,8 +159,9 @@ class AsyncStorageAccountHostsMixin(object):
                 sub_kwargs["transport"] = transport
 
                 _, session_pipeline = self._create_pipeline(credential, **sub_kwargs)
-                generated = AzureBlobStorage(container_url, self.api_version, base_url=container_url)
-                generated._client._pipeline = session_pipeline  # pylint: disable=protected-access
+                generated = AzureBlobStorage(
+                    container_url, self.api_version, base_url=container_url, pipeline=session_pipeline
+                )
                 return generated
 
             policies.append(
