@@ -13,9 +13,15 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
-from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
-from azure.ai.ml._restclient.v2024_10_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2024_10_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials, SecretExpiry
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+    MachineLearningServicesMgmtClient as ServiceClient102024Preview,
+)
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+    DatastoreSecrets,
+    NoneDatastoreCredentials,
+    SecretExpiry,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
