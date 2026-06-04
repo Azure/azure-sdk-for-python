@@ -5,9 +5,11 @@
 
 Spec 015 Phase 3 (FR-006): the developer-facing `@task` decorator surface
 no longer accepts ``description``, ``store_input``, ``lease_duration_seconds``,
-or ``max_pending``. ``stream_handler_factory`` remains supported. ``TaskOptions``
-is no longer in the public ``__all__`` (it is an internal implementation
-detail; the ``_opts`` attribute is still observable for asserts).
+or ``max_pending``. Spec 017 additionally removed ``stream_handler_factory``
+(streaming is now handled via ``azure.ai.agentserver.core.streaming.streams``
+— see ``test_stream_handler_factory_rejected_post_spec_017`` below).
+``TaskOptions`` is no longer in the public ``__all__`` (it is an internal
+implementation detail; the ``_opts`` attribute is still observable for asserts).
 """
 
 import asyncio
