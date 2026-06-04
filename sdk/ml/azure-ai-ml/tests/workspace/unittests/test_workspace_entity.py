@@ -5,7 +5,7 @@ import json
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     Workspace as RestWorkspace,
 )
 from azure.ai.ml.constants._workspace import FirewallSku, IsolationMode
@@ -43,7 +43,7 @@ class TestWorkspaceEntity:
 
     def test_from_rest_object(self) -> None:
         with open("./tests/test_configs/workspace/workspace_full_rest_response.json", "r") as f:
-            rest_object = RestWorkspace.deserialize(json.load(f))
+            rest_object = RestWorkspace._deserialize(json.load(f), [])
 
         workspace = Workspace._from_rest_object(rest_object)
 
@@ -94,7 +94,7 @@ class TestWorkspaceEntity:
             del rest_json["properties"]["featureStoreSettings"]
             del rest_json["properties"]["serverlessComputeSettings"]
             del rest_json["properties"]["networkAcls"]
-            rest_object = RestWorkspace.deserialize(rest_json)
+            rest_object = RestWorkspace._deserialize(rest_json, [])
 
         workspace = Workspace._from_rest_object(rest_object)
 
