@@ -524,8 +524,9 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         # 401 → invalidate + re-acquire ONCE, then resend.
         if status == 401 and not request.context.options.get(SESSION_RETRIED_CONTEXT_KEY):
             _LOGGER.info("Session authentication: HTTP 401 on '%s'; re-acquiring once.", container_name)
+            used_token = StorageSessionPolicy._used_session_token(request)  # pylint: disable=protected-access
             async with self._cache.lock_container_async(container_name):
-                self._cache.put_fallback(container_name)
+                self._cache.invalidate(container_name, used_token)
             request.context.options[SESSION_RETRIED_CONTEXT_KEY] = True
             retried_container = await self.on_request(request)
             retried_response = await self.next.send(request)

@@ -953,6 +953,14 @@ class SessionCache:
             None, None, datetime.now(UTC) + SessionCache.FALLBACK_COOLDOWN, is_fallback=True
         )
 
+    def invalidate(self, container_name: str, session_token: Optional[str] = None) -> None:
+        if session_token is None:
+            self._entry.pop(container_name, None)
+            return
+        cached = self._entry.get(container_name)
+        if cached is not None and cached.session_token == session_token:
+            self._entry.pop(container_name, None)
+
 
 class StorageSessionPolicy(HTTPPolicy):
     """
@@ -1017,6 +1025,14 @@ class StorageSessionPolicy(HTTPPolicy):
         container_name = segments[0]
         container_url = f"{parsed.scheme}://{parsed.netloc}/{container_name}"
         return container_name, container_url
+
+    @staticmethod
+    def _used_session_token(request: "PipelineRequest") -> Optional[str]:
+        """Use for distinguishing between a successful concurrent refresh and invalidated token."""
+        auth = request.http_request.headers.get("Authorization", "")
+        if not auth.startswith("Session "):
+            return None
+        return auth[len("Session ") :].split(":", 1)[0] or None
 
     @staticmethod
     def _extract_session(response: Any) -> Tuple[str, str, datetime]:
@@ -1175,8 +1191,9 @@ class StorageSessionPolicy(HTTPPolicy):
         # 401 → invalidate + re-acquire ONCE, then resend.
         if status == 401 and not request.context.options.get(SESSION_RETRIED_CONTEXT_KEY):
             _LOGGER.info("Session authentication: HTTP 401 on '%s'; re-acquiring once.", container_name)
+            used_token = self._used_session_token(request)
             with self._cache.lock_container(container_name):
-                self._cache.put_fallback(container_name)
+                self._cache.invalidate(container_name, used_token)
             request.context.options[SESSION_RETRIED_CONTEXT_KEY] = True
             retried_container = self.on_request(request)
             retried_response = self.next.send(request)
