@@ -422,59 +422,59 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Model `AccessControlList` moved instance variable `annotation`, `configuration_type`, `acls_url`, `match_configurations`, `dynamic_match_configurations`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `AccessControlListPatch` moved instance variable `configuration_type`, `acls_url`, `match_configurations`, `dynamic_match_configurations` and `annotation` under property `properties`
+  - Model `AccessControlList` moved instance variable `annotation`, `configuration_type`, `acls_url`, `match_configurations`, `dynamic_match_configurations`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `AccessControlListProperties`
+  - Model `AccessControlListPatch` moved instance variable `configuration_type`, `acls_url`, `match_configurations`, `dynamic_match_configurations` and `annotation` under property `properties` whose type is `AccessControlListPatchProperties`
   - Model `ConnectedSubnetRoutePolicy` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `ExternalNetwork` moved instance variable `annotation`, `network_to_network_interconnect_id`, `import_route_policy`, `export_route_policy`, `peering_option`, `option_b_properties`, `option_a_properties`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
+  - Model `ExternalNetwork` moved instance variable `annotation`, `network_to_network_interconnect_id`, `import_route_policy`, `export_route_policy`, `peering_option`, `option_b_properties`, `option_a_properties`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `ExternalNetworkProperties`
   - Model `ExternalNetwork` deleted or renamed its instance variable `import_route_policy_id`
   - Model `ExternalNetwork` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `ExternalNetworkPatch` moved instance variable `annotation`, `import_route_policy`, `export_route_policy`, `peering_option`, `option_b_properties` and `option_a_properties` under property `properties`
+  - Model `ExternalNetworkPatch` moved instance variable `annotation`, `import_route_policy`, `export_route_policy`, `peering_option`, `option_b_properties` and `option_a_properties` under property `properties` whose type is `ExternalNetworkPatchProperties`
   - Model `ExternalNetworkPatch` deleted or renamed its instance variable `import_route_policy_id`
   - Model `ExternalNetworkPatch` deleted or renamed its instance variable `export_route_policy_id`
   - Model `ExternalNetworkPatchProperties` deleted or renamed its instance variable `import_route_policy_id`
   - Model `ExternalNetworkPatchProperties` deleted or renamed its instance variable `export_route_policy_id`
   - Model `ExternalNetworkProperties` deleted or renamed its instance variable `import_route_policy_id`
   - Model `ExternalNetworkProperties` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `InternalNetwork` moved instance variable `annotation`, `extension`, `mtu`, `connected_i_pv4_subnets`, `connected_i_pv6_subnets`, `import_route_policy`, `export_route_policy`, `ingress_acl_id`, `egress_acl_id`, `is_monitoring_enabled`, `vlan_id`, `bgp_configuration`, `static_route_configuration`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
+  - Model `InternalNetwork` moved instance variable `annotation`, `extension`, `mtu`, `connected_i_pv4_subnets`, `connected_i_pv6_subnets`, `import_route_policy`, `export_route_policy`, `ingress_acl_id`, `egress_acl_id`, `is_monitoring_enabled`, `vlan_id`, `bgp_configuration`, `static_route_configuration`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `InternalNetworkProperties`
   - Model `InternalNetwork` deleted or renamed its instance variable `import_route_policy_id`
   - Model `InternalNetwork` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `InternalNetworkPatch` moved instance variable `annotation`, `mtu`, `connected_i_pv4_subnets`, `connected_i_pv6_subnets`, `import_route_policy`, `export_route_policy`, `ingress_acl_id`, `egress_acl_id`, `is_monitoring_enabled`, `bgp_configuration` and `static_route_configuration` under property `properties`
+  - Model `InternalNetworkPatch` moved instance variable `annotation`, `mtu`, `connected_i_pv4_subnets`, `connected_i_pv6_subnets`, `import_route_policy`, `export_route_policy`, `ingress_acl_id`, `egress_acl_id`, `is_monitoring_enabled`, `bgp_configuration` and `static_route_configuration` under property `properties` whose type is `InternalNetworkPatchProperties`
   - Model `InternalNetworkPatch` deleted or renamed its instance variable `import_route_policy_id`
   - Model `InternalNetworkPatch` deleted or renamed its instance variable `export_route_policy_id`
   - Model `InternalNetworkPatchProperties` deleted or renamed its instance variable `import_route_policy_id`
   - Model `InternalNetworkPatchProperties` deleted or renamed its instance variable `export_route_policy_id`
   - Model `InternalNetworkProperties` deleted or renamed its instance variable `import_route_policy_id`
   - Model `InternalNetworkProperties` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `InternetGateway` moved instance variable `annotation`, `internet_gateway_rule_id`, `ipv4_address`, `port`, `network_fabric_controller_id` and `provisioning_state` under property `properties`
+  - Model `InternetGateway` moved instance variable `annotation`, `internet_gateway_rule_id`, `ipv4_address`, `port`, `network_fabric_controller_id` and `provisioning_state` under property `properties` whose type is `InternetGatewayProperties`
   - Model `InternetGateway` deleted or renamed its instance variable `type_properties_type`
-  - Model `InternetGatewayRule` moved instance variable `annotation`, `rule_properties`, `provisioning_state` and `internet_gateway_ids` under property `properties`
-  - Model `IpCommunity` moved instance variable `annotation`, `ip_community_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `IpCommunityPatch` moved instance variable `ip_community_rules` under property `properties`
-  - Model `IpExtendedCommunity` moved instance variable `annotation`, `ip_extended_community_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `IpExtendedCommunityPatch` moved instance variable `annotation` and `ip_extended_community_rules` under property `properties`
-  - Model `IpPrefix` moved instance variable `annotation`, `ip_prefix_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `IpPrefixPatch` moved instance variable `annotation` and `ip_prefix_rules` under property `properties`
-  - Model `L2IsolationDomain` moved instance variable `annotation`, `network_fabric_id`, `vlan_id`, `mtu`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `L2IsolationDomainPatch` moved instance variable `annotation` and `mtu` under property `properties`
-  - Model `L3IsolationDomain` moved instance variable `annotation`, `redistribute_connected_subnets`, `redistribute_static_routes`, `aggregate_route_configuration`, `connected_subnet_route_policy`, `network_fabric_id`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `L3IsolationDomainPatch` moved instance variable `annotation`, `redistribute_connected_subnets`, `redistribute_static_routes`, `aggregate_route_configuration` and `connected_subnet_route_policy` under property `properties`
-  - Model `NeighborGroup` moved instance variable `annotation`, `destination`, `network_tap_ids`, `network_tap_rule_ids` and `provisioning_state` under property `properties`
-  - Model `NeighborGroupPatch` moved instance variable `annotation` and `destination` under property `properties`
-  - Model `NetworkDevice` moved instance variable `annotation`, `host_name`, `serial_number`, `version`, `network_device_sku`, `network_device_role`, `network_rack_id`, `management_ipv4_address`, `management_ipv6_address`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `NetworkDevicePatchParameters` moved instance variable `annotation`, `host_name` and `serial_number` under property `properties`
-  - Model `NetworkFabric` moved instance variable `annotation`, `network_fabric_sku`, `fabric_version`, `router_ids`, `network_fabric_controller_id`, `rack_count`, `server_count_per_rack`, `ipv4_prefix`, `ipv6_prefix`, `fabric_asn`, `terminal_server_configuration`, `management_network_configuration`, `racks`, `l2_isolation_domains`, `l3_isolation_domains`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `NetworkFabricController` moved instance variable `annotation`, `infrastructure_express_route_connections`, `workload_express_route_connections`, `infrastructure_services`, `workload_services`, `managed_resource_group_configuration`, `network_fabric_ids`, `is_workload_management_network_enabled`, `tenant_internet_gateway_ids`, `ipv4_address_space`, `ipv6_address_space`, `nfc_sku` and `provisioning_state` under property `properties`
+  - Model `InternetGatewayRule` moved instance variable `annotation`, `rule_properties`, `provisioning_state` and `internet_gateway_ids` under property `properties` whose type is `InternetGatewayRuleProperties`
+  - Model `IpCommunity` moved instance variable `annotation`, `ip_community_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpCommunityProperties`
+  - Model `IpCommunityPatch` moved instance variable `ip_community_rules` under property `properties` whose type is `IpCommunityPatchableProperties`
+  - Model `IpExtendedCommunity` moved instance variable `annotation`, `ip_extended_community_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpExtendedCommunityProperties`
+  - Model `IpExtendedCommunityPatch` moved instance variable `annotation` and `ip_extended_community_rules` under property `properties` whose type is `IpExtendedCommunityPatchProperties`
+  - Model `IpPrefix` moved instance variable `annotation`, `ip_prefix_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpPrefixProperties`
+  - Model `IpPrefixPatch` moved instance variable `annotation` and `ip_prefix_rules` under property `properties` whose type is `IpPrefixPatchProperties`
+  - Model `L2IsolationDomain` moved instance variable `annotation`, `network_fabric_id`, `vlan_id`, `mtu`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `L2IsolationDomainProperties`
+  - Model `L2IsolationDomainPatch` moved instance variable `annotation` and `mtu` under property `properties` whose type is `L2IsolationDomainPatchProperties`
+  - Model `L3IsolationDomain` moved instance variable `annotation`, `redistribute_connected_subnets`, `redistribute_static_routes`, `aggregate_route_configuration`, `connected_subnet_route_policy`, `network_fabric_id`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `L3IsolationDomainProperties`
+  - Model `L3IsolationDomainPatch` moved instance variable `annotation`, `redistribute_connected_subnets`, `redistribute_static_routes`, `aggregate_route_configuration` and `connected_subnet_route_policy` under property `properties` whose type is `L3IsolationDomainPatchProperties`
+  - Model `NeighborGroup` moved instance variable `annotation`, `destination`, `network_tap_ids`, `network_tap_rule_ids` and `provisioning_state` under property `properties` whose type is `NeighborGroupProperties`
+  - Model `NeighborGroupPatch` moved instance variable `annotation` and `destination` under property `properties` whose type is `NeighborGroupPatchProperties`
+  - Model `NetworkDevice` moved instance variable `annotation`, `host_name`, `serial_number`, `version`, `network_device_sku`, `network_device_role`, `network_rack_id`, `management_ipv4_address`, `management_ipv6_address`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkDeviceProperties`
+  - Model `NetworkDevicePatchParameters` moved instance variable `annotation`, `host_name` and `serial_number` under property `properties` whose type is `NetworkDevicePatchParametersProperties`
+  - Model `NetworkFabric` moved instance variable `annotation`, `network_fabric_sku`, `fabric_version`, `router_ids`, `network_fabric_controller_id`, `rack_count`, `server_count_per_rack`, `ipv4_prefix`, `ipv6_prefix`, `fabric_asn`, `terminal_server_configuration`, `management_network_configuration`, `racks`, `l2_isolation_domains`, `l3_isolation_domains`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkFabricProperties`
+  - Model `NetworkFabricController` moved instance variable `annotation`, `infrastructure_express_route_connections`, `workload_express_route_connections`, `infrastructure_services`, `workload_services`, `managed_resource_group_configuration`, `network_fabric_ids`, `is_workload_management_network_enabled`, `tenant_internet_gateway_ids`, `ipv4_address_space`, `ipv6_address_space`, `nfc_sku` and `provisioning_state` under property `properties` whose type is `NetworkFabricControllerProperties`
   - Model `NetworkFabricController` deleted or renamed its instance variable `workload_management_network`
   - Model `NetworkFabricControllerProperties` deleted or renamed its instance variable `workload_management_network`
-  - Model `NetworkFabricPatch` moved instance variable `annotation`, `rack_count`, `server_count_per_rack`, `ipv4_prefix`, `ipv6_prefix`, `fabric_asn`, `terminal_server_configuration` and `management_network_configuration` under property `properties`
-  - Model `NetworkInterface` moved instance variable `annotation`, `physical_identifier`, `connected_to`, `interface_type`, `ipv4_address`, `ipv6_address`, `provisioning_state` and `administrative_state` under property `properties`
+  - Model `NetworkFabricPatch` moved instance variable `annotation`, `rack_count`, `server_count_per_rack`, `ipv4_prefix`, `ipv6_prefix`, `fabric_asn`, `terminal_server_configuration` and `management_network_configuration` under property `properties` whose type is `NetworkFabricPatchProperties`
+  - Model `NetworkInterface` moved instance variable `annotation`, `physical_identifier`, `connected_to`, `interface_type`, `ipv4_address`, `ipv6_address`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkInterfaceProperties`
   - Model `NetworkInterfacePatch` deleted or renamed its instance variable `annotation`
-  - Model `NetworkRack` moved instance variable `annotation`, `network_rack_type`, `network_fabric_id`, `network_devices` and `provisioning_state` under property `properties`
-  - Model `NetworkTap` moved instance variable `annotation`, `network_packet_broker_id`, `source_tap_rule_id`, `destinations`, `polling_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `NetworkTapRule` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations`, `dynamic_match_configurations`, `network_tap_id`, `polling_interval_in_seconds`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `NetworkTapRulePatch` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations` and `dynamic_match_configurations` under property `properties`
-  - Model `RoutePolicy` moved instance variable `annotation`, `statements`, `network_fabric_id`, `address_family_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties`
-  - Model `RoutePolicyPatch` moved instance variable `statements` under property `properties`
+  - Model `NetworkRack` moved instance variable `annotation`, `network_rack_type`, `network_fabric_id`, `network_devices` and `provisioning_state` under property `properties` whose type is `NetworkRackProperties`
+  - Model `NetworkTap` moved instance variable `annotation`, `network_packet_broker_id`, `source_tap_rule_id`, `destinations`, `polling_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkTapProperties`
+  - Model `NetworkTapRule` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations`, `dynamic_match_configurations`, `network_tap_id`, `polling_interval_in_seconds`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkTapRuleProperties`
+  - Model `NetworkTapRulePatch` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations` and `dynamic_match_configurations` under property `properties` whose type is `NetworkTapRulePatchProperties`
+  - Model `RoutePolicy` moved instance variable `annotation`, `statements`, `network_fabric_id`, `address_family_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `RoutePolicyProperties`
+  - Model `RoutePolicyPatch` moved instance variable `statements` under property `properties` whose type is `RoutePolicyPatchableProperties`
   - Deleted or renamed model `AccessControlListPatchableProperties`
   - Deleted or renamed model `ExtendedLocation`
   - Deleted or renamed model `ExtensionEnumProperty`
@@ -511,7 +511,7 @@
 ### Other Changes
 
   - Deleted model `ExternalNetworksList`/`InternalNetworksList`/`NetworkInterfacesList`/`NetworkToNetworkInterconnectsList` which actually were not used by SDK users
-    - Method `AccessControlListsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
+  - Method `AccessControlListsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `ExternalNetworksOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `ExternalNetworksOperations.begin_update_static_route_bfd_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `InternalNetworksOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
