@@ -7,13 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ManagedNetworkFabricMgmtClientConfiguration
 from .operations import (
     AccessControlListsOperations,
@@ -33,6 +38,7 @@ from .operations import (
     NetworkFabricSkusOperations,
     NetworkFabricsOperations,
     NetworkInterfacesOperations,
+    NetworkMonitorsOperations,
     NetworkPacketBrokersOperations,
     NetworkRacksOperations,
     NetworkTapRulesOperations,
@@ -43,22 +49,24 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ManagedNetworkFabricMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Self service experience for Azure Network Fabric API.
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.managednetworkfabric.aio.operations.Operations
     :ivar access_control_lists: AccessControlListsOperations operations
     :vartype access_control_lists:
      azure.mgmt.managednetworkfabric.aio.operations.AccessControlListsOperations
-    :ivar internet_gateways: InternetGatewaysOperations operations
-    :vartype internet_gateways:
-     azure.mgmt.managednetworkfabric.aio.operations.InternetGatewaysOperations
     :ivar internet_gateway_rules: InternetGatewayRulesOperations operations
     :vartype internet_gateway_rules:
      azure.mgmt.managednetworkfabric.aio.operations.InternetGatewayRulesOperations
+    :ivar internet_gateways: InternetGatewaysOperations operations
+    :vartype internet_gateways:
+     azure.mgmt.managednetworkfabric.aio.operations.InternetGatewaysOperations
     :ivar ip_communities: IpCommunitiesOperations operations
     :vartype ip_communities: azure.mgmt.managednetworkfabric.aio.operations.IpCommunitiesOperations
     :ivar ip_extended_communities: IpExtendedCommunitiesOperations operations
@@ -72,12 +80,6 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
     :ivar l3_isolation_domains: L3IsolationDomainsOperations operations
     :vartype l3_isolation_domains:
      azure.mgmt.managednetworkfabric.aio.operations.L3IsolationDomainsOperations
-    :ivar internal_networks: InternalNetworksOperations operations
-    :vartype internal_networks:
-     azure.mgmt.managednetworkfabric.aio.operations.InternalNetworksOperations
-    :ivar external_networks: ExternalNetworksOperations operations
-    :vartype external_networks:
-     azure.mgmt.managednetworkfabric.aio.operations.ExternalNetworksOperations
     :ivar neighbor_groups: NeighborGroupsOperations operations
     :vartype neighbor_groups:
      azure.mgmt.managednetworkfabric.aio.operations.NeighborGroupsOperations
@@ -87,9 +89,6 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
     :ivar network_devices: NetworkDevicesOperations operations
     :vartype network_devices:
      azure.mgmt.managednetworkfabric.aio.operations.NetworkDevicesOperations
-    :ivar network_interfaces: NetworkInterfacesOperations operations
-    :vartype network_interfaces:
-     azure.mgmt.managednetworkfabric.aio.operations.NetworkInterfacesOperations
     :ivar network_fabric_controllers: NetworkFabricControllersOperations operations
     :vartype network_fabric_controllers:
      azure.mgmt.managednetworkfabric.aio.operations.NetworkFabricControllersOperations
@@ -99,9 +98,9 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
     :ivar network_fabrics: NetworkFabricsOperations operations
     :vartype network_fabrics:
      azure.mgmt.managednetworkfabric.aio.operations.NetworkFabricsOperations
-    :ivar network_to_network_interconnects: NetworkToNetworkInterconnectsOperations operations
-    :vartype network_to_network_interconnects:
-     azure.mgmt.managednetworkfabric.aio.operations.NetworkToNetworkInterconnectsOperations
+    :ivar network_monitors: NetworkMonitorsOperations operations
+    :vartype network_monitors:
+     azure.mgmt.managednetworkfabric.aio.operations.NetworkMonitorsOperations
     :ivar network_packet_brokers: NetworkPacketBrokersOperations operations
     :vartype network_packet_brokers:
      azure.mgmt.managednetworkfabric.aio.operations.NetworkPacketBrokersOperations
@@ -112,18 +111,31 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
      azure.mgmt.managednetworkfabric.aio.operations.NetworkTapRulesOperations
     :ivar network_taps: NetworkTapsOperations operations
     :vartype network_taps: azure.mgmt.managednetworkfabric.aio.operations.NetworkTapsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.managednetworkfabric.aio.operations.Operations
     :ivar route_policies: RoutePoliciesOperations operations
     :vartype route_policies: azure.mgmt.managednetworkfabric.aio.operations.RoutePoliciesOperations
+    :ivar external_networks: ExternalNetworksOperations operations
+    :vartype external_networks:
+     azure.mgmt.managednetworkfabric.aio.operations.ExternalNetworksOperations
+    :ivar internal_networks: InternalNetworksOperations operations
+    :vartype internal_networks:
+     azure.mgmt.managednetworkfabric.aio.operations.InternalNetworksOperations
+    :ivar network_interfaces: NetworkInterfacesOperations operations
+    :vartype network_interfaces:
+     azure.mgmt.managednetworkfabric.aio.operations.NetworkInterfacesOperations
+    :ivar network_to_network_interconnects: NetworkToNetworkInterconnectsOperations operations
+    :vartype network_to_network_interconnects:
+     azure.mgmt.managednetworkfabric.aio.operations.NetworkToNetworkInterconnectsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-15". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2024-06-15-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -133,25 +145,58 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = ManagedNetworkFabricMgmtClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.access_control_lists = AccessControlListsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.internet_gateways = InternetGatewaysOperations(
+        self.internet_gateway_rules = InternetGatewayRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.internet_gateway_rules = InternetGatewayRulesOperations(
+        self.internet_gateways = InternetGatewaysOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.ip_communities = IpCommunitiesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -165,20 +210,11 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
         self.l3_isolation_domains = L3IsolationDomainsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.internal_networks = InternalNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.external_networks = ExternalNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.neighbor_groups = NeighborGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.network_device_skus = NetworkDeviceSkusOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.network_devices = NetworkDevicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_interfaces = NetworkInterfacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.network_fabric_controllers = NetworkFabricControllersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -186,7 +222,7 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
             self._client, self._config, self._serialize, self._deserialize
         )
         self.network_fabrics = NetworkFabricsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_to_network_interconnects = NetworkToNetworkInterconnectsOperations(
+        self.network_monitors = NetworkMonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.network_packet_brokers = NetworkPacketBrokersOperations(
@@ -197,10 +233,23 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
             self._client, self._config, self._serialize, self._deserialize
         )
         self.network_taps = NetworkTapsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.route_policies = RoutePoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.external_networks = ExternalNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.internal_networks = InternalNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_interfaces = NetworkInterfacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_to_network_interconnects = NetworkToNetworkInterconnectsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -220,12 +269,12 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ManagedNetworkFabricMgmtClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

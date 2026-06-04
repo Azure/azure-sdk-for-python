@@ -1,0 +1,11 @@
+{
+  "commit": "2bf3bb94c1efe7f19ddca52cf74f1da2d19da440",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.50.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/managednetworkfabric/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=D:\\spec\\worktrees\\sdk-azure-mgmt-managednetworkfabric\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/managednetworkfabric/resource-manager/readme.md"
+}
