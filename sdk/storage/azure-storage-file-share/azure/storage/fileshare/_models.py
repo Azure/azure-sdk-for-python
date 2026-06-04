@@ -8,7 +8,7 @@
 
 from enum import Enum
 import xml.etree.ElementTree as ET
-from typing import Any, Callable, Dict, List, Literal, Optional, Union, TYPE_CHECKING
+from typing import Any, Callable, Dict, List, Literal, Mapping, Optional, Union, overload, TYPE_CHECKING
 from urllib.parse import unquote
 from typing_extensions import Self
 
@@ -63,7 +63,22 @@ class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted."""
 
-    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
+    @overload
+    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
+        enabled = args[0] if args else kwargs.get("enabled", False)
+        days = args[1] if len(args) > 1 else kwargs.get("days", None)
         if enabled and (days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
         super().__init__(enabled=enabled, days=days)
@@ -128,7 +143,27 @@ class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
-    def __init__(self, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        version: str = "1.0",
+        enabled: bool = False,
+        include_apis: Optional[bool] = None,
+        retention_policy: Optional[RetentionPolicy] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
         super().__init__(
             version=kwargs.get("version", "1.0"),
             enabled=kwargs.get("enabled", False),
@@ -220,7 +255,30 @@ class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
-    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        allowed_origins: List[str],
+        allowed_methods: List[str],
+        *,
+        allowed_headers: Optional[List[str]] = None,
+        exposed_headers: Optional[List[str]] = None,
+        max_age_in_seconds: int = 0,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
+        allowed_origins = args[0] if args else kwargs.pop("allowed_origins")
+        allowed_methods = args[1] if len(args) > 1 else kwargs.pop("allowed_methods")
         super().__init__(
             allowed_origins=",".join(allowed_origins),
             allowed_methods=",".join(allowed_methods),
@@ -292,8 +350,18 @@ class SmbMultichannel(GeneratedSmbMultichannel, _ModelBackCompatMixin):
     enabled: bool
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        super().__init__(enabled=enabled)
+    @overload
+    def __init__(self, *, enabled: bool) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
     def as_dict(
         self,
@@ -327,8 +395,18 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit, _ModelBackCompatMi
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        super().__init__(required=required)
+    @overload
+    def __init__(self, *, required: bool) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
     def as_dict(
         self,
@@ -365,16 +443,26 @@ class ShareSmbSettings(GeneratedShareSmbSettings, _ModelBackCompatMixin):
     encryption_in_transit: Optional[SmbEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    def __init__(  # pylint: disable=unused-argument
+    @overload
+    def __init__(
         self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
-        **kwargs: Any,
-    ) -> None:
-        super().__init__(multichannel=multichannel, encryption_in_transit=encryption_in_transit)
-        if self.multichannel is None and self.encryption_in_transit is None:
-            raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        if not (args and isinstance(args[0], (ET.Element, dict))):
+            if self.multichannel is None and self.encryption_in_transit is None:
+                raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
 
     def as_dict(
         self,
@@ -408,8 +496,18 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit, _ModelBackCompatMi
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        super().__init__(required=required)
+    @overload
+    def __init__(self, *, required: bool) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
     def as_dict(
         self,
@@ -443,10 +541,18 @@ class ShareNfsSettings(GeneratedShareNfsSettings, _ModelBackCompatMixin):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any
-    ) -> None:
-        super().__init__(encryption_in_transit=encryption_in_transit)
+    @overload
+    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
     def as_dict(
         self,
@@ -485,12 +591,26 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings, _ModelBackCompatMixi
     nfs: Optional[ShareNfsSettings]
     """Sets the NFS settings."""
 
+    @overload
     def __init__(
-        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any  # pylint: disable=unused-argument
-    ) -> None:
-        super().__init__(smb=smb, nfs=nfs)
-        if self.smb is None and self.nfs is None:
-            raise ValueError("The value 'smb' or 'nfs' must be specified.")
+        self,
+        *,
+        smb: Optional[ShareSmbSettings] = None,
+        nfs: Optional[ShareNfsSettings] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        if not (args and isinstance(args[0], (ET.Element, dict))):
+            if self.smb is None and self.nfs is None:
+                raise ValueError("The value 'smb' or 'nfs' must be specified.")
 
     def as_dict(
         self,
@@ -651,12 +771,28 @@ class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
 
+    @overload
     def __init__(
         self,
         permission: Optional[Union[ShareSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
-    ) -> None:
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
+        permission = args[0] if args else kwargs.get("permission")
+        expiry = args[1] if len(args) > 1 else kwargs.get("expiry")
+        start = args[2] if len(args) > 2 else kwargs.get("start")
         super().__init__()
         self.start = start  # type: ignore [assignment]
         self.expiry = expiry  # type: ignore [assignment]
