@@ -33,7 +33,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
-from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
 from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
     MachineLearningServicesMgmtClient as ServiceClient102024PreviewTsp,
 )
@@ -375,17 +374,6 @@ class MLClient:
         self._service_client_04_2024_preview = ServiceClient042024Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._service_client_10_2024_preview = ServiceClient102024Preview(
-            credential=self._credential,
-            subscription_id=(
-                self._ws_operation_scope._subscription_id
-                if registry_reference
-                else self._operation_scope._subscription_id
-            ),
             base_url=base_url,
             **kwargs,
         )
