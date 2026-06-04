@@ -1,6 +1,6 @@
 # Release History
 
-## 12.31.0b1 (Unreleased)
+## 12.30.0 (2026-06-08)
 
 ### Features Added
 - Stable release of features from 12.30.0b1
