@@ -624,10 +624,26 @@ registry pattern.
 
 ### Input-acceptance preconditions (`LastInputIdPreconditionFailed`, `TaskPreconditionFailed`)
 
-For sequential-input semantics (don't accept input *N* unless the
-last-accepted input was *N-1*), `.start(... if_last_input_id=...)`
-applies an HTTP-`If-Match`-style precondition. Mismatch raises
-`LastInputIdPreconditionFailed` (a subclass of `TaskPreconditionFailed`).
+The `input_id` and `if_last_input_id` kwargs on `.start()` / `.run()`
+are **orthogonal**:
+
+- `input_id` (alone) — **idempotency / chain-head tracking**. Records
+  the input as the chain head on the task's persisted state
+  (`payload["_last_input_id"]`). Always succeeds; no precondition is
+  checked. Use this when chain ordering is enforced by another
+  mechanism (e.g. `task_id` collapse + `TaskConflictError` /
+  steering-queue sequencing for conversation-grouped multi-turn).
+- `if_last_input_id` (paired with `input_id`) — **HTTP-`If-Match`-style
+  chain-extension precondition**. The framework requires the stored
+  `last_input_id` to equal `if_last_input_id` (the predecessor the
+  caller claims to be extending). Mismatch raises
+  `LastInputIdPreconditionFailed` (a subclass of
+  `TaskPreconditionFailed`). Use this when callers explicitly thread
+  predecessor identity through every turn (e.g. OpenAI Responses
+  API's `previous_response_id`-style chaining).
+
+It is **not** valid to pass `if_last_input_id` without `input_id` —
+that raises `TypeError` at the call site.
 
 ### Steering-queue backpressure (`SteeringQueueFull`)
 
