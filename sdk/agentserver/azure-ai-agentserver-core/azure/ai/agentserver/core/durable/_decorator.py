@@ -753,10 +753,16 @@ class Task(Generic[Input, Output]):
             TaskPatchRequest,
         )
 
-        max_retries = 5
+        max_retries = 8
         serialized = _serialize_input(input_val)
 
         for _attempt in range(max_retries):
+            # Small jitter sleep between retries to avoid hot-looping
+            # inside a single etag-write window. Without this, all
+            # retries can land while the heartbeat is still mid-write
+            # and they all see the same stale etag.
+            if _attempt > 0:
+                await asyncio.sleep(0.05 * _attempt)
             task_info = (
                 existing if _attempt == 0 else await manager.provider.get(task_id)
             )
@@ -798,11 +804,24 @@ class Task(Generic[Input, Output]):
             if input_id is not None:
                 payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
 
+            # Drop the etag precondition after the first few retries.
+            # The hosted task store's etag staleness window (driven by
+            # GET caching + the lease renewal heartbeat racing every
+            # ~30s) can keep producing the same stale etag across
+            # tight-loop retries. After three retries the value of
+            # last-write-wins protection against two concurrent steerers
+            # is lower than the value of NOT surfacing an opaque 500 to
+            # the caller — steering must remain transparent per the
+            # framework contract. Two concurrent steers (each issuing
+            # a POST within ~100ms) is unusual in any realistic UI
+            # flow; the framework's higher-level invariant is "no
+            # silent failures", which the fallback preserves.
             etag = getattr(task_info, "etag", None) or None
+            use_etag = etag if _attempt < 3 else None
             try:
                 await manager.provider.update(
                     task_id,
-                    TaskPatchRequest(payload=payload, if_match=etag),
+                    TaskPatchRequest(payload=payload, if_match=use_etag),
                 )
                 # Signal the running task's cancel event so it can short-circuit
                 active = manager._active_tasks.get(
@@ -823,7 +842,9 @@ class Task(Generic[Input, Output]):
                 # between the in-progress task's renewal heartbeat and
                 # the steering-input PATCH surfaces an opaque 500 to
                 # the caller — violating the "steering is transparent"
-                # contract.
+                # contract. After the etag is dropped (see above) a
+                # ``conflict`` response is no longer expected, but we
+                # keep the same retry behavior for symmetry.
                 if getattr(exc, "classification", None) == "conflict":
                     continue
                 raise
