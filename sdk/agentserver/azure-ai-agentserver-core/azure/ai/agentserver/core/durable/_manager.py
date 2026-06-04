@@ -1822,7 +1822,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         self._active_tasks.pop(task_id, None)
 
-    async def _try_drain_steering(  # pylint: disable=too-many-branches,too-many-statements
+    async def _try_drain_steering(  # pylint: disable=too-many-branches,too-many-statements,too-many-locals
         self,
         *,
         task_id: str,
@@ -1830,6 +1830,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         opts: TaskOptions,
         result_future: asyncio.Future[Any],
         partial_output: Any | None = None,
+        _conflict_attempt: int = 0,
     ) -> TaskContext[Any] | None:
         """Check for pending steering inputs and drain the next one.
 
@@ -1894,22 +1895,40 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         try:
             etag = getattr(task_info, "etag", None) or None
+            # Hosted task store etag bug workaround: empirically the
+            # hosted store returns 412 even when If-Match matches the
+            # etag the server JUST returned via GET (verified via wire
+            # logs — GET -> Etag: ""abc"" then PATCH If-Match: ""abc""
+            # -> 412, with no other writer between the two calls).
+            # Issue tracked with the hosted-task-store team. Until
+            # fixed, drop the etag precondition after a few retries
+            # so steering drain converges. Last-write-wins on the
+            # steering-state payload is acceptable here — the drain
+            # only runs from a single in-process call site (the task
+            # body's suspend boundary).
+            use_etag = etag if _conflict_attempt < 2 else None
             await self._provider.update(
                 task_id,
-                TaskPatchRequest(payload=payload, if_match=etag),
+                TaskPatchRequest(payload=payload, if_match=use_etag),
             )
         except (ValueError, TransportClassifiedError) as exc:
-            # Etag conflict — re-read and retry once. Local provider
-            # raises ValueError; hosted task store raises
-            # TransportClassifiedError with classification="conflict"
-            # (412 etag mismatch or 409). Both are the same logical
-            # concurrency outcome and warrant the same retry path.
+            # Etag conflict — re-read and retry. Local provider raises
+            # ValueError; hosted task store raises
+            # TransportClassifiedError with classification="conflict".
             if isinstance(exc, TransportClassifiedError) and getattr(
                 exc, "classification", None
             ) != "conflict":
                 raise
+            if _conflict_attempt >= 5:
+                raise RuntimeError(
+                    f"Steering drain for {task_id!r} did not converge "
+                    "after 5 etag-conflict retries"
+                ) from exc
             logger.warning(
-                "Etag conflict during steering drain for %s, retrying", task_id
+                "Etag conflict during steering drain for %s, retrying "
+                "(attempt %d)",
+                task_id,
+                _conflict_attempt + 1,
             )
             return await self._try_drain_steering(
                 task_id=task_id,
@@ -1917,6 +1936,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 opts=opts,
                 result_future=result_future,
                 partial_output=partial_output,
+                _conflict_attempt=_conflict_attempt + 1,
             )
 
         # Pop and bind the next pending steering future (if any)
