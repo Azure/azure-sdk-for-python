@@ -60,6 +60,20 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+_SIGNED_HEADERS = (
+    "content-encoding",
+    "content-language",
+    "content-length",
+    "content-md5",
+    "content-type",
+    "date",
+    "if-modified-since",
+    "if-match",
+    "if-none-match",
+    "if-unmodified-since",
+    "byte_range",
+)
+
 CONTENT_LENGTH_HEADER = "Content-Length"
 MD5_HEADER = "Content-MD5"
 CRC64_HEADER = "x-ms-content-crc64"
@@ -113,21 +127,6 @@ def _used_session_token(request: "PipelineRequest") -> Optional[str]:
     if not auth.startswith("Session "):
         return None
     return auth[len("Session ") :].split(":", 1)[0] or None
-
-
-_SIGNED_HEADERS = (
-    "content-encoding",
-    "content-language",
-    "content-length",
-    "content-md5",
-    "content-type",
-    "date",
-    "if-modified-since",
-    "if-match",
-    "if-none-match",
-    "if-unmodified-since",
-    "byte_range",
-)
 
 
 def _apply_session_auth(
