@@ -85,7 +85,7 @@ logger = logging.getLogger("azure.ai.agentserver")
 # duplicates across multiple AgentServerHost instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
-# Logger names whose INFO messages are too noisy for the console.
+# Logger names whose INFO messages are too noisy by default (set to WARNING unless the user requests DEBUG).
 _SUPPRESSED_LOGGERS = (
     "azure.monitor.opentelemetry.exporter",
     "azure.core.pipeline.policies.http_logging_policy",
