@@ -34,17 +34,6 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)
 
-        if cont_token is None:
-            raw_result = self._submit_job_initial(
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read() # type: ignore[attr-defined]
-
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -70,13 +59,23 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         else:
             polling_method = polling
 
-        if cont_token:
+        if cont_token is not None:
             return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
+
+        raw_result = self._submit_job_initial(
+            body=body,
+            content_type=content_type,
+            cls=lambda x, y, z: x,
+            headers=_headers,
+            params=_params,
+            **kwargs
+        )
+        raw_result.http_response.read()  # type: ignore[attr-defined]
 
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)
 
@@ -90,16 +89,6 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)
 
-        if cont_token is None:
-            raw_result = self._cancel_job_initial(
-                job_id=job_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read() # type: ignore[attr-defined]
-
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -125,13 +114,22 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         else:
             polling_method = polling
 
-        if cont_token:
+        if cont_token is not None:
             return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
+
+        raw_result = self._cancel_job_initial(
+            job_id=job_id,
+            cls=lambda x, y, z: x,
+            headers=_headers,
+            params=_params,
+            **kwargs
+        )
+        raw_result.http_response.read()  # type: ignore[attr-defined]
 
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)
 
