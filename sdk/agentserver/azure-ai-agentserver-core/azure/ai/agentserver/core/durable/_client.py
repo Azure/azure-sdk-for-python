@@ -511,7 +511,23 @@ class HostedTaskProvider:
 
         headers: dict[str, str] = {"Content-Type": "application/json"}
         if patch.if_match is not None:
-            headers["If-Match"] = f'"{patch.if_match}"'
+            # The hosted task store returns the etag inside the JSON body
+            # with its outer RFC 7232 quotes already embedded in the
+            # string value (e.g. ``"5e00450b-..."`` — the literal quote
+            # characters are PART of the value). Read that as-is and
+            # send it as the If-Match header verbatim (no extra
+            # wrapping) so the wire format matches the server's
+            # ``Etag`` response header byte-for-byte. The conditional
+            # below tolerates both shapes — etag values that already
+            # carry the outer quotes (hosted store path) and bare
+            # values from the local provider's ad-hoc etag generator
+            # (unit tests) — by adding the quotes only when they
+            # aren't already there.
+            raw = str(patch.if_match)
+            if raw.startswith('"') and raw.endswith('"'):
+                headers["If-Match"] = raw
+            else:
+                headers["If-Match"] = f'"{raw}"'
 
         url = f"{self._base_url}/{task_id}"
         http_request = HttpRequest(
