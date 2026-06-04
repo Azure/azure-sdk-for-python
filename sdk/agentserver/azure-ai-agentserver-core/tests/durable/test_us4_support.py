@@ -120,8 +120,12 @@ def test_suspended_resume_uses_etag_retry_loop() -> None:
     src = inspect.getsource(Task._lifecycle_start_inner)
     # Etag retry loop at the suspended-resume site.
     assert 'if_match=etag' in src
-    # And the standard retry behaviour.
-    assert "except ValueError" in src
+    # And the standard retry behaviour. The retry catches the local
+    # provider's ValueError AND the hosted store's
+    # TransportClassifiedError(classification="conflict") — both are
+    # the same logical etag conflict.
+    assert "ValueError" in src
+    assert "TransportClassifiedError" in src
     # Spec 013 US4 framing.
     assert "Spec 013 US4" in src
 

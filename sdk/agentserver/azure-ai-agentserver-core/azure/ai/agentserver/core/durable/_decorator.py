@@ -814,6 +814,19 @@ class Task(Generic[Input, Output]):
             except ValueError:
                 # Local provider etag conflict — retry
                 continue
+            except _TransportClassifiedError as exc:
+                # Hosted task store classifies 412 etag conflicts as
+                # ``"conflict"`` (and 409 likewise). Treat these the
+                # same as the local-provider ValueError above — re-fetch
+                # the task record on the next attempt and re-apply the
+                # append against the fresh etag. Without this, a race
+                # between the in-progress task's renewal heartbeat and
+                # the steering-input PATCH surfaces an opaque 500 to
+                # the caller — violating the "steering is transparent"
+                # contract.
+                if getattr(exc, "classification", None) == "conflict":
+                    continue
+                raise
 
         raise RuntimeError(
             f"Failed to append steering input after {max_retries} retries"
@@ -1004,8 +1017,16 @@ class Task(Generic[Input, Output]):
                         TaskPatchRequest(payload=resume_payload, if_match=etag),
                     )
                     break
-                except ValueError as exc:
+                except (ValueError, _TransportClassifiedError) as exc:
                     # Etag conflict — re-fetch, re-check precondition, retry.
+                    # Local provider raises ValueError; hosted task store
+                    # raises TransportClassifiedError with classification=
+                    # "conflict" (412 etag mismatch or 409). Both are
+                    # the same logical concurrency outcome.
+                    if isinstance(exc, _TransportClassifiedError) and getattr(
+                        exc, "classification", None
+                    ) != "conflict":
+                        raise
                     refreshed = await manager.provider.get(task_id)
                     if refreshed is None:
                         raise RuntimeError(
