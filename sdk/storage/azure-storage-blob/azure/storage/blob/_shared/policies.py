@@ -964,10 +964,6 @@ class StorageSessionPolicy(HTTPPolicy):
     When disabled, all requests are delegated to the bearer token policy.
     """
 
-    SESSIONS_UNAVAILABLE: str = "SessionOperationsTemporarilyUnavailable"
-    """Service-reported code: session operations are temporarily unavailable."""
-    FEATURE_NOT_ENABLED: str = "FeatureNotEnabled"
-    """Service-reported code: the session feature is not enabled on the scale unit."""
     _SIGNED_HEADERS = (
         "content-encoding",
         "content-language",
@@ -1161,13 +1157,13 @@ class StorageSessionPolicy(HTTPPolicy):
         status = response.http_response.status_code
         error_code = response.http_response.headers.get("x-ms-error-code", "")
 
-        if error_code == self.FEATURE_NOT_ENABLED:
+        if error_code == StorageErrorCode.FEATURE_NOT_ENABLED:
             _LOGGER.info("Session feature not enabled on this account; disabling session auth.")
             self._use_session = False
             return response
 
         # Unavailable / 5xx → negative-cache cooldown.
-        if error_code == self.SESSIONS_UNAVAILABLE or status >= 500:
+        if error_code == StorageErrorCode.SESSIONS_UNAVAILABLE or status >= 500:
             _LOGGER.warning(
                 "Session authentication: '%s' (HTTP %d) on container '%s'; bearer fallback for %d seconds.",
                 error_code or "5xx",

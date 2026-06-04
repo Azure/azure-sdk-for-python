@@ -340,14 +340,11 @@ class StorageAccountHostsMixin(object):
 
             def _session_client_factory(container_url: str) -> AzureBlobStorage:
                 sub_kwargs = dict(kwargs)
-                sub_kwargs.pop("_pipeline", None)
                 sub_kwargs.pop("_configuration", None)
                 sub_kwargs.pop("pipeline", None)
-                sub_kwargs.pop("sdk_moniker", None)
-                sub_kwargs["use_session"] = False
                 sub_kwargs["transport"] = transport
 
-                _, session_pipeline = self._create_pipeline(credential, sdk_moniker=self._sdk_moniker, **sub_kwargs)
+                _, session_pipeline = self._create_pipeline(credential, **sub_kwargs)
                 generated = AzureBlobStorage(container_url, self.api_version, base_url=container_url)
                 generated._client._pipeline = session_pipeline  # pylint: disable=protected-access
                 return generated

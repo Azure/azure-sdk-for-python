@@ -19,6 +19,7 @@ from azure.core.pipeline.policies import (
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
+from .models import StorageErrorCode
 from .policies import (
     _prepare_content_validation,
     _validate_content_response,
@@ -383,11 +384,6 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
     policy that sits earlier in the pipeline.
     """
 
-    SESSIONS_UNAVAILABLE: str = StorageSessionPolicy.SESSIONS_UNAVAILABLE
-    """Service-reported code: session operations are temporarily unavailable."""
-    FEATURE_NOT_ENABLED: str = StorageSessionPolicy.FEATURE_NOT_ENABLED
-    """Service-reported code: the session feature is not enabled on the scale unit."""
-
     def __init__(
         self,
         *,
@@ -510,13 +506,13 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         status = response.http_response.status_code
         error_code = response.http_response.headers.get("x-ms-error-code", "")
 
-        if error_code == self.FEATURE_NOT_ENABLED:
+        if error_code == StorageErrorCode.FEATURE_NOT_ENABLED:
             _LOGGER.info("Session feature not enabled on this account; disabling session auth.")
             self._use_session = False
             return response
 
         # Unavailable / 5xx → negative-cache cooldown.
-        if error_code == self.SESSIONS_UNAVAILABLE or status >= 500:
+        if error_code == StorageErrorCode.SESSIONS_UNAVAILABLE or status >= 500:
             _LOGGER.warning(
                 "Session authentication: '%s' (HTTP %d) on container '%s'; bearer fallback for %d seconds.",
                 error_code or "5xx",
