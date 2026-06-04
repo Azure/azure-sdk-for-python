@@ -365,16 +365,6 @@ class TestLocationCacheAsync(unittest.IsolatedAsyncioTestCase):
         )
         self.assertIn(location2_endpoint, endpoints)
 
-    # Note: a test that asserted "for a metadata request, a healthy
-    # user-excluded region should be preferred over an unavailable
-    # non-excluded region" used to live here. It was removed because
-    # the underlying ordering in `_location_cache._get_applicable_regional_routing_contexts`
-    # currently picks the unavailable non-excluded region first for
-    # master-resource calls. Whether that should be fixed (three-tier
-    # ordering) or formalized (strict exclusion even for metadata,
-    # per OpenAI's ask) is an open design question tracked in
-    # docs/METADATA_ROUTING_REGRESSION.md. Re-add a test once the
-    # contract is decided.
 
     async def test_async_master_resource_with_all_healthy_prefers_non_excluded(self):
         """With every region healthy, a metadata request should still

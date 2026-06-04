@@ -41,9 +41,6 @@ except ImportError:
     HAS_TRACEMALLOC = False
 
 
-# =================================
-# Shared Test Helpers
-# =================================
 
 class MockGlobalEndpointManager:
     """Mock global endpoint manager for testing."""
@@ -114,9 +111,6 @@ def raise_410_partition_split_error(*args, **kwargs):
     raise create_410_partition_split_error()
 
 
-# ==========================
-# Test Class
-# ==========================
 
 @pytest.mark.cosmosEmulator
 class TestPartitionSplitRetryUnit(unittest.TestCase):
@@ -634,11 +628,8 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         - Memory growth is minimal (no recursive accumulation)
         - No infinite recursion (max depth = 0 for PK range queries)
         """
-        # tracemalloc.start() begins tracing memory allocations to detect leaks
         tracemalloc.start()
-        # gc.collect() forces garbage collection to get accurate baseline memory measurement
         gc.collect()
-        # take_snapshot() captures current memory state for comparison after test
         snapshot_before = tracemalloc.take_snapshot()
         start_time = time.time()
 
@@ -656,31 +647,26 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             context._fetch_items_helper_with_retries(mock_fetch_function)
 
         elapsed_time = time.time() - start_time
-        # gc.collect() before snapshot ensures we measure actual leaks, not pending garbage
         gc.collect()
         snapshot_after = tracemalloc.take_snapshot()
-        # compare_to() shows memory difference between snapshots to identify growth
         top_stats = snapshot_after.compare_to(snapshot_before, 'lineno')
         memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
         peak_memory = tracemalloc.get_traced_memory()[1]
-        # tracemalloc.stop() ends memory tracing and frees tracing overhead
         tracemalloc.stop()
 
         # Collect metrics
         execute_calls = mock_execute.call_count
         refresh_calls = mock_client.refresh_routing_map_provider_call_count
 
-        # Print metrics
-        print(f"\n{'=' * 60}")
-        print("MEMORY METRICS - Partition Split Memory Verification")
-        print(f"{'=' * 60}")
-        print(f"Metrics:")
-        print(f"  - Execute calls:   {execute_calls} (bounded)")
-        print(f"  - Refresh calls:   {refresh_calls}")
-        print(f"  - Elapsed time:    {elapsed_time:.2f}s")
-        print(f"  - Memory growth:   {memory_growth / 1024:.2f} KB")
-        print(f"  - Peak memory:     {peak_memory / 1024:.2f} KB")
-        print(f"{'=' * 60}")
+        # Print metrics for diagnostics when running locally.
+        print(
+            f"\nMemory metrics (partition split):"
+            f"\n  Execute calls: {execute_calls}"
+            f"\n  Refresh calls: {refresh_calls}"
+            f"\n  Elapsed:       {elapsed_time:.2f}s"
+            f"\n  Memory growth: {memory_growth / 1024:.2f} KB"
+            f"\n  Peak memory:   {peak_memory / 1024:.2f} KB"
+        )
 
         assert execute_calls == 4, \
             f"Execute calls should be bounded to 4, got {execute_calls}"
@@ -705,10 +691,11 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         pk_execute_calls = mock_execute.call_count
         pk_refresh_calls = mock_client.refresh_routing_map_provider_call_count
 
-        print(f"\nPK Range Query:")
-        print(f"  - Execute calls:   {pk_execute_calls} (no retry)")
-        print(f"  - Refresh calls:   {pk_refresh_calls} (no recursion)")
-        print(f"{'=' * 60}\n")
+        print(
+            f"\nPK range query:"
+            f"\n  Execute calls: {pk_execute_calls} (no retry)"
+            f"\n  Refresh calls: {pk_refresh_calls} (no recursion)"
+        )
 
         assert pk_execute_calls == 1, \
             f"PK range query should have 1 execute call, got {pk_execute_calls}"
@@ -1182,11 +1169,8 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         `__QueryFeed` itself does the population. Catches the
         `options`-vs-`kwargs` extraction regression.
         """
-        from unittest.mock import patch as _patch
-
-        # Build a CosmosClientConnection without running __init__; we
-        # only need the attributes that the no-query (read-feed) branch
-        # of __QueryFeed touches.
+        # Build the connection without running __init__; only the attributes
+        # used by the no-query (read-feed) branch of __QueryFeed are needed.
         conn = object.__new__(CosmosClientConnection)
         conn.default_headers = {}
         conn.last_response_headers = {}
@@ -1210,20 +1194,19 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             headers={},
         )
 
-        # Patch the heavy collaborators inside __QueryFeed's no-query
-        # branch so we can drive it without a real pipeline.
-        with _patch(
+        # Patch the heavy collaborators so the no-query branch can run without a real pipeline.
+        with patch(
                  "azure.cosmos._cosmos_client_connection.base.GetHeaders",
                  return_value={},
              ), \
-             _patch(
+             patch(
                  "azure.cosmos._cosmos_client_connection.base.set_session_token_header"
              ), \
-             _patch(
+             patch(
                  "azure.cosmos._cosmos_client_connection.RequestObject",
                  return_value=request_obj_mock,
-             ) as request_obj_ctor, \
-             _patch.object(
+             ), \
+             patch.object(
                  CosmosClientConnection,
                  "_CosmosClientConnection__Get",
                  return_value=(
@@ -1231,7 +1214,6 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
                      canned_headers,
                  ),
              ) as mock_get:
-            _ = request_obj_ctor  # silence unused-warning
 
             # Invoke the name-mangled private method directly.
             result, headers = conn._CosmosClientConnection__QueryFeed(
@@ -1253,8 +1235,8 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             "'_internal_response_headers_capture' from options."
         )
 
-        # the marker key must have been removed from options so it
-        # never leaks downstream into header construction or RequestObject.
+        # The marker key must have been removed from options so it never
+        # leaks downstream into header construction or RequestObject.
         assert "_internal_response_headers_capture" not in options, (
             "__QueryFeed should pop the capture marker out of options"
         )

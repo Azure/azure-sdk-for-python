@@ -36,20 +36,10 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
 
-# =========================================================
-# Test-only tolerant shim for evaluate_drain_page
-# =========================================================
-# Production wires ``_internal_response_status_capture`` via ``_Request`` so
-# ``evaluate_drain_page`` always receives a concrete HTTP status. These unit
-# tests use lightweight MagicMock side_effects that bypass ``_Request`` and
-# therefore leave the sidecar at ``[None]``. Rather than retrofit every mock
-# to populate the sidecar, default an unknown status to ``304`` (Not Modified)
-# so the drain terminates after the first page -- which is exactly the
-# termination signal each existing mock relies on (data on the data path,
-# ``iter([])`` on the INM-match path).
-#
-# This shim is the *only* test-side concession to the strict status contract
-# introduced in commit a1e27a57bd; production code is unchanged.
+# Test-only shim: production wires status via the request pipeline so the drain
+# helper always sees a real HTTP status. The lightweight mocks in this file
+# bypass that pipeline, so an unknown status defaults to 304 (Not Modified) and
+# the drain terminates after the first mocked page. Production code is unchanged.
 # pylint: disable=wrong-import-position
 import azure.cosmos._routing._routing_map_provider_common as _drain_common  # noqa: E402
 import azure.cosmos._routing.routing_map_provider as _sync_provider_module  # noqa: E402
@@ -76,9 +66,6 @@ _sync_provider_module.evaluate_drain_page = _tolerant_evaluate_drain_page
 _async_provider_module.evaluate_drain_page = _tolerant_evaluate_drain_page
 
 
-# =========================================================
-# Helpers
-# =========================================================
 
 def _make_complete_routing_map(collection_id="coll1", etag='"etag-1"'):
     """Create a minimal but complete CollectionRoutingMap for testing."""
@@ -107,9 +94,6 @@ def _make_mock_client(ranges, response_etag='"etag-resp"', include_etag_header=T
     return client
 
 
-# =========================================================
-# Test Class
-# =========================================================
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProviderUnit(unittest.TestCase):
@@ -685,13 +669,9 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         self.assertEqual(result.change_feed_etag, '"etag-old"')
 
 
-    # ==========================================================================
-    # Helper-level retry-policy unit tests.
-    #
-    # These target only the pure helper that computes retry backoff / 503
-    # escalation (no cache object, no fetch loop). They check that backoff
-    # stays within the deterministic upper bound and that jitter is applied.
-    # ==========================================================================
+    # Helper-level retry-policy tests: target the pure helper that computes
+    # retry backoff and 503 escalation (no cache, no fetch loop). They check
+    # that backoff stays within the deterministic upper bound and jitters.
 
     def test_overlap_retry_backoff_is_within_deterministic_upper_bound(self):
         """Each non-terminal attempt's backoff must lie in
@@ -844,14 +824,9 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
             http_constants.StatusCodes.SERVICE_UNAVAILABLE,
         )
 
-    # ==========================================================================
-    # Provider retry-loop behavior tests (mocked integration path).
-    #
-    # These exercise the sync provider's fetch/retry loop with mocked
-    # ``/pkranges`` payloads: transient inconsistencies either recover on
-    # retry or surface as HTTP 503; ``ValueError("Ranges overlap")`` never
-    # leaks to callers.
-    # ==========================================================================
+    # Provider retry-loop tests: exercise the sync provider's fetch and retry
+    # loop with mocked /pkranges payloads. Inconsistent snapshots either recover
+    # on retry or surface as HTTP 503; overlap errors never leak to callers.
 
     def test_fetch_routing_map_recovers_after_transient_overlap(self):
         """An inconsistent ``/pkranges`` snapshot followed by a consistent

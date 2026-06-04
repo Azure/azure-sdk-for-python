@@ -1,30 +1,30 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio
+import gc
 import unittest
+from typing import Any, Mapping, Optional
+from unittest.mock import MagicMock, patch
 
 import pytest
 
+from azure.cosmos import _base, http_constants
 from azure.cosmos._routing import routing_range as routing_range
-from azure.cosmos._routing.aio.routing_map_provider import CollectionRoutingMap
-from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider
-from azure.cosmos._routing.aio.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos._routing._routing_map_provider_common import (
     _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
 )
-from azure.cosmos import http_constants
-
-from typing import Optional, Mapping, Any
-from unittest.mock import MagicMock, patch
-import gc
-from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._routing.aio.routing_map_provider import (
-    _shared_routing_map_cache,
+    CollectionRoutingMap,
+    PartitionKeyRangeCache,
+    SmartRoutingMapProvider,
+    _shared_cache_lock,
+    _shared_cache_refcounts,
     _shared_collection_locks,
     _shared_locks_locks,
-    _shared_cache_refcounts,
-    _shared_cache_lock,
+    _shared_routing_map_cache,
 )
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
@@ -36,7 +36,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
     def _capture_internal_headers(kwargs, etag):
         """Capture ETag header and HTTP status into the drain-loop sidecars.
 
-        Returns ``True`` when this call should behave like a wire 304 — i.e.
+        Returns ``True`` when this call should behave like a wire 304 â€” i.e.
         the drain loop's ``If-None-Match`` matches the etag this mock is
         about to return. Mocks that simulate a stable snapshot pass a stable
         etag here so the drain terminates after one data page + one 304.
@@ -108,9 +108,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         client = TestRoutingMapProviderAsync.MockedCosmosClientConnection(partition_key_ranges)
         return SmartRoutingMapProvider(client)
 
-    # ---------------------------------------------------------------
-    # SmartRoutingMapProvider.get_overlapping_ranges tests
-    # ---------------------------------------------------------------
 
     async def test_full_range_async(self):
         pkRange = routing_range.Range("", "FF", True, False)
@@ -203,9 +200,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         expected = [self.partition_key_ranges[1], self.partition_key_ranges[4]]
         self.assertEqual(overlapping, expected)
 
-    # ---------------------------------------------------------------
-    # PartitionKeyRangeCache(async) caching tests
-    # ---------------------------------------------------------------
 
     async def test_get_routing_map_caches_on_first_call_async(self):
         """Initial call to get_routing_map fetches from service and caches the result."""
@@ -218,7 +212,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         self.assertIsNotNone(result)
         self.assertEqual(len(list(result._orderedPartitionKeyRanges)), 5)
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         self.assertIn(collection_id, provider._collection_routing_map_by_item)
 
@@ -340,7 +333,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             TestRoutingMapProviderAsync.MockedCosmosClientConnection(self.partition_key_ranges)
         )
         collection_link = "dbs/db/colls/container"
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         cached_map = await provider.get_routing_map(collection_link, feed_options={})
@@ -385,7 +377,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(IncompleteClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -436,7 +427,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(DeltaClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -494,7 +484,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(HeaderCapturingClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -559,7 +548,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -570,7 +558,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             feed_options={}
         )
 
-        self.assertIsNotNone(result, "Should succeed incrementally — parents[1] is in cache")
+        self.assertIsNotNone(result, "Should succeed incrementally â€” parents[1] is in cache")
         self.assertEqual(call_count['count'], 2, "Should only drain once logically (data + 304)")
         ranges = list(result._orderedPartitionKeyRanges)
         self.assertEqual(len(ranges), 3)
@@ -578,12 +566,12 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ids, ['0', '3', '2'])
 
     async def test_fetch_routing_map_merge_all_parents_cached_async(self):
-        """Merge where all parents are in cache — validates first-match range_info inheritance.
+        """Merge where all parents are in cache â€” validates first-match range_info inheritance.
 
         Scenario:
         - Cache has: {0, 1, 2} with distinct range_info values
         - Ranges '0' and '1' merge into '3' with parents=['0', '1']
-        - Both '0' and '1' are in cache → should pick '0' (first match) range_info
+        - Both '0' and '1' are in cache â†’ should pick '0' (first match) range_info
         """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
@@ -613,7 +601,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -629,7 +616,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(ranges), 2)
         self.assertEqual(ranges[0]['id'], '3')
         self.assertEqual(ranges[1]['id'], '2')
-        # range_info should be inherited from the first cached parent ('0' → 'info_0')
+        # range_info should be inherited from the first cached parent ('0' â†’ 'info_0')
         self.assertEqual(result._orderedPartitionInfo[0], 'info_0')
         # Stable range '2' should keep its original range_info
         self.assertEqual(result._orderedPartitionInfo[1], 'info_2')
@@ -644,7 +631,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
           2. Range '1A' split again into '1A-i' and '1A-ii'
         - Delta returns '1A-i' with parents=['1A'], '1A-ii' with parents=['1A'], '1B' with parents=['1']
         - '1B' has parent '1' -> found in cache
-        - '1A-i' has parent '1A' -> NOT found (intermediate, never cached) → falls back to full refresh
+        - '1A-i' has parent '1A' -> NOT found (intermediate, never cached) â†’ falls back to full refresh
         """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
@@ -688,7 +675,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(RapidSplitClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -751,7 +737,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 return _gen()
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -819,7 +804,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         Verifies that coroutines don't corrupt the cache and all get a valid result.
         """
-        import asyncio
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
         fetch_event = asyncio.Event()
@@ -872,7 +856,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         The cache entry is atomically replaced, never deleted.
         """
-        import asyncio
         original_ranges = self.partition_key_ranges
         call_count = {'count': 0}
 
@@ -893,7 +876,6 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         provider = PartitionKeyRangeCache(SlowClient())
         collection_link = "dbs/db/colls/container"
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         # Populate cache
@@ -922,7 +904,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         await reader_task
 
         self.assertEqual(none_seen['count'], 0,
-                         "Cache entry should never be None during a refresh — it should be atomically replaced")
+                         "Cache entry should never be None during a refresh â€” it should be atomically replaced")
 
     # End-to-end tests that go through SmartRoutingMapProvider to confirm
     # overlap/gap errors from the cache surface as 503 rather than reaching

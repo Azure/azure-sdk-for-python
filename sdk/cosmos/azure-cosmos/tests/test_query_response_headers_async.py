@@ -5,6 +5,7 @@ import asyncio
 import os
 import unittest
 import uuid
+from collections.abc import Mapping
 
 import pytest
 from azure.core.utils import CaseInsensitiveDict
@@ -668,7 +669,6 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
         moment the pager is constructed, which can be a stale value from
         an earlier request when nothing has yet flowed through this
         specific query."""
-        from collections.abc import Mapping
 
         captured_db = []
 
@@ -699,7 +699,6 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
     async def test_response_hook_fires_at_least_once_for_every_paged_surface_async(self):
         """A response_hook attached to any async paged data-plane surface must
         fire at least once, and every captured payload must be a Mapping."""
-        from collections.abc import Mapping
 
         cid = "test_hookfires_paged_async_" + str(uuid.uuid4())
         created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))

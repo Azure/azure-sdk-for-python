@@ -5,6 +5,7 @@ import os
 import threading
 import unittest
 import uuid
+from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pytest
@@ -677,7 +678,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
         moment the pager is constructed, which can be a stale value from
         an earlier request (e.g. the account probe) when nothing has yet
         flowed through this specific query."""
-        from collections.abc import Mapping
 
         captured_db = []
 
@@ -715,7 +715,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
     def test_response_hook_fires_at_least_once_for_every_paged_surface(self):
         """A response_hook attached to any paged data-plane surface must
         fire at least once, and every captured payload must be a Mapping."""
-        from collections.abc import Mapping
 
         container_id = "test_hookfires_paged_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))

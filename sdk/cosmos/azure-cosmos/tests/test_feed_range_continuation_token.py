@@ -943,8 +943,8 @@ class TestAggregateMergeConsistency:
         )
         assert merged["Documents"] == [-1]
 
-    # Lowercase query text should still merge with min and max
-    # semantics, not be treated as a sum.
+    # Lowercase query text should still merge as a min/max,
+    # not by adding the values.
     def test_value_min_max_merge_lowercase_keyword_still_merges(self):
         min_query = "select value min(c.score) from c"
         merged_min = _base._merge_query_results(
@@ -959,8 +959,8 @@ class TestAggregateMergeConsistency:
         assert merged_max["Documents"] == [7]
 
     # Object-shaped partials carry the aggregate inside an "_aggregate"
-    # key. Names starting with "min" or "max" (any case) should merge
-    # with min or max semantics, not by adding the values.
+    # key. Names starting with "min" or "max" (any case) should pick the
+    # smallest or largest, not add the values.
 
     def test_object_aggregate_min_branch_uses_min(self):
         query = "SELECT MIN(c.score) AS min_score FROM c"
