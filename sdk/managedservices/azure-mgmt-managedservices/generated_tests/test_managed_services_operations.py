@@ -20,9 +20,9 @@ class TestManagedServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2022-10-01",
+            api_version="2020-02-01-preview",
         )
 
         # please add some check logic here by yourself
