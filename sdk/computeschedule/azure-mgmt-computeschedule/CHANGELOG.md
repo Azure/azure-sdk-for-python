@@ -4,13 +4,11 @@
 
 ### Features Added
 
-  - Model `ComputeScheduleMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ComputeScheduleMgmtClient` added parameter `cloud_setting` in method `__init__`
   - Enum `ActionType` added member `INTERNAL`
   - Model `ResourceOperationDetails` added property `fallback_operation_info`
   - Enum `ResourceOperationType` added member `CREATE`
   - Enum `ResourceOperationType` added member `DELETE`
-  - Model `ResourceProvisionPayload` added property `virtual_machine_base_profile`
-  - Model `ResourceProvisionPayload` added property `virtual_machine_overrides`
   - Model `RetryPolicy` added property `on_failure_action`
   - Added model `AdditionalCapabilities`
   - Added model `AdditionalUnattendContent`
@@ -24,7 +22,6 @@
   - Added model `BulkActionVmExtensionProperties`
   - Added model `BulkVMConfiguration`
   - Added enum `CachingTypes`
-  - Added model `CancelOperationsContent`
   - Added model `CapacityReservationProfile`
   - Added model `CreateFlexResourceOperationResponse`
   - Added model `DataDisk`
@@ -43,18 +40,11 @@
   - Added enum `DomainNameLabelScopeTypes`
   - Added model `EncryptionIdentity`
   - Added model `EventGridAndResourceGraph`
-  - Added model `ExecuteCreateContent`
   - Added model `ExecuteCreateFlexContent`
-  - Added model `ExecuteDeallocateContent`
-  - Added model `ExecuteDeleteContent`
-  - Added model `ExecuteHibernateContent`
-  - Added model `ExecuteStartContent`
   - Added model `ExtendedLocation`
   - Added enum `ExtendedLocationType`
   - Added model `FallbackOperationInfo`
   - Added model `FlexProperties`
-  - Added model `GetOperationErrorsContent`
-  - Added model `GetOperationStatusContent`
   - Added model `HardwareProfile`
   - Added model `HostEndpointSettings`
   - Added enum `IPVersions`
@@ -111,9 +101,6 @@
   - Added enum `StorageAccountTypes`
   - Added model `StorageProfile`
   - Added model `SubResource`
-  - Added model `SubmitDeallocateContent`
-  - Added model `SubmitHibernateContent`
-  - Added model `SubmitStartContent`
   - Added model `TerminateNotificationProfile`
   - Added model `UefiSettings`
   - Added model `UserAssignedIdentitiesValue`
@@ -146,27 +133,27 @@
   - Added model `ZoneAllocationPolicy`
   - Added enum `ZonePlacementPolicyType`
   - Added model `ZonePreference`
-  - Model `ScheduledActionsOperations` added method `virtual_machines_execute_create_flex`
+  - Operation group `ScheduledActionsOperations` added method `virtual_machines_execute_create_flex`
 
 ### Breaking Changes
 
   - Deleted or renamed enum value `ActionType.DEALLOCATE`
   - Deleted or renamed enum value `ActionType.HIBERNATE`
   - Deleted or renamed enum value `ActionType.START`
-  - Model `ResourceProvisionPayload` deleted or renamed its instance variable `base_profile`
-  - Model `ResourceProvisionPayload` deleted or renamed its instance variable `resource_overrides`
-  - Deleted or renamed model `CancelOperationsRequest`
-  - Deleted or renamed model `ExecuteCreateRequest`
-  - Deleted or renamed model `ExecuteDeallocateRequest`
-  - Deleted or renamed model `ExecuteDeleteRequest`
-  - Deleted or renamed model `ExecuteHibernateRequest`
-  - Deleted or renamed model `ExecuteStartRequest`
-  - Deleted or renamed model `GetOperationErrorsRequest`
-  - Deleted or renamed model `GetOperationStatusRequest`
+  - Model `ResourceProvisionPayload` renamed its instance variable `base_profile` to `virtual_machine_base_profile`
+  - Model `ResourceProvisionPayload` renamed its instance variable `resource_overrides` to `virtual_machine_overrides`
+  - Renamed model `CancelOperationsRequest` to `CancelOperationsContent`
+  - Renamed model `ExecuteCreateRequest` to `ExecuteCreateContent`
+  - Renamed model `ExecuteDeallocateRequest` to `ExecuteDeallocateContent`
+  - Renamed model `ExecuteDeleteRequest` to `ExecuteDeleteContent`
+  - Renamed model `ExecuteHibernateRequest` to `ExecuteHibernateContent`
+  - Renamed model `ExecuteStartRequest` to `ExecuteStartContent`
+  - Renamed model `GetOperationErrorsRequest` to `GetOperationErrorsContent`
+  - Renamed model `GetOperationStatusRequest` to `GetOperationStatusContent`
+  - Renamed model `SubmitDeallocateRequest` to `SubmitDeallocateContent`
+  - Renamed model `SubmitHibernateRequest` to `SubmitHibernateContent`
+  - Renamed model `SubmitStartRequest` to `SubmitStartContent`
   - Deleted or renamed model `ResourceOperationResponse`
-  - Deleted or renamed model `SubmitDeallocateRequest`
-  - Deleted or renamed model `SubmitHibernateRequest`
-  - Deleted or renamed model `SubmitStartRequest`
 
 ## 1.2.0b1 (2025-07-24)
 
