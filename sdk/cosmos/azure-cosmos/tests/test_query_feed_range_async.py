@@ -233,6 +233,146 @@ class TestQueryFeedRangeAsync:
         assert single_items, "Single-partition container AVG must return a row"
         assert single_items[0] == 100
 
+    # The next few tests run against a multi-partition container
+    # (async variant) and confirm that combining partial results
+    # returns the right shape: lists for non-aggregate projections,
+    # single values for MIN, MAX, SUM, and COUNT.
+
+    async def test_query_value_numeric_field_across_full_feed_range_returns_list_async(self):
+        """Numeric VALUE projections should return one row per document, not a sum."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE c["value"] FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query, feed_range=feed_range,
+        )]
+
+        assert len(items) == len(PK_VALUES), (
+            f"Expected one value per seeded doc ({len(PK_VALUES)}); got {len(items)}."
+        )
+        assert all(item == 100 for item in items), (
+            f"Expected every value to be 100; got {items}"
+        )
+        assert sum(items) == 100 * len(PK_VALUES)
+
+    async def test_query_value_boolean_expression_across_full_feed_range_returns_list_async(self):
+        """Boolean VALUE projections should return one boolean per document."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE c["value"] > 0 FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query, feed_range=feed_range,
+        )]
+
+        assert len(items) == len(PK_VALUES), (
+            f"Expected one boolean per seeded doc ({len(PK_VALUES)}); got {len(items)}."
+        )
+        assert all(item is True for item in items), (
+            f"All seeded values are 100 > 0; expected every row to be True. Got {items}"
+        )
+
+    async def test_query_value_min_across_full_feed_range_returns_scalar_async(self):
+        """MIN over a multi-partition feed_range should return one value (the smallest)."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE MIN(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query, feed_range=feed_range,
+        )]
+
+        assert len(items) == 1, (
+            f"MIN should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100
+
+    async def test_query_value_max_across_full_feed_range_returns_scalar_async(self):
+        """MAX over a multi-partition feed_range should return one value (the largest)."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE MAX(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query, feed_range=feed_range,
+        )]
+
+        assert len(items) == 1, (
+            f"MAX should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100
+
+    async def test_query_value_sum_across_full_feed_range_still_sums_async(self):
+        """SUM should still add per-partition totals together."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query, feed_range=feed_range,
+        )]
+
+        assert len(items) == 1, (
+            f"SUM should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100 * len(PK_VALUES)
+
+    async def test_query_value_count_across_full_feed_range_still_counts_async(self):
+        """COUNT should still return a single total across partitions."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE COUNT(1) FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query, feed_range=feed_range,
+        )]
+
+        assert len(items) == 1
+        assert items[0] == len(PK_VALUES)
+
     @pytest.mark.skip(reason="will be moved to a new pipeline")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     async def test_query_with_feed_range_async_during_back_to_back_partition_splits_async(self, container_id):

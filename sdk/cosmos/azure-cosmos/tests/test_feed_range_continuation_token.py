@@ -926,6 +926,69 @@ class TestAggregateMergeConsistency:
         merged_max = _base._merge_query_results(merged_max, {"Documents": [11]}, max_query)
         assert merged_max["Documents"] == [11]
 
+    # MIN and MAX should still pick the right value when one partition
+    # returns an int and another a float, or when values are negative.
+
+    def test_value_min_merge_mixed_int_and_float(self):
+        query = "SELECT VALUE MIN(c.score) FROM c"
+        merged = _base._merge_query_results(
+            {"Documents": [7]}, {"Documents": [3.5]}, query,
+        )
+        assert merged["Documents"] == [3.5]
+
+    def test_value_max_merge_with_negative_values(self):
+        query = "SELECT VALUE MAX(c.score) FROM c"
+        merged = _base._merge_query_results(
+            {"Documents": [-1]}, {"Documents": [-5]}, query,
+        )
+        assert merged["Documents"] == [-1]
+
+    # Lowercase query text should still merge with min and max
+    # semantics, not be treated as a sum.
+    def test_value_min_max_merge_lowercase_keyword_still_merges(self):
+        min_query = "select value min(c.score) from c"
+        merged_min = _base._merge_query_results(
+            {"Documents": [7]}, {"Documents": [3]}, min_query,
+        )
+        assert merged_min["Documents"] == [3]
+
+        max_query = "select value max(c.score) from c"
+        merged_max = _base._merge_query_results(
+            {"Documents": [7]}, {"Documents": [3]}, max_query,
+        )
+        assert merged_max["Documents"] == [7]
+
+    # Object-shaped partials carry the aggregate inside an "_aggregate"
+    # key. Names starting with "min" or "max" (any case) should merge
+    # with min or max semantics, not by adding the values.
+
+    def test_object_aggregate_min_branch_uses_min(self):
+        query = "SELECT MIN(c.score) AS min_score FROM c"
+        results = {"Documents": [{"_aggregate": {"min_score": 9}}]}
+        partial = {"Documents": [{"_aggregate": {"min_score": 5}}]}
+        merged = _base._merge_query_results(results, partial, query)
+        assert merged["Documents"] == [{"_aggregate": {"min_score": 5}}]
+
+    def test_object_aggregate_max_branch_uses_max(self):
+        query = "SELECT MAX(c.score) AS max_score FROM c"
+        results = {"Documents": [{"_aggregate": {"max_score": 9}}]}
+        partial = {"Documents": [{"_aggregate": {"max_score": 12}}]}
+        merged = _base._merge_query_results(results, partial, query)
+        assert merged["Documents"] == [{"_aggregate": {"max_score": 12}}]
+
+    def test_object_aggregate_min_max_branches_are_case_insensitive(self):
+        query = "SELECT MIN(c.score) AS Min_score, MAX(c.score) AS MAX_score FROM c"
+        results = {
+            "Documents": [{"_aggregate": {"Min_score": 9, "MAX_score": 1}}],
+        }
+        partial = {
+            "Documents": [{"_aggregate": {"Min_score": 5, "MAX_score": 7}}],
+        }
+        merged = _base._merge_query_results(results, partial, query)
+        assert merged["Documents"] == [
+            {"_aggregate": {"Min_score": 5, "MAX_score": 7}},
+        ]
+
     def test_value_boolean_non_aggregate_fragments_are_concatenated(self):
         query = "SELECT VALUE c.flag FROM c"
         partial_result = {"Documents": [True]}
@@ -1125,6 +1188,31 @@ class TestSelectValueProjectionParser:
         query = "SELECT VALUE   COUNT(1)   FROM c"
         assert _get_select_value_aggregate_function(query) == "COUNT"
 
+    # MIN and MAX should be detected for any case spelling, since the
+    # user's query text can arrive in any case.
+
+    @pytest.mark.parametrize(
+        "query,expected_function",
+        [
+            ("SELECT VALUE MIN(c.score) FROM c", "MIN"),
+            ("select value min(c.score) from c", "MIN"),
+            ("Select Value Min(c.score) From c", "MIN"),
+            ("SELECT VALUE MAX(c.score) FROM c", "MAX"),
+            ("select value max(c.score) from c", "MAX"),
+            ("Select Value Max(c.score) From c", "MAX"),
+            ("SELECT VALUE COUNT(1) FROM c", "COUNT"),
+            ("SELECT VALUE SUM(c.amount) FROM c", "SUM"),
+            ("SELECT VALUE AVG(c.score) FROM c", "AVG"),
+        ],
+    )
+    def test_value_aggregate_detection_is_case_insensitive(self, query, expected_function):
+        assert _get_select_value_aggregate_function(query) == expected_function
+
+    # A property named "min" or "max" is not an aggregate call.
+    def test_value_min_max_detection_distinguishes_from_column_named_min(self):
+        assert _get_select_value_aggregate_function("SELECT VALUE c.min FROM c") is None
+        assert _get_select_value_aggregate_function("SELECT VALUE c.max FROM c") is None
+
 
 class TestAggregateClassificationHeuristics:
     def test_block_comment_prefix_does_not_drive_outer_select_value_detection(self):
@@ -1216,6 +1304,23 @@ class TestAggregateClassificationHeuristics:
         query = "SELECT VALUE c.price FROM c"
         docs = [42.5]
         assert _classify_aggregate_partial(docs, query) == _AggregatePartialClassification.NONE
+
+    # Boolean rows should not be treated as numeric, even when the
+    # query wraps them in MIN, MAX, or SUM.
+
+    def test_classify_aggregate_partial_excludes_boolean_value_rows_for_min(self):
+        query = "SELECT VALUE MIN(c.flag) FROM c"
+        assert _classify_aggregate_partial([True], query) == _AggregatePartialClassification.NONE
+        assert _classify_aggregate_partial([False], query) == _AggregatePartialClassification.NONE
+
+    def test_classify_aggregate_partial_excludes_boolean_value_rows_for_max(self):
+        query = "SELECT VALUE MAX(c.flag) FROM c"
+        assert _classify_aggregate_partial([True], query) == _AggregatePartialClassification.NONE
+        assert _classify_aggregate_partial([False], query) == _AggregatePartialClassification.NONE
+
+    def test_classify_aggregate_partial_excludes_boolean_value_rows_for_sum(self):
+        query = "SELECT VALUE SUM(c.flag) FROM c"
+        assert _classify_aggregate_partial([True], query) == _AggregatePartialClassification.NONE
 
 
 class TestEmptyPageStallCounter:

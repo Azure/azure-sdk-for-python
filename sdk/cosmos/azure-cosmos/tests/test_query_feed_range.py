@@ -204,6 +204,135 @@ class TestQueryFeedRange:
         assert single_items, "Single-partition container AVG must return a row"
         assert single_items[0] == 100
 
+    # The next few tests run against a multi-partition container and
+    # confirm that combining partial results returns the right shape:
+    # lists for non-aggregate projections, single values for MIN, MAX,
+    # SUM, and COUNT.
+
+    def test_query_value_numeric_field_across_full_feed_range_returns_list(self, setup):
+        """Numeric VALUE projections should return one row per document, not a sum."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE c["value"] FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(query=query, feed_range=feed_range))
+
+        # All seeded docs have value=100; we expect one entry per doc.
+        assert len(items) == len(PK_VALUES), (
+            f"Expected one value per seeded doc ({len(PK_VALUES)}); got {len(items)}."
+        )
+        assert all(item == 100 for item in items), (
+            f"Expected every value to be 100; got {items}"
+        )
+        assert sum(items) == 100 * len(PK_VALUES)
+
+    def test_query_value_boolean_expression_across_full_feed_range_returns_list(self, setup):
+        """Boolean VALUE projections should return one boolean per document."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE c["value"] > 0 FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(query=query, feed_range=feed_range))
+
+        assert len(items) == len(PK_VALUES), (
+            f"Expected one boolean per seeded doc ({len(PK_VALUES)}); got {len(items)}."
+        )
+        assert all(item is True for item in items), (
+            f"All seeded values are 100 > 0; expected every row to be True. Got {items}"
+        )
+
+    def test_query_value_min_across_full_feed_range_returns_scalar(self, setup):
+        """MIN over a multi-partition feed_range should return one value (the smallest)."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE MIN(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(query=query, feed_range=feed_range))
+
+        assert len(items) == 1, (
+            f"MIN should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100
+
+    def test_query_value_max_across_full_feed_range_returns_scalar(self, setup):
+        """MAX over a multi-partition feed_range should return one value (the largest)."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE MAX(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(query=query, feed_range=feed_range))
+
+        assert len(items) == 1, (
+            f"MAX should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100
+
+    def test_query_value_sum_across_full_feed_range_still_sums(self, setup):
+        """SUM should still add per-partition totals together."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(query=query, feed_range=feed_range))
+
+        assert len(items) == 1, (
+            f"SUM should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100 * len(PK_VALUES)
+
+    def test_query_value_count_across_full_feed_range_still_counts(self, setup):
+        """COUNT should still return a single total across partitions."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE COUNT(1) FROM c WHERE IS_DEFINED(c["value"])'
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(query=query, feed_range=feed_range))
+
+        assert len(items) == 1
+        assert items[0] == len(PK_VALUES)
+
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     @pytest.mark.cosmosSplit
     def test_query_with_feed_range_during_partition_split_combined(self, setup, container_id):
