@@ -25,6 +25,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `L3IsolationDomainPatchProperties` deleted or renamed its instance variable `static_route_policy`
   - Model `L3IsolationDomainProperties` deleted or renamed its instance variable `static_route_policy`
   - Deleted or renamed enum value `PollingIntervalInSeconds.from_number`
@@ -35,138 +36,50 @@
   - Renamed model `StaticRoutePolicyPatch` to `StaticRouteRoutePolicyPatch`
   - Renamed model `TerminalServerPatchConfiguration` to `NetworkFabricPatchablePropertiesTerminalServerConfiguration`
   - Renamed model `VpnOptionBProperties` to `OptionBProperties`
-  - Method `AccessControlListsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `AccessControlListsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `AccessControlListsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `AccessControlListsOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `ExternalNetworksOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `ExternalNetworksOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `ExternalNetworksOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `ExternalNetworksOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `InternalNetworksOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `InternalNetworksOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `InternalNetworksOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `InternalNetworksOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `InternetGatewayRulesOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `InternetGatewayRulesOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `InternetGatewayRulesOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `InternetGatewayRulesOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `InternetGatewaysOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `InternetGatewaysOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `InternetGatewaysOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `InternetGatewaysOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `IpCommunitiesOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `IpCommunitiesOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `IpCommunitiesOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `IpCommunitiesOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `IpExtendedCommunitiesOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `IpExtendedCommunitiesOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `IpExtendedCommunitiesOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `IpExtendedCommunitiesOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `IpPrefixesOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `IpPrefixesOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `IpPrefixesOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `IpPrefixesOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `L2IsolationDomainsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `L2IsolationDomainsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `L2IsolationDomainsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `L2IsolationDomainsOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `L3IsolationDomainsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `L3IsolationDomainsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `L3IsolationDomainsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `L3IsolationDomainsOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NeighborGroupsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NeighborGroupsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NeighborGroupsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NeighborGroupsOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkDevicesOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkDevicesOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkDevicesOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkDevicesOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkFabricControllersOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkFabricControllersOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkFabricControllersOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkFabricControllersOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkFabricsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkFabricsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkFabricsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkFabricsOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkInterfacesOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkInterfacesOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkInterfacesOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkInterfacesOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkMonitorsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkMonitorsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkMonitorsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkMonitorsOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkPacketBrokersOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkPacketBrokersOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkPacketBrokersOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkPacketBrokersOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkRacksOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkRacksOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkRacksOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkRacksOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkTapRulesOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkTapRulesOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkTapRulesOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkTapRulesOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkTapsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkTapsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkTapsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkTapsOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `NetworkToNetworkInterconnectsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkToNetworkInterconnectsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `NetworkToNetworkInterconnectsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `NetworkToNetworkInterconnectsOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `RoutePoliciesOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
-  - Method `RoutePoliciesOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
-  - Method `RoutePoliciesOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
-  - Method `RoutePoliciesOperations.begin_update` deleted or renamed its parameter `properties` of kind `positional_or_keyword`
-  - Method `InternalNetworksOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'l3_isolation_domain_name', 'internal_network_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'l3_isolation_domain_name', 'internal_network_name', 'body', 'kwargs']`
-  - Method `InternalNetworksOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'l3_isolation_domain_name', 'internal_network_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'l3_isolation_domain_name', 'internal_network_name', 'body', 'kwargs']`
-  - Method `InternetGatewaysOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'internet_gateway_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'internet_gateway_name', 'body', 'kwargs']`
-  - Method `InternetGatewaysOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'internet_gateway_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'internet_gateway_name', 'body', 'kwargs']`
-  - Method `IpCommunitiesOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'ip_community_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'ip_community_name', 'body', 'kwargs']`
-  - Method `IpCommunitiesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'ip_community_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'ip_community_name', 'body', 'kwargs']`
-  - Method `NetworkInterfacesOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_device_name', 'network_interface_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_device_name', 'network_interface_name', 'body', 'kwargs']`
-  - Method `NetworkInterfacesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_device_name', 'network_interface_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_device_name', 'network_interface_name', 'body', 'kwargs']`
-  - Method `NetworkDevicesOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_device_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_device_name', 'body', 'kwargs']`
-  - Method `NetworkDevicesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_device_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_device_name', 'body', 'kwargs']`
-  - Method `IpExtendedCommunitiesOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'ip_extended_community_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'ip_extended_community_name', 'body', 'kwargs']`
-  - Method `IpExtendedCommunitiesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'ip_extended_community_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'ip_extended_community_name', 'body', 'kwargs']`
-  - Method `ExternalNetworksOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'l3_isolation_domain_name', 'external_network_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'l3_isolation_domain_name', 'external_network_name', 'body', 'kwargs']`
-  - Method `ExternalNetworksOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'l3_isolation_domain_name', 'external_network_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'l3_isolation_domain_name', 'external_network_name', 'body', 'kwargs']`
-  - Method `RoutePoliciesOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'route_policy_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'route_policy_name', 'body', 'kwargs']`
-  - Method `RoutePoliciesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'route_policy_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'route_policy_name', 'body', 'kwargs']`
-  - Method `NetworkTapsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_tap_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_tap_name', 'body', 'kwargs']`
-  - Method `NetworkTapsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_tap_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_tap_name', 'body', 'kwargs']`
-  - Method `NetworkTapRulesOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_tap_rule_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_tap_rule_name', 'body', 'kwargs']`
-  - Method `NetworkTapRulesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_tap_rule_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_tap_rule_name', 'body', 'kwargs']`
-  - Method `L2IsolationDomainsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'l2_isolation_domain_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'l2_isolation_domain_name', 'body', 'kwargs']`
-  - Method `L2IsolationDomainsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'l2_isolation_domain_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'l2_isolation_domain_name', 'body', 'kwargs']`
-  - Method `NetworkMonitorsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_monitor_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_monitor_name', 'body', 'kwargs']`
-  - Method `NetworkMonitorsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_monitor_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_monitor_name', 'body', 'kwargs']`
-  - Method `NetworkPacketBrokersOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_packet_broker_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_packet_broker_name', 'body', 'kwargs']`
-  - Method `NetworkPacketBrokersOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_packet_broker_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_packet_broker_name', 'body', 'kwargs']`
-  - Method `AccessControlListsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'access_control_list_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'access_control_list_name', 'body', 'kwargs']`
-  - Method `AccessControlListsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'access_control_list_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'access_control_list_name', 'body', 'kwargs']`
-  - Method `IpPrefixesOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'ip_prefix_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'ip_prefix_name', 'body', 'kwargs']`
-  - Method `IpPrefixesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'ip_prefix_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'ip_prefix_name', 'body', 'kwargs']`
-  - Method `NeighborGroupsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'neighbor_group_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'neighbor_group_name', 'body', 'kwargs']`
-  - Method `NeighborGroupsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'neighbor_group_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'neighbor_group_name', 'body', 'kwargs']`
-  - Method `NetworkToNetworkInterconnectsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_fabric_name', 'network_to_network_interconnect_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_fabric_name', 'network_to_network_interconnect_name', 'body', 'kwargs']`
-  - Method `NetworkToNetworkInterconnectsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_fabric_name', 'network_to_network_interconnect_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_fabric_name', 'network_to_network_interconnect_name', 'body', 'kwargs']`
-  - Method `NetworkFabricControllersOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_fabric_controller_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_fabric_controller_name', 'body', 'kwargs']`
-  - Method `NetworkFabricControllersOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_fabric_controller_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_fabric_controller_name', 'body', 'kwargs']`
-  - Method `L3IsolationDomainsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'l3_isolation_domain_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'l3_isolation_domain_name', 'body', 'kwargs']`
-  - Method `L3IsolationDomainsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'l3_isolation_domain_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'l3_isolation_domain_name', 'body', 'kwargs']`
-  - Method `NetworkRacksOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_rack_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_rack_name', 'body', 'kwargs']`
-  - Method `NetworkRacksOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_rack_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_rack_name', 'body', 'kwargs']`
-  - Method `InternetGatewayRulesOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'internet_gateway_rule_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'internet_gateway_rule_name', 'body', 'kwargs']`
-  - Method `InternetGatewayRulesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'internet_gateway_rule_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'internet_gateway_rule_name', 'body', 'kwargs']`
-  - Method `NetworkFabricsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'network_fabric_name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'network_fabric_name', 'body', 'kwargs']`
-  - Method `NetworkFabricsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'network_fabric_name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'network_fabric_name', 'body', 'kwargs']`
+  - Method `AccessControlListsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `AccessControlListsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `ExternalNetworksOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `ExternalNetworksOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `InternalNetworksOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `InternalNetworksOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `InternetGatewayRulesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `InternetGatewayRulesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `InternetGatewaysOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `InternetGatewaysOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `IpCommunitiesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `IpCommunitiesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `IpExtendedCommunitiesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `IpExtendedCommunitiesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `IpPrefixesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `IpPrefixesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `L2IsolationDomainsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `L2IsolationDomainsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `L3IsolationDomainsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `L3IsolationDomainsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NeighborGroupsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NeighborGroupsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkDevicesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkDevicesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkFabricControllersOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkFabricControllersOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkFabricsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkFabricsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkInterfacesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkInterfacesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkMonitorsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkMonitorsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkPacketBrokersOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkPacketBrokersOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkRacksOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkRacksOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkTapRulesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkTapRulesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkTapsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkTapsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkToNetworkInterconnectsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkToNetworkInterconnectsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `RoutePoliciesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `RoutePoliciesOperations.begin_update` renamed its parameter `properties` to `body`
 
 ## 1.0.0 (2023-07-19)
 
