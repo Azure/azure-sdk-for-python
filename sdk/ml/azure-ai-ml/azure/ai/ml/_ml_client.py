@@ -708,7 +708,7 @@ class MLClient:
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
             service_client_01_2024_preview=self._service_client_01_2024_preview,
-            service_client_10_2024_preview=self._service_client_10_2024_preview,
+            service_client_10_2024_preview=self._service_client_10_2024_preview_tsp,
             service_client_01_2025_preview=self._service_client_01_2025_preview,
             **ops_kwargs,
         )
