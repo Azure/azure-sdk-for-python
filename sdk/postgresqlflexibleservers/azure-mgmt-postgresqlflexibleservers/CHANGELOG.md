@@ -26,9 +26,9 @@
   - Added model `StartMajorVersionUpgradePrecheckRequest`
   - Added model `StartMajorVersionUpgradePrecheckResponse`
   - Added model `UpgradeSequence`
-  - Model `ServersOperations` added method `begin_start_major_version_upgrade_precheck`
-  - Added model `MaintenanceEventsOperations`
-  - Added model `MajorVersionUpgradePrecheckOperations`
+  - Operation group `ServersOperations` added method `begin_start_major_version_upgrade_precheck`
+  - Added operation group `MaintenanceEventsOperations`
+  - Added operation group `MajorVersionUpgradePrecheckOperations`
 
 ## 3.0.0b1 (2026-02-13)
 
