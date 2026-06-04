@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-06-15-preview",
+  "apiVersions": {
+    "Microsoft.ManagedNetworkFabric": "2024-06-15-preview"
+  },
+  "commit": "f2b3df51e564c690ebcd33735fc9e819b3b617f8",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/managednetworkfabric/ManagedNetworkFabric.ResourceManager.Management",
+  "emitterVersion": "0.63.0"
+}

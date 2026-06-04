@@ -1,5 +1,86 @@
 # Release History
 
+## 1.1.0b1 (2026-06-04)
+
+### Features Added
+
+  - Client `ManagedNetworkFabricMgmtClient` added method `send_request`
+  - Model `L3IsolationDomainPatchProperties` added property `static_route_route_policy`
+  - Model `L3IsolationDomainProperties` added property `static_route_route_policy`
+  - Enum `PollingIntervalInSeconds` added member `bit_count`
+  - Enum `PollingIntervalInSeconds` added member `bit_length`
+  - Enum `PollingIntervalInSeconds` added member `denominator`
+  - Enum `PollingIntervalInSeconds` added member `from_bytes`
+  - Enum `PollingIntervalInSeconds` added member `numerator`
+  - Enum `PollingIntervalInSeconds` added member `to_bytes`
+  - Added model `AnnotationResource`
+  - Added model `CommonErrorResponse`
+  - Added model `CommonMatchConditions`
+  - Added model `CommonMatchConditionsPatch`
+  - Added model `EnableDisableOnResources`
+  - Added model `Layer3IpPrefixPatchProperties`
+  - Added model `Layer3IpPrefixProperties`
+  - Added model `ProxyResourceBase`
+  - Added model `TagsUpdate`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `L3IsolationDomainPatchProperties` deleted or renamed its instance variable `static_route_policy`
+  - Model `L3IsolationDomainProperties` deleted or renamed its instance variable `static_route_policy`
+  - Deleted or renamed enum value `PollingIntervalInSeconds.from_number`
+  - Deleted or renamed enum value `PollingIntervalInSeconds.fromhex`
+  - Deleted or renamed enum value `PollingIntervalInSeconds.hex`
+  - Renamed model `ManagementNetworkPatchConfiguration` to `ManagementNetworkConfigurationPatchableProperties`
+  - Renamed model `StaticRoutePolicy` to `StaticRouteRoutePolicy`
+  - Renamed model `StaticRoutePolicyPatch` to `StaticRouteRoutePolicyPatch`
+  - Renamed model `TerminalServerPatchConfiguration` to `NetworkFabricPatchablePropertiesTerminalServerConfiguration`
+  - Renamed model `VpnOptionBProperties` to `OptionBProperties`
+  - Method `AccessControlListsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `AccessControlListsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `ExternalNetworksOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `ExternalNetworksOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `InternalNetworksOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `InternalNetworksOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `InternetGatewayRulesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `InternetGatewayRulesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `InternetGatewaysOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `InternetGatewaysOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `IpCommunitiesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `IpCommunitiesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `IpExtendedCommunitiesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `IpExtendedCommunitiesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `IpPrefixesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `IpPrefixesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `L2IsolationDomainsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `L2IsolationDomainsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `L3IsolationDomainsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `L3IsolationDomainsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NeighborGroupsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NeighborGroupsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkDevicesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkDevicesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkFabricControllersOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkFabricControllersOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkFabricsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkFabricsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkInterfacesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkInterfacesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkMonitorsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkMonitorsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkPacketBrokersOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkPacketBrokersOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkRacksOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkRacksOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkTapRulesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkTapRulesOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkTapsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkTapsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `NetworkToNetworkInterconnectsOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `NetworkToNetworkInterconnectsOperations.begin_update` renamed its parameter `properties` to `body`
+  - Method `RoutePoliciesOperations.begin_create` renamed its parameter `resource` to `body`
+  - Method `RoutePoliciesOperations.begin_update` renamed its parameter `properties` to `body`
+
 ## 1.0.0 (2023-07-19)
 
 ### Features Added
