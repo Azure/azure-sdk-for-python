@@ -1,3 +1,54 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-storage-extensions"
+authors = [
+  { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
+]
+description = "Azure Storage Extensions"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.10"
+keywords = ["azure", "azure sdk"]
+dynamic = ["version", "readme"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions"
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.storage.extensions.checksums._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.storage",
+    "azure.storage.extensions",
+]
+
+[tool.setuptools.package-data]
+"azure.storage.extensions.checksums" = ["py.typed", "*.pyi"]
+
 [tool.azure-sdk-build]
 mypy = false
 pyright = false
@@ -12,9 +63,8 @@ breaking = false
 # these can be any number of suppressions. note that * present means that ALL warnings will be suppressed for this package
 suppressed_skip_warnings = ["*"]
 
-[build-system]
-# cibuildwheel is NOT a build-system dependency; it is the outer orchestration tool
-requires = ["setuptools", "wheel"]
+[tool.azure-sdk-conda]
+in_bundle = false
 
 [tool.cibuildwheel]
 build = ["cp310*", "pp310*", "pp311*"]
