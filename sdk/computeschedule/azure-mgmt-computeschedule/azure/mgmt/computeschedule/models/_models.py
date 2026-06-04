@@ -678,7 +678,7 @@ class CancelOccurrenceRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CancelOperationsContent(_Model):
+class CancelOperationsRequest(_Model):
     """This is the request to cancel running operations in scheduled actions using the operation ids.
 
     :ivar operation_ids: The list of operation ids to cancel operations on. Required.
@@ -1455,50 +1455,7 @@ class EventGridAndResourceGraph(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteCreateContent(_Model):
-    """The ExecuteCreateRequest request for create operations.
-
-    :ivar resource_config_parameters: resource creation payload. Required.
-    :vartype resource_config_parameters:
-     ~azure.mgmt.computeschedule.models.ResourceProvisionPayload
-    :ivar execution_parameters: The execution parameters for the request. Required.
-    :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
-    :ivar correlationid: CorrelationId item.
-    :vartype correlationid: str
-    """
-
-    resource_config_parameters: "_models.ResourceProvisionPayload" = rest_field(
-        name="resourceConfigParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """resource creation payload. Required."""
-    execution_parameters: "_models.ExecutionParameters" = rest_field(
-        name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The execution parameters for the request. Required."""
-    correlationid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """CorrelationId item."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_config_parameters: "_models.ResourceProvisionPayload",
-        execution_parameters: "_models.ExecutionParameters",
-        correlationid: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ExecuteCreateFlexContent(_Model):
+class ExecuteCreateFlexRequest(_Model):
     """The ExecuteCreateFlexRequest request for executeCreateFlex operations.
 
     :ivar resource_config_parameters: Resource creation payload with flex properties. Required.
@@ -1541,7 +1498,50 @@ class ExecuteCreateFlexContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteDeallocateContent(_Model):
+class ExecuteCreateRequest(_Model):
+    """The ExecuteCreateRequest request for create operations.
+
+    :ivar resource_config_parameters: resource creation payload. Required.
+    :vartype resource_config_parameters:
+     ~azure.mgmt.computeschedule.models.ResourceProvisionPayload
+    :ivar execution_parameters: The execution parameters for the request. Required.
+    :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
+    :ivar correlationid: CorrelationId item.
+    :vartype correlationid: str
+    """
+
+    resource_config_parameters: "_models.ResourceProvisionPayload" = rest_field(
+        name="resourceConfigParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """resource creation payload. Required."""
+    execution_parameters: "_models.ExecutionParameters" = rest_field(
+        name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The execution parameters for the request. Required."""
+    correlationid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """CorrelationId item."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_config_parameters: "_models.ResourceProvisionPayload",
+        execution_parameters: "_models.ExecutionParameters",
+        correlationid: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExecuteDeallocateRequest(_Model):
     """The ExecuteDeallocateRequest request for executeDeallocate operations.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -1581,7 +1581,7 @@ class ExecuteDeallocateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteDeleteContent(_Model):
+class ExecuteDeleteRequest(_Model):
     """The ExecuteDeleteRequest for delete VM operation.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -1628,7 +1628,7 @@ class ExecuteDeleteContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteHibernateContent(_Model):
+class ExecuteHibernateRequest(_Model):
     """The ExecuteHibernateRequest request for executeHibernate operations.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -1668,7 +1668,7 @@ class ExecuteHibernateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteStartContent(_Model):
+class ExecuteStartRequest(_Model):
     """The ExecuteStartRequest request for executeStart operations.
 
     :ivar execution_parameters: The execution parameters for the request. Required.
@@ -1927,7 +1927,7 @@ class FlexProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetOperationErrorsContent(_Model):
+class GetOperationErrorsRequest(_Model):
     """This is the request to get errors per vm operations.
 
     :ivar operation_ids: The list of operation ids to query errors of. Required.
@@ -1987,7 +1987,7 @@ class GetOperationErrorsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetOperationStatusContent(_Model):
+class GetOperationStatusRequest(_Model):
     """This is the request to get operation status using operationids.
 
     :ivar operation_ids: The list of operation ids to get the status of. Required.
@@ -3543,7 +3543,7 @@ class OSProfile(_Model):
      characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):**
      123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity
      requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters
-     <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\W_])
+     <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\\W_])
      <br><br> **Disallowed values:** \"abc@123\", \"P@$$w0rd\", \"P@ssw0rd\", \"P@ssword123\",
      \"Pa$$word\", \"pass@word1\", \"Password!\", \"Password1\", \"Password22\", \"iloveyou!\"
      <br><br> For resetting the password, see `How to reset the Remote Desktop service or its login
@@ -5584,7 +5584,7 @@ class StorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubmitDeallocateContent(_Model):
+class SubmitDeallocateRequest(_Model):
     """The deallocate request for resources.
 
     :ivar schedule: The schedule for the request. Required.
@@ -5629,7 +5629,7 @@ class SubmitDeallocateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubmitHibernateContent(_Model):
+class SubmitHibernateRequest(_Model):
     """This is the request for hibernate.
 
     :ivar schedule: The schedule for the request. Required.
@@ -5674,7 +5674,7 @@ class SubmitHibernateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubmitStartContent(_Model):
+class SubmitStartRequest(_Model):
     """This is the request for start.
 
     :ivar schedule: The schedule for the request. Required.

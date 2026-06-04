@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b2 (2026-05-06)
+## 1.2.0b2 (2026-06-04)
 
 ### Features Added
 
@@ -9,6 +9,8 @@
   - Model `ResourceOperationDetails` added property `fallback_operation_info`
   - Enum `ResourceOperationType` added member `CREATE`
   - Enum `ResourceOperationType` added member `DELETE`
+  - Model `ResourceProvisionPayload` added property `virtual_machine_base_profile`
+  - Model `ResourceProvisionPayload` added property `virtual_machine_overrides`
   - Model `RetryPolicy` added property `on_failure_action`
   - Added model `AdditionalCapabilities`
   - Added model `AdditionalUnattendContent`
@@ -40,7 +42,7 @@
   - Added enum `DomainNameLabelScopeTypes`
   - Added model `EncryptionIdentity`
   - Added model `EventGridAndResourceGraph`
-  - Added model `ExecuteCreateFlexContent`
+  - Added model `ExecuteCreateFlexRequest`
   - Added model `ExtendedLocation`
   - Added enum `ExtendedLocationType`
   - Added model `FallbackOperationInfo`
@@ -133,27 +135,23 @@
   - Added model `ZoneAllocationPolicy`
   - Added enum `ZonePlacementPolicyType`
   - Added model `ZonePreference`
-  - Operation group `ScheduledActionsOperations` added method `virtual_machines_execute_create_flex`
+  - Model `ScheduledActionsOperations` added method `virtual_machines_execute_create_flex`
 
 ### Breaking Changes
 
   - Deleted or renamed enum value `ActionType.DEALLOCATE`
   - Deleted or renamed enum value `ActionType.HIBERNATE`
   - Deleted or renamed enum value `ActionType.START`
-  - Model `ResourceProvisionPayload` renamed its instance variable `base_profile` to `virtual_machine_base_profile`
-  - Model `ResourceProvisionPayload` renamed its instance variable `resource_overrides` to `virtual_machine_overrides`
-  - Renamed model `CancelOperationsRequest` to `CancelOperationsContent`
-  - Renamed model `ExecuteCreateRequest` to `ExecuteCreateContent`
-  - Renamed model `ExecuteDeallocateRequest` to `ExecuteDeallocateContent`
-  - Renamed model `ExecuteDeleteRequest` to `ExecuteDeleteContent`
-  - Renamed model `ExecuteHibernateRequest` to `ExecuteHibernateContent`
-  - Renamed model `ExecuteStartRequest` to `ExecuteStartContent`
-  - Renamed model `GetOperationErrorsRequest` to `GetOperationErrorsContent`
-  - Renamed model `GetOperationStatusRequest` to `GetOperationStatusContent`
-  - Renamed model `SubmitDeallocateRequest` to `SubmitDeallocateContent`
-  - Renamed model `SubmitHibernateRequest` to `SubmitHibernateContent`
-  - Renamed model `SubmitStartRequest` to `SubmitStartContent`
+  - Model `ResourceProvisionPayload` deleted or renamed its instance variable `base_profile`
+  - Model `ResourceProvisionPayload` deleted or renamed its instance variable `resource_overrides`
   - Deleted or renamed model `ResourceOperationResponse`
+  - Method `OccurrencesOperations.begin_delay` changed return type from `AsyncLROPoller[ResourceOperationResponse]` to `AsyncLROPoller[RecurringActionsResourceOperationResult]`
+  - Method `OccurrencesOperations.begin_delay` changed return type from `LROPoller[ResourceOperationResponse]` to `LROPoller[RecurringActionsResourceOperationResult]`
+  - Method `OccurrencesOperations.cancel` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
+  - Method `ScheduledActionsOperations.attach_resources` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
+  - Method `ScheduledActionsOperations.cancel_next_occurrence` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
+  - Method `ScheduledActionsOperations.detach_resources` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
+  - Method `ScheduledActionsOperations.patch_resources` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
 
 ## 1.2.0b1 (2025-07-24)
 

@@ -1081,7 +1081,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1145,7 +1148,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_submit_deallocate(
         self,
         locationparameter: str,
-        request_body: _models.SubmitDeallocateContent,
+        request_body: _models.SubmitDeallocateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1156,7 +1159,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateContent
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1210,7 +1213,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_submit_deallocate(
         self,
         locationparameter: str,
-        request_body: Union[_models.SubmitDeallocateContent, JSON, IO[bytes]],
+        request_body: Union[_models.SubmitDeallocateRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesSubmitDeallocate: Schedule deallocate operation for a batch of virtual machines
@@ -1218,9 +1221,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: SubmitDeallocateContent,
+        :param request_body: The request body. Is one of the following types: SubmitDeallocateRequest,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateContent or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateRequest or JSON or
          IO[bytes]
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
          compatible with MutableMapping
@@ -1297,7 +1300,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_submit_hibernate(
         self,
         locationparameter: str,
-        request_body: _models.SubmitHibernateContent,
+        request_body: _models.SubmitHibernateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1308,7 +1311,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateContent
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1362,7 +1365,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_submit_hibernate(
         self,
         locationparameter: str,
-        request_body: Union[_models.SubmitHibernateContent, JSON, IO[bytes]],
+        request_body: Union[_models.SubmitHibernateRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesSubmitHibernate: Schedule hibernate operation for a batch of virtual machines at
@@ -1370,9 +1373,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: SubmitHibernateContent,
+        :param request_body: The request body. Is one of the following types: SubmitHibernateRequest,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateContent or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateRequest or JSON or
          IO[bytes]
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
          compatible with MutableMapping
@@ -1449,7 +1452,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_submit_start(
         self,
         locationparameter: str,
-        request_body: _models.SubmitStartContent,
+        request_body: _models.SubmitStartRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1460,7 +1463,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartContent
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1512,16 +1515,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def virtual_machines_submit_start(
-        self, locationparameter: str, request_body: Union[_models.SubmitStartContent, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, request_body: Union[_models.SubmitStartRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesSubmitStart: Schedule start operation for a batch of virtual machines at
         datetime in future.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: SubmitStartContent, JSON,
+        :param request_body: The request body. Is one of the following types: SubmitStartRequest, JSON,
          IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartContent or JSON or IO[bytes]
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartRequest or JSON or IO[bytes]
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.StartResourceOperationResponse
@@ -1597,7 +1600,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_deallocate(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteDeallocateContent,
+        request_body: _models.ExecuteDeallocateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1608,7 +1611,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateContent
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1662,7 +1665,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_deallocate(
         self,
         locationparameter: str,
-        request_body: Union[_models.ExecuteDeallocateContent, JSON, IO[bytes]],
+        request_body: Union[_models.ExecuteDeallocateRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesExecuteDeallocate: Execute deallocate operation for a batch of virtual machines,
@@ -1670,9 +1673,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteDeallocateContent,
+        :param request_body: The request body. Is one of the following types: ExecuteDeallocateRequest,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateContent or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateRequest or JSON or
          IO[bytes]
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
          compatible with MutableMapping
@@ -1749,7 +1752,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_hibernate(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteHibernateContent,
+        request_body: _models.ExecuteHibernateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1760,7 +1763,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateContent
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1814,7 +1817,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_hibernate(
         self,
         locationparameter: str,
-        request_body: Union[_models.ExecuteHibernateContent, JSON, IO[bytes]],
+        request_body: Union[_models.ExecuteHibernateRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesExecuteHibernate: Execute hibernate operation for a batch of virtual machines,
@@ -1822,9 +1825,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteHibernateContent,
+        :param request_body: The request body. Is one of the following types: ExecuteHibernateRequest,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateContent or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateRequest or JSON or
          IO[bytes]
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
          compatible with MutableMapping
@@ -1901,7 +1904,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_start(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteStartContent,
+        request_body: _models.ExecuteStartRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1912,7 +1915,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartContent
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1964,16 +1967,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def virtual_machines_execute_start(
-        self, locationparameter: str, request_body: Union[_models.ExecuteStartContent, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, request_body: Union[_models.ExecuteStartRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesExecuteStart: Execute start operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteStartContent,
+        :param request_body: The request body. Is one of the following types: ExecuteStartRequest,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartContent or JSON or IO[bytes]
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartRequest or JSON or IO[bytes]
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.StartResourceOperationResponse
@@ -2049,7 +2052,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_create_flex(
         self,
         locationparameter: str,
-        body: _models.ExecuteCreateFlexContent,
+        body: _models.ExecuteCreateFlexRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2060,7 +2063,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param body: The request body. Required.
-        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexContent
+        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2119,16 +2122,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2026-03-01-preview", "2026-04-15-preview"],
     )
     def virtual_machines_execute_create_flex(
-        self, locationparameter: str, body: Union[_models.ExecuteCreateFlexContent, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, body: Union[_models.ExecuteCreateFlexRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CreateFlexResourceOperationResponse:
         """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
         flex properties, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param body: The request body. Is one of the following types: ExecuteCreateFlexContent, JSON,
+        :param body: The request body. Is one of the following types: ExecuteCreateFlexRequest, JSON,
          IO[bytes] Required.
-        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexContent or JSON or IO[bytes]
+        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexRequest or JSON or IO[bytes]
         :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
@@ -2204,7 +2207,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_create(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteCreateContent,
+        request_body: _models.ExecuteCreateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2215,7 +2218,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateContent
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2280,16 +2283,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         ],
     )
     def virtual_machines_execute_create(
-        self, locationparameter: str, request_body: Union[_models.ExecuteCreateContent, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, request_body: Union[_models.ExecuteCreateRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
         """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
         virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteCreateContent,
+        :param request_body: The request body. Is one of the following types: ExecuteCreateRequest,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateContent or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateRequest or JSON or
          IO[bytes]
         :return: CreateResourceOperationResponse. The CreateResourceOperationResponse is compatible
          with MutableMapping
@@ -2366,7 +2369,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_delete(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteDeleteContent,
+        request_body: _models.ExecuteDeleteRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2377,7 +2380,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteContent
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2442,16 +2445,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         ],
     )
     def virtual_machines_execute_delete(
-        self, locationparameter: str, request_body: Union[_models.ExecuteDeleteContent, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, request_body: Union[_models.ExecuteDeleteRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
         """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
         virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteDeleteContent,
+        :param request_body: The request body. Is one of the following types: ExecuteDeleteRequest,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteContent or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteRequest or JSON or
          IO[bytes]
         :return: DeleteResourceOperationResponse. The DeleteResourceOperationResponse is compatible
          with MutableMapping
@@ -2528,7 +2531,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_get_operation_status(
         self,
         locationparameter: str,
-        request_body: _models.GetOperationStatusContent,
+        request_body: _models.GetOperationStatusRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2539,7 +2542,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusContent
+        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2593,7 +2596,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_get_operation_status(
         self,
         locationparameter: str,
-        request_body: Union[_models.GetOperationStatusContent, JSON, IO[bytes]],
+        request_body: Union[_models.GetOperationStatusRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
         """VirtualMachinesGetOperationStatus: Polling endpoint to read status of operations performed on
@@ -2602,8 +2605,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Is one of the following types:
-         GetOperationStatusContent, JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusContent or JSON or
+         GetOperationStatusRequest, JSON, IO[bytes] Required.
+        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusRequest or JSON or
          IO[bytes]
         :return: GetOperationStatusResponse. The GetOperationStatusResponse is compatible with
          MutableMapping
@@ -2680,7 +2683,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_cancel_operations(
         self,
         locationparameter: str,
-        request_body: _models.CancelOperationsContent,
+        request_body: _models.CancelOperationsRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2691,7 +2694,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsContent
+        :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2745,7 +2748,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_cancel_operations(
         self,
         locationparameter: str,
-        request_body: Union[_models.CancelOperationsContent, JSON, IO[bytes]],
+        request_body: Union[_models.CancelOperationsRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
         """VirtualMachinesCancelOperations: Cancel a previously submitted (start/deallocate/hibernate)
@@ -2753,9 +2756,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: CancelOperationsContent,
+        :param request_body: The request body. Is one of the following types: CancelOperationsRequest,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsContent or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsRequest or JSON or
          IO[bytes]
         :return: CancelOperationsResponse. The CancelOperationsResponse is compatible with
          MutableMapping
@@ -2832,7 +2835,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_get_operation_errors(
         self,
         locationparameter: str,
-        request_body: _models.GetOperationErrorsContent,
+        request_body: _models.GetOperationErrorsRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2843,7 +2846,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsContent
+        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2897,7 +2900,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_get_operation_errors(
         self,
         locationparameter: str,
-        request_body: Union[_models.GetOperationErrorsContent, JSON, IO[bytes]],
+        request_body: Union[_models.GetOperationErrorsRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.GetOperationErrorsResponse:
         """VirtualMachinesGetOperationErrors: Get error details on operation errors (like transient errors
@@ -2906,8 +2909,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Is one of the following types:
-         GetOperationErrorsContent, JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsContent or JSON or
+         GetOperationErrorsRequest, JSON, IO[bytes] Required.
+        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsRequest or JSON or
          IO[bytes]
         :return: GetOperationErrorsResponse. The GetOperationErrorsResponse is compatible with
          MutableMapping
@@ -3698,7 +3701,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3793,7 +3799,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3906,7 +3915,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4992,7 +5004,10 @@ class ScheduledActionExtensionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5211,7 +5226,10 @@ class OccurrencesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5327,7 +5345,10 @@ class OccurrencesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5825,14 +5846,10 @@ class OccurrencesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -5935,7 +5952,10 @@ class OccurrenceExtensionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
