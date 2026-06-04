@@ -10,7 +10,7 @@
   - Model `DataExport` added property `system_data`
   - Model `DataSource` added property `system_data`
   - Model `LinkedService` added property `system_data`
-  - Model `LinkedStorageAccountsResource` added property `properties`
+  - Model `LinkedStorageAccountsResource` added property `properties` whose type is `LinkedStorageAccountsProperties`, grouping instance variables `data_source_type` and `storage_account_ids`
   - Model `LinkedStorageAccountsResource` added property `system_data`
   - Enum `ProvisioningStateEnum` added member `CANCELED`
   - Enum `ProvisioningStateEnum` added member `FAILED`
@@ -19,7 +19,7 @@
   - Model `SavedSearch` added property `system_data`
   - Model `StorageInsight` added property `system_data`
   - Model `TrackedResource` added property `system_data`
-  - Model `WorkspacePatch` added property `properties`
+  - Model `WorkspacePatch` added property `properties` whose type is `WorkspaceProperties`, grouping instance variables `provisioning_state`, `customer_id`, `sku`, `retention_in_days`, `workspace_capping`, `created_date`, `modified_date`, `public_network_access_for_ingestion`, `public_network_access_for_query`, `force_cmk_for_query`, `private_link_scoped_resources`, `features`, `default_data_collection_rule_resource_id`, `replication`, and `failover`
   - Model `WorkspacePatch` added property `system_data`
   - Added model `AccessRulePropertiesSubscription`
   - Added model `Destination`
@@ -31,41 +31,9 @@
 
 ### Breaking Changes
 
-  - Model `LinkedStorageAccountsResource` deleted or renamed its instance variable `data_source_type`
-  - Model `LinkedStorageAccountsResource` deleted or renamed its instance variable `storage_account_ids`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `id_properties_id`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `display_name`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `time_created`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `time_modified`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `author`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `description`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `body`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `related`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `tags`
-  - Model `ManagementGroup` deleted or renamed its instance variable `server_count`
-  - Model `ManagementGroup` deleted or renamed its instance variable `is_gateway`
-  - Model `ManagementGroup` deleted or renamed its instance variable `name`
-  - Model `ManagementGroup` deleted or renamed its instance variable `id`
-  - Model `ManagementGroup` deleted or renamed its instance variable `created`
-  - Model `ManagementGroup` deleted or renamed its instance variable `data_received`
-  - Model `ManagementGroup` deleted or renamed its instance variable `version`
-  - Model `ManagementGroup` deleted or renamed its instance variable `sku`
+  - Model `LogAnalyticsQueryPackQuery` moved instance variables `id_properties_id`, `display_name`, `time_created`, `time_modified`, `author`, `description`, `body`, `related`, and `tags` under property `properties` whose type is `LogAnalyticsQueryPackQueryProperties`
+  - Model `ManagementGroup` moved instance variables `server_count`, `is_gateway`, `name`, `id`, `created`, `data_received`, `version`, and `sku` under property `properties` whose type is `ManagementGroupProperties`
   - Deleted or renamed enum value `ProvisioningStateEnum.IN_PROGRESS`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `provisioning_state`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `customer_id`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `sku`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `retention_in_days`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `workspace_capping`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `created_date`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `modified_date`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `public_network_access_for_ingestion`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `public_network_access_for_query`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `force_cmk_for_query`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `private_link_scoped_resources`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `features`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `default_data_collection_rule_resource_id`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `replication`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `failover`
   - Deleted or renamed model `AccessRulePropertiesSubscriptionsItem`
   - Deleted or renamed model `DataSourceFilter`
   - Deleted or renamed model `ErrorDetailAutoGenerated`
