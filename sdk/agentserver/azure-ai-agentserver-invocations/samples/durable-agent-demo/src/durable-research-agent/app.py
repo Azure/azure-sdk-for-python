@@ -4,7 +4,16 @@
 
 This file is minimal plumbing. The durability + steering logic is in ``agent.py``.
 
-Routes (all of them are platform-managed — only ``/invocations*`` is reachable
+Streaming is wired through the SDK ``streams`` registry: at startup
+we pick the **file-backed replay** backing (events persist to disk so
+they survive a crash + container restart). The POST handler reserves
+the per-turn stream id (``invocation_id``) BEFORE starting the task so
+the GET handler can subscribe deterministically. The handler in
+``agent.py`` emits to the same id; events on the SSE wire carry the
+emitted ``sequence_number`` as the SSE ``id:`` field, so a reconnect
+with ``?last_event_id=N`` skips events the client already received.
+
+Routes (all platform-managed — only ``/invocations*`` is reachable
 through the Foundry endpoint proxy):
   * ``POST /invocations``                       — fire-and-forget dispatch (or
                                                    steering input on an in-progress run);
@@ -26,13 +35,37 @@ from pathlib import Path
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core.durable import TaskCancelled, TaskConflictError, TaskFailed
+from azure.ai.agentserver.core.durable import TaskConflictError
+from azure.ai.agentserver.core.streaming import (
+    EventStreamGoneError,
+    EventStreamNotFoundError,
+    streams,
+)
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 from agent import deep_research
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
+
+
+# --- Streams bootstrap (run once at module import) --------------------------
+
+# Per-turn streams persist to disk so they survive a container crash +
+# restart. ``cursor_fn`` reads the agent's natural sequence number so
+# ``?last_event_id=N`` reconnects skip already-delivered events.
+# ``ttl_seconds=600`` bounds disk usage: once a stream is closed and
+# all its events have aged out, the registry destroys it and removes
+# the file.
+_STREAM_DIR = Path.home() / ".durable-tasks" / "_streams"
+_STREAM_DIR.mkdir(parents=True, exist_ok=True)
+
+streams.use_file_backed_replay(
+    storage_dir=_STREAM_DIR,
+    cursor_fn=lambda ev: ev["sequence_number"],
+    ttl_seconds=600,
+)
+
 
 app = InvocationAgentServerHost()
 
@@ -51,8 +84,7 @@ async def handle_invoke(request: Request) -> Response:
       ``os._exit(137)`` shortly after returning ``202``. The platform's nanny
       worker brings the container back within ~1 min on its own — no new
       client ingress required — and the durable task auto-resumes from its
-      last checkpoint. This is gated by ``DEMO_MODE`` so a stray request
-      can't accidentally kill a production agent.
+      last checkpoint.
 
     * Any other ``{"message": "<topic>"}`` dispatches a normal research run.
       If a steerable run is already in progress on this session, the input is
@@ -93,9 +125,16 @@ async def handle_invoke(request: Request) -> Response:
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
     # ONE durable task per session so steering finds the active run.
-    # invocation_id labels the call; session_id labels the long-lived task.
+    # invocation_id labels THIS turn; session_id labels the long-lived task.
     task_id = session_id
-    logger.info("POST handler: session_id=%r task_id=%r topic=%r", session_id, task_id, topic)
+    logger.info("POST handler: session_id=%r task_id=%r invocation_id=%r topic=%r",
+                session_id, task_id, invocation_id, topic)
+
+    # Reserve the per-turn stream id BEFORE starting the task. This
+    # guarantees a GET that races the POST sees the stream (rather than
+    # a 404 NotFound). The file-backed replay backing means we don't
+    # need to wait for a subscriber before the handler starts emitting.
+    await streams.get_or_create(invocation_id)
 
     status = "started"
     try:
@@ -106,7 +145,9 @@ async def handle_invoke(request: Request) -> Response:
     except TaskConflictError as exc:
         # Steerable task already running. The framework queued our input and
         # signalled cancel; the agent will wind down at the next checkpoint
-        # and re-enter with our input.
+        # and re-enter with our input. The re-entered handler reads
+        # ctx.input["invocation_id"] — which we pre-reserved above — so the
+        # GET for THIS invocation finds its stream.
         status = "steered"
         logger.info("POST handler: queued steering input (current_status=%s)",
                     getattr(exc, "current_status", None))
@@ -123,132 +164,59 @@ async def handle_invoke(request: Request) -> Response:
 
 @app.get_invocation_handler
 async def handle_get(request: Request) -> Response:
-    """Stream SSE from the active task, or replay from disk if finished.
+    """Stream SSE from the per-invocation stream.
 
     The platform routes ``GET /invocations/{id}`` to this container based on
     the invocation-to-session mapping set up by the original POST. Clients
     can pass ``?last_event_id=N`` to skip events they've already seen on a
-    reconnect.
+    reconnect — we forward this to ``stream.subscribe(after=N)`` which
+    skips events whose sequence_number ≤ N (whether they're being served
+    from in-memory live, from on-disk replay, or from a rehydrated stream
+    after a crash).
 
-    If the durable task is still active we stream live events from the
-    in-memory run. If the task has already finished (or this container
-    doesn't currently hold the run) we replay from the persisted
-    ``stream.jsonl`` file — so a reconnect after completion still shows the
-    full transcript.
+    HTTP mapping:
+      - 404 if the invocation id was never seen
+        (``EventStreamNotFoundError``).
+      - 410 if the stream was destroyed (TTL eviction or explicit
+        ``streams.delete``) (``EventStreamGoneError``).
     """
     invocation_id = request.state.invocation_id
-    session_id = (
-        getattr(request.state, "session_id", None) or app.config.session_id
-    )
-    task_id = session_id  # one task per session — match POST handler
 
     last_event_id = request.query_params.get("last_event_id", "")
     skip_count = int(last_event_id) if last_event_id.isdigit() else 0
-    logger.info("GET handler: invocation_id=%r task_id=%r skip=%d",
-                invocation_id, task_id, skip_count)
+    logger.info("GET handler: invocation_id=%r skip=%d", invocation_id, skip_count)
 
-    run = await deep_research.get_active_run(task_id)
-
-    if run is not None:
-        async def live_stream():
-            # event_id is now derived durably from FileStreamHandler's disk
-            # line counter — items arrive as (event_id, chunk) tuples. We
-            # advertise that id to the client so ?last_event_id=N resume
-            # is meaningful across reconnects, recovery, and partial queue
-            # drains. If the requested id is below the queue's current
-            # head we just emit what's available (gracefully accept a
-            # small delta gap rather than erroring).
-            last_id = skip_count
-            try:
-                async for item in run:
-                    # FileStreamHandler always emits tuples; defensive
-                    # unpack handles a non-tuple chunk if some other
-                    # handler is ever swapped in.
-                    if isinstance(item, tuple) and len(item) == 2:
-                        event_id, chunk = item
-                    else:
-                        last_id += 1
-                        event_id, chunk = last_id, item
-                    if event_id <= skip_count:
-                        continue
-                    last_id = event_id
-                    yield f"id: {event_id}\ndata: {chunk}\n\n"
-                result = await run.result()
-                last_id += 1
-                yield (
-                    f"id: {last_id}\ndata: "
-                    + json.dumps({
-                        "type": "done",
-                        "phases_completed": result.output.get("phases_completed", 0),
-                    })
-                    + "\n\n"
-                )
-            except TaskCancelled:
-                last_id += 1
-                yield (
-                    f"id: {last_id}\ndata: "
-                    + json.dumps({"type": "done", "reason": "cancelled"})
-                    + "\n\n"
-                )
-            except TaskFailed as exc:
-                last_id += 1
-                yield (
-                    f"id: {last_id}\ndata: "
-                    + json.dumps({"type": "done", "reason": "failed", "error": str(exc)})
-                    + "\n\n"
-                )
-
-        return StreamingResponse(
-            live_stream(),
-            media_type="text/event-stream",
-            headers={"Cache-Control": "no-cache"},
-        )
-
-    # No live run — replay from the persisted stream file.
-    stream_file = (
-        Path.home() / ".durable-tasks" / "_streams" / task_id / "stream.jsonl"
-    )
-    if not stream_file.exists():
+    try:
+        stream = await streams.get(invocation_id)
+    except EventStreamNotFoundError:
         return JSONResponse(
             {"status": "not_found",
-             "message": "No active or finished task for this session."},
+             "message": "No stream for this invocation id."},
             status_code=404,
         )
-
-    async def file_replay():
-        event_id = 0
-        for line in stream_file.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if not line:
-                continue
-            # FileStreamHandler.put writes `json.dumps(item) + "\n"` where item
-            # is a JSON string from `ctx.stream(json.dumps({...}))`, so each line
-            # on disk is the original JSON dict serialised twice. Decode once
-            # here — the result is the original JSON string (or the {__done__}
-            # sentinel dict). Emit raw to avoid re-double-encoding for SSE.
-            data = json.loads(line)
-            if isinstance(data, dict) and "__done__" in data:
-                event_id += 1
-                yield (
-                    f"id: {event_id}\ndata: "
-                    + json.dumps({"type": "done", "reason": "replayed"})
-                    + "\n\n"
-                )
-                return
-            event_id += 1
-            if event_id <= skip_count:
-                continue
-            yield f"id: {event_id}\ndata: {data}\n\n"
-        # File present but no __done__ sentinel — task may still be recovering.
-        event_id += 1
-        yield (
-            f"id: {event_id}\ndata: "
-            + json.dumps({"type": "done", "reason": "replay_incomplete"})
-            + "\n\n"
+    except EventStreamGoneError:
+        return JSONResponse(
+            {"status": "gone",
+             "message": "Stream for this invocation id has been destroyed."},
+            status_code=410,
         )
 
+    async def sse_stream():
+        try:
+            async for event in stream.subscribe(after=skip_count or None):
+                seq = event.get("sequence_number")
+                yield f"id: {seq}\ndata: {json.dumps(event)}\n\n"
+        except EventStreamGoneError:
+            # Stream destroyed while we were attached (TTL eviction or
+            # explicit delete). Tell the client we're done.
+            yield (
+                f"event: gone\ndata: "
+                + json.dumps({"type": "gone", "invocation_id": invocation_id})
+                + "\n\n"
+            )
+
     return StreamingResponse(
-        file_replay(),
+        sse_stream(),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache"},
     )
@@ -256,7 +224,13 @@ async def handle_get(request: Request) -> Response:
 
 @app.cancel_invocation_handler
 async def handle_cancel(request: Request) -> Response:
-    """Cancel the running research task."""
+    """Cancel the running research task.
+
+    Cancel applies to the per-session durable task (task_id == session_id).
+    The handler observes ``ctx.cancel.is_set()`` and runs its
+    cooperative wind-down at the next checkpoint, which closes the
+    per-turn stream before suspending.
+    """
     invocation_id = request.state.invocation_id
     session_id = (
         getattr(request.state, "session_id", None) or app.config.session_id

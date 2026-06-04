@@ -223,7 +223,8 @@ window — the framework's lease-renewal cycle keeps the sandbox warm.
 │  │  │     └─ {"message": "crash"} (DEMO_MODE=1 only) → os._exit     │  │  │
 │  │  │                                                               │  │  │
 │  │  │  GET /invocations/{id}?last_event_id=N                        │  │  │
-│  │  │     └─ live SSE from get_active_run(task_id), else file replay│  │  │
+│  │  │     └─ (await streams.get(id)).subscribe(after=N) → SSE       │  │  │
+│  │  │     └─ 404 if id never seen; 410 if stream destroyed (TTL)    │  │  │
 │  │  │                                                               │  │  │
 │  │  │  POST /invocations/{id}/cancel                                │  │  │
 │  │  │     └─ run.cancel()                                           │  │  │
@@ -231,8 +232,15 @@ window — the framework's lease-renewal cycle keeps the sandbox warm.
 │  │  │  GET  /readiness  (called by platform health probe at startup)│  │  │
 │  │  └───────────────────────────────────────────────────────────────┘  │  │
 │  │                                                                     │  │
+│  │  At module import: streams.use_file_backed_replay(                  │  │
+│  │     storage_dir=~/.durable-tasks/_streams,                          │  │
+│  │     cursor_fn=lambda ev: ev["sequence_number"],                     │  │
+│  │     ttl_seconds=600)                                                │  │
+│  │                                                                     │  │
 │  │  deep_research  (agent.py)                                          │  │
-│  │     @task(steerable=True, stream_handler_factory=file_stream_factory)│ │
+│  │     @task(steerable=True)   ← no streaming kwarg                    │  │
+│  │     stream = await streams.get_or_create(ctx.input["invocation_id"])│  │
+│  │     seq    = await stream.last_cursor() or 0   ← resume after crash │  │
 │  │     loop 1..NUM_PHASES:                                             │  │
 │  │        emit phase_start with server_time_utc + server_uptime_sec    │  │
 │  │        run CALLS_PER_PHASE LLM sub-calls (research → critique → …)  │  │
@@ -240,7 +248,7 @@ window — the framework's lease-renewal cycle keeps the sandbox warm.
 │  │        await ctx.metadata.flush()       ← crash-recovery boundary   │  │
 │  │        emit phase_end                                               │  │
 │  │        if ctx.cancel.is_set():                                      │  │
-│  │           wind down → return await ctx.suspend(...)                 │  │
+│  │           emit winding_down → stream.close() → ctx.suspend(...)     │  │
 │  └─────────────────────────────────────────────────────────────────────┘  │
 └───────────────────────────────────────────────────────────────────────────┘
                               ▲          │
@@ -281,6 +289,59 @@ Notable points:
   handler with `ctx.entry_mode == "recovered"` and `ctx.metadata`
   populated from the last checkpoint. A `recovered` SSE event is
   emitted to any (re)connecting clients.
+
+## Streaming
+
+The agent emits to the SDK's `streams` registry
+(`azure.ai.agentserver.core.streaming`); the HTTP layer subscribes by
+the same id. There is no streaming kwarg on `@task` — streaming is
+explicitly initiated by the handler.
+
+**Public surface used here (6 exports):** `streams`, `EventStream`,
+`EventStreamError`, `EventStreamClosedError`, `EventStreamGoneError`,
+`EventStreamNotFoundError`. The SDK ships three backings (live,
+in-memory replay, file-backed replay) which you pick via the
+registry's configurators; concrete backing classes are not in the
+public API.
+
+**Backing.** `app.py` calls `streams.use_file_backed_replay(...)`
+once at module import. This persists every event to
+`~/.durable-tasks/_streams/<invocation_id>.jsonl` so the stream
+survives a container crash + restart and a late `GET` can replay the
+full transcript.
+
+**Stream id = per-turn `invocation_id`** (per the streaming guide).
+The HTTP layer reads `request.state.invocation_id` and propagates it
+to the handler via `task.start(input={"invocation_id": inv_id, ...})`.
+The handler reads it from `ctx.input["invocation_id"]`. **Not**
+`ctx.task_id` — `task_id` is the per-session durable-task identity
+that spans multiple turns (steering, recovery), and conflating
+logically separate per-turn streams under one id would break
+`emit`-after-close on the second turn. Each turn — including a steered
+re-entry — gets its own fresh `invocation_id` and its own stream.
+
+**Cursor field.** `cursor_fn=lambda ev: ev["sequence_number"]`.
+The handler maintains an in-memory `seq` counter and tags every emit
+with the next value. On crash recovery the handler calls
+`stream.last_cursor()` first to learn the highest sequence number
+that made it to disk, then resumes numbering from there. The HTTP
+layer surfaces `sequence_number` as the SSE `id:` field so a client
+reconnect with `?last_event_id=N` maps cleanly to
+`stream.subscribe(after=N)` — events the client already saw are
+skipped without duplicates.
+
+**Retention.** `ttl_seconds=600`. Per-event TTL bounds disk usage:
+once a stream is closed and all its events have aged out, the
+registry destroys the stream and removes the file. The 410 Gone
+wire mapping in the GET handler covers the "client tried to reconnect
+to an expired stream" case.
+
+**Close-before-suspend / close-before-return.** Every exit path in
+the handler (`run_complete`, `winding_down → suspend`,
+`finally` safety net) explicitly closes the stream before the
+framework reports the turn as terminal. This guarantees SSE
+subscribers see a clean stream terminator before any next-turn
+plumbing kicks in.
 
 ## Environment variables
 

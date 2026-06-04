@@ -1,22 +1,29 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-"""The durable research task — crash-resilient, steerable, long-running."""
+"""The durable research task — crash-resilient, steerable, long-running.
+
+Streaming uses the SDK ``streams`` registry: events for a given turn
+are emitted to ``streams.get_or_create(invocation_id)``. The HTTP
+layer subscribes to the same stream by id (see ``app.py``). On crash
+recovery, ``stream.last_cursor()`` rehydrates the in-process sequence
+counter from disk so we resume numbering from where we left off — no
+gap, no duplicate cursor value.
+"""
 
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 import os
 import time
 from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any
+from typing import Any, Awaitable, Callable
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.streaming import streams
 
 logger = logging.getLogger(__name__)
 
@@ -47,75 +54,6 @@ _model = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini")
 _credential = DefaultAzureCredential()
 _project_client = AIProjectClient(endpoint=_endpoint, credential=_credential)
 _openai_client = _project_client.get_openai_client()
-
-
-# --- File-backed stream handler ---------------------------------------------
-
-_STREAM_DIR = Path.home() / ".durable-tasks" / "_streams"
-
-
-class FileStreamHandler:
-    """Stream handler that persists every item to disk for crash-resilient replay.
-
-    Each stream item is paired with a **durable** ``event_id`` derived from
-    its 1-based line number in ``stream.jsonl``. Items go onto the queue
-    as ``(event_id, item)`` tuples so the SSE consumer (live_stream in
-    ``app.py``) can advertise the durable id to clients. This lets a
-    client reconnect with ``?last_event_id=N`` and resume at the correct
-    point — across container restarts, recovery, and (single) drained
-    queue states alike. If some items the client expected are no longer
-    in the queue (already dequeued by a prior consumer), live_stream
-    simply emits what *is* available; a small gap is acceptable.
-    """
-
-    def __init__(self, task_id: str) -> None:
-        self._task_id = task_id
-        self._dir = _STREAM_DIR / task_id
-        self._dir.mkdir(parents=True, exist_ok=True)
-        self._file = self._dir / "stream.jsonl"
-        self._queue: asyncio.Queue[Any] = asyncio.Queue()
-        self._closed = False
-        self._SENTINEL = object()
-        # _next_event_id is the disk-line counter; it is bumped on every
-        # written line (preload + put + __done__ sentinel). The item put
-        # onto the queue is (event_id, item) — the SSE consumer uses the
-        # event_id directly so resume semantics are durable across queue
-        # state, not tied to a per-stream-instance counter.
-        self._next_event_id = 0
-
-        if self._file.exists():
-            for line in self._file.read_text(encoding="utf-8").splitlines():
-                if line.strip():
-                    self._next_event_id += 1
-                    data = json.loads(line)
-                    if "__done__" not in data:
-                        self._queue.put_nowait((self._next_event_id, data))
-
-    async def put(self, item: Any) -> None:
-        with open(self._file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(item) + "\n")
-        self._next_event_id += 1
-        await self._queue.put((self._next_event_id, item))
-
-    async def get(self) -> Any:
-        item = await self._queue.get()
-        if item is self._SENTINEL:
-            raise StopAsyncIteration
-        return item
-
-    async def close(self) -> None:
-        self._closed = True
-        with open(self._file, "a", encoding="utf-8") as f:
-            f.write(json.dumps({"__done__": True}) + "\n")
-        # __done__ also occupies a disk line; bump the counter so a
-        # subsequent get-handler call that crosses this boundary uses an
-        # id matching the disk row count.
-        self._next_event_id += 1
-        await self._queue.put(self._SENTINEL)
-
-
-def file_stream_factory(task_id: str) -> FileStreamHandler:
-    return FileStreamHandler(task_id)
 
 
 # --- Research phase plan ----------------------------------------------------
@@ -169,10 +107,14 @@ def _phase_title(i: int) -> str:
 
 # --- The durable task -------------------------------------------------------
 
+# Type alias: the per-turn emit function the helpers below take. It
+# wraps stream.emit() with auto-increment of ``sequence_number``.
+EmitFn = Callable[[dict], Awaitable[None]]
+
+
 @task(
     name="deep_research",
     steerable=True,
-    stream_handler_factory=file_stream_factory,
 )
 async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Long-running deep-research task: crash-resilient, steerable.
@@ -180,111 +122,145 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
     Checkpointing is **per subcall**, not just per phase. After each
     LLM subcall finishes we persist {completed_phases, results,
     in_progress_phase, completed_subcalls, current_text} to
-    ctx.metadata.  On recovery we resume the in-progress phase at the
+    ctx.metadata. On recovery we resume the in-progress phase at the
     next un-finished subcall, re-using the text we had streamed before
     the crash — so the worst case is one wasted subcall (the one that
     was actively streaming when the container died).
+
+    Streaming uses the SDK ``streams`` registry. The HTTP layer in
+    ``app.py`` reads ``request.state.invocation_id`` and propagates it
+    via ``task.start(input={"invocation_id": inv_id, ...})``. The
+    handler reads the same id from ``ctx.input["invocation_id"]`` and
+    calls ``streams.get_or_create(inv_id)`` to get the same stream
+    instance the HTTP subscriber is attached to. On recovery the
+    file-backed replay backing rehydrates the stream from disk and
+    ``stream.last_cursor()`` returns the highest sequence number that
+    made it to disk pre-crash — we resume numbering from there.
     """
     topic: str = ctx.input["topic"]
+    inv_id: str = ctx.input["invocation_id"]
     stored_topic = ctx.metadata.get("topic")
 
-    if stored_topic != topic:
-        ctx.metadata["topic"] = topic
-        ctx.metadata["completed_phases"] = 0
-        ctx.metadata["results"] = []
-        ctx.metadata["in_progress_phase"] = None
-        ctx.metadata["completed_subcalls"] = 0
-        ctx.metadata["current_text"] = ""
-        await ctx.metadata.flush()
-        await _emit_run_start(ctx, topic=topic, prior_topic=stored_topic)
-    else:
-        await _emit_run_start(ctx, topic=topic, prior_topic=None)
+    stream = await streams.get_or_create(inv_id)
+    # On crash recovery, last_cursor() returns the highest
+    # sequence_number that made it to disk before the crash.
+    last_cursor = await stream.last_cursor()
+    seq = last_cursor or 0
 
-    completed: int = ctx.metadata.get("completed_phases", 0)
-    results: list = ctx.metadata.get("results", [])
+    async def emit(payload: dict) -> None:
+        nonlocal seq
+        seq += 1
+        await stream.emit({"sequence_number": seq, **payload})
 
-    if ctx.entry_mode == "recovered" and completed > 0:
-        await ctx.stream(json.dumps({
-            "type": "recovered",
-            "completed_phases": completed,
-            "total_phases": NUM_PHASES,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-        }))
+    try:
+        if stored_topic != topic:
+            ctx.metadata["topic"] = topic
+            ctx.metadata["completed_phases"] = 0
+            ctx.metadata["results"] = []
+            ctx.metadata["in_progress_phase"] = None
+            ctx.metadata["completed_subcalls"] = 0
+            ctx.metadata["current_text"] = ""
+            await ctx.metadata.flush()
+            await _emit_run_start(emit, ctx, topic=topic, prior_topic=stored_topic)
+        else:
+            await _emit_run_start(emit, ctx, topic=topic, prior_topic=None)
 
-    for phase_idx in range(completed, NUM_PHASES):
-        if ctx.cancel.is_set():
-            return await _wind_down(ctx, phase_idx, results)
+        completed: int = ctx.metadata.get("completed_phases", 0)
+        results: list = ctx.metadata.get("results", [])
 
-        phase_started_mono = time.monotonic()
-        title = _phase_title(phase_idx)
+        if ctx.entry_mode == "recovered" and completed > 0:
+            await emit({
+                "type": "recovered",
+                "completed_phases": completed,
+                "total_phases": NUM_PHASES,
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+            })
 
-        await ctx.stream(json.dumps({
-            "type": "phase_start",
-            "phase": phase_idx + 1,
-            "total": NUM_PHASES,
-            "title": title,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-        }))
-
-        phase_text = await _run_phase(
-            ctx, phase_idx, topic, title, prior_results=results[-3:],
-        )
-        results.append({"phase": phase_idx + 1, "title": title, "text": phase_text})
-
-        # --- PHASE-COMPLETE CHECKPOINT ---
-        # Clear in-progress subcall state once the phase is done.
-        ctx.metadata["completed_phases"] = phase_idx + 1
-        ctx.metadata["results"] = results
-        ctx.metadata["in_progress_phase"] = None
-        ctx.metadata["completed_subcalls"] = 0
-        ctx.metadata["current_text"] = ""
-        await ctx.metadata.flush()
-
-        phase_duration = round(time.monotonic() - phase_started_mono, 1)
-        await ctx.stream(json.dumps({
-            "type": "phase_end",
-            "phase": phase_idx + 1,
-            "total": NUM_PHASES,
-            "title": title,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-            "duration_sec": phase_duration,
-        }))
-
-        if ctx.cancel.is_set():
-            return await _wind_down(ctx, phase_idx + 1, results)
-
-        if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
-            await _cooldown(
-                ctx, INTER_PHASE_COOLDOWN_SEC,
-                stage="inter_phase",
-                phase=phase_idx + 2,
-                total=NUM_PHASES,
-            )
+        for phase_idx in range(completed, NUM_PHASES):
             if ctx.cancel.is_set():
-                return await _wind_down(ctx, phase_idx + 1, results)
+                return await _wind_down(emit, stream, ctx, phase_idx, results)
 
-    await ctx.stream(json.dumps({
-        "type": "run_complete",
-        "server_time_utc": _now_iso(),
-        "server_uptime_sec": _server_uptime_sec(),
-        "phases_completed": NUM_PHASES,
-    }))
-    return {
-        "topic": topic,
-        "phases_completed": NUM_PHASES,
-        "report": results[-1]["text"] if results else "",
-    }
+            phase_started_mono = time.monotonic()
+            title = _phase_title(phase_idx)
+
+            await emit({
+                "type": "phase_start",
+                "phase": phase_idx + 1,
+                "total": NUM_PHASES,
+                "title": title,
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+            })
+
+            phase_text = await _run_phase(
+                emit, ctx, phase_idx, topic, title, prior_results=results[-3:],
+            )
+            results.append({"phase": phase_idx + 1, "title": title, "text": phase_text})
+
+            # --- PHASE-COMPLETE CHECKPOINT ---
+            ctx.metadata["completed_phases"] = phase_idx + 1
+            ctx.metadata["results"] = results
+            ctx.metadata["in_progress_phase"] = None
+            ctx.metadata["completed_subcalls"] = 0
+            ctx.metadata["current_text"] = ""
+            await ctx.metadata.flush()
+
+            phase_duration = round(time.monotonic() - phase_started_mono, 1)
+            await emit({
+                "type": "phase_end",
+                "phase": phase_idx + 1,
+                "total": NUM_PHASES,
+                "title": title,
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+                "duration_sec": phase_duration,
+            })
+
+            if ctx.cancel.is_set():
+                return await _wind_down(emit, stream, ctx, phase_idx + 1, results)
+
+            if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
+                await _cooldown(
+                    emit, ctx, INTER_PHASE_COOLDOWN_SEC,
+                    stage="inter_phase",
+                    phase=phase_idx + 2,
+                    total=NUM_PHASES,
+                )
+                if ctx.cancel.is_set():
+                    return await _wind_down(emit, stream, ctx, phase_idx + 1, results)
+
+        await emit({
+            "type": "run_complete",
+            "server_time_utc": _now_iso(),
+            "server_uptime_sec": _server_uptime_sec(),
+            "phases_completed": NUM_PHASES,
+        })
+        # Close BEFORE returning, mirroring the wind-down path: SSE
+        # subscribers should see the terminator before the framework
+        # reports the task complete.
+        await stream.close()
+        return {
+            "topic": topic,
+            "phases_completed": NUM_PHASES,
+            "report": results[-1]["text"] if results else "",
+        }
+    finally:
+        # Safety net. The wind-down (suspend) and the run-complete
+        # (normal-return) paths both close the stream explicitly before
+        # they exit, so close() is idempotent here. This finally only
+        # matters if the handler raises an unexpected exception
+        # mid-emit (TaskFailed path) — we still want SSE subscribers
+        # to see a clean stream terminator instead of hanging.
+        await stream.close()
 
 
 # --- Helpers ---------------------------------------------------------------
 
 async def _emit_run_start(
-    ctx: TaskContext, *, topic: str, prior_topic: str | None,
+    emit: EmitFn, ctx: TaskContext, *, topic: str, prior_topic: str | None,
 ) -> None:
-    await ctx.stream(json.dumps({
+    await emit({
         "type": "run_start",
         "topic": topic,
         "prior_topic": prior_topic,
@@ -293,13 +269,21 @@ async def _emit_run_start(
         "calls_per_phase": CALLS_PER_PHASE,
         "server_time_utc": _now_iso(),
         "server_uptime_sec": _server_uptime_sec(),
-    }))
+    })
 
 
 async def _wind_down(
-    ctx: TaskContext, completed_phases: int, results: list,
+    emit: EmitFn, stream: Any, ctx: TaskContext,
+    completed_phases: int, results: list,
 ) -> Any:
-    """Cooperative wind-down at a phase boundary."""
+    """Cooperative wind-down at a phase boundary.
+
+    Closes the per-turn stream BEFORE calling ``ctx.suspend(...)`` so
+    that the SSE subscriber observes a clean stream terminator before
+    the framework reports the turn as suspended. Each turn (even a
+    steered re-entry) is a fresh ``invocation_id`` with its own stream;
+    the close here belongs to THIS turn's stream, not the next one's.
+    """
     # Cause-detection: steering events drain pending_input_count by the
     # time we reach here, so detect by exclusion. If neither timeout nor
     # operator cancel fired, it's steering.
@@ -310,7 +294,7 @@ async def _wind_down(
     else:
         cause = "steering"
 
-    await ctx.stream(json.dumps({
+    await emit({
         "type": "winding_down",
         "cause": cause,
         "completed_phases": completed_phases,
@@ -318,7 +302,11 @@ async def _wind_down(
         "pending_steering_inputs": ctx.pending_input_count,
         "server_time_utc": _now_iso(),
         "server_uptime_sec": _server_uptime_sec(),
-    }))
+    })
+
+    # Close BEFORE suspend so subscribers see the terminator before the
+    # framework hands the next turn off.
+    await stream.close()
 
     return await ctx.suspend(output={
         "topic": ctx.input["topic"],
@@ -328,6 +316,7 @@ async def _wind_down(
 
 
 async def _cooldown(
+    emit: EmitFn,
     ctx: TaskContext,
     duration_sec: float,
     *,
@@ -357,7 +346,7 @@ async def _cooldown(
         payload["subcall"] = subcall
     if of is not None:
         payload["of"] = of
-    await ctx.stream(json.dumps(payload))
+    await emit(payload)
     try:
         await asyncio.wait_for(ctx.cancel.wait(), timeout=duration_sec)
     except asyncio.TimeoutError:
@@ -365,6 +354,7 @@ async def _cooldown(
 
 
 async def _run_phase(
+    emit: EmitFn,
     ctx: TaskContext,
     phase_idx: int,
     topic: str,
@@ -384,10 +374,7 @@ async def _run_phase(
             f"- {r['title']}: {r['text'][:200]}..." for r in prior_results
         )
 
-    # Resume in-phase state if we crashed mid-phase. The outer loop
-    # already advanced phase_idx to the right phase via
-    # completed_phases; here we figure out how many subcalls of *this*
-    # phase already finished.
+    # Resume in-phase state if we crashed mid-phase.
     in_progress = ctx.metadata.get("in_progress_phase")
     if in_progress == phase_idx:
         start_sub = int(ctx.metadata.get("completed_subcalls", 0) or 0)
@@ -416,39 +403,36 @@ async def _run_phase(
         else:
             user_input = f"Topic: {topic}\nPhase: {phase_title}{prior_summary}"
 
-        await ctx.stream(json.dumps({
+        await emit({
             "type": "subcall_start",
             "role": role_name,
             "index": sub_idx + 1,
             "of": CALLS_PER_PHASE,
             "server_time_utc": _now_iso(),
-        }))
+        })
 
         sub_text = await _stream_llm(
-            ctx, instructions=instructions, user_input=user_input,
+            emit, instructions=instructions, user_input=user_input,
         )
 
-        await ctx.stream(json.dumps({
+        await emit({
             "type": "subcall_end",
             "role": role_name,
             "index": sub_idx + 1,
             "of": CALLS_PER_PHASE,
             "server_time_utc": _now_iso(),
-        }))
+        })
 
         current_text = sub_text
 
         # --- SUBCALL-LEVEL CHECKPOINT ---
-        # Persist what we just produced so a mid-phase crash recovers
-        # at the next subcall, not at subcall 1.
         ctx.metadata["completed_subcalls"] = sub_idx + 1
         ctx.metadata["current_text"] = current_text
         await ctx.metadata.flush()
 
-        # Intra-phase cooldown — emits cooldown event + cancel-aware wait.
         if sub_idx + 1 < CALLS_PER_PHASE and INTRA_PHASE_COOLDOWN_SEC > 0:
             await _cooldown(
-                ctx, INTRA_PHASE_COOLDOWN_SEC,
+                emit, ctx, INTRA_PHASE_COOLDOWN_SEC,
                 stage="intra_phase",
                 phase=phase_idx + 1,
                 total=NUM_PHASES,
@@ -456,18 +440,15 @@ async def _run_phase(
                 of=CALLS_PER_PHASE,
             )
             if ctx.cancel.is_set():
-                # Cancel observed within a phase — finish the phase
-                # quickly by skipping remaining sub-calls; wind-down
-                # happens at the next checkpoint boundary in the outer loop.
                 break
 
     return current_text
 
 
 async def _stream_llm(
-    ctx: TaskContext, *, instructions: str, user_input: str,
+    emit: EmitFn, *, instructions: str, user_input: str,
 ) -> str:
-    """One streaming LLM call. Forwards token deltas via ctx.stream()."""
+    """One streaming LLM call. Forwards token deltas via the per-turn stream."""
     full_text = ""
     async for event in await _openai_client.responses.create(
         model=_model,
@@ -479,5 +460,5 @@ async def _stream_llm(
     ):
         if event.type == "response.output_text.delta":
             full_text += event.delta
-            await ctx.stream(json.dumps({"type": "token", "content": event.delta}))
+            await emit({"type": "token", "content": event.delta})
     return full_text
