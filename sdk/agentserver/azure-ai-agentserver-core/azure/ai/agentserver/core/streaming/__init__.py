@@ -4,17 +4,14 @@
 """Unified streaming primitive — :class:`EventStream` Protocol +
 ``streams`` registry.
 
-This subpackage is the SDK's unified streaming surface. The public
-``__all__`` is **six** entries: the registry, the Protocol, and the
-four exception types. The three SDK-bundled concrete classes
-(``BroadcastEventStream``, ``ReplayEventStream``,
-``FileBackedReplayEventStream``) live in the private
-``_concrete`` submodule and are constructed exclusively by the
-registry's three ``use_*`` configurators — external callers MUST
-obtain instances via ``await streams.get_or_create(id)``.
+Pick a backing once at app startup via one of the registry's three
+``use_*`` configurators, then obtain stream instances anywhere in
+your process via ``await streams.get_or_create(id)`` and program
+against the :class:`EventStream` Protocol.
 
-See ``sdk/agentserver/specs/streaming.md`` for the authoritative
-reference. See spec 017 for the executable spec.
+See ``docs/streaming-guide.md`` for the developer guide (registry
+API, backings, per-turn id convention, exception/wire mapping,
+third-party-impl peer-registry pattern).
 """
 
 from __future__ import annotations

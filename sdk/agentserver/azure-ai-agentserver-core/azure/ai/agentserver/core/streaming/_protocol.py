@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 """``EventStream`` Protocol and exception hierarchy.
 
-See ``sdk/agentserver/specs/streaming.md`` §4 for the authoritative
-contract. This module defines the data-flow surface only — lifecycle
+This module defines the data-flow surface only — lifecycle
 (create / lookup / destroy) is the registry's responsibility
-(``_registry.py``).
+(``_registry.py``). See ``docs/streaming-guide.md`` for the developer
+guide covering the registry API, backings, per-turn id convention,
+and exception/wire mapping.
 """
 
 from __future__ import annotations
@@ -19,30 +20,29 @@ class EventStreamError(Exception):
     """Base class for all ``EventStream``-raised exceptions.
 
     Lets callers ``except EventStreamError`` to catch any of the
-    subclasses uniformly. See ``streaming.md`` §4.2 + rule 21.
+    subclasses uniformly.
     """
 
 
 class EventStreamClosedError(EventStreamError):
-    """Raised when ``emit()`` is called on a ``CLOSED`` stream.
+    """Raised when ``emit()`` is called on an already-closed stream.
 
     The stream still exists; the caller cannot add more events. This
     is a server-side bug (the producer kept emitting after closing)
-    and should be wire-mapped to 5xx, not 4xx. See ``streaming.md``
-    §4.2 + rule 4.
+    and should be wire-mapped to 5xx, not 4xx.
     """
 
 
 class EventStreamGoneError(EventStreamError):
-    """Raised when any operation is attempted on a ``GONE`` stream.
+    """Raised when any operation is attempted on a destroyed stream.
 
-    ``GONE`` is reached via ``streams.delete(id)`` or via the
-    auto-transition specified in ``streaming.md`` rule 25 (CLOSED →
-    GONE when the last replayable event evicts on a stream that had
-    ≥1 emit).
+    A stream becomes "gone" when it is destroyed via
+    ``streams.delete(id)``, or — for the replay backings configured
+    with a TTL — when the stream is closed and its replayable history
+    has been fully evicted.
 
-    Wire-mapped to HTTP 410 Gone (the resource existed but is
-    destroyed). See ``streaming.md`` §4.2 + rules 5-7.
+    Wire-mapped to HTTP 410 Gone (the resource existed but is now
+    destroyed). Distinct from :class:`EventStreamNotFoundError`.
     """
 
 
@@ -53,12 +53,11 @@ class EventStreamNotFoundError(EventStreamError):
 
     Distinct from :class:`EventStreamGoneError`: NotFound means the
     id was never registered; Gone means it was registered and the
-    stream is now destroyed. The registry MUST retain tombstones for
+    stream is now destroyed. The registry retains tombstones for
     destroyed ids so this distinction holds across the destroy
-    boundary (``streaming.md`` rule 36a).
+    boundary.
 
-    Wire-mapped to HTTP 404 Not Found. See ``streaming.md`` §4.2 +
-    rule 36.
+    Wire-mapped to HTTP 404 Not Found.
     """
 
 
@@ -66,16 +65,12 @@ class EventStreamNotFoundError(EventStreamError):
 class EventStream(Protocol):
     """A multi-cast event stream.
 
-    Four data-flow methods. Lifecycle (create / lookup / destroy) is
-    the registry's job (``streams`` in ``_registry.py``); the
+    Four data-flow methods: :meth:`emit`, :meth:`close`,
+    :meth:`subscribe`, :meth:`last_cursor`. Lifecycle (create /
+    lookup / destroy) is the registry's job (``streams``); the
     Protocol intentionally does NOT include a destructive method.
 
-    See ``streaming.md`` §4.3 for the authoritative signature and §13
-    for the conformance rules every implementation MUST satisfy.
-
-    States: ``ACTIVE`` / ``CLOSED`` / ``GONE`` (``streaming.md``
-    §4.1, rules 1-3). Operations check the current state and raise
-    the specific exception per rules 4-7.
+    See ``docs/streaming-guide.md`` for the developer guide.
     """
 
     async def emit(self, payload: Any, *, close: bool = False) -> None:
@@ -84,70 +79,69 @@ class EventStream(Protocol):
         :param payload: Opaque value. The framework never inspects,
             validates, or rewrites it.
         :param close: If ``True``, the emit and the close-of-stream
-            are observably atomic (``streaming.md`` rule 14): every
-            subscriber attached before this call returns sees BOTH
-            the payload AND the end-of-stream signal; subscribers
-            attached after see neither.
+            are observably atomic: every subscriber attached before
+            this call returns sees BOTH the payload AND the
+            end-of-stream signal; subscribers attached after see
+            neither.
 
-        :raises EventStreamClosedError: If the stream is ``CLOSED``.
-        :raises EventStreamGoneError: If the stream is ``GONE``.
+        :raises EventStreamClosedError: If the stream has already
+            been closed.
+        :raises EventStreamGoneError: If the stream has been
+            destroyed.
         """
         ...
 
     async def close(self) -> None:
-        """Transition ``ACTIVE`` → ``CLOSED``. Idempotent.
+        """Transition the stream from active to closed. Idempotent.
 
-        On ``CLOSED`` or ``GONE``, this is a no-op (never raises) per
-        ``streaming.md`` rule 9. Subscribers attached at close time
-        drain any remaining queued items, then their iterators
-        terminate cleanly with ``StopAsyncIteration`` (rule 13).
+        On an already-closed or destroyed stream, this is a no-op
+        (never raises). Subscribers attached at close time drain any
+        remaining queued items, then their iterators terminate
+        cleanly with ``StopAsyncIteration``.
         """
         ...
 
     def subscribe(self, *, after: Optional[int] = None) -> AsyncIterator[Any]:
         """Return an async iterator over emitted payloads.
 
-        NOT a coroutine (``streaming.md`` rule 16): call without
-        ``await`` and immediately use with ``async for`` /
-        ``aiter()`` / ``anext()``.
+        NOT a coroutine: call without ``await`` and immediately use
+        with ``async for`` / ``aiter()`` / ``anext()``.
 
-        :param after: If supplied and the impl has a ``cursor_fn``,
-            yield only payloads whose ``cursor_fn(payload) > after``.
-            Impls without a ``cursor_fn`` (and :class:`BroadcastEventStream`
-            always) silently ignore non-``None`` values per rule 17.
+        :param after: If supplied and the active backing supports
+            cursored replay, yield only payloads whose cursor value
+            is strictly greater than ``after``. Backings without
+            cursor support silently ignore non-``None`` values.
 
         :raises EventStreamGoneError: Raised synchronously at the
             call site (before the iterator is returned) if the
-            stream is ``GONE``.
+            stream has been destroyed.
         """
         ...
 
     async def last_cursor(self) -> Optional[int]:
         """Return the highest cursor seen so far, or ``None``.
 
-        Semantics per ``streaming.md`` rule 8:
+        Semantics:
 
-        - On ``ACTIVE``: highest ``cursor_fn(payload)`` value
-          persisted so far, or ``None`` if zero emits OR impl has no
-          ``cursor_fn`` (e.g. :class:`BroadcastEventStream`).
-        - On ``CLOSED``: the last cursor the impl ever saw, even if
-          those events have since been evicted by per-event TTL.
-          **Special case (rule 25 exemption)**: ``last_cursor()``
-          MUST NOT itself trigger the ``CLOSED`` → ``GONE``
-          auto-transition. It is a read-only watermark query and
-          survives the eviction window. The transition fires only
-          on the next ``subscribe()`` or ``emit()``. The recovery
-          path in :class:`FileBackedReplayEventStream` rehydration
-          (handler reads ``last_cursor()`` on entry to pick the next
-          cursor) depends on this exemption.
-        - On ``GONE`` (after the transition has fired): raises
-          :class:`EventStreamGoneError` per rule 7.
+        - While the stream is active: the highest cursor value
+          persisted so far, or ``None`` if zero emits OR the active
+          backing has no cursor support.
+        - After the stream is closed: the last cursor the backing
+          ever saw, even if those events have since been evicted by
+          per-event TTL. ``last_cursor()`` is a read-only watermark
+          query and does not itself fire the close → destroy
+          auto-transition. This is load-bearing for the file-backed
+          replay rehydration path (handler reads ``last_cursor()``
+          on entry to pick the next cursor).
+        - After the stream is destroyed (auto-transition has fired):
+          raises :class:`EventStreamGoneError`.
 
         ``last_cursor()`` is the **emitter's** recovery primitive.
         It is NOT a workflow-recovery primitive — workflow
         watermarks (what work is done) belong in ``ctx.metadata``,
-        batched per side-effecting operation (``streaming.md`` §8.1
-        metadata-vs-cursor split antipattern note).
+        batched per side-effecting operation. See
+        ``docs/streaming-guide.md`` for the metadata-vs-cursor
+        antipattern note.
         """
         ...
 

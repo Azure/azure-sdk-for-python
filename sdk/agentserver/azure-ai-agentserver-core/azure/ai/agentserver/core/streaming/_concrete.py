@@ -5,22 +5,11 @@
 
 This module is SDK-private (underscore-prefixed). External callers
 obtain instances exclusively via the ``streams`` registry's three
-``use_*`` configurators (see ``streaming.md`` §7.1 + rule 38). The
-classes here are reachable only via this private import path:
-
-    from azure.ai.agentserver.core.streaming._concrete import (
-        BroadcastEventStream,
-        ReplayEventStream,
-        FileBackedReplayEventStream,
-    )
-
-This path is for internal SDK tests (impl-specific assertions: file
-lock detection, corruption recovery, per-event TTL eviction
-observability, broadcast no-buffer semantics) only. Consumer
-packages (responses, invocations) MUST NOT use it — enforced by
-SC-006b / SC-010 grep gates.
-
-See ``streaming.md`` §5 for the per-class authoritative contract.
+``use_*`` configurators. This private import path is reserved for
+SDK-internal tests (impl-specific assertions like file lock
+detection, corruption recovery, per-event TTL eviction observability,
+and broadcast no-buffer semantics). Consumer packages MUST NOT use
+this private path.
 """
 
 from __future__ import annotations

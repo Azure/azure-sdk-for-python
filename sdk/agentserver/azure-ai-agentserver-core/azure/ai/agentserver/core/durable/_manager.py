@@ -29,7 +29,6 @@ from ._provider import TaskProvider
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
-from ._stream import QueueStreamHandler, StreamHandler
 from .._version import VERSION as _CORE_VERSION
 from .._server_version import build_server_version as _build_server_version
 
@@ -460,7 +459,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         :type fn_name: str
         :param fn: The async function to call on resume.
         :type fn: Callable[..., Any]
-        :param opts: The task options (for stream_handler_factory etc.).
+        :param opts: The task options (opts subset).
         :type opts: TaskOptions | None
         """
         self._resume_callbacks[fn_name] = fn
@@ -754,7 +753,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         opts: TaskOptions,
         retry: RetryPolicy | None = None,
         entry_mode: EntryMode = "fresh",
-        stream_handler: StreamHandler | None = None,
         initial_payload_extras: dict[str, Any] | None = None,
     ) -> TaskRun[Any]:
         """Create a task, start the function, and return a handle.
@@ -784,9 +782,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         :paramtype retry: RetryPolicy | None
         :keyword entry_mode: Why this execution is starting.
         :paramtype entry_mode: EntryMode
-        :keyword stream_handler: Custom stream handler. If ``None``,
-            a default :class:`QueueStreamHandler` is created.
-        :paramtype stream_handler: StreamHandler | None
         :keyword initial_payload_extras: (Spec 013 US2 / Spec 015 FR-004)
             Framework-reserved top-level payload slots (e.g.,
             ``{"_last_input_id": "msg-1"}``) merged into the initial
@@ -854,13 +849,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         # Build context
         cancel_event = asyncio.Event()
-        # Resolve handler: call-site > factory > default
-        if stream_handler is not None:
-            handler = stream_handler
-        elif opts.stream_handler_factory is not None:
-            handler = opts.stream_handler_factory(task_id)
-        else:
-            handler = QueueStreamHandler()
         metadata = TaskMetadata(
             flush_callback=self._make_metadata_flush(task_id),
         )
@@ -876,7 +864,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             recovery_count=lease_gen,
             cancel=cancel_event,
             shutdown=self._shutdown_event,
-            stream_handler=handler,
             entry_mode=entry_mode,
             pending_count_provider=self._make_pending_count_provider(task_id),
         )
@@ -960,7 +947,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             result_future=result_future,
             metadata=metadata,
             cancel_event=cancel_event,
-            stream_handler=handler,
             terminate_event=terminate_event,
             execution_task=execution_task,
             terminate_reason_ref=terminate_reason_ref,
@@ -1025,7 +1011,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 result_future=active.result_future,
                 metadata=active.context.metadata,
                 cancel_event=active.context.cancel,
-                stream_handler=active.context._stream_handler,  # pylint: disable=protected-access
                 terminate_event=active.terminate_event,
                 execution_task=active.execution_task,
             )
@@ -1084,7 +1069,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     result_future=active.result_future,
                     metadata=active.context.metadata,
                     cancel_event=active.context.cancel,
-                    stream_handler=active.context._stream_handler,  # pylint: disable=protected-access
                     terminate_event=active.terminate_event,
                     execution_task=active.execution_task,
                 )
@@ -1127,7 +1111,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         input_type: type[Any] | None = None,
         opts: TaskOptions | None = None,
         retry: RetryPolicy | None = None,
-        stream_handler: StreamHandler | None = None,
     ) -> TaskRun[Any]:
         """Transition an existing task to in_progress and execute it.
 
@@ -1150,9 +1133,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         :paramtype opts: TaskOptions | None
         :keyword retry: Retry policy.
         :paramtype retry: RetryPolicy | None
-        :keyword stream_handler: Custom stream handler. If ``None``, falls
-            back to ``opts.stream_handler_factory`` or :class:`QueueStreamHandler`.
-        :paramtype stream_handler: StreamHandler | None
         :return: A TaskRun handle.
         :rtype: TaskRun[Any]
         """
@@ -1201,13 +1181,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         # Build context for execution
         cancel_event = asyncio.Event()
-        # Resolve handler: call-site > factory > default
-        if stream_handler is not None:
-            handler = stream_handler
-        elif resolved_opts.stream_handler_factory is not None:
-            handler = resolved_opts.stream_handler_factory(task_id)
-        else:
-            handler = QueueStreamHandler()
         # Spec 015 Phase 5 (FR-003): restore ALL namespaces, not just default.
         # ``from_payload`` decodes ``payload["metadata"]`` into the default
         # namespace and every ``payload["metadata:<name>"]`` into its named
@@ -1267,7 +1240,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             recovery_count=lease_gen,
             cancel=cancel_event,
             shutdown=self._shutdown_event,
-            stream_handler=handler,
             entry_mode=entry_mode,
             is_steered_turn=is_steered_turn,
             pending_count_provider=self._make_pending_count_provider(task_id),
@@ -1347,7 +1319,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             result_future=result_future,
             metadata=metadata,
             cancel_event=cancel_event,
-            stream_handler=handler,
             terminate_event=terminate_event,
             execution_task=execution_task,
             terminate_reason_ref=terminate_reason_ref,
@@ -1850,16 +1821,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 break
 
         self._active_tasks.pop(task_id, None)
-        # Signal end of streaming via handler.close()
-        if ctx._stream_handler is not None:  # pylint: disable=protected-access
-            try:
-                await ctx._stream_handler.close()  # pylint: disable=protected-access
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Stream handler close() failed for task %s",
-                    task_id,
-                    exc_info=True,
-                )
 
     async def _try_drain_steering(  # pylint: disable=too-many-branches,too-many-statements
         self,
@@ -1999,7 +1960,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             recovery_count=ctx.recovery_count,
             cancel=cancel_event,
             shutdown=ctx.shutdown,
-            stream_handler=ctx._stream_handler,  # pylint: disable=protected-access
             entry_mode="resumed",
             is_steered_turn=True,
             pending_count_provider=self._make_pending_count_provider(task_id),
@@ -2330,7 +2290,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             fn = self._find_resume_callback(task_info)
             if fn is not None:
                 try:
-                    # Look up stored opts for stream_handler_factory etc.
+                    # Look up stored opts for resumed-task configuration.
                     fn_name = (task_info.source or {}).get("name", "")
                     opts = self._resume_opts.get(fn_name)
                     await self._start_existing_task(

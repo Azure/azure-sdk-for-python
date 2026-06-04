@@ -63,55 +63,44 @@ from collections.abc import AsyncGenerator
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
+from azure.ai.agentserver.core.streaming import (
+    EventStream,
+    EventStreamGoneError,
+    streams,
+)
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 from .agent import invocation_store, langgraph_session
 
 logger = logging.getLogger(__name__)
 
+# In-memory multi-subscriber replay buffer; 10-min sliding window for
+# reconnects within the recovery window. Per streaming.md §7.8 the
+# stream id is the per-turn ``invocation_id``.
+streams.use_in_memory_replay(ttl_seconds=600)
+
 app = InvocationAgentServerHost()
 
 
-async def _sse_from_run(
-    run: object, invocation_id: str, *, initial_status: str = "queued"
+async def _sse_from_stream(
+    stream: EventStream, invocation_id: str, *, initial_status: str = "queued"
 ) -> AsyncGenerator[bytes, None]:
-    """Convert a TaskRun's stream into SSE-formatted bytes."""
-    from azure.ai.agentserver.core.durable import (  # pylint: disable=import-outside-toplevel
-        TaskCancelled,
-        TaskFailed,
-        TaskTerminated,
-    )
+    """Convert an EventStream's payloads into SSE-formatted bytes."""
 
     yield (
         f"data: {json.dumps({'type': 'lifecycle', 'status': initial_status, 'invocation_id': invocation_id})}\n\n"
     ).encode()
 
     try:
-        async for chunk in run:  # type: ignore[union-attr]
+        async for chunk in stream.subscribe():
             yield f"data: {json.dumps(chunk)}\n\n".encode()
-
-        try:
-            result = await run.result()  # type: ignore[union-attr]
-            done_data = {"type": "done", "invocation_id": invocation_id}
-            if (
-                result is not None
-                and hasattr(result, "output")
-                and result.output is not None
-            ):
-                done_data["output"] = result.output
-            yield f"event: done\ndata: {json.dumps(done_data)}\n\n".encode()
-        except (TaskCancelled, TaskTerminated):
-            yield (
-                f"event: superseded\n"
-                f"data: {json.dumps({'type': 'superseded', 'invocation_id': invocation_id})}\n\n"
-            ).encode()
-    except TaskFailed as exc:
-        error_data = {
-            "type": "error",
-            "invocation_id": invocation_id,
-            "error": str(exc),
-        }
-        yield f"event: error\ndata: {json.dumps(error_data)}\n\n".encode()
+        done_data = {"type": "done", "invocation_id": invocation_id}
+        yield f"event: done\ndata: {json.dumps(done_data)}\n\n".encode()
+    except EventStreamGoneError:
+        yield (
+            f"event: superseded\n"
+            f"data: {json.dumps({'type': 'superseded', 'invocation_id': invocation_id})}\n\n"
+        ).encode()
     except Exception as exc:  # pylint: disable=broad-except
         error_data = {
             "type": "error",
@@ -142,13 +131,17 @@ async def handle_invoke(request: Request) -> Response:
 
     invocation_store.save(invocation_id, {"status": "queued"})
 
-    run = await langgraph_session.start(task_id=task_id, input=task_input)
+    # Subscribe-before-start (streaming.md §5.1): attach SSE subscriber
+    # BEFORE starting the task. Handler reads invocation_id from
+    # ctx.input and obtains the SAME registry-cached stream.
+    stream = await streams.get_or_create(invocation_id)
+    await langgraph_session.start(task_id=task_id, input=task_input)
 
     # SSE streaming mode — return live node progress
     wants_stream = "text/event-stream" in request.headers.get("accept", "")
     if wants_stream:
         return StreamingResponse(
-            _sse_from_run(run, invocation_id),
+            _sse_from_stream(stream, invocation_id),
             media_type="text/event-stream",
             headers={"X-Agent-Invocation-Id": invocation_id},
         )

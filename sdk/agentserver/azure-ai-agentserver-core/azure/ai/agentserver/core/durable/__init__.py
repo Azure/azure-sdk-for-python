@@ -54,20 +54,25 @@ from ._models import TaskStatus
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
-from ._stream import QueueStreamHandler, StreamHandler, StreamHandlerFactory
 
 # Spec 016 FR-022 + SC-014 (US6): TaskTerminated is fully removed from
 # the public surface — importing it from this package now raises
 # ImportError as the spec requires. The class itself is deleted from
 # `_exceptions.py`. Internal call sites that previously raised it have
 # been switched to TaskCancelled (`_manager.py` cancelled-error path).
+#
+# Spec 017 FR-014/FR-015: The old StreamHandler/QueueStreamHandler/
+# StreamHandlerFactory surface (formerly in `_stream.py`) is removed.
+# Streaming now lives in `azure.ai.agentserver.core.streaming` as a
+# peer subpackage with a registry-based lifecycle model. `@task`
+# accepts no streaming-related kwarg; `TaskContext` has no streaming
+# attribute. Handlers explicitly do
+# ``stream = await streams.get_or_create(invocation_id)`` (per-turn id
+# from ``ctx.input``).
 __all__ = [
     "task",
     "Task",
-    "QueueStreamHandler",
     "RetryPolicy",
-    "StreamHandler",
-    "StreamHandlerFactory",
     "TaskContext",
     "TaskMetadata",
     "TaskResult",

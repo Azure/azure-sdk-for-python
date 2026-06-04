@@ -26,6 +26,7 @@ from langgraph.types import Command, interrupt
 from typing_extensions import TypedDict
 
 from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.streaming import streams
 
 from .store import FileStore
 
@@ -319,7 +320,8 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     invocation_id: str = ctx.input["invocation_id"]
 
     invocation_store.save(invocation_id, {"status": "running"})
-    await ctx.stream({"type": "lifecycle", "status": "running"})
+    stream = await streams.get_or_create(invocation_id)
+    await stream.emit({"type": "lifecycle", "status": "running"})
 
     thread_config: dict[str, Any] = {"configurable": {"thread_id": session_id}}
 
@@ -390,11 +392,10 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         """Stream node progress events from the sync graph thread."""
         node_names = list(chunk.keys())
         for name in node_names:
-            if ctx._stream_handler is not None:  # pylint: disable=protected-access
-                asyncio.run_coroutine_threadsafe(
-                    ctx.stream({"type": "node_progress", "node": name}),
-                    loop,
-                )
+            asyncio.run_coroutine_threadsafe(
+                stream.emit({"type": "node_progress", "node": name}),
+                loop,
+            )
         invocation_store.save(
             invocation_id,
             {

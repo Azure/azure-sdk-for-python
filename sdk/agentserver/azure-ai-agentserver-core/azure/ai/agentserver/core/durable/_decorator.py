@@ -39,7 +39,6 @@ from ._context import TaskContext
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import TaskRun
-from ._stream import StreamHandler, StreamHandlerFactory  # noqa: F401  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from ._models import TaskStatus
@@ -350,7 +349,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
     *Internal*: not part of the public ``durable`` surface as of Spec 015 Phase 3.
     Constructed by the ``@task`` decorator (and ``Task.options()``) from a small
     public kwarg set: ``name``, ``title``, ``tags``, ``timeout``, ``ephemeral``,
-    ``retry``, ``steerable``, ``stream_handler_factory``.
+    ``retry``, ``steerable``, .
 
     :param name: **Stable identity anchor.** Used for recovery routing and
         source stamping.  If you rename the Python function later, existing
@@ -365,11 +364,6 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
     :type timeout: timedelta | None
     :param ephemeral: Whether to delete on terminal exit.
     :type ephemeral: bool
-    :param stream_handler_factory: Optional factory callable that receives a
-        ``task_id`` and returns a :class:`StreamHandler`.  When set, crash-
-        recovery and resume paths use this factory instead of defaulting to
-        :class:`QueueStreamHandler`.
-    :type stream_handler_factory: Callable[[str], StreamHandler] | None
     """
 
     __slots__ = (
@@ -380,7 +374,6 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         "ephemeral",
         "retry",
         "steerable",
-        "stream_handler_factory",
     )
 
     def __init__(
@@ -392,7 +385,6 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         ephemeral: bool = True,
         retry: RetryPolicy | None = None,
         steerable: bool = False,
-        stream_handler_factory: StreamHandlerFactory | None = None,
     ) -> None:
         self.name = name
         self.title = title
@@ -401,7 +393,6 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         self.ephemeral = ephemeral
         self.retry = retry
         self.steerable = steerable
-        self.stream_handler_factory = stream_handler_factory
 
     def __repr__(self) -> str:
         return (
@@ -500,7 +491,7 @@ class Task(Generic[Input, Output]):
 
         .. note::
 
-            ``title``, ``tags``, ``retry``, and ``stream_handler`` are
+            ``title``, ``tags``, ``retry``, are
             configured on the ``@task(...)``
             decorator (or via :meth:`Task.options`), not per-call. This
             is enforced so the values survive crash recovery: after the
@@ -568,7 +559,7 @@ class Task(Generic[Input, Output]):
 
         .. note::
 
-            ``title``, ``tags``, ``retry``, and ``stream_handler`` are
+            ``title``, ``tags``, ``retry``, are
             configured on the ``@task(...)``
             decorator (or via :meth:`Task.options`), not per-call —
             see :meth:`run` for the rationale. Session identity is
@@ -950,7 +941,6 @@ class Task(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
-                    stream_handler=None,
                 )
             # No task exists — create new
             return await manager.create_and_start(
@@ -965,7 +955,6 @@ class Task(Generic[Input, Output]):
                 opts=self._opts,
                 retry=resolved_retry,
                 entry_mode="fresh",
-                stream_handler=None,
                 initial_payload_extras=_build_framework_extras(input_id),
             )
 
@@ -1034,7 +1023,6 @@ class Task(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
-                    stream_handler=None,
                 )
             )
 
@@ -1085,7 +1073,6 @@ class Task(Generic[Input, Output]):
                             input_type=self._input_type,
                             opts=self._opts,
                             retry=resolved_retry,
-                            stream_handler=None,
                         )
                 # Normal recovery
                 return await manager._start_existing_task(  # pylint: disable=protected-access
@@ -1097,7 +1084,6 @@ class Task(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
-                    stream_handler=None,
                 )
             if self._opts.steerable:
                 # Steering path: append input to queue, signal cancel, return ack
@@ -1156,7 +1142,6 @@ class Task(Generic[Input, Output]):
             ephemeral=(ephemeral if ephemeral is not None else self._opts.ephemeral),
             retry=retry if retry is not None else self._opts.retry,
             steerable=(steerable if steerable is not None else self._opts.steerable),
-            stream_handler_factory=self._opts.stream_handler_factory,
         )
         return Task(
             fn=self._fn,
@@ -1181,7 +1166,6 @@ def task(
     ephemeral: bool = ...,
     retry: RetryPolicy | None = ...,
     steerable: bool = ...,
-    stream_handler_factory: StreamHandlerFactory | None = ...,
 ) -> Callable[
     [Callable[[TaskContext[Input]], Awaitable[Output]]],
     Task[Input, Output],
@@ -1197,7 +1181,6 @@ def task(
     ephemeral: bool = True,
     retry: RetryPolicy | None = None,
     steerable: bool = False,
-    stream_handler_factory: StreamHandlerFactory | None = None,
 ) -> Any:
     """Turn an async function into a crash-resilient durable task.
 
@@ -1230,12 +1213,6 @@ def task(
     :keyword steerable: Whether this task accepts steering inputs. When True,
         calling ``start()`` on an ``in_progress`` task queues the input and
         signals cancel instead of raising ``TaskConflictError``. Default False.
-    :keyword stream_handler_factory: Optional factory callable that receives a
-        ``task_id`` and returns a :class:`StreamHandler`. When set, fresh
-        starts, resumes, and crash-recovery all use this factory instead of
-        defaulting to :class:`QueueStreamHandler`. The factory itself is the
-        only supported configuration surface — there is no per-call override,
-        so the handler stays consistent across the crash boundary.
     :return: A ``Task[Input, Output]`` wrapper.
     :rtype: Any
     """
@@ -1259,7 +1236,6 @@ def task(
             ephemeral=ephemeral,
             retry=retry,
             steerable=steerable,
-            stream_handler_factory=stream_handler_factory,
         )
 
         result = Task(

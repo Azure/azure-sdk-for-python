@@ -558,21 +558,42 @@ site (visible in user-code tracebacks). The task ends in `failed`,
 not silently `in_progress` — misuse is loudly visible in operator
 logs.
 
-### Streaming (`StreamHandler`, `StreamHandlerFactory`, `QueueStreamHandler`)
+### Streaming (see [`docs/streaming-guide.md`](./streaming-guide.md))
 
-Yield incremental output with `await ctx.stream(chunk)`. Consumers iterate
-the task handle:
+Streaming is **decoupled from `@task`** — handlers opt in by emitting
+to the process-level `streams` registry. There is no streaming kwarg
+on `@task` and no `ctx.stream(...)` method.
 
 ```python
-run = await my_task.start(task_id=..., input=...)
-async for chunk in run:
-    print(chunk, end="")
+from azure.ai.agentserver.core.streaming import streams
+
+# Once at app startup:
+streams.use_in_memory_replay(ttl_seconds=600)
+
+@task(name="search")
+async def search(ctx: TaskContext) -> str:
+    inv_id = ctx.input["invocation_id"]          # per-turn stream id
+    stream = await streams.get_or_create(inv_id)
+    await stream.emit({"event": "progress", "step": "fetch"})
+    ...
+    await stream.close()
+    return result
 ```
 
-`StreamHandler` is the interface the consumer side reads through;
-`StreamHandlerFactory` is the per-task constructor injection point
-(for example: tee every chunk to a file in addition to the in-memory
-queue); `QueueStreamHandler` is the in-memory default.
+Consumers (typically the HTTP layer) attach **before** starting the task:
+
+```python
+stream = await streams.get_or_create(invocation_id)
+run = await search.start(task_id=..., input={"invocation_id": invocation_id, ...})
+async for ev in stream.subscribe(after=0):
+    ...
+```
+
+See [`streaming-guide.md`](./streaming-guide.md)
+for the registry API, backings (`use_in_memory_live` /
+`use_in_memory_replay` / `use_file_backed_replay`), per-turn id
+convention, exception/wire mapping, and the third-party-impl peer-
+registry pattern.
 
 ### Results and runs (`TaskResult`, `TaskRun`, `TaskStatus`)
 
@@ -663,7 +684,6 @@ changing it strands existing tasks.
 | `ephemeral`              | `bool`                                    | `True`  | Delete the persisted record on terminal exit. |
 | `retry`                  | `RetryPolicy \| None`                     | `None`  | Retry policy for handler-raised exceptions. Recovery-safe (applied on every entry, including post-crash). |
 | `steerable`              | `bool`                                    | `False` | Allow `.start()` on an `in_progress` task to queue a steering input instead of raising. |
-| `stream_handler_factory` | `Callable[[str], StreamHandler] \| None`  | `None`  | Custom stream-handler factory. Recovery-safe: fresh starts, resumes, and crash recovery all use this factory. |
 
 All decorator options are recovery-safe: the framework only knows
 about the registered decorator after a crash, so anything that needs
@@ -695,15 +715,14 @@ same `input_id` / `if_last_input_id` sequential-input preconditions
 (see §4).
 
 Everything else that characterises a task — `title`, `retry`,
-`stream_handler_factory`, `steerable`, `ephemeral`,
-`timeout` — is configured once on the `@task(...)` decorator (or via
-`Task.options(...)` for a derived `Task`). There is no per-call
-override. This is deliberate so the settings survive crash recovery:
-after the container crashes and the framework re-enters the task, it
-has only the registered decorator's view to work with — a per-call
-override would silently disappear at the crash boundary. Session
-identity is platform-derived from the `FOUNDRY_AGENT_SESSION_ID`
-environment variable.
+`steerable`, `ephemeral`, `timeout` — is configured once on the
+`@task(...)` decorator (or via `Task.options(...)` for a derived `Task`).
+There is no per-call override. This is deliberate so the settings
+survive crash recovery: after the container crashes and the framework
+re-enters the task, it has only the registered decorator's view to
+work with — a per-call override would silently disappear at the crash
+boundary. Session identity is platform-derived from the
+`FOUNDRY_AGENT_SESSION_ID` environment variable.
 
 ### `TaskContext`
 
@@ -727,7 +746,6 @@ The single argument your handler receives. Properties:
 Methods:
 
 - `await ctx.suspend(output=...)` — park the task in `suspended`.
-- `await ctx.stream(chunk)` — emit an incremental chunk to consumers.
 - `await ctx.exit_for_recovery()` — graceful-shutdown shape. See §4 Shutdown.
 
 The cancel-cause boolean fields exposed above are read as
@@ -826,11 +844,13 @@ lifetimes for the task; crash recovery does NOT consume it.
 `retry_on=None` retries every exception; pass a tuple to scope
 retries to specific types.
 
-### Streaming types (`StreamHandler`, `StreamHandlerFactory`, `QueueStreamHandler`)
+### Streaming
 
-See §4. Most users never touch these directly — they construct via
-`stream_handler_factory=` on `@task`. The default
-`QueueStreamHandler` is what you get when you do not override.
+Streaming has moved out of `@task` into a separate process-level
+primitive — `azure.ai.agentserver.core.streaming.streams`. See §4
+("Streaming") for the in-line example and
+[`streaming-guide.md`](./streaming-guide.md)
+for the full developer guide.
 
 ### Exceptions
 
@@ -962,22 +982,41 @@ async def orchestrator(ctx: TaskContext[dict]) -> dict:
 ### Pattern E — Streaming partial results to a UI
 
 ```python
+from azure.ai.agentserver.core.streaming import streams
+
+# Once at app startup:
+streams.use_in_memory_replay(ttl_seconds=600)
+
 @task(name="research")
-async def research(ctx: TaskContext[str]) -> str:
-    sources = await search(ctx.input)
-    for s in sources:
-        await ctx.stream({"event": "source", "url": s.url})
-    return await synthesize(sources)
+async def research(ctx: TaskContext[dict]) -> str:
+    inv_id = ctx.input["invocation_id"]
+    stream = await streams.get_or_create(inv_id)
+    try:
+        sources = await search(ctx.input["query"])
+        for s in sources:
+            await stream.emit({"event": "source", "url": s.url})
+        result = await synthesize(sources)
+        await stream.emit({"event": "result", "text": result})
+        return result
+    finally:
+        await stream.close()
 ```
 
-Consumer:
+Consumer (HTTP layer attaches **before** starting the task):
 
 ```python
-run = await research.start(task_id="r-1", input="LLM observability")
-async for chunk in run:
-    ui.push(chunk)
+stream = await streams.get_or_create(invocation_id)
+run = await research.start(
+    task_id="r-1",
+    input={"invocation_id": invocation_id, "query": "LLM observability"},
+)
+async for ev in stream.subscribe(after=0):
+    ui.push(ev)
 final = await run.result()
 ```
+
+See [`streaming-guide.md`](./streaming-guide.md)
+for backings, per-turn id convention, and exception/wire mapping.
 
 ### Pattern F — Steerable chat: queueing new inputs mid-flight
 
