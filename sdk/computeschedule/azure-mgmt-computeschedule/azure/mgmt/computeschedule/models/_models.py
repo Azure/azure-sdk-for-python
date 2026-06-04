@@ -3972,42 +3972,6 @@ class PublicIPAddressSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecurringActionsResourceOperationResult(_Model):
-    """The response from scheduled action resource requests, which contains the status of each
-    resource.
-
-    :ivar total_resources: The total number of resources operated on. Required.
-    :vartype total_resources: int
-    :ivar resources_statuses: The resource status of for each resource. Required.
-    :vartype resources_statuses: list[~azure.mgmt.computeschedule.models.ResourceStatus]
-    """
-
-    total_resources: int = rest_field(name="totalResources", visibility=["read", "create", "update", "delete", "query"])
-    """The total number of resources operated on. Required."""
-    resources_statuses: list["_models.ResourceStatus"] = rest_field(
-        name="resourcesStatuses", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource status of for each resource. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        total_resources: int,
-        resources_statuses: list["_models.ResourceStatus"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ResourceAttachRequest(_Model):
     """Request model to attach a list of scheduled action resources.
 
@@ -4251,6 +4215,42 @@ class ResourceOperationError(_Model):
         *,
         error_code: str,
         error_details: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceOperationResponse(_Model):
+    """The response from scheduled action resource requests, which contains the status of each
+    resource.
+
+    :ivar total_resources: The total number of resources operated on. Required.
+    :vartype total_resources: int
+    :ivar resources_statuses: The resource status of for each resource. Required.
+    :vartype resources_statuses: list[~azure.mgmt.computeschedule.models.ResourceStatus]
+    """
+
+    total_resources: int = rest_field(name="totalResources", visibility=["read", "create", "update", "delete", "query"])
+    """The total number of resources operated on. Required."""
+    resources_statuses: list["_models.ResourceStatus"] = rest_field(
+        name="resourcesStatuses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource status of for each resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_resources: int,
+        resources_statuses: list["_models.ResourceStatus"],
     ) -> None: ...
 
     @overload

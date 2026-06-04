@@ -81,12 +81,12 @@
         "azure.mgmt.computeschedule.models.PriorityProfile": "Microsoft.ComputeSchedule.PriorityProfile",
         "azure.mgmt.computeschedule.models.ProxyAgentSettings": "Microsoft.ComputeSchedule.ProxyAgentSettings",
         "azure.mgmt.computeschedule.models.PublicIPAddressSku": "Microsoft.ComputeSchedule.PublicIPAddressSku",
-        "azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult": "Microsoft.ComputeSchedule.ResourceOperationResponse",
         "azure.mgmt.computeschedule.models.ResourceAttachRequest": "Microsoft.ComputeSchedule.ResourceAttachRequest",
         "azure.mgmt.computeschedule.models.ResourceDetachRequest": "Microsoft.ComputeSchedule.ResourceDetachRequest",
         "azure.mgmt.computeschedule.models.ResourceOperation": "Microsoft.ComputeSchedule.ResourceOperation",
         "azure.mgmt.computeschedule.models.ResourceOperationDetails": "Microsoft.ComputeSchedule.ResourceOperationDetails",
         "azure.mgmt.computeschedule.models.ResourceOperationError": "Microsoft.ComputeSchedule.ResourceOperationError",
+        "azure.mgmt.computeschedule.models.ResourceOperationResponse": "Microsoft.ComputeSchedule.ResourceOperationResponse",
         "azure.mgmt.computeschedule.models.ResourcePatchRequest": "Microsoft.ComputeSchedule.ResourcePatchRequest",
         "azure.mgmt.computeschedule.models.ResourceProvisionFlexPayload": "Microsoft.ComputeSchedule.ResourceProvisionFlexPayload",
         "azure.mgmt.computeschedule.models.ResourceProvisionPayload": "Microsoft.ComputeSchedule.ResourceProvisionPayload",
@@ -267,5 +267,5 @@
         "azure.mgmt.computeschedule.operations.OccurrenceExtensionOperations.list_occurrence_by_vms": "Microsoft.ComputeSchedule.OccurrenceExtension.listOccurrenceByVms",
         "azure.mgmt.computeschedule.aio.operations.OccurrenceExtensionOperations.list_occurrence_by_vms": "Microsoft.ComputeSchedule.OccurrenceExtension.listOccurrenceByVms"
     },
-    "CrossLanguageVersion": "627e3b335a64"
+    "CrossLanguageVersion": "149eb1d207c4"
 }

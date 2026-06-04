@@ -84,7 +84,6 @@
   - Added enum `PublicIPAddressSkuName`
   - Added enum `PublicIPAddressSkuTier`
   - Added enum `PublicIPAllocationMethod`
-  - Added model `RecurringActionsResourceOperationResult`
   - Added enum `ResourceIdentityType`
   - Added model `ResourceProvisionFlexPayload`
   - Added enum `ScheduledActionType`
@@ -144,14 +143,6 @@
   - Deleted or renamed enum value `ActionType.START`
   - Model `ResourceProvisionPayload` deleted or renamed its instance variable `base_profile`
   - Model `ResourceProvisionPayload` deleted or renamed its instance variable `resource_overrides`
-  - Deleted or renamed model `ResourceOperationResponse`
-  - Method `OccurrencesOperations.begin_delay` changed return type from `AsyncLROPoller[ResourceOperationResponse]` to `AsyncLROPoller[RecurringActionsResourceOperationResult]`
-  - Method `OccurrencesOperations.begin_delay` changed return type from `LROPoller[ResourceOperationResponse]` to `LROPoller[RecurringActionsResourceOperationResult]`
-  - Method `OccurrencesOperations.cancel` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
-  - Method `ScheduledActionsOperations.attach_resources` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
-  - Method `ScheduledActionsOperations.cancel_next_occurrence` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
-  - Method `ScheduledActionsOperations.detach_resources` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
-  - Method `ScheduledActionsOperations.patch_resources` changed return type from `ResourceOperationResponse` to `RecurringActionsResourceOperationResult`
 
 ## 1.2.0b1 (2025-07-24)
 
