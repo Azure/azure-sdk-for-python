@@ -514,6 +514,345 @@ class TestQueryResponseHeaders(unittest.TestCase):
         finally:
             self._delete_container_for_test(container_id)
 
+    # -- response_hook parity across every paged and point surface ----------
+    #
+    # Previously only query_items had explicit parity coverage between the
+    # headers handed to a per-call response_hook and the headers returned
+    # by the pager or CosmosDict. The tests below extend that same
+    # guarantee to read_all_items, the change feed, point CRUD, and the
+    # database and container query surfaces.
+
+    def test_response_hook_parity_read_all_items(self):
+        """Headers handed to the last response_hook invocation on
+        read_all_items must match the pager's get_response_headers()."""
+        container_id = "test_hookparity_readall_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            for i in range(10):
+                created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
+
+            captured = []
+
+            def hook(headers, _result):
+                captured.append(dict(headers))
+
+            paged = created_collection.read_all_items(max_item_count=3, response_hook=hook)
+            items = list(paged)
+            self.assertEqual(len(items), 10)
+            self.assertGreater(len(captured), 0, "response_hook must fire at least once")
+
+            final_headers = paged.get_response_headers()
+            self.assertIn("x-ms-request-charge", final_headers)
+            self.assertEqual(
+                final_headers["x-ms-request-charge"],
+                captured[-1]["x-ms-request-charge"],
+            )
+            self.assertEqual(
+                final_headers["x-ms-activity-id"],
+                captured[-1]["x-ms-activity-id"],
+            )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_response_hook_parity_query_items_change_feed(self):
+        """Headers handed to the response_hook on query_items_change_feed
+        must match the pager's get_response_headers()."""
+        container_id = "test_hookparity_cf_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            for i in range(6):
+                created_collection.create_item(body={"pk": "test", "id": f"item_{i}"})
+
+            captured = []
+
+            def hook(headers, _result):
+                captured.append(dict(headers))
+
+            paged = created_collection.query_items_change_feed(
+                start_time="Beginning",
+                max_item_count=2,
+                response_hook=hook,
+            )
+            items = list(paged)
+            self.assertGreaterEqual(len(items), 6)
+            self.assertGreater(len(captured), 0, "response_hook must fire at least once")
+
+            # change_feed pages always carry a request charge in the hook payload
+            self.assertIn("x-ms-request-charge", captured[-1])
+
+            # When the change-feed pager exposes get_response_headers(),
+            # the last page's headers must match the last hook invocation.
+            if hasattr(paged, "get_response_headers"):
+                final_headers = paged.get_response_headers()
+                if "x-ms-request-charge" in final_headers:
+                    self.assertEqual(
+                        final_headers["x-ms-request-charge"],
+                        captured[-1]["x-ms-request-charge"],
+                    )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_response_hook_parity_point_ops(self):
+        """For every point CRUD method, the headers handed to the
+        response_hook must match the returned CosmosDict's
+        get_response_headers() (and ``delete_item`` returns no body)."""
+        container_id = "test_hookparity_point_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            captured = []
+
+            def hook(headers, _body):
+                captured.append(dict(headers))
+
+            # create_item
+            captured.clear()
+            created = created_collection.create_item(
+                body={"pk": "p", "id": "doc1", "value": 1},
+                response_hook=hook,
+            )
+            self.assertEqual(len(captured), 1)
+            self.assertEqual(
+                created.get_response_headers()["x-ms-request-charge"],
+                captured[0]["x-ms-request-charge"],
+            )
+
+            # read_item
+            captured.clear()
+            read = created_collection.read_item(
+                item="doc1", partition_key="p", response_hook=hook,
+            )
+            self.assertEqual(len(captured), 1)
+            self.assertEqual(
+                read.get_response_headers()["x-ms-request-charge"],
+                captured[0]["x-ms-request-charge"],
+            )
+
+            # replace_item
+            captured.clear()
+            replaced = created_collection.replace_item(
+                item="doc1",
+                body={"pk": "p", "id": "doc1", "value": 2},
+                response_hook=hook,
+            )
+            self.assertEqual(len(captured), 1)
+            self.assertEqual(
+                replaced.get_response_headers()["x-ms-request-charge"],
+                captured[0]["x-ms-request-charge"],
+            )
+
+            # upsert_item
+            captured.clear()
+            upserted = created_collection.upsert_item(
+                body={"pk": "p", "id": "doc1", "value": 3},
+                response_hook=hook,
+            )
+            self.assertEqual(len(captured), 1)
+            self.assertEqual(
+                upserted.get_response_headers()["x-ms-request-charge"],
+                captured[0]["x-ms-request-charge"],
+            )
+
+            # delete_item: returns None, but the hook still fires once with
+            # the response headers from the DELETE round-trip.
+            captured.clear()
+            created_collection.delete_item(
+                item="doc1", partition_key="p", response_hook=hook,
+            )
+            self.assertEqual(len(captured), 1)
+            self.assertIn("x-ms-request-charge", captured[0])
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_response_hook_parity_query_databases_and_query_containers(self):
+        """query_databases and query_containers fire their response_hook
+        exactly once after the iterable is returned (the hook fires before
+        the caller actually walks the iterable). ``query_databases`` passes
+        a one-arg hook (just headers); ``query_containers`` passes two args
+        (headers, paged-iterable). Accept both via ``*args``.
+
+        We pin: the hook fires exactly once for each surface, and the
+        captured payload is a Mapping. We deliberately do *not* pin a
+        specific header like ``x-ms-request-charge`` because the hook
+        fires with ``client_connection.last_response_headers`` at the
+        moment the pager is constructed, which can be a stale value from
+        an earlier request (e.g. the account probe) when nothing has yet
+        flowed through this specific query."""
+        from collections.abc import Mapping
+
+        captured_db = []
+
+        def hook_db(*args):
+            # query_databases: hook(headers); query_containers: hook(headers, paged)
+            captured_db.append(args[0])
+
+        db_pager = self.client.query_databases(
+            query="SELECT * FROM root r",
+            response_hook=hook_db,
+        )
+        _ = list(db_pager)
+        self.assertEqual(
+            len(captured_db), 1,
+            "query_databases response_hook must fire exactly once",
+        )
+        self.assertIsInstance(captured_db[0], Mapping)
+
+        captured_c = []
+
+        def hook_c(*args):
+            captured_c.append(args[0])
+
+        c_pager = self.created_db.query_containers(
+            query="SELECT * FROM root r",
+            response_hook=hook_c,
+        )
+        _ = list(c_pager)
+        self.assertEqual(
+            len(captured_c), 1,
+            "query_containers response_hook must fire exactly once",
+        )
+        self.assertIsInstance(captured_c[0], Mapping)
+
+    def test_response_hook_fires_at_least_once_for_every_paged_surface(self):
+        """A response_hook attached to any paged data-plane surface must
+        fire at least once, and every captured payload must be a Mapping."""
+        from collections.abc import Mapping
+
+        container_id = "test_hookfires_paged_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            for i in range(6):
+                created_collection.create_item(body={"pk": "test", "id": f"item_{i}"})
+
+            def _run(surface_name, build_pager):
+                captured = []
+
+                def hook(headers, _result):
+                    captured.append(dict(headers))
+
+                pager = build_pager(hook)
+                list(pager)
+                self.assertGreater(
+                    len(captured),
+                    0,
+                    f"{surface_name} response_hook never fired",
+                )
+                for payload in captured:
+                    self.assertIsInstance(
+                        payload,
+                        Mapping,
+                        f"{surface_name} hook received non-Mapping payload",
+                    )
+
+            _run(
+                "query_items",
+                lambda h: created_collection.query_items(
+                    query="SELECT * FROM c",
+                    partition_key="test",
+                    response_hook=h,
+                ),
+            )
+            _run(
+                "read_all_items",
+                lambda h: created_collection.read_all_items(
+                    max_item_count=2,
+                    response_hook=h,
+                ),
+            )
+            _run(
+                "query_items_change_feed",
+                lambda h: created_collection.query_items_change_feed(
+                    start_time="Beginning",
+                    max_item_count=2,
+                    response_hook=h,
+                ),
+            )
+        finally:
+            self._delete_container_for_test(container_id)
+
+    # -- response_hook parity for patch_item / execute_item_batch -----------
+    #
+    # Both methods accept a response_hook keyword. The hook must fire
+    # exactly once per call and receive the same response headers that
+    # the returned wrapper exposes via get_response_headers().
+
+    def test_response_hook_parity_patch_item(self):
+        # patch_item must fire its response_hook once with headers that
+        # match the returned wrapper on request charge and activity id.
+        container_id = "test_hookparity_patch_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk")
+        )
+        try:
+            created_collection.create_item(
+                body={"pk": "p", "id": "doc-patch", "value": 1}
+            )
+
+            captured = []
+
+            def hook(headers, _body):
+                captured.append(dict(headers))
+
+            patched = created_collection.patch_item(
+                item="doc-patch",
+                partition_key="p",
+                patch_operations=[
+                    {"op": "replace", "path": "/value", "value": 99}
+                ],
+                response_hook=hook,
+            )
+
+            self.assertEqual(len(captured), 1)
+            patched_headers = patched.get_response_headers()
+            self.assertEqual(
+                patched_headers["x-ms-request-charge"],
+                captured[0]["x-ms-request-charge"],
+            )
+            self.assertEqual(
+                patched_headers["x-ms-activity-id"],
+                captured[0]["x-ms-activity-id"],
+            )
+            self.assertEqual(patched["value"], 99)
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_response_hook_parity_execute_item_batch(self):
+        # execute_item_batch must fire its response_hook once with
+        # headers that match the returned wrapper.
+        container_id = "test_hookparity_batch_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(
+            container_id, PartitionKey(path="/pk")
+        )
+        try:
+            captured = []
+
+            def hook(headers, _body):
+                captured.append(dict(headers))
+
+            batch_ops = [
+                ("create", ({"pk": "p", "id": "batch-doc-1", "value": 1},)),
+                ("upsert", ({"pk": "p", "id": "batch-doc-2", "value": 2},)),
+            ]
+
+            result = created_collection.execute_item_batch(
+                batch_operations=batch_ops,
+                partition_key="p",
+                response_hook=hook,
+            )
+
+            self.assertEqual(len(captured), 1)
+            result_headers = result.get_response_headers()
+            self.assertEqual(
+                result_headers["x-ms-request-charge"],
+                captured[0]["x-ms-request-charge"],
+            )
+            self.assertEqual(
+                result_headers["x-ms-activity-id"],
+                captured[0]["x-ms-activity-id"],
+            )
+            self.assertEqual(len(result), 2)
+        finally:
+            self._delete_container_for_test(container_id)
+
 
 if __name__ == "__main__":
     unittest.main()

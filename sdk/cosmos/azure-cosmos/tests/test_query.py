@@ -1205,6 +1205,359 @@ class TestQuery(unittest.TestCase):
         finally:
             self._delete_container_for_test(container.id)
 
+    # Aggregate queries (COUNT, SUM, MAX) take a separate execution path
+    # from regular queries. The tests below confirm a per-request
+    # read_timeout still reaches every page fetch on that path. GROUP BY
+    # is excluded because the Python SDK does not declare it as
+    # supported and the gateway rejects those queries. ``c.amount`` is
+    # used instead of ``c.value`` because ``VALUE`` is a SQL keyword.
+
+    def test_read_timeout_propagates_through_by_page_value_count_aggregate(self):
+        # Per-request read_timeout must reach every /docs/ page fetch
+        # when paging a ``SELECT VALUE COUNT(1) FROM c`` aggregate.
+        container = self._create_container_for_test(
+            "by_page_count_agg_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "amount": i + 10})
+
+            request_level_timeout = 25
+            captured, ctx = self._capture_pipeline_read_timeouts()
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT VALUE COUNT(1) FROM c",
+                    enable_cross_partition_query=True,
+                    max_item_count=1,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                for page in pages:
+                    list(page)
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0, "expected at least one page fetch")
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"VALUE COUNT aggregate by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+        finally:
+            self._delete_container_for_test(container.id)
+
+    def test_read_timeout_propagates_through_by_page_value_sum_aggregate(self):
+        # Per-request read_timeout must reach every /docs/ page fetch
+        # when paging a ``SELECT VALUE SUM(...) FROM c`` aggregate.
+        container = self._create_container_for_test(
+            "by_page_sum_agg_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "amount": i + 10})
+
+            request_level_timeout = 25
+            captured, ctx = self._capture_pipeline_read_timeouts()
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT VALUE SUM(c.amount) FROM c WHERE IS_NUMBER(c.amount)",
+                    enable_cross_partition_query=True,
+                    max_item_count=1,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                for page in pages:
+                    list(page)
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"VALUE SUM aggregate by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+        finally:
+            self._delete_container_for_test(container.id)
+
+    def test_read_timeout_propagates_through_by_page_value_max_aggregate(self):
+        # Per-request read_timeout must reach every /docs/ page fetch
+        # when paging a ``SELECT VALUE MAX(...) FROM c`` aggregate. MAX
+        # exercises the same MultiExecutionAggregator path that GROUP BY
+        # would, but is actually supported by the Python SDK.
+        container = self._create_container_for_test(
+            "by_page_max_agg_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "amount": i + 10})
+
+            request_level_timeout = 25
+            captured, ctx = self._capture_pipeline_read_timeouts()
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT VALUE MAX(c.amount) FROM c",
+                    enable_cross_partition_query=True,
+                    max_item_count=1,
+                    read_timeout=request_level_timeout,
+                ).by_page()
+                for page in pages:
+                    list(page)
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(
+                all(rt == request_level_timeout for rt in doc_timeouts),
+                f"VALUE MAX aggregate by_page() dropped read_timeout on some pages: {doc_timeouts}",
+            )
+        finally:
+            self._delete_container_for_test(container.id)
+
+    def test_client_level_read_timeout_propagates_through_aggregate_by_page(self):
+        # Mirror of test_client_level_read_timeout_propagates_through_by_page_paging
+        # but for the aggregate path. The client-level read_timeout must
+        # reach every /docs/ page fetch across the three aggregate shapes
+        # when no per-request override is set.
+        container = self._create_container_for_test(
+            "by_page_client_agg_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "amount": i + 10})
+
+            client_timeout = 22
+
+            with cosmos_client.CosmosClient(
+                self.host, self.credential, read_timeout=client_timeout
+            ) as ct_client:
+                ct_container = ct_client.get_database_client(self.TEST_DATABASE_ID) \
+                                        .get_container_client(container.id)
+
+                for query in (
+                    "SELECT VALUE COUNT(1) FROM c",
+                    "SELECT VALUE SUM(c.amount) FROM c WHERE IS_NUMBER(c.amount)",
+                    "SELECT VALUE MAX(c.amount) FROM c",
+                ):
+                    captured, ctx = self._capture_pipeline_read_timeouts()
+                    with ctx:
+                        pages = ct_container.query_items(
+                            query=query,
+                            enable_cross_partition_query=True,
+                            max_item_count=1,
+                        ).by_page()
+                        for page in pages:
+                            list(page)
+                    doc_timeouts = self._doc_call_timeouts(captured)
+                    self.assertGreater(
+                        len(doc_timeouts), 0,
+                        f"no /docs/ fetches for aggregate query {query!r}",
+                    )
+                    # Tier-1 page fetches must carry the client value.
+                    # The query-plan POST against /docs/ is a tier-2-ish
+                    # call that the dispatch path strips kwargs from in
+                    # some flows; tolerate a ``None`` there but require
+                    # at least one /docs/ call to carry the value, and
+                    # any non-None /docs/ call must match it exactly.
+                    non_none = [rt for rt in doc_timeouts if rt is not None]
+                    self.assertGreater(
+                        len(non_none), 0,
+                        f"every /docs/ call dropped read_timeout for aggregate {query!r}",
+                    )
+                    self.assertTrue(
+                        all(rt == client_timeout for rt in non_none),
+                        f"client-level read_timeout did not reach all pages for "
+                        f"aggregate {query!r}: {doc_timeouts}",
+                    )
+        finally:
+            self._delete_container_for_test(container.id)
+
+    # by_page() coverage for the outer timeout, connection_timeout,
+    # resume from a continuation token, and the cross-partition AVG
+    # error.
+
+    def _capture_pipeline_kwarg(self, kwarg_name):
+        # Wraps the outgoing HTTP call so each request records its URL
+        # and the value of the named kwarg the SDK passed along.
+        captured = []
+        original = _synchronized_request._PipelineRunFunction
+
+        def _wrapper(pipeline_client, request, **kwargs):
+            captured.append((str(request.url), kwargs.get(kwarg_name)))
+            return original(pipeline_client, request, **kwargs)
+
+        return captured, patch.object(
+            _synchronized_request, "_PipelineRunFunction", side_effect=_wrapper,
+        )
+
+    def test_outer_timeout_propagates_through_by_page_paging(self):
+        # The outer wall-clock timeout must reach every page fetch when
+        # a cross-partition query is walked one page at a time. The
+        # remaining budget may decrement across attempts, but it must
+        # never be dropped and must never exceed the requested value.
+        container = self._create_container_for_test(
+            "by_page_outer_timeout_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                container.create_item(
+                    {"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "data": i}
+                )
+
+            outer_timeout = 15
+            captured, ctx = self._capture_pipeline_kwarg("timeout")
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT * FROM c",
+                    enable_cross_partition_query=True,
+                    max_item_count=1,
+                    timeout=outer_timeout,
+                ).by_page()
+                for page in pages:
+                    list(page)
+            doc_values = [t for (url, t) in captured if "/docs" in url]
+            self.assertGreater(len(doc_values), 0)
+            non_none = [t for t in doc_values if t is not None]
+            self.assertGreater(len(non_none), 0)
+            for t in non_none:
+                self.assertLessEqual(t, outer_timeout)
+        finally:
+            self._delete_container_for_test(container.id)
+
+    def test_connection_timeout_propagates_through_by_page_paging(self):
+        # connection_timeout is per-attempt, so it must reach every
+        # page fetch as the same exact value the caller passed in.
+        container = self._create_container_for_test(
+            "by_page_conn_timeout_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        try:
+            for i in range(6):
+                container.create_item(
+                    {"id": f"item_{i}_{uuid.uuid4()}", "pk": i % 2, "data": i}
+                )
+
+            connection_timeout = 27
+            captured, ctx = self._capture_pipeline_kwarg("connection_timeout")
+            with ctx:
+                pages = container.query_items(
+                    query="SELECT * FROM c",
+                    enable_cross_partition_query=True,
+                    max_item_count=1,
+                    connection_timeout=connection_timeout,
+                ).by_page()
+                for page in pages:
+                    list(page)
+            doc_values = [t for (url, t) in captured if "/docs" in url]
+            self.assertGreater(len(doc_values), 0)
+            self.assertTrue(all(t == connection_timeout for t in doc_values))
+        finally:
+            self._delete_container_for_test(container.id)
+
+    def test_avg_aggregate_by_page_raises_value_error_cross_partition(self):
+        # A VALUE AVG query across multiple partitions cannot be merged
+        # to a correct result on the client, so the SDK must raise
+        # ValueError. A single-partition AVG is the supported workaround
+        # and is verified as a control at the end.
+        container = self._create_container_for_test(
+            "by_page_avg_cross_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        try:
+            # Seed across many distinct partition key values so the
+            # query has data on multiple physical partitions to merge.
+            for i in range(20):
+                container.create_item(
+                    {"id": f"item_{i}_{uuid.uuid4()}", "pk": f"pk_{i}", "amount": i + 10}
+                )
+
+            # A feed range that covers the full hash space forces the
+            # query to fan out across every physical partition.
+            full_range = test_config.create_range(
+                range_min="",
+                range_max="FF",
+                is_min_inclusive=True,
+                is_max_inclusive=False,
+            )
+            feed_range = test_config.create_feed_range_in_dict(full_range)
+
+            with self.assertRaises(ValueError) as cm:
+                pages = container.query_items(
+                    query="SELECT VALUE AVG(c.amount) FROM c",
+                    feed_range=feed_range,
+                    max_item_count=1,
+                ).by_page()
+                for page in pages:
+                    list(page)
+            self.assertIn("AVG", str(cm.exception).upper())
+
+            # Control: a single-partition AVG must still succeed.
+            single_pages = container.query_items(
+                query="SELECT VALUE AVG(c.amount) FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "pk_0"}],
+                partition_key="pk_0",
+                max_item_count=1,
+            ).by_page()
+            single_result = []
+            for page in single_pages:
+                single_result.extend(list(page))
+            self.assertEqual(len(single_result), 1)
+        finally:
+            self._delete_container_for_test(container.id)
+
+    def test_read_timeout_propagates_through_by_page_resume(self):
+        # When the caller resumes paging on a new pager built from a
+        # continuation token, the per-request read_timeout must reach
+        # every page fetch on the resumed pager too.
+        container = self._create_container_for_test(
+            "by_page_resume_timeout_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        try:
+            for i in range(10):
+                container.create_item(
+                    {"id": f"item_{i}_{uuid.uuid4()}", "pk": "p", "data": i}
+                )
+
+            request_level_timeout = 19
+
+            # Pull one page and capture its continuation token. This
+            # initial call runs outside the capture context because we
+            # only want to assert on the resumed pager.
+            first_pages = container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "p"}],
+                partition_key="p",
+                max_item_count=2,
+            ).by_page()
+            try:
+                first_page = next(first_pages)
+            except StopIteration:
+                self.fail("expected at least one page on the initial pull")
+            list(first_page)
+            continuation = first_pages.continuation_token
+            self.assertIsNotNone(continuation)
+
+            captured, ctx = self._capture_pipeline_read_timeouts()
+            with ctx:
+                resumed_pages = container.query_items(
+                    query="SELECT * FROM c WHERE c.pk = @pk",
+                    parameters=[{"name": "@pk", "value": "p"}],
+                    partition_key="p",
+                    max_item_count=2,
+                    read_timeout=request_level_timeout,
+                ).by_page(continuation_token=continuation)
+                for page in resumed_pages:
+                    list(page)
+            doc_timeouts = self._doc_call_timeouts(captured)
+            self.assertGreater(len(doc_timeouts), 0)
+            self.assertTrue(all(rt == request_level_timeout for rt in doc_timeouts))
+        finally:
+            self._delete_container_for_test(container.id)
+
 
 if __name__ == "__main__":
     unittest.main()
