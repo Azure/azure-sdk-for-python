@@ -8,11 +8,10 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping # pylint:disable=import-error
 from typing import Any, IO, Optional, Union, cast, overload
 
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
