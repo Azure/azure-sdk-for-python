@@ -21,7 +21,11 @@ from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .models import StorageErrorCode
 from .policies import (
+    _analyze_request,
+    _apply_session_auth,
+    _extract_session,
     _prepare_content_validation,
+    _used_session_token,
     _validate_content_response,
     CreateSessionConfiguration,
     encode_base64,
@@ -29,7 +33,6 @@ from .policies import (
     Session,
     SessionCache,
     StorageRetryPolicy,
-    StorageSessionPolicy,
     SESSION_RETRIED_CONTEXT_KEY,
 )
 from .streams_async import AsyncStructuredMessageDecoder
@@ -407,16 +410,12 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         self._session_client_factory = session_client_factory
         self._enabled = True
         self._cache = AsyncSessionCache()
-        self._signer = StorageSessionPolicy(
-            account_name=account_name,
-            session_client_factory=session_client_factory,
-        )
 
     async def _create_session(self, container_url: str) -> Tuple[str, str, datetime]:
         config = CreateSessionConfiguration(authentication_type="HMAC")
         client = self._session_client_factory(container_url)
         response = await client.container.create_session(create_session_configuration=config)
-        return StorageSessionPolicy._extract_session(response)  # pylint: disable=protected-access
+        return _extract_session(response)
 
     async def _refresh_session_token(self, container_name: str, container_url: str) -> Optional[Session]:
         """Acquire (or re-use) a session under per-container async single-flight.
@@ -463,7 +462,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         """
         if not self._enabled:
             return None
-        analysis = StorageSessionPolicy._analyze_request(request)  # pylint: disable=protected-access
+        analysis = _analyze_request(request)
         if analysis is None:
             return None
         container_name, container_url = analysis
@@ -477,9 +476,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         if session is None or session.is_fallback or not session.session_token or not session.session_key:
             return None
 
-        self._signer._apply_session_auth(  # pylint: disable=protected-access
-            request, session.session_token, session.session_key
-        )
+        _apply_session_auth(request, session.session_token, session.session_key, self._account_name)
         return container_name
 
     async def on_response(
@@ -524,7 +521,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         # 401 → invalidate + re-acquire ONCE, then resend.
         if status == 401 and not request.context.options.get(SESSION_RETRIED_CONTEXT_KEY):
             _LOGGER.info("Session authentication: HTTP 401 on '%s'; re-acquiring once.", container_name)
-            used_token = StorageSessionPolicy._used_session_token(request)  # pylint: disable=protected-access
+            used_token = _used_session_token(request)
             async with self._cache.lock_container_async(container_name):
                 self._cache.invalidate(container_name, used_token)
             request.context.options[SESSION_RETRIED_CONTEXT_KEY] = True

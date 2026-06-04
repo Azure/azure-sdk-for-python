@@ -77,6 +77,103 @@ def encode_base64(data: Union[bytes, str]) -> str:
     return encoded.decode("utf-8")
 
 
+def _extract_session(response: Any) -> Tuple[str, str, datetime]:
+    creds = getattr(response, "credentials", None)
+    if not creds or not getattr(creds, "session_token", None) or not getattr(creds, "session_key", None):
+        raise ValueError("CreateSession response missing SessionToken/SessionKey")
+    session_token: str = creds.session_token
+    session_key: str = creds.session_key
+    expires_at = getattr(response, "expiration", None)
+    if expires_at is None:
+        expires_at = datetime.now(UTC) + timedelta(minutes=5)
+    elif expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=UTC)
+    return session_token, session_key, expires_at
+
+
+def _analyze_request(request: "PipelineRequest") -> Optional[Tuple[str, str]]:
+    http_request = request.http_request
+    if http_request.method != "GET":
+        return None
+    parsed = urlparse(http_request.url)
+    segments = [seg for seg in parsed.path.split("/") if seg]
+    if len(segments) < 2:
+        return None
+    query = http_request.query
+    if "comp" in query or query.get("restype") == "container":
+        return None
+    container_name = segments[0]
+    container_url = f"{parsed.scheme}://{parsed.netloc}/{container_name}"
+    return container_name, container_url
+
+
+def _used_session_token(request: "PipelineRequest") -> Optional[str]:
+    """Use for distinguishing between a successful concurrent refresh and invalidated token."""
+    auth = request.http_request.headers.get("Authorization", "")
+    if not auth.startswith("Session "):
+        return None
+    return auth[len("Session ") :].split(":", 1)[0] or None
+
+
+_SIGNED_HEADERS = (
+    "content-encoding",
+    "content-language",
+    "content-length",
+    "content-md5",
+    "content-type",
+    "date",
+    "if-modified-since",
+    "if-match",
+    "if-none-match",
+    "if-unmodified-since",
+    "byte_range",
+)
+
+
+def _apply_session_auth(
+    request: "PipelineRequest", session_token: str, session_key: str, account_name: str
+) -> None:
+    """Sign an eligible request with the SharedKey protocol under the Session scheme.
+
+    Shared by the sync and async session policies; ``account_name`` is passed in
+    rather than read from ``self`` so neither policy needs to instantiate the other.
+
+    :param ~azure.core.pipeline.PipelineRequest request: The request to sign in place.
+    :param str session_token: The session token to embed in the Authorization header.
+    :param str session_key: The HMAC signing key for the session.
+    :param str account_name: Storage account name; the signer identity.
+    :raises ~azure.storage.blob._shared.authentication.AzureSigningError: if signing fails.
+    """
+    http_request = request.http_request
+    http_request.headers["x-ms-date"] = format_date_time(time())
+
+    # 1) Standard headers. Storage omits content-length when it is "0".
+    headers = {name.lower(): value for name, value in http_request.headers.items() if value}
+    if headers.get("content-length") == "0":
+        del headers["content-length"]
+    signed_headers = "\n".join(headers.get(h, "") for h in _SIGNED_HEADERS) + "\n"
+
+    # 2) Canonicalized x-ms-* headers, sorted by the service-emulating comparator.
+    x_ms_headers = _storage_header_sort(
+        [(n.lower(), v) for n, v in http_request.headers.items() if n.lower().startswith("x-ms-")]
+    )
+    canonicalized_headers = "".join(f"{n}:{v}\n" for n, v in x_ms_headers if v is not None)
+
+    # 3) Canonicalized resource + query (query values must be url-decoded).
+    canonicalized_resource = "/" + account_name + urlparse(http_request.url).path
+    canonicalized_resource += "".join(
+        f"\n{n.lower()}:{unquote(v)}" for n, v in sorted(http_request.query.items()) if v is not None
+    )
+
+    string_to_sign = http_request.method + "\n" + signed_headers + canonicalized_headers + canonicalized_resource
+
+    try:
+        signature = sign_string(session_key, string_to_sign)
+    except Exception as ex:  # pylint: disable=broad-except
+        raise AzureSigningError(str(ex)) from ex
+    http_request.headers["Authorization"] = f"Session {session_token}:{signature}"
+
+
 # Are we out of retries?
 def is_exhausted(settings):
     retry_counts = (
@@ -972,19 +1069,6 @@ class StorageSessionPolicy(HTTPPolicy):
     When disabled, all requests are delegated to the bearer token policy.
     """
 
-    _SIGNED_HEADERS = (
-        "content-encoding",
-        "content-language",
-        "content-length",
-        "content-md5",
-        "content-type",
-        "date",
-        "if-modified-since",
-        "if-match",
-        "if-none-match",
-        "if-unmodified-since",
-        "byte_range",
-    )
 
     def __init__(
         self,
@@ -1010,74 +1094,6 @@ class StorageSessionPolicy(HTTPPolicy):
         self._enabled = True
         self._cache = SessionCache()
 
-    @staticmethod
-    def _analyze_request(request: "PipelineRequest") -> Optional[Tuple[str, str]]:
-        http_request = request.http_request
-        if http_request.method != "GET":
-            return None
-        parsed = urlparse(http_request.url)
-        segments = [seg for seg in parsed.path.split("/") if seg]
-        if len(segments) < 2:
-            return None
-        query = http_request.query
-        if "comp" in query or query.get("restype") == "container":
-            return None
-        container_name = segments[0]
-        container_url = f"{parsed.scheme}://{parsed.netloc}/{container_name}"
-        return container_name, container_url
-
-    @staticmethod
-    def _used_session_token(request: "PipelineRequest") -> Optional[str]:
-        """Use for distinguishing between a successful concurrent refresh and invalidated token."""
-        auth = request.http_request.headers.get("Authorization", "")
-        if not auth.startswith("Session "):
-            return None
-        return auth[len("Session ") :].split(":", 1)[0] or None
-
-    @staticmethod
-    def _extract_session(response: Any) -> Tuple[str, str, datetime]:
-        creds = getattr(response, "credentials", None)
-        if not creds or not getattr(creds, "session_token", None) or not getattr(creds, "session_key", None):
-            raise ValueError("CreateSession response missing SessionToken/SessionKey")
-        session_token: str = creds.session_token
-        session_key: str = creds.session_key
-        expires_at = getattr(response, "expiration", None)
-        if expires_at is None:
-            expires_at = datetime.now(UTC) + timedelta(minutes=5)
-        elif expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=UTC)
-        return session_token, session_key, expires_at
-
-    def _apply_session_auth(self, request: "PipelineRequest", session_token: str, session_key: str) -> None:
-        http_request = request.http_request
-        http_request.headers["x-ms-date"] = format_date_time(time())
-
-        # 1) Standard headers. Storage omits content-length when it is "0".
-        headers = {name.lower(): value for name, value in http_request.headers.items() if value}
-        if headers.get("content-length") == "0":
-            del headers["content-length"]
-        signed_headers = "\n".join(headers.get(h, "") for h in self._SIGNED_HEADERS) + "\n"
-
-        # 2) Canonicalized x-ms-* headers, sorted by the service-emulating comparator.
-        x_ms_headers = _storage_header_sort(
-            [(n.lower(), v) for n, v in http_request.headers.items() if n.lower().startswith("x-ms-")]
-        )
-        canonicalized_headers = "".join(f"{n}:{v}\n" for n, v in x_ms_headers if v is not None)
-
-        # 3) Canonicalized resource + query (query values must be url-decoded).
-        canonicalized_resource = "/" + self._account_name + urlparse(http_request.url).path
-        canonicalized_resource += "".join(
-            f"\n{n.lower()}:{unquote(v)}" for n, v in sorted(http_request.query.items()) if v is not None
-        )
-
-        string_to_sign = http_request.method + "\n" + signed_headers + canonicalized_headers + canonicalized_resource
-
-        try:
-            signature = sign_string(session_key, string_to_sign)
-        except Exception as ex:  # pylint: disable=broad-except
-            raise AzureSigningError(str(ex)) from ex
-        http_request.headers["Authorization"] = f"Session {session_token}:{signature}"
-
     def _resolve_session(self, container_name: str, container_url: str) -> Optional[Session]:
         session = self._cache.get(container_name)
         if session is None:
@@ -1090,7 +1106,7 @@ class StorageSessionPolicy(HTTPPolicy):
         config = CreateSessionConfiguration(authentication_type="HMAC")
         client = self._session_client_factory(container_url)
         response = client.container.create_session(create_session_configuration=config)
-        return self._extract_session(response)
+        return _extract_session(response)
 
     def _refresh_session_token(self, container_name: str, container_url: str) -> Optional[Session]:
         """Acquire (or re-use) a session for the container under per-container single-flight.
@@ -1137,7 +1153,7 @@ class StorageSessionPolicy(HTTPPolicy):
         """
         if not self._enabled:
             return None
-        analysis = self._analyze_request(request)
+        analysis = _analyze_request(request)
         if analysis is None:
             return None
         container_name, container_url = analysis
@@ -1146,7 +1162,7 @@ class StorageSessionPolicy(HTTPPolicy):
         if session is None or not session.session_token or not session.session_key:
             return None
 
-        self._apply_session_auth(request, session.session_token, session.session_key)
+        _apply_session_auth(request, session.session_token, session.session_key, self._account_name)
         return container_name
 
     def on_response(
@@ -1191,7 +1207,7 @@ class StorageSessionPolicy(HTTPPolicy):
         # 401 → invalidate + re-acquire ONCE, then resend.
         if status == 401 and not request.context.options.get(SESSION_RETRIED_CONTEXT_KEY):
             _LOGGER.info("Session authentication: HTTP 401 on '%s'; re-acquiring once.", container_name)
-            used_token = self._used_session_token(request)
+            used_token = _used_session_token(request)
             with self._cache.lock_container(container_name):
                 self._cache.invalidate(container_name, used_token)
             request.context.options[SESSION_RETRIED_CONTEXT_KEY] = True
