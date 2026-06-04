@@ -331,6 +331,17 @@ class ResponsesAgentServerHost(AgentServerHost):
             host=self,
             provider=resolved_provider,
         )
+        # Wire the endpoint's shutdown flag into the orchestrator so the
+        # exception/cancellation handlers can detect "we're inside the
+        # graceful-shutdown grace window" before the durable task's
+        # ctx.shutdown event propagates. Without this, an upstream-client
+        # exception triggered by SIGTERM-via-killpg (e.g. an LLM SDK
+        # subprocess in the server's process group dying instantly)
+        # would be misclassified as a regular handler failure and bake
+        # a "failed" terminal into the durable task — instead of leaving
+        # the task in_progress for next-lifetime recovery as the spec /
+        # user-facing durability contract requires.
+        orchestrator._shutdown_event = endpoint._shutdown_requested  # pylint: disable=protected-access
 
         # Build response protocol routes
         response_routes: list[Route] = [

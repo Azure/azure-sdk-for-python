@@ -845,6 +845,19 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         self._runtime_options = runtime_options
         self._provider = provider
         self._acceptance_hook = acceptance_hook
+        # Optional shutdown-signal handle, wired by the host's _routing.py
+        # post-construction. When set, the cancellation/exception
+        # handlers in the streaming pipeline can detect "server is in
+        # graceful shutdown right now" — earlier than the durable task
+        # framework's ``ctx.shutdown`` event, which only fires once
+        # ``TaskManager.shutdown()`` runs (after Hypercorn has begun
+        # draining). The race matters for upstream-client failures
+        # triggered by SIGTERM propagating through the server's process
+        # group: without this signal, the orchestrator would treat them
+        # as plain handler exceptions and bake a "failed" terminal,
+        # contradicting the durability contract (durable_background
+        # responses must remain in_progress for next-lifetime recovery).
+        self._shutdown_event: "asyncio.Event | None" = None
 
         # Eagerly create the durable orchestrator so the @task function
         # is registered in _REGISTERED_DESCRIPTORS before TaskManager.startup()
@@ -1700,19 +1713,43 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # one, the handler exception is most likely a transient symptom
             # of the SIGTERM itself (e.g. an upstream LLM SDK subprocess
             # being killed in our process group before it could fully
-            # start). Leave the durable task in_progress so the
-            # next-lifetime recovery scanner re-invokes the handler with a
-            # fresh upstream client — baking a "failed" terminal here would
-            # orphan any queued steering inputs and prevent the response
-            # from making forward progress on a retry.
+            # start). Convert the exception into a cooperative-cancellation
+            # of the durable task body — raise asyncio.CancelledError so
+            # the @task framework leaves the task ``status="in_progress"``
+            # for next-lifetime recovery instead of writing a "failed"
+            # terminal that would orphan any queued steering inputs and
+            # prevent the response from making forward progress on a retry.
+            #
+            # "Mid-shutdown" detection prefers the durable task's
+            # cancellation_reason (set by the _durable_orchestrator's
+            # bridge once ctx.shutdown fires), but ALSO checks the
+            # server-level shutdown_event (set as Hypercorn's pre-shutdown
+            # callback — fires as soon as the process receives SIGTERM,
+            # before TaskManager.shutdown() propagates ctx.shutdown). The
+            # server-level signal closes a race where the handler raises
+            # in the gap between SIGTERM reaching the process group (which
+            # also kills any upstream client subprocesses) and the
+            # durable framework's cooperative-shutdown propagation.
             _reason = ctx.context.cancellation_reason if ctx.context else None
+            _server_shutting_down = (
+                self._shutdown_event is not None and self._shutdown_event.is_set()
+            )
             if (
-                _reason == CancellationReason.SHUTTING_DOWN
+                (_reason == CancellationReason.SHUTTING_DOWN or _server_shutting_down)
                 and ctx.background
                 and ctx.store
                 and self._runtime_options.durable_background
             ):
-                return
+                # Stamp the reason so the durable body's FR-005a check
+                # (which also looks at ctx.shutdown) routes consistently.
+                if ctx.context is not None and ctx.context.cancellation_reason is None:
+                    ctx.context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                # Raise CancelledError so the @task framework treats this
+                # as a cooperative cancel and leaves the task in_progress
+                # (see core durable/_manager.py CancelledError branch:
+                # "cancellation is never retried" but task stays
+                # in_progress for recovery scanner to pick up).
+                raise asyncio.CancelledError()
             # S-035: emit response.failed when handler raises after response.created.
             if not self._has_terminal_event(state.handler_events):
                 state.pending_terminal = await self._make_failed_event(ctx, state)
@@ -2718,14 +2755,37 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # ``record.subject`` (publish, close) target this stream.
         wire_stream = await streams.get_or_create(response_id)
         record.subject = wire_stream
+        # Per responses-api-behaviour-contract.md §Stream Recovery
+        # Limitations (Post-Crash): "SSE streams are NOT resumable
+        # after a container crash or restart". On recovery the prior
+        # lifetime's stream may be in CLOSED state (the terminal
+        # marker was flushed during graceful shutdown) — emits to it
+        # would be silently dropped by the closed-stream contract,
+        # leaving GET ?stream=true post-recovery without a terminal.
+        # Delete + recreate to give the recovered run a fresh,
+        # writable stream from sequence 0. This matches the spec's
+        # "no resumable SSE post-crash" position and guarantees that
+        # GET ?stream=true after recovery delivers a well-formed event
+        # sequence (including the terminal).
+        _is_recovery = False
+        if context is not None and context.durability is not None:
+            _is_recovery = bool(getattr(context.durability, "is_recovery", False))
+        if _is_recovery:
+            try:
+                await streams.delete(response_id)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "streams.delete on recovery failed (response_id=%s)",
+                    response_id,
+                    exc_info=True,
+                )
+            wire_stream = await streams.get_or_create(response_id)
+            record.subject = wire_stream
         # Seed the per-attempt sequence counter from the prior persisted
         # event count. On fresh entry the persisted log is empty →
-        # next_seq=0 (no behaviour change). On recovered entry the
-        # persisted log already has lifetime-1's events → next_seq = last
-        # cursor + 1 so the recovered handler's events have seq numbers
-        # strictly succeeding the pre-crash events, keeping the assembled
-        # (cross-attempt) stream monotonic. Best-effort: any backing error
-        # falls back to 0 rather than blocking the body.
+        # next_seq=0. On recovered entry we explicitly reset to a fresh
+        # stream above, so next_seq also starts at 0. Best-effort: any
+        # backing error falls back to 0 rather than blocking the body.
         try:
             _last = await wire_stream.last_cursor()
             state.next_seq = (_last + 1) if _last is not None else 0
