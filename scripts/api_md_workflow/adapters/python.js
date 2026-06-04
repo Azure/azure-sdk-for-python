@@ -13,8 +13,13 @@ function run(cmd, args, options = {}) {
     env: options.env,
     encoding: "utf-8",
     stdio: options.capture ? "pipe" : "inherit",
-    shell: process.platform === "win32",
+    shell: options.shell ?? false,
   });
+
+  if (result.error) {
+    const errorMessage = result.error instanceof Error ? result.error.message : String(result.error);
+    throw new Error(`Command failed to start: ${printable}\n${errorMessage}`);
+  }
 
   if ((options.check ?? true) && result.status !== 0) {
     throw new Error(`Command failed (${result.status}): ${printable}`);
@@ -112,6 +117,7 @@ function readVersion(packageDir) {
 function generateApiForPackage({
   repoRoot,
   packageName,
+  runtimeExecutable,
   logger,
   refLabel,
 }) {
@@ -121,10 +127,25 @@ function generateApiForPackage({
   }
 
   const packageDir = findPackageDir(repoRoot, packageName);
+  if (runtimeExecutable || process.env.RUNTIME_EXECUTABLE) {
+    const pythonExecutable = runtimeExecutable || process.env.RUNTIME_EXECUTABLE;
+    run(
+      pythonExecutable,
+      ["-m", "azpysdk.main", "apistub", "--md", "--extract-metadata", "--install-deps", "--dest-dir", packageDir, packageName],
+      {
+        cwd: repoRoot,
+        check: true,
+        logger: activeLogger,
+      },
+    );
+    return;
+  }
+
   run("azpysdk", ["apistub", "--md", "--extract-metadata", "--install-deps", "--dest-dir", packageDir, packageName], {
     cwd: repoRoot,
     check: true,
     logger: activeLogger,
+    shell: process.platform === "win32",
   });
 }
 
