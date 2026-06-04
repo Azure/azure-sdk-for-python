@@ -23,7 +23,8 @@ from ._models import(
     IssuerProperties,
     LifetimeAction,
     KeyVaultCertificate,
-    KeyVaultCertificateIdentifier
+    KeyVaultCertificateIdentifier,
+    PlatformManaged
 )
 from ._shared.client_base import ApiVersion
 
@@ -49,7 +50,8 @@ __all__ = [
     "CertificateContentType",
     "WellKnownIssuerNames",
     "CertificateIssuer",
-    "IssuerProperties"
+    "IssuerProperties",
+    "PlatformManaged"
 ]
 
 from ._version import VERSION

@@ -6,6 +6,7 @@
 """Unit tests for PlatformManaged property on CertificatePolicy (2026-03-01-preview)."""
 
 import pytest
+from azure.keyvault.certificates import CertificatePolicy, PlatformManaged, WellKnownIssuerNames
 from azure.keyvault.certificates._generated import models
 
 
@@ -96,3 +97,84 @@ class TestCertificatePolicyPlatformManaged:
         }
         policy = models.CertificatePolicy(raw)
         assert policy.platform_managed is None
+
+
+class TestPublicPlatformManaged:
+    """Tests for the public PlatformManaged wrapper and CertificatePolicy.platform_managed."""
+
+    def test_wrapper_required_field_only(self):
+        pm = PlatformManaged("tls-server")
+        assert pm.certificate_usage == "tls-server"
+        assert pm.metadata is None
+
+    def test_wrapper_with_metadata(self):
+        pm = PlatformManaged("tls-client", metadata={"env": "prod"})
+        assert pm.certificate_usage == "tls-client"
+        assert pm.metadata == {"env": "prod"}
+
+    def test_wrapper_repr(self):
+        pm = PlatformManaged("tls-server")
+        assert "tls-server" in repr(pm)
+
+    def test_metadata_kwarg_only(self):
+        # metadata must be keyword-only
+        with pytest.raises(TypeError):
+            PlatformManaged("tls-server", {"env": "prod"})  # type: ignore
+
+    def test_policy_default_platform_managed_is_none(self):
+        policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self)
+        assert policy.platform_managed is None
+
+    def test_policy_with_platform_managed(self):
+        pm = PlatformManaged("tls-server", metadata={"k": "v"})
+        policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self, platform_managed=pm)
+        assert policy.platform_managed is pm
+        assert policy.platform_managed.certificate_usage == "tls-server"
+        assert policy.platform_managed.metadata == {"k": "v"}
+
+    def test_to_bundle_serializes_platform_managed(self):
+        pm = PlatformManaged("tls-server", metadata={"env": "prod"})
+        policy = CertificatePolicy(issuer_name="Self", platform_managed=pm)
+        bundle = policy._to_certificate_policy_bundle()
+        assert bundle.platform_managed is not None
+        assert bundle.platform_managed.certificate_usage == "tls-server"
+        assert bundle.platform_managed.metadata == {"env": "prod"}
+
+    def test_to_bundle_without_platform_managed(self):
+        policy = CertificatePolicy(issuer_name="Self")
+        bundle = policy._to_certificate_policy_bundle()
+        assert bundle.platform_managed is None
+
+    def test_from_bundle_reads_platform_managed(self):
+        gen_pm = models.PlatformManaged(certificate_usage="tls-client", metadata={"a": 1})
+        bundle = models.CertificatePolicy(
+            issuer_parameters=models.IssuerParameters(name="Self"),
+            platform_managed=gen_pm,
+        )
+        policy = CertificatePolicy._from_certificate_policy_bundle(bundle)
+        assert policy.platform_managed is not None
+        assert policy.platform_managed.certificate_usage == "tls-client"
+        assert policy.platform_managed.metadata == {"a": 1}
+
+    def test_from_bundle_without_platform_managed(self):
+        bundle = models.CertificatePolicy(
+            issuer_parameters=models.IssuerParameters(name="Self"),
+        )
+        policy = CertificatePolicy._from_certificate_policy_bundle(bundle)
+        assert policy.platform_managed is None
+
+    def test_round_trip_preserves_platform_managed(self):
+        pm = PlatformManaged("tls-server", metadata={"env": "prod", "owner": "team-x"})
+        original = CertificatePolicy(issuer_name="Self", platform_managed=pm)
+        bundle = original._to_certificate_policy_bundle()
+        restored = CertificatePolicy._from_certificate_policy_bundle(bundle)
+        assert restored.platform_managed is not None
+        assert restored.platform_managed.certificate_usage == "tls-server"
+        assert restored.platform_managed.metadata == {"env": "prod", "owner": "team-x"}
+
+    def test_platform_managed_exported_from_public_namespace(self):
+        # Guards against future regression where the wrapper is only available under _models.
+        import azure.keyvault.certificates as kv_certs
+
+        assert kv_certs.PlatformManaged is PlatformManaged
+        assert "PlatformManaged" in kv_certs.__all__

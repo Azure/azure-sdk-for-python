@@ -5,7 +5,7 @@
 ### Features Added
 
 - Added support for service API version `2026-03-01-preview`
-- Added `PlatformManaged` property to `CertificatePolicy`
+- Added `PlatformManaged` model and `platform_managed` keyword argument / property on `CertificatePolicy`, exposed from the public `azure.keyvault.certificates` namespace
 
 ### Breaking Changes
 

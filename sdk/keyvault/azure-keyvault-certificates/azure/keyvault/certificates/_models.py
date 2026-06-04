@@ -689,6 +689,53 @@ class CertificateOperation(object):
         return self._preserve_order
 
 
+class PlatformManaged(object):
+    """Configuration that enables the platform to manage the certificate on behalf of the user.
+
+    This feature is currently intended for internal use only.
+
+    :param certificate_usage: The intended usage of the certificate.
+    :type certificate_usage: str
+    :keyword metadata: JSON-formatted platform managed metadata. The schema is intentionally
+        undefined as this feature is currently intended for internal use only.
+    :paramtype metadata: dict[str, Any] or None
+    """
+
+    def __init__(self, certificate_usage: str, *, metadata: Optional[Dict[str, Any]] = None) -> None:
+        self._certificate_usage = certificate_usage
+        self._metadata = metadata
+
+    def __repr__(self) -> str:
+        return f"<PlatformManaged [certificate_usage: {self._certificate_usage}]>"[:1024]
+
+    @property
+    def certificate_usage(self) -> str:
+        """The intended usage of the certificate.
+
+        :returns: The intended usage of the certificate.
+        :rtype: str
+        """
+        return self._certificate_usage
+
+    @property
+    def metadata(self) -> Optional[Dict[str, Any]]:
+        """JSON-formatted platform managed metadata.
+
+        :returns: Platform managed metadata, if any.
+        :rtype: dict[str, Any] or None
+        """
+        return self._metadata
+
+    def _to_generated(self) -> models.PlatformManaged:
+        return models.PlatformManaged(certificate_usage=self._certificate_usage, metadata=self._metadata)
+
+    @classmethod
+    def _from_generated(cls, generated: Optional[models.PlatformManaged]) -> Optional["PlatformManaged"]:
+        if generated is None:
+            return None
+        return cls(certificate_usage=generated.certificate_usage, metadata=generated.metadata)
+
+
 class CertificatePolicy(object):
     """Management policy for a certificate.
 
@@ -742,6 +789,9 @@ class CertificatePolicy(object):
     :keyword certificate_transparency: Indicates if the certificates generated under this policy should be
         published to certificate transparency logs.
     :paramtype certificate_transparency: bool or None
+    :keyword platform_managed: Configuration that enables the platform to manage the certificate on behalf
+        of the user. This feature is currently intended for internal use only.
+    :paramtype platform_managed: ~azure.keyvault.certificates.PlatformManaged or None
     """
 
     # pylint:disable=too-many-instance-attributes
@@ -770,6 +820,7 @@ class CertificatePolicy(object):
         self._san_user_principal_names = kwargs.pop("san_user_principal_names", None) or None
         self._san_ip_addresses = kwargs.pop("san_ip_addresses", None) or None
         self._san_uris = kwargs.pop("san_uris", None) or None
+        self._platform_managed = kwargs.pop("platform_managed", None)
 
     @classmethod
     def get_default(cls) -> "CertificatePolicy":
@@ -874,6 +925,7 @@ class CertificatePolicy(object):
             lifetime_actions=lifetime_actions,
             issuer_parameters=issuer_parameters,
             attributes=attributes,
+            platform_managed=self._platform_managed._to_generated() if self._platform_managed else None,
         )
         return policy_bundle
 
@@ -954,6 +1006,9 @@ class CertificatePolicy(object):
             ),
             validity_in_months=(
                 x509_certificate_properties.validity_in_months if x509_certificate_properties else None
+            ),
+            platform_managed=PlatformManaged._from_generated(
+                getattr(certificate_policy_bundle, "platform_managed", None)
             ),
         )
 
@@ -1082,6 +1137,17 @@ class CertificatePolicy(object):
         :rtype: list[str] or None
         """
         return self._san_uris
+
+    @property
+    def platform_managed(self) -> Optional[PlatformManaged]:
+        """Configuration that enables the platform to manage the certificate on behalf of the user.
+
+        This feature is currently intended for internal use only.
+
+        :returns: The platform managed configuration, if set.
+        :rtype: ~azure.keyvault.certificates.PlatformManaged or None
+        """
+        return self._platform_managed
 
     @property
     def validity_in_months(self) -> Optional[int]:
