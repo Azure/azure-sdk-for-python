@@ -59,7 +59,8 @@ class AccessRuleProperties(_Model):
     :ivar address_prefixes: Address prefixes in the CIDR format for inbound rules.
     :vartype address_prefixes: list[str]
     :ivar subscriptions: Subscriptions for inbound rules.
-    :vartype subscriptions: list[~azure.mgmt.loganalytics.models.AccessRulePropertiesSubscription]
+    :vartype subscriptions:
+     list[~azure.mgmt.loganalytics.models.AccessRulePropertiesSubscriptionsItem]
     :ivar network_security_perimeters: Network security perimeters for inbound rules.
     :vartype network_security_perimeters:
      list[~azure.mgmt.loganalytics.models.NetworkSecurityPerimeter]
@@ -79,7 +80,7 @@ class AccessRuleProperties(_Model):
         name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Address prefixes in the CIDR format for inbound rules."""
-    subscriptions: Optional[list["_models.AccessRulePropertiesSubscription"]] = rest_field(
+    subscriptions: Optional[list["_models.AccessRulePropertiesSubscriptionsItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Subscriptions for inbound rules."""
@@ -106,7 +107,7 @@ class AccessRuleProperties(_Model):
         *,
         direction: Optional[Union[str, "_models.AccessRuleDirection"]] = None,
         address_prefixes: Optional[list[str]] = None,
-        subscriptions: Optional[list["_models.AccessRulePropertiesSubscription"]] = None,
+        subscriptions: Optional[list["_models.AccessRulePropertiesSubscriptionsItem"]] = None,
         network_security_perimeters: Optional[list["_models.NetworkSecurityPerimeter"]] = None,
         fully_qualified_domain_names: Optional[list[str]] = None,
         email_addresses: Optional[list[str]] = None,
@@ -124,8 +125,9 @@ class AccessRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRulePropertiesSubscription(_Model):
-    """AccessRulePropertiesSubscription.
+class AccessRulePropertiesSubscriptionsItem(_Model):
+    """we add this model  in order to replace subscriptions model in CommonTypes with this model via
+    alternateType decorator.
 
     :ivar id: The fully qualified Azure resource ID of the subscription e.g.
      ('/subscriptions/00000000-0000-0000-0000-000000000000').
@@ -3621,7 +3623,8 @@ class SummaryLogsProperties(_Model):
      'deleting', indicates a resource lock due to an ongoing operation, preventing any update to the
      Summary rule until the operation is complete. Known values are: "Updating", "Succeeded",
      "Deleting", "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.loganalytics.models.ProvisioningStateEnum
+    :vartype provisioning_state: str or
+     ~azure.mgmt.loganalytics.models.SummaryLogsProvisioningState
     :ivar rule_definition: Rule definition parameters.
     :vartype rule_definition: ~azure.mgmt.loganalytics.models.RuleDefinition
     """
@@ -3641,7 +3644,7 @@ class SummaryLogsProperties(_Model):
     status_code: Optional[Union[str, "_models.StatusCodeEnum"]] = rest_field(name="statusCode", visibility=["read"])
     """Indicates the reason for rule deactivation. Known values are: \"UserAction\" and
      \"DataPlaneError\"."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.SummaryLogsProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Summary rule is in provisioning state. If set to 'updating' or 'deleting', indicates a resource
@@ -3905,8 +3908,7 @@ class TableProperties(_Model):
      resource lock due to ongoing operation, forbidding any update to the table until the ongoing
      operation is concluded. Known values are: "Updating", "InProgress", "Succeeded", and
      "Deleting".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.loganalytics.models.OperationalInsightsTableProvisioningState
+    :vartype provisioning_state: str or ~azure.mgmt.loganalytics.models.ProvisioningStateEnum
     :ivar retention_in_days_as_default: True - Value originates from workspace retention in days,
      False - Customer specific.
     :vartype retention_in_days_as_default: bool
@@ -3947,7 +3949,7 @@ class TableProperties(_Model):
     """The timestamp that table plan was last modified (UTC)."""
     schema: Optional["_models.Schema"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Table schema."""
-    provisioning_state: Optional[Union[str, "_models.OperationalInsightsTableProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Table's current provisioning state. If set to 'updating', indicates a resource lock due to

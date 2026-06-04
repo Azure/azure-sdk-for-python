@@ -3,7 +3,7 @@
     "CrossLanguageDefinitionId": {
         "azure.mgmt.loganalytics.models.AccessRule": "Azure.ResourceManager.CommonTypes.AccessRule",
         "azure.mgmt.loganalytics.models.AccessRuleProperties": "Azure.ResourceManager.CommonTypes.AccessRuleProperties",
-        "azure.mgmt.loganalytics.models.AccessRulePropertiesSubscription": "Azure.ResourceManager.CommonTypes.AccessRuleProperties.subscription.anonymous",
+        "azure.mgmt.loganalytics.models.AccessRulePropertiesSubscriptionsItem": "AccessRulePropertiesSubscriptionsItem",
         "azure.mgmt.loganalytics.models.AssociatedWorkspace": "Microsoft.OperationalInsights.AssociatedWorkspace",
         "azure.mgmt.loganalytics.models.AvailableServiceTier": "Microsoft.OperationalInsights.AvailableServiceTier",
         "azure.mgmt.loganalytics.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
@@ -125,7 +125,7 @@
         "azure.mgmt.loganalytics.models.SourceEnum": "Microsoft.OperationalInsights.SourceEnum",
         "azure.mgmt.loganalytics.models.TableTypeEnum": "Microsoft.OperationalInsights.TableTypeEnum",
         "azure.mgmt.loganalytics.models.TableSubTypeEnum": "Microsoft.OperationalInsights.TableSubTypeEnum",
-        "azure.mgmt.loganalytics.models.OperationalInsightsTableProvisioningState": "Microsoft.OperationalInsights.OperationalInsightsTableProvisioningState",
+        "azure.mgmt.loganalytics.models.ProvisioningStateEnum": "Microsoft.OperationalInsights.OperationalInsightsTableProvisioningState",
         "azure.mgmt.loganalytics.models.SkuNameEnum": "Microsoft.OperationalInsights.SkuNameEnum",
         "azure.mgmt.loganalytics.models.SearchSortEnum": "Microsoft.OperationalInsights.SearchSortEnum",
         "azure.mgmt.loganalytics.models.PurgeState": "Microsoft.OperationalInsights.PurgeState",
@@ -133,7 +133,7 @@
         "azure.mgmt.loganalytics.models.StorageInsightState": "Microsoft.OperationalInsights.StorageInsightState",
         "azure.mgmt.loganalytics.models.RuleTypeEnum": "Microsoft.OperationalInsights.RuleTypeEnum",
         "azure.mgmt.loganalytics.models.StatusCodeEnum": "Microsoft.OperationalInsights.StatusCodeEnum",
-        "azure.mgmt.loganalytics.models.ProvisioningStateEnum": "Microsoft.OperationalInsights.ProvisioningStateEnum",
+        "azure.mgmt.loganalytics.models.SummaryLogsProvisioningState": "Microsoft.OperationalInsights.ProvisioningStateEnum",
         "azure.mgmt.loganalytics.models.TimeSelectorEnum": "Microsoft.OperationalInsights.TimeSelectorEnum",
         "azure.mgmt.loganalytics.operations.Operations.list": "Azure.ResourceManager.Legacy.Operations.list",
         "azure.mgmt.loganalytics.aio.operations.Operations.list": "Azure.ResourceManager.Legacy.Operations.list",
@@ -304,5 +304,5 @@
         "azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations.list_by_resource_group": "Microsoft.OperationalInsights.DeletedWorkspacesOperationGroup.listByResourceGroup",
         "azure.mgmt.loganalytics.aio.operations.DeletedWorkspacesOperations.list_by_resource_group": "Microsoft.OperationalInsights.DeletedWorkspacesOperationGroup.listByResourceGroup"
     },
-    "CrossLanguageVersion": "a89559d21b7a"
+    "CrossLanguageVersion": "6fc845d823bb"
 }

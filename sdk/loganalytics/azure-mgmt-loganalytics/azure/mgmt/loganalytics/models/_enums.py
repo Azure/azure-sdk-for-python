@@ -310,9 +310,7 @@ class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable
     """CANCELED."""
 
 
-class OperationalInsightsTableProvisioningState(  # pylint: disable=name-too-long
-    str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
+class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Table's current provisioning state. If set to 'updating', indicates a resource lock due to
     ongoing operation, forbidding any update to the table until the ongoing operation is concluded.
     """
@@ -326,24 +324,6 @@ class OperationalInsightsTableProvisioningState(  # pylint: disable=name-too-lon
     """Table state is stable and without changes, table is unlocked and open for new updates."""
     DELETING = "Deleting"
     """Table state is deleting."""
-
-
-class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Table's current provisioning state. If set to 'updating', indicates a resource lock due to
-    ongoing operation, forbidding any update to the table until the ongoing operation is concluded.
-    """
-
-    UPDATING = "Updating"
-    """Table schema is still being built and updated, table is currently locked for any changes till
-    the procedure is done."""
-    SUCCEEDED = "Succeeded"
-    """Table state is stable and without changes, table is unlocked and open for new updates."""
-    DELETING = "Deleting"
-    """Table state is deleting."""
-    FAILED = "Failed"
-    """Table state is failed."""
-    CANCELED = "Canceled"
-    """Table state is canceled."""
 
 
 class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -448,6 +428,24 @@ class StorageInsightState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OK."""
     ERROR = "ERROR"
     """ERROR."""
+
+
+class SummaryLogsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Table's current provisioning state. If set to 'updating', indicates a resource lock due to
+    ongoing operation, forbidding any update to the table until the ongoing operation is concluded.
+    """
+
+    UPDATING = "Updating"
+    """Table schema is still being built and updated, table is currently locked for any changes till
+    the procedure is done."""
+    SUCCEEDED = "Succeeded"
+    """Table state is stable and without changes, table is unlocked and open for new updates."""
+    DELETING = "Deleting"
+    """Table state is deleting."""
+    FAILED = "Failed"
+    """Table state is failed."""
+    CANCELED = "Canceled"
+    """Table state is canceled."""
 
 
 class TablePlanEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
