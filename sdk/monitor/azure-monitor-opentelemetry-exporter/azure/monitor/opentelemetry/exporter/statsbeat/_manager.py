@@ -2,8 +2,9 @@
 # Licensed under the MIT License.
 import logging
 import threading
-from typing import Optional, Any, Dict
+from typing import Callable, Iterable, Optional, Any, Dict
 
+from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
@@ -19,6 +20,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _get_stats_long_export_interval,
     _get_stats_short_export_interval,
     _get_connection_string_for_region_from_config,
+    _ADDITIONAL_CALLBACKS,
+    _ADDITIONAL_CALLBACKS_LOCK,
 )
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
@@ -377,3 +380,18 @@ class StatsbeatManager(metaclass=Singleton):
         """
         with self._lock:
             return self._initialized
+
+    def add_metric_callback(
+        self,
+        metric_name: str,
+        callback: Callable[[CallbackOptions], Iterable[Observation]],
+    ) -> bool:
+        """Register an extra observation callback that an SDK/Distro with its own network sdkstats metric can use to
+        contribute rows to a built-in statsbeat metric.
+        """
+        with _ADDITIONAL_CALLBACKS_LOCK:
+            callbacks = _ADDITIONAL_CALLBACKS.setdefault(metric_name, [])
+            if callback in callbacks:
+                return False
+            callbacks.append(callback)
+            return True

@@ -20,6 +20,9 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
 )
+from opentelemetry.metrics import Observation
+from azure.monitor.opentelemetry.exporter.statsbeat import _utils as statsbeat_utils
+from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
@@ -34,6 +37,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _StatsbeatMetrics,
     _AttachTypes,
     _RP_Names,
+)
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    _iter_extra_observations,
 )
 
 
@@ -966,5 +972,134 @@ class TestStatsbeatMetrics(unittest.TestCase):
         url = "http://fakehost-5/"
         self.assertEqual(_shorten_host(url), "fakehost-5")
 
+
+# pylint: disable=protected-access
+class TestExtraObservationCallbacks(unittest.TestCase):
+    """Tests for StatsbeatManager.add_metric_callback and the _iter_extra_observations helper."""
+
+    def setUp(self):
+        statsbeat_utils._ADDITIONAL_CALLBACKS.clear()
+        _REQUESTS_MAP.clear()
+
+    def tearDown(self):
+        statsbeat_utils._ADDITIONAL_CALLBACKS.clear()
+        _REQUESTS_MAP.clear()
+
+    def _make_metric(self):
+        return _StatsbeatMetrics(
+            MeterProvider(),
+            "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334",
+            "https://westus-1.in.applicationinsights.azure.com/",
+            False,
+            0,
+            False,
+        )
+
+    # ---- StatsbeatManager.add_metric_callback ----
+
+    def test_add_returns_true_first_time(self):
+        cb = lambda options: []  # noqa: E731
+        self.assertTrue(StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], cb))
+        self.assertEqual(statsbeat_utils._ADDITIONAL_CALLBACKS[_REQ_SUCCESS_NAME[0]], [cb])
+
+    def test_add_is_idempotent_on_same_callback(self):
+        cb = lambda options: []  # noqa: E731
+        self.assertTrue(StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], cb))
+        self.assertFalse(StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], cb))
+        self.assertEqual(statsbeat_utils._ADDITIONAL_CALLBACKS[_REQ_SUCCESS_NAME[0]], [cb])
+
+    def test_add_supports_multiple_distinct_callbacks(self):
+        cb1 = lambda options: []  # noqa: E731
+        cb2 = lambda options: []  # noqa: E731
+        self.assertTrue(StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], cb1))
+        self.assertTrue(StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], cb2))
+        self.assertEqual(
+            statsbeat_utils._ADDITIONAL_CALLBACKS[_REQ_SUCCESS_NAME[0]],
+            [cb1, cb2],
+        )
+
+    # ---- _iter_extra_observations ----
+
+    def test_iter_unregistered_name_yields_nothing(self):
+        self.assertEqual(list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None)), [])
+
+    def test_iter_yields_observations_from_registered_callback(self):
+        obs = Observation(7, {"endpoint": "ep1"})
+
+        def cb(_options):
+            yield obs
+
+        StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], cb)
+        self.assertEqual(list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None)), [obs])
+
+    def test_iter_aggregates_across_multiple_callbacks(self):
+        obs1 = Observation(1, {"endpoint": "ep1"})
+        obs2 = Observation(2, {"endpoint": "ep2"})
+        StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], lambda _options: [obs1])
+        StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], lambda _options: [obs2])
+        self.assertEqual(
+            list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None)),
+            [obs1, obs2],
+        )
+
+    def test_iter_swallows_callback_exception_and_continues(self):
+        good_obs = Observation(42, {"endpoint": "ok"})
+
+        def bad_cb(_options):
+            raise RuntimeError("boom")
+
+        StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], bad_cb)
+        StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], lambda _options: [good_obs])
+        # Should not raise; should still emit the good observation.
+        self.assertEqual(
+            list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None)),
+            [good_obs],
+        )
+
+    def test_iter_callbacks_for_other_metrics_not_invoked(self):
+        called = []
+        StatsbeatManager().add_metric_callback(
+            _REQ_FAILURE_NAME[0], lambda _options: called.append("failure") or []
+        )
+        list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None))
+        self.assertEqual(called, [])
+
+    # ---- integration with built-in callbacks ----
+
+    def test_success_count_callback_emits_extras(self):
+        metric = self._make_metric()
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 5
+
+        extra = Observation(99, {"endpoint": "extra-ep", "statusCode": 200})
+        StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], lambda _options: [extra])
+
+        observations = metric._get_success_count(options=None)
+
+        # Built-in observation followed by the extra one.
+        self.assertEqual(len(observations), 2)
+        self.assertEqual(observations[0].value, 5)
+        self.assertIs(observations[-1], extra)
+
+    def test_success_count_callback_unchanged_without_extras(self):
+        metric = self._make_metric()
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 3
+
+        observations = metric._get_success_count(options=None)
+
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(observations[0].value, 3)
+
+    def test_extras_for_other_metric_do_not_leak_into_success(self):
+        metric = self._make_metric()
+        _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 1
+
+        unrelated = Observation(123, {"endpoint": "other"})
+        StatsbeatManager().add_metric_callback(_REQ_FAILURE_NAME[0], lambda _options: [unrelated])
+
+        observations = metric._get_success_count(options=None)
+
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(observations[0].value, 1)
+        self.assertNotIn(unrelated, observations)
 
 # cSpell:enable

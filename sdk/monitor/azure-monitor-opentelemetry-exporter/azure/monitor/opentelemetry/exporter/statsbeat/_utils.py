@@ -3,8 +3,10 @@
 import os
 import logging
 import json
-from collections.abc import Iterable  # pylint: disable=import-error
+import threading
+from collections.abc import Iterable, Callable, Iterator  # pylint: disable=import-error
 from typing import Optional, Dict
+from opentelemetry.metrics import CallbackOptions, Observation
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
@@ -25,6 +27,9 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _REQUESTS_MAP_LOCK,
 )
+
+_ADDITIONAL_CALLBACKS: dict[str, list[Callable[[CallbackOptions], Iterable[Observation]]]] = {}
+_ADDITIONAL_CALLBACKS_LOCK = threading.Lock()
 
 
 def _get_stats_connection_string(endpoint: str) -> str:
@@ -165,3 +170,32 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
             "Unexpected error getting stats connection string for region '%s': %s", target_region, str(ex)
         )
         return None
+
+
+def _iter_extra_observations(
+    metric_name: str, options: CallbackOptions
+) -> Iterator[Observation]:
+    """Yield observations contributed via :func:`add_metric_callback`.
+
+    Invoked by the built-in ``_StatsbeatMetrics`` callbacks at collection time.
+    Snapshots the registered callbacks under the registry lock to avoid
+    mutation during iteration, then releases the lock before invoking user
+    callbacks (so they cannot deadlock against the registry). Exceptions raised
+    by individual callbacks are caught, logged, and skipped.
+    """
+
+    with _ADDITIONAL_CALLBACKS_LOCK:
+        callbacks = tuple(_ADDITIONAL_CALLBACKS.get(metric_name, ()))
+
+    iter_logger = logging.getLogger(__name__)
+    for cb in callbacks:
+        try:
+            for observation in cb(options):
+                yield observation
+        except Exception:  # pylint: disable=broad-except
+            iter_logger.debug(
+                "Extra statsbeat callback %r for %r raised; skipping.",
+                cb,
+                metric_name,
+                exc_info=True,
+            )

@@ -3,6 +3,8 @@
 ## 1.0.0b54 (Unreleased)
 
 ### Features Added
+- Add `StatsbeatManager.add_metric_callback` to let SDKs/distros contribute extra
+  observations to built-in statsbeat metrics
 
 ### Breaking Changes
 - Customer Facing SDKStats: Renamed metric dimension attributes from snake_case/dotted to camelCase
