@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.monitorworkspaces import MonitorClient
+from azure.mgmt.monitorworkspaces import MonitorWorkspacesMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.monitorworkspaces import MonitorClient
 
 
 def main():
-    client = MonitorClient(
+    client = MonitorWorkspacesMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

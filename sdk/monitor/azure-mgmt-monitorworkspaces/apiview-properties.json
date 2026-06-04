@@ -105,5 +105,6 @@
         "azure.mgmt.monitorworkspaces.aio.operations.MetricsContainersOperations.create_or_update": "Microsoft.Monitor.MetricsContainers.createOrUpdate",
         "azure.mgmt.monitorworkspaces.operations.MetricsContainersOperations.list_by_azure_monitor_workspace": "Microsoft.Monitor.MetricsContainers.listByAzureMonitorWorkspace",
         "azure.mgmt.monitorworkspaces.aio.operations.MetricsContainersOperations.list_by_azure_monitor_workspace": "Microsoft.Monitor.MetricsContainers.listByAzureMonitorWorkspace"
-    }
+    },
+    "CrossLanguageVersion": "b24c26eb8e7b"
 }

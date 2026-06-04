@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -17,17 +17,22 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import MonitorClientConfiguration
+from ._configuration import MonitorWorkspacesMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import AzureMonitorWorkspacesOperations, IssueOperations, MetricsContainersOperations, Operations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class MonitorClient:
-    """MonitorClient.
+class MonitorWorkspacesMgmtClient:
+    """MonitorWorkspacesMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.monitorworkspaces.operations.Operations
@@ -48,9 +53,9 @@ class MonitorClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-10-03".
-     Default value is "2025-10-03". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-10-03"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -71,7 +76,7 @@ class MonitorClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = MonitorClientConfiguration(
+        self._config = MonitorWorkspacesMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

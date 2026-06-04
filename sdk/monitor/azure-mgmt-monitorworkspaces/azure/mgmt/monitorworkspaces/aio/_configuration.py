@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MonitorClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for MonitorClient.
+class MonitorWorkspacesMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for MonitorWorkspacesMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -33,9 +33,9 @@ class MonitorClientConfiguration:  # pylint: disable=too-many-instance-attribute
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-10-03".
-     Default value is "2025-10-03". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-10-03"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitorworkspaces import MonitorClient
+from azure.mgmt.monitorworkspaces.aio import MonitorWorkspacesMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMonitorMetricsContainersOperations(AzureMgmtRecordedTestCase):
+class TestMonitorWorkspacesMgmtMetricsContainersOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(MonitorClient)
+        self.client = self.create_mgmt_client(MonitorWorkspacesMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_metrics_containers_get(self, resource_group):
-        response = self.client.metrics_containers.get(
+    @recorded_by_proxy_async
+    async def test_metrics_containers_get(self, resource_group):
+        response = await self.client.metrics_containers.get(
             resource_group_name=resource_group.name,
             azure_monitor_workspace_name="str",
             metrics_container_name="str",
@@ -31,9 +32,9 @@ class TestMonitorMetricsContainersOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_metrics_containers_create_or_update(self, resource_group):
-        response = self.client.metrics_containers.create_or_update(
+    @recorded_by_proxy_async
+    async def test_metrics_containers_create_or_update(self, resource_group):
+        response = await self.client.metrics_containers.create_or_update(
             resource_group_name=resource_group.name,
             azure_monitor_workspace_name="str",
             metrics_container_name="str",
@@ -57,12 +58,12 @@ class TestMonitorMetricsContainersOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_metrics_containers_list_by_azure_monitor_workspace(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_metrics_containers_list_by_azure_monitor_workspace(self, resource_group):
         response = self.client.metrics_containers.list_by_azure_monitor_workspace(
             resource_group_name=resource_group.name,
             azure_monitor_workspace_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
