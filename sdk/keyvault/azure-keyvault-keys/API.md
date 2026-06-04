@@ -38,6 +38,12 @@ namespace azure.keyvault.keys
 
 
     class azure.keyvault.keys.ExternalKey:
+        # A key that is managed outside Azure Key Vault.
+        # External keys reference key material stored by an external key manager,
+        # allowing Key Vault operations to identify and use that external key by id.
+        # A key that is managed outside Azure Key Vault.
+        # External keys reference key material stored by an external key manager,
+        # allowing Key Vault operations to identify and use that external key by id.
 
         def __init__(
                 self, 
