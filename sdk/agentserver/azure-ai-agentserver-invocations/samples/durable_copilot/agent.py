@@ -53,6 +53,7 @@ from pathlib import Path
 from typing import Any
 
 from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.streaming import streams
 
 from .store import FileStore
 
@@ -177,7 +178,8 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     invocation_id: str = ctx.input["invocation_id"]
 
     invocation_store.save(invocation_id, {"status": "running"})
-    await ctx.stream({"type": "lifecycle", "status": "running"})
+    stream = await streams.get_or_create(invocation_id)
+    await stream.emit({"type": "lifecycle", "status": "running"})
 
     logger.info(
         "Copilot session %s steered=%s invocation=%s entry=%s",
@@ -200,7 +202,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     "Recovery replay: %d chars from upstream session log",
                     len(recovered_text),
                 )
-                await ctx.stream(
+                await stream.emit(
                     {
                         "type": "text_delta",
                         "delta": recovered_text,
@@ -260,11 +262,11 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     content = getattr(data, "content", "") or ""
                     reply_parts.append(content)
                     loop.create_task(
-                        _stream_and_persist(ctx, invocation_id, content, reply_parts)
+                        _stream_and_persist(stream, invocation_id, content, reply_parts)
                     )
             elif isinstance(data, SessionIdleData):
                 # FR-011 gap 3 — emit session_idle to consumers and unblock us.
-                loop.create_task(ctx.stream({"type": "session_idle"}))
+                loop.create_task(stream.emit({"type": "session_idle"}))
                 idle_event.set()
 
         session.on(on_event)
@@ -325,14 +327,14 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
 
 
 async def _stream_and_persist(
-    ctx: TaskContext[dict],
+    stream: Any,
     invocation_id: str,
     delta: str,
     parts: list[str],
 ) -> None:
     """Push a streaming delta and persist the running text snapshot."""
 
-    await ctx.stream({"type": "text_delta", "delta": delta})
+    await stream.emit({"type": "text_delta", "delta": delta})
     invocation_store.save(
         invocation_id,
         {

@@ -75,15 +75,17 @@ class TestTaskDecorator:
         with pytest.raises((TypeError, AttributeError)):
             task(42)  # type: ignore[arg-type]
 
-    def test_stream_handler_factory_still_accepted(self) -> None:
-        """FR-006: ``stream_handler_factory=`` remains a supported @task kwarg."""
-        from azure.ai.agentserver.core.durable import QueueStreamHandler
+    def test_stream_handler_factory_rejected_post_spec_017(self) -> None:
+        """Spec 017 FR-015: ``stream_handler_factory=`` is REMOVED from
+        the @task signature. Passing it raises ``TypeError`` for
+        unknown keyword argument. Streaming now lives in the
+        ``azure.ai.agentserver.core.streaming`` peer subpackage with
+        a registry-based lifecycle model."""
 
-        @task(stream_handler_factory=lambda task_id: QueueStreamHandler())
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        assert my_task._opts.stream_handler_factory is not None
+        with pytest.raises(TypeError, match="stream_handler_factory"):
+            @task(stream_handler_factory=lambda task_id: None)  # type: ignore[call-arg]
+            async def my_task(ctx: TaskContext[str]) -> int:
+                return 1
 
     @pytest.mark.parametrize(
         "kwarg",

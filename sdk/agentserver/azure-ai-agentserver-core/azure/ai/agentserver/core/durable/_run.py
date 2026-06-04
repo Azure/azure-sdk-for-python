@@ -15,7 +15,6 @@ from ._metadata import TaskMetadata
 from ._models import TaskInfo, TaskStatus
 from ._provider import TaskProvider
 from ._result import TaskResult
-from ._stream import StreamHandler
 
 Output = TypeVar("Output")
 
@@ -76,7 +75,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         "_terminate_event",  # Spec 016 FR-022: retained as internal-only; will be removed when callers stop passing it
         "_terminate_reason_ref",
         "_status",
-        "_stream_handler",
         "_execution_task",
         "_lease_expiry_count",
     )
@@ -90,7 +88,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         metadata: TaskMetadata | None = None,
         cancel_event: asyncio.Event | None = None,
         status: TaskStatus = "in_progress",
-        stream_handler: StreamHandler | None = None,
         terminate_event: asyncio.Event | None = None,
         execution_task: asyncio.Task[Any] | None = None,
         terminate_reason_ref: list[str | None] | None = None,
@@ -107,7 +104,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
             terminate_reason_ref if terminate_reason_ref is not None else [None]
         )
         self._status: TaskStatus = status
-        self._stream_handler: StreamHandler | None = stream_handler
         self._execution_task: asyncio.Task[Any] | None = execution_task
         self._lease_expiry_count = lease_expiry_count
         # Spec 016 FR-018 (US6): weak reference to the TaskContext so
@@ -214,35 +210,6 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
             meta_data: dict[str, Any] = task_info.payload["metadata"]
             for key, value in meta_data.items():
                 self._metadata.set(key, value)
-
-    def __aiter__(self) -> TaskRun[Output]:
-        """Return self as an async iterator over streamed items.
-
-        Usage::
-
-            async for chunk in task_run:
-                print(chunk)
-
-        :return: Self.
-        :rtype: TaskRun
-        """
-        return self
-
-    async def __anext__(self) -> Any:
-        """Yield the next streamed item, or raise ``StopAsyncIteration``.
-
-        If no stream handler was provided, raises ``StopAsyncIteration``
-        immediately (the task does not stream). When the stream is
-        closed, ``handler.get()`` raises ``StopAsyncIteration`` which
-        propagates naturally.
-
-        :return: The next streamed item.
-        :rtype: Any
-        :raises StopAsyncIteration: When streaming ends.
-        """
-        if self._stream_handler is None:
-            raise StopAsyncIteration
-        return await self._stream_handler.get()
 
     def __await__(self) -> Any:
         """Awaiting a :class:`TaskRun` returns its :meth:`result`.
