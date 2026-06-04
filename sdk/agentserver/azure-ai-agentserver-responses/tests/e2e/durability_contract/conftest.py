@@ -224,6 +224,88 @@ async def post_and_get_response_id(
     )
 
 
+async def post_stream_to_terminal(
+    client: httpx.AsyncClient,
+    *,
+    store: bool,
+    model: str = "conformance-test",
+    input_text: str = "hello",
+    extra: dict[str, Any] | None = None,
+    timeout_seconds: float = 120.0,
+) -> tuple[str, list[dict[str, Any]]]:
+    """POST a foreground+stream request and consume the SSE to terminal.
+
+    Unlike :func:`post_and_get_response_id`, this helper keeps the
+    streaming POST connection OPEN until a terminal event arrives or
+    the timeout fires, mirroring how a real foreground+stream client
+    would behave. Closing the connection early triggers the spec's
+    Rule B17 (connection termination = cancellation), which is correct
+    for cancellation tests but wrong for natural-completion or server-
+    shutdown tests where the server is expected to drive the terminal.
+
+    Returns ``(response_id, events)`` where ``events`` is the list of
+    payload dicts parsed from each ``data:`` line (in order). The
+    response id is extracted from the first ``response.created`` event.
+    Raises ``RuntimeError`` if no ``response.created`` is observed.
+
+    :param client: An httpx async client bound to the server base URL.
+    :param store: Forwarded into the request body.
+    :param model: Forwarded into the request body.
+    :param input_text: Forwarded into the request body.
+    :param extra: Optional additional body fields.
+    :param timeout_seconds: Upper bound on the streaming read.
+    """
+    import json
+
+    body: dict[str, Any] = {
+        "model": model,
+        "input": input_text,
+        "store": store,
+        "background": False,
+        "stream": True,
+    }
+    if extra:
+        body.update(extra)
+
+    response_id: str | None = None
+    events: list[dict[str, Any]] = []
+
+    async with client.stream(
+        "POST", "/responses", json=body, timeout=timeout_seconds
+    ) as resp:
+        if resp.status_code != 200:
+            text = (await resp.aread()).decode("utf-8", errors="replace")
+            raise httpx.HTTPStatusError(
+                f"POST /responses returned {resp.status_code}: {text}",
+                request=resp.request,
+                response=resp,
+            )
+        async for line in resp.aiter_lines():
+            if not line.startswith("data:"):
+                continue
+            try:
+                payload = json.loads(line.removeprefix("data:").strip())
+            except json.JSONDecodeError:
+                continue
+            events.append(payload)
+            if response_id is None:
+                rid = (payload.get("response") or {}).get("id")
+                if rid:
+                    response_id = rid
+            event_type = payload.get("type", "")
+            if event_type in (
+                "response.completed",
+                "response.failed",
+                "response.cancelled",
+            ):
+                break
+    if response_id is None:
+        raise RuntimeError(
+            "POST /responses streamed without yielding a response.created event"
+        )
+    return response_id, events
+
+
 async def reconnect_stream_and_collect_events(
     client: httpx.AsyncClient,
     response_id: str,

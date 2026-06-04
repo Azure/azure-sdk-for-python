@@ -99,6 +99,7 @@ import os
 from typing import Any
 
 from copilot import CopilotClient  # type: ignore[import-untyped]
+from copilot._jsonrpc import JsonRpcError  # type: ignore[import-untyped]
 from copilot.generated.session_events import (  # type: ignore[import-untyped]
     AssistantMessageData,
     AssistantMessageDeltaData,
@@ -142,7 +143,17 @@ async def _open_session(
     subsequent steerable turn we use ``resume_session``, the SDK's explicit
     reattach API. ``durability.is_recovery`` is True only when we are being
     re-entered after a crash; ``durability.entry_mode == "resumed"`` is True
-    for steerable follow-up turns. Both routes reattach.
+    for steerable follow-up turns. Both routes attempt to reattach.
+
+    If ``resume_session`` raises "Session not found" (the upstream Copilot
+    CLI was not given enough time to persist the session before the
+    previous process exited — most common after SIGTERM with a short
+    grace, or SIGKILL), we fall back to ``create_session``. We lose the
+    pre-crash conversation context for this turn, but the handler makes
+    forward progress instead of failing outright. This honours the
+    invariant that recovery and upstream-dependency hiccups should
+    NOT propagate up as task failures (which would orphan the response
+    and fail any queued steers).
 
     Both paths pass ``streaming=True`` so the SDK emits
     ``AssistantMessageDeltaData`` events with incremental ``delta_content``
@@ -152,12 +163,29 @@ async def _open_session(
     live characters.
     """
     if durability.is_recovery or durability.entry_mode == "resumed":
-        return await client.resume_session(
-            session_id,
-            on_permission_request=PermissionHandler.approve_all,
-            model=_COPILOT_MODEL,
-            streaming=True,
-        )
+        try:
+            return await client.resume_session(
+                session_id,
+                on_permission_request=PermissionHandler.approve_all,
+                model=_COPILOT_MODEL,
+                streaming=True,
+            )
+        except JsonRpcError as exc:
+            # Copilot CLI couldn't find the prior session (didn't persist
+            # before the previous process exited, or aged out of the SDK's
+            # cache). Fall back to a fresh session so the turn doesn't
+            # fail outright.
+            msg = str(exc)
+            if "Session not found" not in msg and "not found" not in msg.lower():
+                raise
+            import logging  # pylint: disable=import-outside-toplevel
+            logging.getLogger(__name__).warning(
+                "Copilot session %s not found on resume (%s); creating fresh "
+                "session — pre-crash conversation context for this turn is lost.",
+                session_id,
+                msg,
+            )
+            # Fall through to create_session below.
     return await client.create_session(
         session_id=session_id,
         on_permission_request=PermissionHandler.approve_all,

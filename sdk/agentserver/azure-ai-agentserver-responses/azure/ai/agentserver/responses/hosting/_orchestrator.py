@@ -1650,8 +1650,38 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 else:
                     yield normalized
         except asyncio.CancelledError:
-            # S-024: Known cancellation — emit cancel terminal.
+            # S-024: Known cancellation. The terminal type depends on
+            # the cancellation reason — preserve the same per-reason
+            # mapping the B11 (handler-returned-without-terminal) path
+            # uses so we don't diverge based on whether the handler
+            # raised CancelledError vs. just returned.
+            #
+            # - SHUTTING_DOWN + durable+background: leave in_progress
+            #   so the next-lifetime recovery scanner re-invokes the
+            #   handler. Per user-facing contract: durable_background
+            #   responses survive a server restart (orphaning the
+            #   response or failing queued steers is unacceptable when
+            #   the upstream task could still complete on retry).
+            # - SHUTTING_DOWN + any other shape: emit response.failed
+            #   (server-side shutdown is recorded as a failure, not a
+            #   cancellation, per the in-process shutdown contract).
+            # - CLIENT_CANCELLED / STEERED / unknown reason: emit
+            #   response.cancelled (B11+B17: cancellation cannot become
+            #   "failed" or "completed").
             if ctx.cancellation_signal.is_set():
+                _reason = ctx.context.cancellation_reason if ctx.context else None
+                if _reason == CancellationReason.SHUTTING_DOWN:
+                    if (
+                        ctx.background
+                        and ctx.store
+                        and self._runtime_options.durable_background
+                    ):
+                        return
+                    if not self._has_terminal_event(state.handler_events):
+                        state.pending_terminal = await self._make_failed_event(
+                            ctx, state
+                        )
+                    return
                 if not self._has_terminal_event(state.handler_events):
                     state.pending_terminal = await self._cancel_terminal_sse_dict(
                         ctx, state
@@ -1666,6 +1696,23 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 exc_info=exc,
             )
             state.captured_error = exc
+            # If we are mid-shutdown and the response is a durable+background
+            # one, the handler exception is most likely a transient symptom
+            # of the SIGTERM itself (e.g. an upstream LLM SDK subprocess
+            # being killed in our process group before it could fully
+            # start). Leave the durable task in_progress so the
+            # next-lifetime recovery scanner re-invokes the handler with a
+            # fresh upstream client — baking a "failed" terminal here would
+            # orphan any queued steering inputs and prevent the response
+            # from making forward progress on a retry.
+            _reason = ctx.context.cancellation_reason if ctx.context else None
+            if (
+                _reason == CancellationReason.SHUTTING_DOWN
+                and ctx.background
+                and ctx.store
+                and self._runtime_options.durable_background
+            ):
+                return
             # S-035: emit response.failed when handler raises after response.created.
             if not self._has_terminal_event(state.handler_events):
                 state.pending_terminal = await self._make_failed_event(ctx, state)
@@ -1764,17 +1811,61 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # was created (empty handler fallback, pre-creation errors, first-event
         # contract violations).
 
-        # B17: Non-bg streaming cancelled by client disconnect (no terminal
-        # was emitted). For ``store=true`` the response is intentionally NOT
-        # persisted — the client disconnected mid-stream, the response is
-        # gone, GET returns 404. Server-side shutdown (Row 3 Path B/C) is
-        # handled by the Phase 4 bookkeeping task: the in-process record is
-        # absent here, so the next-lifetime recovery scanner sees the
-        # bookkeeping task still in_progress and writes the ``server_error``
-        # terminal via ``_persist_crash_failed``.
+        # Non-bg streaming interrupted mid-stream. The interrupt is either a
+        # client disconnect (`CLIENT_CANCELLED`, treated as a cancellation —
+        # we persist a cancelled terminal so a later GET sees `cancelled`,
+        # NOT a 404), or a server shutdown (`SHUTTING_DOWN`, deferred to the
+        # next-lifetime recovery scanner via the bookkeeping task — we leave
+        # the response un-persisted in THIS lifetime so the scanner's
+        # `_persist_crash_failed` writes the canonical terminal).
         if not ctx.background and state.stream_interrupted:
-            ctx.span.end(state.captured_error)
-            return
+            _reason = (
+                ctx.context.cancellation_reason if ctx.context else None
+            )
+            if _reason == CancellationReason.SHUTTING_DOWN:
+                # Defer to bookkeeping-task recovery in the next lifetime.
+                ctx.span.end(state.captured_error)
+                return
+            # Client disconnect (or unknown cancellation): make sure we have
+            # a terminal event so the persistence path can extract a
+            # snapshot. If the cancel terminal wasn't already buffered
+            # (e.g. cancellation_signal didn't reach the handler before its
+            # task was torn down), build one now.
+            if state.pending_terminal is None and not self._has_terminal_event(
+                state.handler_events
+            ):
+                try:
+                    state.pending_terminal = await self._cancel_terminal_sse_dict(
+                        ctx, state
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "Failed to synthesise cancel terminal on interrupted "
+                        "foreground stream (response_id=%s)",
+                        ctx.response_id,
+                        exc_info=True,
+                    )
+            # Persist the cancelled response to the durable provider so a
+            # later GET retrieves status=cancelled instead of 404.
+            # _persist_and_resolve_terminal handles create_response +
+            # update_response and stamps the failure on the record if
+            # persistence itself fails. Without this call the response
+            # only lives in runtime_state and is lost on eager eviction.
+            if ctx.store and state.pending_terminal is not None:
+                record = state.bg_record or _make_ephemeral_record(ctx, state)
+                try:
+                    await self._persist_and_resolve_terminal(ctx, state, record)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "Persistence of interrupted foreground stream failed "
+                        "(response_id=%s) — falling through to in-memory-only "
+                        "runtime_state record",
+                        ctx.response_id,
+                        exc_info=True,
+                    )
+            # Fall through to the normal Path B persistence below — the
+            # cancelled snapshot will be written to runtime_state and
+            # (for store=True) becomes retrievable via GET.
 
         events = (
             state.handler_events

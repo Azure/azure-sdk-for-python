@@ -198,5 +198,6 @@ def payload(
 from tests.e2e.durability_contract.conftest import (  # noqa: E402,F401
     poll_until_terminal,
     post_and_get_response_id,
+    post_stream_to_terminal,
     reconnect_stream_and_collect_events,
 )
