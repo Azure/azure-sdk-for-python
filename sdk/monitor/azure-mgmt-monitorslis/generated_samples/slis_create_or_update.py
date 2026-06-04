@@ -53,7 +53,7 @@ def main():
                         "signalFormula": "(A + B) /2",
                         "signalSources": [
                             {
-                                "filters": [{"dimensionName": "ApiName", "operator": "==", "value": "GetContosoUsers"}],
+                                "filters": [{"dimensionName": "ApiName", "operator": "eq", "value": "GetContosoUsers"}],
                                 "metricName": "Stamp1Latency",
                                 "metricNamespace": "ContosoMetricsWest",
                                 "signalSourceId": "A",
@@ -63,7 +63,7 @@ def main():
                                 "temporalAggregation": {"type": "Average", "windowSizeMinutes": 5},
                             },
                             {
-                                "filters": [{"dimensionName": "ApiName", "operator": "==", "value": "GetContosoUsers"}],
+                                "filters": [{"dimensionName": "ApiName", "operator": "eq", "value": "GetContosoUsers"}],
                                 "metricName": "Stamp2Latency",
                                 "metricNamespace": "ContosoMetricsEast",
                                 "signalSourceId": "B",
@@ -74,7 +74,7 @@ def main():
                             },
                         ],
                     },
-                    "windowUptimeCriteria": {"comparator": ">=", "target": 95},
+                    "windowUptimeCriteria": {"comparator": "gte", "target": 95},
                 },
             }
         },

@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, ove
 from ._models import SearchField as _SearchField
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
+from ._models import SearchResourceEncryptionKey as _SearchResourceEncryptionKey
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
@@ -19,12 +20,12 @@ from ._enums import (
 
 if TYPE_CHECKING:
     from ._models import (
+        AzureActiveDirectoryApplicationCredentials,
         DataChangeDetectionPolicy,
         DataDeletionDetectionPolicy,
         DataSourceCredentials,
         SearchIndexerDataContainer,
         SearchIndexerDataIdentity,
-        SearchResourceEncryptionKey,
     )
     from ._enums import SearchIndexerDataSourceType
 
@@ -107,6 +108,32 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchResourceEncryptionKey(_SearchResourceEncryptionKey):
+    """A customer-managed encryption key in Azure Key Vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_name: Optional[str] = None,
+        vault_uri: Optional[str] = None,
+        key_version: Optional[str] = None,
+        access_credentials: Optional["AzureActiveDirectoryApplicationCredentials"] = None,
+        identity: Optional["SearchIndexerDataIdentity"] = None,
+        is_service_level_key: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -427,6 +454,7 @@ __all__: list[str] = [
     "SearchField",
     "SearchFieldDataType",
     "SearchIndexerDataSourceConnection",
+    "SearchResourceEncryptionKey",
     "SimpleField",
     "SearchableField",
     "ComplexField",

@@ -20,9 +20,20 @@ class AsyncCertificatesClientPreparer(AzureRecordedTestCase):
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
 
         if is_live():
-            os.environ["AZURE_TENANT_ID"] = os.getenv("KEYVAULT_TENANT_ID", "")  # empty in pipelines
-            os.environ["AZURE_CLIENT_ID"] = os.getenv("KEYVAULT_CLIENT_ID", "")  # empty in pipelines
-            os.environ["AZURE_CLIENT_SECRET"] = os.getenv("KEYVAULT_CLIENT_SECRET", "")  # empty for user-based auth
+            # Only set AZURE_* vars if the KEYVAULT_* counterpart is non-empty.
+            # Setting them to empty strings causes EnvironmentCredential to attempt (and fail)
+            # ClientSecretCredential construction. Removing them lets DefaultAzureCredential
+            # fall through to AzureCliCredential for developer/interactive auth.
+            for keyvault_var, azure_var in (
+                ("KEYVAULT_TENANT_ID", "AZURE_TENANT_ID"),
+                ("KEYVAULT_CLIENT_ID", "AZURE_CLIENT_ID"),
+                ("KEYVAULT_CLIENT_SECRET", "AZURE_CLIENT_SECRET"),
+            ):
+                value = os.getenv(keyvault_var, "")
+                if value:
+                    os.environ[azure_var] = value
+                else:
+                    os.environ.pop(azure_var, None)
 
     def __call__(self, fn):
         async def _preparer(test_class, api_version, **kwargs):

@@ -11,6 +11,8 @@ Use the client library for Azure AI Content Understanding to:
 * **Create custom analyzers** - Build domain-specific analyzers for specialized content extraction needs across all four modalities (documents, video, audio, and images)
 * **Classify documents and video** - Automatically categorize and extract information from documents and video by type
 
+If you have encountered issues or want to suggest features, please [file an issue][file_issue].
+
 [Source code][python_cu_src] | [Package (PyPI)][python_cu_pypi] | [Product documentation][python_cu_product_docs] | [Samples][python_cu_samples]
 
 ## Table of Contents
@@ -57,6 +59,7 @@ This table shows the relationship between SDK versions and supported API service
 
 | SDK version | Supported API service version |
 | ----------- | ----------------------------- |
+| 1.2.0b1     | 2025-11-01                    |
 | 1.1.0       | 2025-11-01                    |
 | 1.0.1       | 2025-11-01                    |
 | 1.0.0       | 2025-11-01                    |
@@ -517,6 +520,61 @@ async def analyze_invoice():
 asyncio.run(analyze_invoice())
 ```
 
+#### Convert results to LLM-ready text
+
+> **Note:** `to_llm_input()` is currently in preview and may change in future
+> releases. We welcome feedback — please [file an issue][file_issue].
+
+Use the `to_llm_input()` helper to convert any analysis result into a text format that LLMs
+can consume directly — YAML front matter with extracted fields followed by the markdown body.
+This works with all content types (documents, images, audio, video) and handles multi-segment
+results and classification hierarchies automatically. Run from the `samples/` directory:
+
+```python
+from azure.ai.contentunderstanding import ContentUnderstandingClient, to_llm_input
+from azure.identity import DefaultAzureCredential
+
+client = ContentUnderstandingClient(endpoint, DefaultAzureCredential())
+
+# Analyze a document with text, tables, and charts using prebuilt-documentSearch (CU's primary RAG analyzer)
+with open("sample_files/sample_document_features.pdf", "rb") as f:
+    poller = client.begin_analyze_binary(
+        analyzer_id="prebuilt-documentSearch",
+        binary_input=f.read(),
+    )
+result = poller.result()
+
+# One line to get LLM-ready text
+text = to_llm_input(result)
+print(text)
+# Output:
+#   ---
+#   contentType: document
+#   pages: 1
+#   fields:
+#     Summary: The document provides an overview of Latin, includes a sample
+#       table with names and corporate affiliations, presents a bar chart
+#       figure illustrating monthly values, and describes the AI Document
+#       Intelligence service...
+#   ---
+#   <!-- page 1 -->
+#   # ==This is title==
+#   ## 1. Text
+#   [Latin](https://en.wikipedia.org/wiki/Latin) refers to an ancient Italic language...
+#   ## 2. Page Objects
+#   ### 2.1 Table
+#   <table><caption>Table 1: This is a dummy table</caption>...</table>
+#   ### 2.2. Figure
+#   ![Values...](figures/1.1 "Bar chart with six bars: Jan=200, Feb=300...")
+#   ```chart
+#   {"type":"bar","data":{"labels":["Jan","Feb",...],...}}
+#   ```
+#   ...
+```
+
+See the [advanced sample][python_cu_sample_to_llm_input] for output options (fields-only,
+markdown-only, custom metadata), multi-page content ranges, and multi-segment video.
+
 ## Troubleshooting
 
 ### Common issues
@@ -618,6 +676,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python_cu_pypi]: https://pypi.org/project/azure-ai-contentunderstanding/
 [python_cu_product_docs]: https://learn.microsoft.com/azure/ai-services/content-understanding/
 [python_cu_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
+[python_cu_sample_to_llm_input]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_to_llm_input.py
 [azure_sub]: https://azure.microsoft.com/free/
 [cu_quickstart]: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=portal%2Cdocument
 [cu_region_support]: https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support
@@ -641,6 +700,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [pip]: https://pypi.org/project/pip/
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[file_issue]: https://github.com/Azure/azure-sdk-for-python/issues/new?labels=Cognitive%20-%20Content%20Understanding&title=[ContentUnderstanding]%20&body=%23%23%20Library%20Version%0A%0A%23%23%20Repro%20Steps%0A%0A%23%23%20Expected%20Result%0A%0A%23%23%20Actual%20Result
 [code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [opencode_email]: mailto:opencode@microsoft.com
 [aiohttp]: https://pypi.org/project/aiohttp/

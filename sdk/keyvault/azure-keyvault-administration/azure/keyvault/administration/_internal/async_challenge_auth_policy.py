@@ -82,9 +82,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
         self._request_copy: Optional[HttpRequest] = None
 
-    async def send(
-        self, request: PipelineRequest[HttpRequest]
-    ) -> PipelineResponse[HttpRequest, AsyncHttpResponse]:
+    async def send(self, request: PipelineRequest[HttpRequest]) -> PipelineResponse[HttpRequest, AsyncHttpResponse]:
         """Authorize request with a bearer token and send it to the next policy.
 
         We implement this method to account for the valid scenario where a Key Vault authentication challenge is
@@ -155,7 +153,6 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                 await await_result(self.on_response, request, response)
         return response
 
-
     async def on_request(self, request: PipelineRequest) -> None:
         _enforce_tls(request)
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
@@ -183,7 +180,6 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             )
             bodiless_request.headers["Content-Length"] = "0"
             request.http_request = bodiless_request
-
 
     async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         try:
@@ -227,9 +223,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
             await self.authorize_request(request, scope, claims=challenge.claims)
         else:
-            await self.authorize_request(
-                request, scope, claims=challenge.claims, tenant_id=challenge.tenant_id
-            )
+            await self.authorize_request(request, scope, claims=challenge.claims, tenant_id=challenge.tenant_id)
 
         return True
 
