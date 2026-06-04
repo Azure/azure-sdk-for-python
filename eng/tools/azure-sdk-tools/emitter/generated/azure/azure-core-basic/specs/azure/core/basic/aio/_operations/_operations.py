@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._operations._operations import (
     build_basic_create_or_replace_request,
     build_basic_create_or_update_request,
@@ -44,6 +44,7 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import BasicClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -75,7 +76,7 @@ class _BasicClientOperationsMixin(
 
     @overload
     async def create_or_update(
-        self, id: int, resource: types.User, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, id: int, resource: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.User:
         """Adds a user or updates a user's fields.
 
@@ -84,7 +85,7 @@ class _BasicClientOperationsMixin(
         :param id: The user's id. Required.
         :type id: int
         :param resource: The resource instance. Required.
-        :type resource: ~specs.azure.core.basic.types.User
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -115,7 +116,7 @@ class _BasicClientOperationsMixin(
 
     @distributed_trace_async
     async def create_or_update(
-        self, id: int, resource: Union[_models.User, types.User, IO[bytes]], **kwargs: Any
+        self, id: int, resource: Union[_models.User, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.User:
         """Adds a user or updates a user's fields.
 
@@ -123,9 +124,9 @@ class _BasicClientOperationsMixin(
 
         :param id: The user's id. Required.
         :type id: int
-        :param resource: The resource instance. Is either a User type or a IO[bytes] type. Required.
-        :type resource: ~specs.azure.core.basic.models.User or ~specs.azure.core.basic.types.User or
-         IO[bytes]
+        :param resource: The resource instance. Is one of the following types: User, JSON, IO[bytes]
+         Required.
+        :type resource: ~specs.azure.core.basic.models.User or JSON or IO[bytes]
         :return: User. The User is compatible with MutableMapping
         :rtype: ~specs.azure.core.basic.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -213,7 +214,7 @@ class _BasicClientOperationsMixin(
 
     @overload
     async def create_or_replace(
-        self, id: int, resource: types.User, *, content_type: str = "application/json", **kwargs: Any
+        self, id: int, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.User:
         """Adds a user or replaces a user's fields.
 
@@ -222,7 +223,7 @@ class _BasicClientOperationsMixin(
         :param id: The user's id. Required.
         :type id: int
         :param resource: The resource instance. Required.
-        :type resource: ~specs.azure.core.basic.types.User
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -253,7 +254,7 @@ class _BasicClientOperationsMixin(
 
     @distributed_trace_async
     async def create_or_replace(
-        self, id: int, resource: Union[_models.User, types.User, IO[bytes]], **kwargs: Any
+        self, id: int, resource: Union[_models.User, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.User:
         """Adds a user or replaces a user's fields.
 
@@ -261,9 +262,9 @@ class _BasicClientOperationsMixin(
 
         :param id: The user's id. Required.
         :type id: int
-        :param resource: The resource instance. Is either a User type or a IO[bytes] type. Required.
-        :type resource: ~specs.azure.core.basic.models.User or ~specs.azure.core.basic.types.User or
-         IO[bytes]
+        :param resource: The resource instance. Is one of the following types: User, JSON, IO[bytes]
+         Required.
+        :type resource: ~specs.azure.core.basic.models.User or JSON or IO[bytes]
         :return: User. The User is compatible with MutableMapping
         :rtype: ~specs.azure.core.basic.models.User
         :raises ~azure.core.exceptions.HttpResponseError:

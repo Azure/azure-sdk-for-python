@@ -30,11 +30,12 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import CombinedClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -252,7 +253,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: Union[_models.VirtualMachine, types.VirtualMachine, IO[bytes]],
+        resource: Union[_models.VirtualMachine, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -361,7 +362,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: types.VirtualMachine,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -375,7 +376,7 @@ class VirtualMachinesOperations:
         :param vm_name: The name of the VirtualMachine. Required.
         :type vm_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.multiservice.combined.types.VirtualMachine
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -421,7 +422,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: Union[_models.VirtualMachine, types.VirtualMachine, IO[bytes]],
+        resource: Union[_models.VirtualMachine, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualMachine]:
         """The operation to create or update a virtual machine. Please note some properties can be set
@@ -432,10 +433,10 @@ class VirtualMachinesOperations:
         :type resource_group_name: str
         :param vm_name: The name of the VirtualMachine. Required.
         :type vm_name: str
-        :param resource: Resource create parameters. Is either a VirtualMachine type or a IO[bytes]
-         type. Required.
-        :type resource: ~azure.resourcemanager.multiservice.combined.models.VirtualMachine or
-         ~azure.resourcemanager.multiservice.combined.types.VirtualMachine or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: VirtualMachine,
+         JSON, IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.multiservice.combined.models.VirtualMachine or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns VirtualMachine. The VirtualMachine is compatible
          with MutableMapping
         :rtype:
@@ -586,11 +587,7 @@ class DisksOperations:
         return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        disk_name: str,
-        resource: Union[_models.Disk, types.Disk, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, disk_name: str, resource: Union[_models.Disk, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -695,7 +692,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        resource: types.Disk,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -708,7 +705,7 @@ class DisksOperations:
         :param disk_name: The name of the Disk. Required.
         :type disk_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.multiservice.combined.types.Disk
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -746,11 +743,7 @@ class DisksOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        disk_name: str,
-        resource: Union[_models.Disk, types.Disk, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, disk_name: str, resource: Union[_models.Disk, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Disk]:
         """Creates or updates a disk.
 
@@ -759,10 +752,9 @@ class DisksOperations:
         :type resource_group_name: str
         :param disk_name: The name of the Disk. Required.
         :type disk_name: str
-        :param resource: Resource create parameters. Is either a Disk type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.resourcemanager.multiservice.combined.models.Disk or
-         ~azure.resourcemanager.multiservice.combined.types.Disk or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types: Disk, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.multiservice.combined.models.Disk or JSON or IO[bytes]
         :return: An instance of LROPoller that returns Disk. The Disk is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.resourcemanager.multiservice.combined.models.Disk]
         :raises ~azure.core.exceptions.HttpResponseError:

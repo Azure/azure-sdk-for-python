@@ -19,11 +19,12 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models1, types
+from .. import models as _models1
 from ..._configuration import JsonClientConfiguration
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -93,11 +94,11 @@ class PropertyOperations:
         """
 
     @overload
-    def send(self, body: types.JsonEncodedNameModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: ~serialization.encodedname.json.property.types.JsonEncodedNameModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -121,13 +122,13 @@ class PropertyOperations:
         """
 
     def send(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.JsonEncodedNameModel, types.JsonEncodedNameModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models1.JsonEncodedNameModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JsonEncodedNameModel type or a IO[bytes] type. Required.
-        :type body: ~serialization.encodedname.json.property.models.JsonEncodedNameModel or
-         ~serialization.encodedname.json.property.types.JsonEncodedNameModel or IO[bytes]
+        :param body: Is one of the following types: JsonEncodedNameModel, JSON, IO[bytes] Required.
+        :type body: ~serialization.encodedname.json.property.models.JsonEncodedNameModel or JSON or
+         IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

@@ -15,12 +15,13 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ..... import models as _models4, types
+from ..... import models as _models4
 from ....._configuration import MultiPartClientConfiguration
 from ....._utils.model_base import Model as _Model
 from ....._utils.serialization import Deserializer, Serializer
 from ....._utils.utils import prepare_multipart_form_data
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -90,29 +91,24 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    def image_jpeg_content_type(self, body: types.FileWithHttpPartSpecificContentTypeRequest, **kwargs: Any) -> None:
+    def image_jpeg_content_type(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.FileWithHttpPartSpecificContentTypeRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def image_jpeg_content_type(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: Union[
-            _models4.FileWithHttpPartSpecificContentTypeRequest, types.FileWithHttpPartSpecificContentTypeRequest
-        ],
-        **kwargs: Any,
+        self, body: Union[_models4.FileWithHttpPartSpecificContentTypeRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: FileWithHttpPartSpecificContentTypeRequest
+        :param body: Is either a FileWithHttpPartSpecificContentTypeRequest type or a JSON type.
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartSpecificContentTypeRequest or
-         ~payload.multipart.types.FileWithHttpPartSpecificContentTypeRequest
+        :type body: ~payload.multipart.models.FileWithHttpPartSpecificContentTypeRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -169,29 +165,24 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    def required_content_type(self, body: types.FileWithHttpPartRequiredContentTypeRequest, **kwargs: Any) -> None:
+    def required_content_type(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.FileWithHttpPartRequiredContentTypeRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def required_content_type(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: Union[
-            _models4.FileWithHttpPartRequiredContentTypeRequest, types.FileWithHttpPartRequiredContentTypeRequest
-        ],
-        **kwargs: Any,
+        self, body: Union[_models4.FileWithHttpPartRequiredContentTypeRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: FileWithHttpPartRequiredContentTypeRequest
+        :param body: Is either a FileWithHttpPartRequiredContentTypeRequest type or a JSON type.
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartRequiredContentTypeRequest or
-         ~payload.multipart.types.FileWithHttpPartRequiredContentTypeRequest
+        :type body: ~payload.multipart.models.FileWithHttpPartRequiredContentTypeRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -248,29 +239,24 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    def optional_content_type(self, body: types.FileWithHttpPartOptionalContentTypeRequest, **kwargs: Any) -> None:
+    def optional_content_type(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for optional content type.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.FileWithHttpPartOptionalContentTypeRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def optional_content_type(  # pylint: disable=inconsistent-return-statements
-        self,
-        body: Union[
-            _models4.FileWithHttpPartOptionalContentTypeRequest, types.FileWithHttpPartOptionalContentTypeRequest
-        ],
-        **kwargs: Any,
+        self, body: Union[_models4.FileWithHttpPartOptionalContentTypeRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for optional content type.
 
-        :param body: Is one of the following types: FileWithHttpPartOptionalContentTypeRequest
+        :param body: Is either a FileWithHttpPartOptionalContentTypeRequest type or a JSON type.
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartOptionalContentTypeRequest or
-         ~payload.multipart.types.FileWithHttpPartOptionalContentTypeRequest
+        :type body: ~payload.multipart.models.FileWithHttpPartOptionalContentTypeRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

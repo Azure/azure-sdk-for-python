@@ -19,7 +19,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .... import models as _models3, types
+from .... import models as _models3
 from ...._utils.model_base import SdkJSONEncoder, _deserialize
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import DatetimeClientConfiguration
@@ -31,6 +31,7 @@ from ...operations._operations import (
     build_property_unix_timestamp_request,
 )
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -70,12 +71,12 @@ class PropertyOperations:
 
     @overload
     async def default(
-        self, body: types.DefaultDatetimeProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models3.DefaultDatetimeProperty:
         """default.
 
         :param body: Required.
-        :type body: ~encode.datetime.types.DefaultDatetimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -101,13 +102,12 @@ class PropertyOperations:
         """
 
     async def default(
-        self, body: Union[_models3.DefaultDatetimeProperty, types.DefaultDatetimeProperty, IO[bytes]], **kwargs: Any
+        self, body: Union[_models3.DefaultDatetimeProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models3.DefaultDatetimeProperty:
         """default.
 
-        :param body: Is either a DefaultDatetimeProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.datetime.models.DefaultDatetimeProperty or
-         ~encode.datetime.types.DefaultDatetimeProperty or IO[bytes]
+        :param body: Is one of the following types: DefaultDatetimeProperty, JSON, IO[bytes] Required.
+        :type body: ~encode.datetime.models.DefaultDatetimeProperty or JSON or IO[bytes]
         :return: DefaultDatetimeProperty. The DefaultDatetimeProperty is compatible with MutableMapping
         :rtype: ~encode.datetime.models.DefaultDatetimeProperty
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -187,12 +187,12 @@ class PropertyOperations:
 
     @overload
     async def rfc3339(
-        self, body: types.Rfc3339DatetimeProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models3.Rfc3339DatetimeProperty:
         """rfc3339.
 
         :param body: Required.
-        :type body: ~encode.datetime.types.Rfc3339DatetimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -218,13 +218,12 @@ class PropertyOperations:
         """
 
     async def rfc3339(
-        self, body: Union[_models3.Rfc3339DatetimeProperty, types.Rfc3339DatetimeProperty, IO[bytes]], **kwargs: Any
+        self, body: Union[_models3.Rfc3339DatetimeProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models3.Rfc3339DatetimeProperty:
         """rfc3339.
 
-        :param body: Is either a Rfc3339DatetimeProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.datetime.models.Rfc3339DatetimeProperty or
-         ~encode.datetime.types.Rfc3339DatetimeProperty or IO[bytes]
+        :param body: Is one of the following types: Rfc3339DatetimeProperty, JSON, IO[bytes] Required.
+        :type body: ~encode.datetime.models.Rfc3339DatetimeProperty or JSON or IO[bytes]
         :return: Rfc3339DatetimeProperty. The Rfc3339DatetimeProperty is compatible with MutableMapping
         :rtype: ~encode.datetime.models.Rfc3339DatetimeProperty
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -304,12 +303,12 @@ class PropertyOperations:
 
     @overload
     async def rfc7231(
-        self, body: types.Rfc7231DatetimeProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models3.Rfc7231DatetimeProperty:
         """rfc7231.
 
         :param body: Required.
-        :type body: ~encode.datetime.types.Rfc7231DatetimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -335,13 +334,12 @@ class PropertyOperations:
         """
 
     async def rfc7231(
-        self, body: Union[_models3.Rfc7231DatetimeProperty, types.Rfc7231DatetimeProperty, IO[bytes]], **kwargs: Any
+        self, body: Union[_models3.Rfc7231DatetimeProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models3.Rfc7231DatetimeProperty:
         """rfc7231.
 
-        :param body: Is either a Rfc7231DatetimeProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.datetime.models.Rfc7231DatetimeProperty or
-         ~encode.datetime.types.Rfc7231DatetimeProperty or IO[bytes]
+        :param body: Is one of the following types: Rfc7231DatetimeProperty, JSON, IO[bytes] Required.
+        :type body: ~encode.datetime.models.Rfc7231DatetimeProperty or JSON or IO[bytes]
         :return: Rfc7231DatetimeProperty. The Rfc7231DatetimeProperty is compatible with MutableMapping
         :rtype: ~encode.datetime.models.Rfc7231DatetimeProperty
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -422,12 +420,12 @@ class PropertyOperations:
 
     @overload
     async def unix_timestamp(
-        self, body: types.UnixTimestampDatetimeProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models3.UnixTimestampDatetimeProperty:
         """unix_timestamp.
 
         :param body: Required.
-        :type body: ~encode.datetime.types.UnixTimestampDatetimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -455,15 +453,13 @@ class PropertyOperations:
         """
 
     async def unix_timestamp(
-        self,
-        body: Union[_models3.UnixTimestampDatetimeProperty, types.UnixTimestampDatetimeProperty, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models3.UnixTimestampDatetimeProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models3.UnixTimestampDatetimeProperty:
         """unix_timestamp.
 
-        :param body: Is either a UnixTimestampDatetimeProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.datetime.models.UnixTimestampDatetimeProperty or
-         ~encode.datetime.types.UnixTimestampDatetimeProperty or IO[bytes]
+        :param body: Is one of the following types: UnixTimestampDatetimeProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.datetime.models.UnixTimestampDatetimeProperty or JSON or IO[bytes]
         :return: UnixTimestampDatetimeProperty. The UnixTimestampDatetimeProperty is compatible with
          MutableMapping
         :rtype: ~encode.datetime.models.UnixTimestampDatetimeProperty
@@ -549,12 +545,12 @@ class PropertyOperations:
 
     @overload
     async def unix_timestamp_array(
-        self, body: types.UnixTimestampArrayDatetimeProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models3.UnixTimestampArrayDatetimeProperty:
         """unix_timestamp_array.
 
         :param body: Required.
-        :type body: ~encode.datetime.types.UnixTimestampArrayDatetimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -582,15 +578,13 @@ class PropertyOperations:
         """
 
     async def unix_timestamp_array(
-        self,
-        body: Union[_models3.UnixTimestampArrayDatetimeProperty, types.UnixTimestampArrayDatetimeProperty, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models3.UnixTimestampArrayDatetimeProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models3.UnixTimestampArrayDatetimeProperty:
         """unix_timestamp_array.
 
-        :param body: Is either a UnixTimestampArrayDatetimeProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.datetime.models.UnixTimestampArrayDatetimeProperty or
-         ~encode.datetime.types.UnixTimestampArrayDatetimeProperty or IO[bytes]
+        :param body: Is one of the following types: UnixTimestampArrayDatetimeProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.datetime.models.UnixTimestampArrayDatetimeProperty or JSON or IO[bytes]
         :return: UnixTimestampArrayDatetimeProperty. The UnixTimestampArrayDatetimeProperty is
          compatible with MutableMapping
         :rtype: ~encode.datetime.models.UnixTimestampArrayDatetimeProperty
