@@ -29,7 +29,7 @@ class TestStorageBlobRetryAsync(AsyncStorageRecordedTestCase):
         self.retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
 
     async def _setup(self, bsc):
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name("utcontainer")
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
@@ -46,13 +46,11 @@ class TestStorageBlobRetryAsync(AsyncStorageRecordedTestCase):
         # Arrange
         retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key.secret,
-            retry_policy=retry
+            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, retry_policy=retry
         )
 
         await self._setup(bsc)
-        blob_name = self.get_resource_name('blob')
+        blob_name = self.get_resource_name("blob")
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
         data_stream = BytesIO(data)
 
@@ -65,13 +63,13 @@ class TestStorageBlobRetryAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         _, uncommitted_blocks = await blob.get_block_list(
-            block_list_type="uncommitted",
-            raw_response_hook=responder.override_first_status)
+            block_list_type="uncommitted", raw_response_hook=responder.override_first_status
+        )
         assert len(uncommitted_blocks) == 1
         assert uncommitted_blocks[0].size == PUT_BLOCK_SIZE
 
         # Commit block and verify content
-        await blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
+        await blob.commit_block_list(["1"], raw_response_hook=responder.override_first_status)
 
         # Assert
         content = await (await blob.download_blob()).readall()
@@ -86,13 +84,11 @@ class TestStorageBlobRetryAsync(AsyncStorageRecordedTestCase):
         # Arrange
         retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key.secret,
-            retry_policy=retry
+            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, retry_policy=retry
         )
 
         await self._setup(bsc)
-        blob_name = self.get_resource_name('blob')
+        blob_name = self.get_resource_name("blob")
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
         data_stream = NonSeekableStream(BytesIO(data))
 
@@ -106,13 +102,13 @@ class TestStorageBlobRetryAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         _, uncommitted_blocks = await blob.get_block_list(
-            block_list_type="uncommitted",
-            raw_response_hook=responder.override_first_status)
+            block_list_type="uncommitted", raw_response_hook=responder.override_first_status
+        )
         assert len(uncommitted_blocks) == 1
         assert uncommitted_blocks[0].size == PUT_BLOCK_SIZE
 
         # Commit block and verify content
-        await blob.commit_block_list(['1'], raw_response_hook=responder.override_first_status)
+        await blob.commit_block_list(["1"], raw_response_hook=responder.override_first_status)
 
         # Assert
         content = await (await blob.download_blob()).readall()

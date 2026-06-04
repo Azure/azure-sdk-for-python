@@ -44,7 +44,7 @@ from azure.storage.blob import BlobServiceClient
 from azure.storage.blob import BlobPrefix
 
 try:
-    CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
+    CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
 except KeyError:
     print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
@@ -52,26 +52,27 @@ except KeyError:
 
 def walk_container(client, container_prop):
     container_client = client.get_container_client(container_prop.name)
-    print('C: {}'.format(container_prop.name))
+    print("C: {}".format(container_prop.name))
     depth = 1
-    separator = '   '
+    separator = "   "
 
     def walk_blob_hierarchy(prefix=""):
         nonlocal depth
         for item in container_client.walk_blobs(name_starts_with=prefix):
-            short_name = item.name[len(prefix):]
+            short_name = item.name[len(prefix) :]
             if isinstance(item, BlobPrefix):
-                print('F: ' + separator * depth + short_name)
+                print("F: " + separator * depth + short_name)
                 depth += 1
                 walk_blob_hierarchy(prefix=item.name)
                 depth -= 1
             else:
-                message = 'B: ' + separator * depth + short_name
-                results = list(container_client.list_blobs(name_starts_with=item.name, include=['snapshots']))
+                message = "B: " + separator * depth + short_name
+                results = list(container_client.list_blobs(name_starts_with=item.name, include=["snapshots"]))
                 num_snapshots = len(results) - 1
                 if num_snapshots:
                     message += " ({} snapshots)".format(num_snapshots)
                 print(message)
+
     walk_blob_hierarchy()
 
 

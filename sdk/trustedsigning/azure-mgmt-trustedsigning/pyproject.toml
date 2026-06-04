@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Trustedsigning Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 7 - Inactive",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -75,6 +75,7 @@ type_check_samples = false
 verifytypes = false
 
 [packaging]
+auto_update = false
 package_name = "azure-mgmt-trustedsigning"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Trustedsigning Management"

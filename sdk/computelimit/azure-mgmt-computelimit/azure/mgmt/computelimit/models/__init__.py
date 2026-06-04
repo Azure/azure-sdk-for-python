@@ -18,6 +18,7 @@ from ._models import (  # type: ignore
     ErrorDetail,
     ErrorResponse,
     Feature,
+    FeatureEnableRequest,
     FeatureProperties,
     GuestSubscription,
     GuestSubscriptionProperties,
@@ -30,6 +31,8 @@ from ._models import (  # type: ignore
     SharedLimit,
     SharedLimitProperties,
     SystemData,
+    VmFamily,
+    VmFamilyProperties,
 )
 
 from ._enums import (  # type: ignore
@@ -48,6 +51,7 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "Feature",
+    "FeatureEnableRequest",
     "FeatureProperties",
     "GuestSubscription",
     "GuestSubscriptionProperties",
@@ -60,6 +64,8 @@ __all__ = [
     "SharedLimit",
     "SharedLimitProperties",
     "SystemData",
+    "VmFamily",
+    "VmFamilyProperties",
     "ActionType",
     "CreatedByType",
     "FeatureState",

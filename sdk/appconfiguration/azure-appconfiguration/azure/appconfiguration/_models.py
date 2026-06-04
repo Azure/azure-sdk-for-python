@@ -12,7 +12,7 @@ from azure.core.exceptions import AzureError
 from azure.core.rest import HttpResponse
 from azure.core.paging import PageIterator, ItemPaged
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged, AsyncList
-from ._generated._serialization import Model
+from ._generated._utils.serialization import Model
 from ._generated.models import (
     KeyValue,
     KeyValueFilter,
@@ -20,7 +20,7 @@ from ._generated.models import (
     SnapshotStatus,
     SnapshotComposition,
 )
-from ._generated._model_base import _deserialize
+from ._generated._utils.model_base import _deserialize
 
 ReturnType = TypeVar("ReturnType")
 
