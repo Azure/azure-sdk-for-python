@@ -25,7 +25,7 @@ from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
 from .._version import VERSION as _RESPONSES_VERSION
 from ..models._generated import CreateResponse, ResponseStreamEvent
-from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from ..store._base import ResponseProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
 from ._orchestrator import _ResponseOrchestrator
@@ -65,6 +65,79 @@ async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
     """
     for item in sync_gen:
         yield item
+
+
+def _serialize_event_payload(payload: Any) -> bytes:
+    """Serialize a stream event for the file-backed registry codec.
+
+    Stream payloads are either SDK ``ResponseStreamEvent`` model instances
+    (the orchestrator passes generated models) or raw dicts (rehydrated /
+    test scaffolds). Both shapes are JSON-encoded via ``as_dict`` when
+    available so the registry's deserializer round-trips them as plain
+    dicts (the consumer side only reads ``e["sequence_number"]`` /
+    ``e["type"]``).
+    """
+    import json  # pylint: disable=import-outside-toplevel
+
+    if hasattr(payload, "as_dict") and callable(payload.as_dict):
+        data = payload.as_dict()
+    elif isinstance(payload, dict):
+        data = payload
+    else:
+        data = dict(payload)
+    return json.dumps(data, separators=(",", ":"), default=str).encode("utf-8")
+
+
+def _deserialize_event_payload(blob: bytes) -> Any:
+    """Inverse of :func:`_serialize_event_payload`. Returns a plain dict."""
+    import json  # pylint: disable=import-outside-toplevel
+
+    return json.loads(blob.decode("utf-8"))
+
+
+def _stream_cursor(event: Any) -> int:
+    """Cursor function for SSE event streams — exposes ``sequence_number``."""
+    return int(event["sequence_number"])
+
+
+def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None:
+    """Pick the registry backing for SSE event streams at compose time.
+
+    - ``durable_background=True`` → file-backed replay, with the on-disk
+      directory taken from ``AGENTSERVER_STREAM_STORE_PATH`` when set,
+      otherwise a per-process temp directory.
+    - ``durable_background=False`` → in-memory replay (events live in
+      process; replay survives eager eviction within the TTL window).
+
+    The configurator is a process-wide singleton — last call wins for
+    streams created after it. In tests with multiple hosts per process,
+    the per-test fixtures snapshot/restore the registry's private state.
+    """
+    import os  # pylint: disable=import-outside-toplevel
+    import tempfile  # pylint: disable=import-outside-toplevel
+    from pathlib import Path  # pylint: disable=import-outside-toplevel
+
+    from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
+        streams,
+    )
+
+    if runtime_options.durable_background:
+        stream_dir = Path(
+            os.environ.get("AGENTSERVER_STREAM_STORE_PATH")
+            or str(Path(tempfile.gettempdir()) / "agentserver_streams")
+        )
+        streams.use_file_backed_replay(
+            storage_dir=stream_dir,
+            cursor_fn=_stream_cursor,
+            ttl_seconds=runtime_options.replay_event_ttl_seconds,
+            serializer=_serialize_event_payload,
+            deserializer=_deserialize_event_payload,
+        )
+    else:
+        streams.use_in_memory_replay(
+            cursor_fn=_stream_cursor,
+            ttl_seconds=runtime_options.replay_event_ttl_seconds,
+        )
 
 
 class ResponsesAgentServerHost(AgentServerHost):
@@ -203,59 +276,17 @@ class ResponsesAgentServerHost(AgentServerHost):
         resolved_provider: ResponseProviderProtocol = (
             store if store is not None else InMemoryResponseProvider()
         )
-        stream_provider: ResponseStreamProviderProtocol = (
-            resolved_provider
-            if isinstance(resolved_provider, ResponseStreamProviderProtocol)
-            else InMemoryResponseProvider()
-        )
 
-        # For durable_background mode, if the resolved stream provider does not
-        # support incremental append (DurableStreamProviderProtocol), create a
-        # file-based provider that does. This enables crash-recoverable streaming.
-        # Note: ``FileResponseStore`` deliberately implements only
-        # :class:`ResponseProviderProtocol`; the on-disk stream-events format
-        # lives in :class:`FileStreamProvider` alone (we don't want two
-        # implementations of the same JSONL layout to drift apart). This
-        # auto-compose path is what wires the two together for file-backed
-        # local-dev / crash-harness setups.
-        from ..store._base import (
-            DurableStreamProviderProtocol,
-        )  # pylint: disable=import-outside-toplevel
-
-        if runtime_options.durable_background and not isinstance(
-            stream_provider, DurableStreamProviderProtocol
-        ):
-            import os as _os  # pylint: disable=import-outside-toplevel
-            import tempfile  # pylint: disable=import-outside-toplevel
-            from pathlib import Path  # pylint: disable=import-outside-toplevel
-
-            from ..streaming._file_stream_provider import (
-                FileStreamProvider,
-            )  # pylint: disable=import-outside-toplevel
-
-            # (Spec 013 US1(c)) Operator/test override via env var; falls
-            # back to a temp directory for local development.
-            stream_dir = Path(
-                _os.environ.get("AGENTSERVER_STREAM_STORE_PATH")
-                or str(Path(tempfile.gettempdir()) / "agentserver_streams")
-            )
-            stream_provider = FileStreamProvider(  # type: ignore[assignment]
-                storage_dir=stream_dir,
-                replay_event_ttl_seconds=runtime_options.replay_event_ttl_seconds,
-            )
-
-        # (Spec 014 FR-006 / RD-3) Composition guard. When the caller
-        # EXPLICITLY supplied a non-persistent ``store=`` argument AND
-        # ``durable_background=True``, refuse to start: the operator
-        # supplied a store that contradicts their durable_background
-        # opt-in and we won't silently degrade.
+        # Composition guard: when ``durable_background=True`` AND the
+        # caller EXPLICITLY supplied a non-persistent ``store=`` argument,
+        # refuse to start. The operator chose a store that contradicts
+        # their durable_background opt-in and we won't silently degrade.
         #
         # The default path (``store=None`` → ``InMemoryResponseProvider``)
         # is NOT considered an explicit operator choice. It satisfies
         # in-process tests and local development that don't need cross-
-        # process recovery. The auto-compose path above provides a
-        # DurableStreamProviderProtocol via FileStreamProvider so the
-        # stream sub-contract is honoured even with the default store.
+        # process recovery. The streams registry configuration below
+        # provides crash-recoverable replay storage independently.
         if (
             runtime_options.durable_background
             and store is not None
@@ -272,8 +303,16 @@ class ResponsesAgentServerHost(AgentServerHost):
                 "(b) set ``AGENTSERVER_RESPONSE_STORE_PATH`` so the "
                 "framework selects FileResponseStore automatically, or "
                 "(c) set ``durable_background=False`` to opt out of "
-                "crash recovery. (Spec 014 FR-006)"
+                "crash recovery."
             )
+
+        # Configure the process-wide streams registry. A single configurator
+        # call at compose time picks the backing used for every response's
+        # SSE event stream. The handler-emitted events are serialized to
+        # ``as_dict()`` form so the registry's default JSON codec accepts
+        # them; the cursor function exposes ``sequence_number`` as the
+        # reconnection cursor for ``subscribe(after=N)`` / ``Last-Event-ID``.
+        _configure_streams_registry(runtime_options)
 
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
@@ -281,7 +320,6 @@ class ResponsesAgentServerHost(AgentServerHost):
             runtime_state=runtime_state,
             runtime_options=runtime_options,
             provider=resolved_provider,
-            stream_provider=stream_provider,
             acceptance_hook=self._acceptance_hook,
         )
         endpoint = _ResponseEndpointHandler(
@@ -292,7 +330,6 @@ class ResponsesAgentServerHost(AgentServerHost):
             sse_headers=sse_headers,
             host=self,
             provider=resolved_provider,
-            stream_provider=stream_provider,
         )
 
         # Build response protocol routes

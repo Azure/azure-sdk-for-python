@@ -14,7 +14,7 @@ from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStre
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..hosting._event_subject import _ResponseEventSubject
+    from azure.ai.agentserver.core.streaming import EventStream  # pylint: disable=import-error,no-name-in-module
 
 
 ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancelled", "incomplete"]
@@ -110,7 +110,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         cancel_requested: bool = False,
         client_disconnected: bool = False,
         response_created_seen: bool = False,
-        subject: _ResponseEventSubject | None = None,
+        subject: "EventStream | None" = None,
         cancel_signal: asyncio.Event | None = None,
         input_items: list[OutputItem] | None = None,
         previous_response_id: str | None = None,

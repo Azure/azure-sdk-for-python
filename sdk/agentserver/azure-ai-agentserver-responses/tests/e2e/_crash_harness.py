@@ -4,8 +4,8 @@
 
 Spawns an HTTP server as a subprocess, exposes ``kill()`` (SIGKILL) and
 ``restart()`` APIs, plus an ``httpx.AsyncClient`` for POST + reconnect. Wires
-the subprocess against ``LocalDurableProvider`` + ``FileResponseStore`` +
-``FileStreamProvider`` against a common ``tmp_path`` so durable state
+the subprocess against ``LocalDurableProvider`` + ``FileResponseStore`` + the file-backed
+streams registry backing against a common ``tmp_path`` so durable state
 survives the kill.
 
 POSIX-only (uses ``os.kill(pid, SIGKILL)``). See spec 013 §Q1 for the

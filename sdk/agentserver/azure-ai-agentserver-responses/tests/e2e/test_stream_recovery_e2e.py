@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import time
 from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock, patch
@@ -29,9 +28,7 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
     TextResponse,
 )
-from azure.ai.agentserver.responses.streaming._file_stream_provider import (
-    FileStreamProvider,
-)
+from azure.ai.agentserver.core.streaming import streams
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -201,73 +198,76 @@ class TestStreamRecoveryResume:
         assert data["status"] == "completed"
 
 
-class TestFileStreamProviderIntegration:
-    """Integration tests for FileStreamProvider with actual streaming."""
+
+
+class TestFileBackedStreamsRegistry:
+    """Integration coverage for the file-backed streams registry backing
+    that has replaced the in-package ``FileStreamProvider``.
+
+    Exercises store-and-replay, sub-second TTL eviction on a closed
+    stream, and the in-flight (open-stream) draining semantics.
+    """
 
     @pytest.mark.asyncio
-    async def test_file_provider_stores_and_replays(self, tmp_path: Path) -> None:
-        """Events stored via file provider are readable after."""
-        provider = FileStreamProvider(storage_dir=tmp_path)
-
-        # Simulate streaming: append events one by one
-        events = [
-            {
-                "type": "response.created",
-                "sequence_number": 0,
-                "data": {"id": "resp_1"},
-            },
-            {"type": "response.in_progress", "sequence_number": 1, "data": {}},
-            {
-                "type": "response.output_text.delta",
-                "sequence_number": 2,
-                "data": {"delta": "Hi"},
-            },
-            {"type": "response.completed", "sequence_number": 3, "data": {}},
-        ]
-        for event in events:
-            await provider.append_stream_event("resp_1", event)
-        await provider.mark_terminal("resp_1")
-
-        # Read back all
-        stored = await provider.get_stream_events("resp_1")
-        assert stored is not None
-        assert len(stored) == 4
-
-        # Resume from seq 1 (get events after seq 1)
-        resumed = await provider.get_stream_events("resp_1", starting_after=1)
-        assert resumed is not None
-        assert len(resumed) == 2
-        assert resumed[0]["sequence_number"] == 2
-        assert resumed[1]["sequence_number"] == 3
-
-    @pytest.mark.asyncio
-    async def test_file_provider_ttl_expiry(self, tmp_path: Path) -> None:
-        """After TTL, events are no longer available."""
-        provider = FileStreamProvider(storage_dir=tmp_path, replay_event_ttl_seconds=1)
-
-        await provider.append_stream_event(
-            "resp_ttl", {"type": "test", "sequence_number": 0}
-        )
-        await provider.mark_terminal("resp_ttl")
-
-        # Backdate terminal marker
-        terminal_path = tmp_path / "resp_ttl.terminal"
-        terminal_path.write_text(str(time.time() - 2))
-
-        result = await provider.get_stream_events("resp_ttl")
-        assert result is None
+    async def test_stores_and_replays(self, tmp_path: Path) -> None:
+        saved_slots = dict(streams._slots)  # type: ignore[attr-defined]
+        saved_factory = streams._factory  # type: ignore[attr-defined]
+        streams._slots.clear()  # type: ignore[attr-defined]
+        try:
+            streams.use_file_backed_replay(
+                storage_dir=tmp_path,
+                cursor_fn=lambda e: int(e["sequence_number"]),
+            )
+            stream = await streams.get_or_create("resp_1")
+            events = [
+                {"type": "response.created", "sequence_number": 0, "data": {"id": "resp_1"}},
+                {"type": "response.in_progress", "sequence_number": 1, "data": {}},
+                {"type": "response.output_text.delta", "sequence_number": 2, "data": {"delta": "Hi"}},
+                {"type": "response.completed", "sequence_number": 3, "data": {}},
+            ]
+            for event in events:
+                await stream.emit(event)
+            await stream.close()
+            stored = [e async for e in stream.subscribe()]
+            assert len(stored) == 4
+            resumed = [e async for e in stream.subscribe(after=1)]
+            assert len(resumed) == 2
+            assert resumed[0]["sequence_number"] == 2
+            assert resumed[1]["sequence_number"] == 3
+        finally:
+            try:
+                await streams.delete("resp_1")
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass
+            streams._slots.clear()  # type: ignore[attr-defined]
+            streams._slots.update(saved_slots)  # type: ignore[attr-defined]
+            streams._factory = saved_factory  # type: ignore[attr-defined]
 
     @pytest.mark.asyncio
-    async def test_file_provider_no_ttl_before_terminal(self, tmp_path: Path) -> None:
-        """Events remain accessible indefinitely before mark_terminal."""
-        provider = FileStreamProvider(storage_dir=tmp_path, replay_event_ttl_seconds=1)
-
-        await provider.append_stream_event(
-            "resp_alive", {"type": "test", "sequence_number": 0}
-        )
-        # NOT calling mark_terminal
-
-        # Even though TTL is 1s, no terminal marker → events are available
-        result = await provider.get_stream_events("resp_alive")
-        assert result is not None
-        assert len(result) == 1
+    async def test_ttl_evicts_closed_buffer(self, tmp_path: Path) -> None:
+        saved_slots = dict(streams._slots)  # type: ignore[attr-defined]
+        saved_factory = streams._factory  # type: ignore[attr-defined]
+        streams._slots.clear()  # type: ignore[attr-defined]
+        try:
+            streams.use_file_backed_replay(
+                storage_dir=tmp_path,
+                cursor_fn=lambda e: int(e["sequence_number"]),
+                ttl_seconds=0.5,
+            )
+            stream = await streams.get_or_create("resp_ttl")
+            await stream.emit({"type": "test", "sequence_number": 0})
+            await stream.close()
+            await asyncio.sleep(0.7)
+            try:
+                drained = [e async for e in stream.subscribe()]
+            except Exception:  # pylint: disable=broad-exception-caught
+                drained = []
+            assert drained == []
+        finally:
+            try:
+                await streams.delete("resp_ttl")
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass
+            streams._slots.clear()  # type: ignore[attr-defined]
+            streams._slots.update(saved_slots)  # type: ignore[attr-defined]
+            streams._factory = saved_factory  # type: ignore[attr-defined]

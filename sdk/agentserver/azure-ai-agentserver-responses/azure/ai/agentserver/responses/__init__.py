@@ -17,7 +17,7 @@ from .models._helpers import (
     to_output_item,
 )
 from .models.runtime import CancellationReason
-from .store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from .store._base import ResponseProviderProtocol
 from .store._foundry_errors import (
     FoundryApiError,
     FoundryBadRequestError,
@@ -39,7 +39,6 @@ __all__ = [
     "IsolationContext",
     "ResponsesServerOptions",
     "ResponseProviderProtocol",
-    "ResponseStreamProviderProtocol",
     "InMemoryResponseProvider",
     "FoundryStorageProvider",
     "FoundryStorageSettings",

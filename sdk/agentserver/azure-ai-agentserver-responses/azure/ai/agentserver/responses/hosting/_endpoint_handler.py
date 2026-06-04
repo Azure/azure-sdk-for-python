@@ -41,6 +41,12 @@ from azure.ai.agentserver.responses.models._generated import (
     ResponseStreamEventType,
 )
 
+from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-error,no-name-in-module
+    EventStreamGoneError,
+    EventStreamNotFoundError,
+    streams,
+)
+
 from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
@@ -52,9 +58,8 @@ from ..models.runtime import (
     build_cancelled_response,
     build_failed_response,
 )
-from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from ..store._base import ResponseProviderProtocol
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
-from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_any_event
 from ..streaming._state_machine import _normalize_lifecycle_events
 from ._execution_context import _ExecutionContext
@@ -268,7 +273,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         sse_headers: dict[str, str],
         host: "ResponsesAgentServerHost",
         provider: ResponseProviderProtocol,
-        stream_provider: ResponseStreamProviderProtocol | None = None,
     ) -> None:
         """Initialise the endpoint handler.
 
@@ -286,8 +290,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type host: ResponsesAgentServerHost
         :param provider: Persistence provider for response envelopes and input items.
         :type provider: ResponseProviderProtocol
-        :param stream_provider: Optional provider for SSE stream event persistence and replay.
-        :type stream_provider: ResponseStreamProviderProtocol | None
         """
         self._orchestrator = orchestrator
         self._runtime_state = runtime_state
@@ -296,7 +298,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self._sse_headers = sse_headers
         self._host = host
         self._provider = provider
-        self._stream_provider = stream_provider
         self._shutdown_requested: asyncio.Event = asyncio.Event()
         self._is_draining: bool = False
 
@@ -1129,17 +1130,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :param record: The in-flight response execution record.
         :type record: ResponseExecution
         :param starting_after: The cursor position to start streaming from.
+            ``-1`` means "from the beginning of the retained history".
         :type starting_after: int
         :param headers: Optional extra headers (e.g. session headers) to merge with SSE headers.
         :type headers: dict[str, str] | None
         :return: A streaming response with live SSE events.
         :rtype: StreamingResponse
         """
-        _cursor = starting_after
+        _cursor: int | None = starting_after if starting_after >= 0 else None
         merged_headers = {**self._sse_headers, **(headers or {})}
 
         async def _stream_from_subject():
-            async for event in record.subject.subscribe(cursor=_cursor):  # type: ignore[union-attr]
+            stream = record.subject
+            if stream is None:
+                # Fall back to looking up the per-response stream from the
+                # registry. The orchestrator populates ``record.subject``
+                # on the bg+stream path but older eviction-race conditions
+                # may leave it unset; the registry lookup is idempotent.
+                stream = await streams.get_or_create(record.response_id)
+            async for event in stream.subscribe(after=_cursor):
                 yield encode_sse_any_event(event)
 
         return StreamingResponse(_stream_from_subject(), media_type="text/event-stream", headers=merged_headers)
@@ -1152,42 +1161,78 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         isolation: IsolationContext | None = None,
         headers: dict[str, str] | None = None,
     ) -> Response | None:
-        """Try to replay persisted SSE events from the stream provider.
+        """Try to replay events from the per-response registry stream.
 
-        Returns a ``StreamingResponse`` if replay events are available,
-        an error ``Response`` for invalid query parameters, or ``None``
-        when no replay data exists.
+        Returns a ``StreamingResponse`` when a stream exists for the id
+        (either still in registry memory or rehydrated from disk by the
+        file-backed backing), an error ``Response`` for invalid query
+        parameters, or ``None`` when no stream exists.
 
         :param request: The incoming Starlette HTTP request.
         :type request: Request
         :param response_id: The response identifier to replay.
         :type response_id: str
-        :keyword isolation: Optional isolation context for multi-tenant filtering.
+        :keyword isolation: Unused (kept for call-site compatibility — the
+            registry is process-wide and partitioning is handled by the
+            response provider, not the stream backing).
         :paramtype isolation: IsolationContext | None
         :keyword headers: Optional extra headers (e.g. session headers) to merge with SSE headers.
         :paramtype headers: dict[str, str] | None
         :return: A streaming replay response, an error response, or ``None``.
         :rtype: Response | None
         """
-        if self._stream_provider is None:
-            return None
+        del isolation  # unused — see docstring
+        parsed_cursor = self._parse_starting_after(request, headers)
+        if isinstance(parsed_cursor, Response):
+            return parsed_cursor
+
+        # Look up an existing stream — do NOT mint one. If the id was
+        # never registered (e.g. ``store=false`` responses never produce
+        # a replay log) ``get`` raises NotFound and we return ``None``
+        # so the caller falls through to its 404 path. Auto-evicted
+        # streams (TTL expiry on a closed file-backed log that was
+        # never re-opened) also surface as NotFound here because the
+        # tombstone was never installed for them.
         try:
-            replay_events = await self._stream_provider.get_stream_events(response_id, isolation=isolation)
-            if replay_events is None:
-                return None
-            parsed_cursor = self._parse_starting_after(request, headers)
-            if isinstance(parsed_cursor, Response):
-                return parsed_cursor
-            filtered = [e for e in replay_events if e["sequence_number"] > parsed_cursor]
-            merged_headers = {**self._sse_headers, **(headers or {})}
-            return StreamingResponse(
-                _encode_sse(filtered),
-                media_type="text/event-stream",
-                headers=merged_headers,
-            )
-        except Exception:  # pylint: disable=broad-exception-caught
-            logger.warning("Failed to replay persisted stream for response_id=%s", response_id, exc_info=True)
+            stream = await streams.get(response_id)
+        except EventStreamNotFoundError:
             return None
+        except EventStreamGoneError:
+            return None
+        # Peek at a method that raises Gone for already-destroyed
+        # streams; last_cursor() is the cheapest such method.
+        try:
+            _ = await stream.last_cursor()
+        except EventStreamGoneError:
+            return None
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning(
+                "Failed to inspect replay stream for response_id=%s",
+                response_id,
+                exc_info=True,
+            )
+            return None
+
+        # If the stream has no retained events (e.g. file-backed
+        # rehydration yielded zero records), behave as "no replay
+        # available" — fall through to caller's 404 path. The cheapest
+        # signal is "no last_cursor seen AND no events to subscribe to";
+        # we use the cursor presence as a proxy.
+        merged_headers = {**self._sse_headers, **(headers or {})}
+        _cursor: int | None = parsed_cursor if parsed_cursor >= 0 else None
+
+        async def _stream_events():
+            try:
+                async for event in stream.subscribe(after=_cursor):
+                    yield encode_sse_any_event(event)
+            except EventStreamGoneError:
+                return
+
+        return StreamingResponse(
+            _stream_events(),
+            media_type="text/event-stream",
+            headers=merged_headers,
+        )
 
     async def handle_delete(self, request: Request) -> Response:
         """Route handler for ``DELETE /responses/{response_id}``.
@@ -1258,19 +1303,18 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 await self._provider.delete_response(response_id, isolation=_extract_isolation(request))
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Best-effort provider delete failed for response_id=%s", response_id, exc_info=True)
-            # Clean up persisted stream events
-            if self._stream_provider is not None:
-                try:
-                    await self._stream_provider.delete_stream_events(
-                        response_id,
-                        isolation=_extract_isolation(request),
-                    )
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.debug(
-                        "Best-effort stream event delete failed for response_id=%s",
-                        response_id,
-                        exc_info=True,
-                    )
+            # Tear down the per-response stream — frees the registry slot,
+            # installs the deletion tombstone (so subsequent GET ?stream=true
+            # raises Gone, mapped to 404 below), and removes the on-disk log
+            # for the file-backed backing.
+            try:
+                await streams.delete(response_id)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Best-effort stream delete failed for response_id=%s",
+                    response_id,
+                    exc_info=True,
+                )
 
         logger.info("Deleted response %s", response_id)
         return JSONResponse(
@@ -1307,17 +1351,18 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         """
         try:
             await self._provider.delete_response(response_id, isolation=isolation)
-            # Clean up persisted stream events
-            if self._stream_provider is not None:
-                try:
-                    await self._stream_provider.delete_stream_events(response_id, isolation=isolation)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.debug(
-                        "Best-effort stream event delete failed for response_id=%s",
-                        response_id,
-                        exc_info=True,
-                    )
+            # Tear down the per-response stream — same as the in-memory
+            # delete path above.
+            try:
+                await streams.delete(response_id)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Best-effort stream delete failed for response_id=%s",
+                    response_id,
+                    exc_info=True,
+                )
             # Mark as deleted in runtime state so subsequent requests get 404
+            await self._runtime_state.mark_deleted(response_id)
             await self._runtime_state.mark_deleted(response_id)
             logger.info("Deleted response %s via provider", response_id)
             return JSONResponse(

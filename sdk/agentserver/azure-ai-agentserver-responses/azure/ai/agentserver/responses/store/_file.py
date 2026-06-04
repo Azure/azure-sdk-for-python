@@ -11,17 +11,14 @@ storage directory; restarts find the files exactly as they were left.
 
 **Scope and composition.** This class implements only
 :class:`ResponseProviderProtocol` — response envelope CRUD, input items,
-and history-item indexes. It does NOT implement
-:class:`ResponseStreamProviderProtocol` (bulk stream events) or
-:class:`DurableStreamProviderProtocol` (incremental stream events). The
-hosting routing layer already composes a separate
-:class:`~azure.ai.agentserver.responses.streaming.FileStreamProvider`
-when the response provider lacks stream support, so streaming concerns
-live cleanly in their own module. Cancellation / execution-record state
-is not part of any protocol; it lives in the in-process
-``_RuntimeState`` (for live execution) and in the durable task layer's
-``_steering`` payload (for crash recovery) — neither requires anything
-from the response store.
+and history-item indexes. Streaming concerns are handled by the
+process-wide ``azure.ai.agentserver.core.streaming.streams`` registry,
+configured by the responses hosting layer with a file-backed or
+in-memory replay backing depending on ``durable_background``.
+Cancellation / execution-record state is not part of any protocol; it
+lives in the in-process ``_RuntimeState`` (for live execution) and in
+the durable task layer's ``_steering`` payload (for crash recovery) —
+neither requires anything from the response store.
 
 **Drop-in for InMemoryResponseProvider.** Within the scope of
 :class:`ResponseProviderProtocol`, this class is a no-side-effects
@@ -163,12 +160,10 @@ def _serialize_item(item: Any) -> dict[str, Any]:
 class FileResponseStore(ResponseProviderProtocol):
     """File-backed response store provider.
 
-    Implements :class:`ResponseProviderProtocol`. Streaming concerns
-    (``ResponseStreamProviderProtocol`` / ``DurableStreamProviderProtocol``)
-    are handled by
-    :class:`~azure.ai.agentserver.responses.streaming.FileStreamProvider`,
-    which the host routing layer composes automatically when the response
-    provider lacks stream support.
+    Implements :class:`ResponseProviderProtocol`. Streaming concerns are
+    handled separately by the process-wide
+    ``azure.ai.agentserver.core.streaming.streams`` registry, configured
+    by the responses hosting layer.
 
     :param storage_dir: Root directory for the store. Created if it does
         not exist. Subdirectories ``responses/``, ``items/``, and

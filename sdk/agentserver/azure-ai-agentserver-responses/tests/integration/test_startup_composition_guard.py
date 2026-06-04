@@ -62,7 +62,7 @@ async def test_durable_background_explicit_inmemory_store_fails_construction() -
             options=options,
             store=InMemoryResponseProvider(),
         )
-    assert "FR-006" in str(excinfo.value)
+    assert "durable_background" in str(excinfo.value)
 
 
 def test_durable_background_default_construction_works() -> None:

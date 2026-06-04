@@ -1,25 +1,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Spec 014 FR-006 — startup composition guard.
+"""Composition guard for the responses host startup.
 
 When ``durable_background=True`` AND the caller EXPLICITLY supplied a
-``store=`` argument that does not persist (or yields a non-durable
-stream provider), ``ResponsesAgentServerHost`` construction MUST raise
-an explicit, descriptive error naming the missing provider — NOT start
-up and silently degrade.
+``store=`` argument that does not persist across crashes,
+``ResponsesAgentServerHost`` construction MUST raise an explicit,
+descriptive error naming the offending store — NOT start up and silently
+degrade.
 
 The guard intentionally does NOT fire for the default-only path
 (``store=None`` → ``InMemoryResponseProvider``). That path satisfies
 in-process tests and local development that don't need cross-process
 recovery; production deployments must supply an explicit persistent
 store either via the ``store=`` constructor argument or the
-``AGENTSERVER_RESPONSE_STORE_PATH`` env var. When neither is supplied
-the framework auto-composes a temp-dir ``FileStreamProvider`` so
-single-process testing continues to work.
-
-Contract sources:
-- ``durability-contract.md`` (FR-006 / RD-3).
-- ``spec.md`` § Edge cases — provider-missing composition.
+``AGENTSERVER_RESPONSE_STORE_PATH`` env var. Streaming durability is
+provided independently by the process-wide streams registry, configured
+by the host at startup against ``AGENTSERVER_STREAM_STORE_PATH``.
 """
 
 from __future__ import annotations
@@ -56,7 +52,7 @@ def _clear_env_overrides() -> Iterator[None]:
 
 
 def test_durable_background_explicit_inmemory_store_raises_at_startup() -> None:
-    """Spec 014 FR-006: explicit ``store=InMemoryResponseProvider()`` with
+    """Composition guard: explicit ``store=InMemoryResponseProvider()`` with
     ``durable_background=True`` MUST raise — operator deliberately chose
     a non-persistent store while opting into crash recovery, which is
     contradictory and the framework refuses to silently degrade.
@@ -79,27 +75,27 @@ def test_durable_background_explicit_inmemory_store_raises_at_startup() -> None:
 
 
 def test_durable_background_with_custom_nondurable_store_raises_at_startup() -> None:
-    """Spec 014 FR-006: ``durable_background=True`` with a custom store
-    that lacks ``DurableStreamProviderProtocol`` MUST raise — the stream
-    half of the durability contract cannot be honoured without a durable
-    stream provider.
+    """Composition guard: explicit ``store=`` with ``durable_background=True``
+    that does not persist across crashes MUST raise — the operator
+    deliberately chose a non-persistent store while opting into crash
+    recovery, which is contradictory and the framework refuses to silently
+    degrade. The guard only inspects the response store; streaming
+    durability is owned by the streams registry configured at startup,
+    so any explicit non-persistent store fails the same way.
     """
     from azure.ai.agentserver.responses.store._memory import (
         InMemoryResponseProvider,
     )
 
     class _NonDurableStore(InMemoryResponseProvider):
-        """Pretends to be a persistent store but only implements the
-        non-durable stream protocol."""
+        """Subclass of the non-persistent in-memory store."""
 
     options = ResponsesServerOptions(durable_background=True)
     with pytest.raises(ValueError) as excinfo:
         ResponsesAgentServerHost(options=options, store=_NonDurableStore())
     msg = str(excinfo.value)
     assert "durable_background" in msg
-    # Either the store-not-persist OR the stream-not-durable message;
-    # both reach the same raise sentence.
-    assert "_NonDurableStore" in msg or "stream" in msg.lower(), msg
+    assert "_NonDurableStore" in msg or "not persist" in msg, msg
 
 
 def test_durable_background_false_with_inmemory_does_not_raise() -> None:
@@ -127,10 +123,10 @@ def test_durable_background_true_with_env_store_paths_does_not_raise(
     tmp_path: object,
 ) -> None:
     """The ``AGENTSERVER_RESPONSE_STORE_PATH`` + ``AGENTSERVER_STREAM_STORE_PATH``
-    operator overrides should jointly satisfy the composition guard:
-    FileResponseStore for the response provider + FileStreamProvider for
-    the stream provider. This is what the crash-harness conformance
-    suite relies on.
+    operator overrides together satisfy the composition guard:
+    ``FileResponseStore`` for the response provider + the registry's
+    file-backed replay backing for streams (configured by the host at
+    startup against ``AGENTSERVER_STREAM_STORE_PATH``).
     """
     os.environ["AGENTSERVER_RESPONSE_STORE_PATH"] = str(tmp_path / "responses")
     os.environ["AGENTSERVER_STREAM_STORE_PATH"] = str(tmp_path / "streams")
