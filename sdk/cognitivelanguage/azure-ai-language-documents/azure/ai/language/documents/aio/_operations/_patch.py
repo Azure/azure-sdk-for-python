@@ -50,6 +50,7 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
+            return None
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -104,6 +105,7 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
+            return None
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
