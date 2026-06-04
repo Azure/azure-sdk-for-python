@@ -319,7 +319,7 @@ jobs:
 
           - Workflow run: ${RUN_URL}
 
-          This PR was auto-generated. You could click the workflow again to update the PR directly if you have new commit in your typespec PR"
+          This PR was auto-generated. Re-run the workflow to update it after new commits are pushed to the upstream TypeSpec PR"
             PR_BODY_ENC=$(jq -rn --arg b "$PR_BODY_RAW" '$b|@uri')
             COMPARE_URL="${SERVER}/${REPO}/compare/${TARGET_BRANCH}...${SOURCE_BRANCH}?quick_pull=1${DRAFT_PARAM}&title=${PR_TITLE_ENC}&body=${PR_BODY_ENC}"
 
