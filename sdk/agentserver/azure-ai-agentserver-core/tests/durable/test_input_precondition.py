@@ -195,8 +195,17 @@ async def test_precondition_mismatch_raises_on_resume(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_fresh_chain_rejected_when_chain_exists(tmp_path: Path) -> None:
-    """input_id-only on a task that already has a stored chain fails."""
+async def test_input_id_only_advances_chain_head_unconditionally(tmp_path: Path) -> None:
+    """input_id-only on a task that already has a stored chain succeeds.
+
+    Per the framework's idempotency-only mode: when the caller supplies
+    ``input_id`` without ``if_last_input_id``, no predecessor assertion
+    is performed and the chain head is advanced unconditionally. This
+    supports use cases like conversation-grouped multi-turn where
+    sequential delivery is enforced externally (e.g. via task_id
+    collapse + TaskConflictError) and the per-turn ``input_id`` is
+    only used for chain-head tracking and idempotency.
+    """
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
         await _steerable_suspending.start(
@@ -206,17 +215,23 @@ async def test_fresh_chain_rejected_when_chain_exists(tmp_path: Path) -> None:
         )
         await asyncio.sleep(0.2)
 
-        # Attempt fresh-chain on a task that's already chained -> rejected.
-        with pytest.raises(LastInputIdPreconditionFailed) as excinfo:
-            await _steerable_suspending.start(
-                task_id="t-fresh-rejected",
-                input={"turn": 2},
-                input_id="msg-2",
-                # No if_last_input_id supplied => claim fresh chain.
-            )
+        info = await manager.provider.get("t-fresh-rejected")
+        assert info is not None
+        assert info.payload["_last_input_id"] == "msg-1"
 
-        assert excinfo.value.expected_last_input_id is None
-        assert excinfo.value.actual_last_input_id == "msg-1"
+        # input_id-only on a task with a stored chain: succeeds and
+        # advances the chain head without precondition assertion.
+        await _steerable_suspending.start(
+            task_id="t-fresh-rejected",
+            input={"turn": 2},
+            input_id="msg-2",
+            # No if_last_input_id: idempotency-only mode.
+        )
+        await asyncio.sleep(0.2)
+
+        info = await manager.provider.get("t-fresh-rejected")
+        assert info is not None
+        assert info.payload["_last_input_id"] == "msg-2"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
