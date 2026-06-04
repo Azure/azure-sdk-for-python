@@ -1,9 +1,12 @@
 """Durable task with streaming output.
 
-Demonstrates using ``ctx.stream()`` to emit incremental results from a
-long-running task while the consumer iterates with ``async for``.
+Demonstrates emitting incremental events from a long-running ``@task``
+handler via the process-level ``streams`` registry (spec 017).
 
-The stream is in-memory only — items are **not** persisted.
+The HTTP / consumer layer attaches a subscriber **before** starting
+the task; the handler emits to the same per-turn stream id (in this
+sample, we synthesize a "per-invocation" id locally — in a real
+server it comes from ``request.state.invocation_id``).
 
 Usage::
 
@@ -21,23 +24,34 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import uuid
 
 from azure.ai.agentserver.core import AgentServerHost  # noqa: F401  # pulled in for side effects
 from azure.ai.agentserver.core.durable import task
 from azure.ai.agentserver.core.durable._context import TaskContext
 from azure.ai.agentserver.core.durable._manager import get_task_manager
+from azure.ai.agentserver.core.streaming import streams
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Pick the backing once at app startup. ``use_in_memory_replay`` lets
+# late subscribers catch up to a recent window of events.
+streams.use_in_memory_replay(ttl_seconds=600)
+
 
 @task(name="stream_numbers")
-async def stream_numbers(ctx: TaskContext[None]) -> str:
+async def stream_numbers(ctx: TaskContext[dict]) -> str:
     """Stream numbers 0-4 with a short delay, then return a summary."""
-    for i in range(5):
-        await ctx.stream({"value": i, "message": f"Processing item {i}"})
-        await asyncio.sleep(0.1)
-    return f"Streamed {5} items"
+    inv_id = ctx.input["invocation_id"]
+    stream = await streams.get_or_create(inv_id)
+    try:
+        for i in range(5):
+            await stream.emit({"value": i, "message": f"Processing item {i}"})
+            await asyncio.sleep(0.1)
+        return f"Streamed {5} items"
+    finally:
+        await stream.close()
 
 
 async def main():
@@ -46,16 +60,24 @@ async def main():
     await manager.startup()
 
     try:
-        # Start the task (non-blocking — returns a TaskRun handle)
-        run = await stream_numbers.start(task_id="stream-demo", input=None)
+        # In an HTTP server this id comes from ``request.state.invocation_id``.
+        # For the standalone sample we synthesize a per-invocation id locally.
+        invocation_id = f"inv-{uuid.uuid4()}"
 
-        # Consume streamed items as they arrive
+        # Attach the subscriber BEFORE starting the task (subscribe-before-start
+        # discipline — guaranteed safe even with the default broadcast backing).
+        stream = await streams.get_or_create(invocation_id)
+
+        run = await stream_numbers.start(
+            task_id="stream-demo",
+            input={"invocation_id": invocation_id},
+        )
+
         items = []
-        async for chunk in run:
-            logger.info("Received: %s", chunk)
-            items.append(chunk)
+        async for ev in stream.subscribe(after=0):
+            logger.info("Received: %s", ev)
+            items.append(ev)
 
-        # After streaming ends, get the final result
         result = await run.result()
         logger.info("Final result: %s", result.output)
         logger.info("Total items streamed: %d", len(items))

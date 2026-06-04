@@ -19,7 +19,6 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Callable, Generic, Literal, TypeVar
 
 from ._metadata import TaskMetadata
-from ._stream import StreamHandler
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
@@ -103,7 +102,6 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         "cancel",
         "shutdown",
         "_suspend_callback",
-        "_stream_handler",
         "entry_mode",
         # Spec 016 FR-016..FR-021 (US6) public cancel-cause / steering surface.
         "timeout_exceeded",
@@ -128,7 +126,6 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         recovery_count: int = 0,
         cancel: asyncio.Event | None = None,
         shutdown: asyncio.Event | None = None,
-        stream_handler: StreamHandler | None = None,
         entry_mode: EntryMode = "fresh",
         is_steered_turn: bool = False,
         pending_count_provider: Callable[[], int] | None = None,
@@ -142,7 +139,6 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         self.cancel = cancel or asyncio.Event()
         self.shutdown = shutdown or asyncio.Event()
         self._suspend_callback: Any = None
-        self._stream_handler: StreamHandler | None = stream_handler
         self.entry_mode: EntryMode = entry_mode
         # Spec 016 FR-016..FR-021: public surface fields. Defaults are
         # framework-controlled at construction; framework setters update
@@ -193,19 +189,6 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         from ._run import Suspended  # pylint: disable=import-outside-toplevel
 
         return Suspended(reason=reason, output=output)
-
-    async def stream(self, item: Any) -> None:
-        """Emit a streaming item to observers iterating this task's output.
-
-        When a :class:`~azure.ai.agentserver.core.durable.StreamHandler`
-        is configured, the item is routed through ``handler.put(item)``.
-        Otherwise the call is a no-op.
-
-        :param item: The value to stream.
-        :type item: Any
-        """
-        if self._stream_handler is not None:
-            await self._stream_handler.put(item)
 
     async def exit_for_recovery(self) -> Any:
         """Spec 016 FR-027 (US8): graceful-shutdown shape.

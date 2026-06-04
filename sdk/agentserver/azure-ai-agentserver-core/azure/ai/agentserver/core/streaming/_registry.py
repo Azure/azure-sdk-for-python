@@ -1,0 +1,200 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+""":data:`streams` registry — process-level lifecycle owner.
+
+Six methods:
+
+- Three async lifecycle: :meth:`_StreamsRegistry.get`,
+  :meth:`_StreamsRegistry.get_or_create`,
+  :meth:`_StreamsRegistry.delete`.
+- Three sync configurators: :meth:`_StreamsRegistry.use_in_memory_live`,
+  :meth:`_StreamsRegistry.use_in_memory_replay`,
+  :meth:`_StreamsRegistry.use_file_backed_replay`.
+
+The registry is the lifecycle owner for the three SDK-bundled
+backings. Third-party :class:`EventStream` impls do NOT plug into
+this registry — they ship their own peer registry.
+
+The registry retains tombstones for destroyed ids so that
+:meth:`get` distinguishes "id never registered" (raises
+:class:`EventStreamNotFoundError` → 404) from "id was registered,
+now destroyed" (raises :class:`EventStreamGoneError` → 410). The
+tombstone is cleared when the id is explicitly re-created via
+:meth:`get_or_create`.
+"""
+
+from __future__ import annotations
+
+import asyncio  # pylint: disable=do-not-import-asyncio
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any, Optional, Union
+
+from ._concrete import (
+    BroadcastEventStream,
+    FileBackedReplayEventStream,
+    ReplayEventStream,
+)
+from ._protocol import (
+    EventStream,
+    EventStreamGoneError,
+    EventStreamNotFoundError,
+)
+
+
+# Sentinel for tombstoned slots (rule 36a)
+_TOMBSTONE: object = object()
+
+
+class _StreamsRegistry:
+    """Implementation of the module-level :data:`streams` singleton.
+
+    Do not instantiate directly — use the exported ``streams``
+    instance. This is the SDK-private implementation type; the
+    public surface is the singleton + the six methods on it.
+    """
+
+    def __init__(self) -> None:
+        # Streams keyed by id; value is either an EventStream
+        # instance OR _TOMBSTONE for destroyed ids.
+        self._slots: dict[str, Union[EventStream, object]] = {}
+        # Per-id locks for get_or_create atomicity (rule 34).
+        self._id_locks: dict[str, asyncio.Lock] = {}
+        # Global lock guarding _slots + _id_locks structural mutations.
+        self._struct_lock = asyncio.Lock()
+        # Factory closure — set by use_* configurators. Default:
+        # use_in_memory_live() per rule 37a (also FR-013a).
+        self._factory: Callable[[str], EventStream] = lambda _id: BroadcastEventStream()
+
+    # ----- Configurators (sync) -----
+
+    def use_in_memory_live(self) -> None:
+        """Configure the registry to construct in-memory **live** streams
+        (multicast, no replay buffer). Subscribers see events emitted
+        after they subscribe — late subscribers miss earlier events.
+        Suitable when consumers attach before the producer starts.
+        """
+        self._factory = lambda _id: BroadcastEventStream()
+
+    def use_in_memory_replay(
+        self,
+        *,
+        cursor_fn: Optional[Callable[[Any], int]] = None,
+        ttl_seconds: Optional[float] = None,
+    ) -> None:
+        """Configure the registry to construct in-memory **replay** streams.
+
+        Each stream retains its event history (subject to ``ttl_seconds``
+        per-event TTL eviction once the stream is closed). Late
+        subscribers see the full retained history. Pass ``cursor_fn``
+        to enable cursored re-subscription via ``subscribe(after=...)``.
+        """
+        self._factory = lambda _id: ReplayEventStream(
+            cursor_fn=cursor_fn, ttl_seconds=ttl_seconds
+        )
+
+    def use_file_backed_replay(
+        self,
+        *,
+        storage_dir: Path,
+        cursor_fn: Optional[Callable[[Any], int]] = None,
+        ttl_seconds: Optional[float] = None,
+        serializer: Optional[Callable[[Any], bytes]] = None,
+        deserializer: Optional[Callable[[bytes], Any]] = None,
+    ) -> None:
+        """Configure the registry to construct **file-backed replay** streams.
+
+        Each stream persists its event log to
+        ``storage_dir / f"{id}.jsonl"`` and rehydrates on construction
+        if the file already exists (crash-recovery friendly). Same
+        replay + TTL + cursor semantics as :meth:`use_in_memory_replay`.
+        """
+        storage_dir = Path(storage_dir)
+        storage_dir.mkdir(parents=True, exist_ok=True)
+        self._factory = lambda _id: FileBackedReplayEventStream(
+            path=storage_dir / f"{_id}.jsonl",
+            cursor_fn=cursor_fn,
+            ttl_seconds=ttl_seconds,
+            serializer=serializer,
+            deserializer=deserializer,
+        )
+
+    # ----- Lifecycle (async) -----
+
+    async def _get_id_lock(self, id: str) -> asyncio.Lock:
+        async with self._struct_lock:
+            lock = self._id_locks.get(id)
+            if lock is None:
+                lock = asyncio.Lock()
+                self._id_locks[id] = lock
+            return lock
+
+    async def get(self, id: str) -> EventStream:
+        """Look up the existing instance for ``id``.
+
+        - Unregistered id → :class:`EventStreamNotFoundError`.
+        - Destroyed id (tombstoned) → :class:`EventStreamGoneError`.
+        - Otherwise: returns the cached :class:`EventStream` instance.
+        """
+        slot = self._slots.get(id, None)
+        if slot is None:
+            raise EventStreamNotFoundError(id)
+        if slot is _TOMBSTONE:
+            raise EventStreamGoneError(id)
+        return slot  # type: ignore[return-value]
+
+    async def get_or_create(self, id: str) -> EventStream:
+        """Return cached instance for ``id``, or create a new one.
+
+        Atomic across concurrent callers: a per-id lock prevents
+        split-brain construction when two coroutines race to create
+        the same id. A previously-destroyed id is cleared on
+        re-creation.
+        """
+        # Fast path — already present, not tombstoned
+        slot = self._slots.get(id, None)
+        if slot is not None and slot is not _TOMBSTONE:
+            return slot  # type: ignore[return-value]
+        # Slow path — acquire per-id lock + create
+        lock = await self._get_id_lock(id)
+        async with lock:
+            slot = self._slots.get(id, None)
+            if slot is not None and slot is not _TOMBSTONE:
+                return slot  # type: ignore[return-value]
+            instance = self._factory(id)
+            self._slots[id] = instance
+            return instance
+
+    async def delete(self, id: str) -> None:
+        """Destroy the stream registered for ``id``.
+
+        Idempotent — calling on an unregistered or already-destroyed
+        id is a no-op (but still ensures the tombstone is in place so
+        subsequent ``get(id)`` raises Gone, not NotFound).
+
+        Cleans up backing resources (e.g. file handles for the
+        file-backed replay backing) before installing the tombstone.
+        """
+        slot = self._slots.get(id, None)
+        if slot is None:
+            # Never registered — install tombstone for symmetry
+            # (the next get(id) raises Gone, not NotFound). This
+            # matches rule 36a's "delete is symmetric with rm -f
+            # but still leaves a marker" semantics.
+            self._slots[id] = _TOMBSTONE
+            return
+        if slot is _TOMBSTONE:
+            return  # idempotent
+        # Invoke private cleanup hook on the bundled impl
+        on_delete = getattr(slot, "_on_delete", None)
+        if on_delete is not None:
+            await on_delete()
+        self._slots[id] = _TOMBSTONE
+
+
+# Module-level singleton — THE public registry per FR-013.
+streams = _StreamsRegistry()
+
+
+__all__ = ["streams"]
