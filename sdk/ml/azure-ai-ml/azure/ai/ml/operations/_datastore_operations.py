@@ -45,12 +45,12 @@ class DatastoreOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param serviceclient_2024_01_01_preview: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type serviceclient_2024_01_01_preview: ~azure.ai.ml._restclient.v2023_01_01_preview.
+    :type serviceclient_2024_01_01_preview: ~azure.ai.ml._restclient.v2024_01_01_preview.
         _azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
     :param serviceclient_2024_10_01_preview: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
     :type serviceclient_2024_10_01_preview: ~azure.ai.ml._restclient.v2024_10_01_preview_tsp.
-        _azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+        MachineLearningServicesMgmtClient
     """
 
     def __init__(
