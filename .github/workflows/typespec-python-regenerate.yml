@@ -164,7 +164,6 @@ jobs:
         run: |
           set -euo pipefail
           TARGET_BRANCH="typespec-python-generated-tests"
-          SOURCE_BRANCH="regen/typespec-python"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -177,10 +176,14 @@ jobs:
           fi
 
           PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
+          # Use a distinct source branch per origin so a main-based run and a
+          # PR-based run never force-push over each other.
           if [ -n "$PR_NUMBER" ]; then
             SOURCE_LABEL="microsoft/typespec PR #${PR_NUMBER}"
+            SOURCE_BRANCH="regen/typespec-python-pr-${PR_NUMBER}"
           else
             SOURCE_LABEL="microsoft/typespec@main"
+            SOURCE_BRANCH="regen/typespec-python-main"
           fi
 
           # Save regenerated files to a temp dir before switching branches,
@@ -329,6 +332,42 @@ jobs:
           gh issue edit "$ISSUE_NUMBER" --add-assignee "$ASSIGNEES" \
             || echo "::warning::Could not assign issue #${ISSUE_NUMBER} to ${ASSIGNEES}"
           echo "::notice::Tracking issue #${ISSUE_NUMBER} updated with PR compare link"
+
+      - name: Clean up stale regen branches
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TARGET_BRANCH="typespec-python-generated-tests"
+          PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
+          if [ -n "$PR_NUMBER" ]; then
+            CURRENT_BRANCH="regen/typespec-python-pr-${PR_NUMBER}"
+          else
+            CURRENT_BRANCH="regen/typespec-python-main"
+          fi
+
+          # Prune any regen/typespec-python-* branch whose PR (to the target
+          # branch) is no longer open but did exist at some point (merged or
+          # closed). Branches that never had a PR opened are left alone, since a
+          # maintainer may still click the pre-filled compare link to open one.
+          BRANCHES=$(git ls-remote --heads origin \
+            | sed 's#.*refs/heads/##' \
+            | grep '^regen/typespec-python-' || true)
+          for b in $BRANCHES; do
+            if [ "$b" = "$CURRENT_BRANCH" ]; then
+              continue
+            fi
+            OPEN_COUNT=$(gh pr list --state open --head "$b" --base "$TARGET_BRANCH" \
+              --json number --jq 'length')
+            ALL_COUNT=$(gh pr list --state all --head "$b" --base "$TARGET_BRANCH" \
+              --json number --jq 'length')
+            if [ "$OPEN_COUNT" = "0" ] && [ "$ALL_COUNT" != "0" ]; then
+              echo "Deleting stale branch $b (PR merged/closed, none open)"
+              git push origin --delete "$b" \
+                || echo "::warning::Failed to delete branch $b"
+            fi
+          done
 
   notify-on-failure:
     name: "Notify on failure"
