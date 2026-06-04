@@ -1090,13 +1090,6 @@ class StorageSessionPolicy(HTTPPolicy):
         self._enabled = True
         self._cache = SessionCache()
 
-    def _resolve_session(self, container_name: str, container_url: str) -> Optional[Session]:
-        session = self._cache.get(container_name)
-        if session is None:
-            session = self._refresh_session_token(container_name, container_url)
-        if session is None or session.is_fallback:
-            return None
-        return session
 
     def _create_session(self, container_url: str) -> Tuple[str, str, datetime]:
         config = CreateSessionConfiguration(authentication_type="HMAC")
@@ -1154,8 +1147,13 @@ class StorageSessionPolicy(HTTPPolicy):
             return None
         container_name, container_url = analysis
 
-        session = self._resolve_session(container_name, container_url)
-        if session is None or not session.session_token or not session.session_key:
+        session = self._cache.get(container_name)
+        if session is None:
+            # True miss/expiry (a live fallback sentinel is returned by get(),
+            # so we never reach refresh while the cooldown is active).
+            session = self._refresh_session_token(container_name, container_url)
+
+        if session is None or session.is_fallback or not session.session_token or not session.session_key:
             return None
 
         _apply_session_auth(request, session.session_token, session.session_key, self._account_name)
