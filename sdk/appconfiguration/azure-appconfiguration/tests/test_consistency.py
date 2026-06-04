@@ -227,7 +227,5 @@ class TestAppConfigurationConsistencyUnitTest(AppConfigTestCase):
             filters=[KeyValueFilter(key="k")],
             description="snap-from-deserialized",
         )
-        snapshot = ConfigurationSnapshot._from_deserialized(
-            response=None, deserialized=generated, response_headers={}
-        )
+        snapshot = ConfigurationSnapshot._from_deserialized(response=None, deserialized=generated, response_headers={})
         assert snapshot.description == "snap-from-deserialized"
