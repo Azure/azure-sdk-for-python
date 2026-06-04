@@ -20,7 +20,6 @@ from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Datastore as 
 from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     DatastoreSecrets,
     NoneDatastoreCredentials,
-    SecretExpiry,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -104,9 +103,10 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
     def _list_secrets(self, name: str, expirable_secret: bool = False) -> DatastoreSecrets:
+        # expireAfterHours is a legacy field still accepted by the service; not modeled in the current TSP.
         return self._operation.list_secrets(
             name=name,
-            body=SecretExpiry(expirable_secret=expirable_secret),
+            body={"expirableSecret": expirable_secret, "expireAfterHours": 1},
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._init_kwargs,
