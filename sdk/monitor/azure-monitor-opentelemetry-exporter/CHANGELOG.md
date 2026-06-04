@@ -3,7 +3,7 @@
 ## 1.0.0b54 (Unreleased)
 
 ### Features Added
-- Add `StatsbeatManager.add_metric_callback` to let SDKs/distros contribute extra
+- Add `StatsbeatManager.add_metric_callback` to let SDKs/distros add their own metric
   observations to built-in statsbeat metrics
 
 ### Breaking Changes
