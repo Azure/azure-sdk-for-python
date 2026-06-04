@@ -28,12 +28,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import RpcClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -66,7 +67,7 @@ def build_rpc_long_running_rpc_request(**kwargs: Any) -> HttpRequest:
 class _RpcClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], RpcClientConfiguration]):
 
     def _long_running_rpc_initial(
-        self, body: Union[_models.GenerationOptions, types.GenerationOptions, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.GenerationOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -148,14 +149,14 @@ class _RpcClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpR
 
     @overload
     def begin_long_running_rpc(
-        self, body: types.GenerationOptions, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.GenerationResult]:
         """Generate data.
 
         Generate data.
 
         :param body: The body parameter. Required.
-        :type body: ~specs.azure.core.lro.rpc.types.GenerationOptions
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -186,16 +187,15 @@ class _RpcClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpR
 
     @distributed_trace
     def begin_long_running_rpc(
-        self, body: Union[_models.GenerationOptions, types.GenerationOptions, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.GenerationOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.GenerationResult]:
         """Generate data.
 
         Generate data.
 
-        :param body: The body parameter. Is either a GenerationOptions type or a IO[bytes] type.
-         Required.
-        :type body: ~specs.azure.core.lro.rpc.models.GenerationOptions or
-         ~specs.azure.core.lro.rpc.types.GenerationOptions or IO[bytes]
+        :param body: The body parameter. Is one of the following types: GenerationOptions, JSON,
+         IO[bytes] Required.
+        :type body: ~specs.azure.core.lro.rpc.models.GenerationOptions or JSON or IO[bytes]
         :return: An instance of LROPoller that returns GenerationResult. The GenerationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~specs.azure.core.lro.rpc.models.GenerationResult]

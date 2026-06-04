@@ -26,11 +26,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import ModelClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -260,13 +261,11 @@ class AzureCoreEmbeddingVectorOperations:
         """
 
     @overload
-    def post(
-        self, body: types.AzureEmbeddingModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AzureEmbeddingModel:
+    def post(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.AzureEmbeddingModel:
         """post a model which has an embeddingVector property.
 
         :param body: _. Required.
-        :type body: ~specs.azure.core.model.types.AzureEmbeddingModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -293,13 +292,12 @@ class AzureCoreEmbeddingVectorOperations:
 
     @distributed_trace
     def post(
-        self, body: Union[_models.AzureEmbeddingModel, types.AzureEmbeddingModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AzureEmbeddingModel, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AzureEmbeddingModel:
         """post a model which has an embeddingVector property.
 
-        :param body: _. Is either a AzureEmbeddingModel type or a IO[bytes] type. Required.
-        :type body: ~specs.azure.core.model.models.AzureEmbeddingModel or
-         ~specs.azure.core.model.types.AzureEmbeddingModel or IO[bytes]
+        :param body: _. Is one of the following types: AzureEmbeddingModel, JSON, IO[bytes] Required.
+        :type body: ~specs.azure.core.model.models.AzureEmbeddingModel or JSON or IO[bytes]
         :return: AzureEmbeddingModel. The AzureEmbeddingModel is compatible with MutableMapping
         :rtype: ~specs.azure.core.model.models.AzureEmbeddingModel
         :raises ~azure.core.exceptions.HttpResponseError:

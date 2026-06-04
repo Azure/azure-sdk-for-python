@@ -24,14 +24,14 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import BasicClientConfiguration
 from .._utils.model_base import SdkJSONEncoder
 from .._utils.serialization import Deserializer, Serializer
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 
 _SERIALIZER = Serializer()
@@ -98,11 +98,11 @@ class ExplicitBodyOperations:
         """
 
     @overload
-    def simple(self, body: types.User, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def simple(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """simple.
 
         :param body: Required.
-        :type body: ~parameters.basic.types.User
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -127,12 +127,12 @@ class ExplicitBodyOperations:
 
     @distributed_trace
     def simple(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.User, types.User, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.User, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """simple.
 
-        :param body: Is either a User type or a IO[bytes] type. Required.
-        :type body: ~parameters.basic.models.User or ~parameters.basic.types.User or IO[bytes]
+        :param body: Is one of the following types: User, JSON, IO[bytes] Required.
+        :type body: ~parameters.basic.models.User or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

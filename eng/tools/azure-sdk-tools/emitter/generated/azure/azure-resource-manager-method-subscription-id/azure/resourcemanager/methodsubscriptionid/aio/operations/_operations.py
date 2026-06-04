@@ -31,7 +31,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -53,6 +53,7 @@ from .._configuration import MethodSubscriptionIdClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -347,7 +348,7 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource1OperationsOperatio
         self,
         subscription_id: str,
         subscription_resource1_name: str,
-        resource: types.SubscriptionResource1,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -359,7 +360,7 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource1OperationsOperatio
         :param subscription_resource1_name: The name of the SubscriptionResource1. Required.
         :type subscription_resource1_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.methodsubscriptionid.types.SubscriptionResource1
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -399,7 +400,7 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource1OperationsOperatio
         self,
         subscription_id: str,
         subscription_resource1_name: str,
-        resource: Union[_models.SubscriptionResource1, types.SubscriptionResource1, IO[bytes]],
+        resource: Union[_models.SubscriptionResource1, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.SubscriptionResource1:
         """Create a SubscriptionResource1.
@@ -408,10 +409,10 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource1OperationsOperatio
         :type subscription_id: str
         :param subscription_resource1_name: The name of the SubscriptionResource1. Required.
         :type subscription_resource1_name: str
-        :param resource: Resource create parameters. Is either a SubscriptionResource1 type or a
-         IO[bytes] type. Required.
+        :param resource: Resource create parameters. Is one of the following types:
+         SubscriptionResource1, JSON, IO[bytes] Required.
         :type resource: ~azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource1 or
-         ~azure.resourcemanager.methodsubscriptionid.types.SubscriptionResource1 or IO[bytes]
+         JSON or IO[bytes]
         :return: SubscriptionResource1. The SubscriptionResource1 is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource1
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -658,7 +659,7 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource2OperationsOperatio
         self,
         subscription_id: str,
         subscription_resource2_name: str,
-        resource: types.SubscriptionResource2,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -670,7 +671,7 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource2OperationsOperatio
         :param subscription_resource2_name: The name of the SubscriptionResource2. Required.
         :type subscription_resource2_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.methodsubscriptionid.types.SubscriptionResource2
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -710,7 +711,7 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource2OperationsOperatio
         self,
         subscription_id: str,
         subscription_resource2_name: str,
-        resource: Union[_models.SubscriptionResource2, types.SubscriptionResource2, IO[bytes]],
+        resource: Union[_models.SubscriptionResource2, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.SubscriptionResource2:
         """Create a SubscriptionResource2.
@@ -719,10 +720,10 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource2OperationsOperatio
         :type subscription_id: str
         :param subscription_resource2_name: The name of the SubscriptionResource2. Required.
         :type subscription_resource2_name: str
-        :param resource: Resource create parameters. Is either a SubscriptionResource2 type or a
-         IO[bytes] type. Required.
+        :param resource: Resource create parameters. Is one of the following types:
+         SubscriptionResource2, JSON, IO[bytes] Required.
         :type resource: ~azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource2 or
-         ~azure.resourcemanager.methodsubscriptionid.types.SubscriptionResource2 or IO[bytes]
+         JSON or IO[bytes]
         :return: SubscriptionResource2. The SubscriptionResource2 is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource2
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -969,7 +970,7 @@ class MixedSubscriptionPlacementSubscriptionResourceOperationsOperations:  # pyl
         self,
         subscription_id: str,
         subscription_resource_name: str,
-        resource: types.SubscriptionResource,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -981,7 +982,7 @@ class MixedSubscriptionPlacementSubscriptionResourceOperationsOperations:  # pyl
         :param subscription_resource_name: The name of the SubscriptionResource. Required.
         :type subscription_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.methodsubscriptionid.types.SubscriptionResource
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1021,7 +1022,7 @@ class MixedSubscriptionPlacementSubscriptionResourceOperationsOperations:  # pyl
         self,
         subscription_id: str,
         subscription_resource_name: str,
-        resource: Union[_models.SubscriptionResource, types.SubscriptionResource, IO[bytes]],
+        resource: Union[_models.SubscriptionResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.SubscriptionResource:
         """Create a SubscriptionResource.
@@ -1030,10 +1031,10 @@ class MixedSubscriptionPlacementSubscriptionResourceOperationsOperations:  # pyl
         :type subscription_id: str
         :param subscription_resource_name: The name of the SubscriptionResource. Required.
         :type subscription_resource_name: str
-        :param resource: Resource create parameters. Is either a SubscriptionResource type or a
-         IO[bytes] type. Required.
-        :type resource: ~azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource or
-         ~azure.resourcemanager.methodsubscriptionid.types.SubscriptionResource or IO[bytes]
+        :param resource: Resource create parameters. Is one of the following types:
+         SubscriptionResource, JSON, IO[bytes] Required.
+        :type resource: ~azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource or JSON
+         or IO[bytes]
         :return: SubscriptionResource. The SubscriptionResource is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1283,7 +1284,7 @@ class MixedSubscriptionPlacementResourceGroupResourceOperationsOperations:  # py
         self,
         resource_group_name: str,
         resource_group_resource_name: str,
-        resource: types.ResourceGroupResource,
+        resource: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1296,7 +1297,7 @@ class MixedSubscriptionPlacementResourceGroupResourceOperationsOperations:  # py
         :param resource_group_resource_name: The name of the ResourceGroupResource. Required.
         :type resource_group_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.resourcemanager.methodsubscriptionid.types.ResourceGroupResource
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1337,7 +1338,7 @@ class MixedSubscriptionPlacementResourceGroupResourceOperationsOperations:  # py
         self,
         resource_group_name: str,
         resource_group_resource_name: str,
-        resource: Union[_models.ResourceGroupResource, types.ResourceGroupResource, IO[bytes]],
+        resource: Union[_models.ResourceGroupResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGroupResource:
         """Create a ResourceGroupResource.
@@ -1347,10 +1348,10 @@ class MixedSubscriptionPlacementResourceGroupResourceOperationsOperations:  # py
         :type resource_group_name: str
         :param resource_group_resource_name: The name of the ResourceGroupResource. Required.
         :type resource_group_resource_name: str
-        :param resource: Resource create parameters. Is either a ResourceGroupResource type or a
-         IO[bytes] type. Required.
+        :param resource: Resource create parameters. Is one of the following types:
+         ResourceGroupResource, JSON, IO[bytes] Required.
         :type resource: ~azure.resourcemanager.methodsubscriptionid.models.ResourceGroupResource or
-         ~azure.resourcemanager.methodsubscriptionid.types.ResourceGroupResource or IO[bytes]
+         JSON or IO[bytes]
         :return: ResourceGroupResource. The ResourceGroupResource is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.methodsubscriptionid.models.ResourceGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:

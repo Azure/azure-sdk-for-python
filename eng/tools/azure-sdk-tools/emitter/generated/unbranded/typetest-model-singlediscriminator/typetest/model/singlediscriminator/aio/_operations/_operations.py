@@ -19,7 +19,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._operations._operations import (
     build_single_discriminator_get_legacy_model_request,
     build_single_discriminator_get_missing_discriminator_request,
@@ -33,6 +33,7 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import SingleDiscriminatorClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -112,11 +113,11 @@ class _SingleDiscriminatorClientOperationsMixin(
         """
 
     @overload
-    async def put_model(self, input: types.Bird, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def put_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put_model.
 
         :param input: Required.
-        :type input: ~typetest.model.singlediscriminator.types.Bird
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -139,12 +140,11 @@ class _SingleDiscriminatorClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def put_model(self, input: Union[_models.Bird, types.Bird, IO[bytes]], **kwargs: Any) -> None:
+    async def put_model(self, input: Union[_models.Bird, JSON, IO[bytes]], **kwargs: Any) -> None:
         """put_model.
 
-        :param input: Is either a Bird type or a IO[bytes] type. Required.
-        :type input: ~typetest.model.singlediscriminator.models.Bird or
-         ~typetest.model.singlediscriminator.types.Bird or IO[bytes]
+        :param input: Is one of the following types: Bird, JSON, IO[bytes] Required.
+        :type input: ~typetest.model.singlediscriminator.models.Bird or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -268,13 +268,11 @@ class _SingleDiscriminatorClientOperationsMixin(
         """
 
     @overload
-    async def put_recursive_model(
-        self, input: types.Bird, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_recursive_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put_recursive_model.
 
         :param input: Required.
-        :type input: ~typetest.model.singlediscriminator.types.Bird
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -299,12 +297,11 @@ class _SingleDiscriminatorClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def put_recursive_model(self, input: Union[_models.Bird, types.Bird, IO[bytes]], **kwargs: Any) -> None:
+    async def put_recursive_model(self, input: Union[_models.Bird, JSON, IO[bytes]], **kwargs: Any) -> None:
         """put_recursive_model.
 
-        :param input: Is either a Bird type or a IO[bytes] type. Required.
-        :type input: ~typetest.model.singlediscriminator.models.Bird or
-         ~typetest.model.singlediscriminator.types.Bird or IO[bytes]
+        :param input: Is one of the following types: Bird, JSON, IO[bytes] Required.
+        :type input: ~typetest.model.singlediscriminator.models.Bird or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

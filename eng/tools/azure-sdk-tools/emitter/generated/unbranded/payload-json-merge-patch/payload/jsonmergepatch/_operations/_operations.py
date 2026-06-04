@@ -19,12 +19,13 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import JsonMergePatchClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -106,13 +107,11 @@ class _JsonMergePatchClientOperationsMixin(
         """
 
     @overload
-    def create_resource(
-        self, body: types.Resource, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Resource:
+    def create_resource(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Resource:
         """Test content-type: application/merge-patch+json with required body.
 
         :param body: Required.
-        :type body: ~payload.jsonmergepatch.types.Resource
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -137,14 +136,11 @@ class _JsonMergePatchClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    def create_resource(
-        self, body: Union[_models.Resource, types.Resource, IO[bytes]], **kwargs: Any
-    ) -> _models.Resource:
+    def create_resource(self, body: Union[_models.Resource, JSON, IO[bytes]], **kwargs: Any) -> _models.Resource:
         """Test content-type: application/merge-patch+json with required body.
 
-        :param body: Is either a Resource type or a IO[bytes] type. Required.
-        :type body: ~payload.jsonmergepatch.models.Resource or ~payload.jsonmergepatch.types.Resource
-         or IO[bytes]
+        :param body: Is one of the following types: Resource, JSON, IO[bytes] Required.
+        :type body: ~payload.jsonmergepatch.models.Resource or JSON or IO[bytes]
         :return: Resource. The Resource is compatible with MutableMapping
         :rtype: ~payload.jsonmergepatch.models.Resource
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -224,12 +220,12 @@ class _JsonMergePatchClientOperationsMixin(
 
     @overload
     def update_resource(
-        self, body: types.ResourcePatch, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Resource:
         """Test content-type: application/merge-patch+json with required body.
 
         :param body: Required.
-        :type body: ~payload.jsonmergepatch.types.ResourcePatch
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -254,14 +250,11 @@ class _JsonMergePatchClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    def update_resource(
-        self, body: Union[_models.ResourcePatch, types.ResourcePatch, IO[bytes]], **kwargs: Any
-    ) -> _models.Resource:
+    def update_resource(self, body: Union[_models.ResourcePatch, JSON, IO[bytes]], **kwargs: Any) -> _models.Resource:
         """Test content-type: application/merge-patch+json with required body.
 
-        :param body: Is either a ResourcePatch type or a IO[bytes] type. Required.
-        :type body: ~payload.jsonmergepatch.models.ResourcePatch or
-         ~payload.jsonmergepatch.types.ResourcePatch or IO[bytes]
+        :param body: Is one of the following types: ResourcePatch, JSON, IO[bytes] Required.
+        :type body: ~payload.jsonmergepatch.models.ResourcePatch or JSON or IO[bytes]
         :return: Resource. The Resource is compatible with MutableMapping
         :rtype: ~payload.jsonmergepatch.models.Resource
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -345,16 +338,12 @@ class _JsonMergePatchClientOperationsMixin(
 
     @overload
     def update_optional_resource(
-        self,
-        body: Optional[types.ResourcePatch] = None,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
+        self, body: Optional[JSON] = None, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Resource:
         """Test content-type: application/merge-patch+json with optional body.
 
         :param body: Default value is None.
-        :type body: ~payload.jsonmergepatch.types.ResourcePatch
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -380,13 +369,13 @@ class _JsonMergePatchClientOperationsMixin(
         """
 
     def update_optional_resource(
-        self, body: Optional[Union[_models.ResourcePatch, types.ResourcePatch, IO[bytes]]] = None, **kwargs: Any
+        self, body: Optional[Union[_models.ResourcePatch, JSON, IO[bytes]]] = None, **kwargs: Any
     ) -> _models.Resource:
         """Test content-type: application/merge-patch+json with optional body.
 
-        :param body: Is either a ResourcePatch type or a IO[bytes] type. Default value is None.
-        :type body: ~payload.jsonmergepatch.models.ResourcePatch or
-         ~payload.jsonmergepatch.types.ResourcePatch or IO[bytes]
+        :param body: Is one of the following types: ResourcePatch, JSON, IO[bytes] Default value is
+         None.
+        :type body: ~payload.jsonmergepatch.models.ResourcePatch or JSON or IO[bytes]
         :return: Resource. The Resource is compatible with MutableMapping
         :rtype: ~payload.jsonmergepatch.models.Resource
         :raises ~corehttp.exceptions.HttpResponseError:

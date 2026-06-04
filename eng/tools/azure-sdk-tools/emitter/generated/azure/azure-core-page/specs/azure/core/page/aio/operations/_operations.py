@@ -27,7 +27,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -44,6 +44,7 @@ from .._configuration import PageClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 
 
 class TwoModelsAsPageItemOperations:
@@ -361,7 +362,7 @@ class _PageClientOperationsMixin(
     @overload
     def list_with_parameters(
         self,
-        body_input: types.ListItemInputBody,
+        body_input: JSON,
         *,
         another: Optional[Union[str, _models.ListItemInputExtensibleEnum]] = None,
         content_type: str = "application/json",
@@ -370,7 +371,7 @@ class _PageClientOperationsMixin(
         """List with extensible enum parameter Azure.Core.Page<>.
 
         :param body_input: The body of the input. Required.
-        :type body_input: ~specs.azure.core.page.types.ListItemInputBody
+        :type body_input: JSON
         :keyword another: Another query parameter. Known values are: "First" and "Second". Default
          value is None.
         :paramtype another: str or ~specs.azure.core.page.models.ListItemInputExtensibleEnum
@@ -409,17 +410,16 @@ class _PageClientOperationsMixin(
     @distributed_trace
     def list_with_parameters(
         self,
-        body_input: Union[_models.ListItemInputBody, types.ListItemInputBody, IO[bytes]],
+        body_input: Union[_models.ListItemInputBody, JSON, IO[bytes]],
         *,
         another: Optional[Union[str, _models.ListItemInputExtensibleEnum]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.User"]:
         """List with extensible enum parameter Azure.Core.Page<>.
 
-        :param body_input: The body of the input. Is either a ListItemInputBody type or a IO[bytes]
-         type. Required.
-        :type body_input: ~specs.azure.core.page.models.ListItemInputBody or
-         ~specs.azure.core.page.types.ListItemInputBody or IO[bytes]
+        :param body_input: The body of the input. Is one of the following types: ListItemInputBody,
+         JSON, IO[bytes] Required.
+        :type body_input: ~specs.azure.core.page.models.ListItemInputBody or JSON or IO[bytes]
         :keyword another: Another query parameter. Known values are: "First" and "Second". Default
          value is None.
         :paramtype another: str or ~specs.azure.core.page.models.ListItemInputExtensibleEnum

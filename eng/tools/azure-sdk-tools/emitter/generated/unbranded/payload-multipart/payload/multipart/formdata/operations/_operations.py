@@ -15,8 +15,8 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models1, types
-from ... import models as _models2, types
+from .. import models as _models1
+from ... import models as _models2
 from ..._configuration import MultiPartClientConfiguration
 from ..._utils.model_base import Model as _Model
 from ..._utils.serialization import Deserializer, Serializer
@@ -24,6 +24,7 @@ from ..._utils.utils import prepare_multipart_form_data
 from ..file.operations._operations import FormDataFileOperations
 from ..httpparts.operations._operations import FormDataHttpPartsOperations
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -146,24 +147,23 @@ class FormDataOperations:
         """
 
     @overload
-    def basic(self, body: types.MultiPartRequest, **kwargs: Any) -> None:
+    def basic(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiPartRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def basic(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models2.MultiPartRequest, types.MultiPartRequest], **kwargs: Any
+        self, body: Union[_models2.MultiPartRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: MultiPartRequest Required.
-        :type body: ~payload.multipart.models.MultiPartRequest or
-         ~payload.multipart.types.MultiPartRequest
+        :param body: Is either a MultiPartRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiPartRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -220,24 +220,23 @@ class FormDataOperations:
         """
 
     @overload
-    def with_wire_name(self, body: types.MultiPartRequestWithWireName, **kwargs: Any) -> None:
+    def with_wire_name(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data with wire names.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiPartRequestWithWireName
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def with_wire_name(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models2.MultiPartRequestWithWireName, types.MultiPartRequestWithWireName], **kwargs: Any
+        self, body: Union[_models2.MultiPartRequestWithWireName, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data with wire names.
 
-        :param body: Is one of the following types: MultiPartRequestWithWireName Required.
-        :type body: ~payload.multipart.models.MultiPartRequestWithWireName or
-         ~payload.multipart.types.MultiPartRequestWithWireName
+        :param body: Is either a MultiPartRequestWithWireName type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiPartRequestWithWireName or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -294,24 +293,23 @@ class FormDataOperations:
         """
 
     @overload
-    def optional_parts(self, body: types.MultiPartOptionalRequest, **kwargs: Any) -> None:
+    def optional_parts(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data with optional parts.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiPartOptionalRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def optional_parts(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models2.MultiPartOptionalRequest, types.MultiPartOptionalRequest], **kwargs: Any
+        self, body: Union[_models2.MultiPartOptionalRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data with optional parts.
 
-        :param body: Is one of the following types: MultiPartOptionalRequest Required.
-        :type body: ~payload.multipart.models.MultiPartOptionalRequest or
-         ~payload.multipart.types.MultiPartOptionalRequest
+        :param body: Is either a MultiPartOptionalRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiPartOptionalRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -368,24 +366,23 @@ class FormDataOperations:
         """
 
     @overload
-    def file_array_and_basic(self, body: types.ComplexPartsRequest, **kwargs: Any) -> None:
+    def file_array_and_basic(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for mixed scenarios.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.ComplexPartsRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def file_array_and_basic(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models2.ComplexPartsRequest, types.ComplexPartsRequest], **kwargs: Any
+        self, body: Union[_models2.ComplexPartsRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for mixed scenarios.
 
-        :param body: Is one of the following types: ComplexPartsRequest Required.
-        :type body: ~payload.multipart.models.ComplexPartsRequest or
-         ~payload.multipart.types.ComplexPartsRequest
+        :param body: Is either a ComplexPartsRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.ComplexPartsRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -442,24 +439,23 @@ class FormDataOperations:
         """
 
     @overload
-    def json_part(self, body: types.JsonPartRequest, **kwargs: Any) -> None:
+    def json_part(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains json part and binary part.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.JsonPartRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def json_part(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models2.JsonPartRequest, types.JsonPartRequest], **kwargs: Any
+        self, body: Union[_models2.JsonPartRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for scenario contains json part and binary part.
 
-        :param body: Is one of the following types: JsonPartRequest Required.
-        :type body: ~payload.multipart.models.JsonPartRequest or
-         ~payload.multipart.types.JsonPartRequest
+        :param body: Is either a JsonPartRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.JsonPartRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -516,24 +512,23 @@ class FormDataOperations:
         """
 
     @overload
-    def binary_array_parts(self, body: types.BinaryArrayPartsRequest, **kwargs: Any) -> None:
+    def binary_array_parts(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains multi binary parts.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.BinaryArrayPartsRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def binary_array_parts(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models2.BinaryArrayPartsRequest, types.BinaryArrayPartsRequest], **kwargs: Any
+        self, body: Union[_models2.BinaryArrayPartsRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for scenario contains multi binary parts.
 
-        :param body: Is one of the following types: BinaryArrayPartsRequest Required.
-        :type body: ~payload.multipart.models.BinaryArrayPartsRequest or
-         ~payload.multipart.types.BinaryArrayPartsRequest
+        :param body: Is either a BinaryArrayPartsRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.BinaryArrayPartsRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -590,24 +585,23 @@ class FormDataOperations:
         """
 
     @overload
-    def multi_binary_parts(self, body: types.MultiBinaryPartsRequest, **kwargs: Any) -> None:
+    def multi_binary_parts(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for scenario contains multi binary parts.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiBinaryPartsRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def multi_binary_parts(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models2.MultiBinaryPartsRequest, types.MultiBinaryPartsRequest], **kwargs: Any
+        self, body: Union[_models2.MultiBinaryPartsRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for scenario contains multi binary parts.
 
-        :param body: Is one of the following types: MultiBinaryPartsRequest Required.
-        :type body: ~payload.multipart.models.MultiBinaryPartsRequest or
-         ~payload.multipart.types.MultiBinaryPartsRequest
+        :param body: Is either a MultiBinaryPartsRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiBinaryPartsRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -664,24 +658,23 @@ class FormDataOperations:
         """
 
     @overload
-    def check_file_name_and_content_type(self, body: types.MultiPartRequest, **kwargs: Any) -> None:
+    def check_file_name_and_content_type(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.types.MultiPartRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def check_file_name_and_content_type(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models2.MultiPartRequest, types.MultiPartRequest], **kwargs: Any
+        self, body: Union[_models2.MultiPartRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: MultiPartRequest Required.
-        :type body: ~payload.multipart.models.MultiPartRequest or
-         ~payload.multipart.types.MultiPartRequest
+        :param body: Is either a MultiPartRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.models.MultiPartRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -738,24 +731,23 @@ class FormDataOperations:
         """
 
     @overload
-    def anonymous_model(self, body: types.AnonymousModelRequest, **kwargs: Any) -> None:
+    def anonymous_model(self, body: JSON, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: ~payload.multipart.formdata.types.AnonymousModelRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def anonymous_model(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.AnonymousModelRequest, types.AnonymousModelRequest], **kwargs: Any
+        self, body: Union[_models1.AnonymousModelRequest, JSON], **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is one of the following types: AnonymousModelRequest Required.
-        :type body: ~payload.multipart.formdata.models.AnonymousModelRequest or
-         ~payload.multipart.formdata.types.AnonymousModelRequest
+        :param body: Is either a AnonymousModelRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.formdata.models.AnonymousModelRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

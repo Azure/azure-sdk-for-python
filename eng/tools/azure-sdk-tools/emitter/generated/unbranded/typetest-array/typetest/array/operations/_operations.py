@@ -21,13 +21,14 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import ArrayClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -1751,11 +1752,11 @@ class ModelValueOperations:
         """
 
     @overload
-    def put(self, body: list[types.InnerModel], *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: list[JSON], *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put.
 
         :param body: Required.
-        :type body: list[~typetest.array.types.InnerModel]
+        :type body: list[JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1779,13 +1780,12 @@ class ModelValueOperations:
         """
 
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[list[_models.InnerModel], list[types.InnerModel], IO[bytes]], **kwargs: Any
+        self, body: Union[list[_models.InnerModel], list[JSON], IO[bytes]], **kwargs: Any
     ) -> None:
         """put.
 
-        :param body: Is either a [InnerModel] type or a IO[bytes] type. Required.
-        :type body: list[~typetest.array.models.InnerModel] or list[~typetest.array.types.InnerModel]
-         or IO[bytes]
+        :param body: Is one of the following types: [InnerModel], [JSON], IO[bytes] Required.
+        :type body: list[~typetest.array.models.InnerModel] or list[JSON] or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -2541,11 +2541,11 @@ class NullableModelValueOperations:
         """
 
     @overload
-    def put(self, body: list[types.InnerModel], *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: list[JSON], *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put.
 
         :param body: Required.
-        :type body: list[~typetest.array.types.InnerModel]
+        :type body: list[JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2569,13 +2569,12 @@ class NullableModelValueOperations:
         """
 
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[list[_models.InnerModel], list[types.InnerModel], IO[bytes]], **kwargs: Any
+        self, body: Union[list[_models.InnerModel], list[JSON], IO[bytes]], **kwargs: Any
     ) -> None:
         """put.
 
-        :param body: Is either a [InnerModel] type or a IO[bytes] type. Required.
-        :type body: list[~typetest.array.models.InnerModel] or list[~typetest.array.types.InnerModel]
-         or IO[bytes]
+        :param body: Is one of the following types: [InnerModel], [JSON], IO[bytes] Required.
+        :type body: list[~typetest.array.models.InnerModel] or list[JSON] or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

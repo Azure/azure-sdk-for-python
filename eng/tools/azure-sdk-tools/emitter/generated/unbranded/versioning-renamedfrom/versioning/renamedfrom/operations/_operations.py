@@ -19,12 +19,13 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import RenamedFromClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -105,12 +106,12 @@ class NewInterfaceOperations:
 
     @overload
     def new_op_in_new_interface(
-        self, body: types.NewModel, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NewModel:
         """new_op_in_new_interface.
 
         :param body: Required.
-        :type body: ~versioning.renamedfrom.types.NewModel
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -136,13 +137,12 @@ class NewInterfaceOperations:
         """
 
     def new_op_in_new_interface(
-        self, body: Union[_models.NewModel, types.NewModel, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.NewModel, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.NewModel:
         """new_op_in_new_interface.
 
-        :param body: Is either a NewModel type or a IO[bytes] type. Required.
-        :type body: ~versioning.renamedfrom.models.NewModel or ~versioning.renamedfrom.types.NewModel
-         or IO[bytes]
+        :param body: Is one of the following types: NewModel, JSON, IO[bytes] Required.
+        :type body: ~versioning.renamedfrom.models.NewModel or JSON or IO[bytes]
         :return: NewModel. The NewModel is compatible with MutableMapping
         :rtype: ~versioning.renamedfrom.models.NewModel
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -230,12 +230,12 @@ class _RenamedFromClientOperationsMixin(
 
     @overload
     def new_op(
-        self, body: types.NewModel, *, new_query: str, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, new_query: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NewModel:
         """new_op.
 
         :param body: Required.
-        :type body: ~versioning.renamedfrom.types.NewModel
+        :type body: JSON
         :keyword new_query: Required.
         :paramtype new_query: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -265,13 +265,12 @@ class _RenamedFromClientOperationsMixin(
         """
 
     def new_op(
-        self, body: Union[_models.NewModel, types.NewModel, IO[bytes]], *, new_query: str, **kwargs: Any
+        self, body: Union[_models.NewModel, JSON, IO[bytes]], *, new_query: str, **kwargs: Any
     ) -> _models.NewModel:
         """new_op.
 
-        :param body: Is either a NewModel type or a IO[bytes] type. Required.
-        :type body: ~versioning.renamedfrom.models.NewModel or ~versioning.renamedfrom.types.NewModel
-         or IO[bytes]
+        :param body: Is one of the following types: NewModel, JSON, IO[bytes] Required.
+        :type body: ~versioning.renamedfrom.models.NewModel or JSON or IO[bytes]
         :keyword new_query: Required.
         :paramtype new_query: str
         :return: NewModel. The NewModel is compatible with MutableMapping
