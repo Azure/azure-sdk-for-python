@@ -1050,10 +1050,7 @@ class SessionCache:
         )
 
     def invalidate(self, container_name: str, session_token: Optional[str] = None) -> None:
-        if session_token is None:
-            self._entry.pop(container_name, None)
-            return
-        cached = self._entry.get(container_name)
+        cached = self._entry.get(container_name, None)
         if cached is not None and cached.session_token == session_token:
             self._entry.pop(container_name, None)
 
