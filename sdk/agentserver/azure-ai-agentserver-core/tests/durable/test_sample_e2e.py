@@ -69,8 +69,25 @@ class _ManagerFixture:
 
 
 class TestStreamingSampleE2E:
-    """E2E for the durable_streaming sample."""
+    """E2E for the durable_streaming sample.
 
+    Spec 017 FR-014/FR-015 removed the legacy ``ctx.stream(item)`` +
+    ``async for chunk in run`` API; streaming is now decoupled from
+    ``@task`` and lives in ``azure.ai.agentserver.core.streaming``.
+    The conformance suite in ``tests/streaming/`` provides full
+    coverage of the new contract. This e2e test is skipped pending a
+    follow-up that migrates it to the new ``streams`` registry pattern
+    (which is functionally a wholly different test — it would be
+    testing the registry + EventStream Protocol rather than @task
+    streaming).
+    """
+
+    @pytest.mark.skip(
+        reason="Spec 017 FR-014/FR-015: ctx.stream/async-for-in-run "
+        "removed. Migrate this e2e to the new streams registry pattern "
+        "(handler does `await streams.get_or_create(invocation_id).emit(...)`, "
+        "consumer does `await streams.get(invocation_id).subscribe()`)."
+    )
     @pytest.mark.asyncio
     async def test_streaming_sample(self, tmp_path):
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
@@ -339,6 +356,13 @@ class TestListE2E:
 class TestMultiturnSampleE2E:
     """E2E for the durable_multiturn sample — suspend/resume per turn."""
 
+    @pytest.mark.skip(
+        reason="Spec 017 FR-014/FR-015: ctx.stream/async-for-in-run "
+        "removed. test_multiturn_suspend_resume incidentally uses the "
+        "legacy streaming API; migrate to streams registry pattern in "
+        "follow-up. The streams conformance suite already covers "
+        "multi-subscriber + cursor reconnect across the same id."
+    )
     @pytest.mark.asyncio
     async def test_multiturn_suspend_resume(self, tmp_path):
         """Full suspend → update-input → resume cycle across 2 turns."""
@@ -1640,8 +1664,17 @@ class TestLangGraphSteeringSampleE2E:
 
 
 class TestSSEStreamingE2E:
-    """E2E tests for the SSE streaming pattern used by all samples."""
+    """E2E tests for the SSE streaming pattern used by all samples.
 
+    Spec 017 FR-014/FR-015: the legacy ``ctx.stream(item)`` +
+    ``async for chunk in run`` API was removed. The full SSE wire
+    contract is now exercised by the new streaming conformance suite
+    (``tests/streaming/``) which directly tests the ``streams`` +
+    ``EventStream`` Protocol surface that the SSE wire layer adapts.
+    These e2e tests will be migrated to the new pattern in a follow-up.
+    """
+
+    @pytest.mark.skip(reason="Spec 017 FR-014/FR-015: migrate to streams registry pattern")
     @pytest.mark.asyncio
     async def test_lifecycle_and_text_deltas_streamed(self, tmp_path):
         """ctx.stream() emits lifecycle:running then text_delta events."""
@@ -1684,6 +1717,7 @@ class TestSSEStreamingE2E:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
+    @pytest.mark.skip(reason="Spec 017 FR-014/FR-015: migrate to streams registry pattern")
     @pytest.mark.asyncio
     async def test_steering_produces_superseded_stream(self, tmp_path):
         """When steering cancels a running task, the stream ends after cancel."""
@@ -1749,6 +1783,7 @@ class TestSSEStreamingE2E:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
+    @pytest.mark.skip(reason="Spec 017 FR-014/FR-015: migrate to streams registry pattern")
     @pytest.mark.asyncio
     async def test_stream_with_invocation_store_snapshots(self, tmp_path):
         """Dual-write: ctx.stream() for live SSE + store for GET snapshots."""

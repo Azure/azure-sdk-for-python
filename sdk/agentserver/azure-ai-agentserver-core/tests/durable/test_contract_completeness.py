@@ -84,10 +84,10 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "Suspended",
         # Retry
         "RetryPolicy",
-        # Streaming (StreamHandlerFactory KEPT per spec.md §251)
-        "StreamHandler",
-        "StreamHandlerFactory",
-        "QueueStreamHandler",
+        # Spec 017 FR-014/FR-015: Streaming moved to peer
+        # `azure.ai.agentserver.core.streaming` subpackage. The old
+        # StreamHandler/QueueStreamHandler/StreamHandlerFactory surface
+        # is REMOVED from durable __all__.
         # Exceptions
         "TaskFailed",
         "TaskCancelled",

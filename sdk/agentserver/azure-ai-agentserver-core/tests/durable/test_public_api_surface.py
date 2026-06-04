@@ -24,19 +24,18 @@ _PACKAGE_ROOT = Path(__file__).resolve().parents[2] / "azure" / "ai" / "agentser
 _DURABLE_INIT = _PACKAGE_ROOT / "durable" / "__init__.py"
 
 
-# Post-Phase-3 expected exact public surface (FR-006).
+# Post-Phase-3 (Spec 015) + post-Spec-017-Phase-1 expected exact public
+# surface.
 #
-# Spec 016 FR-022 (US6): TaskTerminated removed from __all__ as
-# preparatory work. The class itself and all plumbing is removed by
-# T082-T085.
+# Spec 016 FR-022 (US6): TaskTerminated removed from __all__.
+# Spec 017 FR-014/FR-015: StreamHandler / QueueStreamHandler /
+# StreamHandlerFactory removed from __all__; streaming lives in the
+# peer ``azure.ai.agentserver.core.streaming`` subpackage.
 EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
     {
         "task",
         "Task",
-        "QueueStreamHandler",
         "RetryPolicy",
-        "StreamHandler",
-        "StreamHandlerFactory",
         "TaskContext",
         "TaskMetadata",
         "TaskResult",

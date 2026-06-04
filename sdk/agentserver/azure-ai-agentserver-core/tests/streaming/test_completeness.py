@@ -131,70 +131,61 @@ class TestExceptionHierarchy:
             )
 
 
-class TestOldSurfaceAbsentOrPresent:
-    """Old ``StreamHandler`` surface — currently still present in
-    ``core.durable._stream`` (additive Phase 1 increment leaves it
-    in place; deletion is deferred to a coordinated cross-branch
-    follow-up per the spec's Phase 1↔3 mitigation).
+class TestOldSurfaceAbsent:
+    """Old ``StreamHandler`` surface has been deleted (spec 017 FR-014)."""
 
-    This test documents the additive-only state of this commit. A
-    follow-up commit will flip these assertions to ``raises
-    ImportError`` once the deletion lands.
-    """
+    def test_old_stream_module_is_gone(self) -> None:
+        """``_stream.py`` is deleted per FR-014."""
+        with pytest.raises(ImportError):
+            importlib.import_module("azure.ai.agentserver.core.durable._stream")
 
-    def test_old_stream_module_still_present_pending_coordinated_deletion(self) -> None:
-        # NOTE: Spec 017 Phase 1 ultimately deletes _stream.py
-        # (FR-014). This additive-first commit defers the deletion
-        # to a follow-up because removing it cross-branch breaks
-        # responses + demo consumers. See plan.md "Phase 1 ↔ Phase 3
-        # hard dependency".
-        try:
-            mod = importlib.import_module(
-                "azure.ai.agentserver.core.durable._stream"
-            )
-            # If still present, confirm the symbols exist (they will
-            # be deleted in the follow-up)
-            assert hasattr(mod, "StreamHandler")
-            assert hasattr(mod, "QueueStreamHandler")
-        except ImportError:
-            # If the follow-up deletion has already landed, that's
-            # also acceptable.
-            pass
+    @pytest.mark.parametrize(
+        "name", ["StreamHandler", "QueueStreamHandler", "StreamHandlerFactory"]
+    )
+    def test_old_symbols_not_in_durable_public_surface(self, name: str) -> None:
+        from azure.ai.agentserver.core import durable
+
+        assert not hasattr(durable, name), (
+            f"{name} MUST be removed from durable subpackage per FR-014"
+        )
+        assert name not in durable.__all__
 
 
 class TestAtSignTaskHasNoStreamingKwarg:
     """SC-006a — ``@task`` decorator + ``TaskContext`` carry no
-    streaming-related public attribute.
+    streaming-related public attribute (spec 017 FR-015)."""
 
-    Currently still has ``stream_handler_factory`` pending the
-    coordinated cross-branch deletion (same as
-    :class:`TestOldSurfaceAbsentOrPresent`). This test documents
-    the additive-only state of this commit; a follow-up will flip
-    these assertions.
-    """
+    def test_at_sign_task_signature_has_no_streaming_kwarg(self) -> None:
+        from azure.ai.agentserver.core.durable._decorator import task
 
-    def test_at_sign_task_signature_after_deletion(self) -> None:
-        # Once the coordinated deletion lands, this should be the
-        # assertion. Currently the kwarg is still present.
-        try:
-            from azure.ai.agentserver.core.durable._decorator import task
+        sig = inspect.signature(task)
+        offenders = [
+            p.name
+            for p in sig.parameters.values()
+            if "stream" in p.name.lower() or "factory" in p.name.lower()
+        ]
+        assert offenders == [], (
+            f"@task MUST have NO streaming-related kwarg per SC-006a; "
+            f"got: {offenders}"
+        )
 
-            sig = inspect.signature(task)
-            offenders = [
-                p
-                for p in sig.parameters.values()
-                if "stream" in p.name.lower() or "factory" in p.name.lower()
-            ]
-            # Today there is ONE: stream_handler_factory. Document
-            # that fact rather than asserting zero.
-            if offenders:
-                # Pending coordinated deletion. Document the
-                # current state — do NOT fail.
-                pytest.skip(
-                    f"@task still has streaming-related kwarg(s) pending "
-                    f"coordinated cross-branch deletion: "
-                    f"{[p.name for p in offenders]}. See spec 017 Phase 1↔3 "
-                    f"mitigation."
-                )
-        except ImportError:
-            pytest.skip("@task decorator not present in this branch")
+    def test_task_context_has_no_stream_method(self) -> None:
+        from azure.ai.agentserver.core.durable import TaskContext
+
+        assert not hasattr(TaskContext, "stream"), (
+            "TaskContext MUST NOT have a stream() method per SC-006a"
+        )
+        # Also no _stream_handler slot
+        if hasattr(TaskContext, "__slots__"):
+            assert "_stream_handler" not in TaskContext.__slots__
+
+    def test_task_run_is_not_async_iterable(self) -> None:
+        """``async for chunk in run`` is removed (FR-014). Subscribers use
+        ``await streams.get(invocation_id).subscribe()`` instead."""
+        from azure.ai.agentserver.core.durable import TaskRun
+
+        assert not hasattr(TaskRun, "__aiter__"), (
+            "TaskRun MUST NOT be async-iterable per FR-014; "
+            "consumers use streams.get(invocation_id).subscribe() instead"
+        )
+        assert not hasattr(TaskRun, "__anext__")

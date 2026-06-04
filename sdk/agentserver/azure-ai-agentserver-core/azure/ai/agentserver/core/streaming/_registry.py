@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """:data:`streams` registry — process-level lifecycle owner.
 
-See ``streaming.md`` §7 for the authoritative contract. Six methods:
+Six methods:
 
 - Three async lifecycle: :meth:`_StreamsRegistry.get`,
   :meth:`_StreamsRegistry.get_or_create`,
@@ -12,18 +12,16 @@ See ``streaming.md`` §7 for the authoritative contract. Six methods:
   :meth:`_StreamsRegistry.use_in_memory_replay`,
   :meth:`_StreamsRegistry.use_file_backed_replay`.
 
-The registry is type-strict — it only ever holds instances of the
-three SDK-bundled concrete classes from ``_concrete.py``. Third-
-party :class:`EventStream` impls do NOT plug into this registry
-(FR-013e + streaming.md §8.4); they ship their own peer registry.
+The registry is the lifecycle owner for the three SDK-bundled
+backings. Third-party :class:`EventStream` impls do NOT plug into
+this registry — they ship their own peer registry.
 
-Tombstone retention (rule 36a) — when a stream is destroyed (via
-:meth:`delete` or via the CLOSED → GONE auto-transition), the
-registry retains a tombstone for the id until it is explicitly
-re-created via :meth:`get_or_create`. The tombstone is consulted by
-:meth:`get` to distinguish "id never registered" (raises
+The registry retains tombstones for destroyed ids so that
+:meth:`get` distinguishes "id never registered" (raises
 :class:`EventStreamNotFoundError` → 404) from "id was registered,
-now destroyed" (raises :class:`EventStreamGoneError` → 410).
+now destroyed" (raises :class:`EventStreamGoneError` → 410). The
+tombstone is cleared when the id is explicitly re-created via
+:meth:`get_or_create`.
 """
 
 from __future__ import annotations
@@ -72,8 +70,10 @@ class _StreamsRegistry:
     # ----- Configurators (sync) -----
 
     def use_in_memory_live(self) -> None:
-        """Configure the registry to construct :class:`BroadcastEventStream`
-        instances per :meth:`get_or_create`. See streaming.md §7.1 + §7.2.
+        """Configure the registry to construct in-memory **live** streams
+        (multicast, no replay buffer). Subscribers see events emitted
+        after they subscribe — late subscribers miss earlier events.
+        Suitable when consumers attach before the producer starts.
         """
         self._factory = lambda _id: BroadcastEventStream()
 
@@ -83,8 +83,12 @@ class _StreamsRegistry:
         cursor_fn: Optional[Callable[[Any], int]] = None,
         ttl_seconds: Optional[float] = None,
     ) -> None:
-        """Configure the registry to construct :class:`ReplayEventStream`
-        instances per :meth:`get_or_create`. See streaming.md §7.1.
+        """Configure the registry to construct in-memory **replay** streams.
+
+        Each stream retains its event history (subject to ``ttl_seconds``
+        per-event TTL eviction once the stream is closed). Late
+        subscribers see the full retained history. Pass ``cursor_fn``
+        to enable cursored re-subscription via ``subscribe(after=...)``.
         """
         self._factory = lambda _id: ReplayEventStream(
             cursor_fn=cursor_fn, ttl_seconds=ttl_seconds
@@ -99,9 +103,12 @@ class _StreamsRegistry:
         serializer: Optional[Callable[[Any], bytes]] = None,
         deserializer: Optional[Callable[[bytes], Any]] = None,
     ) -> None:
-        """Configure the registry to construct :class:`FileBackedReplayEventStream`
-        instances per :meth:`get_or_create`. Path layout:
-        ``storage_dir / f"{id}.jsonl"``. See streaming.md §7.1.
+        """Configure the registry to construct **file-backed replay** streams.
+
+        Each stream persists its event log to
+        ``storage_dir / f"{id}.jsonl"`` and rehydrates on construction
+        if the file already exists (crash-recovery friendly). Same
+        replay + TTL + cursor semantics as :meth:`use_in_memory_replay`.
         """
         storage_dir = Path(storage_dir)
         storage_dir.mkdir(parents=True, exist_ok=True)
@@ -126,9 +133,8 @@ class _StreamsRegistry:
     async def get(self, id: str) -> EventStream:
         """Look up the existing instance for ``id``.
 
-        - Unregistered id → :class:`EventStreamNotFoundError` (rule 36).
-        - Tombstoned (destroyed) id → :class:`EventStreamGoneError`
-          (rule 36 + rule 36a).
+        - Unregistered id → :class:`EventStreamNotFoundError`.
+        - Destroyed id (tombstoned) → :class:`EventStreamGoneError`.
         - Otherwise: returns the cached :class:`EventStream` instance.
         """
         slot = self._slots.get(id, None)
@@ -141,9 +147,10 @@ class _StreamsRegistry:
     async def get_or_create(self, id: str) -> EventStream:
         """Return cached instance for ``id``, or create a new one.
 
-        Atomic across concurrent callers (rule 34): per-id lock
-        prevents split-brain construction. A tombstoned id is
-        cleared on re-creation (rule 36a).
+        Atomic across concurrent callers: a per-id lock prevents
+        split-brain construction when two coroutines race to create
+        the same id. A previously-destroyed id is cleared on
+        re-creation.
         """
         # Fast path — already present, not tombstoned
         slot = self._slots.get(id, None)
@@ -162,12 +169,12 @@ class _StreamsRegistry:
     async def delete(self, id: str) -> None:
         """Destroy the stream registered for ``id``.
 
-        Idempotent (rule 35) — calling on an unregistered or
-        already-tombstoned id is a no-op (but still ensures the
-        tombstone is in place per rule 36a).
+        Idempotent — calling on an unregistered or already-destroyed
+        id is a no-op (but still ensures the tombstone is in place so
+        subsequent ``get(id)`` raises Gone, not NotFound).
 
-        Invokes the impl's private ``_on_delete()`` hook (rule 33)
-        BEFORE installing the tombstone.
+        Cleans up backing resources (e.g. file handles for the
+        file-backed replay backing) before installing the tombstone.
         """
         slot = self._slots.get(id, None)
         if slot is None:

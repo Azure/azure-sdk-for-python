@@ -7,11 +7,12 @@ A long-running deep-research task that survives container crashes:
   flushed durably with ``await ctx.metadata.flush()``.
 - On crash recovery, ``ctx.entry_mode == "recovered"`` triggers a
   resume-from-checkpoint that picks up at the next un-completed stage.
-- The handler streams incremental tokens to consumers via
-  ``ctx.stream(...)``. Streaming chunks are also persisted on a
-  per-stage basis, so a consumer that reconnects after the container
-  crashed can replay the most-recent stage's accumulated text from
-  ``ctx.metadata`` rather than starting over from stage 1.
+- The handler streams incremental tokens to consumers via the SDK
+  ``streams`` registry — per-turn ``invocation_id`` is the stream id
+  (per streaming.md §7.8). The HTTP layer attaches the SSE
+  subscriber BEFORE invoking the task (subscribe-before-start
+  discipline per §5.1) so the live multi-subscriber Broadcast
+  backing is safe.
 
 This is the peer-sample-shape distillation of the larger
 ``samples/durable-agent-demo/src/durable-research-agent`` reference
@@ -42,6 +43,7 @@ import os
 from typing import Any
 
 from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.streaming import streams
 
 logger = logging.getLogger(__name__)
 
@@ -110,9 +112,17 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
     Progress (``completed_stages`` watermark + accumulated ``results``)
     is checkpointed to ``ctx.metadata`` and flushed after each stage.
     On crash recovery, picks up at the next un-completed stage.
+
+    Streaming: the handler reads its per-turn ``invocation_id`` from
+    ``ctx.input`` (propagated by the HTTP layer) and emits to the SDK
+    ``streams`` registry. The HTTP layer attaches the SSE subscriber
+    BEFORE starting the task (subscribe-before-start discipline per
+    streaming.md §5.1 + §7.8) so Broadcast is safe.
     """
 
     topic: str = ctx.input["topic"]
+    inv_id: str = ctx.input["invocation_id"]
+    stream = await streams.get_or_create(inv_id)
     completed: int = ctx.metadata.get("completed_stages", 0)
     results: list[dict[str, str]] = ctx.metadata.get("results", [])
     total = len(STAGES)
@@ -121,7 +131,7 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
         logger.warning(
             "⚡ Recovered — resuming research at stage %d/%d", completed + 1, total
         )
-        await ctx.stream(
+        await stream.emit(
             {
                 "type": "token",
                 "content": (
@@ -133,13 +143,14 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
 
     for stage_idx in range(completed, total):
         if ctx.cancel.is_set():
-            await ctx.stream(
-                {"type": "token", "content": "\n\n---\n🛑 **Research cancelled.**\n"}
+            await stream.emit(
+                {"type": "token", "content": "\n\n---\n🛑 **Research cancelled.**\n"},
+                close=True,
             )
             return {"topic": topic, "stages_completed": stage_idx, "cancelled": True}
 
         stage = STAGES[stage_idx]
-        await ctx.stream(
+        await stream.emit(
             {
                 "type": "token",
                 "content": f"\n\n**[Stage {stage_idx + 1}/{total}]** {stage}…\n",
@@ -147,7 +158,7 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
         )
 
         result = await _run_stage_streaming(
-            ctx, topic, stage, prior_results=results[-3:], stage_idx=stage_idx
+            stream, topic, stage, prior_results=results[-3:], stage_idx=stage_idx
         )
         results.append({"stage": stage, "result": result})
 
@@ -156,15 +167,16 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
         ctx.metadata["results"] = results
         await ctx.metadata.flush()
 
-        await ctx.stream(
+        await stream.emit(
             {
                 "type": "token",
                 "content": f"\n✅ Stage {stage_idx + 1}/{total} complete.\n",
             }
         )
 
-    await ctx.stream(
-        {"type": "token", "content": "\n\n---\n✅ **Research complete.**\n"}
+    await stream.emit(
+        {"type": "token", "content": "\n\n---\n✅ **Research complete.**\n"},
+        close=True,
     )
     return {
         "topic": topic,
@@ -177,7 +189,7 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
 
 
 async def _run_stage_streaming(
-    ctx: TaskContext[dict],
+    stream: Any,
     topic: str,
     stage: str,
     *,
@@ -217,7 +229,7 @@ async def _run_stage_streaming(
     ):
         if event.type == "response.output_text.delta":
             full_text += event.delta
-            await ctx.stream({"type": "token", "content": event.delta})
+            await stream.emit({"type": "token", "content": event.delta})
     return full_text
 
 

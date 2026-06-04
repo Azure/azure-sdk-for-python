@@ -4,19 +4,64 @@
 
 ### Features Added
 
+- **Unified streaming primitive** — new `azure.ai.agentserver.core.streaming`
+  subpackage exposing a `streams` registry singleton + `EventStream`
+  Protocol + four exception types. The registry is the single
+  process-level lifecycle owner; pick a backing once at app startup
+  via one of three strongly-typed configurators:
+
+  ```python
+  streams.use_in_memory_live()                      # default — multicast, no buffer
+  streams.use_in_memory_replay(cursor_fn=..., ttl_seconds=600)
+  streams.use_file_backed_replay(storage_dir=..., ttl_seconds=600)
+  ```
+
+  Then anywhere in the process: `stream = await streams.get_or_create(id)`
+  where `id` is the **per-turn / per-invocation identifier**
+  (`invocation_id` for invocations, `response_id` for responses).
+  Subscribers attach via `async for ev in stream.subscribe(after=N)`.
+  Streaming is now fully decoupled from `@task` — handlers explicitly
+  opt in by calling the registry. See
+  [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md)
+  for the full developer guide, including tombstone retention,
+  per-turn id convention, and exception/wire mapping.
+
+  Public surface = 6 exports: `streams`, `EventStream`,
+  `EventStreamError`, `EventStreamClosedError`, `EventStreamGoneError`,
+  `EventStreamNotFoundError`. The three SDK-bundled backings are
+  selected at app startup via the registry's `use_in_memory_live()` /
+  `use_in_memory_replay(...)` / `use_file_backed_replay(...)` config-
+  urators; external callers obtain stream instances exclusively via
+  `await streams.get_or_create(id)` and program against the Protocol.
+
 - **Durable tasks** — new `@task` decorator and supporting types
   (`TaskContext`, `TaskResult`, `TaskRun`, `RetryPolicy`,
   `TaskConflictError`, `TaskFailed`, `TaskCancelled`) for
   crash-resilient long-running agents. Tasks survive container
   restarts, OOM kills, and redeployments; the framework re-enters the
   handler with `ctx.entry_mode == "recovered"` and a populated
-  `ctx.metadata` after a crash. Supports streaming output via
-  `ctx.stream()`, multi-turn suspend/resume via `ctx.suspend()`,
-  cooperative cancel via `ctx.cancel`, per-turn wall-clock timeout via
-  `@task(timeout=...)`, and steering of in-flight tasks via
-  `@task(steerable=True)`. See the
+  `ctx.metadata` after a crash. Supports multi-turn suspend/resume via
+  `ctx.suspend()`, cooperative cancel via `ctx.cancel`, per-turn
+  wall-clock timeout via `@task(timeout=...)`, and steering of in-flight
+  tasks via `@task(steerable=True)`. For streaming, handlers use the
+  new `streams` registry (above) — `@task` itself has no streaming-
+  related kwarg. See the
   [developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
   for the full API and patterns reference.
+
+### Breaking Changes
+
+- **Spec 017** — the legacy `StreamHandler` / `QueueStreamHandler` /
+  `StreamHandlerFactory` types are REMOVED from
+  `azure.ai.agentserver.core.durable`. The `stream_handler_factory=`
+  kwarg on `@task` is REMOVED. `TaskContext.stream(item)` is REMOVED.
+  `async for chunk in run` (where `run` is a `TaskRun`) is REMOVED.
+  All streaming functionality moves to the new
+  `azure.ai.agentserver.core.streaming` subpackage with a registry-
+  based lifecycle decoupled from `@task`. The agentserver family is
+  pre-release; no backward-compat shims are owed. Migration crosswalk:
+  see the "Migrating from the legacy `StreamHandler`" section of
+  [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md).
 
 ### Other Changes
 
