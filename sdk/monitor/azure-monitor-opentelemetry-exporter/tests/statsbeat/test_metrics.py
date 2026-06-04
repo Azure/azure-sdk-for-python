@@ -978,11 +978,13 @@ class TestExtraObservationCallbacks(unittest.TestCase):
     """Tests for StatsbeatManager.add_metric_callback and the _iter_extra_observations helper."""
 
     def setUp(self):
-        statsbeat_utils._ADDITIONAL_CALLBACKS.clear()
+        with statsbeat_utils._ADDITIONAL_CALLBACKS_LOCK:
+            statsbeat_utils._ADDITIONAL_CALLBACKS.clear()
         _REQUESTS_MAP.clear()
 
     def tearDown(self):
-        statsbeat_utils._ADDITIONAL_CALLBACKS.clear()
+        with statsbeat_utils._ADDITIONAL_CALLBACKS_LOCK:
+            statsbeat_utils._ADDITIONAL_CALLBACKS.clear()
         _REQUESTS_MAP.clear()
 
     def _make_metric(self):

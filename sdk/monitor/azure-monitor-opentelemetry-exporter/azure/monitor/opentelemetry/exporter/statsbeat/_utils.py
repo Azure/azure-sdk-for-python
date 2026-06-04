@@ -5,7 +5,7 @@ import logging
 import json
 import threading
 from collections.abc import Iterable, Callable, Iterator  # pylint: disable=import-error
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from opentelemetry.metrics import CallbackOptions, Observation
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -28,7 +28,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
 )
 
-_ADDITIONAL_CALLBACKS: dict[str, list[Callable[[CallbackOptions], Iterable[Observation]]]] = {}
+_ADDITIONAL_CALLBACKS: Dict[str, List[Callable[[CallbackOptions], Iterable[Observation]]]] = {}
 _ADDITIONAL_CALLBACKS_LOCK = threading.Lock()
 
 
