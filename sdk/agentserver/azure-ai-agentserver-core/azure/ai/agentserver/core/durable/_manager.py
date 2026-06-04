@@ -1898,8 +1898,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 task_id,
                 TaskPatchRequest(payload=payload, if_match=etag),
             )
-        except ValueError:
-            # Etag conflict — re-read and retry once
+        except (ValueError, TransportClassifiedError) as exc:
+            # Etag conflict — re-read and retry once. Local provider
+            # raises ValueError; hosted task store raises
+            # TransportClassifiedError with classification="conflict"
+            # (412 etag mismatch or 409). Both are the same logical
+            # concurrency outcome and warrant the same retry path.
+            if isinstance(exc, TransportClassifiedError) and getattr(
+                exc, "classification", None
+            ) != "conflict":
+                raise
             logger.warning(
                 "Etag conflict during steering drain for %s, retrying", task_id
             )
@@ -2051,6 +2059,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     )
                     return False
                 except TransportClassifiedError as exc:
+                    classification = getattr(exc, "classification", None)
                     if _is_evicted(exc):
                         # Spec 016 FR-007: orphan-sandbox eviction at the
                         # terminal-write site. Suppress this terminal write
@@ -2065,6 +2074,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                             self._config.session_id or "local",
                         )
                         raise TaskConflictError(task_id, "in_progress") from exc
+                    if classification == "conflict":
+                        # Hosted task store etag conflict (412 / 409). Same
+                        # logical outcome as the local-provider ValueError
+                        # above — return False so the outer loop re-checks
+                        # for newly-queued steers before retrying.
+                        logger.info(
+                            "Etag conflict (hosted store) completing task %s "
+                            "— re-checking for steers",
+                            task_id,
+                        )
+                        return False
                     raise
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Failed to complete task %s", task_id, exc_info=True)
