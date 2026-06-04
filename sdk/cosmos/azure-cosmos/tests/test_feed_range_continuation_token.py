@@ -141,9 +141,6 @@ class TestStableHash128MurmurRegression:
         )
 
 
-# ---------------------------------------------------------------------- #
-# Token round-trip
-# ---------------------------------------------------------------------- #
 class TestTokenRoundTrip:
     """``_encode_token`` -> ``_decode_token`` is structurally lossless and
     the wire form is base64-encoded JSON containing all seven required
@@ -258,9 +255,6 @@ class TestTokenRoundTrip:
         assert _decode_token("") is None
 
 
-# ---------------------------------------------------------------------- #
-# Version-mismatch rejection
-# ---------------------------------------------------------------------- #
 class TestVersionMismatchRejected:
     """A token that decodes as our shape but with a non-current ``v``
     raises ``ValueError`` rather than being silently misinterpreted."""
@@ -372,9 +366,6 @@ class TestMalformedV1TokenRejected:
         assert "bc" in str(excinfo.value)
 
 
-# ---------------------------------------------------------------------- #
-# Identity-fingerprint mismatch rejection
-# ---------------------------------------------------------------------- #
 class TestIdentityFingerprintMismatch:
     """A valid v=1 token replayed against a different collection / query /
     feed_range produces a fingerprint mismatch the call site rejects.
@@ -533,9 +524,6 @@ class TestIdentityFingerprintMismatch:
 
 
 
-# ---------------------------------------------------------------------- #
-# Explode-on-multi-overlap - post-split fan-out unit contract
-# ---------------------------------------------------------------------- #
 class TestExplodeOnMultiOverlap:
     """Post-split fan-out contract for the resume path.
 
@@ -729,9 +717,6 @@ class TestExplodeOnMultiOverlap:
         ]
 
 
-# ---------------------------------------------------------------------- #
-# max_item_count normalization
-# ---------------------------------------------------------------------- #
 class TestNormalizeMaxItemCount:
     """``_normalize_max_item_count`` collapses unset / non-numeric / non-positive
     values to ``None`` (unbounded) and passes positive ints through unchanged.
@@ -764,9 +749,6 @@ class TestNormalizeMaxItemCount:
         assert _normalize_max_item_count(object()) is None
 
 
-# ---------------------------------------------------------------------- #
-# Request-header shaping
-# ---------------------------------------------------------------------- #
 class TestApplyFeedrangeRequestHeaders:
     """``_apply_feedrange_request_headers`` sets and clears routing/page/token
     headers correctly for both full-partition and sub-range requests."""

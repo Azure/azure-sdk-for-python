@@ -658,15 +658,6 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         execute_calls = mock_execute.call_count
         refresh_calls = mock_client.refresh_routing_map_provider_call_count
 
-        # Print metrics for diagnostics when running locally.
-        print(
-            f"\nMemory metrics (partition split):"
-            f"\n  Execute calls: {execute_calls}"
-            f"\n  Refresh calls: {refresh_calls}"
-            f"\n  Elapsed:       {elapsed_time:.2f}s"
-            f"\n  Memory growth: {memory_growth / 1024:.2f} KB"
-            f"\n  Peak memory:   {peak_memory / 1024:.2f} KB"
-        )
 
         assert execute_calls == 4, \
             f"Execute calls should be bounded to 4, got {execute_calls}"
@@ -691,11 +682,6 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         pk_execute_calls = mock_execute.call_count
         pk_refresh_calls = mock_client.refresh_routing_map_provider_call_count
 
-        print(
-            f"\nPK range query:"
-            f"\n  Execute calls: {pk_execute_calls} (no retry)"
-            f"\n  Refresh calls: {pk_refresh_calls} (no recursion)"
-        )
 
         assert pk_execute_calls == 1, \
             f"PK range query should have 1 execute call, got {pk_execute_calls}"

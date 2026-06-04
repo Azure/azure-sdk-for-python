@@ -18,8 +18,6 @@ from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos.partition_key import PartitionKey
 
 CONFIG = test_config.TestConfig()
-HOST = CONFIG.host
-KEY = CONFIG.masterKey
 DATABASE_ID = CONFIG.TEST_DATABASE_ID
 
 REPRO_CONTAINER_ID = "FeedRangeMultiPartitionAsync-" + str(uuid.uuid4())
@@ -31,7 +29,9 @@ MIN_DOCS_PER_PARTITION = 15
 
 
 def _client() -> CosmosClient:
-    return CosmosClient(HOST, KEY)
+    """Return a data-plane client. Uses AAD when COSMOS_TEST_DATA_AUTH_MODE=aad,
+    key auth otherwise, so the AAD lane actually exercises AAD."""
+    return test_config.TestConfig.create_data_client_async()
 
 
 def _get_container(client: CosmosClient):
@@ -113,15 +113,13 @@ async def setup_and_teardown_async():
 
 
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADQuery
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestFeedRangeMultiPartitionAsync:
     """Async end-to-end tests for feed_range queries that overlap multiple
     physical partitions."""
 
-    # ------------------------------------------------------------------ #
-    # Single-partition control
-    # ------------------------------------------------------------------ #
     async def test_single_partition_feed_range_async(self):
         """Single-partition regression guard."""
         client = _client()
@@ -174,9 +172,6 @@ class TestFeedRangeMultiPartitionAsync:
             await client.close()
 
 
-    # ------------------------------------------------------------------ #
-    # Two-partition feed_range
-    # ------------------------------------------------------------------ #
     async def test_two_partition_feed_range_async(self):
         client = _client()
         try:
@@ -511,9 +506,6 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    # ------------------------------------------------------------------ #
-    # Three-way overlap
-    # ------------------------------------------------------------------ #
     async def test_three_way_overlap_async(self):
         client = _client()
         try:
@@ -566,9 +558,6 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    # ------------------------------------------------------------------ #
-    # Post-split resume (slow)
-    # ------------------------------------------------------------------ #
     @pytest.mark.cosmosSplit
     @pytest.mark.cosmosAADSplit
     async def test_post_split_resume_async(self):
@@ -658,9 +647,6 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    # ------------------------------------------------------------------ #
-    # Legacy opaque token compatibility
-    # ------------------------------------------------------------------ #
     async def test_legacy_opaque_token_compat_async(self, caplog):
         """Use an opaque continuation token and verify restart behavior."""
         client = _client()
@@ -725,9 +711,6 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    # ------------------------------------------------------------------ #
-    # Identity-fingerprint mismatch rejection (live half)
-    # ------------------------------------------------------------------ #
     async def test_token_identity_mismatch_rejected_async(self):
         """Live identity-mismatch rejection test."""
         client = _client()

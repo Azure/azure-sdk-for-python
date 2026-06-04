@@ -3,6 +3,7 @@
 
 import os
 import threading
+import tracemalloc
 import unittest
 import uuid
 from collections.abc import Mapping
@@ -234,6 +235,94 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self.assertGreater(len(item_counts), 1)
             self.assertEqual(sum(item_counts), num_items)
             self.assertLess(item_counts[-1], item_counts[0])
+
+        finally:
+            self._delete_container_for_test(container_id)
+
+    def test_query_response_headers_long_pagination_bounded_memory(self):
+        """Paging through many pages does not grow the response-headers
+        state on the iterator: the headers dict size stays close to the
+        first page and overall memory growth stays under a small ceiling."""
+        container_id = "test_headers_long_pagination_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
+        try:
+            num_items = 200
+            for i in range(num_items):
+                created_collection.create_item(
+                    body={"pk": "test", "id": f"item_{i:04d}", "value": i}
+                )
+
+            query_iterable = created_collection.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "test"}],
+                partition_key="test",
+                max_item_count=2,
+            )
+
+            # Read the first page outside the memory window so one-time
+            # client setup is not counted as growth.
+            page_iter = query_iterable.by_page()
+            first_page = next(page_iter)
+            first_page_items = list(first_page)
+            baseline_headers = query_iterable.get_response_headers()
+            self.assertIsNotNone(baseline_headers)
+
+            tracemalloc.start()
+            snapshot_before = tracemalloc.take_snapshot()
+
+            page_count = 1
+            header_sizes = [len(baseline_headers)]
+            all_keys_seen = set(baseline_headers.keys())
+            all_items = list(first_page_items)
+
+            for page in page_iter:
+                page_items = list(page)
+                all_items.extend(page_items)
+                page_count += 1
+                headers = query_iterable.get_response_headers()
+                self.assertIsNotNone(headers)
+                header_sizes.append(len(headers))
+                all_keys_seen.update(headers.keys())
+
+            snapshot_after = tracemalloc.take_snapshot()
+            top_stats = snapshot_after.compare_to(snapshot_before, "lineno")
+            memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
+            tracemalloc.stop()
+
+            # Make sure we really paginated and read all the items back.
+            self.assertGreaterEqual(
+                page_count, 20,
+                "Expected many pages, got {}.".format(page_count),
+            )
+            self.assertEqual(len(all_items), num_items)
+
+            # The headers dict on any single page stays close to the first
+            # page's size, even after many pages.
+            max_header_size = max(header_sizes)
+            self.assertLessEqual(
+                max_header_size, len(baseline_headers) + 8,
+                "Headers dict grew across pagination (max={}, baseline={}).".format(
+                    max_header_size, len(baseline_headers)
+                ),
+            )
+
+            # The total set of header names seen across all pages stays
+            # bounded; it does not grow proportional to page count.
+            self.assertLessEqual(
+                len(all_keys_seen), len(baseline_headers) + 16,
+                "Header name set grew across pagination (seen={}, baseline={}).".format(
+                    len(all_keys_seen), len(baseline_headers)
+                ),
+            )
+
+            # Memory growth should stay well under a 2 MiB ceiling.
+            ceiling_bytes = 2 * 1024 * 1024
+            self.assertLess(
+                memory_growth, ceiling_bytes,
+                "Memory grew by {} bytes over {} pages (ceiling {} bytes).".format(
+                    memory_growth, page_count, ceiling_bytes,
+                ),
+            )
 
         finally:
             self._delete_container_for_test(container_id)
@@ -474,8 +563,8 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self._delete_container_for_test(container_id)
 
     def test_query_response_headers_return_type_is_dict_not_list(self):
-        """Regression guard: the getter must return a single dict, not a list,
-        and the removed get_last_response_headers must stay removed."""
+        """The getter returns a single dict (not a list), and the old
+        get_last_response_headers method is not available."""
         container_id = "test_headers_returntype_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
