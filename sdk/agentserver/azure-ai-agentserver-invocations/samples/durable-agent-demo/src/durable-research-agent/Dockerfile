@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir /tmp/wheels/*.whl && rm -rf /tmp/wheels
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py agent.py ./
+COPY app.py agent.py store.py ./
 
 EXPOSE 8088
 

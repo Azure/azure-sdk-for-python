@@ -35,7 +35,6 @@ from pathlib import Path
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core.durable import TaskConflictError
 from azure.ai.agentserver.core.streaming import (
     EventStreamGoneError,
     EventStreamNotFoundError,
@@ -136,25 +135,22 @@ async def handle_invoke(request: Request) -> Response:
     # need to wait for a subscriber before the handler starts emitting.
     await streams.get_or_create(invocation_id)
 
-    status = "started"
-    try:
-        await deep_research.start(
-            task_id=task_id,
-            input={"topic": topic, "invocation_id": invocation_id},
-        )
-    except TaskConflictError as exc:
-        # Steerable task already running. The framework queued our input and
-        # signalled cancel; the agent will wind down at the next checkpoint
-        # and re-enter with our input. The re-entered handler reads
-        # ctx.input["invocation_id"] — which we pre-reserved above — so the
-        # GET for THIS invocation finds its stream.
-        status = "steered"
-        logger.info("POST handler: queued steering input (current_status=%s)",
-                    getattr(exc, "current_status", None))
+    # Steering is transparent to callers: for a steerable=True task,
+    # task.start() queues the input on the in-progress task's steering
+    # queue WITHOUT raising. The agent's currently-running turn observes
+    # ctx.cancel.is_set(), winds down at its next checkpoint, and the
+    # framework re-enters the body with the queued input as
+    # ctx.input — at which point the new turn streams its events to
+    # the per-turn invocation_id stream reserved above. No status
+    # branching is needed here.
+    await deep_research.start(
+        task_id=task_id,
+        input={"topic": topic, "invocation_id": invocation_id},
+    )
 
     return JSONResponse(
         {
-            "status": status,
+            "status": "started",
             "invocation_id": invocation_id,
             "session_id": session_id,
         },

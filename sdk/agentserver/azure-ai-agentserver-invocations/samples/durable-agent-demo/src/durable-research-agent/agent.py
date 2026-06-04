@@ -8,6 +8,20 @@ layer subscribes to the same stream by id (see ``app.py``). On crash
 recovery, ``stream.last_cursor()`` rehydrates the in-process sequence
 counter from disk so we resume numbering from where we left off — no
 gap, no duplicate cursor value.
+
+Per the durable-task primitive's persistence model (see
+``core/docs/durable-task-guide.md``), ``ctx.metadata`` is a
+*small-watermark* store — never a bulk-data store. This handler
+keeps only three small integer watermarks in ``ctx.metadata``
+(``completed_phases``, ``in_progress_phase``, ``completed_subcalls``)
+and parks the in-flight subcall text (potentially several KB) in a
+separate file-backed :class:`CheckpointStore` keyed by the per-turn
+``invocation_id``. The checkpoint-store entry, the wire stream, and
+the metadata watermarks are all reset together at every turn-
+completion boundary (normal completion AND wind-down-via-suspend) so
+the next turn — steered re-entry or otherwise — starts cleanly. We
+explicitly do NOT reset on crash paths: the watermarks left behind
+are exactly what the recovery re-entry needs to resume mid-turn.
 """
 
 from __future__ import annotations
@@ -17,6 +31,7 @@ import logging
 import os
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Awaitable, Callable
 
 from azure.ai.projects.aio import AIProjectClient
@@ -24,6 +39,8 @@ from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.agentserver.core.durable import TaskContext, task
 from azure.ai.agentserver.core.streaming import streams
+
+from store import CheckpointStore
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +71,15 @@ _model = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini")
 _credential = DefaultAzureCredential()
 _project_client = AIProjectClient(endpoint=_endpoint, credential=_credential)
 _openai_client = _project_client.get_openai_client()
+
+
+# --- File-backed checkpoint store (heavy artifacts live here) --------------
+
+# Co-located with the streams directory so a single mount/volume
+# carries everything the handler needs to survive a restart. The
+# directory is created on first write.
+_CHECKPOINT_DIR = Path.home() / ".durable-tasks" / "_checkpoints"
+_checkpoint_store = CheckpointStore(_CHECKPOINT_DIR)
 
 
 # --- Research phase plan ----------------------------------------------------
@@ -112,34 +138,68 @@ def _phase_title(i: int) -> str:
 EmitFn = Callable[[dict], Awaitable[None]]
 
 
+async def _finish_turn(stream: Any, ctx: TaskContext, inv_id: str) -> None:
+    """Tear down per-turn resources at every non-crash exit.
+
+    Steered re-entries, operator cancels, timeouts, and normal
+    completions all flow through here. We:
+
+    1. Close the wire stream so SSE subscribers see the terminator
+       before the framework reports the turn as suspended / completed.
+    2. Wipe ``ctx.metadata`` watermarks so the NEXT turn — steered
+       re-entry on the same task, or a fresh ``start()`` — naturally
+       starts at phase 0 without any "is this a steered turn?"
+       branching.
+    3. Delete this invocation's checkpoint-store entry so disk
+       usage doesn't grow with completed turns.
+
+    We explicitly do NOT call this on crash paths: the wire stream
+    must stay OPEN (per the orchestrator's
+    ``leave_stream_open_for_recovery`` contract) and the watermarks
+    must remain so the recovery re-entry can resume mid-turn.
+    """
+    await stream.close()
+    ctx.metadata.pop("completed_phases", None)
+    ctx.metadata.pop("in_progress_phase", None)
+    ctx.metadata.pop("completed_subcalls", None)
+    _checkpoint_store.delete(inv_id)
+
+
 @task(
     name="deep_research",
     steerable=True,
 )
-async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
+async def deep_research(ctx: TaskContext[dict]) -> None:
     """Long-running deep-research task: crash-resilient, steerable.
 
     Checkpointing is **per subcall**, not just per phase. After each
-    LLM subcall finishes we persist {completed_phases, results,
-    in_progress_phase, completed_subcalls, current_text} to
-    ctx.metadata. On recovery we resume the in-progress phase at the
-    next un-finished subcall, re-using the text we had streamed before
-    the crash — so the worst case is one wasted subcall (the one that
-    was actively streaming when the container died).
+    LLM subcall finishes we (a) advance the three small integer
+    watermarks on ``ctx.metadata`` (``completed_phases``,
+    ``in_progress_phase``, ``completed_subcalls``) and (b) write the
+    in-flight phase text to the file-backed checkpoint store keyed by
+    the per-invocation id. On recovery we resume the in-progress    phase at the next un-finished subcall, re-using the text we had
+    streamed before the crash — so the worst case is one wasted
+    subcall (the one that was actively streaming when the container
+    died).
 
-    Streaming uses the SDK ``streams`` registry. The HTTP layer in
-    ``app.py`` reads ``request.state.invocation_id`` and propagates it
-    via ``task.start(input={"invocation_id": inv_id, ...})``. The
-    handler reads the same id from ``ctx.input["invocation_id"]`` and
-    calls ``streams.get_or_create(inv_id)`` to get the same stream
-    instance the HTTP subscriber is attached to. On recovery the
-    file-backed replay backing rehydrates the stream from disk and
-    ``stream.last_cursor()`` returns the highest sequence number that
-    made it to disk pre-crash — we resume numbering from there.
+    Steering is transparent: a new POST while a turn is running
+    enqueues the input on the framework's steering queue and sets
+    ``ctx.cancel``. The handler observes the cancel at the next
+    checkpoint, winds down via ``ctx.suspend(...)`` (which calls
+    :func:`_finish_turn` to clear all per-turn state), and the
+    framework re-enters the body with the new ``ctx.input``. Because
+    state was cleared at suspend, the re-entered handler naturally
+    starts the new topic at phase 0 — no ``is_steered_turn`` check
+    needed in handler code.
+
+    The body returns ``None`` on normal completion (or the
+    :class:`Suspended` sentinel from ``ctx.suspend(...)`` on the
+    wind-down path). Clients read progress + final content from the
+    per-invocation SSE stream, not from the task's terminal output, so
+    there is no return-value payload to construct.
     """
     topic: str = ctx.input["topic"]
     inv_id: str = ctx.input["invocation_id"]
-    stored_topic = ctx.metadata.get("topic")
 
     stream = await streams.get_or_create(inv_id)
     # On crash recovery, last_cursor() returns the highest
@@ -152,118 +212,92 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
         seq += 1
         await stream.emit({"sequence_number": seq, **payload})
 
-    try:
-        if stored_topic != topic:
-            ctx.metadata["topic"] = topic
-            ctx.metadata["completed_phases"] = 0
-            ctx.metadata["results"] = []
-            ctx.metadata["in_progress_phase"] = None
-            ctx.metadata["completed_subcalls"] = 0
-            ctx.metadata["current_text"] = ""
-            await ctx.metadata.flush()
-            await _emit_run_start(emit, ctx, topic=topic, prior_topic=stored_topic)
-        else:
-            await _emit_run_start(emit, ctx, topic=topic, prior_topic=None)
+    await _emit_run_start(emit, ctx, topic=topic)
 
-        completed: int = ctx.metadata.get("completed_phases", 0)
-        results: list = ctx.metadata.get("results", [])
+    completed: int = ctx.metadata.get("completed_phases", 0)
 
-        if ctx.entry_mode == "recovered" and completed > 0:
-            await emit({
-                "type": "recovered",
-                "completed_phases": completed,
-                "total_phases": NUM_PHASES,
-                "server_time_utc": _now_iso(),
-                "server_uptime_sec": _server_uptime_sec(),
-            })
-
-        for phase_idx in range(completed, NUM_PHASES):
-            if ctx.cancel.is_set():
-                return await _wind_down(emit, stream, ctx, phase_idx, results)
-
-            phase_started_mono = time.monotonic()
-            title = _phase_title(phase_idx)
-
-            await emit({
-                "type": "phase_start",
-                "phase": phase_idx + 1,
-                "total": NUM_PHASES,
-                "title": title,
-                "server_time_utc": _now_iso(),
-                "server_uptime_sec": _server_uptime_sec(),
-            })
-
-            phase_text = await _run_phase(
-                emit, ctx, phase_idx, topic, title, prior_results=results[-3:],
-            )
-            results.append({"phase": phase_idx + 1, "title": title, "text": phase_text})
-
-            # --- PHASE-COMPLETE CHECKPOINT ---
-            ctx.metadata["completed_phases"] = phase_idx + 1
-            ctx.metadata["results"] = results
-            ctx.metadata["in_progress_phase"] = None
-            ctx.metadata["completed_subcalls"] = 0
-            ctx.metadata["current_text"] = ""
-            await ctx.metadata.flush()
-
-            phase_duration = round(time.monotonic() - phase_started_mono, 1)
-            await emit({
-                "type": "phase_end",
-                "phase": phase_idx + 1,
-                "total": NUM_PHASES,
-                "title": title,
-                "server_time_utc": _now_iso(),
-                "server_uptime_sec": _server_uptime_sec(),
-                "duration_sec": phase_duration,
-            })
-
-            if ctx.cancel.is_set():
-                return await _wind_down(emit, stream, ctx, phase_idx + 1, results)
-
-            if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
-                await _cooldown(
-                    emit, ctx, INTER_PHASE_COOLDOWN_SEC,
-                    stage="inter_phase",
-                    phase=phase_idx + 2,
-                    total=NUM_PHASES,
-                )
-                if ctx.cancel.is_set():
-                    return await _wind_down(emit, stream, ctx, phase_idx + 1, results)
-
+    if ctx.entry_mode == "recovered" and completed > 0:
         await emit({
-            "type": "run_complete",
+            "type": "recovered",
+            "completed_phases": completed,
+            "total_phases": NUM_PHASES,
             "server_time_utc": _now_iso(),
             "server_uptime_sec": _server_uptime_sec(),
-            "phases_completed": NUM_PHASES,
         })
-        # Close BEFORE returning, mirroring the wind-down path: SSE
-        # subscribers should see the terminator before the framework
-        # reports the task complete.
-        await stream.close()
-        return {
-            "topic": topic,
-            "phases_completed": NUM_PHASES,
-            "report": results[-1]["text"] if results else "",
-        }
-    finally:
-        # Safety net. The wind-down (suspend) and the run-complete
-        # (normal-return) paths both close the stream explicitly before
-        # they exit, so close() is idempotent here. This finally only
-        # matters if the handler raises an unexpected exception
-        # mid-emit (TaskFailed path) — we still want SSE subscribers
-        # to see a clean stream terminator instead of hanging.
-        await stream.close()
+
+    for phase_idx in range(completed, NUM_PHASES):
+        if ctx.cancel.is_set():
+            return await _wind_down(emit, stream, ctx, inv_id, phase_idx)
+
+        phase_started_mono = time.monotonic()
+        title = _phase_title(phase_idx)
+
+        await emit({
+            "type": "phase_start",
+            "phase": phase_idx + 1,
+            "total": NUM_PHASES,
+            "title": title,
+            "server_time_utc": _now_iso(),
+            "server_uptime_sec": _server_uptime_sec(),
+        })
+
+        await _run_phase(emit, ctx, inv_id, phase_idx, topic, title)
+
+        # --- PHASE-COMPLETE CHECKPOINT ---
+        # Advance the phase watermark, clear the in-phase watermarks +
+        # the checkpoint-store entry. The next iteration starts at
+        # phase_idx+1 with no in-flight text to resume.
+        ctx.metadata["completed_phases"] = phase_idx + 1
+        ctx.metadata["in_progress_phase"] = None
+        ctx.metadata["completed_subcalls"] = 0
+        _checkpoint_store.delete(inv_id)
+        await ctx.metadata.flush()
+
+        phase_duration = round(time.monotonic() - phase_started_mono, 1)
+        await emit({
+            "type": "phase_end",
+            "phase": phase_idx + 1,
+            "total": NUM_PHASES,
+            "title": title,
+            "server_time_utc": _now_iso(),
+            "server_uptime_sec": _server_uptime_sec(),
+            "duration_sec": phase_duration,
+        })
+
+        if ctx.cancel.is_set():
+            return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
+
+        if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
+            await _cooldown(
+                emit, ctx, INTER_PHASE_COOLDOWN_SEC,
+                stage="inter_phase",
+                phase=phase_idx + 2,
+                total=NUM_PHASES,
+            )
+            if ctx.cancel.is_set():
+                return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
+
+    await emit({
+        "type": "run_complete",
+        "server_time_utc": _now_iso(),
+        "server_uptime_sec": _server_uptime_sec(),
+        "phases_completed": NUM_PHASES,
+    })
+    # Normal completion: close stream + wipe watermarks + clear
+    # checkpoint entry. Skipped on crash (the handler exits via an
+    # exception and the orchestrator's leave_stream_open_for_recovery
+    # path keeps the stream open for the next-lifetime recovery).
+    await _finish_turn(stream, ctx, inv_id)
 
 
 # --- Helpers ---------------------------------------------------------------
 
 async def _emit_run_start(
-    emit: EmitFn, ctx: TaskContext, *, topic: str, prior_topic: str | None,
+    emit: "EmitFn", ctx: "TaskContext", *, topic: str,
 ) -> None:
     await emit({
         "type": "run_start",
         "topic": topic,
-        "prior_topic": prior_topic,
         "entry_mode": ctx.entry_mode,
         "total_phases": NUM_PHASES,
         "calls_per_phase": CALLS_PER_PHASE,
@@ -273,20 +307,18 @@ async def _emit_run_start(
 
 
 async def _wind_down(
-    emit: EmitFn, stream: Any, ctx: TaskContext,
-    completed_phases: int, results: list,
-) -> Any:
+    emit: "EmitFn", stream, ctx: "TaskContext", inv_id: str,
+    completed_phases: int,
+):
     """Cooperative wind-down at a phase boundary.
 
-    Closes the per-turn stream BEFORE calling ``ctx.suspend(...)`` so
-    that the SSE subscriber observes a clean stream terminator before
-    the framework reports the turn as suspended. Each turn (even a
-    steered re-entry) is a fresh ``invocation_id`` with its own stream;
-    the close here belongs to THIS turn's stream, not the next one's.
+    Tears down per-turn resources (stream close + metadata wipe +
+    checkpoint-store clear) via :func:`_finish_turn` BEFORE calling
+    ``ctx.suspend(...)`` so the SSE subscriber observes a clean
+    terminator before the framework reports the turn as suspended,
+    and so the steered re-entry (or any future ``start()``) finds
+    metadata wiped.
     """
-    # Cause-detection: steering events drain pending_input_count by the
-    # time we reach here, so detect by exclusion. If neither timeout nor
-    # operator cancel fired, it's steering.
     if ctx.timeout_exceeded:
         cause = "timeout"
     elif ctx.cancel_requested:
@@ -304,36 +336,23 @@ async def _wind_down(
         "server_uptime_sec": _server_uptime_sec(),
     })
 
-    # Close BEFORE suspend so subscribers see the terminator before the
-    # framework hands the next turn off.
-    await stream.close()
-
-    return await ctx.suspend(output={
-        "topic": ctx.input["topic"],
-        "phases_completed": completed_phases,
-        "wind_down_cause": cause,
-    })
+    await _finish_turn(stream, ctx, inv_id)
+    return await ctx.suspend()
 
 
 async def _cooldown(
-    emit: EmitFn,
-    ctx: TaskContext,
+    emit: "EmitFn",
+    ctx: "TaskContext",
     duration_sec: float,
     *,
     stage: str,
     phase: int,
     total: int,
-    subcall: int | None = None,
-    of: int | None = None,
+    subcall=None,
+    of=None,
 ) -> None:
-    """Cooldown wait with a visible client-side marker.
-
-    Emits a single ``cooldown`` SSE event before sleeping so the terminal
-    is not silent during the pause, and the client can render a low-key
-    progress indicator. The wait is cancel-aware: if ``ctx.cancel`` fires
-    we return early.
-    """
-    payload: dict[str, Any] = {
+    """Cooldown wait with a visible client-side marker."""
+    payload = {
         "type": "cooldown",
         "duration_sec": duration_sec,
         "stage": stage,
@@ -354,54 +373,48 @@ async def _cooldown(
 
 
 async def _run_phase(
-    emit: EmitFn,
-    ctx: TaskContext,
+    emit: "EmitFn",
+    ctx: "TaskContext",
+    inv_id: str,
     phase_idx: int,
     topic: str,
     phase_title: str,
-    *,
-    prior_results: list,
-) -> str:
-    """Run the sub-call loop for one phase. Returns the final synthesized text.
+) -> None:
+    """Run the sub-call loop for one phase.
 
     Checkpoints after each completed subcall so a crash mid-phase
     recovers at the next un-finished subcall (loses at most the one
-    that was actively streaming).
+    that was actively streaming). The in-flight phase text lives in
+    the file-backed checkpoint store keyed by ``inv_id``; the
+    subcall index lives in ``ctx.metadata`` as a small watermark.
     """
-    prior_summary = ""
-    if prior_results:
-        prior_summary = "\n\nPrior phases (for context):\n" + "\n".join(
-            f"- {r['title']}: {r['text'][:200]}..." for r in prior_results
-        )
-
-    # Resume in-phase state if we crashed mid-phase.
     in_progress = ctx.metadata.get("in_progress_phase")
     if in_progress == phase_idx:
         start_sub = int(ctx.metadata.get("completed_subcalls", 0) or 0)
-        current_text: str = ctx.metadata.get("current_text", "") or ""
+        current_text = _checkpoint_store.get(inv_id)
     else:
         start_sub = 0
         current_text = ""
         ctx.metadata["in_progress_phase"] = phase_idx
         ctx.metadata["completed_subcalls"] = 0
-        ctx.metadata["current_text"] = ""
+        _checkpoint_store.delete(inv_id)
         await ctx.metadata.flush()
 
     for sub_idx in range(start_sub, CALLS_PER_PHASE):
         role_name, role_prompt = _SUB_CALL_ROLES[sub_idx]
         instructions = (
-            f"You are a research analyst working on the topic: '{topic}'.\n"
-            f"Current phase: '{phase_title}'.\n"
-            f"Your role in this sub-step: {role_name}.\n\n"
-            f"{role_prompt}"
+            "You are a research analyst working on the topic: '" + topic + "'.\n"
+            "Current phase: '" + phase_title + "'.\n"
+            "Your role in this sub-step: " + role_name + ".\n\n"
+            + role_prompt
         )
         if current_text:
             user_input = (
-                f"Topic: {topic}\nPhase: {phase_title}\n\n"
-                f"Previous sub-step output:\n{current_text}{prior_summary}"
+                "Topic: " + topic + "\nPhase: " + phase_title + "\n\n"
+                "Previous sub-step output:\n" + current_text
             )
         else:
-            user_input = f"Topic: {topic}\nPhase: {phase_title}{prior_summary}"
+            user_input = "Topic: " + topic + "\nPhase: " + phase_title
 
         await emit({
             "type": "subcall_start",
@@ -425,9 +438,10 @@ async def _run_phase(
 
         current_text = sub_text
 
-        # --- SUBCALL-LEVEL CHECKPOINT ---
+        # Heavy content -> file-backed checkpoint store. Light
+        # watermark (subcall index) -> ctx.metadata.
+        _checkpoint_store.put(inv_id, current_text)
         ctx.metadata["completed_subcalls"] = sub_idx + 1
-        ctx.metadata["current_text"] = current_text
         await ctx.metadata.flush()
 
         if sub_idx + 1 < CALLS_PER_PHASE and INTRA_PHASE_COOLDOWN_SEC > 0:
@@ -442,11 +456,9 @@ async def _run_phase(
             if ctx.cancel.is_set():
                 break
 
-    return current_text
-
 
 async def _stream_llm(
-    emit: EmitFn, *, instructions: str, user_input: str,
+    emit: "EmitFn", *, instructions: str, user_input: str,
 ) -> str:
     """One streaming LLM call. Forwards token deltas via the per-turn stream."""
     full_text = ""
