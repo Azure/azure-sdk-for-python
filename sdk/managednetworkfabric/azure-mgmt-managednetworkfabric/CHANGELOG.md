@@ -20,12 +20,7 @@
   - Added model `EnableDisableOnResources`
   - Added model `Layer3IpPrefixPatchProperties`
   - Added model `Layer3IpPrefixProperties`
-  - Added model `ManagementNetworkConfigurationPatchableProperties`
-  - Added model `NetworkFabricPatchablePropertiesTerminalServerConfiguration`
-  - Added model `OptionBProperties`
   - Added model `ProxyResourceBase`
-  - Added model `StaticRouteRoutePolicy`
-  - Added model `StaticRouteRoutePolicyPatch`
   - Added model `TagsUpdate`
 
 ### Breaking Changes
@@ -35,11 +30,11 @@
   - Deleted or renamed enum value `PollingIntervalInSeconds.from_number`
   - Deleted or renamed enum value `PollingIntervalInSeconds.fromhex`
   - Deleted or renamed enum value `PollingIntervalInSeconds.hex`
-  - Deleted or renamed model `ManagementNetworkPatchConfiguration`
-  - Deleted or renamed model `StaticRoutePolicy`
-  - Deleted or renamed model `StaticRoutePolicyPatch`
-  - Deleted or renamed model `TerminalServerPatchConfiguration`
-  - Deleted or renamed model `VpnOptionBProperties`
+  - Renamed model `ManagementNetworkPatchConfiguration` to `ManagementNetworkConfigurationPatchableProperties`
+  - Renamed model `StaticRoutePolicy` to `StaticRouteRoutePolicy`
+  - Renamed model `StaticRoutePolicyPatch` to `StaticRouteRoutePolicyPatch`
+  - Renamed model `TerminalServerPatchConfiguration` to `NetworkFabricPatchablePropertiesTerminalServerConfiguration`
+  - Renamed model `VpnOptionBProperties` to `OptionBProperties`
   - Method `AccessControlListsOperations.begin_create` inserted a `positional_or_keyword` parameter `body`
   - Method `AccessControlListsOperations.begin_create` deleted or renamed its parameter `resource` of kind `positional_or_keyword`
   - Method `AccessControlListsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
