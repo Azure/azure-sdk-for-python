@@ -33,7 +33,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
-from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
 from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
 from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
 from azure.ai.ml._restclient.workspace_dataplane import WorkspaceDataplaneClient as ServiceClientWorkspaceDataplane
@@ -377,17 +376,6 @@ class MLClient:
             **kwargs,
         )
 
-        self._service_client_07_2024_preview = ServiceClient072024Preview(
-            credential=self._credential,
-            subscription_id=(
-                self._ws_operation_scope._subscription_id
-                if registry_reference
-                else self._operation_scope._subscription_id
-            ),
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._service_client_10_2024_preview = ServiceClient102024Preview(
             credential=self._credential,
             subscription_id=(
@@ -565,7 +553,7 @@ class MLClient:
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
-            serviceclient_2024_07_01_preview=self._service_client_07_2024_preview,
+            serviceclient_2024_10_01_preview=self._service_client_10_2024_preview,
             serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
             **ops_kwargs,  # type: ignore[arg-type]
         )

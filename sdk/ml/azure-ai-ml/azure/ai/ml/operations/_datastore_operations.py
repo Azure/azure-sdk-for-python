@@ -13,9 +13,9 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
-from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
-from azure.ai.ml._restclient.v2024_07_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2024_07_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials, SecretExpiry
+from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2024_10_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2024_10_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials, SecretExpiry
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
@@ -41,9 +41,9 @@ class DatastoreOperations(_ScopeDependentOperations):
         Workspace resources.
     :type serviceclient_2024_01_01_preview: ~azure.ai.ml._restclient.v2023_01_01_preview.
         _azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
-    :param serviceclient_2024_07_01_preview: Service client to allow end users to operate on Azure Machine Learning
+    :param serviceclient_2024_10_01_preview: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type serviceclient_2024_07_01_preview: ~azure.ai.ml._restclient.v2024_07_01_preview.
+    :type serviceclient_2024_10_01_preview: ~azure.ai.ml._restclient.v2024_10_01_preview.
         _azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
     """
 
@@ -52,14 +52,14 @@ class DatastoreOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         serviceclient_2024_01_01_preview: ServiceClient012024Preview,
-        serviceclient_2024_07_01_preview: ServiceClient072024Preview,
+        serviceclient_2024_10_01_preview: ServiceClient102024Preview,
         **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_filter()
-        self._operation = serviceclient_2024_07_01_preview.datastores
+        self._operation = serviceclient_2024_10_01_preview.datastores
         self._compute_operation = serviceclient_2024_01_01_preview.compute
-        self._credential = serviceclient_2024_07_01_preview._config.credential
+        self._credential = serviceclient_2024_10_01_preview._config.credential
         self._init_kwargs = kwargs
 
     @monitor_with_activity(ops_logger, "Datastore.List", ActivityType.PUBLICAPI)
