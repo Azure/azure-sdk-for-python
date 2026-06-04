@@ -4,10 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
-import re
+# This file remains only for two things that setuptools cannot yet express
+# declaratively in pyproject.toml without opting into experimental config:
+#   1. Compiling the limited-API C extension(s).
+#   2. Overriding bdist_wheel so wheels built against Py_LIMITED_API are
+#      tagged abi3 and become reusable across CPython 3.x versions.
+# Can be removed once experimental is removed from https://github.com/pypa/setuptools/blob/84ed5913724df5a12dc804e1d5efe12508e706d2/setuptools/config/pyprojecttoml.py#L135
+
 from setuptools import setup, Extension
-from wheel.bdist_wheel import bdist_wheel
+from setuptools.command.bdist_wheel import bdist_wheel
 
 
 class bdist_wheel_abi3(bdist_wheel):
@@ -21,51 +26,12 @@ class bdist_wheel_abi3(bdist_wheel):
         return python, abi, plat
 
 
-PACKAGE_NAME = "azure-storage-extensions"
-PACKAGE_PPRINT_NAME = "Azure Storage Extensions"
-
-package_folder_path = PACKAGE_NAME.replace("-", "/")
-
-# Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, "checksums", "_version.py"), "r") as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
-
-if not version:
-    raise RuntimeError("Cannot find version information")
-
 setup(
-    name=PACKAGE_NAME,
-    version=version,
-    description=PACKAGE_PPRINT_NAME,
-    long_description=open("README.md", "r", encoding="utf-8").read(),
-    long_description_content_type="text/markdown",
-    license="MIT",
-    author="Microsoft Corporation",
-    author_email="ascl@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions",
-    keywords="azure, azure sdk",
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "Programming Language :: Python :: 3.13",
-        "Programming Language :: Python :: 3.14",
-        "License :: OSI Approved :: MIT License",
-    ],
-    zip_safe=False,
-    python_requires=">=3.10",
-    packages=[
-        "azure.storage.extensions.checksums",
-    ],
     ext_package="azure.storage.extensions.checksums",
     ext_modules=[
         Extension(
             "crc64",
-            [os.path.join(package_folder_path, "checksums", "crc64", "crc64module.c")],
+            ["azure/storage/extensions/checksums/crc64/crc64module.c"],
             define_macros=[("Py_LIMITED_API", "3")],
             py_limited_api=True,
         ),
