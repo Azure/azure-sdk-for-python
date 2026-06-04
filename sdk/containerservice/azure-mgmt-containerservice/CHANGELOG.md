@@ -1,5 +1,21 @@
 # Release History
 
+## 41.3.0 (2026-06-03)
+
+### Features Added
+
+  - Client `ContainerServiceClient` added operation group `identity_bindings`
+  - Model `AgentPoolUpgradeProfileProperties` added property `recently_used_versions`
+  - Model `ManagedClusterAzureMonitorProfileMetrics` added property `control_plane`
+  - Added model `AgentPoolRecentlyUsedVersion`
+  - Added model `IdentityBinding`
+  - Added model `IdentityBindingManagedIdentityProfile`
+  - Added model `IdentityBindingOidcIssuerProfile`
+  - Added model `IdentityBindingProperties`
+  - Added enum `IdentityBindingProvisioningState`
+  - Added model `ManagedClusterAzureMonitorProfileMetricsControlPlane`
+  - Added operation group `IdentityBindingsOperations`
+
 ## 41.3.0b1 (2026-05-18)
 
 ### Features Added
