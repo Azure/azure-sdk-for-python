@@ -570,7 +570,8 @@ about:
 
 extra:
   recipe-maintainers:
-    - xiangyan99
+    - jennypng
+    - kashifkhan-msft
 """
     return meta_yaml_content
 
