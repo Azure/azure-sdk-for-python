@@ -983,7 +983,6 @@ class StorageSessionPolicy(HTTPPolicy):
         *,
         account_name: str,
         session_client_factory: Callable[[str], Any],
-        use_session: bool = False,
     ) -> None:
         """Constructs a StorageSessionPolicy.
 
@@ -993,8 +992,6 @@ class StorageSessionPolicy(HTTPPolicy):
             returns a session-disabled generated client (AzureBlobStorage)
             whose pipeline uses OAuth/bearer auth. Invoked to issue CreateSession.
         :paramtype session_client_factory: Callable[[str], Any]
-        :keyword bool use_session: Whether session authentication is enabled.
-            When set to False, the policy is a pass-through no-op.
         :raises ValueError: if `account_name` or `session_client_factory` is `None`.
         """
         if account_name is None or session_client_factory is None:
@@ -1002,7 +999,7 @@ class StorageSessionPolicy(HTTPPolicy):
         super().__init__()
         self._account_name = account_name
         self._session_client_factory = session_client_factory
-        self._use_session = use_session
+        self._enabled = True
         self._cache = SessionCache()
 
     @staticmethod
@@ -1122,7 +1119,7 @@ class StorageSessionPolicy(HTTPPolicy):
         :return: The container name if a session was applied, else None.
         :rtype: str or None
         """
-        if not self._use_session:
+        if not self._enabled:
             return None
         analysis = self._analyze_request(request)
         if analysis is None:
@@ -1159,7 +1156,7 @@ class StorageSessionPolicy(HTTPPolicy):
 
         if error_code == StorageErrorCode.FEATURE_NOT_ENABLED:
             _LOGGER.info("Session feature not enabled on this account; disabling session auth.")
-            self._use_session = False
+            self._enabled = False
             return response
 
         # Unavailable / 5xx → negative-cache cooldown.

@@ -168,7 +168,6 @@ class AsyncStorageAccountHostsMixin(object):
                 AsyncStorageSessionPolicy(
                     account_name=self.account_name,
                     session_client_factory=_session_client_factory,
-                    use_session=True,
                 )
             )
         policies.extend(

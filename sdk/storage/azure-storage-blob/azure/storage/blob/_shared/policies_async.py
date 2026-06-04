@@ -389,7 +389,6 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         *,
         account_name: str,
         session_client_factory: Callable[[str], Any],
-        use_session: bool = False,
     ) -> None:
         """Constructs an AsyncStorageSessionPolicy.
 
@@ -399,7 +398,6 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
             returns a session-disabled generated async client whose pipeline
             uses OAuth/bearer auth. Invoked (and awaited) to issue CreateSession.
         :paramtype session_client_factory: Callable[[str], Any]
-        :keyword bool use_session: Whether session authentication is enabled.
         :raises ValueError: if account_name or session_client_factory is None.
         """
         if account_name is None or session_client_factory is None:
@@ -407,12 +405,11 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         super().__init__()
         self._account_name = account_name
         self._session_client_factory = session_client_factory
-        self._use_session = use_session
+        self._enabled = True
         self._cache = AsyncSessionCache()
         self._signer = StorageSessionPolicy(
             account_name=account_name,
             session_client_factory=session_client_factory,
-            use_session=use_session,
         )
 
     async def _create_session(self, container_url: str) -> Tuple[str, str, datetime]:
@@ -464,7 +461,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         :return: The container name if a session was applied, else None.
         :rtype: str or None
         """
-        if not self._use_session:
+        if not self._enabled:
             return None
         analysis = StorageSessionPolicy._analyze_request(request)  # pylint: disable=protected-access
         if analysis is None:
@@ -508,7 +505,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
 
         if error_code == StorageErrorCode.FEATURE_NOT_ENABLED:
             _LOGGER.info("Session feature not enabled on this account; disabling session auth.")
-            self._use_session = False
+            self._enabled = False
             return response
 
         # Unavailable / 5xx → negative-cache cooldown.
