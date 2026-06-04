@@ -161,7 +161,7 @@ class BroadcastEventStream(_BaseEventStream):
         del after  # silently ignored per rule 17 — no buffer to seek
         if self._state == self._STATE_GONE:
             raise EventStreamGoneError("stream is GONE")
-        return _BroadcastIterator(self)
+        return _BroadcastIterator(self, terminated=self._state == self._STATE_CLOSED)
 
     async def last_cursor(self) -> Optional[int]:
         if self._state == self._STATE_GONE:
@@ -177,19 +177,20 @@ class BroadcastEventStream(_BaseEventStream):
 class _BroadcastIterator:
     """Per-subscriber iterator for :class:`BroadcastEventStream`."""
 
-    def __init__(self, owner: BroadcastEventStream) -> None:
+    def __init__(self, owner: BroadcastEventStream, *, terminated: bool = False) -> None:
         self._owner = owner
         self._queue: Optional[asyncio.Queue[Any]] = None
-        self._terminated = False
+        self._terminated = terminated
 
     def __aiter__(self) -> "_BroadcastIterator":
         # Attach at __aiter__ so the subscriber is registered before
         # the first __anext__ returns (rule for "attach" definition,
-        # FR-003 / streaming.md §4.3).
+        # FR-003 / streaming.md §4.3). Skip if pre-terminated (stream
+        # was already CLOSED at subscribe() time).
         if self._queue is None and not self._terminated:
-            self._queue = asyncio.get_event_loop().create_task(
-                self._owner._register_subscriber()
-            )
+            q: asyncio.Queue[Any] = asyncio.Queue()
+            self._owner._subscriber_queues.append(q)
+            self._queue = q
         return self
 
     async def __anext__(self) -> Any:
@@ -197,8 +198,6 @@ class _BroadcastIterator:
             raise StopAsyncIteration
         if self._queue is None:
             self._queue = await self._owner._register_subscriber()
-        elif asyncio.isfuture(self._queue) or asyncio.iscoroutine(self._queue):
-            self._queue = await self._queue  # type: ignore[misc]
         try:
             item = await self._queue.get()
             if item is _GONE_SENTINEL:
@@ -207,12 +206,12 @@ class _BroadcastIterator:
                 raise StopAsyncIteration
             return item
         except (asyncio.CancelledError, GeneratorExit):
-            if self._queue is not None and not asyncio.isfuture(self._queue):
+            if self._queue is not None:
                 self._owner._remove_subscriber(self._queue)
             raise
 
     def __del__(self) -> None:  # rule 15 — subscriber cleanup on GC
-        if self._queue is not None and not asyncio.isfuture(self._queue):
+        if self._queue is not None:
             try:
                 self._owner._remove_subscriber(self._queue)
             except Exception:  # pylint: disable=broad-except
@@ -391,6 +390,13 @@ class _ReplayIterator:
         if not self._attached and not self._terminated:
             self._attach()
         if self._terminated:
+            raise StopAsyncIteration
+        # Check if owner has transitioned to GONE via registry-delete
+        # (immediate cutoff per FR-012a)
+        if self._owner._state == self._owner._STATE_GONE:
+            self._terminated = True
+            if self._queue is not None:
+                self._owner._remove_subscriber(self._queue)
             raise StopAsyncIteration
         # Drain history first
         if self._history_index < len(self._history_buffer):
