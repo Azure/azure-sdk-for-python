@@ -10,59 +10,24 @@
   - Model `DataExport` added property `system_data`
   - Model `DataSource` added property `system_data`
   - Model `LinkedService` added property `system_data`
-  - Model `LinkedStorageAccountsResource` added property `properties`
   - Model `LinkedStorageAccountsResource` added property `system_data`
   - Model `ProxyResource` added property `system_data`
   - Model `Resource` added property `system_data`
   - Model `SavedSearch` added property `system_data`
   - Model `StorageInsight` added property `system_data`
   - Model `TrackedResource` added property `system_data`
-  - Model `WorkspacePatch` added property `properties`
   - Model `WorkspacePatch` added property `system_data`
   - Added model `Destination`
   - Added model `DestinationMetaData`
-  - Added model `LinkedStorageAccountsProperties`
-  - Added model `LogAnalyticsQueryPackQueryProperties`
-  - Added model `ManagementGroupProperties`
   - Added enum `SummaryLogsProvisioningState`
 
 ### Breaking Changes
 
-  - Model `LinkedStorageAccountsResource` deleted or renamed its instance variable `data_source_type`
-  - Model `LinkedStorageAccountsResource` deleted or renamed its instance variable `storage_account_ids`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `id_properties_id`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `display_name`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `time_created`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `time_modified`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `author`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `description`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `body`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `related`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `tags`
-  - Model `ManagementGroup` deleted or renamed its instance variable `server_count`
-  - Model `ManagementGroup` deleted or renamed its instance variable `is_gateway`
-  - Model `ManagementGroup` deleted or renamed its instance variable `name`
-  - Model `ManagementGroup` deleted or renamed its instance variable `id`
-  - Model `ManagementGroup` deleted or renamed its instance variable `created`
-  - Model `ManagementGroup` deleted or renamed its instance variable `data_received`
-  - Model `ManagementGroup` deleted or renamed its instance variable `version`
-  - Model `ManagementGroup` deleted or renamed its instance variable `sku`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `provisioning_state`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `customer_id`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `sku`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `retention_in_days`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `workspace_capping`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `created_date`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `modified_date`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `public_network_access_for_ingestion`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `public_network_access_for_query`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `force_cmk_for_query`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `private_link_scoped_resources`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `features`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `default_data_collection_rule_resource_id`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `replication`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `failover`
-  - Deleted or renamed model `DataSourceFilter`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `LinkedStorageAccountsResource` moved instance variable `data_source_type` and `storage_account_ids` under property `properties` whose type is `LinkedStorageAccountsProperties`
+  - Model `LogAnalyticsQueryPackQuery` moved instance variable `id_properties_id`, `display_name`, `time_created`, `time_modified`, `author`, `description`, `body`, `related` and `tags` under property `properties` whose type is `LogAnalyticsQueryPackQueryProperties`
+  - Model `ManagementGroup` moved instance variable `server_count`, `is_gateway`, `name`, `id`, `created`, `data_received`, `version` and `sku` under property `properties` whose type is `ManagementGroupProperties`
+  - Model `WorkspacePatch` moved instance variable `provisioning_state`, `customer_id`, `sku`, `retention_in_days`, `workspace_capping`, `created_date`, `modified_date`, `public_network_access_for_ingestion`, `public_network_access_for_query`, `force_cmk_for_query`, `private_link_scoped_resources`, `features`, `default_data_collection_rule_resource_id`, `replication` and `failover` under property `properties` whose type is `WorkspaceProperties`
   - Deleted or renamed model `ErrorDetailAutoGenerated`
   - Deleted or renamed model `ErrorDetailAutoGenerated2`
   - Deleted or renamed model `ErrorResponseAutoGenerated`
@@ -70,8 +35,6 @@
   - Deleted or renamed model `ProxyResourceAutoGenerated`
   - Deleted or renamed model `ResourceAutoGenerated`
   - Deleted or renamed model `TrackedResourceAutoGenerated`
-  - Deleted or renamed model `WorkspaceListManagementGroupsResult`
-  - Deleted or renamed model `WorkspaceListUsagesResult`
   - Deleted or renamed model `WorkspaceReplicationPatProperties`
   - Method `DataSourcesOperations.list_by_workspace` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
   - Method `QueriesOperations.list` changed its parameter `include_body` from `positional_or_keyword` to `keyword_only`
@@ -79,6 +42,10 @@
   - Method `QueriesOperations.search` changed its parameter `include_body` from `positional_or_keyword` to `keyword_only`
   - Method `QueriesOperations.search` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `WorkspacesOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - The following list/filter models have been removed as they are no longer needed: `DataSourceFilter`, `WorkspaceListManagementGroupsResult`, `WorkspaceListUsagesResult`
 
 ## 13.1.1 (2026-01-05)
 
