@@ -170,6 +170,11 @@ class CrashHarness:
         sample can pick them up. Specific environment variable names are a
         convention the sample author honours.
 
+        Also injects the package root onto ``PYTHONPATH`` so the
+        subprocess can resolve ``python -m tests.e2e.<module>`` invocations
+        regardless of the parent process's CWD (e.g. when pytest is
+        launched from the repository root rather than the package root).
+
         :rtype: dict[str, str]
         """
         env = dict(os.environ)
@@ -177,6 +182,14 @@ class CrashHarness:
         env["AGENTSERVER_DURABLE_TASKS_PATH"] = str(self._tmp_path / "tasks")
         env["AGENTSERVER_RESPONSE_STORE_PATH"] = str(self._tmp_path / "responses")
         env["AGENTSERVER_STREAM_STORE_PATH"] = str(self._tmp_path / "streams")
+        # The package root (parent of tests/) — _crash_harness.py lives at
+        # tests/e2e/_crash_harness.py so two parents up is the package
+        # root that contains the importable ``tests`` package.
+        _pkg_root = str(Path(__file__).resolve().parent.parent.parent)
+        _existing_pp = env.get("PYTHONPATH", "")
+        env["PYTHONPATH"] = (
+            f"{_pkg_root}{os.pathsep}{_existing_pp}" if _existing_pp else _pkg_root
+        )
         env.update(self._env_extras)
         return env
 

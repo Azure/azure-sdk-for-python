@@ -23,6 +23,8 @@ import asyncio
 import json as _json
 from typing import Any
 
+import pytest
+
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -432,6 +434,7 @@ def _make_two_item_gated_bg_handler():
 class TestC2StreamStoredAsync:
     """Sync streaming tests requiring concurrent access during an active stream."""
 
+    @pytest.mark.asyncio
     async def test_e8_stream_get_during_stream_returns_404(self) -> None:
         """B16 — non-bg in-flight → 404."""
         handler = _make_gated_stream_handler()
@@ -470,6 +473,7 @@ class TestC2StreamStoredAsync:
         assert get_after.status_code == 200
         assert get_after.json()["status"] == "completed"
 
+    @pytest.mark.asyncio
     async def test_e11_stream_cancel_during_stream_returns_400(self) -> None:
         """B1 — cancel requires background; non-bg → 400."""
         handler = _make_gated_stream_handler()
@@ -516,6 +520,7 @@ class TestC2StreamStoredAsync:
 class TestC4BgStreamStoredAsync:
     """Background streaming tests requiring concurrent access during active stream."""
 
+    @pytest.mark.asyncio
     async def test_e20_bg_stream_get_during_stream_returns_in_progress(self) -> None:
         """B5 — background responses accessible during in-progress."""
         handler = _make_gated_stream_handler()
@@ -554,6 +559,7 @@ class TestC4BgStreamStoredAsync:
         assert get_after.status_code == 200
         assert get_after.json()["status"] == "completed"
 
+    @pytest.mark.asyncio
     async def test_e25_bg_stream_cancel_mid_stream_returns_cancelled(self) -> None:
         """B7, B11 — cancel mid-stream → cancelled with 0 output."""
         handler = _make_gated_stream_handler()
@@ -593,6 +599,7 @@ class TestC4BgStreamStoredAsync:
         assert get_resp.json()["status"] == "cancelled"
         assert get_resp.json()["output"] == []
 
+    @pytest.mark.asyncio
     async def test_e43_bg_stream_get_during_stream_returns_partial_output(self) -> None:
         """B5, B23 — GET mid-stream returns partial output items."""
         handler = _make_gated_stream_handler_with_output()
@@ -635,6 +642,7 @@ class TestC4BgStreamStoredAsync:
         assert get_after.status_code == 200
         assert get_after.json()["status"] == "completed"
 
+    @pytest.mark.asyncio
     async def test_bg_stream_cancel_terminal_sse_is_response_failed_with_cancelled(self) -> None:
         """B11, B26 — cancel mid-stream → terminal SSE event is response.failed with status cancelled."""
         handler = _make_gated_stream_handler()
@@ -686,6 +694,7 @@ class TestC4BgStreamStoredAsync:
         finally:
             await _ensure_task_done(post_task, handler)
 
+    @pytest.mark.asyncio
     async def test_e26_bg_stream_cancel_then_sse_replay_terminal_event(self) -> None:
         """B26 — SSE replay after cancel contains terminal event response.failed with status cancelled.
 
@@ -729,6 +738,7 @@ class TestC4BgStreamStoredAsync:
         replay_resp = await client.get(f"/responses/{response_id}?stream=true")
         assert replay_resp.status_code == 400
 
+    @pytest.mark.asyncio
     async def test_e43_bg_stream_get_during_stream_item_lifecycle(self) -> None:
         """B5, B23 — GET mid-stream returns progressive item lifecycle.
 
@@ -818,6 +828,7 @@ class TestC4BgStreamStoredAsync:
         finally:
             await _ensure_task_done(post_task, handler)
 
+    @pytest.mark.asyncio
     async def test_e44_bg_progressive_polling_output_grows(self) -> None:
         """B5, B10 — background progressive polling shows output accumulation.
 

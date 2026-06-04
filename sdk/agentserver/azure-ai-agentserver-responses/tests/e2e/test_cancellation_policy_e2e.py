@@ -163,6 +163,7 @@ def _parse_sse_events(body: str) -> list[dict[str, Any]]:
 class TestSteeringCancellation:
     """Steering cancellation: handler terminal wins; no terminal → failed."""
 
+    @pytest.mark.asyncio
     async def test_steered_no_terminal_produces_failed(self) -> None:
         """Rule 1: Handler returns without terminal on steering → response.failed.
 
@@ -228,6 +229,7 @@ class TestSteeringCancellation:
             "Steered cancellation must produce 'failed', never 'cancelled'"
         )
 
+    @pytest.mark.asyncio
     async def test_steered_handler_terminal_wins(self) -> None:
         """Rule 1: Handler emits response.completed on steering → that wins.
 
@@ -294,6 +296,7 @@ class TestSteeringCancellation:
 class TestShutdownNeverCancelled:
     """Shutdown NEVER produces 'cancelled' status — always 'failed' or stays in_progress."""
 
+    @pytest.mark.asyncio
     async def test_shutdown_non_durable_bg_produces_failed_not_cancelled(self) -> None:
         """Rule 2: Non-durable bg shutdown → failed (never cancelled)."""
         started = asyncio.Event()
@@ -360,6 +363,7 @@ class TestShutdownNeverCancelled:
 class TestClientExplicitCancellation:
     """Client cancel (/cancel endpoint) forces 'cancelled' regardless of handler."""
 
+    @pytest.mark.asyncio
     async def test_cancel_endpoint_forces_cancelled_status(self) -> None:
         """Rule 3: /cancel → status='cancelled', output cleared."""
         started = asyncio.Event()
@@ -412,6 +416,7 @@ class TestClientExplicitCancellation:
         assert get_resp.json()["status"] == "cancelled"
         assert get_resp.json()["output"] == []
 
+    @pytest.mark.asyncio
     async def test_cancel_overrides_handler_terminal(self) -> None:
         """Rule 3: Even if handler emits completed AFTER cancel signal, stored status is cancelled.
 
@@ -476,6 +481,7 @@ class TestClientExplicitCancellation:
 class TestIncompleteNeverFramework:
     """Framework NEVER sets 'incomplete' — it's exclusively developer-controlled."""
 
+    @pytest.mark.asyncio
     async def test_handler_incomplete_honoured(self) -> None:
         """Developer emitting incomplete is passed through."""
 

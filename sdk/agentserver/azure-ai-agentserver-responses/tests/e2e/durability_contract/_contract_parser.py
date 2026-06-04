@@ -149,11 +149,21 @@ def _parse_matrix_table(section: str) -> list[ContractRow]:
 
 
 def load_contract_rows() -> list[ContractRow]:
-    """Read and parse ``durability-contract.md`` § The matrix."""
+    """Read and parse ``durability-contract.md`` § The matrix.
+
+    The contract spec is maintained out-of-tree (it is not checked into
+    ``sdk/agentserver/specs/``). Callers should treat
+    :class:`FileNotFoundError` as a signal to skip the meta-test
+    (e.g. ``pytest.skip(...)``) rather than fail; the per-cell tests in
+    this package are the actual contract enforcers.
+    """
     contract = _contract_path()
     if not contract.exists():
         raise FileNotFoundError(
-            f"durability-contract.md not found at expected path: {contract}"
+            f"durability-contract.md not found at expected path: {contract}. "
+            "The contract spec is maintained out-of-tree — meta-completeness "
+            "tests skip when it is unavailable. Per-cell tests in this "
+            "package are unaffected."
         )
     text = contract.read_text(encoding="utf-8")
     return _parse_matrix_table(_extract_matrix_section(text))

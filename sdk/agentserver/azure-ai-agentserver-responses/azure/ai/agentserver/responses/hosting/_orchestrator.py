@@ -783,6 +783,7 @@ class _PipelineState:
         "pending_terminal",
         "provider_created",
         "next_seq",
+        "leave_stream_open_for_recovery",
     )
 
     def __init__(self) -> None:
@@ -800,6 +801,17 @@ class _PipelineState:
         # (cross-attempt) stream monotonic. On fresh entry this stays
         # 0 and the first event lands at seq=0.
         self.next_seq: int = 0
+        # Set by the exception handler when SHUTTING_DOWN is detected
+        # for a durable_background+store response. Signals the durable
+        # stream body's ``finally`` to SKIP the finalize+close step so
+        # the wire stream stays in OPEN state. The next lifetime's
+        # recovered handler re-opens the same registry entry (file-
+        # backed, rehydrated from disk) and appends its events from
+        # next_seq — preserving cross-attempt continuity per spec 017
+        # streaming.md. Without this flag, closing the stream flushes
+        # a terminal marker and the rehydrated stream is in CLOSED
+        # state — the recovered handler's emits silently no-op.
+        self.leave_stream_open_for_recovery: bool = False
 
 
 class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
@@ -1744,6 +1756,17 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # (which also looks at ctx.shutdown) routes consistently.
                 if ctx.context is not None and ctx.context.cancellation_reason is None:
                     ctx.context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                # Signal the durable-stream-body finally to SKIP the
+                # finalize+close step. Closing the wire stream now would
+                # flush a terminal marker, putting the rehydrated stream
+                # in CLOSED state for the next lifetime — emits from the
+                # recovered handler would silently no-op and the GET
+                # ?stream=true after recovery would deliver no terminal.
+                # Leaving the stream open lets the next lifetime
+                # re-open the same registry entry and append its events,
+                # preserving cross-attempt continuity per spec 017
+                # streaming.md.
+                state.leave_stream_open_for_recovery = True
                 # Raise CancelledError so the @task framework treats this
                 # as a cooperative cancel and leaves the task in_progress
                 # (see core durable/_manager.py CancelledError branch:
@@ -2755,37 +2778,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # ``record.subject`` (publish, close) target this stream.
         wire_stream = await streams.get_or_create(response_id)
         record.subject = wire_stream
-        # Per responses-api-behaviour-contract.md §Stream Recovery
-        # Limitations (Post-Crash): "SSE streams are NOT resumable
-        # after a container crash or restart". On recovery the prior
-        # lifetime's stream may be in CLOSED state (the terminal
-        # marker was flushed during graceful shutdown) — emits to it
-        # would be silently dropped by the closed-stream contract,
-        # leaving GET ?stream=true post-recovery without a terminal.
-        # Delete + recreate to give the recovered run a fresh,
-        # writable stream from sequence 0. This matches the spec's
-        # "no resumable SSE post-crash" position and guarantees that
-        # GET ?stream=true after recovery delivers a well-formed event
-        # sequence (including the terminal).
-        _is_recovery = False
-        if context is not None and context.durability is not None:
-            _is_recovery = bool(getattr(context.durability, "is_recovery", False))
-        if _is_recovery:
-            try:
-                await streams.delete(response_id)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "streams.delete on recovery failed (response_id=%s)",
-                    response_id,
-                    exc_info=True,
-                )
-            wire_stream = await streams.get_or_create(response_id)
-            record.subject = wire_stream
         # Seed the per-attempt sequence counter from the prior persisted
         # event count. On fresh entry the persisted log is empty →
-        # next_seq=0. On recovered entry we explicitly reset to a fresh
-        # stream above, so next_seq also starts at 0. Best-effort: any
-        # backing error falls back to 0 rather than blocking the body.
+        # next_seq=0 (no behaviour change). On recovered entry the
+        # persisted log already has lifetime-1's events → next_seq = last
+        # cursor + 1 so the recovered handler's events have seq numbers
+        # strictly succeeding the pre-crash events, keeping the assembled
+        # (cross-attempt) stream monotonic. Best-effort: any backing error
+        # falls back to 0 rather than blocking the body.
         try:
             _last = await wire_stream.last_cursor()
             state.next_seq = (_last + 1) if _last is not None else 0
@@ -2829,22 +2829,39 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # as ``wire_stream`` by registry identity) when
                 # ``ctx.background and ctx.store``, so we do not re-emit.
         finally:
-            # Ensure finalization runs on every exit path (handler error,
-            # cancellation, normal completion). Same as _live_stream's
-            # finally for bg+store path.
-            try:
-                await self._finalize_stream(ctx, state)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "_finalize_stream failed for durable streaming body "
-                    "response_id=%s",
-                    response_id,
-                    exc_info=True,
-                )
-            # Always close the per-response stream so the live wire
-            # iterator exits cleanly. Idempotent if _finalize_stream
-            # already closed the same stream through state.bg_record.
-            await self._safe_close(wire_stream)
+            # Detect "leave in_progress for next-lifetime recovery" — set
+            # by the exception handler in _process_handler_events when
+            # SHUTTING_DOWN is detected for a durable_background+store
+            # response. In that case we MUST NOT close the wire stream:
+            # closing flushes a terminal marker, which puts the stream
+            # in CLOSED state. The recovered handler on the next
+            # lifetime would then see a CLOSED stream and its emits
+            # would silently no-op (closed-stream contract), leaving
+            # GET ?stream=true post-recovery without a terminal event
+            # even though the recovered handler ran to completion. The
+            # finalize_stream / close steps are skipped — the next
+            # lifetime's _run_durable_stream_body will re-open the same
+            # registry entry (file-backed; rehydrated from on-disk
+            # state) and append its events from next_seq (cross-attempt
+            # continuity per spec 017 streaming.md).
+            _leave_for_recovery = state.leave_stream_open_for_recovery
+            if not _leave_for_recovery:
+                # Ensure finalization runs on every exit path (handler error,
+                # cancellation, normal completion). Same as _live_stream's
+                # finally for bg+store path.
+                try:
+                    await self._finalize_stream(ctx, state)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "_finalize_stream failed for durable streaming body "
+                        "response_id=%s",
+                        response_id,
+                        exc_info=True,
+                    )
+                # Always close the per-response stream so the live wire
+                # iterator exits cleanly. Idempotent if _finalize_stream
+                # already closed the same stream through state.bg_record.
+                await self._safe_close(wire_stream)
 
     async def _complete_bookkeeping_task(self, response_id: str) -> None:
         """Signal the bookkeeping durable task to mark itself complete.

@@ -189,6 +189,7 @@ def _make_durability_context(
 class TestFreshEntryBaseline:
     """TR-001: pins the existing fresh-entry happy path. No spec changes here."""
 
+    @pytest.mark.asyncio
     async def test_fresh_entry_produces_well_formed_response(self) -> None:
         def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
@@ -414,6 +415,7 @@ class TestDuplicateTerminalIdempotent:
 class TestRecoveryAwareHandlerProducesCleanFinalResponse:
     """TR-002: pins FR-002, FR-004, FR-007 (composed)."""
 
+    @pytest.mark.asyncio
     async def test_recovery_aware_emits_reset_in_progress_then_new_items(self) -> None:
         # Two-attempt simulation: first invocation emits partial output, then
         # we "crash" by raising. Second invocation runs the recovery path.
@@ -518,6 +520,7 @@ class TestRecoveryAwareHandlerProducesCleanFinalResponse:
 class TestNaiveHandlerFallback:
     """TR-003: pins FR-013."""
 
+    @pytest.mark.asyncio
     async def test_naive_handler_still_produces_terminal(self) -> None:
         # Naive handler — always runs from scratch.
         def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
@@ -564,6 +567,7 @@ class TestNaiveHandlerFallback:
 class TestRecoveryWithClientCancelled:
     """TR-008: signal pre-set with CLIENT_CANCELLED on recovered entry."""
 
+    @pytest.mark.asyncio
     async def test_recovered_handler_with_client_cancel_returns_no_terminal(self) -> None:
         # When the recovered entry sees CLIENT_CANCELLED, the handler returns
         # without a terminal event and the framework forces "cancelled".
@@ -611,6 +615,7 @@ class TestRecoveryWithClientCancelled:
 class TestRecoveryWithSteered:
     """TR-009: signal pre-set with STEERED on recovered entry."""
 
+    @pytest.mark.asyncio
     async def test_recovered_handler_with_steered_emits_completed(self) -> None:
         events_emitted: list[str] = []
 
@@ -652,6 +657,7 @@ class TestRecoveryWithSteered:
 class TestRecoveryWithShutdown:
     """TR-010: signal fires mid-stream during recovered attempt → no terminal."""
 
+    @pytest.mark.asyncio
     async def test_recovered_handler_with_shutdown_returns_no_terminal(self) -> None:
         events_emitted: list[str] = []
 

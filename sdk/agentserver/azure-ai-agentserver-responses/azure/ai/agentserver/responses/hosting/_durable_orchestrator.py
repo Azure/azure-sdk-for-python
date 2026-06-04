@@ -354,9 +354,18 @@ class DurableResponseOrchestrator:
 
             On fresh entry: runs the full pipeline via _run_background_non_stream.
             On recovery: re-runs the pipeline (handler is re-invoked from scratch).
-            After completion: suspends awaiting the next turn.
+            After completion: suspends awaiting the next turn (steerable mode)
+            by returning the ``Suspended`` sentinel from ``_execute_in_task``
+            UNCHANGED. Returning the sentinel directly is required for the
+            framework to transition the task to ``suspended`` status — any
+            wrapping that discards the return value (e.g. ``await
+            _execute_in_task(ctx)`` with no ``return``) causes the framework
+            to treat the body as a normal completion and writes
+            ``status="completed"``, which prevents subsequent turns from
+            chaining onto the same task_id (the task is terminal and
+            ``start()`` either conflicts or fails the precondition).
             """
-            await orchestrator._execute_in_task(ctx)
+            return await orchestrator._execute_in_task(ctx)  # noqa: RET504
 
         return _durable_response_task
 
@@ -673,20 +682,25 @@ class DurableResponseOrchestrator:
                 "task_id": task_id,
                 "input": persisted,
             }
-            # (Spec 013 US2) Steerable conversations: forbid forks via the
-            # input-precondition primitive. The current input id is the
-            # caller-supplied response_id; the precondition is the
-            # previous_response_id the caller claims to be branching from.
-            # The Responses API contract is "previous_response_id must be the
-            # most recent turn" — wire this directly to the input-precondition
-            # primitive so the framework enforces it atomically with the
-            # accept path. Maps to FR-***/SC-021 in spec 013.
+            # Steerable conversations: per-turn input_id provides
+            # idempotency on the response_id. The ``if_last_input_id``
+            # precondition is the chain-extension primitive and applies
+            # ONLY when the caller is using ``previous_response_id``-style
+            # explicit chaining (where the caller declares which prior
+            # turn this one extends). For ``conversation``-style grouping
+            # the task_id derivation already collapses every turn in the
+            # same conversation onto a single task_id; sequential
+            # delivery is enforced via TaskConflictError (queued for
+            # steering) or the steerable input queue — there is no chain
+            # to enforce so we skip the precondition.
+            #
+            # Mapping to FR-***/SC-021 in spec 013.
             if self._options.steerable_conversations:
                 if response_id is not None:
                     start_kwargs["input_id"] = response_id
-                    previous_response_id = ctx_params.get("previous_response_id")
-                    if previous_response_id is not None:
-                        start_kwargs["if_last_input_id"] = previous_response_id
+                previous_response_id = ctx_params.get("previous_response_id")
+                if previous_response_id is not None:
+                    start_kwargs["if_last_input_id"] = previous_response_id
             task_run = await self._task_fn.start(**start_kwargs)
             # Store the task run reference on the record for observability
             record.durable_task_run = task_run  # type: ignore[attr-defined]
