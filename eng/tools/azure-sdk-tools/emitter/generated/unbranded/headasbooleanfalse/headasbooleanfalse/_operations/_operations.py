@@ -19,12 +19,13 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import VisibilityClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -168,12 +169,12 @@ class _VisibilityClientOperationsMixin(
 
     @overload
     def get_model(
-        self, input: types.VisibilityModel, *, query_prop: int, content_type: str = "application/json", **kwargs: Any
+        self, input: JSON, *, query_prop: int, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VisibilityModel:
         """get_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword query_prop: Required int32, illustrating a query property. Required.
         :paramtype query_prop: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -203,13 +204,12 @@ class _VisibilityClientOperationsMixin(
         """
 
     def get_model(
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], *, query_prop: int, **kwargs: Any
+        self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], *, query_prop: int, **kwargs: Any
     ) -> _models.VisibilityModel:
         """get_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :keyword query_prop: Required int32, illustrating a query property. Required.
         :paramtype query_prop: int
         :return: VisibilityModel. The VisibilityModel is compatible with MutableMapping
@@ -294,12 +294,12 @@ class _VisibilityClientOperationsMixin(
 
     @overload
     def head_model(
-        self, input: types.VisibilityModel, *, query_prop: int, content_type: str = "application/json", **kwargs: Any
+        self, input: JSON, *, query_prop: int, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """head_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword query_prop: Required int32, illustrating a query property. Required.
         :paramtype query_prop: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -329,13 +329,12 @@ class _VisibilityClientOperationsMixin(
         """
 
     def head_model(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], *, query_prop: int, **kwargs: Any
+        self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], *, query_prop: int, **kwargs: Any
     ) -> None:
         """head_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :keyword query_prop: Required int32, illustrating a query property. Required.
         :paramtype query_prop: int
         :return: None
@@ -404,11 +403,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @overload
-    def put_model(self, input: types.VisibilityModel, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -432,13 +431,12 @@ class _VisibilityClientOperationsMixin(
         """
 
     def put_model(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """put_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -504,13 +502,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @overload
-    def patch_model(
-        self, input: types.VisibilityModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    def patch_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """patch_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -534,13 +530,12 @@ class _VisibilityClientOperationsMixin(
         """
 
     def patch_model(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """patch_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -606,13 +601,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @overload
-    def post_model(
-        self, input: types.VisibilityModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    def post_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """post_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -636,13 +629,12 @@ class _VisibilityClientOperationsMixin(
         """
 
     def post_model(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """post_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -708,13 +700,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @overload
-    def delete_model(
-        self, input: types.VisibilityModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    def delete_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """delete_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -738,13 +728,12 @@ class _VisibilityClientOperationsMixin(
         """
 
     def delete_model(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """delete_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -811,12 +800,12 @@ class _VisibilityClientOperationsMixin(
 
     @overload
     def put_read_only_model(
-        self, input: types.ReadOnlyModel, *, content_type: str = "application/json", **kwargs: Any
+        self, input: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ReadOnlyModel:
         """put_read_only_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.ReadOnlyModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -842,13 +831,12 @@ class _VisibilityClientOperationsMixin(
         """
 
     def put_read_only_model(
-        self, input: Union[_models.ReadOnlyModel, types.ReadOnlyModel, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.ReadOnlyModel, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ReadOnlyModel:
         """put_read_only_model.
 
-        :param input: Is either a ReadOnlyModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.ReadOnlyModel or
-         ~headasbooleanfalse.types.ReadOnlyModel or IO[bytes]
+        :param input: Is one of the following types: ReadOnlyModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.ReadOnlyModel or JSON or IO[bytes]
         :return: ReadOnlyModel. The ReadOnlyModel is compatible with MutableMapping
         :rtype: ~headasbooleanfalse.models.ReadOnlyModel
         :raises ~corehttp.exceptions.HttpResponseError:

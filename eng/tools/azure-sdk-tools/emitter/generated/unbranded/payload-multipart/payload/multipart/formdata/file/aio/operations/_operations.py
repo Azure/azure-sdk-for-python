@@ -14,7 +14,7 @@ from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 
-from ... import models as _models2, types
+from ... import models as _models2
 from ....._utils.model_base import Model as _Model
 from ....._utils.serialization import Deserializer, Serializer
 from ....._utils.utils import prepare_multipart_form_data
@@ -25,6 +25,7 @@ from ...operations._operations import (
     build_form_data_file_upload_file_specific_content_type_request,
 )
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -60,28 +61,24 @@ class FormDataFileOperations:
         """
 
     @overload
-    async def upload_file_specific_content_type(
-        self, body: types.UploadFileSpecificContentTypeRequest, **kwargs: Any
-    ) -> None:
+    async def upload_file_specific_content_type(self, body: JSON, **kwargs: Any) -> None:
         """upload_file_specific_content_type.
 
         :param body: Required.
-        :type body: ~payload.multipart.formdata.file.types.UploadFileSpecificContentTypeRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     async def upload_file_specific_content_type(
-        self,
-        body: Union[_models2.UploadFileSpecificContentTypeRequest, types.UploadFileSpecificContentTypeRequest],
-        **kwargs: Any
+        self, body: Union[_models2.UploadFileSpecificContentTypeRequest, JSON], **kwargs: Any
     ) -> None:
         """upload_file_specific_content_type.
 
-        :param body: Is one of the following types: UploadFileSpecificContentTypeRequest Required.
+        :param body: Is either a UploadFileSpecificContentTypeRequest type or a JSON type. Required.
         :type body: ~payload.multipart.formdata.file.models.UploadFileSpecificContentTypeRequest or
-         ~payload.multipart.formdata.file.types.UploadFileSpecificContentTypeRequest
+         JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -140,26 +137,23 @@ class FormDataFileOperations:
         """
 
     @overload
-    async def upload_file_required_filename(self, body: types.UploadFileRequiredFilenameRequest, **kwargs: Any) -> None:
+    async def upload_file_required_filename(self, body: JSON, **kwargs: Any) -> None:
         """upload_file_required_filename.
 
         :param body: Required.
-        :type body: ~payload.multipart.formdata.file.types.UploadFileRequiredFilenameRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     async def upload_file_required_filename(
-        self,
-        body: Union[_models2.UploadFileRequiredFilenameRequest, types.UploadFileRequiredFilenameRequest],
-        **kwargs: Any
+        self, body: Union[_models2.UploadFileRequiredFilenameRequest, JSON], **kwargs: Any
     ) -> None:
         """upload_file_required_filename.
 
-        :param body: Is one of the following types: UploadFileRequiredFilenameRequest Required.
-        :type body: ~payload.multipart.formdata.file.models.UploadFileRequiredFilenameRequest or
-         ~payload.multipart.formdata.file.types.UploadFileRequiredFilenameRequest
+        :param body: Is either a UploadFileRequiredFilenameRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.formdata.file.models.UploadFileRequiredFilenameRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -216,24 +210,21 @@ class FormDataFileOperations:
         """
 
     @overload
-    async def upload_file_array(self, body: types.UploadFileArrayRequest, **kwargs: Any) -> None:
+    async def upload_file_array(self, body: JSON, **kwargs: Any) -> None:
         """upload_file_array.
 
         :param body: Required.
-        :type body: ~payload.multipart.formdata.file.types.UploadFileArrayRequest
+        :type body: JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def upload_file_array(
-        self, body: Union[_models2.UploadFileArrayRequest, types.UploadFileArrayRequest], **kwargs: Any
-    ) -> None:
+    async def upload_file_array(self, body: Union[_models2.UploadFileArrayRequest, JSON], **kwargs: Any) -> None:
         """upload_file_array.
 
-        :param body: Is one of the following types: UploadFileArrayRequest Required.
-        :type body: ~payload.multipart.formdata.file.models.UploadFileArrayRequest or
-         ~payload.multipart.formdata.file.types.UploadFileArrayRequest
+        :param body: Is either a UploadFileArrayRequest type or a JSON type. Required.
+        :type body: ~payload.multipart.formdata.file.models.UploadFileArrayRequest or JSON
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

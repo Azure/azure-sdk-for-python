@@ -28,7 +28,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -59,6 +59,7 @@ from .._configuration import DictionaryClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 
 
 class Int32ValueOperations:
@@ -1428,13 +1429,11 @@ class ModelValueOperations:
         """
 
     @overload
-    async def put(
-        self, body: dict[str, types.InnerModel], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: dict[str, JSON], *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put.
 
         :param body: Required.
-        :type body: dict[str, ~typetest.dictionary.types.InnerModel]
+        :type body: dict[str, JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1458,14 +1457,11 @@ class ModelValueOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self, body: Union[dict[str, _models.InnerModel], dict[str, types.InnerModel], IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[dict[str, _models.InnerModel], dict[str, JSON], IO[bytes]], **kwargs: Any) -> None:
         """put.
 
-        :param body: Is either a {str: InnerModel} type or a IO[bytes] type. Required.
-        :type body: dict[str, ~typetest.dictionary.models.InnerModel] or dict[str,
-         ~typetest.dictionary.types.InnerModel] or IO[bytes]
+        :param body: Is one of the following types: {str: InnerModel}, {str: JSON}, IO[bytes] Required.
+        :type body: dict[str, ~typetest.dictionary.models.InnerModel] or dict[str, JSON] or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1608,13 +1604,11 @@ class RecursiveModelValueOperations:
         """
 
     @overload
-    async def put(
-        self, body: dict[str, types.InnerModel], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put(self, body: dict[str, JSON], *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put.
 
         :param body: Required.
-        :type body: dict[str, ~typetest.dictionary.types.InnerModel]
+        :type body: dict[str, JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1638,14 +1632,11 @@ class RecursiveModelValueOperations:
         """
 
     @distributed_trace_async
-    async def put(
-        self, body: Union[dict[str, _models.InnerModel], dict[str, types.InnerModel], IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put(self, body: Union[dict[str, _models.InnerModel], dict[str, JSON], IO[bytes]], **kwargs: Any) -> None:
         """put.
 
-        :param body: Is either a {str: InnerModel} type or a IO[bytes] type. Required.
-        :type body: dict[str, ~typetest.dictionary.models.InnerModel] or dict[str,
-         ~typetest.dictionary.types.InnerModel] or IO[bytes]
+        :param body: Is one of the following types: {str: InnerModel}, {str: JSON}, IO[bytes] Required.
+        :type body: dict[str, ~typetest.dictionary.models.InnerModel] or dict[str, JSON] or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -26,7 +26,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -36,6 +36,7 @@ from ...operations._operations import (
 )
 from .._configuration import NumericClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -75,12 +76,12 @@ class PropertyOperations:
 
     @overload
     async def safeint_as_string(
-        self, value: types.SafeintAsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, value: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SafeintAsStringProperty:
         """safeint_as_string.
 
         :param value: Required.
-        :type value: ~encode.numeric.types.SafeintAsStringProperty
+        :type value: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -107,13 +108,12 @@ class PropertyOperations:
 
     @distributed_trace_async
     async def safeint_as_string(
-        self, value: Union[_models.SafeintAsStringProperty, types.SafeintAsStringProperty, IO[bytes]], **kwargs: Any
+        self, value: Union[_models.SafeintAsStringProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.SafeintAsStringProperty:
         """safeint_as_string.
 
-        :param value: Is either a SafeintAsStringProperty type or a IO[bytes] type. Required.
-        :type value: ~encode.numeric.models.SafeintAsStringProperty or
-         ~encode.numeric.types.SafeintAsStringProperty or IO[bytes]
+        :param value: Is one of the following types: SafeintAsStringProperty, JSON, IO[bytes] Required.
+        :type value: ~encode.numeric.models.SafeintAsStringProperty or JSON or IO[bytes]
         :return: SafeintAsStringProperty. The SafeintAsStringProperty is compatible with MutableMapping
         :rtype: ~encode.numeric.models.SafeintAsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -195,12 +195,12 @@ class PropertyOperations:
 
     @overload
     async def uint32_as_string_optional(
-        self, value: types.Uint32AsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, value: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Uint32AsStringProperty:
         """uint32_as_string_optional.
 
         :param value: Required.
-        :type value: ~encode.numeric.types.Uint32AsStringProperty
+        :type value: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -227,13 +227,12 @@ class PropertyOperations:
 
     @distributed_trace_async
     async def uint32_as_string_optional(
-        self, value: Union[_models.Uint32AsStringProperty, types.Uint32AsStringProperty, IO[bytes]], **kwargs: Any
+        self, value: Union[_models.Uint32AsStringProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Uint32AsStringProperty:
         """uint32_as_string_optional.
 
-        :param value: Is either a Uint32AsStringProperty type or a IO[bytes] type. Required.
-        :type value: ~encode.numeric.models.Uint32AsStringProperty or
-         ~encode.numeric.types.Uint32AsStringProperty or IO[bytes]
+        :param value: Is one of the following types: Uint32AsStringProperty, JSON, IO[bytes] Required.
+        :type value: ~encode.numeric.models.Uint32AsStringProperty or JSON or IO[bytes]
         :return: Uint32AsStringProperty. The Uint32AsStringProperty is compatible with MutableMapping
         :rtype: ~encode.numeric.models.Uint32AsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -315,12 +314,12 @@ class PropertyOperations:
 
     @overload
     async def uint8_as_string(
-        self, value: types.Uint8AsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, value: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Uint8AsStringProperty:
         """uint8_as_string.
 
         :param value: Required.
-        :type value: ~encode.numeric.types.Uint8AsStringProperty
+        :type value: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -347,13 +346,12 @@ class PropertyOperations:
 
     @distributed_trace_async
     async def uint8_as_string(
-        self, value: Union[_models.Uint8AsStringProperty, types.Uint8AsStringProperty, IO[bytes]], **kwargs: Any
+        self, value: Union[_models.Uint8AsStringProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Uint8AsStringProperty:
         """uint8_as_string.
 
-        :param value: Is either a Uint8AsStringProperty type or a IO[bytes] type. Required.
-        :type value: ~encode.numeric.models.Uint8AsStringProperty or
-         ~encode.numeric.types.Uint8AsStringProperty or IO[bytes]
+        :param value: Is one of the following types: Uint8AsStringProperty, JSON, IO[bytes] Required.
+        :type value: ~encode.numeric.models.Uint8AsStringProperty or JSON or IO[bytes]
         :return: Uint8AsStringProperty. The Uint8AsStringProperty is compatible with MutableMapping
         :rtype: ~encode.numeric.models.Uint8AsStringProperty
         :raises ~azure.core.exceptions.HttpResponseError:

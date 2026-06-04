@@ -20,11 +20,12 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models1, types
+from .. import models as _models1
 from ..._configuration import DurationClientConfiguration
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -309,12 +310,12 @@ class PropertyOperations:
 
     @overload
     def default(
-        self, body: types.DefaultDurationProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.DefaultDurationProperty:
         """default.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.DefaultDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -340,13 +341,12 @@ class PropertyOperations:
         """
 
     def default(
-        self, body: Union[_models1.DefaultDurationProperty, types.DefaultDurationProperty, IO[bytes]], **kwargs: Any
+        self, body: Union[_models1.DefaultDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.DefaultDurationProperty:
         """default.
 
-        :param body: Is either a DefaultDurationProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.duration.property.models.DefaultDurationProperty or
-         ~encode.duration.property.types.DefaultDurationProperty or IO[bytes]
+        :param body: Is one of the following types: DefaultDurationProperty, JSON, IO[bytes] Required.
+        :type body: ~encode.duration.property.models.DefaultDurationProperty or JSON or IO[bytes]
         :return: DefaultDurationProperty. The DefaultDurationProperty is compatible with MutableMapping
         :rtype: ~encode.duration.property.models.DefaultDurationProperty
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -426,12 +426,12 @@ class PropertyOperations:
 
     @overload
     def iso8601(
-        self, body: types.ISO8601DurationProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.ISO8601DurationProperty:
         """iso8601.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.ISO8601DurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -457,13 +457,12 @@ class PropertyOperations:
         """
 
     def iso8601(
-        self, body: Union[_models1.ISO8601DurationProperty, types.ISO8601DurationProperty, IO[bytes]], **kwargs: Any
+        self, body: Union[_models1.ISO8601DurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.ISO8601DurationProperty:
         """iso8601.
 
-        :param body: Is either a ISO8601DurationProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.duration.property.models.ISO8601DurationProperty or
-         ~encode.duration.property.types.ISO8601DurationProperty or IO[bytes]
+        :param body: Is one of the following types: ISO8601DurationProperty, JSON, IO[bytes] Required.
+        :type body: ~encode.duration.property.models.ISO8601DurationProperty or JSON or IO[bytes]
         :return: ISO8601DurationProperty. The ISO8601DurationProperty is compatible with MutableMapping
         :rtype: ~encode.duration.property.models.ISO8601DurationProperty
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -544,12 +543,12 @@ class PropertyOperations:
 
     @overload
     def int32_seconds(
-        self, body: types.Int32SecondsDurationProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.Int32SecondsDurationProperty:
         """int32_seconds.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.Int32SecondsDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -577,15 +576,13 @@ class PropertyOperations:
         """
 
     def int32_seconds(
-        self,
-        body: Union[_models1.Int32SecondsDurationProperty, types.Int32SecondsDurationProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models1.Int32SecondsDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.Int32SecondsDurationProperty:
         """int32_seconds.
 
-        :param body: Is either a Int32SecondsDurationProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.duration.property.models.Int32SecondsDurationProperty or
-         ~encode.duration.property.types.Int32SecondsDurationProperty or IO[bytes]
+        :param body: Is one of the following types: Int32SecondsDurationProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.duration.property.models.Int32SecondsDurationProperty or JSON or IO[bytes]
         :return: Int32SecondsDurationProperty. The Int32SecondsDurationProperty is compatible with
          MutableMapping
         :rtype: ~encode.duration.property.models.Int32SecondsDurationProperty
@@ -667,12 +664,12 @@ class PropertyOperations:
 
     @overload
     def float_seconds(
-        self, body: types.FloatSecondsDurationProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.FloatSecondsDurationProperty:
         """float_seconds.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.FloatSecondsDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -700,15 +697,13 @@ class PropertyOperations:
         """
 
     def float_seconds(
-        self,
-        body: Union[_models1.FloatSecondsDurationProperty, types.FloatSecondsDurationProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models1.FloatSecondsDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.FloatSecondsDurationProperty:
         """float_seconds.
 
-        :param body: Is either a FloatSecondsDurationProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.duration.property.models.FloatSecondsDurationProperty or
-         ~encode.duration.property.types.FloatSecondsDurationProperty or IO[bytes]
+        :param body: Is one of the following types: FloatSecondsDurationProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.duration.property.models.FloatSecondsDurationProperty or JSON or IO[bytes]
         :return: FloatSecondsDurationProperty. The FloatSecondsDurationProperty is compatible with
          MutableMapping
         :rtype: ~encode.duration.property.models.FloatSecondsDurationProperty
@@ -790,12 +785,12 @@ class PropertyOperations:
 
     @overload
     def float64_seconds(
-        self, body: types.Float64SecondsDurationProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.Float64SecondsDurationProperty:
         """float64_seconds.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.Float64SecondsDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -823,15 +818,14 @@ class PropertyOperations:
         """
 
     def float64_seconds(
-        self,
-        body: Union[_models1.Float64SecondsDurationProperty, types.Float64SecondsDurationProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models1.Float64SecondsDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.Float64SecondsDurationProperty:
         """float64_seconds.
 
-        :param body: Is either a Float64SecondsDurationProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.duration.property.models.Float64SecondsDurationProperty or
-         ~encode.duration.property.types.Float64SecondsDurationProperty or IO[bytes]
+        :param body: Is one of the following types: Float64SecondsDurationProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.duration.property.models.Float64SecondsDurationProperty or JSON or
+         IO[bytes]
         :return: Float64SecondsDurationProperty. The Float64SecondsDurationProperty is compatible with
          MutableMapping
         :rtype: ~encode.duration.property.models.Float64SecondsDurationProperty
@@ -913,12 +907,12 @@ class PropertyOperations:
 
     @overload
     def int32_milliseconds(
-        self, body: types.Int32MillisecondsDurationProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.Int32MillisecondsDurationProperty:
         """int32_milliseconds.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.Int32MillisecondsDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -946,15 +940,14 @@ class PropertyOperations:
         """
 
     def int32_milliseconds(
-        self,
-        body: Union[_models1.Int32MillisecondsDurationProperty, types.Int32MillisecondsDurationProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models1.Int32MillisecondsDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.Int32MillisecondsDurationProperty:
         """int32_milliseconds.
 
-        :param body: Is either a Int32MillisecondsDurationProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.duration.property.models.Int32MillisecondsDurationProperty or
-         ~encode.duration.property.types.Int32MillisecondsDurationProperty or IO[bytes]
+        :param body: Is one of the following types: Int32MillisecondsDurationProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.duration.property.models.Int32MillisecondsDurationProperty or JSON or
+         IO[bytes]
         :return: Int32MillisecondsDurationProperty. The Int32MillisecondsDurationProperty is compatible
          with MutableMapping
         :rtype: ~encode.duration.property.models.Int32MillisecondsDurationProperty
@@ -1036,12 +1029,12 @@ class PropertyOperations:
 
     @overload
     def float_milliseconds(
-        self, body: types.FloatMillisecondsDurationProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.FloatMillisecondsDurationProperty:
         """float_milliseconds.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.FloatMillisecondsDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1069,15 +1062,14 @@ class PropertyOperations:
         """
 
     def float_milliseconds(
-        self,
-        body: Union[_models1.FloatMillisecondsDurationProperty, types.FloatMillisecondsDurationProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models1.FloatMillisecondsDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.FloatMillisecondsDurationProperty:
         """float_milliseconds.
 
-        :param body: Is either a FloatMillisecondsDurationProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.duration.property.models.FloatMillisecondsDurationProperty or
-         ~encode.duration.property.types.FloatMillisecondsDurationProperty or IO[bytes]
+        :param body: Is one of the following types: FloatMillisecondsDurationProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.duration.property.models.FloatMillisecondsDurationProperty or JSON or
+         IO[bytes]
         :return: FloatMillisecondsDurationProperty. The FloatMillisecondsDurationProperty is compatible
          with MutableMapping
         :rtype: ~encode.duration.property.models.FloatMillisecondsDurationProperty
@@ -1163,12 +1155,12 @@ class PropertyOperations:
 
     @overload
     def float64_milliseconds(
-        self, body: types.Float64MillisecondsDurationProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.Float64MillisecondsDurationProperty:
         """float64_milliseconds.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.Float64MillisecondsDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1196,16 +1188,14 @@ class PropertyOperations:
         """
 
     def float64_milliseconds(
-        self,
-        body: Union[_models1.Float64MillisecondsDurationProperty, types.Float64MillisecondsDurationProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models1.Float64MillisecondsDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.Float64MillisecondsDurationProperty:
         """float64_milliseconds.
 
-        :param body: Is either a Float64MillisecondsDurationProperty type or a IO[bytes] type.
-         Required.
-        :type body: ~encode.duration.property.models.Float64MillisecondsDurationProperty or
-         ~encode.duration.property.types.Float64MillisecondsDurationProperty or IO[bytes]
+        :param body: Is one of the following types: Float64MillisecondsDurationProperty, JSON,
+         IO[bytes] Required.
+        :type body: ~encode.duration.property.models.Float64MillisecondsDurationProperty or JSON or
+         IO[bytes]
         :return: Float64MillisecondsDurationProperty. The Float64MillisecondsDurationProperty is
          compatible with MutableMapping
         :rtype: ~encode.duration.property.models.Float64MillisecondsDurationProperty
@@ -1287,12 +1277,12 @@ class PropertyOperations:
 
     @overload
     def float_seconds_array(
-        self, body: types.FloatSecondsDurationArrayProperty, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.FloatSecondsDurationArrayProperty:
         """float_seconds_array.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.FloatSecondsDurationArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1320,15 +1310,14 @@ class PropertyOperations:
         """
 
     def float_seconds_array(
-        self,
-        body: Union[_models1.FloatSecondsDurationArrayProperty, types.FloatSecondsDurationArrayProperty, IO[bytes]],
-        **kwargs: Any,
+        self, body: Union[_models1.FloatSecondsDurationArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.FloatSecondsDurationArrayProperty:
         """float_seconds_array.
 
-        :param body: Is either a FloatSecondsDurationArrayProperty type or a IO[bytes] type. Required.
-        :type body: ~encode.duration.property.models.FloatSecondsDurationArrayProperty or
-         ~encode.duration.property.types.FloatSecondsDurationArrayProperty or IO[bytes]
+        :param body: Is one of the following types: FloatSecondsDurationArrayProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~encode.duration.property.models.FloatSecondsDurationArrayProperty or JSON or
+         IO[bytes]
         :return: FloatSecondsDurationArrayProperty. The FloatSecondsDurationArrayProperty is compatible
          with MutableMapping
         :rtype: ~encode.duration.property.models.FloatSecondsDurationArrayProperty
@@ -1414,16 +1403,12 @@ class PropertyOperations:
 
     @overload
     def float_milliseconds_array(
-        self,
-        body: types.FloatMillisecondsDurationArrayProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.FloatMillisecondsDurationArrayProperty:
         """float_milliseconds_array.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.FloatMillisecondsDurationArrayProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1451,18 +1436,14 @@ class PropertyOperations:
         """
 
     def float_milliseconds_array(
-        self,
-        body: Union[
-            _models1.FloatMillisecondsDurationArrayProperty, types.FloatMillisecondsDurationArrayProperty, IO[bytes]
-        ],
-        **kwargs: Any,
+        self, body: Union[_models1.FloatMillisecondsDurationArrayProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.FloatMillisecondsDurationArrayProperty:
         """float_milliseconds_array.
 
-        :param body: Is either a FloatMillisecondsDurationArrayProperty type or a IO[bytes] type.
-         Required.
-        :type body: ~encode.duration.property.models.FloatMillisecondsDurationArrayProperty or
-         ~encode.duration.property.types.FloatMillisecondsDurationArrayProperty or IO[bytes]
+        :param body: Is one of the following types: FloatMillisecondsDurationArrayProperty, JSON,
+         IO[bytes] Required.
+        :type body: ~encode.duration.property.models.FloatMillisecondsDurationArrayProperty or JSON or
+         IO[bytes]
         :return: FloatMillisecondsDurationArrayProperty. The FloatMillisecondsDurationArrayProperty is
          compatible with MutableMapping
         :rtype: ~encode.duration.property.models.FloatMillisecondsDurationArrayProperty
@@ -1548,16 +1529,12 @@ class PropertyOperations:
 
     @overload
     def int32_seconds_larger_unit(
-        self,
-        body: types.Int32SecondsLargerUnitDurationProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.Int32SecondsLargerUnitDurationProperty:
         """int32_seconds_larger_unit.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.Int32SecondsLargerUnitDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1585,18 +1562,14 @@ class PropertyOperations:
         """
 
     def int32_seconds_larger_unit(
-        self,
-        body: Union[
-            _models1.Int32SecondsLargerUnitDurationProperty, types.Int32SecondsLargerUnitDurationProperty, IO[bytes]
-        ],
-        **kwargs: Any,
+        self, body: Union[_models1.Int32SecondsLargerUnitDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.Int32SecondsLargerUnitDurationProperty:
         """int32_seconds_larger_unit.
 
-        :param body: Is either a Int32SecondsLargerUnitDurationProperty type or a IO[bytes] type.
-         Required.
-        :type body: ~encode.duration.property.models.Int32SecondsLargerUnitDurationProperty or
-         ~encode.duration.property.types.Int32SecondsLargerUnitDurationProperty or IO[bytes]
+        :param body: Is one of the following types: Int32SecondsLargerUnitDurationProperty, JSON,
+         IO[bytes] Required.
+        :type body: ~encode.duration.property.models.Int32SecondsLargerUnitDurationProperty or JSON or
+         IO[bytes]
         :return: Int32SecondsLargerUnitDurationProperty. The Int32SecondsLargerUnitDurationProperty is
          compatible with MutableMapping
         :rtype: ~encode.duration.property.models.Int32SecondsLargerUnitDurationProperty
@@ -1682,16 +1655,12 @@ class PropertyOperations:
 
     @overload
     def float_seconds_larger_unit(
-        self,
-        body: types.FloatSecondsLargerUnitDurationProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.FloatSecondsLargerUnitDurationProperty:
         """float_seconds_larger_unit.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.FloatSecondsLargerUnitDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1719,18 +1688,14 @@ class PropertyOperations:
         """
 
     def float_seconds_larger_unit(
-        self,
-        body: Union[
-            _models1.FloatSecondsLargerUnitDurationProperty, types.FloatSecondsLargerUnitDurationProperty, IO[bytes]
-        ],
-        **kwargs: Any,
+        self, body: Union[_models1.FloatSecondsLargerUnitDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.FloatSecondsLargerUnitDurationProperty:
         """float_seconds_larger_unit.
 
-        :param body: Is either a FloatSecondsLargerUnitDurationProperty type or a IO[bytes] type.
-         Required.
-        :type body: ~encode.duration.property.models.FloatSecondsLargerUnitDurationProperty or
-         ~encode.duration.property.types.FloatSecondsLargerUnitDurationProperty or IO[bytes]
+        :param body: Is one of the following types: FloatSecondsLargerUnitDurationProperty, JSON,
+         IO[bytes] Required.
+        :type body: ~encode.duration.property.models.FloatSecondsLargerUnitDurationProperty or JSON or
+         IO[bytes]
         :return: FloatSecondsLargerUnitDurationProperty. The FloatSecondsLargerUnitDurationProperty is
          compatible with MutableMapping
         :rtype: ~encode.duration.property.models.FloatSecondsLargerUnitDurationProperty
@@ -1816,16 +1781,12 @@ class PropertyOperations:
 
     @overload
     def int32_milliseconds_larger_unit(
-        self,
-        body: types.Int32MillisecondsLargerUnitDurationProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.Int32MillisecondsLargerUnitDurationProperty:
         """int32_milliseconds_larger_unit.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.Int32MillisecondsLargerUnitDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1853,20 +1814,14 @@ class PropertyOperations:
         """
 
     def int32_milliseconds_larger_unit(
-        self,
-        body: Union[
-            _models1.Int32MillisecondsLargerUnitDurationProperty,
-            types.Int32MillisecondsLargerUnitDurationProperty,
-            IO[bytes],
-        ],
-        **kwargs: Any,
+        self, body: Union[_models1.Int32MillisecondsLargerUnitDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.Int32MillisecondsLargerUnitDurationProperty:
         """int32_milliseconds_larger_unit.
 
-        :param body: Is either a Int32MillisecondsLargerUnitDurationProperty type or a IO[bytes] type.
-         Required.
+        :param body: Is one of the following types: Int32MillisecondsLargerUnitDurationProperty, JSON,
+         IO[bytes] Required.
         :type body: ~encode.duration.property.models.Int32MillisecondsLargerUnitDurationProperty or
-         ~encode.duration.property.types.Int32MillisecondsLargerUnitDurationProperty or IO[bytes]
+         JSON or IO[bytes]
         :return: Int32MillisecondsLargerUnitDurationProperty. The
          Int32MillisecondsLargerUnitDurationProperty is compatible with MutableMapping
         :rtype: ~encode.duration.property.models.Int32MillisecondsLargerUnitDurationProperty
@@ -1952,16 +1907,12 @@ class PropertyOperations:
 
     @overload
     def float_milliseconds_larger_unit(
-        self,
-        body: types.FloatMillisecondsLargerUnitDurationProperty,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.FloatMillisecondsLargerUnitDurationProperty:
         """float_milliseconds_larger_unit.
 
         :param body: Required.
-        :type body: ~encode.duration.property.types.FloatMillisecondsLargerUnitDurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1989,20 +1940,14 @@ class PropertyOperations:
         """
 
     def float_milliseconds_larger_unit(
-        self,
-        body: Union[
-            _models1.FloatMillisecondsLargerUnitDurationProperty,
-            types.FloatMillisecondsLargerUnitDurationProperty,
-            IO[bytes],
-        ],
-        **kwargs: Any,
+        self, body: Union[_models1.FloatMillisecondsLargerUnitDurationProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.FloatMillisecondsLargerUnitDurationProperty:
         """float_milliseconds_larger_unit.
 
-        :param body: Is either a FloatMillisecondsLargerUnitDurationProperty type or a IO[bytes] type.
-         Required.
+        :param body: Is one of the following types: FloatMillisecondsLargerUnitDurationProperty, JSON,
+         IO[bytes] Required.
         :type body: ~encode.duration.property.models.FloatMillisecondsLargerUnitDurationProperty or
-         ~encode.duration.property.types.FloatMillisecondsLargerUnitDurationProperty or IO[bytes]
+         JSON or IO[bytes]
         :return: FloatMillisecondsLargerUnitDurationProperty. The
          FloatMillisecondsLargerUnitDurationProperty is compatible with MutableMapping
         :rtype: ~encode.duration.property.models.FloatMillisecondsLargerUnitDurationProperty

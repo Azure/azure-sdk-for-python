@@ -19,7 +19,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._operations._operations import (
     build_enum_discriminator_get_extensible_model_missing_discriminator_request,
     build_enum_discriminator_get_extensible_model_request,
@@ -34,6 +34,7 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import EnumDiscriminatorClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -115,13 +116,11 @@ class _EnumDiscriminatorClientOperationsMixin(
         """
 
     @overload
-    async def put_extensible_model(
-        self, input: types.Dog, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_extensible_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Send model with extensible enum discriminator type.
 
         :param input: Dog to create. Required.
-        :type input: ~typetest.model.enumdiscriminator.types.Dog
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -146,12 +145,11 @@ class _EnumDiscriminatorClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def put_extensible_model(self, input: Union[_models.Dog, types.Dog, IO[bytes]], **kwargs: Any) -> None:
+    async def put_extensible_model(self, input: Union[_models.Dog, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Send model with extensible enum discriminator type.
 
-        :param input: Dog to create. Is either a Dog type or a IO[bytes] type. Required.
-        :type input: ~typetest.model.enumdiscriminator.models.Dog or
-         ~typetest.model.enumdiscriminator.types.Dog or IO[bytes]
+        :param input: Dog to create. Is one of the following types: Dog, JSON, IO[bytes] Required.
+        :type input: ~typetest.model.enumdiscriminator.models.Dog or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -389,13 +387,11 @@ class _EnumDiscriminatorClientOperationsMixin(
         """
 
     @overload
-    async def put_fixed_model(
-        self, input: types.Snake, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_fixed_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Send model with fixed enum discriminator type.
 
         :param input: Snake to create. Required.
-        :type input: ~typetest.model.enumdiscriminator.types.Snake
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -418,12 +414,11 @@ class _EnumDiscriminatorClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def put_fixed_model(self, input: Union[_models.Snake, types.Snake, IO[bytes]], **kwargs: Any) -> None:
+    async def put_fixed_model(self, input: Union[_models.Snake, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Send model with fixed enum discriminator type.
 
-        :param input: Snake to create. Is either a Snake type or a IO[bytes] type. Required.
-        :type input: ~typetest.model.enumdiscriminator.models.Snake or
-         ~typetest.model.enumdiscriminator.types.Snake or IO[bytes]
+        :param input: Snake to create. Is one of the following types: Snake, JSON, IO[bytes] Required.
+        :type input: ~typetest.model.enumdiscriminator.models.Snake or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

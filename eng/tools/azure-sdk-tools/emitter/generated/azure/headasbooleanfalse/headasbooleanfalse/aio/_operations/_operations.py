@@ -27,7 +27,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._operations._operations import (
     build_visibility_delete_model_request,
     build_visibility_get_model_request,
@@ -41,6 +41,7 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import VisibilityClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -69,12 +70,12 @@ class _VisibilityClientOperationsMixin(
 
     @overload
     async def get_model(
-        self, input: types.VisibilityModel, *, query_prop: int, content_type: str = "application/json", **kwargs: Any
+        self, input: JSON, *, query_prop: int, content_type: str = "application/json", **kwargs: Any
     ) -> _models.VisibilityModel:
         """get_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword query_prop: Required int32, illustrating a query property. Required.
         :paramtype query_prop: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -105,13 +106,12 @@ class _VisibilityClientOperationsMixin(
 
     @distributed_trace_async
     async def get_model(
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], *, query_prop: int, **kwargs: Any
+        self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], *, query_prop: int, **kwargs: Any
     ) -> _models.VisibilityModel:
         """get_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :keyword query_prop: Required int32, illustrating a query property. Required.
         :paramtype query_prop: int
         :return: VisibilityModel. The VisibilityModel is compatible with MutableMapping
@@ -198,12 +198,12 @@ class _VisibilityClientOperationsMixin(
 
     @overload
     async def head_model(
-        self, input: types.VisibilityModel, *, query_prop: int, content_type: str = "application/json", **kwargs: Any
+        self, input: JSON, *, query_prop: int, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """head_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword query_prop: Required int32, illustrating a query property. Required.
         :paramtype query_prop: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -234,13 +234,12 @@ class _VisibilityClientOperationsMixin(
 
     @distributed_trace_async
     async def head_model(
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], *, query_prop: int, **kwargs: Any
+        self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], *, query_prop: int, **kwargs: Any
     ) -> None:
         """head_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :keyword query_prop: Required int32, illustrating a query property. Required.
         :paramtype query_prop: int
         :return: None
@@ -311,13 +310,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @overload
-    async def put_model(
-        self, input: types.VisibilityModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -341,14 +338,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def put_model(
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_model(self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """put_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -416,13 +410,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @overload
-    async def patch_model(
-        self, input: types.VisibilityModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def patch_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """patch_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -446,14 +438,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def patch_model(
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def patch_model(self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """patch_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -521,13 +510,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @overload
-    async def post_model(
-        self, input: types.VisibilityModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def post_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """post_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -551,14 +538,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def post_model(
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def post_model(self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """post_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -626,13 +610,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @overload
-    async def delete_model(
-        self, input: types.VisibilityModel, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def delete_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """delete_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.VisibilityModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -656,14 +638,11 @@ class _VisibilityClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def delete_model(
-        self, input: Union[_models.VisibilityModel, types.VisibilityModel, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def delete_model(self, input: Union[_models.VisibilityModel, JSON, IO[bytes]], **kwargs: Any) -> None:
         """delete_model.
 
-        :param input: Is either a VisibilityModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.VisibilityModel or
-         ~headasbooleanfalse.types.VisibilityModel or IO[bytes]
+        :param input: Is one of the following types: VisibilityModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.VisibilityModel or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -732,12 +711,12 @@ class _VisibilityClientOperationsMixin(
 
     @overload
     async def put_read_only_model(
-        self, input: types.ReadOnlyModel, *, content_type: str = "application/json", **kwargs: Any
+        self, input: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ReadOnlyModel:
         """put_read_only_model.
 
         :param input: Required.
-        :type input: ~headasbooleanfalse.types.ReadOnlyModel
+        :type input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -764,13 +743,12 @@ class _VisibilityClientOperationsMixin(
 
     @distributed_trace_async
     async def put_read_only_model(
-        self, input: Union[_models.ReadOnlyModel, types.ReadOnlyModel, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.ReadOnlyModel, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ReadOnlyModel:
         """put_read_only_model.
 
-        :param input: Is either a ReadOnlyModel type or a IO[bytes] type. Required.
-        :type input: ~headasbooleanfalse.models.ReadOnlyModel or
-         ~headasbooleanfalse.types.ReadOnlyModel or IO[bytes]
+        :param input: Is one of the following types: ReadOnlyModel, JSON, IO[bytes] Required.
+        :type input: ~headasbooleanfalse.models.ReadOnlyModel or JSON or IO[bytes]
         :return: ReadOnlyModel. The ReadOnlyModel is compatible with MutableMapping
         :rtype: ~headasbooleanfalse.models.ReadOnlyModel
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -26,12 +26,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import TypeChangedFromClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -84,12 +85,12 @@ class _TypeChangedFromClientOperationsMixin(
 
     @overload
     def test(
-        self, body: types.TestModel, *, param: str, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, param: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TestModel:
         """test.
 
         :param body: Required.
-        :type body: ~versioning.typechangedfrom.types.TestModel
+        :type body: JSON
         :keyword param: Required.
         :paramtype param: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -119,14 +120,11 @@ class _TypeChangedFromClientOperationsMixin(
         """
 
     @distributed_trace
-    def test(
-        self, body: Union[_models.TestModel, types.TestModel, IO[bytes]], *, param: str, **kwargs: Any
-    ) -> _models.TestModel:
+    def test(self, body: Union[_models.TestModel, JSON, IO[bytes]], *, param: str, **kwargs: Any) -> _models.TestModel:
         """test.
 
-        :param body: Is either a TestModel type or a IO[bytes] type. Required.
-        :type body: ~versioning.typechangedfrom.models.TestModel or
-         ~versioning.typechangedfrom.types.TestModel or IO[bytes]
+        :param body: Is one of the following types: TestModel, JSON, IO[bytes] Required.
+        :type body: ~versioning.typechangedfrom.models.TestModel or JSON or IO[bytes]
         :keyword param: Required.
         :paramtype param: str
         :return: TestModel. The TestModel is compatible with MutableMapping

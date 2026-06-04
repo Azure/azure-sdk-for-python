@@ -27,7 +27,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models, types
+from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -98,6 +98,7 @@ from ...operations._operations import (
 )
 from .._configuration import OptionalClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -250,13 +251,11 @@ class StringOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.StringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.StringProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -280,14 +279,11 @@ class StringOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.StringProperty, types.StringProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.StringProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a StringProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.StringProperty or
-         ~typetest.property.optional.types.StringProperty or IO[bytes]
+        :param body: Is one of the following types: StringProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.StringProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -355,13 +351,11 @@ class StringOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.StringProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.StringProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -385,14 +379,11 @@ class StringOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.StringProperty, types.StringProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.StringProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a StringProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.StringProperty or
-         ~typetest.property.optional.types.StringProperty or IO[bytes]
+        :param body: Is one of the following types: StringProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.StringProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -592,13 +583,11 @@ class BytesOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.BytesProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.BytesProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -622,12 +611,11 @@ class BytesOperations:
         """
 
     @distributed_trace_async
-    async def put_all(self, body: Union[_models.BytesProperty, types.BytesProperty, IO[bytes]], **kwargs: Any) -> None:
+    async def put_all(self, body: Union[_models.BytesProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a BytesProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.BytesProperty or
-         ~typetest.property.optional.types.BytesProperty or IO[bytes]
+        :param body: Is one of the following types: BytesProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.BytesProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -695,13 +683,11 @@ class BytesOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.BytesProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.BytesProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -725,14 +711,11 @@ class BytesOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.BytesProperty, types.BytesProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.BytesProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a BytesProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.BytesProperty or
-         ~typetest.property.optional.types.BytesProperty or IO[bytes]
+        :param body: Is one of the following types: BytesProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.BytesProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -932,13 +915,11 @@ class DatetimeOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.DatetimeProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.DatetimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -962,14 +943,11 @@ class DatetimeOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.DatetimeProperty, types.DatetimeProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.DatetimeProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a DatetimeProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.DatetimeProperty or
-         ~typetest.property.optional.types.DatetimeProperty or IO[bytes]
+        :param body: Is one of the following types: DatetimeProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.DatetimeProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1037,13 +1015,11 @@ class DatetimeOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.DatetimeProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.DatetimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1067,14 +1043,11 @@ class DatetimeOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.DatetimeProperty, types.DatetimeProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.DatetimeProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a DatetimeProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.DatetimeProperty or
-         ~typetest.property.optional.types.DatetimeProperty or IO[bytes]
+        :param body: Is one of the following types: DatetimeProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.DatetimeProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1274,13 +1247,11 @@ class DurationOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.DurationProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.DurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1304,14 +1275,11 @@ class DurationOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.DurationProperty, types.DurationProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.DurationProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a DurationProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.DurationProperty or
-         ~typetest.property.optional.types.DurationProperty or IO[bytes]
+        :param body: Is one of the following types: DurationProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.DurationProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1379,13 +1347,11 @@ class DurationOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.DurationProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.DurationProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1409,14 +1375,11 @@ class DurationOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.DurationProperty, types.DurationProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.DurationProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a DurationProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.DurationProperty or
-         ~typetest.property.optional.types.DurationProperty or IO[bytes]
+        :param body: Is one of the following types: DurationProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.DurationProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1616,13 +1579,11 @@ class PlainDateOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.PlainDateProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.PlainDateProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1646,14 +1607,11 @@ class PlainDateOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.PlainDateProperty, types.PlainDateProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.PlainDateProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a PlainDateProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.PlainDateProperty or
-         ~typetest.property.optional.types.PlainDateProperty or IO[bytes]
+        :param body: Is one of the following types: PlainDateProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.PlainDateProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1721,13 +1679,11 @@ class PlainDateOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.PlainDateProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.PlainDateProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1751,14 +1707,11 @@ class PlainDateOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.PlainDateProperty, types.PlainDateProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.PlainDateProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a PlainDateProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.PlainDateProperty or
-         ~typetest.property.optional.types.PlainDateProperty or IO[bytes]
+        :param body: Is one of the following types: PlainDateProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.PlainDateProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1958,13 +1911,11 @@ class PlainTimeOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.PlainTimeProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.PlainTimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1988,14 +1939,11 @@ class PlainTimeOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.PlainTimeProperty, types.PlainTimeProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.PlainTimeProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a PlainTimeProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.PlainTimeProperty or
-         ~typetest.property.optional.types.PlainTimeProperty or IO[bytes]
+        :param body: Is one of the following types: PlainTimeProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.PlainTimeProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2063,13 +2011,11 @@ class PlainTimeOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.PlainTimeProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.PlainTimeProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2093,14 +2039,11 @@ class PlainTimeOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.PlainTimeProperty, types.PlainTimeProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.PlainTimeProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a PlainTimeProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.PlainTimeProperty or
-         ~typetest.property.optional.types.PlainTimeProperty or IO[bytes]
+        :param body: Is one of the following types: PlainTimeProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.PlainTimeProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2300,13 +2243,11 @@ class CollectionsByteOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.CollectionsByteProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.CollectionsByteProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2330,14 +2271,11 @@ class CollectionsByteOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.CollectionsByteProperty, types.CollectionsByteProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.CollectionsByteProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a CollectionsByteProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.CollectionsByteProperty or
-         ~typetest.property.optional.types.CollectionsByteProperty or IO[bytes]
+        :param body: Is one of the following types: CollectionsByteProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.CollectionsByteProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2405,13 +2343,11 @@ class CollectionsByteOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.CollectionsByteProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.CollectionsByteProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2435,14 +2371,11 @@ class CollectionsByteOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.CollectionsByteProperty, types.CollectionsByteProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.CollectionsByteProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a CollectionsByteProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.CollectionsByteProperty or
-         ~typetest.property.optional.types.CollectionsByteProperty or IO[bytes]
+        :param body: Is one of the following types: CollectionsByteProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.CollectionsByteProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2644,13 +2577,11 @@ class CollectionsModelOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.CollectionsModelProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.CollectionsModelProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2674,14 +2605,11 @@ class CollectionsModelOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.CollectionsModelProperty, types.CollectionsModelProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.CollectionsModelProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a CollectionsModelProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.CollectionsModelProperty or
-         ~typetest.property.optional.types.CollectionsModelProperty or IO[bytes]
+        :param body: Is one of the following types: CollectionsModelProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.CollectionsModelProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2749,13 +2677,11 @@ class CollectionsModelOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.CollectionsModelProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.CollectionsModelProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2779,14 +2705,11 @@ class CollectionsModelOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.CollectionsModelProperty, types.CollectionsModelProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.CollectionsModelProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a CollectionsModelProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.CollectionsModelProperty or
-         ~typetest.property.optional.types.CollectionsModelProperty or IO[bytes]
+        :param body: Is one of the following types: CollectionsModelProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.CollectionsModelProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2986,13 +2909,11 @@ class StringLiteralOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.StringLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.StringLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3016,14 +2937,11 @@ class StringLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.StringLiteralProperty, types.StringLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.StringLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a StringLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.StringLiteralProperty or
-         ~typetest.property.optional.types.StringLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: StringLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.StringLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3091,13 +3009,11 @@ class StringLiteralOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.StringLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.StringLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3121,14 +3037,11 @@ class StringLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.StringLiteralProperty, types.StringLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.StringLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a StringLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.StringLiteralProperty or
-         ~typetest.property.optional.types.StringLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: StringLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.StringLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3328,13 +3241,11 @@ class IntLiteralOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.IntLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.IntLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3358,14 +3269,11 @@ class IntLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.IntLiteralProperty, types.IntLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.IntLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a IntLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.IntLiteralProperty or
-         ~typetest.property.optional.types.IntLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: IntLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.IntLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3433,13 +3341,11 @@ class IntLiteralOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.IntLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.IntLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3463,14 +3369,11 @@ class IntLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.IntLiteralProperty, types.IntLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.IntLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a IntLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.IntLiteralProperty or
-         ~typetest.property.optional.types.IntLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: IntLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.IntLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3670,13 +3573,11 @@ class FloatLiteralOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.FloatLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.FloatLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3700,14 +3601,11 @@ class FloatLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.FloatLiteralProperty, types.FloatLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.FloatLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a FloatLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.FloatLiteralProperty or
-         ~typetest.property.optional.types.FloatLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: FloatLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.FloatLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3775,13 +3673,11 @@ class FloatLiteralOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.FloatLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.FloatLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3805,14 +3701,11 @@ class FloatLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.FloatLiteralProperty, types.FloatLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.FloatLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a FloatLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.FloatLiteralProperty or
-         ~typetest.property.optional.types.FloatLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: FloatLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.FloatLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4012,13 +3905,11 @@ class BooleanLiteralOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.BooleanLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.BooleanLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4042,14 +3933,11 @@ class BooleanLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.BooleanLiteralProperty, types.BooleanLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.BooleanLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a BooleanLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.BooleanLiteralProperty or
-         ~typetest.property.optional.types.BooleanLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: BooleanLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.BooleanLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4117,13 +4005,11 @@ class BooleanLiteralOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.BooleanLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.BooleanLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4147,14 +4033,11 @@ class BooleanLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.BooleanLiteralProperty, types.BooleanLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.BooleanLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a BooleanLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.BooleanLiteralProperty or
-         ~typetest.property.optional.types.BooleanLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: BooleanLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.BooleanLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4356,13 +4239,11 @@ class UnionStringLiteralOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.UnionStringLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.UnionStringLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4386,16 +4267,12 @@ class UnionStringLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self,
-        body: Union[_models.UnionStringLiteralProperty, types.UnionStringLiteralProperty, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.UnionStringLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a UnionStringLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.UnionStringLiteralProperty or
-         ~typetest.property.optional.types.UnionStringLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: UnionStringLiteralProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.optional.models.UnionStringLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4463,13 +4340,11 @@ class UnionStringLiteralOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.UnionStringLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.UnionStringLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4494,15 +4369,13 @@ class UnionStringLiteralOperations:
 
     @distributed_trace_async
     async def put_default(
-        self,
-        body: Union[_models.UnionStringLiteralProperty, types.UnionStringLiteralProperty, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.UnionStringLiteralProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a UnionStringLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.UnionStringLiteralProperty or
-         ~typetest.property.optional.types.UnionStringLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: UnionStringLiteralProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.optional.models.UnionStringLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4702,13 +4575,11 @@ class UnionIntLiteralOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.UnionIntLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.UnionIntLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4732,14 +4603,11 @@ class UnionIntLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.UnionIntLiteralProperty, types.UnionIntLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.UnionIntLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a UnionIntLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.UnionIntLiteralProperty or
-         ~typetest.property.optional.types.UnionIntLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: UnionIntLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.UnionIntLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4807,13 +4675,11 @@ class UnionIntLiteralOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.UnionIntLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.UnionIntLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4837,14 +4703,11 @@ class UnionIntLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.UnionIntLiteralProperty, types.UnionIntLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.UnionIntLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a UnionIntLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.UnionIntLiteralProperty or
-         ~typetest.property.optional.types.UnionIntLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: UnionIntLiteralProperty, JSON, IO[bytes] Required.
+        :type body: ~typetest.property.optional.models.UnionIntLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5046,13 +4909,11 @@ class UnionFloatLiteralOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.UnionFloatLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.UnionFloatLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5076,14 +4937,12 @@ class UnionFloatLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self, body: Union[_models.UnionFloatLiteralProperty, types.UnionFloatLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.UnionFloatLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a UnionFloatLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.UnionFloatLiteralProperty or
-         ~typetest.property.optional.types.UnionFloatLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: UnionFloatLiteralProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.optional.models.UnionFloatLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5151,13 +5010,11 @@ class UnionFloatLiteralOperations:
         """
 
     @overload
-    async def put_default(
-        self, body: types.UnionFloatLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with default properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.UnionFloatLiteralProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5181,14 +5038,12 @@ class UnionFloatLiteralOperations:
         """
 
     @distributed_trace_async
-    async def put_default(
-        self, body: Union[_models.UnionFloatLiteralProperty, types.UnionFloatLiteralProperty, IO[bytes]], **kwargs: Any
-    ) -> None:
+    async def put_default(self, body: Union[_models.UnionFloatLiteralProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with default properties.
 
-        :param body: Is either a UnionFloatLiteralProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.UnionFloatLiteralProperty or
-         ~typetest.property.optional.types.UnionFloatLiteralProperty or IO[bytes]
+        :param body: Is one of the following types: UnionFloatLiteralProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.optional.models.UnionFloatLiteralProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5390,13 +5245,11 @@ class RequiredAndOptionalOperations:
         """
 
     @overload
-    async def put_all(
-        self, body: types.RequiredAndOptionalProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with all properties present.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.RequiredAndOptionalProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5420,16 +5273,12 @@ class RequiredAndOptionalOperations:
         """
 
     @distributed_trace_async
-    async def put_all(
-        self,
-        body: Union[_models.RequiredAndOptionalProperty, types.RequiredAndOptionalProperty, IO[bytes]],
-        **kwargs: Any
-    ) -> None:
+    async def put_all(self, body: Union[_models.RequiredAndOptionalProperty, JSON, IO[bytes]], **kwargs: Any) -> None:
         """Put a body with all properties present.
 
-        :param body: Is either a RequiredAndOptionalProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.RequiredAndOptionalProperty or
-         ~typetest.property.optional.types.RequiredAndOptionalProperty or IO[bytes]
+        :param body: Is one of the following types: RequiredAndOptionalProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.optional.models.RequiredAndOptionalProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5497,13 +5346,11 @@ class RequiredAndOptionalOperations:
         """
 
     @overload
-    async def put_required_only(
-        self, body: types.RequiredAndOptionalProperty, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def put_required_only(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put a body with only required properties.
 
         :param body: Required.
-        :type body: ~typetest.property.optional.types.RequiredAndOptionalProperty
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5530,15 +5377,13 @@ class RequiredAndOptionalOperations:
 
     @distributed_trace_async
     async def put_required_only(
-        self,
-        body: Union[_models.RequiredAndOptionalProperty, types.RequiredAndOptionalProperty, IO[bytes]],
-        **kwargs: Any
+        self, body: Union[_models.RequiredAndOptionalProperty, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put a body with only required properties.
 
-        :param body: Is either a RequiredAndOptionalProperty type or a IO[bytes] type. Required.
-        :type body: ~typetest.property.optional.models.RequiredAndOptionalProperty or
-         ~typetest.property.optional.types.RequiredAndOptionalProperty or IO[bytes]
+        :param body: Is one of the following types: RequiredAndOptionalProperty, JSON, IO[bytes]
+         Required.
+        :type body: ~typetest.property.optional.models.RequiredAndOptionalProperty or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

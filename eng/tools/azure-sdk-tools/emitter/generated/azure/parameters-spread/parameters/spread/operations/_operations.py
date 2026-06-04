@@ -25,7 +25,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import SpreadClientConfiguration
 from .._utils.model_base import SdkJSONEncoder
 from .._utils.serialization import Deserializer, Serializer
@@ -376,12 +376,12 @@ class ModelOperations:
 
     @overload
     def spread_composite_request_only_with_body(
-        self, body: types.BodyParameter, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """spread_composite_request_only_with_body.
 
         :param body: Required.
-        :type body: ~parameters.spread.types.BodyParameter
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -408,13 +408,12 @@ class ModelOperations:
 
     @distributed_trace
     def spread_composite_request_only_with_body(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.BodyParameter, types.BodyParameter, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BodyParameter, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """spread_composite_request_only_with_body.
 
-        :param body: Is either a BodyParameter type or a IO[bytes] type. Required.
-        :type body: ~parameters.spread.models.BodyParameter or ~parameters.spread.types.BodyParameter
-         or IO[bytes]
+        :param body: Is one of the following types: BodyParameter, JSON, IO[bytes] Required.
+        :type body: ~parameters.spread.models.BodyParameter or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -545,20 +544,14 @@ class ModelOperations:
 
     @overload
     def spread_composite_request(
-        self,
-        name: str,
-        body: types.BodyParameter,
-        *,
-        test_header: str,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, name: str, body: JSON, *, test_header: str, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """spread_composite_request.
 
         :param name: Required.
         :type name: str
         :param body: Required.
-        :type body: ~parameters.spread.types.BodyParameter
+        :type body: JSON
         :keyword test_header: Required.
         :paramtype test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -591,20 +584,14 @@ class ModelOperations:
 
     @distributed_trace
     def spread_composite_request(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        body: Union[_models.BodyParameter, types.BodyParameter, IO[bytes]],
-        *,
-        test_header: str,
-        **kwargs: Any,
+        self, name: str, body: Union[_models.BodyParameter, JSON, IO[bytes]], *, test_header: str, **kwargs: Any
     ) -> None:
         """spread_composite_request.
 
         :param name: Required.
         :type name: str
-        :param body: Is either a BodyParameter type or a IO[bytes] type. Required.
-        :type body: ~parameters.spread.models.BodyParameter or ~parameters.spread.types.BodyParameter
-         or IO[bytes]
+        :param body: Is one of the following types: BodyParameter, JSON, IO[bytes] Required.
+        :type body: ~parameters.spread.models.BodyParameter or JSON or IO[bytes]
         :keyword test_header: Required.
         :paramtype test_header: str
         :return: None

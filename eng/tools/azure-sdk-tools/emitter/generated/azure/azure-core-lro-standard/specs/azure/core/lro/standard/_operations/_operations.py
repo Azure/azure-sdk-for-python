@@ -28,12 +28,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types
+from .. import models as _models
 from .._configuration import StandardClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -122,7 +123,7 @@ class _StandardClientOperationsMixin(
 ):
 
     def _create_or_replace_initial(
-        self, name: str, resource: Union[_models.User, types.User, IO[bytes]], **kwargs: Any
+        self, name: str, resource: Union[_models.User, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -206,7 +207,7 @@ class _StandardClientOperationsMixin(
 
     @overload
     def begin_create_or_replace(
-        self, name: str, resource: types.User, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.User]:
         """Adds a user or replaces a user's fields.
 
@@ -215,7 +216,7 @@ class _StandardClientOperationsMixin(
         :param name: The name of user. Required.
         :type name: str
         :param resource: The resource instance. Required.
-        :type resource: ~specs.azure.core.lro.standard.types.User
+        :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -246,7 +247,7 @@ class _StandardClientOperationsMixin(
 
     @distributed_trace
     def begin_create_or_replace(
-        self, name: str, resource: Union[_models.User, types.User, IO[bytes]], **kwargs: Any
+        self, name: str, resource: Union[_models.User, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.User]:
         """Adds a user or replaces a user's fields.
 
@@ -254,9 +255,9 @@ class _StandardClientOperationsMixin(
 
         :param name: The name of user. Required.
         :type name: str
-        :param resource: The resource instance. Is either a User type or a IO[bytes] type. Required.
-        :type resource: ~specs.azure.core.lro.standard.models.User or
-         ~specs.azure.core.lro.standard.types.User or IO[bytes]
+        :param resource: The resource instance. Is one of the following types: User, JSON, IO[bytes]
+         Required.
+        :type resource: ~specs.azure.core.lro.standard.models.User or JSON or IO[bytes]
         :return: An instance of LROPoller that returns User. The User is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~specs.azure.core.lro.standard.models.User]
         :raises ~azure.core.exceptions.HttpResponseError:
