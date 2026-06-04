@@ -7,7 +7,7 @@
 
 import sys
 import xml.etree.ElementTree as ET
-from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, TYPE_CHECKING, Union, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import (
@@ -71,7 +71,16 @@ class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
             **kwargs,
         )  # type: ignore[return-value]
 
-    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
+    @overload
+    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None: ...
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
+        enabled = args[0] if args else kwargs.get("enabled", False)
+        days = args[1] if len(args) > 1 else kwargs.get("days", None)
         if enabled and (days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
         super().__init__(enabled=enabled, days=days)
@@ -134,7 +143,22 @@ class QueueAnalyticsLogging(GeneratedLogging, _ModelBackCompatMixin):
             **kwargs,
         )  # type: ignore[return-value]
 
-    def __init__(self, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        version: str = "1.0",
+        delete: bool = False,
+        read: bool = False,
+        write: bool = False,
+        retention_policy: Optional[RetentionPolicy] = None,
+    ) -> None: ...
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
         super().__init__(
             version=kwargs.get("version", "1.0"),
             delete=kwargs.get("delete", False),
@@ -204,7 +228,21 @@ class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
             **kwargs,
         )  # type: ignore[return-value]
 
-    def __init__(self, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        version: str = "1.0",
+        enabled: bool = False,
+        include_apis: Optional[bool] = None,
+        retention_policy: Optional[RetentionPolicy] = None,
+    ) -> None: ...
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
         super().__init__(
             version=kwargs.get("version", "1.0"),
             enabled=kwargs.get("enabled", False),
@@ -295,7 +333,24 @@ class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
             **kwargs,
         )  # type: ignore[return-value]
 
-    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        allowed_origins: List[str],
+        allowed_methods: List[str],
+        *,
+        allowed_headers: Optional[List[str]] = None,
+        exposed_headers: Optional[List[str]] = None,
+        max_age_in_seconds: int = 0,
+    ) -> None: ...
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
+        allowed_origins = args[0] if args else kwargs.pop("allowed_origins")
+        allowed_methods = args[1] if len(args) > 1 else kwargs.pop("allowed_methods")
         super().__init__(
             allowed_origins=",".join(allowed_origins),
             allowed_methods=",".join(allowed_methods),
@@ -477,14 +532,24 @@ class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
             **kwargs,
         )  # type: ignore[return-value]
 
+    @overload
     def __init__(
         self,
         permission: Optional[Union[QueueSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
-    ) -> None:
+    ) -> None: ...
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if args and isinstance(args[0], (ET.Element, dict)):
+            super().__init__(*args, **kwargs)
+            return
         # TODO: here AccessPolicy never took in a datetime
         # but we supported datetime and serialized it when passing the model through. (see set access policy)
+        permission = args[0] if args else kwargs.pop("permission", None)
+        expiry = args[1] if len(args) > 1 else kwargs.pop("expiry", None)
+        start = args[2] if len(args) > 2 else kwargs.pop("start", None)
         if isinstance(permission, QueueSasPermissions):
             permission = str(permission)
         super().__init__(start=start, expiry=expiry, permission=permission)  # type: ignore [arg-type]
