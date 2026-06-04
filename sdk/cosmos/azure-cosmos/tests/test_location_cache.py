@@ -951,6 +951,202 @@ class TestLocationCache:
         ]
         assert read_endpoints == [canonical_location1_endpoint, canonical_location2_endpoint]
 
+    """
+    Additional sync coverage for keeping unavailable endpoints as
+    fallback options. Covers the global-endpoint-manager wrapper,
+    single-write accounts, the health-check probe set, ordering,
+    circuit-breaker fallback, recovery, and account-refresh preservation.
+    """
+
+    def test_sync_global_endpoint_manager_returns_unavailable_as_last_resort(self):
+        # Sync wrapper around LocationCache should also keep an unavailable
+        # endpoint at the tail of the routing list so it can be used as fallback.
+        cp = documents.ConnectionPolicy()
+        cp.PreferredLocations = [location1_name, location2_name]
+        cp.UseMultipleWriteLocations = True
+        mock_client = unittest.mock.Mock()
+        mock_client.connection_policy = cp
+        mock_client.url_connection = default_endpoint
+
+        gem = _GlobalEndpointManager(mock_client)
+        gem.location_cache.perform_on_database_account_read(create_database_account(True))
+
+        # Mark location1 unavailable for both reads and writes.
+        gem.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True, context="test")
+        gem.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_ctxs = gem.get_applicable_read_regional_routing_contexts(read_request)
+        assert [c.get_primary() for c in read_ctxs] == [location2_endpoint, location1_endpoint], \
+            "Sync GEM should keep unavailable read endpoint at the tail, not drop it."
+
+        # If the only healthy region is excluded, the unavailable region
+        # should still be returned by the sync wrapper, not the global default.
+        read_request.excluded_locations = [location2_name]
+        assert gem._resolve_service_endpoint(read_request) == location1_endpoint
+
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_ctxs = gem.get_applicable_write_regional_routing_contexts(write_request)
+        assert [c.get_primary() for c in write_ctxs] == [location2_endpoint, location1_endpoint]
+
+        write_request.excluded_locations = [location2_name]
+        assert gem._resolve_service_endpoint(write_request) == location1_endpoint
+
+    def test_sync_single_write_account_read_unavailable_and_excluded(self):
+        # On a single-write account, an excluded healthy region should still
+        # fall back to the unavailable preferred region rather than the global default.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=False
+        )
+        lc.perform_on_database_account_read(create_database_account(False))
+        assert lc.can_use_multiple_write_locations() is False, \
+            "Test setup must be a single-write account."
+
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.excluded_locations = [location2_name]
+
+        resolved = lc.resolve_service_endpoint(read_request)
+        assert resolved == location1_endpoint, \
+            "Single-write read path returned the global default instead of " \
+            "the unavailable preferred region."
+
+    def test_sync_health_check_set_includes_unavailable_endpoints(self):
+        # Unavailable endpoints must remain in the health-check probe set so
+        # they can be re-marked available once the prober finds them healthy.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
+        endpoints = lc.endpoints_to_health_check()
+        assert location1_endpoint in endpoints, \
+            "Health-check probe set is missing the unavailable read endpoint."
+        assert location2_endpoint in endpoints
+
+    @pytest.mark.parametrize("unavailable", [[], [location1_name], [location1_name, location2_name]])
+    def test_sync_routing_list_has_no_duplicate_endpoints(self, unavailable):
+        # The routing list should never contain the same endpoint twice,
+        # regardless of how many regions are marked unavailable.
+        endpoint_by_loc = {location1_name: location1_endpoint, location2_name: location2_endpoint}
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        for loc in unavailable:
+            lc.mark_endpoint_unavailable_for_read(endpoint_by_loc[loc], refresh_cache=True)
+        read_primaries = [c.get_primary() for c in lc.get_read_regional_routing_contexts()]
+        assert len(read_primaries) == len(set(read_primaries)), \
+            f"Read routing list has duplicates: {read_primaries}"
+        assert set(read_primaries) == {location1_endpoint, location2_endpoint}
+
+        for loc in unavailable:
+            lc.mark_endpoint_unavailable_for_write(
+                endpoint_by_loc[loc], refresh_cache=True, context="test"
+            )
+        write_primaries = [c.get_primary() for c in lc.get_write_regional_routing_contexts()]
+        assert len(write_primaries) == len(set(write_primaries)), \
+            f"Write routing list has duplicates: {write_primaries}"
+        assert set(write_primaries) == {location1_endpoint, location2_endpoint}
+
+    def test_mark_endpoint_available_restores_head_position(self):
+        # After recovery, a previously-unavailable preferred endpoint should
+        # return to the head of the routing list, not stay at the tail.
+        lc = refresh_location_cache(
+            [location1_name, location2_name, location3_name],
+            use_multiple_write_locations=True,
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        # Initial state: most-preferred is location1.
+        assert lc.read_regional_routing_contexts[0].get_primary() == location1_endpoint
+        assert lc.write_regional_routing_contexts[0].get_primary() == location1_endpoint
+
+        # Mark location1 unavailable for both lanes — it should slide to the tail.
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+        assert lc.read_regional_routing_contexts[-1].get_primary() == location1_endpoint
+        assert lc.write_regional_routing_contexts[-1].get_primary() == location1_endpoint
+
+        # Simulate the health-probe rehabilitating the endpoint.
+        lc.mark_endpoint_available(location1_endpoint)
+        lc.update_location_cache()
+
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Read") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write") is False
+        assert lc.read_regional_routing_contexts[0].get_primary() == location1_endpoint, \
+            "Recovered endpoint should return to the head of the read routing list."
+        assert lc.write_regional_routing_contexts[0].get_primary() == location1_endpoint, \
+            "Recovered endpoint should return to the head of the write routing list."
+
+    def test_account_topology_refresh_preserves_unavailability_tail_order(self):
+        # A periodic account-topology refresh must not drop endpoints that
+        # were marked unavailable, and the tail ordering must be preserved.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        db_acc = create_database_account(True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Mark location1 unavailable for writes — it should move to the tail.
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+        write_primaries_before = [c.get_primary() for c in lc.get_write_regional_routing_contexts()]
+        assert write_primaries_before == [location2_endpoint, location1_endpoint]
+
+        # Simulate a periodic background refresh — the same topology comes back.
+        lc.perform_on_database_account_read(db_acc)
+
+        # The unavailability mark must survive, AND the routing list must
+        # still contain location1 (as the tail), not drop it.
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write"), \
+            "Unavailability mark must survive an account-topology refresh."
+        write_primaries_after = [c.get_primary() for c in lc.get_write_regional_routing_contexts()]
+        assert write_primaries_after == write_primaries_before, \
+            "Account-topology refresh dropped the unavailable endpoint from the routing list."
+
+    def test_circuit_breaker_excluded_read_falls_back_before_global_default(self):
+        # With the only healthy region user-excluded and the other region
+        # circuit-breaker-excluded, reads should still resolve to the
+        # circuit-breaker-excluded region instead of the global default.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.excluded_locations = [location1_name]
+        read_request.excluded_locations_circuit_breaker = [location2_name]
+
+        resolved = lc.resolve_service_endpoint(read_request)
+        assert resolved == location2_endpoint, \
+            "Read should fall back to the circuit-breaker-excluded region " \
+            "instead of dropping to the global default."
+
+    def test_master_resource_appends_user_excluded_to_tail(self):
+        # For master/metadata requests, user-excluded locations should be
+        # appended to the tail so the request still has a chance to succeed.
+        lc = refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True
+        )
+        lc.perform_on_database_account_read(create_database_account(True))
+
+        # Both regions healthy and both user-excluded — for a metadata request,
+        # the SDK must still try them as a last resort.
+        master_request = RequestObject(ResourceType.Database, _OperationType.Read, None)
+        master_request.excluded_locations = [location1_name, location2_name]
+
+        applicable = lc._get_applicable_read_regional_routing_contexts(master_request)
+        primaries = [c.get_primary() for c in applicable]
+        # The fix preserves user-excluded regions as a tail fallback for
+        # master requests; both location1 and location2 should appear.
+        assert location1_endpoint in primaries
+        assert location2_endpoint in primaries
+        # And neither should be the global default.
+        assert default_endpoint not in primaries
+
 
 class TestNormalizeRegionName:
     """Unit tests for the _normalize_region_name helper.

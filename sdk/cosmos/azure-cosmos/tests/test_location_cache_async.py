@@ -396,11 +396,11 @@ class TestLocationCacheAsync(unittest.IsolatedAsyncioTestCase):
             f"to come first, but got {resolved}.",
         )
 
-    async def test_async_data_call_with_exclusion_and_unavailable_preserves_pr45200(self):
-        """For a data request, excluded_locations is a hard filter.
-        With one region unavailable and the other excluded, the SDK
-        should still return the unavailable non-excluded region before
-        falling back to the global default."""
+    async def test_async_data_call_with_exclusion_and_unavailable_preserves_fallback(self):
+        # For a data request, excluded_locations is a hard filter. With one
+        # region unavailable and the other excluded, the SDK should still
+        # return the unavailable non-excluded region before falling back to
+        # the global default.
         lc = _refresh_location_cache(
             [location1_name, location2_name], use_multiple_write_locations=True,
         )
@@ -416,6 +416,95 @@ class TestLocationCacheAsync(unittest.IsolatedAsyncioTestCase):
             resolved, location1_endpoint,
             f"Expected the unavailable non-excluded region ({location1_endpoint}) "
             f"as a last-resort regional endpoint, but got {resolved}.",
+        )
+
+    """
+    Additional async coverage for keeping unavailable endpoints as
+    fallback options. Recovery, account-topology refresh, and
+    circuit-breaker read fallback are exercised here.
+    """
+
+    async def test_async_mark_endpoint_available_restores_head_position_async(self):
+        # After recovery, a previously-unavailable preferred endpoint should
+        # return to the head of the routing list, not stay at the tail.
+        lc = _refresh_location_cache(
+            [location1_name, location2_name, location3_name],
+            use_multiple_write_locations=True,
+        )
+        lc.perform_on_database_account_read(_create_database_account(True))
+
+        self.assertEqual(
+            lc.read_regional_routing_contexts[0].get_primary(), location1_endpoint
+        )
+        self.assertEqual(
+            lc.write_regional_routing_contexts[0].get_primary(), location1_endpoint
+        )
+
+        # Mark location1 unavailable on both lanes; it should slide to the tail.
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+        self.assertEqual(lc.read_regional_routing_contexts[-1].get_primary(), location1_endpoint)
+        self.assertEqual(lc.write_regional_routing_contexts[-1].get_primary(), location1_endpoint)
+
+        # Health-probe rehabilitates the endpoint.
+        lc.mark_endpoint_available(location1_endpoint)
+        lc.update_location_cache()
+
+        self.assertFalse(lc.is_endpoint_unavailable(location1_endpoint, "Read"))
+        self.assertFalse(lc.is_endpoint_unavailable(location1_endpoint, "Write"))
+        self.assertEqual(
+            lc.read_regional_routing_contexts[0].get_primary(), location1_endpoint,
+            "Recovered endpoint should return to the head of the read routing list."
+        )
+        self.assertEqual(
+            lc.write_regional_routing_contexts[0].get_primary(), location1_endpoint,
+            "Recovered endpoint should return to the head of the write routing list."
+        )
+
+    async def test_account_topology_refresh_preserves_unavailability_tail_order_async(self):
+        # A periodic account-topology refresh must not drop endpoints that
+        # were marked unavailable, and the tail ordering must be preserved.
+        lc = _refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True,
+        )
+        db_acc = _create_database_account(True)
+        lc.perform_on_database_account_read(db_acc)
+
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+        write_primaries_before = [c.get_primary() for c in lc.get_write_regional_routing_contexts()]
+        self.assertEqual(write_primaries_before, [location2_endpoint, location1_endpoint])
+
+        # Simulate periodic background refresh — same topology comes back.
+        lc.perform_on_database_account_read(db_acc)
+
+        self.assertTrue(
+            lc.is_endpoint_unavailable(location1_endpoint, "Write"),
+            "Unavailability mark must survive an account-topology refresh.",
+        )
+        write_primaries_after = [c.get_primary() for c in lc.get_write_regional_routing_contexts()]
+        self.assertEqual(
+            write_primaries_after, write_primaries_before,
+            "Account-topology refresh dropped the unavailable endpoint from the routing list.",
+        )
+
+    async def test_async_circuit_breaker_excluded_read_falls_back_before_global_default_async(self):
+        # With the only healthy region user-excluded and the other region
+        # circuit-breaker-excluded, reads should still resolve to the
+        # circuit-breaker-excluded region instead of the global default.
+        lc = _refresh_location_cache(
+            [location1_name, location2_name], use_multiple_write_locations=True,
+        )
+        lc.perform_on_database_account_read(_create_database_account(True))
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.excluded_locations = [location1_name]
+        read_request.excluded_locations_circuit_breaker = [location2_name]
+
+        resolved = lc.resolve_service_endpoint(read_request)
+        self.assertEqual(
+            resolved, location2_endpoint,
+            "Read should fall back to the circuit-breaker-excluded region "
+            "instead of dropping to the global default.",
         )
 
 
