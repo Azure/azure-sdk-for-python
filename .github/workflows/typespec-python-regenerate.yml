@@ -158,13 +158,12 @@ jobs:
             ! -path "$TARGET/template/*" \
             -print -exec cp -f "$TEMPLATE" {} \;
 
-      - name: Create regeneration PR
+      - name: Create or update tracking issue with PR link
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           TARGET_BRANCH="typespec-python-generated-tests"
-          SOURCE_BRANCH="regen/typespec-python"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -177,10 +176,14 @@ jobs:
           fi
 
           PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
+          # Use a distinct source branch per origin so a main-based run and a
+          # PR-based run never force-push over each other.
           if [ -n "$PR_NUMBER" ]; then
             SOURCE_LABEL="microsoft/typespec PR #${PR_NUMBER}"
+            SOURCE_BRANCH="regen/typespec-python-pr-${PR_NUMBER}"
           else
             SOURCE_LABEL="microsoft/typespec@main"
+            SOURCE_BRANCH="regen/typespec-python-main"
           fi
 
           # Save regenerated files to a temp dir before switching branches,
@@ -194,11 +197,6 @@ jobs:
             git push origin "origin/main:refs/heads/$TARGET_BRANCH"
             git fetch --no-tags --depth=1 origin "$TARGET_BRANCH"
           fi
-
-          # Check if an open regen PR already exists; reuse its branch if so.
-          EXISTING_PR=$(gh pr list --repo "${{ github.repository }}" \
-            --base "$TARGET_BRANCH" --head "$SOURCE_BRANCH" --label "typespec-python" \
-            --state open --json number -q '.[0].number')
 
           # Clean up untracked generated files so checkout doesn't conflict.
           rm -rf "$GENERATED_DIR"
@@ -222,17 +220,168 @@ jobs:
           git commit -m "$COMMIT_MSG"
           git push origin "$SOURCE_BRANCH" --force-with-lease
 
-          if [ -n "$EXISTING_PR" ]; then
-            echo "::notice::Updated existing PR #${EXISTING_PR} with new regeneration"
+          # GitHub Actions' default GITHUB_TOKEN is not permitted to create pull
+          # requests in this repository, so instead of opening a PR directly we
+          # create/update a tracking issue containing a pre-filled "compare" link
+          # that a maintainer can click to open the PR manually.
+          REPO="${{ github.repository }}"
+          SERVER="${{ github.server_url }}"
+          RUN_URL="${SERVER}/${REPO}/actions/runs/${{ github.run_id }}"
+          TS_REF_URL="${{ steps.typespec-info.outputs.typespec_ref_url }}"
+
+          # Determine assignees. For manual (workflow_dispatch) triggers, assign
+          # to the user who triggered the run. For automatic triggers (push,
+          # schedule), fall back to the default maintainers.
+          EVENT_NAME="${{ github.event_name }}"
+          ACTOR="${{ github.actor }}"
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$ACTOR" ]; then
+            ASSIGNEES="$ACTOR"
+            CC_LINE="cc @${ACTOR}"
           else
-            gh pr create --repo "${{ github.repository }}" \
-              --base "$TARGET_BRANCH" \
-              --head "$SOURCE_BRANCH" \
-              --title "$COMMIT_MSG" \
-              --body "Automated regeneration from ${SOURCE_LABEL}." \
-              --label "typespec-python"
-            echo "::notice::Created PR for regenerated tests against $TARGET_BRANCH"
+            ASSIGNEES="iscai-msft,msyyc"
+            CC_LINE="cc @iscai-msft @msyyc"
           fi
+
+          TITLE="$COMMIT_MSG"
+
+          # Reuse an existing open tracking issue if one exists (matched by exact
+          # title). We list by label and match the title with jq because GitHub's
+          # search tokenizer strips characters like [ ] @ # and /, making a title
+          # search ambiguous.
+          ISSUES_JSON=$(gh issue list --state open --label typespec-python \
+            --limit 100 --json number,title)
+          EXISTING_ISSUE=$(jq -r --arg title "$TITLE" \
+            'first(.[] | select(.title == $title) | .number) // ""' <<< "$ISSUES_JSON")
+
+          if [ -n "$EXISTING_ISSUE" ]; then
+            ISSUE_NUMBER="$EXISTING_ISSUE"
+            echo "Reusing existing tracking issue #$ISSUE_NUMBER"
+          else
+            echo "Creating new tracking issue"
+            # `gh issue create` prints the new issue's URL to stdout; parse the
+            # trailing number out of it. The body is filled in below once we have
+            # the compare URL.
+            # Assignees are applied best-effort in the final `gh issue edit`
+            # below, so a non-assignable actor never fails issue creation.
+            ISSUE_URL=$(gh issue create --title "$TITLE" \
+              --body "Tracking issue for TypeSpec Python regeneration. Details will be filled in shortly." \
+              --label "typespec-python")
+            ISSUE_NUMBER="${ISSUE_URL##*/}"
+            echo "Created issue #$ISSUE_NUMBER ($ISSUE_URL)"
+          fi
+
+          # If an open PR already exists from the source branch to the target
+          # branch, point the tracking issue at it instead of asking for a new one.
+          EXISTING_PR_JSON=$(gh pr list --state open --head "$SOURCE_BRANCH" --base "$TARGET_BRANCH" \
+            --json number,url --limit 1)
+          EXISTING_PR_URL=$(echo "$EXISTING_PR_JSON" | jq -r '.[0].url // empty')
+          EXISTING_PR_NUMBER=$(echo "$EXISTING_PR_JSON" | jq -r '.[0].number // empty')
+
+          if [ -n "$EXISTING_PR_URL" ]; then
+            ISSUE_BODY="A pull request already exists for this regeneration.
+
+          👉 [View pull request #${EXISTING_PR_NUMBER}](${EXISTING_PR_URL})
+
+          The branch \`${SOURCE_BRANCH}\` was just updated with the latest regenerated tests; the existing PR will reflect those changes automatically.
+
+          Details:
+          - Source: [${SOURCE_LABEL}](${TS_REF_URL})
+          - Branch: [\`${SOURCE_BRANCH}\`](${SERVER}/${REPO}/tree/${SOURCE_BRANCH})
+          - Latest workflow run: ${RUN_URL}
+
+          > Note: the PR targets the \`${TARGET_BRANCH}\` branch, so merging it will **not** auto-close this issue. Please close this issue manually after the PR is merged.
+
+          ${CC_LINE}"
+          else
+            # Build a "compare" URL that opens the PR creation page pre-filled.
+            # GitHub Actions cannot create PRs directly (org policy), so the
+            # reviewer just needs to click the link to open the PR. The PR is
+            # based on the dedicated target branch, not main.
+            ISSUE_LINK="${SERVER}/${REPO}/issues/${ISSUE_NUMBER}"
+            # For PR-sourced runs, mark the prefilled PR as do-not-merge: it only
+            # exists to surface the code diff of the upstream typespec PR.
+            PR_TITLE="$TITLE"
+            NOTE_PREFIX=""
+            DRAFT_PARAM=""
+            if [ -n "$PR_NUMBER" ]; then
+              PR_TITLE="$TITLE (DO NOT MERGE)"
+              NOTE_PREFIX=$'NOTE: This PR exists only to display the code diff. Please do not merge it.\n\n'
+              # PR-sourced regenerations open the prefilled PR as a draft
+              # (draft=1 is undocumented but honored by the quick_pull form).
+              DRAFT_PARAM="&draft=1"
+            fi
+            PR_TITLE_ENC=$(jq -rn --arg t "$PR_TITLE" '$t|@uri')
+            PR_BODY_RAW="${NOTE_PREFIX}Fixes ${ISSUE_LINK}
+
+          Source: ${TS_REF_URL}
+
+          Automated regeneration of TypeSpec Python generated tests from ${SOURCE_LABEL}.
+
+          - Workflow run: ${RUN_URL}
+
+          This PR was auto-generated. Re-run the workflow to update it after new commits are pushed to the upstream TypeSpec PR"
+            PR_BODY_ENC=$(jq -rn --arg b "$PR_BODY_RAW" '$b|@uri')
+            COMPARE_URL="${SERVER}/${REPO}/compare/${TARGET_BRANCH}...${SOURCE_BRANCH}?quick_pull=1${DRAFT_PARAM}&title=${PR_TITLE_ENC}&body=${PR_BODY_ENC}"
+
+            ISSUE_BODY="GitHub Actions is not permitted to create pull requests in this repository, so this issue tracks the regeneration instead.
+
+          **Click the link below to open a pre-filled PR:**
+
+          👉 [Create pull request from \`${SOURCE_BRANCH}\`](${COMPARE_URL})
+
+          Details:
+          - Source: [${SOURCE_LABEL}](${TS_REF_URL})
+          - Branch: [\`${SOURCE_BRANCH}\`](${SERVER}/${REPO}/tree/${SOURCE_BRANCH})
+          - Latest workflow run: ${RUN_URL}
+
+          > Note: the PR targets the \`${TARGET_BRANCH}\` branch, so merging it will **not** auto-close this issue. Please close this issue manually after the PR is merged.
+
+          ${CC_LINE}"
+          fi
+
+          # Write the final body onto the tracking issue (whether reused or just
+          # created) and re-apply the expected label. Assignment is best-effort:
+          # a non-assignable actor must not fail the workflow.
+          gh issue edit "$ISSUE_NUMBER" --body "$ISSUE_BODY" --add-label "typespec-python"
+          gh issue edit "$ISSUE_NUMBER" --add-assignee "$ASSIGNEES" \
+            || echo "::warning::Could not assign issue #${ISSUE_NUMBER} to ${ASSIGNEES}"
+          echo "::notice::Tracking issue #${ISSUE_NUMBER} updated with PR compare link"
+
+      - name: Clean up stale regen branches
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TARGET_BRANCH="typespec-python-generated-tests"
+          PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
+          if [ -n "$PR_NUMBER" ]; then
+            CURRENT_BRANCH="regen/typespec-python-pr-${PR_NUMBER}"
+          else
+            CURRENT_BRANCH="regen/typespec-python-main"
+          fi
+
+          # Prune any regen/typespec-python-* branch whose PR (to the target
+          # branch) is no longer open but did exist at some point (merged or
+          # closed). Branches that never had a PR opened are left alone, since a
+          # maintainer may still click the pre-filled compare link to open one.
+          BRANCHES=$(git ls-remote --heads origin \
+            | sed 's#.*refs/heads/##' \
+            | grep '^regen/typespec-python-' || true)
+          for b in $BRANCHES; do
+            if [ "$b" = "$CURRENT_BRANCH" ]; then
+              continue
+            fi
+            OPEN_COUNT=$(gh pr list --state open --head "$b" --base "$TARGET_BRANCH" \
+              --json number --jq 'length')
+            ALL_COUNT=$(gh pr list --state all --head "$b" --base "$TARGET_BRANCH" \
+              --json number --jq 'length')
+            if [ "$OPEN_COUNT" = "0" ] && [ "$ALL_COUNT" != "0" ]; then
+              echo "Deleting stale branch $b (PR merged/closed, none open)"
+              git push origin --delete "$b" \
+                || echo "::warning::Failed to delete branch $b"
+            fi
+          done
 
   notify-on-failure:
     name: "Notify on failure"
