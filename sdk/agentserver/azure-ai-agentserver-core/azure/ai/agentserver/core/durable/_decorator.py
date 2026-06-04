@@ -275,11 +275,16 @@ def _check_input_precondition(
 ) -> None:
     """Validate the ``if_last_input_id`` precondition before any accept path.
 
-    Spec 013 US2 semantic rules:
+    Semantic rules:
 
     - Both ``input_id`` and ``if_last_input_id`` ``None``: no precondition.
-    - ``input_id`` set, ``if_last_input_id`` ``None``: caller asserts a fresh
-      chain. Succeeds iff no stored ``last_input_id`` exists.
+    - ``input_id`` set, ``if_last_input_id`` ``None``: idempotency-only mode
+      — the caller wants the chain head advanced to ``input_id`` but is
+      NOT asserting any predecessor. Always succeeds; the chain head is
+      overwritten on the accept path. Use this for per-turn idempotency
+      identifiers (e.g. a response_id) when chain-ordering is enforced
+      externally (e.g. by task_id collapse + TaskConflictError
+      sequencing for conversation-grouped multi-turn).
     - ``if_last_input_id`` set, stored ``last_input_id`` ``None``: the chain
       task is brand new (e.g., a steerable conversation's second turn lands
       on a freshly-created chain task). The precondition is vacuously
@@ -295,22 +300,16 @@ def _check_input_precondition(
     :keyword if_last_input_id: The precondition value (caller-supplied).
     :raises LastInputIdPreconditionFailed: If the precondition does not hold.
     """
-    if input_id is None and if_last_input_id is None:
+    if if_last_input_id is None:
+        # Either no precondition at all, or idempotency-only mode where
+        # the caller advances the chain head without asserting any
+        # predecessor. Both cases succeed unconditionally.
         return
     from ._exceptions import (  # pylint: disable=import-outside-toplevel
         LastInputIdPreconditionFailed,
     )
 
     stored = _read_stored_last_input_id(existing)
-    if if_last_input_id is None:
-        # Caller asserts fresh chain. Must not already exist.
-        if stored is not None:
-            raise LastInputIdPreconditionFailed(
-                task_id,
-                expected_last_input_id=None,
-                actual_last_input_id=stored,
-            )
-        return
     # if_last_input_id is set.
     if stored is None:
         # No prior chain recorded. The chain task is brand new — accept
@@ -508,8 +507,17 @@ class Task(Generic[Input, Output]):
         :keyword input_id: Optional identifier for the input being accepted. When
             supplied, the framework records it as the task's most-recently-accepted
             input id in a framework-reserved slot (``payload["_last_input_id"]``).
-            Used together with ``if_last_input_id`` to implement HTTP If-Match-style
-            optimistic concurrency on the input queue.
+
+            Two modes:
+
+            - **Idempotency-only** (``input_id`` set, ``if_last_input_id`` unset):
+              advances the stored chain head unconditionally. Always succeeds; no
+              precondition check. Use this when chain ordering is enforced by
+              another mechanism (e.g. ``task_id`` collapse + ``TaskConflictError``
+              / steering-queue sequencing for conversation-grouped multi-turn).
+            - **Chain-extension** (paired with ``if_last_input_id``):
+              implements HTTP If-Match-style optimistic concurrency on the
+              input queue — see ``if_last_input_id`` below.
         :paramtype input_id: str | None
         :keyword if_last_input_id: Optional precondition. When supplied, the framework
             verifies that the task's currently-stored last input id equals this value
@@ -517,8 +525,8 @@ class Task(Generic[Input, Output]):
             concurrent caller advanced the queue, or the caller's view is stale),
             raises :class:`LastInputIdPreconditionFailed` before any state mutation.
             Modelled on HTTP ``If-Match: <etag>`` semantics. Requires ``input_id``
-            to also be supplied (raises :class:`TypeError` otherwise — invalid
-            combination).
+            to also be supplied (raises :class:`TypeError` otherwise — a
+            precondition without an advancing id is not meaningful).
         :paramtype if_last_input_id: str | None
         :return: The task result wrapper with output, status, and suspension info.
         :rtype: ~azure.ai.agentserver.core.durable.TaskResult[Output]
@@ -573,8 +581,17 @@ class Task(Generic[Input, Output]):
         :keyword input_id: Optional identifier for the input being accepted. When
             supplied, the framework records it as the task's most-recently-accepted
             input id in a framework-reserved slot (``payload["_last_input_id"]``).
-            Used together with ``if_last_input_id`` to implement HTTP If-Match-style
-            optimistic concurrency on the input queue.
+
+            Two modes:
+
+            - **Idempotency-only** (``input_id`` set, ``if_last_input_id`` unset):
+              advances the stored chain head unconditionally. Always succeeds; no
+              precondition check. Use this when chain ordering is enforced by
+              another mechanism (e.g. ``task_id`` collapse + ``TaskConflictError``
+              / steering-queue sequencing for conversation-grouped multi-turn).
+            - **Chain-extension** (paired with ``if_last_input_id``):
+              implements HTTP If-Match-style optimistic concurrency on the
+              input queue — see ``if_last_input_id`` below.
         :paramtype input_id: str | None
         :keyword if_last_input_id: Optional precondition. When supplied, the framework
             verifies that the task's currently-stored last input id equals this value
@@ -582,8 +599,8 @@ class Task(Generic[Input, Output]):
             concurrent caller advanced the queue, or the caller's view is stale),
             raises :class:`LastInputIdPreconditionFailed` before any state mutation.
             Modelled on HTTP ``If-Match: <etag>`` semantics. Requires ``input_id``
-            to also be supplied (raises :class:`TypeError` otherwise — invalid
-            combination).
+            to also be supplied (raises :class:`TypeError` otherwise — a
+            precondition without an advancing id is not meaningful).
         :paramtype if_last_input_id: str | None
         :return: A handle to the running task.
         :rtype: TaskRun[Output]
