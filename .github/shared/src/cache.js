@@ -49,7 +49,7 @@ export class KeyedPairCache {
    * @returns {V} cached value
    *
    * @example
-   * const result = cache.getOrCreate(42, 7 async () => await doWork(42, 7));
+  * const result = cache.getOrCreate(42, 7, async () => await doWork(42, 7));
    */
   getOrCreate(key1, key2, factory) {
     // key1 => cache for the next layer

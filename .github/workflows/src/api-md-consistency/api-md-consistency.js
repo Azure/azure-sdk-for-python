@@ -40,10 +40,10 @@ function formatIssueSection(title, apiFiles) {
 
   const lines = [title];
   for (const apiFile of apiFiles) {
-    const packageDir = apiFile.replace(/\/API\.md$/, "");
+    const packageDir = apiFile.replace(/\/(api\.md|api\.metadata\.yml)$/, "");
     const packageName = path.basename(packageDir);
     lines.push(`- ${packageDir}`);
-    lines.push(`  API.md: ${apiFile}`);
+    lines.push(`  API file: ${apiFile}`);
     lines.push(`  Regenerate: azpysdk apistub --md --extract-metadata ${packageName}`);
   }
   lines.push("");
@@ -87,12 +87,12 @@ module.exports = async function apiMdConsistency({ core }) {
 
   if (issueCount > 0) {
     const messageParts = [
-      "Generated API.md does not match committed API.md, or API.md is missing, for one or more affected packages.",
-      "API.metadata.yml is informational only (for troubleshooting API drift, e.g., parser/runtime differences) and is not part of pass/fail gating.",
+      "Generated api.md or api.metadata.yml does not match the committed files, or required API files are missing, for one or more affected packages.",
+      "api.metadata.yml must be committed alongside api.md, and selected metadata fields are part of pass/fail gating.",
       "",
       formatIssueSection("Mismatched packages:", mismatches),
-      formatIssueSection("Missing API.md packages:", missing),
-      "To regenerate API.md locally, run the command shown for each package from the repository root.",
+      formatIssueSection("Missing required API files:", missing),
+      "To regenerate api.md locally, run the command shown for each package from the repository root.",
     ].filter((part) => part !== "");
 
     core.setFailed(messageParts.join("\n"));

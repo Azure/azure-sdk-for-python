@@ -24,7 +24,7 @@ async function main() {
   const config = loadWorkflowConfig();
   const adapter = loadAdapter(config.adapter);
 
-  // Fields to compare in API.metadata.yml. If the adapter doesn't specify,
+  // Fields to compare in api.metadata.yml. If the adapter doesn't specify,
   // compare all fields (strict default for languages that don't opt out).
   const fieldsToValidate = adapter.metadataFieldsToValidate || null;
 
@@ -36,10 +36,10 @@ async function main() {
   const mismatches = [];
   const missing = [];
   for (const pkgDir of packages) {
-    const apiFile = `${pkgDir}/API.md`;
-    const metadataFile = `${pkgDir}/API.metadata.yml`;
+    const apiFile = `${pkgDir}/api.md`;
+    const metadataFile = `${pkgDir}/api.metadata.yml`;
 
-    // Enforce that each affected package has a committed API.md file.
+    // Enforce that each affected package has a committed api.md file.
     if (!fs.existsSync(apiFile) || !fs.statSync(apiFile).isFile()) {
       missing.push(apiFile);
       continue;
@@ -53,7 +53,7 @@ async function main() {
       continue;
     }
 
-    // API.metadata.yml must be present alongside API.md.
+    // api.metadata.yml must be present alongside api.md.
     if (!fs.existsSync(metadataFile) || !fs.statSync(metadataFile).isFile()) {
       missing.push(metadataFile);
     } else {
@@ -76,7 +76,7 @@ async function main() {
       }
     }
 
-    // Diff-gate only API.md; metadata content differences are acceptable.
+    // Diff-gate the full api.md content; metadata is field-gated above.
     const quietDiffResult = await runAsync("git", ["diff", "--quiet", "--", apiFile], {
       check: false,
     });

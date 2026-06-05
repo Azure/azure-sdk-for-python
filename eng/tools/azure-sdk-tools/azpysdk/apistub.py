@@ -74,7 +74,7 @@ class apistub(Check):
             dest="extract_metadata",
             default=False,
             action="store_true",
-            help="Extract language-specific metadata from generated api.md into API.metadata.yml and remove metadata header from api.md.",
+            help="Extract language-specific metadata from generated api.md into api.metadata.yml and remove metadata header from api.md.",
         )
         p.add_argument(
             "--install-deps",

@@ -24,8 +24,8 @@ async function main() {
   const runtimeExecutable = process.env.RUNTIME_EXECUTABLE || null;
   for (const pkgDir of packages) {
     const packageName = path.basename(pkgDir);
-    logger.info(`Generating API.md for ${packageName}`);
-    adapter.generateApiForPackage({
+    logger.info(`Generating api.md for ${packageName}`);
+    await adapter.generateApiForPackage({
       repoRoot: REPO_ROOT,
       packageName,
       runtimeExecutable,

@@ -204,19 +204,19 @@ function packageRelDir(packageDir) {
 }
 
 function apiMdPath(packageDir) {
-  return path.join(packageDir, "API.md");
+  return path.join(packageDir, "api.md");
 }
 
 function apiMdRel(packageDir) {
-  return `${packageRelDir(packageDir)}/API.md`;
+  return `${packageRelDir(packageDir)}/api.md`;
 }
 
 function metadataPath(packageDir) {
-  return path.join(packageDir, "API.metadata.yml");
+  return path.join(packageDir, "api.metadata.yml");
 }
 
 function metadataRel(packageDir) {
-  return `${packageRelDir(packageDir)}/API.metadata.yml`;
+  return `${packageRelDir(packageDir)}/api.metadata.yml`;
 }
 
 function apiReviewBranchName(kind, packageName, version) {
@@ -532,7 +532,7 @@ function resolveBranchSelection({ preferredBranch, desiredState, apiRelative, me
 
 function ensureBranchStateHasMetadataSha(branchLabel, state) {
   if (state.hasApiMd && !state.apiMdSha256) {
-    throw new Error(`ERROR: ${branchLabel} is missing apiMdSha256 in API.metadata.yml.`);
+    throw new Error(`ERROR: ${branchLabel} is missing apiMdSha256 in api.metadata.yml.`);
   }
 }
 
@@ -770,7 +770,7 @@ function writeBytes(filePath, bytes) {
   fs.writeFileSync(filePath, bytes);
 }
 
-function generateApiBytesForRef({
+async function generateApiBytesForRef({
   adapter,
   repoRoot,
   packageName,
@@ -789,7 +789,7 @@ function generateApiBytesForRef({
   try {
     const version = adapter.readVersion(packageDir);
 
-    adapter.generateApiForPackage({
+    await adapter.generateApiForPackage({
       repoRoot,
       packageName,
       runtimeExecutable,
@@ -818,7 +818,7 @@ function generateApiBytesForRef({
   }
 }
 
-function main() {
+async function main() {
   const args = parseArgs(process.argv.slice(2));
   const adapter = loadAdapter(args.adapter);
 
@@ -843,8 +843,8 @@ function main() {
   try {
     let baseResult = null;
     if (args.base) {
-      logInfo(`\n=== Capturing baseline API.md from tag ${args.base} ===`);
-      baseResult = generateApiBytesForRef({
+      logInfo(`\n=== Capturing baseline api.md from tag ${args.base} ===`);
+      baseResult = await generateApiBytesForRef({
         adapter,
         repoRoot: REPO_ROOT,
         packageName: args.packageName,
@@ -856,8 +856,8 @@ function main() {
       });
     }
 
-    logInfo(`\n=== Capturing target API.md from ${targetRef} ===`);
-    const targetResult = generateApiBytesForRef({
+    logInfo(`\n=== Capturing target api.md from ${targetRef} ===`);
+    const targetResult = await generateApiBytesForRef({
       adapter,
       repoRoot: REPO_ROOT,
       packageName: args.packageName,
@@ -901,7 +901,7 @@ function main() {
           writeBytes(metaFilePath, baseResult.metadata);
           git(["add", metaRelative]);
         }
-        git(["commit", "-m", `[API Review] Baseline API.md for ${args.packageName} ${baseVersion}`]);
+        git(["commit", "-m", `[API Review] Baseline api.md for ${args.packageName} ${baseVersion}`]);
       } else {
         const tracked = git(["ls-files", "--error-unmatch", apiRelative], {
           capture: true,
@@ -917,7 +917,7 @@ function main() {
           if (metaTracked.status === 0) {
             git(["rm", metaRelative]);
           }
-          git(["commit", "-m", `[API Review] Remove API.md for ${args.packageName} (empty baseline)`]);
+          git(["commit", "-m", `[API Review] Remove api.md for ${args.packageName} (empty baseline)`]);
         } else {
           if (fs.existsSync(apiPath)) {
             fs.unlinkSync(apiPath);
@@ -964,10 +964,10 @@ function main() {
           "commit",
           "--allow-empty",
           "-m",
-          `[API Review] API.md for ${args.packageName} ${targetVersion} (no diff vs baseline)`,
+          `[API Review] api.md for ${args.packageName} ${targetVersion} (no diff vs baseline)`,
         ]);
       } else {
-        git(["commit", "-m", `[API Review] API.md for ${args.packageName} ${targetVersion}`]);
+        git(["commit", "-m", `[API Review] api.md for ${args.packageName} ${targetVersion}`]);
       }
 
       git(["push", "--force-with-lease", REMOTE, reviewBranch]);
@@ -1037,7 +1037,7 @@ function main() {
 (async () => {
   logger = await getDefaultLogger();
   try {
-    process.exit(main());
+    process.exit(await main());
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     logError(message);

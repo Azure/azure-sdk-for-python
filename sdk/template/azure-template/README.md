@@ -26,7 +26,7 @@ Running into issues? This section should contain details as to what to do there.
 
 # Next steps
 
-More sample code should go here, along with links out to the appropriate example tests. And more. 
+More sample code should go here, along with links out to the appropriate example tests.
 
 # Contributing
 

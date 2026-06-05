@@ -3,16 +3,15 @@
 
 <#
 .SYNOPSIS
-Extracts Python APIView metadata from API markdown and writes API.metadata.yml.
+Extracts Python APIView metadata from API markdown and writes api.metadata.yml.
 
 .DESCRIPTION
 Reads an API markdown file, extracts parser and Python runtime versions from the
 Python APIView metadata header, removes that header from the markdown, trims leading
-blank lines from the markdown body, and writes API.metadata.yml beside the markdown file.
+blank lines from the markdown body, and writes api.metadata.yml beside the markdown file.
 
 .PARAMETER ApiMarkdownPath
-Optional. Path to API markdown file. If omitted, a markdown file will be resolved
-from OutputPath (prefers API.md, then api.md).
+Optional. Path to API markdown file. If omitted, api.md will be resolved from OutputPath.
 
 .PARAMETER OutputPath
 Optional. Directory containing API markdown output. Defaults to current directory.
@@ -21,7 +20,7 @@ Optional. Directory containing API markdown output. Defaults to current director
 ./Extract-APIViewMetadata-Python.ps1 -OutputPath ./sdk/template/azure-template
 
 .EXAMPLE
-./Extract-APIViewMetadata-Python.ps1 -ApiMarkdownPath ./sdk/template/azure-template/API.md
+./Extract-APIViewMetadata-Python.ps1 -ApiMarkdownPath ./sdk/template/azure-template/api.md
 #>
 
 [CmdletBinding()]
@@ -47,17 +46,12 @@ function Resolve-ApiMarkdownPath {
     }
 
     $resolvedOutput = Resolve-Path -LiteralPath $OutputDirectory -ErrorAction Stop
-    $apiUpper = Join-Path $resolvedOutput.Path "API.md"
-    if (Test-Path -LiteralPath $apiUpper -PathType Leaf) {
-        return $apiUpper
-    }
-
     $apiLower = Join-Path $resolvedOutput.Path "api.md"
     if (Test-Path -LiteralPath $apiLower -PathType Leaf) {
         return $apiLower
     }
 
-    throw "Could not find API markdown file in '$OutputDirectory'. Expected API.md or api.md."
+    throw "Could not find API markdown file in '$OutputDirectory'. Expected api.md."
 }
 
 function Trim-LeadingBlankLines {
@@ -143,7 +137,7 @@ $metadata['apiMdSha256'] = Get-Sha256Hex -Text $normalizedTextForHash
 Set-Content -LiteralPath $resolvedApiPath -Value ($filtered -join $lineEnding) -NoNewline -Encoding utf8
 Write-Host "Updated markdown: $resolvedApiPath"
 
-$metadataPath = Join-Path (Split-Path -Parent $resolvedApiPath) "API.metadata.yml"
+$metadataPath = Join-Path (Split-Path -Parent $resolvedApiPath) "api.metadata.yml"
 if ($metadata.Count -gt 0) {
     $yamlLines = [System.Collections.Generic.List[string]]::new()
     foreach ($key in ($metadata.Keys | Sort-Object)) {
