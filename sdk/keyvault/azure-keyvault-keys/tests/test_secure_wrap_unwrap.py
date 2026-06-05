@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cspell:ignore KWPAD Vtbw kwpad vtbw
 """
 Unit tests for the new ``securewrapkey`` / ``secureunwrapkey`` operations
 added in service API version ``2026-03-01-preview``.
