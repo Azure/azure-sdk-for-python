@@ -2,7 +2,7 @@
 mypy = true
 pyright = false
 type_check_samples = true
-black = false
+black = true
 
 [tool.azure-sdk-conda]
 in_bundle = true

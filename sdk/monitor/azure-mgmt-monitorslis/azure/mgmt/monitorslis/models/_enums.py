@@ -22,29 +22,31 @@ class Category(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines operators used in filter conditions."""
 
-    EQUAL = "=="
+    EQUAL = "eq"
     """Equal to."""
-    NOT_EQUAL = "!="
+    NOT_EQUAL = "ne"
     """Not equal to."""
-    LESS_THAN = "<"
+    LESS_THAN = "lt"
     """Less than."""
-    LESS_THAN_OR_EQUAL = "<="
+    LESS_THAN_OR_EQUAL = "lte"
     """Less than or equal to."""
-    GREATER_THAN = ">"
+    GREATER_THAN = "gt"
     """Greater than."""
-    GREATER_THAN_OR_EQUAL = ">="
+    GREATER_THAN_OR_EQUAL = "gte"
     """Greater than or equal to."""
-    IN = "@in"
-    """In operator."""
-    NOT_IN = "!in"
-    """Not in."""
+    IN = "in"
+    """Matches when ``value`` is one of the items in the ``^^``-delimited list (for example, ``value``
+    = "east^^west^^north")."""
+    NOT_IN = "notin"
+    """Matches when ``value`` is none of the items in the ``^^``-delimited list (for example,
+    ``value`` = "east^^west^^north")."""
     STARTS_WITH = "startswith"
     """Starts with."""
-    NOT_STARTS_WITH = "!startswith"
+    NOT_STARTS_WITH = "notstartswith"
     """Does not start with."""
     CONTAINS = "contains"
     """Contains the value."""
-    NOT_CONTAINS = "!contains"
+    NOT_CONTAINS = "notcontains"
     """Does not contain the value."""
 
 
@@ -108,14 +110,16 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SamplingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the available sampling types."""
 
-    MAX = "max"
-    """Maximum value."""
-    MIN = "min"
-    """Minimum value."""
-    AVG = "avg"
+    AVERAGE = "Average"
     """Average value."""
-    SUM = "sum"
+    SUM = "Sum"
     """Summation."""
+    COUNT = "Count"
+    """Count of occurrences."""
+    MIN = "Min"
+    """Minimum value."""
+    MAX = "Max"
+    """Maximum value."""
 
 
 class ScalarFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -176,11 +180,11 @@ class TemporalAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class WindowUptimeCriteriaComparator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines comparison operators for window uptime criteria."""
 
-    LESS_THAN = "<"
+    LESS_THAN = "lt"
     """Less than the target value."""
-    GREATER_THAN = ">"
+    GREATER_THAN = "gt"
     """Greater than the target value."""
-    LESS_THAN_OR_EQUAL = "<="
+    LESS_THAN_OR_EQUAL = "lte"
     """Less than or equal to the target value."""
-    GREATER_THAN_OR_EQUAL = ">="
+    GREATER_THAN_OR_EQUAL = "gte"
     """Greater than or equal to the target value."""

@@ -66,9 +66,7 @@ async def sample_transcribe_with_phrase_list_async():
         with open(audio_file_path, "rb") as audio_file:
             # Add custom phrases to improve recognition of names and domain-specific terms
             # For example, "Jessie" might be recognized as "Jesse", or "Contoso" as "can't do so"
-            phrase_list = PhraseListProperties(
-                phrases=["Contoso", "Jessie", "Rehaan"]
-            )
+            phrase_list = PhraseListProperties(phrases=["Contoso", "Jessie", "Rehaan"])
 
             # Create transcription options with phrase list
             options = TranscriptionOptions(phrase_list=phrase_list)
