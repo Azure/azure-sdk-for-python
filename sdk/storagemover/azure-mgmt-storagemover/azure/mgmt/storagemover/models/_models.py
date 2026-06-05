@@ -1439,7 +1439,14 @@ class JobDefinitionUpdateParameters(_Model):
     )
     """Job definition properties."""
 
-    __flattened_items = ["description", "copy_mode", "agent_name", "connections", "data_integrity_validation"]
+    __flattened_items = [
+        "description",
+        "copy_mode",
+        "agent_name",
+        "connections",
+        "data_integrity_validation",
+        "schedule",
+    ]
 
     @overload
     def __init__(
@@ -1492,6 +1499,8 @@ class JobDefinitionUpdateProperties(_Model):
      "SaveVerifyFileMD5", "SaveFileMD5", and "None".
     :vartype data_integrity_validation: str or
      ~azure.mgmt.storagemover.models.DataIntegrityValidation
+    :ivar schedule: Schedule information for the Job Definition.
+    :vartype schedule: ~azure.mgmt.storagemover.models.ScheduleInfo
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1509,6 +1518,8 @@ class JobDefinitionUpdateProperties(_Model):
     )
     """Data Integrity Validation mode. Known values are: \"SaveVerifyFileMD5\", \"SaveFileMD5\", and
      \"None\"."""
+    schedule: Optional["_models.ScheduleInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Schedule information for the Job Definition."""
 
     @overload
     def __init__(
@@ -1519,6 +1530,7 @@ class JobDefinitionUpdateProperties(_Model):
         agent_name: Optional[str] = None,
         connections: Optional[list[str]] = None,
         data_integrity_validation: Optional[Union[str, "_models.DataIntegrityValidation"]] = None,
+        schedule: Optional["_models.ScheduleInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -2333,8 +2345,8 @@ class S3WithHmacEndpointProperties(EndpointBaseProperties, discriminator="S3With
     :vartype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultS3WithHmacCredentials
     :ivar source_uri: The  URI which points to the source.
     :vartype source_uri: str
-    :ivar source_type: The source type of S3WithHmac endpoint. Known values are: "MINIO",
-     "BACKBLAZE", "IBM", "CLOUDFLARE", and "GCS".
+    :ivar source_type: The source type of S3WithHmac endpoint. Known values are: "MINIO", "IBM",
+     "GCS", "ALIBABA", "DELL_EMC", and "OTHER".
     :vartype source_type: str or ~azure.mgmt.storagemover.models.S3WithHmacSourceType
     :ivar other_source_type_description: The description for other source type of S3WithHmac
      endpoint.
@@ -2351,8 +2363,8 @@ class S3WithHmacEndpointProperties(EndpointBaseProperties, discriminator="S3With
     source_type: Optional[Union[str, "_models.S3WithHmacSourceType"]] = rest_field(
         name="sourceType", visibility=["read", "create"]
     )
-    """The source type of S3WithHmac endpoint. Known values are: \"MINIO\", \"BACKBLAZE\", \"IBM\",
-     \"CLOUDFLARE\", and \"GCS\"."""
+    """The source type of S3WithHmac endpoint. Known values are: \"MINIO\", \"IBM\", \"GCS\",
+     \"ALIBABA\", \"DELL_EMC\", and \"OTHER\"."""
     other_source_type_description: Optional[str] = rest_field(
         name="otherSourceTypeDescription", visibility=["read", "create"]
     )
@@ -2426,13 +2438,13 @@ class S3WithHmacEndpointUpdateProperties(EndpointBaseUpdateProperties, discrimin
 class ScheduleInfo(_Model):
     """Schedule information for the Job Definition.
 
-    :ivar frequency: Type of schedule — Monthly, Weekly, or Daily. Required. Known values are:
-     "Monthly", "Weekly", "Daily", and "Onetime".
+    :ivar frequency: Type of schedule — Monthly, Weekly, or Daily. Known values are: "Monthly",
+     "Weekly", "Daily", "Onetime", and "None".
     :vartype frequency: str or ~azure.mgmt.storagemover.models.Frequency
-    :ivar is_active: Whether the schedule is currently active. Required.
+    :ivar is_active: Whether the schedule is currently active.
     :vartype is_active: bool
     :ivar execution_time: Time of day to execute (hours and minutes).
-    :vartype execution_time: ~azure.mgmt.storagemover.models.Time
+    :vartype execution_time: ~azure.mgmt.storagemover.models.SchedulerTime
     :ivar start_date: Specific one-time execution date and time.
     :vartype start_date: ~datetime.datetime
     :ivar days_of_week: Days of the week for weekly schedules.
@@ -2445,12 +2457,14 @@ class ScheduleInfo(_Model):
     :vartype end_date: ~datetime.datetime
     """
 
-    frequency: Union[str, "_models.Frequency"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Type of schedule — Monthly, Weekly, or Daily. Required. Known values are: \"Monthly\",
-     \"Weekly\", \"Daily\", and \"Onetime\"."""
-    is_active: bool = rest_field(name="isActive", visibility=["read", "create", "update", "delete", "query"])
-    """Whether the schedule is currently active. Required."""
-    execution_time: Optional["_models.Time"] = rest_field(
+    frequency: Optional[Union[str, "_models.Frequency"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of schedule — Monthly, Weekly, or Daily. Known values are: \"Monthly\", \"Weekly\",
+     \"Daily\", \"Onetime\", and \"None\"."""
+    is_active: Optional[bool] = rest_field(name="isActive", visibility=["read", "create", "update", "delete", "query"])
+    """Whether the schedule is currently active."""
+    execution_time: Optional["_models.SchedulerTime"] = rest_field(
         name="executionTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """Time of day to execute (hours and minutes)."""
@@ -2479,14 +2493,54 @@ class ScheduleInfo(_Model):
     def __init__(
         self,
         *,
-        frequency: Union[str, "_models.Frequency"],
-        is_active: bool,
-        execution_time: Optional["_models.Time"] = None,
+        frequency: Optional[Union[str, "_models.Frequency"]] = None,
+        is_active: Optional[bool] = None,
+        execution_time: Optional["_models.SchedulerTime"] = None,
         start_date: Optional[datetime.datetime] = None,
         days_of_week: Optional[list[str]] = None,
         days_of_month: Optional[list[int]] = None,
         cron_expression: Optional[str] = None,
         end_date: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchedulerTime(_Model):
+    """The time of day.
+
+    :ivar hour: The hour element of the time. Allowed values range from 0 (start of the selected
+     day) to 24 (end of the selected day). Hour value 24 cannot be combined with any other minute
+     value but 0.
+    :vartype hour: int
+    :ivar minute: The minute element of the time. Allowed values are 0 and 30. If not specified,
+     its value defaults to 0. Known values are: 0 and 30.
+    :vartype minute: int or ~azure.mgmt.storagemover.models.Minute
+    """
+
+    hour: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The hour element of the time. Allowed values range from 0 (start of the selected day) to 24
+     (end of the selected day). Hour value 24 cannot be combined with any other minute value but 0."""
+    minute: Optional[Union[int, "_models.Minute"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minute element of the time. Allowed values are 0 and 30. If not specified, its value
+     defaults to 0. Known values are: 0 and 30."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hour: Optional[int] = None,
+        minute: Optional[Union[int, "_models.Minute"]] = None,
     ) -> None: ...
 
     @overload

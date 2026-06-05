@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.authentication_settings.delete(
+    client.authentication_settings.begin_delete(
         resource_group_name="my-resource-group",
         health_model_name="my-health-model",
         authentication_setting_name="my-auth-setting",
-    )
+    ).result()
 
 
-# x-ms-original-file: 2025-05-01-preview/AuthenticationSettings_Delete.json
+# x-ms-original-file: 2026-01-01-preview/AuthenticationSettings_Delete.json
 if __name__ == "__main__":
     main()

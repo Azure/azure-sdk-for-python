@@ -7,7 +7,7 @@
 import asyncio
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testcase_async import WebpubsubClientTestAsync, TEST_RESULT_ASYNC, on_group_message
+from testcase_async import WebpubsubClientTestAsync, TEST_RESULT_ASYNC
 from testcase import WebpubsubClientPowerShellPreparer
 from azure.messaging.webpubsubclient.models import WebPubSubProtocolType
 
@@ -16,9 +16,9 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
     # auto_connect will be triggered if connection is dropped by accident and we disable recovery
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_auto_connect_async(self, webpubsubclient_connection_string):
+    async def test_auto_connect_async(self, webpubsubclient_endpoint):
         client = await self.create_client(
-            connection_string=webpubsubclient_connection_string,
+            endpoint=webpubsubclient_endpoint,
             protocol_type=WebPubSubProtocolType.JSON,
             message_retry_total=10,
             reconnect_retry_total=10,
@@ -26,18 +26,16 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
             reconnect_retry_backoff_factor=0.1,
         )
         name = "test_auto_connect_async"
+        connected_event, _, message_event = await self.setup_events(client)
         async with client:
-            await asyncio.sleep(0.001)  # wait for connection_id to be updated
+            await asyncio.wait_for(connected_event.wait(), timeout=30)
             conn_id0 = client._connection_id
-            group_name = name
-            await client.subscribe("group-message", on_group_message)
-            await client.join_group(group_name)
-            await client._ws.sock.close(
-                code=1001
-            )  # close the connection to trigger auto connect
-            await asyncio.sleep(3)  # wait for reconnect
-            await client.send_to_group(group_name, name, "text")
-            await asyncio.sleep(1)  # wait for on_group_message to be called
+            await client.join_group(name)
+            connected_event.clear()  # reset for reconnection detection
+            await client._ws.sock.close(code=1001)  # close the connection to trigger auto connect
+            # wait for reconnect
+            await asyncio.wait_for(connected_event.wait(), timeout=30)
+            await self.retry_send_until_message(client, name, name, message_event, retries=10)
             conn_id1 = client._connection_id
         assert conn_id0 is not None
         assert conn_id1 is not None

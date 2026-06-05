@@ -4439,6 +4439,29 @@ class ModelPackageInput(msrest.serialization.Model):
         self.path = kwargs['path']
 
 
+class ModelVersionAllowedDeploymentTemplatesItem(msrest.serialization.Model):
+    """ModelVersionAllowedDeploymentTemplatesItem.
+
+    :ivar asset_id:
+    :vartype asset_id: str
+    """
+
+    _attribute_map = {
+        'asset_id': {'key': 'assetId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword asset_id:
+        :paramtype asset_id: str
+        """
+        super(ModelVersionAllowedDeploymentTemplatesItem, self).__init__(**kwargs)
+        self.asset_id = kwargs.get('asset_id', None)
+
+
 class ModelVersionData(Resource):
     """Azure Resource Manager resource envelope.
 
@@ -4541,6 +4564,9 @@ class ModelVersionDetails(AssetBase):
     :ivar default_deployment_template:
     :vartype default_deployment_template:
      ~azure.mgmt.machinelearningservices.models.ModelVersionDefaultDeploymentTemplate
+    :ivar allowed_deployment_templates:
+    :vartype allowed_deployment_templates:
+     list[~azure.mgmt.machinelearningservices.models.ModelVersionAllowedDeploymentTemplatesItem]
     """
 
     _attribute_map = {
@@ -4556,6 +4582,7 @@ class ModelVersionDetails(AssetBase):
         'model_uri': {'key': 'modelUri', 'type': 'str'},
         'origin_asset_id': {'key': 'originAssetId', 'type': 'str'},
         'default_deployment_template': {'key': 'defaultDeploymentTemplate', 'type': 'ModelVersionDefaultDeploymentTemplate'},
+        'allowed_deployment_templates': {'key': 'allowedDeploymentTemplates', 'type': '[ModelVersionAllowedDeploymentTemplatesItem]'},
     }
 
     def __init__(
@@ -4590,6 +4617,9 @@ class ModelVersionDetails(AssetBase):
         :keyword default_deployment_template:
         :paramtype default_deployment_template:
          ~azure.mgmt.machinelearningservices.models.ModelVersionDefaultDeploymentTemplate
+        :keyword allowed_deployment_templates:
+        :paramtype allowed_deployment_templates:
+         list[~azure.mgmt.machinelearningservices.models.ModelVersionAllowedDeploymentTemplatesItem]
         """
         super(ModelVersionDetails, self).__init__(**kwargs)
         self.flavors = kwargs.get('flavors', None)
@@ -4599,6 +4629,7 @@ class ModelVersionDetails(AssetBase):
         self.model_uri = kwargs.get('model_uri', None)
         self.origin_asset_id = kwargs.get('origin_asset_id', None)
         self.default_deployment_template = kwargs.get('default_deployment_template', None)
+        self.allowed_deployment_templates = kwargs.get('allowed_deployment_templates', None)
 
 
 class ModelVersionResourceArmPaginatedResult(msrest.serialization.Model):

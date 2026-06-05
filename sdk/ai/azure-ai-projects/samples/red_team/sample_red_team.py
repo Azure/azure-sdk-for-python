@@ -16,9 +16,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. Your model deployment name.
+    2) FOUNDRY_MODEL_NAME - Required. Your model deployment name.
     3) MODEL_ENDPOINT - Required. The Azure AI Model endpoint, as found in the overview page of your
        Microsoft Foundry project. Example: https://<account_name>.services.ai.azure.com
     4) MODEL_API_KEY - Required. The API key for your Azure AI Model.
@@ -38,18 +38,17 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
+    "FOUNDRY_PROJECT_ENDPOINT"
 ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
 model_api_key = os.environ["MODEL_API_KEY"]
-model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]  # Sample : gpt-4o-mini
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
-    # [START red_team_sample]
     print("Creating a Red Team scan for direct model testing")
 
     # Create target configuration for testing an Azure OpenAI model
@@ -81,4 +80,3 @@ with (
     print("Listing all Red Team scans")
     for scan in project_client.beta.red_teams.list():
         print(f"Found scan: {scan.name}, Status: {scan.status}")
-        # [END red_team_sample]

@@ -70,6 +70,6 @@ class ClientPreparer(BaseClientPreparer):
 
 def get_decorator(**kwargs):
     """returns a test decorator for test parameterization"""
-    versions = kwargs.pop("api_versions", None) or ["7.5"]
+    versions = kwargs.pop("api_versions", None) or ["2025-07-01"]
     params = [pytest.param(api_version) for api_version in versions]
     return params

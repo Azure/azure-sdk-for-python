@@ -1,6 +1,6 @@
 # Release History
 
-## 2.4.1 (Unreleased)
+## 2.5.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,17 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 2.5.0 (2026-05-22)
+
+### Features Added
+
+- Added `refresh_enabled` parameter to the `load` method. Defaults to `True` if `refresh_on` is set. When set to `True` without `refresh_on` keys, all selected key-values are monitored for changes. When set to `False`, calling `refresh` will be a no-op.
+- Added the ability to monitor all selected key-values for refresh with the `refresh_enabled` kwarg. When this kwarg is set to `True`, and `refresh_on` is not specified, changes to any selected key-values will trigger configuration reload.
+
+### Other Changes
+
+- Switched feature flag refresh to use page-based etag checking instead of per-flag etag checking, reducing the number of requests needed to detect changes.
 
 ## 2.4.0 (2026-02-17)
 

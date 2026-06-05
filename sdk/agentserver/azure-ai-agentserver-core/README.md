@@ -1,4 +1,4 @@
-# Azure AI AgentServerHost Core for Python
+# Azure AI Agent Server Core client library for Python
 
 The `azure-ai-agentserver-core` package provides the foundation host framework for building Azure AI Hosted Agent containers. It handles the protocol-agnostic infrastructure — health probes, graceful shutdown, OpenTelemetry tracing, and ASGI serving — so that protocol packages can focus on their endpoint logic.
 
@@ -10,11 +10,7 @@ The `azure-ai-agentserver-core` package provides the foundation host framework f
 pip install azure-ai-agentserver-core
 ```
 
-To enable OpenTelemetry tracing with Azure Monitor and OTLP exporters:
-
-```bash
-pip install azure-ai-agentserver-core[tracing]
-```
+OpenTelemetry tracing with Azure Monitor and OTLP exporters is included by default.
 
 ### Prerequisites
 

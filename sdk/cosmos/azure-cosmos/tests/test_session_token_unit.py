@@ -254,3 +254,66 @@ class TestSessionTokenUnitTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+
+class TestResolvePartitionLocalSessionTokenRegression(unittest.TestCase):
+    """Regression tests for ``_resolve_partition_local_session_token``.
+
+    Companion-fix for the PKRange migration at ``_session.py:386``:
+    ``parents = list(pk_range[0].get('parents') or ())``. Previously this was
+    ``pk_range[0]['parents'].copy()`` which crashed (a) on PKRange namedtuples
+    because tuples have no ``.copy()`` and (b) when ``parents`` was ``None``.
+    """
+
+    def _container(self):
+        return _session.SessionContainer()
+
+    def test_pkrange_tuple_with_parents(self):
+        """PKRange (namedtuple) input does not crash and parents are walked."""
+        from azure.cosmos._routing.routing_range import PKRange
+        pkr = PKRange(id="child", minInclusive="80", maxExclusive="FF",
+                      parents=("parentA", "parentB"))
+        # No tokens — function must not crash on the parents iteration.
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_none_parents_does_not_crash(self):
+        """Old code did ``parents.copy()`` which raised AttributeError on None."""
+        pkr = {"id": "0", "minInclusive": "", "maxExclusive": "FF", "parents": None}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_empty_parents(self):
+        pkr = {"id": "0", "minInclusive": "", "maxExclusive": "FF", "parents": []}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_tuple_parents(self):
+        pkr = {"id": "child", "parents": ("parentA",)}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_pkrange_walks_parents_then_self(self):
+        """The iteration appends ``pk_range[0]['id']`` after parents, so an id
+        token alone (no parent tokens) still resolves."""
+        from azure.cosmos._routing.routing_range import PKRange
+        from azure.cosmos._vector_session_token import VectorSessionToken
+        pkr = PKRange(id="child", minInclusive="80", maxExclusive="FF", parents=())
+        # Build a token for the child id only.
+        # VectorSessionToken.create accepts the standard "version#globalLsn" form;
+        # use a minimal valid token so .session_token round-trips.
+        token = VectorSessionToken.create("1#1")
+        # The session container holds dict[id] -> SessionToken-like object
+        # whose ``session_token`` attribute is the string form. Wrap accordingly.
+        class _Wrap:
+            def __init__(self, t):
+                self.session_token = t.session_token
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={"child": _Wrap(token)})
+        self.assertEqual(result, token.session_token)
+

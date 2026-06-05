@@ -92,7 +92,13 @@ class apistub(Check):
                 os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for apistub check")
 
             # install dependencies
@@ -148,6 +154,8 @@ class apistub(Check):
                 cmds.extend(["--out-path", out_token_path])
             if cross_language_mapping_path:
                 cmds.extend(["--mapping-path", cross_language_mapping_path])
+            if getattr(args, "generate_md", False):
+                cmds.append("--skip-pylint")
 
             logger.info("Running apistub {}.".format(cmds))
 

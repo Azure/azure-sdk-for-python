@@ -25,7 +25,8 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from typing import Optional, cast, Union, Tuple
+import urllib.parse
+from typing import Optional, Set, cast, Union, Tuple
 from urllib.parse import urlparse
 
 from azure.core.pipeline.transport import (
@@ -36,8 +37,9 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, AsyncHttpResponse, HttpRequest
 
 
-from ...utils._utils import _FixedOffset, case_insensitive_dict
+from ...utils._utils import case_insensitive_dict, CaseInsensitiveSet
 from .. import PipelineResponse
+
 
 AllHttpResponseType = Union[HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse]
 HTTPRequestType = Union[HttpRequest, LegacyHttpRequest]
@@ -54,7 +56,7 @@ def _parse_http_date(text: str) -> datetime.datetime:
     if not parsed_date:
         raise ValueError("Invalid HTTP date")
     tz_offset = cast(int, parsed_date[9])  # Look at the code, tz_offset is always an int, at worst 0
-    return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(tz_offset / 60))
+    return datetime.datetime(*parsed_date[:6], tzinfo=datetime.timezone(datetime.timedelta(seconds=tz_offset)))
 
 
 def parse_retry_after(retry_after: str) -> float:
@@ -202,3 +204,37 @@ def get_next_parameter(header_value: str, separator: str = "=") -> Optional[Tupl
         header_value = header_value[len(param_value) + 1 :]
 
     return param_key, param_value, header_value
+
+
+def sanitize_url(url: str, allowed_query_params: Set[str], redacted_placeholder: str = "REDACTED") -> str:
+    """Redact query parameter values not in the allowlist.
+
+    :param str url: The URL to sanitize.
+    :param set[str] allowed_query_params: Set of query parameter names whose values should not be redacted.
+        If a :class:`~azure.core.utils._utils.CaseInsensitiveSet` is provided, lookups are case-insensitive
+        without per-call normalization.
+    :param str redacted_placeholder: The placeholder to use for redacted values.
+    :return: The sanitized URL with redacted query parameter values.
+    :rtype: str
+    """
+    parsed_url = urllib.parse.urlparse(url)
+    if not parsed_url.query:
+        return url
+
+    # Operate on the raw query string to preserve original percent-encoding.
+    if not isinstance(allowed_query_params, CaseInsensitiveSet):
+        allowed_query_params = CaseInsensitiveSet(allowed_query_params)
+
+    parts = []
+    for param in parsed_url.query.split("&"):
+        eq_idx = param.find("=")
+        if eq_idx == -1:
+            # No value to redact, keep as-is.
+            parts.append(param)
+        else:
+            key = param[:eq_idx]
+            parts.append(param if key in allowed_query_params else f"{key}={redacted_placeholder}")
+
+    sanitized_query = "&".join(parts)
+    sanitized_url = parsed_url._replace(query=sanitized_query)
+    return urllib.parse.urlunparse(sanitized_url)

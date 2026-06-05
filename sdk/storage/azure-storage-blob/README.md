@@ -20,7 +20,7 @@ Blob storage is ideal for:
 ## Getting started
 
 ### Prerequisites
-* Python 3.9 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Python 3.9 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://learn.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -128,12 +128,12 @@ The `credential` parameter may be provided in a number of different forms, depen
     from azure.storage.blob import BlobServiceClient
     service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", credential="<account_access_key>")
     ```
-    
+
     If you are using **customized url** (which means the url is not in this format `<my_account_name>.blob.core.windows.net`),
     please instantiate the client using the credential below:
     ```python
     from azure.storage.blob import BlobServiceClient
-    service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net", 
+    service = BlobServiceClient(account_url="https://<my_account_name>.blob.core.windows.net",
        credential={"account_name": "<your_account_name>", "account_key":"<account_access_key>"})
     ```
 
@@ -186,7 +186,7 @@ Four different clients are provided to interact with the various components of t
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.
 
-### Async Clients 
+### Async Clients
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
@@ -354,7 +354,7 @@ Other optional configuration keyword arguments that can be specified on the clie
 * __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
 Defaults to 20 seconds.
 * __read_timeout__ (int): The number of seconds the client will wait, between consecutive read operations, for a
-response from the server. This is a socket level timeout and is not affected by overall data size. Client-side read 
+response from the server. This is a socket level timeout and is not affected by overall data size. Client-side read
 timeouts will be automatically retried. Defaults to 60 seconds.
 * __transport__ (Any): User-provided transport to send the HTTP request.
 

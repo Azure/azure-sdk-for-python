@@ -89,7 +89,7 @@ def start_proxy(test_proxy):
 @pytest.fixture(scope="function", autouse=True)
 def initialize_test(request):
     if request.node.originalname is None:
-        # tox throws error otherwise
+        # pytest throws error otherwise
         test_name = os.environ.get("PYTEST_CURRENT_TEST").split(":")[-1].split(" ")[0]
         request.cls._testMethodName = test_name
     else:

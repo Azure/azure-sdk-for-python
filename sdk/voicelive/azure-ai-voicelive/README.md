@@ -5,7 +5,7 @@ This package provides a **real-time, speech-to-speech** client for Azure AI Voic
 It opens a WebSocket session to stream microphone audio to the service and receive
 typed server events (including audio) for responsive, interruptible conversations.
 
-> **Status:** General Availability (GA). This is a stable release suitable for production use.
+> **Status:** Preview (`1.3.0b1`). This beta release includes the latest SDK and sample updates and may change before the next stable release.
 
 > **Important:** As of version 1.0.0, this SDK is **async-only**. The synchronous API has been removed to focus exclusively on async patterns. All examples and samples use `async`/`await` syntax.
 
@@ -16,34 +16,35 @@ Getting started
 
 ### Prerequisites
 
-- **Python 3.9+**
+- **Python 3.10+**
 - An **Azure subscription**
 - A **VoiceLive** resource and endpoint
 - A working **microphone** and **speakers/headphones** if you run the voice samples
 
 ### Install
 
-Install the stable GA version:
+Install the latest preview version:
 
 ```bash
 # Base install (core client only)
-python -m pip install azure-ai-voicelive
+python -m pip install --pre azure-ai-voicelive
 
 # For asynchronous streaming (uses aiohttp)
-python -m pip install "azure-ai-voicelive[aiohttp]"
+python -m pip install --pre "azure-ai-voicelive[aiohttp]"
 
 # For voice samples (includes audio processing)
 # First install PyAudio dependencies for your platform:
 #   Linux: sudo apt-get install -y portaudio19-dev libasound2-dev
 #   macOS: brew install portaudio
-python -m pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv
+python -m pip install --pre "azure-ai-voicelive[aiohttp]" azure-identity pyaudio python-dotenv
 ```
 
 The SDK provides async-only WebSocket connections using `aiohttp` for optimal performance and reliability.
 
 ### Authenticate
 
-You can authenticate with an **API key** or an **Azure Active Directory (AAD) token**.
+You can authenticate with an **API key** or a Microsoft Entra ID token.
+The samples default to `DefaultAzureCredential`; for local development, `az login` is usually the simplest path.
 
 #### API Key Authentication (Quick Start)
 
@@ -66,7 +67,7 @@ async def main():
     async with connect(
         endpoint="your-endpoint",
         credential=AzureKeyCredential("your-api-key"),
-        model="gpt-4o-realtime-preview"
+        model="gpt-realtime"
     ) as connection:
         # Your async code here
         pass
@@ -76,7 +77,7 @@ asyncio.run(main())
 
 #### AAD Token Authentication
 
-For production applications, AAD authentication is recommended:
+For production applications, Entra ID authentication is recommended:
 
 ```python
 import asyncio
@@ -85,14 +86,17 @@ from azure.ai.voicelive import connect
 
 async def main():
     credential = DefaultAzureCredential()
-    
-    async with connect(
-        endpoint="your-endpoint",
-        credential=credential,
-        model="gpt-4o-realtime-preview"
-    ) as connection:
-        # Your async code here
-        pass
+
+    try:
+        async with connect(
+            endpoint="your-endpoint",
+            credential=credential,
+            model="gpt-realtime"
+        ) as connection:
+            # Your async code here
+            pass
+    finally:
+        await credential.close()
 
 asyncio.run(main())
 ```
@@ -107,13 +111,16 @@ Key concepts
   - **SessionResource** – Update session parameters (voice, formats, VAD) with async methods
   - **RequestSession** – Strongly-typed session configuration
   - **ServerVad** – Configure voice activity detection
+  - **SmartEndOfTurnDetection** – Configure audio-based end-of-turn detection
   - **AzureStandardVoice** – Configure voice settings
+  - **parallel_tool_calls** – Control whether tool calls may run in parallel for a session
 - **Audio Handling**:
   - **InputAudioBufferResource** – Manage audio input to the service with async methods
   - **OutputAudioBufferResource** – Control audio output from the service with async methods
 - **Conversation Management**:
   - **ResponseResource** – Create or cancel model responses with async methods
   - **ConversationResource** – Manage conversation items with async methods
+  - **ClientEventInputTextDelta / ClientEventInputTextDone** – Stream text input incrementally into an item
 - **Error Handling**: 
   - **ConnectionError** – Base exception for WebSocket connection errors
   - **ConnectionClosed** – Raised when WebSocket connection is closed
@@ -142,7 +149,7 @@ The Basic Voice Assistant sample demonstrates full-featured voice interaction wi
 python samples/basic_voice_assistant_async.py
 
 # With custom parameters
-python samples/basic_voice_assistant_async.py --model gpt-4o-realtime-preview --voice alloy --instructions "You're a helpful assistant"
+python samples/basic_voice_assistant_async.py --model gpt-realtime --voice alloy --instructions "You're a helpful assistant"
 ```
 
 ### Minimal example
@@ -152,12 +159,18 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive.aio import connect
 from azure.ai.voicelive.models import (
-    RequestSession, Modality, InputAudioFormat, OutputAudioFormat, ServerVad, ServerEventType
+    AudioEchoCancellation,
+    RequestSession,
+    Modality,
+    InputAudioFormat,
+    OutputAudioFormat,
+    ServerVad,
+    ServerEventType,
 )
 
 API_KEY = "your-api-key"
 ENDPOINT = "wss://your-endpoint.com/openai/realtime"
-MODEL = "gpt-4o-realtime-preview"
+MODEL = "gpt-realtime"
 
 async def main():
     async with connect(
@@ -170,6 +183,7 @@ async def main():
             instructions="You are a helpful assistant.",
             input_audio_format=InputAudioFormat.PCM16,
             output_audio_format=OutputAudioFormat.PCM16,
+            input_audio_echo_cancellation=AudioEchoCancellation(),
             turn_detection=ServerVad(
                 threshold=0.5, 
                 prefix_padding_ms=300, 
@@ -186,6 +200,13 @@ async def main():
 
 asyncio.run(main())
 ```
+
+`AudioEchoCancellation` now supports both the default server loopback reference path and a
+client-provided stereo echo reference. Use `reference_source="client"` with `channels=2` only when
+your application sends stereo PCM16 input with the microphone on channel 0 and the echo reference
+signal on channel 1.
+
+For image inputs, `RequestImageContentPart` uses the `image_url` field name.
 
 Available Voice Options
 -----------------------

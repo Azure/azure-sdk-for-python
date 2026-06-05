@@ -22,7 +22,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
 
-_Python 3.9 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
+_Python 3.9 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md)._
 
 ## Getting started
 ### Install the package
@@ -86,6 +86,7 @@ This section contains code snippets covering common tasks:
 * [Update an existing key](#update-an-existing-key)
 * [Delete a key](#delete-a-key)
 * [Configure automatic key rotation](#configure-automatic-key-rotation)
+* [Register external keys](#register-external-keys-managed-hsm-only)
 * [List keys](#list-keys)
 * [Perform cryptographic operations](#cryptographic-operations)
 * [Async API](#async-api)
@@ -203,6 +204,29 @@ print(f"Rotated the key on-demand; new version is {rotated_key.properties.versio
 ```
 
 <!-- END SNIPPET -->
+
+### Register external keys (Managed HSM only)
+[create_external_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_external_key)
+registers an external key with a Managed HSM that is configured to use External Key Management (EKM). The external HSM
+owns the key material; the Managed HSM stores only a reference to the key.
+
+> **NOTE:** External keys are only supported on Managed HSM, not regular Key Vault. The Managed HSM must be configured
+> with an external HSM source.
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import ExternalKey, KeyClient
+
+credential = DefaultAzureCredential()
+
+key_client = KeyClient(vault_url="https://my-managed-hsm.managedhsm.azure.net/", credential=credential)
+
+external_key = ExternalKey(id="external-key-reference-id")
+key = key_client.create_external_key("external-key-name", external_key=external_key)
+
+print(key.name)
+print(key.properties.external_key.id)
+```
 
 ### List keys
 [list_properties_of_keys](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.list_properties_of_keys)

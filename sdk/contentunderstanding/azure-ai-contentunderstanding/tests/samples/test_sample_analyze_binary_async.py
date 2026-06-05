@@ -34,6 +34,7 @@ import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.models import DocumentContent
 
 
@@ -96,8 +97,38 @@ class TestSampleAnalyzeBinaryAsync(ContentUnderstandingClientTestBaseAsync):
         # Test document properties access
         self._test_document_properties(result)
 
+        # Test to_llm_input conversion (mirrors sample's [START convert_to_llm_input] block)
+        self._test_to_llm_input(result)
+
         await client.close()
         print("\n[SUCCESS] All test_sample_analyze_binary_async assertions passed")
+
+    def _test_to_llm_input(self, result):
+        """Validate to_llm_input() produces a non-empty LLM-ready text block.
+
+        Mirrors the [START convert_to_llm_input] block in sample_analyze_binary_async.py:
+        the helper packages the AnalysisResult into YAML front matter + markdown body.
+        """
+        text = to_llm_input(result)
+
+        assert isinstance(text, str), "to_llm_input should return a string"
+        assert len(text) > 0, "to_llm_input output should not be empty"
+        assert text.strip(), "to_llm_input output should not be just whitespace"
+
+        # YAML front matter is delimited by '---' lines at the top of each content block
+        assert text.startswith("---"), "to_llm_input output should start with YAML front matter delimiter"
+        assert "\n---\n" in text, "to_llm_input output should contain YAML front matter closing delimiter"
+
+        # Front matter should declare the content type for document analysis
+        assert "contentType: document" in text, "YAML front matter should declare 'contentType: document'"
+
+        # The markdown body should follow the front matter
+        content = result.contents[0]
+        markdown = getattr(content, "markdown", None)
+        if markdown:
+            assert markdown in text, "to_llm_input output should include the original markdown body"
+
+        print(f"[PASS] to_llm_input output validated ({len(text)} characters)")
 
     def _test_markdown_extraction(self, result):
         """Test markdown content extraction."""
