@@ -8,7 +8,8 @@
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import random
-from typing import Any, Dict, TYPE_CHECKING
+from datetime import datetime
+from typing import Any, Callable, Dict, Optional, Tuple, TYPE_CHECKING
 
 from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedError
 from azure.core.pipeline.policies import (
@@ -18,12 +19,21 @@ from azure.core.pipeline.policies import (
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
+from .models import StorageErrorCode
 from .policies import (
+    _analyze_request,
+    _apply_session_auth,
+    _extract_session,
     _prepare_content_validation,
+    _used_session_token,
     _validate_content_response,
+    CreateSessionConfiguration,
     encode_base64,
     is_retry,
+    Session,
+    SessionCache,
     StorageRetryPolicy,
+    SESSION_RETRIED_CONTEXT_KEY,
 )
 from .streams_async import AsyncStructuredMessageDecoder
 from .validation import (
@@ -222,7 +232,7 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         retry_total: int = 3,
         retry_to_secondary: bool = False,
         random_jitter_range: int = 3,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Constructs an Exponential retry object. The initial_backoff is used for
@@ -282,7 +292,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
         retry_total: int = 3,
         retry_to_secondary: bool = False,
         random_jitter_range: int = 3,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """
         Constructs a Linear retry object.
@@ -338,3 +348,185 @@ class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
+
+
+class AsyncSessionCache(SessionCache):
+    """Async variant of :class:`SessionCache`.
+
+    Reuses the lock-free, non-mutating read path and the immutable
+    Session snapshots from the sync cache, but serializes the
+    per-container CreateSession single-flight with asynchronous locks.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._async_locks: Dict[str, asyncio.Lock] = {}
+
+    def lock_container_async(self, container_name: str) -> asyncio.Lock:
+        """Return the per-container asyncio lock, creating it exactly once.
+
+        Lock creation is not awaited, so it is safe to do without holding a
+        lock: the event loop guarantees this runs to completion without
+        interleaving other coroutines.
+
+        :param str container_name: The container to get the lock for.
+        :return: The single asyncio lock associated with the container.
+        :rtype: ~asyncio.Lock
+        """
+        existing = self._async_locks.get(container_name)
+        if existing is not None:
+            return existing
+        return self._async_locks.setdefault(container_name, asyncio.Lock())
+
+
+class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
+    """Constructs an AsyncStorageSessionPolicy.
+
+    Eligible blob download GETs are authenticated with a per-container session
+    token; everything else is delegated unchanged to the bearer credential
+    policy that sits earlier in the pipeline.
+    """
+
+    def __init__(
+        self,
+        *,
+        account_name: str,
+        session_client_factory: Callable[[str], Any],
+    ) -> None:
+        """Constructs an AsyncStorageSessionPolicy.
+
+        :keyword str account_name: Storage account name; used as the signer
+            identity when signing session-authenticated requests.
+        :keyword session_client_factory: A callable that, given a container URL,
+            returns a session-disabled generated async client whose pipeline
+            uses OAuth/bearer auth. Invoked (and awaited) to issue CreateSession.
+        :paramtype session_client_factory: Callable[[str], Any]
+        :raises ValueError: if account_name or session_client_factory is None.
+        """
+        if account_name is None or session_client_factory is None:
+            raise ValueError("account_name and session_client_factory are required.")
+        super().__init__()
+        self._account_name = account_name
+        self._session_client_factory = session_client_factory
+        self._enabled = True
+        self._cache = AsyncSessionCache()
+
+    async def _create_session(self, container_url: str) -> Tuple[str, str, datetime]:
+        config = CreateSessionConfiguration(authentication_type="HMAC")
+        client = self._session_client_factory(container_url)
+        response = await client.container.create_session(create_session_configuration=config)
+        return _extract_session(response)
+
+    async def _refresh_session_token(self, container_name: str, container_url: str) -> Optional[Session]:
+        """Acquire (or re-use) a session under per-container async single-flight.
+
+        :param str container_name: The container key for the cache and lock.
+        :param str container_url: The container-scoped URL for the CreateSession call.
+        :return: A live session, a fallback sentinel, or None if unusable.
+        :rtype: ~azure.storage.blob._shared.policies.Session or None
+        """
+        async with self._cache.lock_container_async(container_name):
+            existing = self._cache.get(container_name)
+            if existing is not None and not existing.expired():
+                return existing
+            try:
+                token, key, expires_at = await self._create_session(container_url)
+                self._cache.put(container_name, token, key, expires_at)
+            except (AzureError, ValueError):
+                _LOGGER.warning(
+                    "CreateSession failed for container '%s'; falling back to bearer for %d seconds.",
+                    container_name,
+                    int(SessionCache.FALLBACK_COOLDOWN.total_seconds()),
+                    exc_info=True,
+                )
+                self._cache.put_fallback(container_name)
+            return self._cache.get(container_name)
+
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
+        """Orchestrate session auth.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The outgoing request.
+        :return: The pipeline response.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        container_name = await self.on_request(request)
+        response = await self.next.send(request)
+        return await self.on_response(request, response, container_name)
+
+    async def on_request(self, request: "PipelineRequest") -> Optional[str]:
+        """Stamp session auth if eligible, otherwise leave the bearer header intact.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The request to (maybe) sign.
+        :return: The container name if a session was applied, else None.
+        :rtype: str or None
+        """
+        if not self._enabled:
+            return None
+        analysis = _analyze_request(request)
+        if analysis is None:
+            return None
+        container_name, container_url = analysis
+
+        session = self._cache.get(container_name)
+        if session is None:
+            # True miss/expiry (a live fallback sentinel is returned by get(),
+            # so we never reach refresh while the cooldown is active).
+            session = await self._refresh_session_token(container_name, container_url)
+
+        if session is None or session.is_fallback or not session.session_token or not session.session_key:
+            return None
+
+        _apply_session_auth(request, session.session_token, session.session_key, self._account_name)
+        return container_name
+
+    async def on_response(
+        self,
+        request: "PipelineRequest",
+        response: "PipelineResponse",
+        container_name: Optional[str],
+    ) -> "PipelineResponse":
+        """React to session-related failures: cooldown sentinel or one-shot re-acquire.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The original request.
+        :param ~azure.core.pipeline.PipelineResponse response: The response to inspect.
+        :param container_name: Container that was session-signed, or None if bearer was used.
+        :type container_name: str or None
+        :return: The final response (possibly from a one-shot retry).
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        if container_name is None:
+            return response  # bearer was used; nothing session-related to react to
+
+        status = response.http_response.status_code
+        error_code = response.http_response.headers.get("x-ms-error-code", "")
+
+        if error_code == StorageErrorCode.FEATURE_NOT_ENABLED:
+            _LOGGER.info("Session feature not enabled on this account; disabling session auth.")
+            self._enabled = False
+            return response
+
+        # Unavailable / 5xx → negative-cache cooldown.
+        if error_code == StorageErrorCode.SESSIONS_UNAVAILABLE or status >= 500:
+            _LOGGER.warning(
+                "Session authentication: '%s' (HTTP %d) on container '%s'; bearer fallback for %d seconds.",
+                error_code or "5xx",
+                status,
+                container_name,
+                int(SessionCache.FALLBACK_COOLDOWN.total_seconds()),
+            )
+            async with self._cache.lock_container_async(container_name):
+                self._cache.put_fallback(container_name)
+            return response
+
+        # 401 → invalidate + re-acquire ONCE, then resend.
+        if status == 401 and not request.context.options.get(SESSION_RETRIED_CONTEXT_KEY):
+            _LOGGER.info("Session authentication: HTTP 401 on '%s'; re-acquiring once.", container_name)
+            used_token = _used_session_token(request)
+            async with self._cache.lock_container_async(container_name):
+                self._cache.invalidate(container_name, used_token)
+            request.context.options[SESSION_RETRIED_CONTEXT_KEY] = True
+            retried_container = await self.on_request(request)
+            retried_response = await self.next.send(request)
+            return await self.on_response(request, retried_response, retried_container)
+
+        return response

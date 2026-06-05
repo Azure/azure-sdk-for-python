@@ -888,6 +888,48 @@ def build_get_account_info_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_create_session_request(
+    url: str,
+    *,
+    content: Any,
+    version: str,
+    timeout: Optional[int] = None,
+    request_id_parameter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["session"] = kwargs.pop("comp", _params.pop("comp", "session"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["restype"] = _SERIALIZER.query("restype", restype, "str")
+    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if request_id_parameter is not None:
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
 class ContainerOperations:
     """
     .. warning::
@@ -2696,3 +2738,82 @@ class ContainerOperations:
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace
+    def create_session(
+        self,
+        create_session_configuration: _models.CreateSessionConfiguration,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.CreateSessionResponse:
+        """The Create Session operation enables users to create a session scoped to a container.
+
+        :param create_session_configuration: Required.
+        :type create_session_configuration: ~azure.storage.blob.models.CreateSessionConfiguration
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
+        :return: CreateSessionResponse or the result of cls(response)
+        :rtype: ~azure.storage.blob.models.CreateSessionResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["session"] = kwargs.pop("comp", _params.pop("comp", "session"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.CreateSessionResponse] = kwargs.pop("cls", None)
+
+        _content = self._serialize.body(create_session_configuration, "CreateSessionConfiguration", is_xml=True)
+
+        _request = build_create_session_request(
+            url=self._config.url,
+            version=self._config.version,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("CreateSessionResponse", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

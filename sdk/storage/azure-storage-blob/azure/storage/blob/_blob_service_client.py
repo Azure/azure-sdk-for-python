@@ -90,6 +90,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this container.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        ValueError is raised otherwise. Defaults to False.
 
     .. admonition:: Example:
 

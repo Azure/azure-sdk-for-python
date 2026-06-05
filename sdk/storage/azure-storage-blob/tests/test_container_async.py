@@ -16,6 +16,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage import LogCaptured
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+from test_helpers import CaptureAuthHeader, _find_session_policy, _parse_session_token
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -2653,3 +2654,113 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert blobs is not None
         assert blobs == ["a/b/blob2", "a/b/blob3", "a/b/blob4", "a/blob1"]
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_create_session(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient, is_async=True)
+        capture_auth_header = CaptureAuthHeader()
+
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=True,
+        )
+        container1_name = self.get_resource_name("utcontainer1")
+        container1 = service.get_container_client(container1_name)
+        try:
+            await container1.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob1_name, blob1_data = self.get_resource_name("blob1"), b"abc123"
+        await container1.upload_blob(
+            blob1_name, blob1_data, overwrite=True, raw_response_hook=capture_auth_header.hook("c1_upload")
+        )
+        assert capture_auth_header["c1_upload"].startswith("Bearer ")
+
+        blob1_actual = await (
+            await container1.download_blob(blob1_name, raw_response_hook=capture_auth_header.hook("c1_download"))
+        ).readall()
+        assert blob1_data == blob1_actual
+        assert capture_auth_header["c1_download"].startswith("Session ")
+        session1 = _parse_session_token(capture_auth_header["c1_download"])
+
+        container2_name = self.get_resource_name("utcontainer2")
+        container2 = service.get_container_client(container2_name)
+        try:
+            await container2.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob2_name, blob2_data = self.get_resource_name("blob2"), b"def456"
+        await container2.upload_blob(
+            blob2_name, blob2_data, overwrite=True, raw_response_hook=capture_auth_header.hook("c2_upload")
+        )
+        assert capture_auth_header["c2_upload"].startswith("Bearer ")
+
+        blob2_actual = await (
+            await container2.download_blob(blob2_name, raw_response_hook=capture_auth_header.hook("c2_download"))
+        ).readall()
+        assert blob2_data == blob2_actual
+        assert capture_auth_header["c2_download"].startswith("Session ")
+        session2 = _parse_session_token(capture_auth_header["c2_download"])
+
+        assert session1 != session2
+
+        blob1_actual = await (
+            await container1.download_blob(blob1_name, raw_response_hook=capture_auth_header.hook("c1_download2"))
+        ).readall()
+        assert blob1_data == blob1_actual
+        assert capture_auth_header["c1_download2"].startswith("Session ")
+        assert session1 == _parse_session_token(capture_auth_header["c1_download2"])
+
+        blob2_actual = await (
+            await container2.download_blob(blob2_name, raw_response_hook=capture_auth_header.hook("c2_download2"))
+        ).readall()
+        assert blob2_data == blob2_actual
+        assert capture_auth_header["c2_download2"].startswith("Session ")
+        assert session2 == _parse_session_token(capture_auth_header["c2_download2"])
+
+        policy = _find_session_policy(service._pipeline, "AsyncStorageSessionPolicy")
+        cached = policy._cache._entry[container1_name]
+        cached.expires_at = datetime.fromtimestamp(0, tz=cached.expires_at.tzinfo)
+
+        blob1_actual = await (
+            await container1.download_blob(blob1_name, raw_response_hook=capture_auth_header.hook("c1_download3"))
+        ).readall()
+        assert blob1_data == blob1_actual
+        assert capture_auth_header["c1_download3"].startswith("Session ")
+        assert session1 != _parse_session_token(capture_auth_header["c1_download3"])
+        assert session2 != _parse_session_token(capture_auth_header["c1_download3"])
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_sessions_disabled(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient, is_async=True)
+        capture = CaptureAuthHeader()
+
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=False,
+        )
+        container = service.get_container_client(self.get_resource_name("utcontainer"))
+        try:
+            await container.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob_name, blob_data = self.get_resource_name("blob"), b"abc123"
+        await container.upload_blob(blob_name, blob_data, overwrite=True, raw_response_hook=capture.hook("upload"))
+        assert capture["upload"].startswith("Bearer ")
+
+        blob_actual = await (
+            await container.download_blob(blob_name, raw_response_hook=capture.hook("download"))
+        ).readall()
+        assert blob_data == blob_actual
+        assert capture["download"].startswith("Bearer ")
