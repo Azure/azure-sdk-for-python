@@ -13,6 +13,7 @@
         "ppcb",
         "reindexing",
         "reranker",
-        "toctou"
+        "toctou",
+        "ufffd"
     ]
 }

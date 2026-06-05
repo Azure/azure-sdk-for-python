@@ -200,11 +200,9 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.key_db.delete_container(test_container_ref)  # control-plane
 
-    """
-    Async coverage for single-partition session token scoping in
-    feed-range queries: pins the exact token value, exercises
-    multi-page pagination, and covers the partition_key-only entry point.
-    """
+    # The three async tests below check that a query targeted at a single
+    # partition sends only that partition's session token on every request,
+    # including each page and the partition_key entry point.
 
     async def test_feed_range_query_session_token_matches_partition_lsn_async(self):
         # Async twin: a single feed-range query must send only that partition's token.
@@ -236,8 +234,8 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
             self.assertIsNotNone(wire_token)
             self.assertNotIn(",", wire_token, f"Got compound token on the wire: {wire_token!r}")
             self.assertIn(":", wire_token, f"Expected single-partition token shape: {wire_token!r}")
-            pkid, _, vector_part = wire_token.partition(":")
-            self.assertNotEqual(pkid, "", f"Partition range id should not be empty: {wire_token!r}")
+            pk_range_id, _, vector_part = wire_token.partition(":")
+            self.assertNotEqual(pk_range_id, "", f"Partition range id should not be empty: {wire_token!r}")
             self.assertTrue(vector_part, f"Vector portion should not be empty: {wire_token!r}")
         finally:
             await self.key_db.delete_container(test_container_ref)

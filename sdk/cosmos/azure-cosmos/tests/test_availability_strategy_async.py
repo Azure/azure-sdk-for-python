@@ -1084,15 +1084,18 @@ class TestAsyncAvailabilityStrategy:
         doc = _create_doc()
         await setup_without_fault['col'].create_item(doc)
 
-        # Both regions are expected because hedging from the client
-        # config is what dispatches the second-region copy.
-        await _perform_read_operation(
-            READ,
-            setup_with_transport['col'],
-            doc,
+        # Exercise the explicit per-request None path directly; helper
+        # utilities omit the kwarg when the value is None.
+        await setup_with_transport['col'].read_item(
+            item=doc['id'],
+            partition_key=doc['pk'],
+            availability_strategy=None,
+        )
+        _validate_response_uris(
             [uri_down, failed_over_uri],
             [],
-            availability_strategy=None,
+            operation_type=OperationType.Read,
+            resource_type=ResourceType.Document,
         )
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()

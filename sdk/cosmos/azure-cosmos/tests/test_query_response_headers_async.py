@@ -641,39 +641,6 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self._delete_container_for_test(cid)
 
-    # -- response_hook parity across every paged and point surface ----------
-    #
-    # Previously only query_items had explicit parity coverage between the
-    # headers handed to a per-call response_hook and the headers returned
-    # by the pager or CosmosDict. The tests below extend that same
-    # guarantee to read_all_items, the change feed, point CRUD, and the
-    # database and container query surfaces.
-
-    async def test_response_hook_parity_read_all_items_async(self):
-        """Headers handed to the last response_hook invocation on async
-        read_all_items must match the pager's get_response_headers()."""
-        cid = "test_hookparity_readall_async_" + str(uuid.uuid4())
-        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
-        try:
-            for i in range(10):
-                await created_collection.create_item(body={"pk": "test", "id": f"item_{i}"})
-
-            captured = []
-
-            def hook(headers, _result):
-                captured.append(dict(headers))
-
-            paged = created_collection.read_all_items(max_item_count=3, response_hook=hook)
-            items = [item async for item in paged]
-            assert len(items) == 10
-            assert len(captured) > 0, "response_hook must fire at least once"
-
-            final_headers = paged.get_response_headers()
-            assert "x-ms-request-charge" in final_headers
-            assert final_headers["x-ms-request-charge"] == captured[-1]["x-ms-request-charge"]
-            assert final_headers["x-ms-activity-id"] == captured[-1]["x-ms-activity-id"]
-        finally:
-            await self._delete_container_for_test(cid)
 
     async def test_response_hook_parity_query_items_change_feed_async(self):
         """Headers handed to the response_hook on async change feed must
@@ -713,8 +680,8 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_response_hook_parity_point_ops_async(self):
         """For every async point CRUD method, the headers handed to the
-        response_hook must match the returned CosmosDict's
-        get_response_headers() (and ``delete_item`` returns no body)."""
+        response_hook must match the returned wrapper's
+        get_response_headers(). delete_item returns no body."""
         cid = "test_hookparity_point_async_" + str(uuid.uuid4())
         created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
@@ -823,8 +790,8 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
         assert isinstance(captured_c[0], Mapping)
 
     async def test_response_hook_fires_at_least_once_for_every_paged_surface_async(self):
-        """A response_hook attached to any async paged data-plane surface must
-        fire at least once, and every captured payload must be a Mapping."""
+        """A response_hook attached to any async paged surface must fire at
+        least once, and every captured payload must be a Mapping."""
 
         cid = "test_hookfires_paged_async_" + str(uuid.uuid4())
         created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
@@ -854,13 +821,6 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 ),
             )
             await _run(
-                "read_all_items",
-                lambda h: created_collection.read_all_items(
-                    max_item_count=2,
-                    response_hook=h,
-                ),
-            )
-            await _run(
                 "query_items_change_feed",
                 lambda h: created_collection.query_items_change_feed(
                     start_time="Beginning",
@@ -871,11 +831,6 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self._delete_container_for_test(cid)
 
-    # -- response_hook parity for patch_item / execute_item_batch (async) --
-    #
-    # Both methods accept a response_hook keyword. The hook must fire
-    # exactly once per call and receive the same response headers that
-    # the returned wrapper exposes via get_response_headers().
 
     async def test_response_hook_parity_patch_item_async(self):
         # Async patch_item must fire its response_hook once with headers

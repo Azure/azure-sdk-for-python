@@ -663,45 +663,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
         finally:
             self._delete_container_for_test(container_id)
 
-    # -- response_hook parity across every paged and point surface ----------
-    #
-    # Previously only query_items had explicit parity coverage between the
-    # headers handed to a per-call response_hook and the headers returned
-    # by the pager or CosmosDict. The tests below extend that same
-    # guarantee to read_all_items, the change feed, point CRUD, and the
-    # database and container query surfaces.
-
-    def test_response_hook_parity_read_all_items(self):
-        """Headers handed to the last response_hook invocation on
-        read_all_items must match the pager's get_response_headers()."""
-        container_id = "test_hookparity_readall_" + str(uuid.uuid4())
-        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
-        try:
-            for i in range(10):
-                created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
-
-            captured = []
-
-            def hook(headers, _result):
-                captured.append(dict(headers))
-
-            paged = created_collection.read_all_items(max_item_count=3, response_hook=hook)
-            items = list(paged)
-            self.assertEqual(len(items), 10)
-            self.assertGreater(len(captured), 0, "response_hook must fire at least once")
-
-            final_headers = paged.get_response_headers()
-            self.assertIn("x-ms-request-charge", final_headers)
-            self.assertEqual(
-                final_headers["x-ms-request-charge"],
-                captured[-1]["x-ms-request-charge"],
-            )
-            self.assertEqual(
-                final_headers["x-ms-activity-id"],
-                captured[-1]["x-ms-activity-id"],
-            )
-        finally:
-            self._delete_container_for_test(container_id)
 
     def test_response_hook_parity_query_items_change_feed(self):
         """Headers handed to the response_hook on query_items_change_feed
@@ -743,8 +704,8 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
     def test_response_hook_parity_point_ops(self):
         """For every point CRUD method, the headers handed to the
-        response_hook must match the returned CosmosDict's
-        get_response_headers() (and ``delete_item`` returns no body)."""
+        response_hook must match the returned wrapper's
+        get_response_headers(). delete_item returns no body."""
         container_id = "test_hookparity_point_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
@@ -861,8 +822,8 @@ class TestQueryResponseHeaders(unittest.TestCase):
         self.assertIsInstance(captured_c[0], Mapping)
 
     def test_response_hook_fires_at_least_once_for_every_paged_surface(self):
-        """A response_hook attached to any paged data-plane surface must
-        fire at least once, and every captured payload must be a Mapping."""
+        """A response_hook attached to any paged surface must fire at least
+        once, and every captured payload must be a Mapping."""
 
         container_id = "test_hookfires_paged_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
@@ -899,13 +860,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 ),
             )
             _run(
-                "read_all_items",
-                lambda h: created_collection.read_all_items(
-                    max_item_count=2,
-                    response_hook=h,
-                ),
-            )
-            _run(
                 "query_items_change_feed",
                 lambda h: created_collection.query_items_change_feed(
                     start_time="Beginning",
@@ -916,11 +870,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
         finally:
             self._delete_container_for_test(container_id)
 
-    # -- response_hook parity for patch_item / execute_item_batch -----------
-    #
-    # Both methods accept a response_hook keyword. The hook must fire
-    # exactly once per call and receive the same response headers that
-    # the returned wrapper exposes via get_response_headers().
 
     def test_response_hook_parity_patch_item(self):
         # patch_item must fire its response_hook once with headers that

@@ -321,11 +321,9 @@ class TestResolvePartitionLocalSessionTokenRegression(unittest.TestCase):
         self.assertEqual(result, token.session_token)
 
 
-"""
-Direct unit coverage for set_session_token_header. When a single physical
-partition is targeted, the helper must emit only that partition's token,
-not a comma-joined token covering every cached partition.
-"""
+# Unit tests for set_session_token_header. When a request targets a single
+# partition, the helper must send only that partition's token, not a
+# comma-joined token covering every cached partition.
 
 class _SessionTokenGemStub:
     """Stub for the global endpoint manager used by session token helpers."""
@@ -342,7 +340,7 @@ class _SessionTokenClientStub:
         # Seed per-partition tokens that a real client would populate after writes.
         self.session.session_container.collection_name_to_rid[collection_link] = collection_rid
         self.session.session_container.rid_to_session_token[collection_rid] = {
-            pkid: VectorSessionToken.create(tok) for pkid, tok in partition_tokens.items()
+            pk_range_id: VectorSessionToken.create(tok) for pk_range_id, tok in partition_tokens.items()
         }
         self._container_properties_cache = {
             collection_link: {"_rid": collection_rid},

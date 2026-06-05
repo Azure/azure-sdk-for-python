@@ -926,15 +926,18 @@ class TestAvailabilityStrategy:
         doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
-        # Both regions are expected because hedging from the client
-        # config is what dispatches the second-region copy.
-        _perform_read_operation(
-            READ,
-            setup['col'],
-            doc,
+        # Exercise the explicit per-request None path directly; helper
+        # utilities omit the kwarg when the value is None.
+        setup['col'].read_item(
+            item=doc['id'],
+            partition_key=doc['pk'],
+            availability_strategy=None,
+        )
+        _validate_response_uris(
             [uri_down, failed_over_uri],
             [],
-            availability_strategy=None,
+            operation_type=OperationType.Read,
+            resource_type=ResourceType.Document,
         )
         self._clean_up_container(setup['db'].id, setup['col'].id)
 

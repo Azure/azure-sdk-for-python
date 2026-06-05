@@ -8,6 +8,8 @@ import unittest
 from importlib import metadata as importlib_metadata
 
 import pytest
+from packaging.requirements import Requirement
+from packaging.version import Version
 
 from azure.cosmos.aio import CosmosClient  # noqa: F401
 
@@ -16,9 +18,9 @@ from azure.cosmos.aio import CosmosClient  # noqa: F401
 class TestAioExtrasPackaging(unittest.TestCase):
 
     def test_aio_extras_declared_in_distribution_metadata(self):
-        # The installed package must advertise the ``aio`` extra and
-        # route it to azure-core with the ``aio`` extra at version 1.30
-        # or newer, so ``pip install azure-cosmos[aio]`` pulls aiohttp.
+        # The installed package must advertise the aio extra and pin it to
+        # azure-core with the aio extra at version 1.30.0 or newer, so
+        # installing with the aio extra pulls in the async transport.
         try:
             dist = importlib_metadata.distribution("azure-cosmos")
         except importlib_metadata.PackageNotFoundError:
@@ -37,7 +39,20 @@ class TestAioExtrasPackaging(unittest.TestCase):
         joined = " ".join(aio_reqs).lower()
         self.assertIn("azure-core", joined)
         self.assertIn("[aio]", joined)
-        self.assertIn("1.30", joined)
+
+        # Check the azure-core[aio] requirement allows version 1.30.0 or newer.
+        # Asking the specifier whether an older version is allowed keeps the
+        # check valid across future version bumps and catches any regression.
+        core_req_str = next(
+            req for req in aio_reqs if "azure-core" in req.lower()
+        )
+        # Drop the environment marker before parsing as a Requirement.
+        core_req = Requirement(core_req_str.split(";", 1)[0].strip())
+        self.assertNotIn(
+            Version("1.29.99"), core_req.specifier,
+            f"azure-core[aio] requirement allows versions older than 1.30.0: "
+            f"{core_req.specifier!r}",
+        )
 
     def test_azure_cosmos_aio_module_imports(self):
         # If the async module cannot be imported the file would already

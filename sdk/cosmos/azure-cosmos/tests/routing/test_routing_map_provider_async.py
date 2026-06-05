@@ -36,7 +36,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
     def _capture_internal_headers(kwargs, etag):
         """Capture ETag header and HTTP status into the drain-loop sidecars.
 
-        Returns ``True`` when this call should behave like a wire 304 â€” i.e.
+        Returns ``True`` when this call should behave like a wire 304 — i.e.
         the drain loop's ``If-None-Match`` matches the etag this mock is
         about to return. Mocks that simulate a stable snapshot pass a stable
         etag here so the drain terminates after one data page + one 304.
@@ -558,7 +558,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             feed_options={}
         )
 
-        self.assertIsNotNone(result, "Should succeed incrementally â€” parents[1] is in cache")
+        self.assertIsNotNone(result, "Should succeed incrementally — parents[1] is in cache")
         self.assertEqual(call_count['count'], 2, "Should only drain once logically (data + 304)")
         ranges = list(result._orderedPartitionKeyRanges)
         self.assertEqual(len(ranges), 3)
@@ -566,12 +566,12 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ids, ['0', '3', '2'])
 
     async def test_fetch_routing_map_merge_all_parents_cached_async(self):
-        """Merge where all parents are in cache â€” validates first-match range_info inheritance.
+        """Merge where all parents are in cache — validates first-match range_info inheritance.
 
         Scenario:
         - Cache has: {0, 1, 2} with distinct range_info values
         - Ranges '0' and '1' merge into '3' with parents=['0', '1']
-        - Both '0' and '1' are in cache â†’ should pick '0' (first match) range_info
+        - Both '0' and '1' are in cache → should pick '0' (first match) range_info
         """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
@@ -616,7 +616,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(ranges), 2)
         self.assertEqual(ranges[0]['id'], '3')
         self.assertEqual(ranges[1]['id'], '2')
-        # range_info should be inherited from the first cached parent ('0' â†’ 'info_0')
+        # range_info should be inherited from the first cached parent ('0' → 'info_0')
         self.assertEqual(result._orderedPartitionInfo[0], 'info_0')
         # Stable range '2' should keep its original range_info
         self.assertEqual(result._orderedPartitionInfo[1], 'info_2')
@@ -631,7 +631,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
           2. Range '1A' split again into '1A-i' and '1A-ii'
         - Delta returns '1A-i' with parents=['1A'], '1A-ii' with parents=['1A'], '1B' with parents=['1']
         - '1B' has parent '1' -> found in cache
-        - '1A-i' has parent '1A' -> NOT found (intermediate, never cached) â†’ falls back to full refresh
+        - '1A-i' has parent '1A' -> NOT found (intermediate, never cached) → falls back to full refresh
         """
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '40'},
@@ -904,11 +904,11 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         await reader_task
 
         self.assertEqual(none_seen['count'], 0,
-                         "Cache entry should never be None during a refresh â€” it should be atomically replaced")
+                         "Cache entry should never be None during a refresh — it should be atomically replaced")
 
-    # End-to-end tests that go through SmartRoutingMapProvider to confirm
-    # overlap/gap errors from the cache surface as 503 rather than reaching
-    # the caller as a bare ValueError or AssertionError.
+    # The tests below run through SmartRoutingMapProvider to confirm that a
+    # bad cache snapshot surfaces as a CosmosHttpResponseError the caller can
+    # handle, not as a raw ValueError or AssertionError.
 
     class _SequencedSnapshotAsyncClient(object):
         """Async mock client that returns the next payload from

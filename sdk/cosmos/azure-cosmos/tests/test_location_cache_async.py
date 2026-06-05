@@ -1,19 +1,23 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Async-context tests for the LocationCache fallback behavior when a
-preferred region is marked unavailable. Drives the same invariants the
-sync tests cover, but from inside coroutines so any event-loop
-interaction with the shared cache shows up. Also drives the async
-endpoint manager wrapper and the retry policy through the full
-retry-then-fallback sequence. All tests use mocks; no live account."""
+"""LocationCache parity checks in async test classes.
 
+Most tests in this module assert the same fallback and normalization
+invariants as the sync suite while running under async unittest
+classes. A small set of tests explicitly awaits async endpoint-manager
+APIs to validate startup refresh/fetch behavior under coroutine
+execution. All tests use mocks; no live account.
+"""
+
+import asyncio
 import logging
 import unittest
 import unittest.mock
 
 import pytest
 
+from azure.cosmos import exceptions
 from azure.cosmos import documents
 from azure.cosmos.aio._global_endpoint_manager_async import _GlobalEndpointManager as _AsyncGlobalEndpointManager
 from azure.cosmos.documents import _OperationType
@@ -195,6 +199,78 @@ class TestLocationCacheAsync(unittest.IsolatedAsyncioTestCase):
             "Expected the unavailable preferred region when the only healthy "
             "region is excluded.",
         )
+
+    async def test_async_endpoint_manager_get_database_account_uses_preferred_fallback_async(self):
+        """_GetDatabaseAccount should await the default endpoint first, then
+        await preferred-region fallback endpoints when default fails."""
+        cp = documents.ConnectionPolicy()
+        cp.PreferredLocations = [location1_name]
+        cp.UseMultipleWriteLocations = True
+        mock_client = unittest.mock.Mock()
+        mock_client.connection_policy = cp
+        mock_client.url_connection = default_endpoint
+
+        gem = _AsyncGlobalEndpointManager(mock_client)
+        account = _create_database_account(True)
+        default_error = exceptions.CosmosHttpResponseError(
+            status_code=503,
+            message="Injected default-endpoint failure",
+        )
+        gem._GetDatabaseAccountStub = unittest.mock.AsyncMock(
+            side_effect=[default_error, account],
+        )
+
+        resolved = await gem._GetDatabaseAccount()
+        self.assertIs(resolved, account)
+
+        locational_endpoint = LocationCache.GetLocationalEndpoint(
+            default_endpoint, location1_name,
+        )
+        gem._GetDatabaseAccountStub.assert_has_awaits(
+            [
+                unittest.mock.call(default_endpoint),
+                unittest.mock.call(locational_endpoint),
+            ],
+            any_order=False,
+        )
+
+    async def test_async_refresh_endpoint_list_concurrent_calls_fetch_once_async(self):
+        """Concurrent refresh calls should serialize on the async lock and
+        avoid duplicate account fetches when startup refresh is in flight."""
+        cp = documents.ConnectionPolicy()
+        cp.PreferredLocations = [location1_name, location2_name]
+        cp.UseMultipleWriteLocations = True
+        mock_client = unittest.mock.Mock()
+        mock_client.connection_policy = cp
+        mock_client.url_connection = default_endpoint
+
+        gem = _AsyncGlobalEndpointManager(mock_client)
+        gem.startup = True
+        gem.refresh_needed = True
+        gem._aenter_used = True
+
+        call_counter = {"count": 0}
+        account = _create_database_account(True)
+
+        async def _get_account_once(**_kwargs):
+            call_counter["count"] += 1
+            await asyncio.sleep(0.01)
+            return account
+
+        gem._GetDatabaseAccount = unittest.mock.AsyncMock(side_effect=_get_account_once)
+        gem._endpoints_health_check = unittest.mock.AsyncMock(return_value=None)
+
+        await asyncio.gather(
+            gem.refresh_endpoint_list(None),
+            gem.refresh_endpoint_list(None),
+        )
+
+        if gem.refresh_task:
+            await gem.refresh_task
+
+        self.assertEqual(call_counter["count"], 1)
+        self.assertFalse(gem.startup)
+        self.assertGreater(len(gem.location_cache.get_ordered_read_locations()), 0)
 
     async def test_async_service_request_retry_policy_routes_through_unavailable_as_last_resort(self):  # pylint: disable=line-too-long
         """Drives the retry policy through the full retry-then-fallback
@@ -680,4 +756,3 @@ class TestNormalizeRegionNameAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -921,9 +921,9 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(none_seen['count'], 0,
                          "Cache entry should never be None during a refresh — it should be atomically replaced")
 
-    # End-to-end tests that go through SmartRoutingMapProvider to confirm
-    # overlap/gap errors from the cache surface as 503 rather than reaching
-    # the caller as a bare ValueError or AssertionError.
+    # The tests below run through SmartRoutingMapProvider to confirm that a
+    # bad cache snapshot surfaces as a CosmosHttpResponseError the caller can
+    # handle, not as a raw ValueError or AssertionError.
 
     class _SequencedSnapshotClient(object):
         """Mock client that returns the next payload from response_sequence on
