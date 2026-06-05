@@ -1149,22 +1149,49 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         if entry_mode != "recovered":
             turn_start_payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
 
-        # Transition to in_progress with new lease
-        await self._provider.update(
-            task_id,
-            TaskPatchRequest(
-                status="in_progress",
-                lease_owner=self._lease_owner,
-                lease_instance_id=self._instance_id,
-                lease_duration_seconds=lease_duration,
-                payload=turn_start_payload if turn_start_payload else None,
-            ),
-        )
+        # Decide whether this PATCH is actually necessary, and whether
+        # the status field belongs in it.
+        #
+        # On the recovery path the immediately-prior ``_reclaim_one``
+        # call already wrote the new lease against the stale
+        # in_progress task, AND we explicitly do NOT re-stamp
+        # ``_turn_started_at`` on recovery (FR-023 exception above)
+        # AND the existing task status is already ``in_progress``.
+        # In that case the PATCH would re-write the same status +
+        # same lease + an empty payload — a full network round-trip
+        # against the same record, with no observable change. Skip
+        # the call (and the follow-up re-fetch) entirely.
+        #
+        # For other entries (suspended/pending/queued -> in_progress)
+        # the PATCH is required for the status flip and/or turn-start
+        # write. The ``status`` field is only sent when the current
+        # status differs from in_progress, so we never re-write the
+        # same status onto a record that already carries it.
+        needs_status_flip = task_info.status != "in_progress"
+        needs_turn_start_write = bool(turn_start_payload)
+        if not needs_status_flip and not needs_turn_start_write:
+            # No-op PATCH would be sent — skip it. The reclaim has
+            # already established our lease; nothing else to write.
+            # The in-memory ``task_info`` already reflects the
+            # post-reclaim state we observed when ``_reclaim_one``
+            # returned, so the re-fetch is also unnecessary.
+            updated_info: TaskInfo | None = task_info
+        else:
+            await self._provider.update(
+                task_id,
+                TaskPatchRequest(
+                    status="in_progress" if needs_status_flip else None,
+                    lease_owner=self._lease_owner,
+                    lease_instance_id=self._instance_id,
+                    lease_duration_seconds=lease_duration,
+                    payload=turn_start_payload if turn_start_payload else None,
+                ),
+            )
 
-        # Re-fetch updated task
-        updated_info: TaskInfo | None = await self._provider.get(task_id)
-        if updated_info is None:
-            raise TaskNotFound(task_id)
+            # Re-fetch updated task
+            updated_info = await self._provider.get(task_id)
+            if updated_info is None:
+                raise TaskNotFound(task_id)
         task_info = updated_info
 
         # Resolve input: prefer caller-provided, fall back to persisted
