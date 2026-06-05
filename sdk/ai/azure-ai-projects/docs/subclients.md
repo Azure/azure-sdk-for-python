@@ -4,7 +4,7 @@ This document lists all sub-clients available on `AIProjectClient` and their pub
 
 ## Summary
 
-There are a total of 139 unique public methods across all sub-clients.
+There are a total of 140 unique public methods across all sub-clients.
 
 ### Top-level Sub-clients (stable operations)
 
@@ -28,7 +28,7 @@ There are a total of 139 unique public methods across all sub-clients.
 | `beta.evaluators` | BetaEvaluatorsOperations | 13 |
 | `beta.insights` | BetaInsightsOperations | 3 |
 | `beta.memory_stores` | BetaMemoryStoresOperations | 13 |
-| `beta.models` | BetaModelsOperations | 8 |
+| `beta.models` | BetaModelsOperations | 9 |
 | `beta.red_teams` | BetaRedTeamsOperations | 3 |
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
@@ -38,7 +38,7 @@ There are a total of 139 unique public methods across all sub-clients.
 
 ## Method list table
 
-Alphabetically sorted, with ".beta" sub-client at the end.
+Alphabetically sorted, with ".beta" sub-client at the end. If the method is a new hand-written method, there will be an asterisk at the end.
 
 ```
 .agents.create_version
@@ -50,8 +50,8 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .agents.list
 .agents.list_versions
 
-.connections.get
-.connections.get_default
+.connections.get*
+.connections.get_default*
 .connections.list
 
 .datasets.create_or_update
@@ -61,8 +61,8 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .datasets.list
 .datasets.list_versions
 .datasets.pending_upload
-.datasets.upload_file
-.datasets.upload_folder
+.datasets.upload_file*
+.datasets.upload_folder*
 
 .deployments.get
 .deployments.list
@@ -78,7 +78,7 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .indexes.list
 .indexes.list_versions
 
-.telemetry.get_application_insights_connection_string
+.telemetry.get_application_insights_connection_string*
 
 .beta.agents.cancel_optimization_job
 .beta.agents.create_optimization_job
@@ -103,7 +103,7 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.agents.patch_agent_details
 .beta.agents.promote_candidate
 .beta.agents.stop_session
-.beta.agents.upload_session_file
+.beta.agents.upload_session_file*
 
 .beta.datasets.cancel_generation_job
 .beta.datasets.create_generation_job
@@ -135,7 +135,7 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.insights.get
 .beta.insights.list
 
-.beta.memory_stores.begin_update_memories
+.beta.memory_stores.begin_update_memories*
 .beta.memory_stores.create
 .beta.memory_stores.create_memory
 .beta.memory_stores.delete
@@ -145,10 +145,11 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.memory_stores.get_memory
 .beta.memory_stores.list
 .beta.memory_stores.list_memories
-.beta.memory_stores.search_memories
+.beta.memory_stores.search_memories*
 .beta.memory_stores.update
 .beta.memory_stores.update_memory
 
+.beta.models.create*
 .beta.models.pending_create_version
 .beta.models.delete
 .beta.models.get
