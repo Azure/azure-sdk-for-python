@@ -8,6 +8,8 @@
 See the sync sibling (test_storage_mover_mgmt_connections_operations_test.py)
 for the full rationale.
 """
+import os
+
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
@@ -18,8 +20,14 @@ from devtools_testutils.aio import recorded_by_proxy_async
 # PrivateLinkService lives in westcentralus, so storage mover must too.
 AZURE_LOCATION = "westcentralus"
 
+# The subscription id is read from the environment for live runs and defaults to
+# the sanitized zero-GUID so the real subscription is never committed.
+SYNTHETICS_SUBSCRIPTION_ID = (
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
+    or "00000000-0000-0000-0000-000000000000"
+)
 REAL_PRIVATE_LINK_SERVICE_ID = (
-    "/subscriptions/b6b34ad8-ca89-4f85-beb7-c2ec13702dac"
+    f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
     "/resourceGroups/E2E-Management-RGsyn"
     "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
 )

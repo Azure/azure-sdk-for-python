@@ -6,8 +6,10 @@
 """Sync scenario tests for endpoints.
 
 Mirrors .NET EndpointTests at:
-  Q:\\source\\azure-sdk-for-net\\sdk\\storagemover\\Azure.ResourceManager.StorageMover\\tests\\Scenario\\EndpointTests.cs
+  https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/storagemover/Azure.ResourceManager.StorageMover/tests/Scenario/EndpointTests.cs
 """
+import os
+
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.mgmt.storagemover import StorageMoverMgmtClient
@@ -19,13 +21,21 @@ STORAGE_ACCOUNT_NAME = "testsmstore24"
 CONTAINER_NAME = "testsmcontainer"
 
 FAKE_SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
+# Subscription that hosts the shared XDataMove-Synthetics cross-sub infra. Read
+# from the environment for live runs; defaults to the sanitized zero-GUID so the
+# real subscription is never committed to the repo (recordings are sanitized to
+# this same value).
+SYNTHETICS_SUBSCRIPTION_ID = (
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
+    or "00000000-0000-0000-0000-000000000000"
+)
 MULTI_CLOUD_CONNECTOR_ID = (
-    "/subscriptions/b6b34ad8-ca89-4f85-beb7-c2ec13702dac"
+    f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
     "/resourceGroups/E2E-Management-RGsyn"
     "/providers/Microsoft.HybridConnectivity/publicCloudConnectors/e2e-sm-rp-connector"
 )
 AWS_S3_BUCKET_ID = (
-    "/subscriptions/b6b34ad8-ca89-4f85-beb7-c2ec13702dac"
+    f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
     "/resourceGroups/aws_640698235822"
     "/providers/Microsoft.AWSConnector/s3Buckets/e2e-sm-rp-bucket"
 )
@@ -233,8 +243,8 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
     # ----- EndpointTests.S3WithHmacEndpointCreateGetDeleteTest -----
     # NOTE: .NET marks this [Ignore] ("requires live S3 resources that are not yet
-    # available for recording"). Running it anyway as the user asked — the request
-    # uses placeholder URIs/credentials, so the RP may reject them.
+    # available for recording"). It is included here for parity; the request uses
+    # placeholder URIs/credentials, so the RP may reject them when run live.
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy

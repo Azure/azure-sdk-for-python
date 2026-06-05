@@ -11,16 +11,17 @@ Connection op group is new in API 2025-08-01+ and isn't in the .NET Scenario sui
 yet — this is the canonical Python port.
 
 Exercises Storage Mover Connection CRUD (create / get / list / update / delete)
-against the **real** shared PrivateLinkService `test-pls-wcs` in subscription
-``b6b34ad8-ca89-4f85-beb7-c2ec13702dac`` (XDataMove-Synthetics) / RG
-``E2E-Management-RGsyn``. The PLS lives in ``westcentralus``, so the storage mover
-must too.
+against the **real** shared PrivateLinkService `test-pls-wcs` in the
+XDataMove-Synthetics subscription / RG ``E2E-Management-RGsyn``. The PLS lives in
+``westcentralus``, so the storage mover must too.
 
 Intentionally does NOT assert on ``properties.connection_status``: it'll be
 ``Pending`` immediately after create because the PLS-side PE provisioning is
 async. Approval is covered by matrix row #31
 (``JobDefinitionJobRunTests.StartC2CJobWithPrivateSourceTest``).
 """
+import os
+
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.mgmt.storagemover import StorageMoverMgmtClient
@@ -33,8 +34,14 @@ AZURE_LOCATION = "westcentralus"
 # Shared team infra in XDataMove-Synthetics — do not recreate.
 # Full inventory in the cross-language playbook
 # (storage-mover-scenario-tests-cross-language, "Porter's reference" callout).
+# The subscription id is read from the environment for live runs and defaults to
+# the sanitized zero-GUID so the real subscription is never committed.
+SYNTHETICS_SUBSCRIPTION_ID = (
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
+    or "00000000-0000-0000-0000-000000000000"
+)
 REAL_PRIVATE_LINK_SERVICE_ID = (
-    "/subscriptions/b6b34ad8-ca89-4f85-beb7-c2ec13702dac"
+    f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
     "/resourceGroups/E2E-Management-RGsyn"
     "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
 )

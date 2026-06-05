@@ -3,10 +3,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-"""Async scenario tests for storage movers (provider operations + StorageMover CRUD).
+"""Async scenario tests for storage movers (StorageMover CRUD).
 
 Mirrors .NET StorageMoverCollectionTests + StorageMoverResourceTests at:
-  Q:\\source\\azure-sdk-for-net\\sdk\\storagemover\\Azure.ResourceManager.StorageMover\\tests\\Scenario
+  https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/storagemover/Azure.ResourceManager.StorageMover/tests/Scenario
 """
 import pytest
 from azure.core.exceptions import ResourceNotFoundError

@@ -6,18 +6,18 @@
 """Sync scenario tests for job_definitions.
 
 Mirrors .NET JobDefinitionJobRunTests + JobDefinitionScheduleTests at:
-  Q:\\source\\azure-sdk-for-net\\sdk\\storagemover\\Azure.ResourceManager.StorageMover\\tests\\Scenario
+  https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/storagemover/Azure.ResourceManager.StorageMover/tests/Scenario
 
 Also implements cross-language matrix row #31
 (`JobDefinitionJobRunTests.StartC2CJobWithPrivateSourceTest`) — the full
 private-bucket CloudToCloud E2E using the shared `test-pls-wcs` PLS, mirroring
 RP `Storage-XDataMove-RP/test/E2ETest/C2CTest/StartJobTest.cs::StartC2CJobWithPrivateSourceAsyncSuccessPathTest`.
 """
+import os
 import uuid
 from datetime import datetime, timedelta, timezone
 
 import pytest
-from azure.core.exceptions import HttpResponseError
 from azure.mgmt.storagemover import StorageMoverMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
@@ -67,7 +67,12 @@ FAKE_STORAGE_ACCOUNT_ID = (
 # Shared team infra in XDataMove-Synthetics — do not recreate.
 # Full inventory in the cross-language playbook
 # (storage-mover-scenario-tests-cross-language, "Porter's reference" callout).
-SYNTHETICS_SUBSCRIPTION_ID = "b6b34ad8-ca89-4f85-beb7-c2ec13702dac"
+# The subscription id is read from the environment for live runs and defaults to
+# the sanitized zero-GUID so the real subscription is never committed.
+SYNTHETICS_SUBSCRIPTION_ID = (
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
+    or "00000000-0000-0000-0000-000000000000"
+)
 
 PLS_RESOURCE_GROUP = "E2E-Management-RGsyn"
 PLS_NAME = "test-pls-wcs"

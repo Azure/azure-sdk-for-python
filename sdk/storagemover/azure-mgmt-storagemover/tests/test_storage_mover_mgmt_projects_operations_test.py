@@ -6,7 +6,7 @@
 """Sync scenario tests for projects.
 
 Mirrors .NET ProjectCollectionTests + ProjectResourceTests at:
-  Q:\\source\\azure-sdk-for-net\\sdk\\storagemover\\Azure.ResourceManager.StorageMover\\tests\\Scenario
+  https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/storagemover/Azure.ResourceManager.StorageMover/tests/Scenario
 """
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
@@ -27,7 +27,7 @@ class TestStorageMoverMgmtProjectsOperations(AzureMgmtRecordedTestCase):
             storage_mover={"location": AZURE_LOCATION},
         )
 
-    # ----- ProjectCollectionTests.CrateGetExistTest -----
+    # ----- ProjectCollectionTests.CreateGetExistsTest -----
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
