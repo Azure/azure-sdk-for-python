@@ -209,6 +209,7 @@ def assign_copilot(
         if not _unassign_copilot(issue):
             return False
 
+    logging.info(f"Assigning '{COPILOT_ASSIGNEE_LOGIN}' to issue #{issue.number} ")
     try:
         issue.add_to_assignees(COPILOT_ASSIGNEE_LOGIN)
         logging.info(f"Assigned {COPILOT_ASSIGNEE_LOGIN} to issue #{issue.number} for {package_name}/{check_type}")
@@ -236,6 +237,10 @@ def _try_auto_fix(
     eligible = is_auto_fix_eligible(package_dir)
 
     if not eligible:
+        logging.info(
+            f"Issue #{issue.number} ({package_name}) is not auto-fix eligible "
+            f"(vnext_copilot_fix not set to true); skipping Copilot assignment"
+        )
         return
 
     # Duplicate PR detection
@@ -260,7 +265,10 @@ def _try_auto_fix(
 
     # Assign Copilot (force reassignment on version bumps)
     if assign_copilot(issue, package_name, check_type, force_reassign=version_changed):
+        logging.info(f"Copilot assignment succeeded for issue #{issue.number}")
         reconcile_auto_fix_labels(issue, eligible=True)
+    else:
+        logging.warning(f"Copilot assignment did not succeed for issue #{issue.number}")
 
 
 def get_version_running(check_type: CHECK_TYPE) -> str:
