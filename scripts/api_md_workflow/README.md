@@ -22,7 +22,7 @@ It runs on pull requests for changes under `sdk/**`.
 - Regenerates `api.md` for those packages.
 - Fails if the generated files differ from the committed files.
 - Fails if an affected package does not have a committed `api.md`.
-- Prints the mismatched or missing packages and the `azpysdk apistub --md --extract-metadata` command needed to regenerate each `api.md` file.
+- Prints the mismatched or missing packages and the `azpysdk apistub --md --extract-metadata <package-name> --dest-dir <package-dir>` command needed to regenerate each `api.md` file.
 
 ## Script Layout
 
@@ -49,7 +49,7 @@ Also writes `count=<n>` to `GITHUB_OUTPUT`.
 
 ### `regenerate.js`
 
-Reads package directories from `API_MD_PACKAGES_FILE` and runs `azpysdk apistub --md --extract-metadata <package-name>` for each package.
+Reads package directories from `API_MD_PACKAGES_FILE` and runs `azpysdk apistub --md --extract-metadata <package-name> --dest-dir <package-dir>` for each package.
 
 This script is used by the consistency check.
 
@@ -100,4 +100,4 @@ Common variables include:
 3. `find_affected.js` determines which packages were touched.
 4. `regenerate.js` rebuilds `api.md` for those packages.
 5. `find_mismatches.js` records any `api.md` drift, including missing or untracked `api.md` files.
-6. If drift is found, the workflow fails and prints the affected packages plus the `azpysdk apistub --md --extract-metadata <package-name>` command to regenerate each `api.md` file locally.
+6. If drift is found, the workflow fails and prints the affected packages plus the `azpysdk apistub --md --extract-metadata <package-name> --dest-dir <package-dir>` command to regenerate each `api.md` file locally.

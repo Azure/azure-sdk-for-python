@@ -44,7 +44,7 @@ function formatIssueSection(title, apiFiles) {
     const packageName = path.basename(packageDir);
     lines.push(`- ${packageDir}`);
     lines.push(`  API file: ${apiFile}`);
-    lines.push(`  Regenerate: azpysdk apistub --md --extract-metadata ${packageName}`);
+    lines.push(`  Regenerate: azpysdk apistub --md --extract-metadata ${packageName} --dest-dir ${packageDir}`);
   }
   lines.push("");
   return lines.join("\n");
