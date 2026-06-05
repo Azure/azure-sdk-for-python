@@ -32,6 +32,11 @@ SIBLING_URL = "https://other-ledger.confidential-ledger.azure.com/app/transactio
 PARENT_URL = "https://confidential-ledger.azure.com/app/transactions"
 UNRELATED_URL = "https://evil.example.com/app/transactions"
 SUFFIX_LOOKALIKE_URL = "https://test-ledger.confidential-ledger.azure.com.evil.com/app/transactions"
+# Scheme downgrade and port-mismatch variants of otherwise-valid hosts.
+DOWNGRADE_SAME_HOST_URL = "http://test-ledger.confidential-ledger.azure.com/app/transactions"
+DOWNGRADE_NODE_URL = "http://node3.test-ledger.confidential-ledger.azure.com/app/transactions"
+DIFFERENT_PORT_HOST_URL = "https://test-ledger.confidential-ledger.azure.com:8443/app/transactions"
+DIFFERENT_PORT_NODE_URL = "https://node3.test-ledger.confidential-ledger.azure.com:8443/app/transactions"
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -113,7 +118,9 @@ class TestIsAllowedRedirectTarget:
             is True
         )
 
-    def test_same_host_ignores_port(self):
+    def test_same_host_explicit_default_port_allowed(self):
+        # Original has an implicit 443; an explicit :443 target is the same
+        # effective port and must be allowed.
         assert (
             _is_allowed_redirect_target(
                 LEDGER_URL,
@@ -121,6 +128,27 @@ class TestIsAllowedRedirectTarget:
             )
             is True
         )
+
+    def test_subdomain_explicit_default_port_allowed(self):
+        assert (
+            _is_allowed_redirect_target(
+                LEDGER_URL,
+                "https://node3.test-ledger.confidential-ledger.azure.com:443/app",
+            )
+            is True
+        )
+
+    def test_http_downgrade_same_host_blocked(self):
+        assert _is_allowed_redirect_target(LEDGER_URL, DOWNGRADE_SAME_HOST_URL) is False
+
+    def test_http_downgrade_subdomain_blocked(self):
+        assert _is_allowed_redirect_target(LEDGER_URL, DOWNGRADE_NODE_URL) is False
+
+    def test_different_port_same_host_blocked(self):
+        assert _is_allowed_redirect_target(LEDGER_URL, DIFFERENT_PORT_HOST_URL) is False
+
+    def test_different_port_subdomain_blocked(self):
+        assert _is_allowed_redirect_target(LEDGER_URL, DIFFERENT_PORT_NODE_URL) is False
 
     def test_case_insensitive(self):
         assert (
@@ -246,7 +274,17 @@ class TestRedirectCachingPolicy:
         assert policy._cache.get() is None
 
     @pytest.mark.parametrize(
-        "target", [SIBLING_URL, PARENT_URL, UNRELATED_URL, SUFFIX_LOOKALIKE_URL]
+        "target",
+        [
+            SIBLING_URL,
+            PARENT_URL,
+            UNRELATED_URL,
+            SUFFIX_LOOKALIKE_URL,
+            DOWNGRADE_SAME_HOST_URL,
+            DOWNGRADE_NODE_URL,
+            DIFFERENT_PORT_HOST_URL,
+            DIFFERENT_PORT_NODE_URL,
+        ],
     )
     def test_disallowed_redirect_not_followed(self, target):
         redirect_resp = _make_response(307, {"Location": target})
@@ -369,7 +407,17 @@ class TestAsyncRedirectCachingPolicy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
-        "target", [SIBLING_URL, PARENT_URL, UNRELATED_URL, SUFFIX_LOOKALIKE_URL]
+        "target",
+        [
+            SIBLING_URL,
+            PARENT_URL,
+            UNRELATED_URL,
+            SUFFIX_LOOKALIKE_URL,
+            DOWNGRADE_SAME_HOST_URL,
+            DOWNGRADE_NODE_URL,
+            DIFFERENT_PORT_HOST_URL,
+            DIFFERENT_PORT_NODE_URL,
+        ],
     )
     async def test_disallowed_redirect_not_followed(self, target):
         redirect_resp = _make_response(307, {"Location": target})
