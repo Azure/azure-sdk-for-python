@@ -8,6 +8,7 @@ import time
 from typing import Optional, Union
 
 import msal
+
 from azure.core.credentials import AccessToken
 from azure.identity import AuthenticationRequiredError, AzureAuthorityHosts
 
