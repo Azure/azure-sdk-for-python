@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-js-azure-ai-projects
 commit: 1a46f23eb6ff991b777135f70d7d0782fc0fb324
 repo: Azure/azure-rest-api-specs
@@ -28,9 +27,3 @@ additionalDirectories:
   - specification/ai-foundry/data-plane/Foundry/src/skills
   - specification/ai-foundry/data-plane/Foundry/src/toolboxes
   - specification/ai-foundry/data-plane/Foundry/src/tools
-=======
-directory: specification/ai-foundry/data-plane/Foundry
-commit: 6aa89cf5b93d34e6eea85f12b95cd370ba9d58b1
-repo: Azure/azure-rest-api-specs
-additionalDirectories: 
->>>>>>> 88c333c5de (restore tsp-location.yaml)
