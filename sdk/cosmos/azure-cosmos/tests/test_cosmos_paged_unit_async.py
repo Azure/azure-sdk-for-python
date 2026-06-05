@@ -184,6 +184,54 @@ class TestCosmosAsyncItemPagedUnit(unittest.TestCase):
 class TestCosmosDictAndListHeadersAsync(unittest.TestCase):
     """Header API guards for CosmosDict and CosmosList."""
 
+    def test_cosmos_dict_returns_copy_of_response_headers_async(self):
+        original = CaseInsensitiveDict({"x-ms-request-charge": "2.5"})
+        wrapper = CosmosDict({"id": "x"}, response_headers=original)
+
+        first = wrapper.get_response_headers()
+        second = wrapper.get_response_headers()
+
+        self.assertIsNot(first, original)
+        self.assertIsNot(first, second)
+        self.assertEqual(first["x-ms-request-charge"], "2.5")
+
+        first["mutated"] = "yes"
+        self.assertNotIn("mutated", second)
+        self.assertNotIn("mutated", original)
+
+    def test_cosmos_dict_with_none_payload_behaves_like_empty_dict_async(self):
+        wrapper = CosmosDict(None, response_headers=CaseInsensitiveDict())
+        self.assertEqual(len(wrapper), 0)
+        self.assertEqual(len(wrapper.get_response_headers()), 0)
+
+    def test_cosmos_dict_headers_are_case_insensitive_async(self):
+        wrapper = CosmosDict(
+            {"id": "x"},
+            response_headers=CaseInsensitiveDict({"x-ms-request-charge": "7.0"}),
+        )
+        headers = wrapper.get_response_headers()
+        self.assertEqual(headers["X-MS-REQUEST-CHARGE"], "7.0")
+
+    def test_cosmos_list_returns_copy_of_response_headers_async(self):
+        original = CaseInsensitiveDict({"x-ms-request-charge": "3.0"})
+        wrapper = CosmosList([{"id": "a"}], response_headers=original)
+
+        first = wrapper.get_response_headers()
+        second = wrapper.get_response_headers()
+
+        self.assertIsNot(first, original)
+        self.assertIsNot(first, second)
+        self.assertEqual(first["x-ms-request-charge"], "3.0")
+
+        first["mutated"] = "yes"
+        self.assertNotIn("mutated", second)
+        self.assertNotIn("mutated", original)
+
+    def test_cosmos_list_with_none_payload_behaves_like_empty_list_async(self):
+        wrapper = CosmosList(None, response_headers=CaseInsensitiveDict())
+        self.assertEqual(len(wrapper), 0)
+        self.assertEqual(len(wrapper.get_response_headers()), 0)
+
     def test_cosmos_dict_does_not_expose_get_last_response_headers_async(self):
         # The old, removed way of reading response headers must not
         # silently reappear on the single-item response wrapper, whether
@@ -210,6 +258,5 @@ class TestCosmosDictAndListHeadersAsync(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
 
 

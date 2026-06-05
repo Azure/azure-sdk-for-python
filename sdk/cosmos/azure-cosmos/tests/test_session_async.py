@@ -249,12 +249,20 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         )
         test_container = self.created_db.get_container_client(test_container_ref.id)
         try:
+            # Build multi-partition session state first so this test can catch
+            # regressions that accidentally send a compound token.
+            for i in range(60):
+                await test_container.create_item({"id": str(uuid.uuid4()), "pk": f"pk_{i:04d}"})
+
             for i in range(20):
                 await test_container.create_item({
                     "id": str(uuid.uuid4()),
                     "pk": "pinned_pk",
                     "i": i,
                 })
+
+            feed_ranges = [fr async for fr in test_container.read_feed_ranges()]
+            self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
 
             target_fr = await test_container.feed_range_from_partition_key("pinned_pk")
 

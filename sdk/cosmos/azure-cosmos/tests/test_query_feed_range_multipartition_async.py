@@ -596,10 +596,19 @@ class TestFeedRangeMultiPartitionAsync:
 
             # Step 2 — trigger a real split.
             target_throughput = max(REPRO_THROUGHPUT * 2, 60000)
+            # Split trigger is a control-plane throughput operation; run it via
+            # key-auth container even in AAD lanes (same pattern as other split tests).
+            key_client_for_split = CosmosClient(CONFIG.host, CONFIG.masterKey)
             try:
-                await test_config.TestConfig.trigger_split_async(container, target_throughput)
+                key_container_for_split = _get_container(key_client_for_split)
+                await test_config.TestConfig.trigger_split_async(
+                    key_container_for_split,
+                    target_throughput,
+                )
             except unittest.SkipTest:
                 raise
+            finally:
+                await key_client_for_split.close()
             await asyncio.sleep(10)
             _ = [fr async for fr in container.read_feed_ranges(force_refresh=True)]
 
@@ -1070,7 +1079,5 @@ class TestFeedRangeMultiPartitionAsync:
 
 if __name__ == "__main__":
     unittest.main()
-
-
 
 

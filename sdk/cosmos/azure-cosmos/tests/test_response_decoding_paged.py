@@ -9,6 +9,7 @@ import os
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from azure.core.exceptions import DecodeError
 
 from azure.cosmos import _synchronized_request
@@ -17,6 +18,7 @@ from azure.cosmos.http_constants import ResourceType
 
 
 _MALFORMED_INPUT_ENV_VAR = "AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
+pytestmark = pytest.mark.cosmosEmulator
 
 # Page 1 is valid JSON but a string value contains an invalid UTF-8
 # byte sequence. Page 2 is fully well-formed.
@@ -237,4 +239,3 @@ class TestAsyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

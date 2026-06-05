@@ -241,9 +241,10 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self._delete_container_for_test(container_id)
 
     def test_query_response_headers_long_pagination_bounded_memory(self):
-        """Paging through many pages does not grow the iterator's response-header
-        state. Document payloads are not retained during measurement so any growth
-        shown reflects only headers and SDK iterator overhead."""
+        """Paging through many pages keeps response-header state bounded and
+        keeps overall iterator memory growth under a linear safety ceiling.
+        Document payloads are not retained during measurement so growth reflects
+        headers and iterator overhead only."""
         container_id = "test_headers_long_pagination_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
@@ -312,15 +313,16 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 f"Header name set grew across pagination (seen={len(all_keys_seen)}, baseline={len(baseline_headers)}).",
             )
 
-            # Per-page ceiling so the check scales if num_items changes.
+            # Linear safety ceiling so the check scales if num_items changes.
+            # This is a "no catastrophic leak" guard, not a strict O(1) proof.
             # Observed per-page overhead on a live account is around 24-29 KiB;
             # 48 KiB gives roughly 2x headroom and still catches a real leak.
             max_per_page_bytes = 48 * 1024
             ceiling_bytes = max_per_page_bytes * page_count
             self.assertLess(
                 memory_growth, ceiling_bytes,
-                f"Iterator memory grew by {memory_growth} bytes over {page_count} pages "
-                f"(ceiling {ceiling_bytes} bytes).",
+                f"Iterator memory grew by {memory_growth} bytes over {page_count} pages; "
+                f"exceeded linear safety ceiling {ceiling_bytes} bytes.",
             )
 
         finally:
@@ -666,7 +668,8 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
     def test_response_hook_parity_query_items_change_feed(self):
         """Headers handed to the response_hook on query_items_change_feed
-        must match the pager's get_response_headers()."""
+        must match the pager's get_response_headers() when the pager
+        exposes one (some change-feed pager flavors don't)."""
         container_id = "test_hookparity_cf_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
@@ -694,11 +697,11 @@ class TestQueryResponseHeaders(unittest.TestCase):
             # the last page's headers must match the last hook invocation.
             if hasattr(paged, "get_response_headers"):
                 final_headers = paged.get_response_headers()
-                if "x-ms-request-charge" in final_headers:
-                    self.assertEqual(
-                        final_headers["x-ms-request-charge"],
-                        captured[-1]["x-ms-request-charge"],
-                    )
+                self.assertIn("x-ms-request-charge", final_headers)
+                self.assertEqual(
+                    final_headers["x-ms-request-charge"],
+                    captured[-1]["x-ms-request-charge"],
+                )
         finally:
             self._delete_container_for_test(container_id)
 

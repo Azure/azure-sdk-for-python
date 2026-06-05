@@ -9,6 +9,8 @@ results from different partitions are classified and merged.
 
 import unittest
 
+import pytest
+
 from azure.cosmos import _base
 from azure.cosmos._query_aggregate_utils import (
     _AggregatePartialClassification,
@@ -20,6 +22,8 @@ from azure.cosmos._routing.feed_range_continuation import (
     _count_page_items_from_partial_result,
 )
 from azure.cosmos.aio import _cosmos_client_connection_async as _async_conn
+
+pytestmark = pytest.mark.cosmosEmulator
 
 
 class TestQueryAggregateUtilsAsync(unittest.IsolatedAsyncioTestCase):
@@ -127,4 +131,3 @@ class TestQueryAggregateUtilsAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

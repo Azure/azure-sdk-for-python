@@ -257,9 +257,10 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_long_pagination_bounded_memory_async(self):
-        """Paging through many pages does not grow the iterator's response-header
-        state. Document payloads are not retained during measurement so any growth
-        shown reflects only headers and SDK iterator overhead."""
+        """Paging through many pages keeps response-header state bounded and
+        keeps overall iterator memory growth under a linear safety ceiling.
+        Document payloads are not retained during measurement so growth reflects
+        headers and iterator overhead only."""
         cid = "test_headers_long_pagination_async_" + str(uuid.uuid4())
         created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
@@ -331,14 +332,15 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 f"baseline={len(baseline_headers)})."
             )
 
-            # Per-page ceiling so the check scales if num_items changes.
+            # Linear safety ceiling so the check scales if num_items changes.
+            # This is a "no catastrophic leak" guard, not a strict O(1) proof.
             # Observed per-page overhead on a live account is around 24-29 KiB;
             # 48 KiB gives roughly 2x headroom and still catches a real leak.
             max_per_page_bytes = 48 * 1024
             ceiling_bytes = max_per_page_bytes * page_count
             assert memory_growth < ceiling_bytes, (
-                f"Iterator memory grew by {memory_growth} bytes over {page_count} pages "
-                f"(ceiling {ceiling_bytes} bytes)."
+                f"Iterator memory grew by {memory_growth} bytes over {page_count} pages; "
+                f"exceeded linear safety ceiling {ceiling_bytes} bytes."
             )
 
         finally:
@@ -670,11 +672,11 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
             if hasattr(paged, "get_response_headers"):
                 final_headers = paged.get_response_headers()
-                if "x-ms-request-charge" in final_headers:
-                    assert (
-                        final_headers["x-ms-request-charge"]
-                        == captured[-1]["x-ms-request-charge"]
-                    )
+                assert "x-ms-request-charge" in final_headers
+                assert (
+                    final_headers["x-ms-request-charge"]
+                    == captured[-1]["x-ms-request-charge"]
+                )
         finally:
             await self._delete_container_for_test(cid)
 

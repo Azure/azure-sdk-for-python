@@ -77,7 +77,9 @@ def create_database_account_with_three_canonical_regions(enable_multiple_writabl
     return db_acc
 
 
-def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=documents.ConnectionPolicy()):
+def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=None):
+    if connection_policy is None:
+        connection_policy = documents.ConnectionPolicy()
     connection_policy.PreferredLocations = preferred_locations
     connection_policy.UseMultipleWriteLocations = use_multiple_write_locations
     lc = LocationCache(default_endpoint=default_endpoint,
