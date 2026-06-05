@@ -96,7 +96,7 @@ async def _tee_stream(
     """
     prefix = f"[{os.path.basename(os.path.normpath(package))} :: {check}] "
 
-    async def _pump(stream, sink) -> str:
+    async def _pump(stream: Optional[asyncio.StreamReader], sink: IO[str]) -> str:
         if stream is None:
             return ""
         chunks: List[str] = []
