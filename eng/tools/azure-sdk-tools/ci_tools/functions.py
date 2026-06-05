@@ -68,18 +68,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 PATHS_EXCLUDED_FROM_DISCOVERY = []
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
-TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
-    "azure-storage-blob": "pypy",
-    "azure-storage-queue": "pypy",
-    "azure-storage-file-datalake": "pypy",
-    "azure-storage-file-share": "pypy",
-    "azure-eventhub": "pypy",
-    "azure-servicebus": "pypy",
-    "azure-ai-projects": "pypy",
-    "azure-ai-agents": "pypy",
-    "azure-identity-broker": "pypy",
-    "azure-storage-extensions": "pypy",
-}
+TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {}
 
 omit_regression = (
     lambda x: "nspkg" not in x
