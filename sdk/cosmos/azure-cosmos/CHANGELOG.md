@@ -1,5 +1,20 @@
 ## Release History
 
+### 4.16.2 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.16.1 (2026-06-01)
+
+#### Bugs Fixed
+* Fixed a bug in the sync and async `/pkranges` change-feed refresh where some containers could fail to build a complete routing map. See [PR 47245](https://github.com/Azure/azure-sdk-for-python/pull/47245).
+
 ### 4.16.0 (2026-05-29)
 
 #### Features Added
@@ -8,6 +23,7 @@
 
 #### Breaking Changes
 * `CosmosItemPaged.get_response_headers()` and `CosmosAsyncItemPaged.get_response_headers()` now return a single `CaseInsensitiveDict` (the latest page) instead of `List[CaseInsensitiveDict]` (introduced in 4.16.0b1); `get_last_response_headers()` has been removed. This avoids unbounded memory growth on large queries. **Migration:** code that previously accessed `headers[i]['x-ms-request-charge']` should switch to `headers['x-ms-request-charge']` for the latest page, or pass `response_hook=` to the query method to receive per-page headers as they arrive. See [PR 47172](https://github.com/Azure/azure-sdk-for-python/pull/47172).
+* `SELECT VALUE AVG(...)` queries spanning multiple physical partitions now raise `ValueError` instead of returning a mathematically incorrect merged value from client-side aggregation. **Migration:** rewrite cross-partition `AVG` queries as `SUM(...) / COUNT(...)` (both of which merge correctly across partitions), or scope the query to a single partition via `partition_key=`. See [PR 47105](https://github.com/Azure/azure-sdk-for-python/pull/47105).
 
 #### Bugs Fixed
 * Fixed bug where the `Content-Length` HTTP request header was computed from the character count of the request body instead of its UTF-8 byte count. See [PR 47008](https://github.com/Azure/azure-sdk-for-python/pull/47008)
@@ -15,7 +31,6 @@
 * Fixed bug where `CosmosClient` construction with AAD credentials would crash at startup if the semantic reranking inference endpoint environment variable was not set, even when semantic reranking was not being used. The inference service is now lazily initialized on first use. See [PR 46243](https://github.com/Azure/azure-sdk-for-python/pull/46243)
 * Fixed bug where region names in `preferred_locations` and `excluded_locations` (client-level and per-request) were not matched tolerantly for differences in case, whitespace, hyphens, and underscores. See [PR 46937](https://github.com/Azure/azure-sdk-for-python/pull/46937)
 * Fixed a bug in `query_items(feed_range=...)` where pagination could return incorrect results after a partition split caused the supplied feed range to overlap multiple physical partitions. See [PR 47105](https://github.com/Azure/azure-sdk-for-python/pull/47105)
-* Fixed bug where `SELECT VALUE AVG(...)` queries spanning multiple physical partitions returned mathematically incorrect merged values from client-side aggregation. These queries now raise `ValueError`. See [PR 47105](https://github.com/Azure/azure-sdk-for-python/pull/47105)
 * Fixed bug where a `ValueError("Ranges overlap")` or an `AssertionError("code bug: returned overlapping ranges ... is empty")` from the partition key range cache could escape to the caller when the `/pkranges` response contained a transiently inconsistent snapshot (overlap or gap). See [PR 47091](https://github.com/Azure/azure-sdk-for-python/pull/47091)
 
 #### Other Changes

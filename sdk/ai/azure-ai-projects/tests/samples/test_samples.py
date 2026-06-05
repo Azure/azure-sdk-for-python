@@ -63,11 +63,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "memories",
-            samples_to_skip=[
-                "sample_memory_advanced.py",
-                "sample_memory_basic.py",
-                "sample_memory_crud.py",  # Sample works fine. But AI thinks something is wrong.
-            ],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()
@@ -185,23 +181,23 @@ class TestSamples(AzureRecordedTestCase):
         # fails the test).
 
     @servicePreparer()
-    # @additionalSampleTests(
-    #     [
-    #         AdditionalSampleTestDetail(
-    #             test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
-    #             sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
-    #             env_vars={
-    #                 "POLL_INTERVAL_SECONDS": "60",
-    #             },
-    #         ),
-    #     ]
-    # )
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
+                sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "60",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "datasets",
             samples_to_skip=[
-                "sample_dataset_generation_job_simpleqna_with_prompt_source.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_with_prompt_source.py",  # Specified through AdditionalSampleTestDetail
                 "sample_dataset_generation_job_traces_for_finetuning.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_for_finetuning.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_traces_for_evaluation.py",  # PR #47067: recording not yet available
@@ -244,13 +240,24 @@ class TestSamples(AzureRecordedTestCase):
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
                 },
             ),
+            AdditionalSampleTestDetail(
+                test_id="sample_routines_with_schedule_trigger",
+                sample_filename="sample_routines_with_schedule_trigger.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "300",
+                },
+            ),
         ]
     )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "hosted_agents",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_routines_with_schedule_trigger.py",  # Specify through AdditionalSampleTestDetail
+                "sample_routines_crud.py",  # Skipped due to service serialization issues
+                "sample_routines_with_timer_trigger.py",  # Skipped due to service serialization issues
+            ],
         ),
     )
     @SamplePathPasser()
