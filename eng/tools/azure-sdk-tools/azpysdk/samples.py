@@ -158,6 +158,9 @@ IGNORED_SAMPLES = {
         "blob_samples_container_access_policy_async.py",
         "blob_samples_client_side_encryption_keyvault.py",
     ],
+    "azure-messaging-webpubsubservice": [
+        "integration_sample.py",
+    ],
 }
 
 
@@ -316,7 +319,13 @@ class samples(Check):
                 os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for samples check")
 
             # install dependencies

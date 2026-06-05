@@ -21,7 +21,6 @@ from .authentication import AzureSigningError
 from .models import get_enum_value, StorageErrorCode, UserDelegationKey
 from .parser import _to_utc_datetime
 
-
 SV_DOCS_URL = "https://learn.microsoft.com/rest/api/storageservices/versioning-for-the-azure-storage-services"
 _LOGGER = logging.getLogger(__name__)
 
@@ -80,7 +79,10 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 
 
 def return_raw_deserialized(response, *_):
-    return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
+    return (
+        response.http_response.location_mode,
+        response.context[ContentDecodePolicy.CONTEXT_NAME],
+    )
 
 
 def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # pylint:disable=too-many-statements, too-many-branches
@@ -96,7 +98,12 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(
         storage_error,
-        (PartialBatchErrorException, ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError),
+        (
+            PartialBatchErrorException,
+            ClientAuthenticationError,
+            ResourceNotFoundError,
+            ResourceExistsError,
+        ),
     ):
         serialized = True
     error_code = storage_error.response.headers.get("x-ms-error-code")
@@ -118,7 +125,8 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
             error_dict = error_body.get("error", {})
         elif not error_code:
             _LOGGER.warning(
-                "Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.", type(error_body)
+                "Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.",
+                type(error_body),
             )
             error_dict = {"message": str(error_body)}
 
@@ -135,9 +143,15 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         # This check would be unnecessary if we have already serialized the error
         if error_code and not serialized:
             error_code = StorageErrorCode(error_code)
-            if error_code in [StorageErrorCode.condition_not_met, StorageErrorCode.blob_overwritten]:
+            if error_code in [
+                StorageErrorCode.condition_not_met,
+                StorageErrorCode.blob_overwritten,
+            ]:
                 raise_error = ResourceModifiedError
-            if error_code in [StorageErrorCode.invalid_authentication_info, StorageErrorCode.authentication_failed]:
+            if error_code in [
+                StorageErrorCode.invalid_authentication_info,
+                StorageErrorCode.authentication_failed,
+            ]:
                 raise_error = ClientAuthenticationError
             if error_code in [
                 StorageErrorCode.resource_not_found,
@@ -193,11 +207,15 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     error.additional_info = additional_data
     # error.args is what's surfaced on the traceback - show error message in all cases
     error.args = (error.message,)
+
     try:
-        # `from None` prevents us from double printing the exception (suppresses generated layer error context)
-        exec("raise error from None")  # pylint: disable=exec-used # nosec
-    except SyntaxError as exc:
-        raise error from exc
+        # `from None` suppresses exception chaining to prevent double printing the exception.
+        raise error from None
+    finally:
+        # Explicitly clears exception references to break circular references
+        # and allow immediate garbage collection.
+        error = None
+        storage_error = None
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):

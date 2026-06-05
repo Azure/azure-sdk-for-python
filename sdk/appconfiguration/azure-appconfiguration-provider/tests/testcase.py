@@ -4,13 +4,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import AzureRecordedTestCase
+import time
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
+    ConfigurationSettingsFilter,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
+    SnapshotComposition,
+    SnapshotStatus,
 )
 from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
 from azure.appconfiguration.provider._constants import NULL_CHAR
@@ -20,14 +24,6 @@ class AppConfigTestCase(AzureRecordedTestCase):
     def create_client(self, **kwargs):
         credential = self.get_credential(AzureAppConfigurationClient)
 
-        client = None
-
-        if "connection_string" in kwargs:
-            client = AzureAppConfigurationClient.from_connection_string(kwargs["connection_string"])
-        else:
-            client = AzureAppConfigurationClient(kwargs["endpoint"], credential)
-
-        setup_configs(client, kwargs.get("keyvault_secret_url"), kwargs.get("keyvault_secret_url2"))
         kwargs["user_agent"] = "SDK/Integration"
 
         if "endpoint" in kwargs:
@@ -44,20 +40,48 @@ class AppConfigTestCase(AzureRecordedTestCase):
 
         return load(**kwargs)
 
-    @staticmethod
-    def create_sdk_client(appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(
-            appconfiguration_connection_string, user_agent="SDK/Integration"
-        )
-
-    def create_aad_sdk_client(self, appconfiguration_endpoint_string):
+    def create_appconfig_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
 
 def setup_configs(client, keyvault_secret_url, keyvault_secret_url2):
+    """Set up all test configs and create snapshots. Returns (snapshot_name, ff_snapshot_name)."""
     for config in get_configs(keyvault_secret_url, keyvault_secret_url2):
         client.set_configuration_setting(config)
+
+    # Snapshot test settings
+    snapshot_settings = [
+        ConfigurationSetting(key="snapshot_test_key1", value="snapshot_test_value1", label=NULL_CHAR),
+        ConfigurationSetting(key="snapshot_test_key2", value="snapshot_test_value2", label=NULL_CHAR),
+        ConfigurationSetting(
+            key="snapshot_test_json",
+            value='{"nested": "snapshot_value"}',
+            label=NULL_CHAR,
+            content_type="application/json",
+        ),
+        ConfigurationSetting(key="refresh_test_key", value="original_refresh_value", label=NULL_CHAR),
+        FeatureFlagConfigurationSetting(feature_id="SnapshotFeature", enabled=True, label=NULL_CHAR),
+        FeatureFlagConfigurationSetting(feature_id="SnapshotFeatureDisabled", enabled=False, label=NULL_CHAR),
+        ConfigurationSetting(key="ff_snapshot_test_key1", value="ff_snapshot_test_value1", label=NULL_CHAR),
+        ConfigurationSetting(key="ff_snapshot_test_key2", value="ff_snapshot_test_value2", label=NULL_CHAR),
+        FeatureFlagConfigurationSetting(feature_id="SnapshotOnlyFeature", enabled=True, label=NULL_CHAR),
+        FeatureFlagConfigurationSetting(feature_id="RegularFeature", enabled=True, label=NULL_CHAR),
+        FeatureFlagConfigurationSetting(feature_id="RegularFeatureDisabled", enabled=False, label=NULL_CHAR),
+    ]
+    for setting in snapshot_settings:
+        client.set_configuration_setting(setting)
+
+    # Create snapshots
+    snapshot_name = f"test-snapshot-{int(time.time())}"
+    ff_snapshot_name = f"test-ff-snapshot-{int(time.time())}"
+
+    create_snapshot(client, snapshot_name, key_filters=["snapshot_test_*", ".appconfig.featureflag/SnapshotFeature*"])
+    create_snapshot(
+        client, ff_snapshot_name, key_filters=["ff_snapshot_test_*", ".appconfig.featureflag/SnapshotOnlyFeature"]
+    )
+
+    return snapshot_name, ff_snapshot_name
 
 
 def get_configs(keyvault_secret_url, keyvault_secret_url2):
@@ -191,9 +215,6 @@ def create_snapshot(client, snapshot_name, key_filters, composition_type=None, r
     :param retention_period: The retention period in seconds (default: 3600, minimum valid value).
     :return: The created snapshot.
     """
-    from azure.appconfiguration import SnapshotComposition, ConfigurationSettingsFilter, SnapshotStatus
-    from devtools_testutils import is_live
-
     if composition_type is None:
         composition_type = SnapshotComposition.KEY
 

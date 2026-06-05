@@ -18,6 +18,7 @@ from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
     SansIOHTTPPolicy,
     AsyncRedirectPolicy,
+    AsyncRetryPolicy,
     SensitiveHeaderCleanupPolicy,
 )
 from azure.core.pipeline.policies._authentication import MAX_REFRESH_JITTER_SECONDS
@@ -768,3 +769,141 @@ async def test_jitter_set_on_token_request_async():
 
         assert policy._refresh_jitter == 25
         mock_randint.assert_called_once_with(0, MAX_REFRESH_JITTER_SECONDS)
+
+
+@pytest.mark.asyncio
+async def test_challenge_auth_header_stripped_after_redirect():
+    """Assuming the SensitiveHeaderCleanupPolicy is in the pipeline, the authorization header should be stripped after
+    a redirect to a different domain by default, and preserved if the policy is configured to disable cleanup."""
+
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self, cleanup_disabled=False):
+            self._first = True
+            self._cleanup_disabled = cleanup_disabled
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_header)
+                response = Response()
+                response.status_code = 307
+                response.headers["location"] = "https://redirect-target.example.invalid"
+                return response
+
+            # Second request: after redirect
+            if self._cleanup_disabled:
+                assert request.headers.get("Authorization")
+            else:
+                assert not request.headers.get("Authorization")
+            response = Response()
+            response.status_code = 401
+            response.headers["WWW-Authenticate"] = (
+                'Bearer error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOnsiZm9vIjoiYmFyIn19"'
+            )
+            return response
+
+    auth_header = "token"
+    get_token_call_count = 0
+
+    async def mock_get_token(*_, **__):
+        nonlocal get_token_call_count
+        get_token_call_count += 1
+        return AccessToken(auth_header, 0)
+
+    credential = Mock(spec_set=["get_token"], get_token=mock_get_token)
+    auth_policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+    redirect_policy = AsyncRedirectPolicy()
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
+
+    response = await pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
+    assert response.http_response.status_code == 401
+
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(disable_redirect_cleanup=True)
+    pipeline = AsyncPipeline(
+        transport=MockTransport(cleanup_disabled=True),
+        policies=[redirect_policy, auth_policy, header_clean_up_policy],
+    )
+    response = await pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
+    assert response.http_response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_auth_header_stripped_after_cross_domain_redirect_with_retry():
+    """After a cross-domain redirect, if the redirected-to endpoint returns a retryable status code,
+    the Authorization header should still be stripped on the retry attempt. This verifies that the
+    insecure_domain_change flag persists across retries so SensitiveHeaderCleanupPolicy continues to
+    remove the Authorization header."""
+
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self._request_count = 0
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):
+            self._request_count += 1
+
+            if self._request_count == 1:
+                # First request: to the original domain — should have auth header
+                assert request.headers.get("Authorization") == "Bearer {}".format(auth_header)
+                response = Response()
+                response.status_code = 307
+                response.headers["location"] = "https://redirect-target.example.invalid"
+                return response
+
+            if self._request_count == 2:
+                # Second request: after redirect to attacker domain — auth header should be stripped
+                assert not request.headers.get(
+                    "Authorization"
+                ), "Authorization header should be stripped on first request to redirected domain"
+                response = Response()
+                response.status_code = 500
+                return response
+
+            if self._request_count == 3:
+                # Third request: retry to attacker domain — auth header should STILL be stripped
+                assert not request.headers.get(
+                    "Authorization"
+                ), "Authorization header should be stripped on retry to redirected domain"
+                response = Response()
+                response.status_code = 200
+                return response
+
+            raise RuntimeError("Unexpected request count: {}".format(self._request_count))
+
+    auth_header = "token"
+
+    async def mock_get_token(*_, **__):
+        return AccessToken(auth_header, 0)
+
+    credential = Mock(spec_set=["get_token"], get_token=mock_get_token)
+    auth_policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+    redirect_policy = AsyncRedirectPolicy()
+    retry_policy = AsyncRetryPolicy(retry_total=1, retry_backoff_factor=0)
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy()
+    transport = MockTransport()
+    # Pipeline order matches the real default: redirect -> retry -> auth -> ... -> sensitive header cleanup
+    pipeline = AsyncPipeline(
+        transport=transport,
+        policies=[redirect_policy, retry_policy, auth_policy, header_clean_up_policy],
+    )
+    response = await pipeline.run(HttpRequest("GET", "https://legitimate.azure.com"))
+    assert response.http_response.status_code == 200
+    assert transport._request_count == 3

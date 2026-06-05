@@ -57,6 +57,31 @@ class TestInlineImageGracefulFallback:
         assert result["type"] == "image_url"
         assert result["image_url"]["url"].startswith("data:image/png;base64,")
 
+    def test_empty_alt_text_returns_text(self, tmp_path):
+        """Empty alt text like ![](figures/14.2) from Document Intelligence should return text."""
+        result = _inline_image("![](figures/14.2)", tmp_path, "auto")
+        assert result["type"] == "text"
+        assert result["text"] == "![](figures/14.2)"
+
+    def test_unparseable_markdown_image_returns_text(self, tmp_path):
+        """Markdown image with title attribute that fails regex should return text, not raise."""
+        result = _inline_image('![alt](url "title")', tmp_path, "auto")
+        assert result["type"] == "text"
+        assert result["text"] == '![alt](url "title")'
+
+    def test_filename_exceeds_os_limit_returns_text(self, tmp_path):
+        """A filename exceeding the OS name limit (255 chars on Linux) should return text, not raise."""
+        long_name = "a" * 300 + ".png"
+        result = _inline_image(f"![alt]({long_name})", tmp_path, "auto")
+        assert result["type"] == "text"
+        assert result["text"] == f"![alt]({long_name})"
+
+    def test_path_with_null_byte_returns_text(self, tmp_path):
+        """A path containing a null byte should return text, not raise."""
+        result = _inline_image("![alt](invalid\x00path.png)", tmp_path, "auto")
+        assert result["type"] == "text"
+        assert result["text"] == "![alt](invalid\x00path.png)"
+
     def test_real_local_image_file(self, tmp_path):
         """A real local image file should still be base64-encoded as before."""
         # Create a minimal valid PNG file (1x1 pixel)
@@ -102,6 +127,21 @@ class TestToContentStrOrListGracefulFallback:
     def test_multiple_unresolvable_refs(self, tmp_path):
         """Multiple unresolvable image refs in one string should all become text."""
         result = _to_content_str_or_list("Text ![a](figures/1.1) middle ![b](figures/2.3) end", tmp_path, "auto")
+        assert isinstance(result, list)
+        for item in result:
+            assert item["type"] == "text"
+
+    def test_text_with_empty_alt_text_image(self, tmp_path):
+        """Empty alt text image refs like ![](figures/14.2) in mixed content should not crash."""
+        result = _to_content_str_or_list("Text ![](figures/14.2) more text", tmp_path, "auto")
+        assert isinstance(result, list)
+        for item in result:
+            assert item["type"] == "text"
+
+    def test_text_with_filename_exceeding_os_limit(self, tmp_path):
+        """A filename exceeding OS limits in mixed content should become text, not crash."""
+        long_name = "b" * 300 + ".png"
+        result = _to_content_str_or_list(f"Text ![img]({long_name}) end", tmp_path, "auto")
         assert isinstance(result, list)
         for item in result:
             assert item["type"] == "text"

@@ -20,7 +20,7 @@
 
 ### Other Changes
 
-- Python 3.7 is no longer supported. Please use Python version 3.8 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 ## 1.5.0 (2024-02-14)
 
@@ -78,7 +78,7 @@
 - Added a new API version `ApiVersion.V2022_06_01` that is now the default API version
 
 ### Other Changes
-- Python 2.7 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+- Python 2.7 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 ## 1.1.0b1 (2021-11-09)
 

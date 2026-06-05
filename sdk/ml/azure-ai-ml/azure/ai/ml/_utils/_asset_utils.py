@@ -49,12 +49,11 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (
     ModelContainersOperations,
     ModelVersionsOperations,
 )
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    DataVersionBaseData,
-    ModelVersionData,
-    ModelVersionResourceArmPaginatedResult,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    DataVersionBase as DataVersionBaseData,
+    ModelVersion as ModelVersionData,
 )
-from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
+from azure.ai.ml._restclient.arm_ml_service.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
@@ -923,7 +922,7 @@ def _get_latest(
     except StopIteration:
         latest = None
 
-    if latest and isinstance(latest, ModelVersionResourceArmPaginatedResult):
+    if latest and isinstance(latest, ModelVersionData):
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
         latest = cast(ModelVersionData, latest)
     if not latest:

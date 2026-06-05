@@ -21,7 +21,7 @@
 
 """Internal class for global endpoint manager for circuit breaker.
 """
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Dict, Any
 
 from azure.cosmos._constants import _Constants
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
@@ -49,7 +49,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         self.global_partition_endpoint_manager_core = (
             _GlobalPartitionEndpointManagerForCircuitBreakerCore(client, self.location_cache))
 
-    async def create_pk_range_wrapper(self, request: RequestObject) -> Optional[PartitionKeyRangeWrapper]:
+    async def create_pk_range_wrapper(self, request: RequestObject, **kwargs) -> Optional[PartitionKeyRangeWrapper]:
         if HttpHeaders.IntendedCollectionRID in request.headers:
             container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
         else:
@@ -63,20 +63,21 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         partition_key_definition = properties["partitionKey"]
         partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
 
-        options = {}
+        options: Dict[str, Any] = {}
         if request.excluded_locations:
             options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
+        options[_Constants.ContainerRID] = container_rid
         if request.pk_val:
             partition_key_value = request.pk_val
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
             partition_ranges = await (self.client._routing_map_provider
-                                      .get_overlapping_ranges(container_link, epk_range, options))
+                                      .get_overlapping_ranges(container_link, epk_range, options, **kwargs))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif HttpHeaders.PartitionKeyRangeID in request.headers:
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
             epk_range = await (self.client._routing_map_provider
-                           .get_range_by_partition_key_range_id(container_link, pk_range_id, options))
+                           .get_range_by_partition_key_range_id(container_link, pk_range_id, options, **kwargs))
             if not epk_range:
                 self.global_partition_endpoint_manager_core.log_warn_or_debug(
                     "Illegal state: partition key range cache not initialized correctly. "

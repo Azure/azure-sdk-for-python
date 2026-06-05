@@ -7,7 +7,7 @@
 import logging
 from typing import Any, Iterable, Optional, cast
 
-from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as RunHistoryServiceClient
+from azure.ai.ml._restclient.runhistory import RunHistoryClient as RunHistoryServiceClient
 from azure.ai.ml._restclient.runhistory.models import GetRunDataRequest, GetRunDataResult, Run, RunDetails
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.constants._common import AZUREML_RESOURCE_PROVIDER, NAMED_RESOURCE_ID_FORMAT, AzureMLResourceType

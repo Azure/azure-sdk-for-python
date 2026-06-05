@@ -1,5 +1,20 @@
 # Release History
 
+## 1.2.0b1 (2026-04-28)
+
+### Features Added
+- Added `to_llm_input` helper function that converts `AnalysisResult` objects into LLM-friendly text with YAML front matter and markdown content. Supports documents, audio/video, and classification hierarchies.
+
+## 1.1.0 (2026-04-20)
+
+### Features Added
+- Added `usage` property on `AnalyzeLROPoller` and `AnalyzeAsyncLROPoller` to surface billing and token consumption details (`UsageDetails`) returned by the REST API.
+
+## 1.0.1 (2026-03-06)
+
+### Bugs Fixed
+- Removed `_models.pyi` stub file that caused type checkers (pyright, mypy) to only resolve 10 of 51 model classes, hiding types like `AnalysisResult` and `AnalyzerDefinition`. The `.value` property type information is now provided via `TYPE_CHECKING` class redeclarations in `models/_patch.py`.
+
 ## 1.0.0 (2026-02-28)
 
 ### Features Added

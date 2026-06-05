@@ -9,9 +9,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union, cast
 
-from msrest import Serializer
-
-from azure.ai.ml._restclient.v2022_10_01 import models
 from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook
 from azure.ai.ml._utils.utils import dump_yaml
 
@@ -61,9 +58,6 @@ class Resource(abc.ABC):
         self.__source_path: Union[str, PathLike] = kwargs.pop("source_path", "")
         self._base_path = kwargs.pop(BASE_PATH_CONTEXT_KEY, None) or os.getcwd()  # base path should never be None
         self._creation_context: Optional[SystemData] = kwargs.pop("creation_context", None)
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         super().__init__(**kwargs)
 
     @property

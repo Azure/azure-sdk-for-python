@@ -6,8 +6,8 @@
 # cSpell:disable
 
 import os
-import pytest
 from io import BytesIO
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
@@ -45,7 +45,7 @@ class TestAgentFileSearch(TestBase):
         DELETE /vector_stores/{id}                           openai_client.vector_stores.delete()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -156,7 +156,7 @@ Widget B,Q2,25000"""
             # Attempt to upload unsupported file type
             print("\nAttempting to upload CSV file (unsupported format)...")
             try:
-                file = openai_client.vector_stores.files.upload_and_poll(
+                _ = openai_client.vector_stores.files.upload_and_poll(
                     vector_store_id=vector_store.id,
                     file=csv_file,
                 )
@@ -164,7 +164,7 @@ Widget B,Q2,25000"""
                 openai_client.vector_stores.delete(vector_store.id)
                 pytest.fail("Expected BadRequestError for CSV file upload, but upload succeeded")
 
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 error_message = str(e)
                 print(f"\n✓ Upload correctly rejected with error: {error_message[:200]}...")
 
@@ -203,7 +203,7 @@ Widget B,Q2,25000"""
         while using File Search to answer follow-up questions.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

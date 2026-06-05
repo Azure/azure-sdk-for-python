@@ -49,7 +49,7 @@ def main():
                         "theOnlyOPCUABroker": {
                             "address": "opc.tcp://192.168.86.23:51211/UA/SampleServer",
                             "authentication": {"method": "Anonymous"},
-                            "endpointType": "microsoft.opcua",
+                            "endpointType": "microsoft.opcua:v1",
                             "version": "2",
                         }
                     }
@@ -61,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/CreateOrReplace_NamespaceDevice_Edge_Anonymous.json
+# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_NamespaceDevice_Edge_Anonymous.json
 if __name__ == "__main__":
     main()

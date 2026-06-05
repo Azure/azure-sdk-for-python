@@ -1,6 +1,8 @@
 import pytest
 import copy
-from azure.ai.evaluation._evaluate._evaluate_aoai import _combine_item_schemas
+from unittest.mock import MagicMock, patch
+from azure.ai.evaluation._evaluate._evaluate_aoai import _combine_item_schemas, _get_single_run_results
+from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
 
 
 @pytest.fixture
@@ -119,3 +121,85 @@ class TestCombineItemSchemas:
 
         assert data_source_config["item_schema"]["properties"] == expected_properties
         assert data_source_config["item_schema"]["required"] == expected_required
+
+
+class TestGetSingleRunResultsBlame:
+    """Unit tests for blame attribution in _get_single_run_results."""
+
+    def _make_run_info(self, client):
+        return {
+            "client": client,
+            "eval_group_id": "group-1",
+            "eval_run_id": "run-1",
+            "grader_name_map": {},
+        }
+
+    @patch("azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion")
+    @pytest.mark.parametrize("code", ["UserError", "usererror", "USERERROR", "uSeReRrOr"])
+    def test_user_error_code_sets_user_blame(self, mock_wait, code):
+        """When run fails with error.code matching 'usererror' (case-insensitive), blame should be USER_ERROR."""
+        run_result = MagicMock()
+        run_result.status = "failed"
+        run_result.error.code = code
+        mock_wait.return_value = run_result
+        client = MagicMock()
+
+        with pytest.raises(EvaluationException) as exc_info:
+            _get_single_run_results(self._make_run_info(client))
+
+        assert exc_info.value.blame == ErrorBlame.USER_ERROR
+
+    @patch("azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion")
+    def test_non_user_error_code_sets_unknown_blame(self, mock_wait):
+        """When run fails with a non-UserError code, blame should be UNKNOWN."""
+        run_result = MagicMock()
+        run_result.status = "failed"
+        run_result.error.code = "SystemError"
+        mock_wait.return_value = run_result
+        client = MagicMock()
+
+        with pytest.raises(EvaluationException) as exc_info:
+            _get_single_run_results(self._make_run_info(client))
+
+        assert exc_info.value.blame == ErrorBlame.UNKNOWN
+
+    @patch("azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion")
+    def test_missing_error_attribute_sets_unknown_blame(self, mock_wait):
+        """When run fails and error attribute is absent, blame should be UNKNOWN."""
+        run_result = MagicMock(spec=["status"])
+        run_result.status = "failed"
+        mock_wait.return_value = run_result
+        client = MagicMock()
+
+        with pytest.raises(EvaluationException) as exc_info:
+            _get_single_run_results(self._make_run_info(client))
+
+        assert exc_info.value.blame == ErrorBlame.UNKNOWN
+
+    @patch("azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion")
+    def test_error_present_but_code_missing_sets_unknown_blame(self, mock_wait):
+        """When error object exists but has no code attribute, blame should be UNKNOWN."""
+        run_result = MagicMock()
+        run_result.status = "failed"
+        run_result.error = MagicMock(spec=[])  # error object without 'code'
+        mock_wait.return_value = run_result
+        client = MagicMock()
+
+        with pytest.raises(EvaluationException) as exc_info:
+            _get_single_run_results(self._make_run_info(client))
+
+        assert exc_info.value.blame == ErrorBlame.UNKNOWN
+
+    @patch("azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion")
+    def test_error_is_none_sets_unknown_blame(self, mock_wait):
+        """When error attribute is None, blame should be UNKNOWN."""
+        run_result = MagicMock()
+        run_result.status = "failed"
+        run_result.error = None
+        mock_wait.return_value = run_result
+        client = MagicMock()
+
+        with pytest.raises(EvaluationException) as exc_info:
+            _get_single_run_results(self._make_run_info(client))
+
+        assert exc_info.value.blame == ErrorBlame.UNKNOWN

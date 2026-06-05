@@ -10,7 +10,8 @@ from azure.ai.ml import load_batch_endpoint, load_online_endpoint
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
 from azure.ai.ml.entities import (
     BatchEndpoint,
     EndpointAuthKeys,
@@ -132,7 +133,7 @@ class TestBatchEndpointYAML:
 
     def test_from_rest(self) -> None:
         with open(TestBatchEndpointYAML.BATCH_ENDPOINT_REST, "r") as f:
-            batch_endpoint_rest = BatchEndpointData.deserialize(json.load(f))
+            batch_endpoint_rest = _deserialize(BatchEndpointData, json.load(f))
             batch_endpoint = BatchEndpoint._from_rest_object(batch_endpoint_rest)
             assert batch_endpoint.name == batch_endpoint_rest.name
             assert batch_endpoint.id == batch_endpoint_rest.id

@@ -40,12 +40,20 @@ class TestPlaywrightMgmtPlaywrightWorkspacesOperationsAsync(AzureMgmtRecordedTes
                 resource={
                     "location": "str",
                     "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "properties": {
                         "dataplaneUri": "str",
                         "localAuth": "str",
                         "provisioningState": "str",
                         "regionalAffinity": "str",
+                        "reporting": "str",
+                        "storageUri": "str",
                         "workspaceId": "str",
                     },
                     "systemData": {
@@ -71,7 +79,16 @@ class TestPlaywrightMgmtPlaywrightWorkspacesOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.playwright_workspaces.update(
             resource_group_name=resource_group.name,
             playwright_workspace_name="str",
-            properties={"properties": {"localAuth": "str", "regionalAffinity": "str"}, "tags": {"str": "str"}},
+            properties={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "properties": {"localAuth": "str", "regionalAffinity": "str", "reporting": "str", "storageUri": "str"},
+                "tags": {"str": "str"},
+            },
         )
 
         # please add some check logic here by yourself

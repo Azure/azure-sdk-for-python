@@ -1,6 +1,6 @@
 {
-  "apiVersion": "2025-04-30-preview",
+  "apiVersion": "2026-04-15",
   "apiVersions": {
-    "Microsoft.PlanetaryComputer": "2025-04-30-preview"
+    "Microsoft.PlanetaryComputer": "2026-04-15"
   }
 }

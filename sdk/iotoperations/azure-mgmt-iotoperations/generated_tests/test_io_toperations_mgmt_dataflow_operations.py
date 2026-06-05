@@ -72,7 +72,11 @@ class TestIoTOperationsMgmtDataflowOperations(AzureMgmtRecordedTestCase):
                                 "schemaRef": "str",
                                 "serializationFormat": "str",
                             },
-                            "destinationSettings": {"dataDestination": "str", "endpointRef": "str"},
+                            "destinationSettings": {
+                                "dataDestination": "str",
+                                "endpointRef": "str",
+                                "headers": ["dataflow_destination_header_action"],
+                            },
                             "name": "str",
                             "sourceSettings": {
                                 "dataSources": ["str"],
@@ -83,8 +87,19 @@ class TestIoTOperationsMgmtDataflowOperations(AzureMgmtRecordedTestCase):
                             },
                         }
                     ],
+                    "healthState": "str",
                     "mode": "str",
                     "provisioningState": "str",
+                    "requestDiskPersistence": "str",
+                    "status": {
+                        "healthState": {
+                            "lastTransitionTime": "str",
+                            "lastUpdateTime": "str",
+                            "message": "str",
+                            "reasonCode": "str",
+                            "status": "str",
+                        }
+                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",

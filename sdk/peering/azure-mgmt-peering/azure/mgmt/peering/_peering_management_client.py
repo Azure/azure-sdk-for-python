@@ -7,74 +7,57 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, cast
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.settings import settings
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
-from . import models
+from . import models as _models
 from ._configuration import PeeringManagementClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    CdnPeeringPrefixesOperations,
-    ConnectionMonitorTestsOperations,
     LegacyPeeringsOperations,
-    LookingGlassOperations,
     Operations,
     PeerAsnsOperations,
     PeeringLocationsOperations,
-    PeeringManagementClientOperationsMixin,
-    PeeringServiceCountriesOperations,
     PeeringServiceLocationsOperations,
+    PeeringServicePrefixesOperations,
     PeeringServiceProvidersOperations,
     PeeringServicesOperations,
     PeeringsOperations,
     PrefixesOperations,
-    ReceivedRoutesOperations,
-    RegisteredAsnsOperations,
-    RegisteredPrefixesOperations,
-    RpUnbilledPrefixesOperations,
+    _PeeringManagementClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class PeeringManagementClient(
-    PeeringManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class PeeringManagementClient(_PeeringManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """Peering Client.
 
-    :ivar cdn_peering_prefixes: CdnPeeringPrefixesOperations operations
-    :vartype cdn_peering_prefixes: azure.mgmt.peering.operations.CdnPeeringPrefixesOperations
     :ivar legacy_peerings: LegacyPeeringsOperations operations
     :vartype legacy_peerings: azure.mgmt.peering.operations.LegacyPeeringsOperations
-    :ivar looking_glass: LookingGlassOperations operations
-    :vartype looking_glass: azure.mgmt.peering.operations.LookingGlassOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.peering.operations.Operations
     :ivar peer_asns: PeerAsnsOperations operations
     :vartype peer_asns: azure.mgmt.peering.operations.PeerAsnsOperations
     :ivar peering_locations: PeeringLocationsOperations operations
     :vartype peering_locations: azure.mgmt.peering.operations.PeeringLocationsOperations
-    :ivar registered_asns: RegisteredAsnsOperations operations
-    :vartype registered_asns: azure.mgmt.peering.operations.RegisteredAsnsOperations
-    :ivar registered_prefixes: RegisteredPrefixesOperations operations
-    :vartype registered_prefixes: azure.mgmt.peering.operations.RegisteredPrefixesOperations
     :ivar peerings: PeeringsOperations operations
     :vartype peerings: azure.mgmt.peering.operations.PeeringsOperations
-    :ivar received_routes: ReceivedRoutesOperations operations
-    :vartype received_routes: azure.mgmt.peering.operations.ReceivedRoutesOperations
-    :ivar connection_monitor_tests: ConnectionMonitorTestsOperations operations
-    :vartype connection_monitor_tests:
-     azure.mgmt.peering.operations.ConnectionMonitorTestsOperations
-    :ivar peering_service_countries: PeeringServiceCountriesOperations operations
-    :vartype peering_service_countries:
-     azure.mgmt.peering.operations.PeeringServiceCountriesOperations
     :ivar peering_service_locations: PeeringServiceLocationsOperations operations
     :vartype peering_service_locations:
      azure.mgmt.peering.operations.PeeringServiceLocationsOperations
+    :ivar peering_service_prefixes: PeeringServicePrefixesOperations operations
+    :vartype peering_service_prefixes:
+     azure.mgmt.peering.operations.PeeringServicePrefixesOperations
     :ivar prefixes: PrefixesOperations operations
     :vartype prefixes: azure.mgmt.peering.operations.PrefixesOperations
     :ivar peering_service_providers: PeeringServiceProvidersOperations operations
@@ -82,16 +65,17 @@ class PeeringManagementClient(
      azure.mgmt.peering.operations.PeeringServiceProvidersOperations
     :ivar peering_services: PeeringServicesOperations operations
     :vartype peering_services: azure.mgmt.peering.operations.PeeringServicesOperations
-    :ivar rp_unbilled_prefixes: RpUnbilledPrefixesOperations operations
-    :vartype rp_unbilled_prefixes: azure.mgmt.peering.operations.RpUnbilledPrefixesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription ID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2019-08-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -99,41 +83,59 @@ class PeeringManagementClient(
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = PeeringManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
+
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.cdn_peering_prefixes = CdnPeeringPrefixesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.legacy_peerings = LegacyPeeringsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.looking_glass = LookingGlassOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.peer_asns = PeerAsnsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.peering_locations = PeeringLocationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.registered_asns = RegisteredAsnsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registered_prefixes = RegisteredPrefixesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.peerings = PeeringsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.received_routes = ReceivedRoutesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.connection_monitor_tests = ConnectionMonitorTestsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.peering_service_countries = PeeringServiceCountriesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.peering_service_locations = PeeringServiceLocationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.peering_service_prefixes = PeeringServicePrefixesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.prefixes = PrefixesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -143,11 +145,8 @@ class PeeringManagementClient(
         self.peering_services = PeeringServicesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.rp_unbilled_prefixes = RpUnbilledPrefixesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -167,17 +166,14 @@ class PeeringManagementClient(
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> PeeringManagementClient
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

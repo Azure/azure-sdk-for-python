@@ -34,10 +34,18 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._configuration import (
     LiveMetricsClientConfiguration,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import LiveMetricsClient
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import MonitoringDataPoint
-from azure.monitor.opentelemetry.exporter._quickpulse._filter import _update_filter_configuration
-from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import (
+    LiveMetricsClient,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
+    MonitoringDataPoint,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
+    _update_filter_configuration,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._policy import (
+    _QuickpulseRedirectPolicy,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_and_clear_quickpulse_documents,
     _get_global_quickpulse_state,
@@ -50,7 +58,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _metric_to_quick_pulse_data_points,
 )
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._connection_string_parser import (
+    ConnectionStringParser,
+)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _ticks_since_dot_net_epoch,
@@ -98,7 +108,8 @@ class _QuickpulseExporter(MetricExporter):
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._credential = kwargs.get("credential")
         self.aad_audience = parsed_connection_string.aad_audience
-        config = LiveMetricsClientConfiguration(credential=self._credential)  # type: ignore
+        # Do not pass credential to config; auth is handled explicitly via _get_auth_policy
+        config = LiveMetricsClientConfiguration()
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
             # Custom redirect policy for QP
@@ -108,7 +119,6 @@ class _QuickpulseExporter(MetricExporter):
             # Logging for client calls
             config.http_logging_policy,
             _get_auth_policy(self._credential, config.authentication_policy, self.aad_audience),
-            config.authentication_policy,
             # Explicitly disabling to avoid tracing live metrics calls
             # DistributedTracingPolicy(),
         ]

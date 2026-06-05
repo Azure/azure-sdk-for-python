@@ -11,11 +11,23 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import azure.cosmos.exceptions as exceptions
 
-os.environ["AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"] = "https://test.endpoint.com"
+_INFERENCE_ENDPOINT_ENV_VAR = "AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"
 
 
 class TestInferenceServiceTimeout(unittest.TestCase):
     """Unit tests for inference service timeout behavior."""
+
+    def setUp(self):
+        """Set the inference endpoint env var before each test."""
+        self._saved_endpoint = os.environ.get(_INFERENCE_ENDPOINT_ENV_VAR)
+        os.environ[_INFERENCE_ENDPOINT_ENV_VAR] = "https://example.com"
+
+    def tearDown(self):
+        """Restore the inference endpoint env var after each test."""
+        if self._saved_endpoint is not None:
+            os.environ[_INFERENCE_ENDPOINT_ENV_VAR] = self._saved_endpoint
+        else:
+            os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
 
     def _create_mock_connection(self, inference_request_timeout=5):
         """Create a mock cosmos client connection with configurable inference timeout."""
@@ -143,6 +155,130 @@ class TestInferenceServiceTimeout(unittest.TestCase):
 
         asyncio.run(run_test())
 
+    def test_sync_inference_uses_shared_response_decoder(self):
+        """Test that sync inference service decodes response bytes via the
+        shared decode_response_body_for_status helper. Locks in the wiring
+        so a regression that reverts to inline data.decode("utf-8") would fail."""
+        from azure.cosmos._inference_service import _InferenceService
+
+        mock_connection = self._create_mock_connection()
+        service = _InferenceService(mock_connection)
+
+        raw_response_data = b'{"Scores": []}'
+        mock_response = MagicMock()
+        mock_response.http_response.status_code = 200
+        mock_response.http_response.headers = {}
+        mock_response.http_response.body.return_value = raw_response_data
+
+        with patch.object(
+            service._inference_pipeline_client._pipeline, "run",
+            return_value=mock_response
+        ), patch(
+            "azure.cosmos._inference_service.decode_response_body_for_status",
+            return_value='{"Scores": []}'
+        ) as mock_decode:
+            service.rerank(
+                reranking_context="test query",
+                documents=["doc1"]
+            )
+            mock_decode.assert_called_once_with(raw_response_data, 200, "inference_request")
+
+    def test_async_inference_uses_shared_response_decoder(self):
+        """Test that async inference service decodes response bytes via the
+        shared decode_response_body_for_status helper."""
+        async def run_test():
+            from azure.cosmos.aio._inference_service_async import _InferenceService
+
+            mock_connection = self._create_mock_connection()
+            mock_connection.connection_policy.DisableSSLVerification = False
+            service = _InferenceService(mock_connection)
+
+            raw_response_data = b'{"Scores": []}'
+            mock_response = MagicMock()
+            mock_response.http_response.status_code = 200
+            mock_response.http_response.headers = {}
+            mock_response.http_response.body.return_value = raw_response_data
+
+            with patch.object(
+                service._inference_pipeline_client._pipeline, "run",
+                return_value=mock_response
+            ), patch(
+                "azure.cosmos.aio._inference_service_async.decode_response_body_for_status",
+                return_value='{"Scores": []}'
+            ) as mock_decode:
+                await service.rerank(
+                    reranking_context="test query",
+                    documents=["doc1"]
+                )
+                mock_decode.assert_called_once_with(raw_response_data, 200, "inference_request")
+
+        asyncio.run(run_test())
+
+    def test_sync_inference_2xx_with_invalid_utf8_raises_decode_error(self):
+        """A successful (2xx) inference response carrying invalid UTF-8
+        in default strict mode must surface as
+        ``azure.core.exceptions.DecodeError`` with the original wire
+        status (200) preserved on ``e.response``, not as a stdlib
+        ``UnicodeDecodeError``. Mirrors the contract enforced for the
+        core request paths in ``test_request_response_decoding``."""
+        from azure.core.exceptions import DecodeError
+        from azure.cosmos._inference_service import _InferenceService
+
+        mock_connection = self._create_mock_connection()
+        service = _InferenceService(mock_connection)
+
+        # Same textbook-invalid UTF-8 used in the core decode tests.
+        invalid_utf8 = b'{"Scores": "caf\xc3\x28"}'
+        mock_response = MagicMock()
+        mock_response.http_response.status_code = 200
+        mock_response.http_response.headers = {}
+        mock_response.http_response.body.return_value = invalid_utf8
+
+        with patch.object(
+            service._inference_pipeline_client._pipeline, "run",
+            return_value=mock_response
+        ):
+            with self.assertRaises(DecodeError) as ctx:
+                service.rerank(
+                    reranking_context="test query",
+                    documents=["doc1"]
+                )
+
+        self.assertEqual(ctx.exception.response.status_code, 200)
+        self.assertIsInstance(ctx.exception.__cause__, UnicodeDecodeError)
+
+    def test_async_inference_2xx_with_invalid_utf8_raises_decode_error(self):
+        """Async counterpart to the sync 2xx-malformed-UTF-8 test."""
+        from azure.core.exceptions import DecodeError
+
+        async def run_test():
+            from azure.cosmos.aio._inference_service_async import _InferenceService
+
+            mock_connection = self._create_mock_connection()
+            mock_connection.connection_policy.DisableSSLVerification = False
+            service = _InferenceService(mock_connection)
+
+            invalid_utf8 = b'{"Scores": "caf\xc3\x28"}'
+            mock_response = MagicMock()
+            mock_response.http_response.status_code = 200
+            mock_response.http_response.headers = {}
+            mock_response.http_response.body.return_value = invalid_utf8
+
+            with patch.object(
+                service._inference_pipeline_client._pipeline, "run",
+                return_value=mock_response
+            ):
+                with self.assertRaises(DecodeError) as ctx:
+                    await service.rerank(
+                        reranking_context="test query",
+                        documents=["doc1"]
+                    )
+
+            self.assertEqual(ctx.exception.response.status_code, 200)
+            self.assertIsInstance(ctx.exception.__cause__, UnicodeDecodeError)
+
+        asyncio.run(run_test())
+
     def test_sync_inference_response_timeout_raises_408(self):
         """Test that sync inference service converts ServiceResponseError to 408."""
         from azure.cosmos._inference_service import _InferenceService
@@ -199,6 +335,159 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         policy = ConnectionPolicy()
         policy.InferenceRequestTimeout = 30
         self.assertEqual(policy.InferenceRequestTimeout, 30)
+
+    def test_sync_lazy_init_raises_error_without_env_var(self):
+        """Test that _InferenceService raises ValueError when env var is missing.
+        With lazy init, this error is deferred from client construction to first use."""
+        from azure.cosmos._inference_service import _InferenceService
+
+        os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
+        mock_connection = self._create_mock_connection()
+        with self.assertRaises(ValueError) as ctx:
+            _InferenceService(mock_connection)
+        self.assertIn(_INFERENCE_ENDPOINT_ENV_VAR, str(ctx.exception))
+
+    def test_async_lazy_init_raises_error_without_env_var(self):
+        """Test that async _InferenceService raises ValueError when env var is missing.
+        With lazy init, this error is deferred from client construction to first use."""
+        from azure.cosmos.aio._inference_service_async import _InferenceService
+
+        os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
+        mock_connection = self._create_mock_connection()
+        mock_connection.connection_policy.DisableSSLVerification = False
+        with self.assertRaises(ValueError) as ctx:
+            _InferenceService(mock_connection)
+        self.assertIn(_INFERENCE_ENDPOINT_ENV_VAR, str(ctx.exception))
+
+    def test_sync_inference_service_created_with_env_var(self):
+        """Test that sync _InferenceService can be created when env var is set."""
+        from azure.cosmos._inference_service import _InferenceService
+
+        mock_connection = self._create_mock_connection()
+        service = _InferenceService(mock_connection)
+        self.assertIsNotNone(service)
+
+    def test_async_inference_service_created_with_env_var(self):
+        """Test that async _InferenceService can be created when env var is set."""
+        from azure.cosmos.aio._inference_service_async import _InferenceService
+
+        mock_connection = self._create_mock_connection()
+        mock_connection.connection_policy.DisableSSLVerification = False
+        service = _InferenceService(mock_connection)
+        self.assertIsNotNone(service)
+
+    # ── _get_inference_service() direct call tests ──
+
+    def test_sync_get_inference_service_returns_service_with_aad_and_env_var(self):
+        """Test that _get_inference_service() returns an _InferenceService when AAD
+        credentials are present and the env var is set."""
+        from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+        import threading
+
+        mock_conn = self._create_mock_connection()
+        mock_conn._inference_service = None
+        mock_conn._inference_service_lock = threading.Lock()
+
+        result = CosmosClientConnection._get_inference_service(mock_conn)
+        self.assertIsNotNone(result)
+
+    def test_async_get_inference_service_returns_service_with_aad_and_env_var(self):
+        """Test that async _get_inference_service() returns an _InferenceService when AAD
+        credentials are present and the env var is set."""
+        from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
+
+        mock_conn = self._create_mock_connection()
+        mock_conn._inference_service = None
+        mock_conn.connection_policy.DisableSSLVerification = False
+
+        result = CosmosClientConnection._get_inference_service(mock_conn)
+        self.assertIsNotNone(result)
+
+    def test_sync_get_inference_service_raises_error_without_env_var(self):
+        """Test that _get_inference_service() wraps ValueError into CosmosHttpResponseError
+        when the env var is missing."""
+        from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+        import threading
+
+        os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
+        mock_conn = self._create_mock_connection()
+        mock_conn._inference_service = None
+        mock_conn._inference_service_lock = threading.Lock()
+
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
+            CosmosClientConnection._get_inference_service(mock_conn)
+        self.assertEqual(ctx.exception.status_code, 400)
+        self.assertIn("Failed to initialize inference service", str(ctx.exception))
+
+    def test_async_get_inference_service_raises_error_without_env_var(self):
+        """Test that async _get_inference_service() wraps ValueError into CosmosHttpResponseError
+        when the env var is missing."""
+        from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
+
+        os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
+        mock_conn = self._create_mock_connection()
+        mock_conn._inference_service = None
+        mock_conn.connection_policy.DisableSSLVerification = False
+
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
+            CosmosClientConnection._get_inference_service(mock_conn)
+        self.assertEqual(ctx.exception.status_code, 400)
+        self.assertIn("Failed to initialize inference service", str(ctx.exception))
+
+    def test_sync_get_inference_service_returns_none_without_aad(self):
+        """Test that _get_inference_service() returns None when no AAD credentials
+        are present (master key auth)."""
+        from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+        import threading
+
+        mock_conn = self._create_mock_connection()
+        mock_conn.aad_credentials = None
+        mock_conn._inference_service = None
+        mock_conn._inference_service_lock = threading.Lock()
+
+        result = CosmosClientConnection._get_inference_service(mock_conn)
+        self.assertIsNone(result)
+
+    def test_async_get_inference_service_returns_none_without_aad(self):
+        """Test that async _get_inference_service() returns None when no AAD credentials
+        are present (master key auth)."""
+        from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
+
+        mock_conn = self._create_mock_connection()
+        mock_conn.aad_credentials = None
+        mock_conn._inference_service = None
+
+        result = CosmosClientConnection._get_inference_service(mock_conn)
+        self.assertIsNone(result)
+
+    def test_sync_get_inference_service_caches_instance(self):
+        """Test that _get_inference_service() returns the same cached instance on
+        repeated calls."""
+        from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+        import threading
+
+        mock_conn = self._create_mock_connection()
+        mock_conn._inference_service = None
+        mock_conn._inference_service_lock = threading.Lock()
+
+        first = CosmosClientConnection._get_inference_service(mock_conn)
+        second = CosmosClientConnection._get_inference_service(mock_conn)
+        self.assertIsNotNone(first)
+        self.assertIs(first, second)
+
+    def test_async_get_inference_service_caches_instance(self):
+        """Test that async _get_inference_service() returns the same cached instance on
+        repeated calls."""
+        from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
+
+        mock_conn = self._create_mock_connection()
+        mock_conn._inference_service = None
+        mock_conn.connection_policy.DisableSSLVerification = False
+
+        first = CosmosClientConnection._get_inference_service(mock_conn)
+        second = CosmosClientConnection._get_inference_service(mock_conn)
+        self.assertIsNotNone(first)
+        self.assertIs(first, second)
 
 
 if __name__ == "__main__":

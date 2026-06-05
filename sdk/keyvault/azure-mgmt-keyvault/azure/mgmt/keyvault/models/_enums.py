@@ -14,14 +14,18 @@ class AccessPolicyUpdateKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AccessPolicyUpdateKind."""
 
     ADD = "add"
+    """ADD."""
     REPLACE = "replace"
+    """REPLACE."""
     REMOVE = "remove"
+    """REMOVE."""
 
 
 class ActionsRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A message indicating if changes on the service provider require any updates on the consumer."""
 
     NONE = "None"
+    """NONE."""
 
 
 class ActivationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -41,29 +45,48 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of CertificatePermissions."""
 
     ALL = "all"
+    """ALL."""
     GET = "get"
+    """GET."""
     LIST = "list"
+    """LIST."""
     DELETE = "delete"
+    """DELETE."""
     CREATE = "create"
+    """CREATE."""
     IMPORT = "import"
+    """IMPORT."""
     UPDATE = "update"
+    """UPDATE."""
     MANAGECONTACTS = "managecontacts"
+    """MANAGECONTACTS."""
     GETISSUERS = "getissuers"
+    """GETISSUERS."""
     LISTISSUERS = "listissuers"
+    """LISTISSUERS."""
     SETISSUERS = "setissuers"
+    """SETISSUERS."""
     DELETEISSUERS = "deleteissuers"
+    """DELETEISSUERS."""
     MANAGEISSUERS = "manageissuers"
+    """MANAGEISSUERS."""
     RECOVER = "recover"
+    """RECOVER."""
     PURGE = "purge"
+    """PURGE."""
     BACKUP = "backup"
+    """BACKUP."""
     RESTORE = "restore"
+    """RESTORE."""
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The vault's create mode to indicate whether the vault need to be recovered or not."""
 
     RECOVER = "recover"
+    """RECOVER."""
     DEFAULT = "default"
+    """DEFAULT."""
 
 
 class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -73,20 +96,30 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     PURGEABLE = "Purgeable"
+    """PURGEABLE."""
     RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
+    """RECOVERABLE_PURGEABLE."""
     RECOVERABLE = "Recoverable"
+    """RECOVERABLE."""
     RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
+    """RECOVERABLE_PROTECTED_SUBSCRIPTION."""
 
 
 class GeoReplicationRegionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state."""
 
     PREPROVISIONING = "Preprovisioning"
+    """PREPROVISIONING."""
     PROVISIONING = "Provisioning"
+    """PROVISIONING."""
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     FAILED = "Failed"
+    """FAILED."""
     DELETING = "Deleting"
+    """DELETING."""
     CLEANUP = "Cleanup"
+    """CLEANUP."""
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -108,9 +141,13 @@ class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     P256 = "P-256"
+    """P256."""
     P384 = "P-384"
+    """P384."""
     P521 = "P-521"
+    """P521."""
     P256_K = "P-256K"
+    """P256_K."""
 
 
 class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -119,72 +156,114 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ENCRYPT = "encrypt"
+    """ENCRYPT."""
     DECRYPT = "decrypt"
+    """DECRYPT."""
     SIGN = "sign"
+    """SIGN."""
     VERIFY = "verify"
+    """VERIFY."""
     WRAP_KEY = "wrapKey"
+    """WRAP_KEY."""
     UNWRAP_KEY = "unwrapKey"
+    """UNWRAP_KEY."""
     IMPORT = "import"
+    """IMPORT."""
     RELEASE = "release"
+    """RELEASE."""
 
 
 class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the key. For valid values, see JsonWebKeyType."""
 
     EC = "EC"
+    """EC."""
     EC_HSM = "EC-HSM"
+    """EC_HSM."""
     RSA = "RSA"
+    """RSA."""
     RSA_HSM = "RSA-HSM"
+    """RSA_HSM."""
 
 
 class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of KeyPermissions."""
 
     ALL = "all"
+    """ALL."""
     ENCRYPT = "encrypt"
+    """ENCRYPT."""
     DECRYPT = "decrypt"
+    """DECRYPT."""
     WRAP_KEY = "wrapKey"
+    """WRAP_KEY."""
     UNWRAP_KEY = "unwrapKey"
+    """UNWRAP_KEY."""
     SIGN = "sign"
+    """SIGN."""
     VERIFY = "verify"
+    """VERIFY."""
     GET = "get"
+    """GET."""
     LIST = "list"
+    """LIST."""
     CREATE = "create"
+    """CREATE."""
     UPDATE = "update"
+    """UPDATE."""
     IMPORT = "import"
+    """IMPORT."""
     DELETE = "delete"
+    """DELETE."""
     BACKUP = "backup"
+    """BACKUP."""
     RESTORE = "restore"
+    """RESTORE."""
     RECOVER = "recover"
+    """RECOVER."""
     PURGE = "purge"
+    """PURGE."""
     RELEASE = "release"
+    """RELEASE."""
     ROTATE = "rotate"
+    """ROTATE."""
     GETROTATIONPOLICY = "getrotationpolicy"
+    """GETROTATIONPOLICY."""
     SETROTATIONPOLICY = "setrotationpolicy"
+    """SETROTATIONPOLICY."""
 
 
 class KeyRotationPolicyActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of action."""
 
     ROTATE = "rotate"
+    """ROTATE."""
     NOTIFY = "notify"
+    """NOTIFY."""
 
 
 class ManagedHsmSkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKU Family of the managed HSM Pool."""
 
     B = "B"
+    """B."""
     C = "C"
+    """C."""
 
 
 class ManagedHsmSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKU of the managed HSM Pool."""
 
     STANDARD_B1 = "Standard_B1"
+    """STANDARD_B1."""
     CUSTOM_B32 = "Custom_B32"
+    """CUSTOM_B32."""
     CUSTOM_B6 = "Custom_B6"
+    """CUSTOM_B6."""
     CUSTOM_C42 = "Custom_C42"
+    """CUSTOM_C42."""
     CUSTOM_C10 = "Custom_C10"
+    """CUSTOM_C10."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -208,7 +287,9 @@ class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ALLOW = "Allow"
+    """ALLOW."""
     DENY = "Deny"
+    """DENY."""
 
 
 class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -217,27 +298,41 @@ class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     AZURE_SERVICES = "AzureServices"
+    """AZURE_SERVICES."""
     NONE = "None"
+    """NONE."""
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     CREATING = "Creating"
+    """CREATING."""
     UPDATING = "Updating"
+    """UPDATING."""
     DELETING = "Deleting"
+    """DELETING."""
     FAILED = "Failed"
+    """FAILED."""
     DISCONNECTED = "Disconnected"
+    """DISCONNECTED."""
 
 
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private endpoint connection status."""
 
     PENDING = "Pending"
+    """PENDING."""
     APPROVED = "Approved"
+    """APPROVED."""
     REJECTED = "Rejected"
+    """REJECTED."""
     DISCONNECTED = "Disconnected"
+    """DISCONNECTED."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -265,7 +360,9 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control permission to the managed HSM from public networks."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -274,58 +371,89 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
+    """ACCOUNT_NAME_INVALID."""
     ALREADY_EXISTS = "AlreadyExists"
+    """ALREADY_EXISTS."""
 
 
 class SecretPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of SecretPermissions."""
 
     ALL = "all"
+    """ALL."""
     GET = "get"
+    """GET."""
     LIST = "list"
+    """LIST."""
     SET = "set"
+    """SET."""
     DELETE = "delete"
+    """DELETE."""
     BACKUP = "backup"
+    """BACKUP."""
     RESTORE = "restore"
+    """RESTORE."""
     RECOVER = "recover"
+    """RECOVER."""
     PURGE = "purge"
+    """PURGE."""
 
 
 class SkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKU family name."""
 
     A = "A"
+    """A."""
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKU name to specify whether the key vault is a standard vault or a premium vault."""
 
     STANDARD = "standard"
+    """STANDARD."""
     PREMIUM = "premium"
+    """PREMIUM."""
 
 
 class StoragePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of StoragePermissions."""
 
     ALL = "all"
+    """ALL."""
     GET = "get"
+    """GET."""
     LIST = "list"
+    """LIST."""
     DELETE = "delete"
+    """DELETE."""
     SET = "set"
+    """SET."""
     UPDATE = "update"
+    """UPDATE."""
     REGENERATEKEY = "regeneratekey"
+    """REGENERATEKEY."""
     RECOVER = "recover"
+    """RECOVER."""
     PURGE = "purge"
+    """PURGE."""
     BACKUP = "backup"
+    """BACKUP."""
     RESTORE = "restore"
+    """RESTORE."""
     SETSAS = "setsas"
+    """SETSAS."""
     LISTSAS = "listsas"
+    """LISTSAS."""
     GETSAS = "getsas"
+    """GETSAS."""
     DELETESAS = "deletesas"
+    """DELETESAS."""
 
 
 class VaultProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the vault."""
 
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     REGISTERING_DNS = "RegisteringDns"
+    """REGISTERING_DNS."""

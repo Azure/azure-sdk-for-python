@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import functools
 from typing import Optional, Any, Dict, List
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
@@ -14,11 +13,11 @@ from azure.core.pipeline import Pipeline
 from ._generated.models import TableServiceProperties
 from ._models import (
     TableItem,
+    TablePropertiesPaged,
     LocationMode,
     TableCorsRule,
     TableMetrics,
     TableAnalyticsLogging,
-    TablePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
 )
@@ -269,13 +268,17 @@ class TableServiceClient(TablesBaseClient):
         """
         query_filter = _parameter_filter_substitution(parameters, query_filter)
 
-        command = functools.partial(self._client.table.query, **kwargs)
-        return ItemPaged(
-            command,
-            results_per_page=results_per_page,
+        paged = self._client.table.query(
+            top=results_per_page,
             filter=query_filter,
-            page_iterator_class=TablePropertiesPaged,
+            cls=lambda items: [TableItem(i.table_name) for i in items],
+            **kwargs,
         )
+        paged._page_iterator_class = TablePropertiesPaged  # pylint: disable=protected-access
+        paged._kwargs.update(  # pylint: disable=protected-access
+            {"results_per_page": results_per_page, "filter": query_filter}
+        )
+        return paged  # type: ignore[return-value]
 
     @distributed_trace
     def list_tables(self, *, results_per_page: Optional[int] = None, **kwargs) -> ItemPaged[TableItem]:
@@ -295,12 +298,14 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in a storage account
         """
-        command = functools.partial(self._client.table.query, **kwargs)
-        return ItemPaged(
-            command,
-            results_per_page=results_per_page,
-            page_iterator_class=TablePropertiesPaged,
+        paged = self._client.table.query(
+            top=results_per_page,
+            cls=lambda items: [TableItem(i.table_name) for i in items],
+            **kwargs,
         )
+        paged._page_iterator_class = TablePropertiesPaged  # pylint: disable=protected-access
+        paged._kwargs.update({"results_per_page": results_per_page})  # pylint: disable=protected-access
+        return paged  # type: ignore[return-value]
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.

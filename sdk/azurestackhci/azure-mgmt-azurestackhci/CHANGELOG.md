@@ -1,5 +1,252 @@
 # Release History
 
+## 8.1.0b1 (2026-04-13)
+
+### Features Added
+
+  - Client `AzureStackHCIClient` added operation group `kubernetes_versions`
+  - Client `AzureStackHCIClient` added operation group `platform_updates`
+  - Client `AzureStackHCIClient` added operation group `os_images`
+  - Client `AzureStackHCIClient` added operation group `update_contents`
+  - Client `AzureStackHCIClient` added operation group `publishers`
+  - Client `AzureStackHCIClient` added operation group `update_summaries_operation_group`
+  - Client `AzureStackHCIClient` added operation group `edge_machines`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_jobs`
+  - Client `AzureStackHCIClient` added operation group `ownership_vouchers`
+  - Client `AzureStackHCIClient` added operation group `cluster_jobs`
+  - Client `AzureStackHCIClient` added operation group `device_pools`
+  - Model `Cluster` added property `kind`
+  - Model `ClusterProperties` added property `ring`
+  - Model `ClusterProperties` added property `billing_properties`
+  - Model `ClusterProperties` added property `confidential_vm_properties`
+  - Model `ClusterProperties` added property `sdn_properties`
+  - Model `ClusterProperties` added property `storage_type`
+  - Model `DeploymentSettingHostNetwork` added property `san_networks`
+  - Model `HciNetworkProfile` added property `sdn_properties`
+  - Model `HciReportedProperties` added property `last_sync_timestamp`
+  - Model `HciReportedProperties` added property `confidential_vm_profile`
+  - Model `HciStorageProfile` added property `disks`
+  - Model `PerNodeRemoteSupportSession` added property `transcript_location`
+  - Model `RemoteSupportProperties` added property `remote_support_provisioning_state`
+  - Model `ReportedProperties` added property `last_sync_timestamp`
+  - Model `ReportedProperties` added property `confidential_vm_profile`
+  - Enum `State` added member `HEALTH_CHECK_EXPIRED`
+  - Enum `State` added member `PENDING_OEM_VALIDATION`
+  - Model `Storage` added property `storage_type`
+  - Model `Storage` added property `s2_d`
+  - Model `Storage` added property `san`
+  - Added model `ChangeRingRequest`
+  - Added model `ChangeRingRequestProperties`
+  - Added model `CheckUpdatesRequest`
+  - Added model `ClaimDeviceRequest`
+  - Added model `ClusterBillingProperties`
+  - Added model `ClusterJob`
+  - Added model `ClusterJobProperties`
+  - Added model `ClusterSdnProperties`
+  - Added enum `ConfidentialVmIntent`
+  - Added model `ConfidentialVmProfile`
+  - Added model `ConfidentialVmProperties`
+  - Added enum `ConfidentialVmStatus`
+  - Added model `ContentPayload`
+  - Added model `DeviceDetail`
+  - Added model `DevicePool`
+  - Added model `DevicePoolPatch`
+  - Added model `DevicePoolProperties`
+  - Added model `DownloadOsJobProperties`
+  - Added model `DownloadOsProfile`
+  - Added model `DownloadRequest`
+  - Added model `EdgeDeviceDisks`
+  - Added model `EdgeMachine`
+  - Added model `EdgeMachineCollectLogJobProperties`
+  - Added model `EdgeMachineCollectLogJobReportedProperties`
+  - Added enum `EdgeMachineConnectivityStatus`
+  - Added model `EdgeMachineJob`
+  - Added model `EdgeMachineJobProperties`
+  - Added enum `EdgeMachineJobType`
+  - Added enum `EdgeMachineKind`
+  - Added model `EdgeMachineNetworkProfile`
+  - Added model `EdgeMachineNicDetail`
+  - Added model `EdgeMachinePatch`
+  - Added model `EdgeMachineProperties`
+  - Added model `EdgeMachineRemoteSupportJobProperties`
+  - Added model `EdgeMachineRemoteSupportJobReportedProperties`
+  - Added model `EdgeMachineRemoteSupportNodeSettings`
+  - Added model `EdgeMachineReportedProperties`
+  - Added enum `EdgeMachineState`
+  - Added model `HardwareProfile`
+  - Added model `HciConfigureCvmJobProperties`
+  - Added model `HciConfigureSdnIntegrationJobProperties`
+  - Added enum `HciJobType`
+  - Added enum `IgvmStatus`
+  - Added model `IgvmStatusDetail`
+  - Added model `IpAddressRange`
+  - Added enum `IpAssignmentType`
+  - Added model `JobReportedProperties`
+  - Added model `KubernetesVersion`
+  - Added model `KubernetesVersionProperties`
+  - Added model `NetworkAdapter`
+  - Added model `NetworkConfiguration`
+  - Added model `NextBillingModel`
+  - Added enum `OSOperationType`
+  - Added model `OnboardingConfiguration`
+  - Added enum `OnboardingResourceType`
+  - Added model `OperationDetail`
+  - Added model `OsImage`
+  - Added model `OsImageProperties`
+  - Added model `OsProfile`
+  - Added model `OsProvisionProfile`
+  - Added enum `OverprovisioningRatio`
+  - Added enum `OwnerKeyType`
+  - Added model `OwnershipVoucherDetails`
+  - Added model `OwnershipVoucherValidationDetails`
+  - Added enum `OwnershipVoucherValidationStatus`
+  - Added model `PlatformPayload`
+  - Added model `PlatformUpdate`
+  - Added model `PlatformUpdateDetails`
+  - Added model `PlatformUpdateProperties`
+  - Added model `ProvisionOsJobProperties`
+  - Added model `ProvisionOsReportedProperties`
+  - Added model `ProvisioningDetails`
+  - Added enum `ProvisioningOsType`
+  - Added model `ProvisioningRequest`
+  - Added model `Publisher`
+  - Added model `PublisherProperties`
+  - Added model `ReleaseDeviceRequest`
+  - Added enum `RemoteSupportProvisioningState`
+  - Added model `SanAdapterIPConfig`
+  - Added model `SanAdapterProperties`
+  - Added model `SanClusterNetworkConfig`
+  - Added model `SanNetworks`
+  - Added enum `SdnIntegrationIntent`
+  - Added model `SdnProperties`
+  - Added enum `SdnStatus`
+  - Added enum `SecretType`
+  - Added model `SiteDetails`
+  - Added model `StorageConfiguration`
+  - Added model `StorageProfile`
+  - Added model `StorageS2dConfig`
+  - Added model `StorageSanConfig`
+  - Added enum `StorageType`
+  - Added model `TargetDeviceConfiguration`
+  - Added model `TimeConfiguration`
+  - Added model `UpdateContent`
+  - Added model `UpdateContentProperties`
+  - Added model `UserDetails`
+  - Added model `ValidateOwnershipVouchersRequest`
+  - Added model `ValidateOwnershipVouchersResponse`
+  - Added enum `VolumeType`
+  - Added model `WebProxyConfiguration`
+  - Operation group `ClustersOperations` added method `begin_change_ring`
+  - Operation group `UpdatesOperations` added method `begin_prepare`
+  - Added operation group `ClusterJobsOperations`
+  - Added operation group `DevicePoolsOperations`
+  - Added operation group `EdgeMachineJobsOperations`
+  - Added operation group `EdgeMachinesOperations`
+  - Added operation group `KubernetesVersionsOperations`
+  - Added operation group `OsImagesOperations`
+  - Added operation group `OwnershipVouchersOperations`
+  - Added operation group `PlatformUpdatesOperations`
+  - Added operation group `PublishersOperations`
+  - Added operation group `UpdateContentsOperations`
+  - Added operation group `UpdateSummariesOperationGroupOperations`
+
+## 8.0.0 (2026-03-31)
+
+### Features Added
+
+  - Client `AzureStackHCIClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureStackHCIClient` added method `send_request`
+  - Client `AzureStackHCIClient` added operation group `edge_device_jobs`
+  - Client `AzureStackHCIClient` added operation group `validated_solution_recipes`
+  - Model `Cluster` added property `identity`
+  - Model `ClusterPatch` added property `identity`
+  - Model `ClusterReportedProperties` added property `msi_expiration_time_stamp`
+  - Model `ClusterReportedProperties` added property `hardware_class`
+  - Model `DeploymentCluster` added property `hardware_class`
+  - Model `DeploymentCluster` added property `cluster_pattern`
+  - Model `DeploymentData` added property `identity_provider`
+  - Model `DeploymentData` added property `is_management_cluster`
+  - Model `DeploymentData` added property `local_availability_zones`
+  - Model `DeploymentData` added property `assembly_info`
+  - Model `HciNicDetail` added property `rdma_capability`
+  - Model `HciReportedProperties` added property `storage_profile`
+  - Model `HciReportedProperties` added property `hardware_profile`
+  - Model `InfrastructureNetwork` added property `dns_server_config`
+  - Model `InfrastructureNetwork` added property `dns_zones`
+  - Added model `AssemblyInfo`
+  - Added model `AssemblyInfoPayload`
+  - Added enum `ClusterPattern`
+  - Added enum `DeviceLogCollectionStatus`
+  - Added enum `DnsServerConfig`
+  - Added model `DnsZones`
+  - Added model `EdgeDeviceJob`
+  - Added enum `EdgeDeviceKind`
+  - Added model `ExtensionParameters`
+  - Added model `ExtensionResource`
+  - Added enum `HardwareClass`
+  - Added model `HciCollectLogJobProperties`
+  - Added model `HciEdgeDeviceJob`
+  - Added model `HciEdgeDeviceJobProperties`
+  - Added enum `HciEdgeDeviceJobType`
+  - Added model `HciHardwareProfile`
+  - Added model `HciRemoteSupportJobProperties`
+  - Added model `HciStorageProfile`
+  - Added enum `IdentityProvider`
+  - Added enum `JobStatus`
+  - Added model `LocalAvailabilityZones`
+  - Added model `LogCollectionJobSession`
+  - Added model `LogCollectionReportedProperties`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `RdmaCapability`
+  - Added model `ReconcileArcSettingsRequest`
+  - Added model `ReconcileArcSettingsRequestProperties`
+  - Added enum `RemoteSupportAccessLevel`
+  - Added model `RemoteSupportJobNodeSettings`
+  - Added model `RemoteSupportJobReportedProperties`
+  - Added model `RemoteSupportSession`
+  - Added model `SecretsLocationDetails`
+  - Added model `SecretsLocationsChangeRequest`
+  - Added enum `SecretsType`
+  - Added model `UpdateStateProperties`
+  - Added model `ValidatedSolutionRecipe`
+  - Added model `ValidatedSolutionRecipeCapabilities`
+  - Added model `ValidatedSolutionRecipeCapability`
+  - Added model `ValidatedSolutionRecipeComponent`
+  - Added model `ValidatedSolutionRecipeComponentMetadata`
+  - Added model `ValidatedSolutionRecipeComponentPayload`
+  - Added model `ValidatedSolutionRecipeContent`
+  - Added model `ValidatedSolutionRecipeInfo`
+  - Added model `ValidatedSolutionRecipeProperties`
+  - Operation group `ArcSettingsOperations` added method `begin_reconcile`
+  - Operation group `ClustersOperations` added method `begin_update_secrets_locations`
+  - Added operation group `EdgeDeviceJobsOperations`
+  - Added operation group `ValidatedSolutionRecipesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Deleted or renamed client operation group `AzureStackHCIClient.publishers`
+  - Model `ArcIdentityResponse` moved instance variables `arc_application_client_id`, `arc_application_tenant_id`, `arc_service_principal_object_id` and `arc_application_object_id` under property `properties` whose type is `ArcIdentityResponseProperties`
+  - Model `ClusterIdentityResponse` moved instance variables `aad_client_id`, `aad_tenant_id`, `aad_service_principal_object_id` and `aad_application_object_id` under property `properties` whose type is `ClusterIdentityResponseProperties`
+  - Model `DeploymentSetting` moved instance variables `provisioning_state`, `arc_node_resource_ids`, `deployment_mode`, `operation_type`, `deployment_configuration` and `reported_properties` under property `properties` whose type is `DeploymentSettingsProperties`
+  - Model `ExtensionPatch` moved instance variable `extension_parameters` under property `properties` whose type is `ExtensionPatchProperties`
+  - Model `SecuritySetting` moved instance variables `secured_core_compliance_assignment`, `wdac_compliance_assignment`, `smb_encryption_for_intra_cluster_traffic_compliance_assignment`, `security_compliance_status` and `provisioning_state` under property `properties` whose type is `SecurityProperties`
+  - Deleted or renamed enum value `Status.FAILED`
+  - Deleted or renamed enum value `Status.IN_PROGRESS`
+  - Deleted or renamed enum value `Status.SUCCEEDED`
+  - Deleted or renamed model `Publisher`
+  - Deleted or renamed operation group `PublishersOperations`
+  - Method `OffersOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `OffersOperations.list_by_cluster` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `OffersOperations.list_by_publisher` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SkusOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SkusOperations.list_by_offer` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ArcSettingList`/`ClusterList`/`ExtensionList`/`OfferList`/`PublisherList`/`SkuList`/`UpdateList`/`UpdateRunList`/`UpdateSummariesList` which actually were not used by SDK users
+
 ## 8.0.0b4 (2024-08-26)
 
 ### Features Added

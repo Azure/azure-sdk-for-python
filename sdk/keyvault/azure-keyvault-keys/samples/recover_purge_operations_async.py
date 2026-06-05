@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,6 +7,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
+
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
