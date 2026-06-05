@@ -22,7 +22,7 @@ It runs on pull requests for changes under `sdk/**`.
 - Regenerates `api.md` for those packages.
 - Fails if the generated files differ from the committed files.
 - Fails if an affected package does not have a committed `api.md`.
-- Prints the mismatched or missing packages and the `azpysdk apistub --md --extract-metadata <package-name> --dest-dir <package-dir>` command needed to regenerate each `api.md` file.
+- Prints the mismatched or missing packages and the `azpysdk apistub --md --extract-metadata <package-name> --dest-dir .` command needed to regenerate each `api.md` file from the repository root.
 
 ## Script Layout
 
@@ -49,7 +49,7 @@ Also writes `count=<n>` to `GITHUB_OUTPUT`.
 
 ### `regenerate.js`
 
-Reads package directories from `API_MD_PACKAGES_FILE` and runs `azpysdk apistub --md --extract-metadata <package-name> --dest-dir <package-dir>` for each package.
+Reads package directories from `API_MD_PACKAGES_FILE` and runs `azpysdk apistub --md --extract-metadata <package-name> --dest-dir <package-dir>` for each package from the repository root.
 
 This script is used by the consistency check.
 
@@ -72,6 +72,14 @@ API review PR creation now uses a shared JavaScript orchestrator with a language
 - `adapters/python.js`: Python-specific package discovery, version parsing, and `api.md` generation.
 
 This split allows the core workflow to be reused across other language repos while keeping generation behavior language-specific.
+
+`create_api_review_pr.js` compares a baseline package release tag with a target API surface. The target can be a package release tag, an `origin` branch, or an `owner:branch` fork reference. When the target is a tag, the generated PR body identifies it as a target tag instead of a working branch.
+
+Example comparing two package release tags:
+
+```bash
+node scripts/api_md_workflow/create_api_review_pr.js --package-name azure-ai-projects --base azure-ai-projects_2.1.0 --target azure-ai-projects_2.2.0
+```
 
 ### `api_md_workflow.config.json`
 
@@ -100,4 +108,4 @@ Common variables include:
 3. `find_affected.js` determines which packages were touched.
 4. `regenerate.js` rebuilds `api.md` for those packages.
 5. `find_mismatches.js` records any `api.md` drift, including missing or untracked `api.md` files.
-6. If drift is found, the workflow fails and prints the affected packages plus the `azpysdk apistub --md --extract-metadata <package-name> --dest-dir <package-dir>` command to regenerate each `api.md` file locally.
+6. If drift is found, the workflow fails and prints the affected packages plus the `azpysdk apistub --md --extract-metadata <package-name> --dest-dir .` command to regenerate each `api.md` file locally from the repository root.

@@ -69,6 +69,10 @@ function parseArgs(argv) {
     throw new Error("Missing required --package-name");
   }
 
+  if (!args.base) {
+    throw new Error("Missing required --base");
+  }
+
   return args;
 }
 
@@ -117,19 +121,19 @@ function resolveGitExecutable() {
   return cachedGitExecutable;
 }
 
-function git(args, options = {}) {
+let git = function gitCommand(args, options = {}) {
   return run(resolveGitExecutable(), args, {
     ...options,
     env: buildGitAwareEnv(options.env),
   });
-}
+};
 
-function gh(args, options = {}) {
+let gh = function ghCommand(args, options = {}) {
   return run("gh", args, {
     ...options,
     env: buildGitAwareEnv(options.env),
   });
-}
+};
 
 function gitOut(args) {
   return git(args, { capture: true }).stdout.trim();
@@ -179,19 +183,33 @@ function validateBaseTag(packageName, baseTag) {
   return version;
 }
 
+function resolveTargetTag(target) {
+  if (tagExists(target)) {
+    return target;
+  }
+
+  git(["fetch", REMOTE, "tag", target], { check: false, capture: true });
+  return tagExists(target) ? target : null;
+}
+
 function remoteBranchRef(branch) {
   git(["fetch", REMOTE, branch]);
   return `${REMOTE}/${branch}`;
 }
 
 function resolveTargetRef(target) {
+  const targetTag = resolveTargetTag(target);
+  if (targetTag) {
+    return targetTag;
+  }
+
   if (!target.includes(":")) {
     return remoteBranchRef(target);
   }
 
   const [owner, branch] = target.split(":", 2);
   if (!owner || !branch) {
-    throw new Error(`ERROR: invalid --target '${target}'. Expected either 'branch' or 'owner:branch'.`);
+    throw new Error(`ERROR: invalid --target '${target}'. Expected 'tag', 'branch', or 'owner:branch'.`);
   }
 
   const forkUrl = `https://github.com/${owner}/azure-sdk-for-python.git`;
@@ -575,13 +593,9 @@ function branchReferenceParts(headSelector) {
   };
 }
 
-function exactHeadSelector(headSelector) {
-  const { owner, branch } = branchReferenceParts(headSelector);
-  return `${owner}:${branch}`;
-}
-
 function findOpenPrForHead(headSelector) {
-  const selector = exactHeadSelector(headSelector);
+  const { owner, branch } = branchReferenceParts(headSelector);
+  const selector = `${owner}:${branch}`;
   const allPrs = [];
 
   const direct = gh(
@@ -595,7 +609,7 @@ function findOpenPrForHead(headSelector) {
       "--state",
       "open",
       "--json",
-      "number,url,state,updatedAt",
+      "number,url,state,updatedAt,headRefName,headRepositoryOwner",
       "--limit",
       "50",
     ],
@@ -609,7 +623,7 @@ function findOpenPrForHead(headSelector) {
     }
   }
 
-  const searchQuery = `repo:Azure/azure-sdk-for-python is:pr is:open head:${selector}`;
+  const searchQuery = `repo:Azure/azure-sdk-for-python is:pr is:open head:${branch}`;
   const search = gh(
     [
       "pr",
@@ -621,7 +635,7 @@ function findOpenPrForHead(headSelector) {
       "--state",
       "open",
       "--json",
-      "number,url,state,updatedAt",
+      "number,url,state,updatedAt,headRefName,headRepositoryOwner",
       "--limit",
       "50",
     ],
@@ -641,7 +655,14 @@ function findOpenPrForHead(headSelector) {
 
   const deduped = new Map();
   for (const pr of allPrs) {
-    if (pr && typeof pr === "object" && "number" in pr) {
+    if (
+      pr &&
+      typeof pr === "object" &&
+      "number" in pr &&
+      pr.headRefName === branch &&
+      pr.headRepositoryOwner &&
+      pr.headRepositoryOwner.login === owner
+    ) {
       deduped.set(pr.number, pr);
     }
   }
@@ -746,15 +767,6 @@ function branchReferenceMarkdown(headSelector) {
   return `[branch \`${display}\`](${branchUrl})`;
 }
 
-function workingReferenceMarkdown(headSelector) {
-  const pr = findOpenPrForHead(headSelector);
-  if (pr) {
-    return `[PR #${pr.number}](${pr.url})`;
-  }
-
-  return branchReferenceMarkdown(headSelector);
-}
-
 function baselineReferenceMarkdown(baseTag) {
   if (!baseTag) {
     return "empty";
@@ -763,6 +775,29 @@ function baselineReferenceMarkdown(baseTag) {
   const commitSha = gitOut(["rev-list", "-n", "1", baseTag]);
   const commitUrl = `https://github.com/Azure/azure-sdk-for-python/commit/${commitSha}`;
   return `[tag \`${baseTag}\`](${commitUrl})`;
+}
+
+function targetReferenceInfo(headSelector) {
+  const targetTag = resolveTargetTag(headSelector);
+  if (targetTag) {
+    return {
+      label: "Target tag",
+      markdown: baselineReferenceMarkdown(targetTag),
+    };
+  }
+
+  const pr = findOpenPrForHead(headSelector);
+  if (pr) {
+    return {
+      label: "Working PR",
+      markdown: `[PR #${pr.number}](${pr.url})`,
+    };
+  }
+
+  return {
+    label: "Working branch",
+    markdown: branchReferenceMarkdown(headSelector),
+  };
 }
 
 function writeBytes(filePath, bytes) {
@@ -812,6 +847,7 @@ async function generateApiBytesForRef({
     return result;
   } finally {
     // Restore the package directory to the current branch state
+    git(["reset", "--", packageRelative], { check: false });
     git(["checkout", "HEAD", "--", packageRelative]);
     // Clean any untracked files that the generation may have left behind
     git(["clean", "-fd", "--", packageRelative], { check: false });
@@ -833,28 +869,22 @@ async function main() {
 
   git(["fetch", REMOTE, "main"]);
 
-  let baseVersion = "none";
-  if (args.base) {
-    baseVersion = validateBaseTag(args.packageName, args.base);
-  }
+  const baseVersion = validateBaseTag(args.packageName, args.base);
 
   const targetRef = args.target ? resolveTargetRef(args.target) : MAIN_REF;
 
   try {
-    let baseResult = null;
-    if (args.base) {
-      logInfo(`\n=== Capturing baseline api.md from tag ${args.base} ===`);
-      baseResult = await generateApiBytesForRef({
-        adapter,
-        repoRoot: REPO_ROOT,
-        packageName: args.packageName,
-        packageDir,
-        runtimeExecutable: args.runtimeExecutable,
-        ref: args.base,
-        refLabel: args.base,
-        logger,
-      });
-    }
+    logInfo(`\n=== Capturing baseline api.md from tag ${args.base} ===`);
+    const baseResult = await generateApiBytesForRef({
+      adapter,
+      repoRoot: REPO_ROOT,
+      packageName: args.packageName,
+      packageDir,
+      runtimeExecutable: args.runtimeExecutable,
+      ref: args.base,
+      refLabel: args.base,
+      logger,
+    });
 
     logInfo(`\n=== Capturing target api.md from ${targetRef} ===`);
     const targetResult = await generateApiBytesForRef({
@@ -893,41 +923,13 @@ async function main() {
     } else {
       logInfo(`\n=== Creating base branch ${baseBranch} ===`);
       git(["checkout", "-B", baseBranch, MAIN_REF]);
-
-      if (baseResult !== null) {
-        writeBytes(apiPath, baseResult.apiMd);
-        git(["add", apiRelative]);
-        if (baseResult.metadata) {
-          writeBytes(metaFilePath, baseResult.metadata);
-          git(["add", metaRelative]);
-        }
-        git(["commit", "-m", `[API Review] Baseline api.md for ${args.packageName} ${baseVersion}`]);
-      } else {
-        const tracked = git(["ls-files", "--error-unmatch", apiRelative], {
-          capture: true,
-          check: false,
-        });
-
-        if (tracked.status === 0) {
-          git(["rm", apiRelative]);
-          const metaTracked = git(["ls-files", "--error-unmatch", metaRelative], {
-            capture: true,
-            check: false,
-          });
-          if (metaTracked.status === 0) {
-            git(["rm", metaRelative]);
-          }
-          git(["commit", "-m", `[API Review] Remove api.md for ${args.packageName} (empty baseline)`]);
-        } else {
-          if (fs.existsSync(apiPath)) {
-            fs.unlinkSync(apiPath);
-          }
-          if (fs.existsSync(metaFilePath)) {
-            fs.unlinkSync(metaFilePath);
-          }
-          git(["commit", "--allow-empty", "-m", `[API Review] Empty baseline for ${args.packageName}`]);
-        }
+      writeBytes(apiPath, baseResult.apiMd);
+      git(["add", apiRelative]);
+      if (baseResult.metadata) {
+        writeBytes(metaFilePath, baseResult.metadata);
+        git(["add", metaRelative]);
       }
+      git(["commit", "-m", `[API Review] Baseline api.md for ${args.packageName} ${baseVersion}`]);
 
       git(["push", "--force-with-lease", REMOTE, baseBranch]);
     }
@@ -974,14 +976,14 @@ async function main() {
     }
 
     const title = `[API Review] ${args.packageName} ${targetVersion} (base ${baseVersion})`;
-    const workingSelector = args.target || originalBranch;
-    const workingRef = workingReferenceMarkdown(workingSelector);
+    const workingSelector = args.target || "main";
+    const workingReference = targetReferenceInfo(workingSelector);
     const baselineRef = baselineReferenceMarkdown(args.base);
 
     const body = [
       `Automated API review PR for ${args.packageName}.`,
       "",
-      `- **Working branch:** ${workingRef} (version ${targetVersion})`,
+      `- **${workingReference.label}:** ${workingReference.markdown} (version ${targetVersion})`,
       `- **Baseline:** ${baselineRef} (version ${baseVersion})`,
       "",
       "Generated by scripts/api_md_workflow/create_api_review_pr.js.",
@@ -1034,13 +1036,27 @@ async function main() {
   }
 }
 
-(async () => {
-  logger = await getDefaultLogger();
-  try {
-    process.exit(await main());
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    logError(message);
-    process.exit(1);
-  }
-})();
+if (require.main === module) {
+  (async () => {
+    logger = await getDefaultLogger();
+    try {
+      process.exit(await main());
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      logError(message);
+      process.exit(1);
+    }
+  })();
+} else {
+  module.exports = {
+    __setCommandRunners({ git: gitRunner, gh: ghRunner }) {
+      if (gitRunner) {
+        git = gitRunner;
+      }
+      if (ghRunner) {
+        gh = ghRunner;
+      }
+    },
+    targetReferenceInfo,
+  };
+}
