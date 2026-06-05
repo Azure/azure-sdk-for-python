@@ -44,7 +44,7 @@ Thread-safety
 import logging
 import threading
 from typing import FrozenSet, Optional
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import ParseResult, urlparse, urlunparse
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy
@@ -111,10 +111,11 @@ def _is_redirect(status_code: int) -> bool:
     return status_code in _REDIRECT_STATUS_CODES
 
 
-def _effective_port(parsed) -> Optional[int]:
+def _effective_port(parsed: ParseResult) -> Optional[int]:
     """Return the effective port for a parsed URL, applying the scheme default.
 
     :param parsed: A :func:`urllib.parse.urlparse` result.
+    :type parsed: ~urllib.parse.ParseResult
     :return: The explicit port, or the scheme default (443 for ``https``,
         80 for ``http``), or ``None`` if it cannot be determined.
     :rtype: Optional[int]
