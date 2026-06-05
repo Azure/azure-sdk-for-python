@@ -77,7 +77,9 @@ def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
-async def _tee_stream(proc: "asyncio.subprocess.Process", package: str, check: str) -> tuple:
+async def _tee_stream(
+    proc: "asyncio.subprocess.Process", package: str, check: str
+) -> tuple:
     """Read the child's stdout and stderr concurrently, mirroring each line to
     this process's stdout/stderr while also accumulating the full text for the
     final :class:`CheckResult`.
@@ -131,7 +133,9 @@ def _compare_req_to_injected_reqs(parsed_req, injected_packages: List[str]) -> b
     return any(parsed_req.name in req for req in injected_packages)
 
 
-def _inject_custom_reqs(req_file: str, injected_packages: str, package_dir: str) -> None:
+def _inject_custom_reqs(
+    req_file: str, injected_packages: str, package_dir: str
+) -> None:
     req_lines = []
     injected_list = [p for p in re.split(r"[\s,]", injected_packages) if p]
 
@@ -160,7 +164,8 @@ def _inject_custom_reqs(req_file: str, injected_packages: str, package_dir: str)
         all_adjustments = installable + [
             line_tuple[0].strip()
             for line_tuple in req_lines
-            if line_tuple[0].strip() and not _compare_req_to_injected_reqs(line_tuple[1], all_filter_names)
+            if line_tuple[0].strip()
+            and not _compare_req_to_injected_reqs(line_tuple[1], all_filter_names)
         ]
     else:
         all_adjustments = installable
@@ -231,7 +236,9 @@ async def run_check(
         env["PYTHONUNBUFFERED"] = "1"
 
         if in_ci():
-            env["PROXY_ASSETS_FOLDER"] = os.path.join(root_dir, ".assets_distributed", str(proxy_port))
+            env["PROXY_ASSETS_FOLDER"] = os.path.join(
+                root_dir, ".assets_distributed", str(proxy_port)
+            )
         try:
             logger.info(" ".join(cmd))
             proc = await asyncio.create_subprocess_exec(
@@ -246,7 +253,11 @@ async def run_check(
             return CheckResult(package, check, 127, 0.0, "", str(ex))
 
         if stream_live:
+            if in_ci():
+                print(f"##[group]{package} :: {check} :: ?")
             stdout, stderr = await _tee_stream(proc, package, check)
+            if in_ci():
+                print("##[endgroup]")
         else:
             stdout_b, stderr_b = await proc.communicate()
             stdout = stdout_b.decode(errors="replace")
@@ -254,7 +265,9 @@ async def run_check(
         duration = time.time() - start
         exit_code = proc.returncode or 0
         status = "OK" if exit_code == 0 else f"FAIL({exit_code})"
-        logger.info(f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s")
+        logger.info(
+            f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s"
+        )
         # When streaming live we've already mirrored every line to the parent's
         # stdout/stderr as it was produced, so skip the post-hoc grouped dump
         # to avoid duplicating every line.
@@ -309,10 +322,14 @@ def summarize(results: List[CheckResult]) -> int:
     print("-" * len(header))
     for r in sorted(results, key=lambda x: (x.exit_code != 0, x.package, x.check)):
         status = "OK" if r.exit_code == 0 else f"FAIL({r.exit_code})"
-        print(f"{r.package.ljust(pkg_w)}  {r.check.ljust(chk_w)}  {status.ljust(8)}  {r.duration:>10.2f}")
+        print(
+            f"{r.package.ljust(pkg_w)}  {r.check.ljust(chk_w)}  {status.ljust(8)}  {r.duration:>10.2f}"
+        )
     worst = max((r.exit_code for r in results), default=0)
     failed = [r for r in results if r.exit_code != 0]
-    print(f"\nTotal checks: {len(results)} | Failed: {len(failed)} | Worst exit code: {worst}")
+    print(
+        f"\nTotal checks: {len(results)} | Failed: {len(failed)} | Worst exit code: {worst}"
+    )
     return worst
 
 
@@ -350,10 +367,14 @@ async def run_all_checks(
     dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
 
     if in_ci():
-        logger.info("Replacing relative requirements in eng/test_tools.txt with prebuilt wheels.")
+        logger.info(
+            "Replacing relative requirements in eng/test_tools.txt with prebuilt wheels."
+        )
         replace_dev_reqs(test_tools_path, root_dir, wheel_dir)
 
-        logger.info("Replacing relative requirements in eng/dependency_tools.txt with prebuilt wheels.")
+        logger.info(
+            "Replacing relative requirements in eng/dependency_tools.txt with prebuilt wheels."
+        )
         replace_dev_reqs(dependency_tools_path, root_dir, wheel_dir)
 
     for pkg in packages:
@@ -375,12 +396,16 @@ async def run_all_checks(
         if not is_check_enabled(package, check, CHECK_DEFAULTS.get(check, True)):
             logger.warning(f"Skipping disabled check {check} for package {package}")
             continue
-        logger.info(f"Assigning proxy port {next_proxy_port} to check {check} for package {package}")
+        logger.info(
+            f"Assigning proxy port {next_proxy_port} to check {check} for package {package}"
+        )
 
         # Check if this package overrides the Python version for analysis
         pkg_python_version = get_config_setting(package, "analyze_python_version", None)
         if pkg_python_version:
-            logger.info(f"Package {package} overrides analyze Python version to {pkg_python_version}")
+            logger.info(
+                f"Package {package} overrides analyze Python version to {pkg_python_version}"
+            )
 
         scheduled.append((package, check, next_proxy_port, pkg_python_version))
         next_proxy_port += 1
@@ -396,7 +421,9 @@ async def run_all_checks(
     # leave --max-parallel at its CPU-count default.
     stream_live = max_parallel == 1 or total <= 1
 
-    for idx, (package, check, proxy_port, pkg_python_version) in enumerate(scheduled, start=1):
+    for idx, (package, check, proxy_port, pkg_python_version) in enumerate(
+        scheduled, start=1
+    ):
         tasks.append(
             asyncio.create_task(
                 run_check(
@@ -433,7 +460,9 @@ async def run_all_checks(
         elif isinstance(res, Exception):
             norm_results.append(CheckResult(package, check, 99, 0.0, "", str(res)))
         else:
-            norm_results.append(CheckResult(package, check, 98, 0.0, "", f"Unknown result type: {res}"))
+            norm_results.append(
+                CheckResult(package, check, 98, 0.0, "", f"Unknown result type: {res}")
+            )
     return summarize(norm_results)
 
 
@@ -509,11 +538,15 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         ),
     )
 
-    parser.add_argument("--disablecov", help=("Flag. Disables code coverage."), action="store_true")
+    parser.add_argument(
+        "--disablecov", help=("Flag. Disables code coverage."), action="store_true"
+    )
 
     parser.add_argument(
         "--service",
-        help=("Name of service directory (under sdk/) to test. Example: --service applicationinsights"),
+        help=(
+            "Name of service directory (under sdk/) to test. Example: --service applicationinsights"
+        ),
     )
 
     parser.add_argument(
@@ -580,7 +613,9 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     else:
         target_dir = root_dir
 
-    logger.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
+    logger.info(
+        f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}."
+    )
 
     # ensure that recursive virtual envs aren't messed with by this call
     os.environ.pop("VIRTUAL_ENV", None)
@@ -597,7 +632,9 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     if len(targeted_packages) == 0:
-        logger.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
+        logger.info(
+            f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0."
+        )
         exit(0)
 
     logger.info(f"Executing checks with the executable {sys.executable}.")
@@ -629,7 +666,9 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         try:
             proxy_executable = prepare_local_tool(root_dir)
         except Exception as exc:
-            logger.error(f"Unable to prepare test proxy executable for recording restore: {exc}")
+            logger.error(
+                f"Unable to prepare test proxy executable for recording restore: {exc}"
+            )
             sys.exit(1)
 
     logger.info(
@@ -640,9 +679,13 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     proxy_processes: List[ProxyProcess] = []
     try:
         if in_ci():
-            logger.info(f"Ensuring {len(checks)} test proxies are running for requested checks...")
+            logger.info(
+                f"Ensuring {len(checks)} test proxies are running for requested checks..."
+            )
         # Pass through service if set and not "auto"
-        effective_service = args.service if (args.service and args.service != "auto") else None
+        effective_service = (
+            args.service if (args.service and args.service != "auto") else None
+        )
         exit_code = asyncio.run(
             run_all_checks(
                 targeted_packages,
