@@ -51,18 +51,21 @@ The build will tell you immediately if it can't find that clone — see
 From this directory (`sdk/cosmos/azure-cosmos`):
 
 ```powershell
-# A virtualenv. The build tool we use (maturin) refuses to install
-# the compiled Rust extension into your system Python.
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
 # maturin = build tool that compiles Rust + drops the result into the
-# Python package. The other three are test deps.
+# Python package. The other three are test deps. Install straight into
+# whatever Python you're using (system Python is fine -- maturin 1.x
+# installs into system site-packages without complaint; a venv works
+# too if you prefer one).
 pip install -U pip maturin pytest pytest-asyncio
 pip install -r dev_requirements.txt
 ```
 
-You're now in a venv. Every command below assumes you stay in it.
+> **Note.** Earlier versions of this README claimed maturin "refuses to
+> install into your system Python" and required a venv. That was true
+> of older maturin (pre-1.0) but is no longer the case. If you already
+> have a `.venv` activated, maturin will use it; if you don't, maturin
+> installs the wheel into the system Python's `site-packages` like any
+> other `pip install -e` would.
 
 ---
 
@@ -111,12 +114,20 @@ does the same thing by hand.)
 
 ## Smoke test: one round trip Python → Rust → Cosmos
 
-Before running any test suite, run the smoke test. It uses **only** the
-Rust path — no Python fallback — so if it succeeds you know the binding
-is wired correctly all the way to your Cosmos endpoint.
+Before running any test suite, run the smoke test. It cuts out the
+*entire* Python helper layer (request-prep, options parsing, PK
+serialization, body marshalling, auto-id) and exercises only:
+
+  PyO3 marshalling → driver authenticates → driver opens HTTPS
+   → driver POSTs to /docs → driver parses response → PyO3 back
+
+So a green smoke test means the binding + driver round-trip is wired
+correctly all the way to your Cosmos endpoint. A failure here is below
+the helper layer; a failure in the parity suite on top of a green
+smoke test is in the helper layer or in response translation.
 
 ```powershell
-python smoke_test_rust_create_item.py
+python tests\create_item\smoke_test_rust_create_item.py
 ```
 
 By default this points at the emulator and expects:
@@ -124,17 +135,30 @@ By default this points at the emulator and expects:
 - a database named `pyo3test`
 - inside it, a container named `items` partitioned on `/pk`
 
-Create those once via the emulator's Data Explorer.
+Create those once via the emulator's Data Explorer (or the Azure CLI
+commands shown in the script's module docstring).
 
 To point at a real account instead:
 
 ```powershell
 $env:COSMOS_ENDPOINT = "<your-cosmos-account-uri>"
 $env:COSMOS_KEY      = "<your-cosmos-account-key>"
-python smoke_test_rust_create_item.py
+python tests\create_item\smoke_test_rust_create_item.py
 ```
 
-A successful run ends with `OK — round trip Python → PyO3 → driver → Cosmos succeeded.`
+What the smoke test prints, in order: the endpoint, the container
+link, the item id it minted, then `status_code`, `sub_status`, and the
+first 200 bytes of the response body. A successful run ends with
+`OK -- round trip Python -> PyO3 -> driver -> Cosmos succeeded.` and
+exits 0. Exit codes: `0` round-trip OK, `1` non-2xx from the service
+(error body is printed above), `2` the compiled `_rust` module is not
+importable (run `maturin develop`).
+
+What the smoke test does **not** check (so don't read too much into a
+green run): response-header parity, typed exceptions on 4xx/5xx,
+response-body parsing into a Python dict, or any routing options
+(consistency level, session token, priority, throughput bucket, ...).
+Those are covered by the parity suite below.
 
 ---
 
@@ -149,19 +173,28 @@ path is being built out.
 $env:ACCOUNT_URI = "https://localhost:8081"
 $env:ACCOUNT_KEY = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
 
-pytest tests/test_create_item_parity.py -v          # only failures show diffs
-pytest tests/test_create_item_parity.py -v -s       # show diff for every call
+pytest tests/create_item/sync/test_create_item_parity.py -v          # only failures show diffs
+pytest tests/create_item/sync/test_create_item_parity.py -v -s -rA   # show diff + every test in the summary
 ```
 
 If you don't set the env vars, the suite skips cleanly. If you set them
 but never built the Rust extension, the suite skips with a "run maturin
 develop" message.
 
-Tests marked `@pytest.mark.skip(reason="C# pending")` cover known
-driver- or binding-side gaps; they're skipped today and you remove the
-marker by hand once the gap closes. `git grep "C5b pending"` finds
-every test waiting on a specific item. See `docs/V5_PARITY_AUDIT.md`
-for the full gap list.
+After a parity run, regenerate the per-test report:
+
+```powershell
+python -m pytest tests/create_item/sync/test_create_item_parity.py -v -s -rA --tb=short *>&1 | Tee-Object .parity_run.log
+python docs/_build_parity_audit.py .parity_run.log
+# -> writes docs/V5/V5_PARITY_AUDIT.md
+```
+
+Tests marked `@pytest.mark.skip(reason="...")` cover known driver- or
+binding-side gaps; the reason string names the specific limitation in
+plain English. `git grep "Permanent skip"` finds every test waiting on
+a Python-only feature that the Rust path can't match. See
+`docs/V5/RUST_PARITY_PUSHBACKS.md` for the driver-team gap list and
+`docs/V5/V5_PARITY_AUDIT.md` for the most recent per-test report.
 
 ---
 

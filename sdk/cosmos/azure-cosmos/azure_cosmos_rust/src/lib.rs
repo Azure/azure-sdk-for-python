@@ -41,13 +41,13 @@ use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
 
-use azure_core::error::ErrorKind;
-use azure_core::http::headers::{HeaderName, HeaderValue, Headers};
+use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::{
     driver::{CosmosDriver, CosmosDriverRuntime},
+    error::CosmosError,
     models::{
-        AccountReference, ActivityId, CosmosOperation, ItemReference, PartitionKey,
-        PartitionKeyValue, SessionToken,
+        AccountReference, ActivityId, CosmosOperation, CosmosResponse, ItemReference,
+        PartitionKey, PartitionKeyValue, ResponseBody, SessionToken,
     },
     options::{ContentResponseOnWrite, EndToEndOperationLatencyPolicy, ExcludedRegions, OperationOptionsBuilder},
 };
@@ -340,7 +340,7 @@ fn create_item<'py>(
         PyRuntimeError::new_err("init_client must be called before create_item")
     })?;
 
-    let response_result: azure_core::Result<_> = py.allow_threads(|| {
+    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
         tokio_rt.block_on(async {
             let container = driver
                 .resolve_container(&database_name, &container_name)
@@ -383,17 +383,34 @@ fn create_item<'py>(
             }
             let options = builder.build();
 
-            driver.execute_operation(op, options).await
+            driver.execute_singleton_operation(op, options).await
         })
     });
 
     match response_result {
+        // Success: the driver hands back a wire response (status + headers
+        // + body). Body may legitimately be `ResponseBody::NoPayload` —
+        // most commonly when the caller passed `no_response=True` and the
+        // driver suppressed the body — and `response_body_to_vec` will
+        // map that to an empty `Vec<u8>` for the Python parser.
         Ok(response) => backend_response_tuple_from_success(py, response),
-        Err(e) => {
-            if let Some(raw_http_error) = backend_response_tuple_from_http_error(py, &e)? {
+        Err(cosmos_error) => {
+            // PUSHBACK #4 / Appendix B Gap 4: the v0.4.0 driver carries the
+            // wire response on its typed CosmosError, reachable via
+            // ``CosmosError::response()``. The binding extracts the typed
+            // status, parsed Cosmos headers, and body directly — no more
+            // format!-and-regex-parse-the-status round trip on the Python
+            // side. Falls through to a generic RuntimeError for synthetic
+            // errors (transport failures, client validation) where there
+            // is no wire response to surface.
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
+            {
                 Ok(raw_http_error)
             } else {
-                Err(PyRuntimeError::new_err(format!("driver execute_operation failed: {e}")))
+                Err(PyRuntimeError::new_err(format!(
+                    "driver execute_singleton_operation failed: {cosmos_error}"
+                )))
             }
         }
     }
@@ -422,7 +439,10 @@ fn backend_response_tuple_from_success<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     let status = response.status();
     let status_code = u16::from(status.status_code()) as i64;
-    let sub_status = status.sub_status().map(u32::from).unwrap_or(0) as i64;
+    // SubStatusCode is a `pub struct SubStatusCode(u16)` in driver v0.4.0
+    // (was a richer type with a `From<SubStatusCode> for u32` impl in 0.3.0).
+    // `.value()` returns the underlying u16.
+    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
 
     // Copy the driver's typed CosmosResponseHeaders fields into a Python
     // dict keyed by the actual `x-ms-...` wire-header names. This is what
@@ -434,32 +454,66 @@ fn backend_response_tuple_from_success<'py>(
     let response_headers = PyDict::new_bound(py);
     write_response_headers(&response_headers, driver_headers)?;
 
-    let body_vec = response.into_body();
+    let body_vec = response_body_to_vec(response.into_body());
     backend_response_tuple(py, status_code, sub_status, response_headers, &body_vec)
 }
 
-fn backend_response_tuple_from_http_error<'py>(
+/// Map the driver's typed `ResponseBody` to a flat `Vec<u8>` suitable for the
+/// Python `BackendResponse.body` bytes field.
+///
+/// `ResponseBody` is an enum (`NoPayload | Bytes | Items`); `create_item`
+/// always produces a single payload (or no payload when the caller passed
+/// `no_response=True`), so we never expect the `Items` feed-shape here.
+/// We concatenate it as a defensive fallback rather than panic — if it ever
+/// fires the test harness will surface a body mismatch that's easier to
+/// diagnose than an unwrap panic from inside the binding.
+fn response_body_to_vec(body: ResponseBody) -> Vec<u8> {
+    match body {
+        ResponseBody::NoPayload => Vec::new(),
+        ResponseBody::Bytes(b) => b.to_vec(),
+        ResponseBody::Items(items) => items.iter().flat_map(|b| b.iter().copied()).collect(),
+    }
+}
+
+/// Build a `BackendResponse` 4-tuple from a driver `CosmosError` that carries
+/// a wire response.
+///
+/// Returns `Ok(None)` when the error has no wire response attached (purely
+/// synthetic errors — transport failures, client validation, end-to-end
+/// timeouts before any HTTP round-trip). The caller falls back to a generic
+/// `PyRuntimeError` in that case.
+///
+/// PUSHBACK #4 / Appendix B Gap 4 status: the driver v0.4.0 `CosmosError`
+/// carries the wire response on its typed `.response()` accessor, so the
+/// binding no longer has to regex-parse the HTTP status out of `format!("{e}")`
+/// to keep the Python typed-exception contract honest. The
+/// `_backend/rust.py` shim that recovered status / sub_status from a
+/// `RuntimeError("driver execute_operation failed: HTTP NNN ...")` message
+/// is now dead code on the success path; it stays only for safety against
+/// the `None` synthetic-error case.
+fn backend_response_tuple_from_cosmos_error<'py>(
     py: Python<'py>,
-    error: &azure_core::Error,
+    error: &CosmosError,
 ) -> PyResult<Option<Bound<'py, PyTuple>>> {
-    let raw_response = match error.kind() {
-        ErrorKind::HttpResponse {
-            raw_response: Some(raw_response),
-            ..
-        } => raw_response,
-        _ => return Ok(None),
+    let response = match error.response() {
+        Some(r) => r,
+        None => return Ok(None),
     };
 
+    let status = response.status();
+    let status_code = u16::from(status.status_code()) as i64;
+    let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
+
     let response_headers = PyDict::new_bound(py);
-    write_raw_response_headers(&response_headers, raw_response.headers())?;
-    let status_code = u16::from(raw_response.status()) as i64;
-    let sub_status = extract_sub_status(raw_response.headers());
+    write_response_headers(&response_headers, response.headers())?;
+
+    let body_vec = response_body_to_vec(response.body().clone());
     Ok(Some(backend_response_tuple(
         py,
         status_code,
         sub_status,
         response_headers,
-        raw_response.body(),
+        &body_vec,
     )?))
 }
 
@@ -494,7 +548,9 @@ fn write_response_headers(
         out.set_item("x-ms-item-count", v)?;
     }
     if let Some(v) = h.substatus {
-        out.set_item("x-ms-substatus", u32::from(v))?;
+        // Driver v0.4.0: SubStatusCode is `pub struct SubStatusCode(u16)`,
+        // expose the underlying number via `.value()`.
+        out.set_item("x-ms-substatus", v.value() as u32)?;
     }
     if let Some(v) = h.index_metrics.as_ref() {
         out.set_item("x-ms-cosmos-index-utilization", v.as_str())?;
@@ -595,21 +651,15 @@ fn write_response_headers(
     Ok(())
 }
 
-fn write_raw_response_headers(out: &Bound<'_, PyDict>, h: &Headers) -> PyResult<()> {
-    for (name, value) in h.iter() {
-        out.set_item(name.as_str(), value.as_str())?;
-    }
-    Ok(())
-}
+// Driver v0.4.0 surfaces wire responses on errors via
+// `CosmosError::response() -> Option<&CosmosResponse>`, which carries
+// typed `CosmosResponseHeaders` directly. The earlier `write_raw_response_headers`
+// helper (which copied an `azure_core::http::Headers` map verbatim) and the
+// matching `extract_sub_status` header probe are gone — both success and
+// error paths now go through `write_response_headers` and read the typed
+// status / sub-status fields off `CosmosStatus` directly.
 
-fn extract_sub_status(headers: &Headers) -> i64 {
-    let sub_status_name = HeaderName::from_static("x-ms-substatus");
-    headers
-        .get_str(&sub_status_name)
-        .ok()
-        .and_then(|value| value.parse::<i64>().ok())
-        .unwrap_or(0)
-}
+
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -674,9 +724,11 @@ fn parse_partition_key_header(header: &str) -> PyResult<PartitionKey> {
 /// Convert a single JSON-array element into a `PartitionKeyValue`.
 fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<PartitionKeyValue> {
     match value {
-        // JSON null -> typed Null. Goes through the `From<Option<T>>` impl
-        // which maps None -> InnerPartitionKeyValue::Null.
-        serde_json::Value::Null => Ok(PartitionKeyValue::from(None::<String>)),
+        // JSON null -> typed Null. Use the `NULL` const exposed on
+        // `PartitionKeyValue` directly rather than going through the
+        // `From<Option<T>>` impl, both for clarity and to avoid coupling
+        // to that impl's continued existence across driver versions.
+        serde_json::Value::Null => Ok(PartitionKeyValue::NULL),
         serde_json::Value::Bool(b) => Ok(PartitionKeyValue::from(b)),
         serde_json::Value::Number(n) => match n.as_f64() {
             Some(f) => Ok(PartitionKeyValue::from(f)),
@@ -687,8 +739,10 @@ fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<PartitionKey
         serde_json::Value::String(s) => Ok(PartitionKeyValue::from(s)),
         // Empty JSON object `{}` is the wire shape for "PK path missing on
         // this document" (Python's `_Undefined`). The driver has a dedicated
-        // representation for this.
-        serde_json::Value::Object(obj) if obj.is_empty() => Ok(PartitionKeyValue::undefined()),
+        // representation for this — exposed as the `UNDEFINED` const on
+        // `PartitionKeyValue` in driver v0.4.0 (was a `::undefined()`
+        // constructor function in 0.3.0).
+        serde_json::Value::Object(obj) if obj.is_empty() => Ok(PartitionKeyValue::UNDEFINED),
         // Anything else is not a valid partition-key component on the wire.
         other => Err(PyValueError::new_err(format!(
             "unsupported partition key value: {other}"

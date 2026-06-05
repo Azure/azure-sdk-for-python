@@ -94,7 +94,7 @@ def skip_unless_rust_binding():
     """Decorator: skip if ``azure.cosmos._rust`` was not built."""
     return pytest.mark.skipif(
         not have_rust_binding(),
-        reason="Compiled azure.cosmos._rust binding missing — run `maturin develop`.",
+        reason="Compiled azure.cosmos._rust binding missing -- run `maturin develop`.",
     )
 
 
@@ -239,7 +239,7 @@ class BackendComparison:
             return "FULL PARITY: both backends produced equivalent outcomes."
         if core_ok != rust_ok:
             return ("FUNCTIONAL DIVERGENCE: one backend succeeded, the other "
-                    "raised. The operation behaves differently — investigate.")
+                    "raised. The operation behaves differently -- investigate.")
         if core_ok and rust_ok:
             non_header = [d for d in self.diffs
                           if not d.startswith("headers only on ")
@@ -411,6 +411,28 @@ def _filtered_body(b: Any, ignored: frozenset) -> Any:
     return b
 
 
+# Boundary marker for the SDK's appended diagnostics JSON blob. The
+# ``CosmosHttpResponseError`` formatter renders ``str(exc)`` as
+#   "(<reason-phrase>) <server-error-text>, {"Summary":...}"
+# where the trailing ``, {"Summary":...`` is a JSON-stringified dump
+# of the client-side request-stats / diagnostics tree -- per-call AND
+# per-backend by construction. core-python's call stack hits the
+# document endpoint directly and produces ``"DirectCalls": {...}``;
+# the rust path goes through one or more metadata-cache pre-flights
+# and produces ``"DirectCalls": {...}, "GatewayCalls": {...}`` with
+# different call counts each time. Comparing that tail across the two
+# backends is comparing routing decisions, not error behaviour. The
+# cross-backend contract is the canonical server-error text *before*
+# this comma -- that's what a customer error handler reads, and that's
+# what both backends agree on when the typed exception matches.
+#
+# ``_normalize_exception_message`` trims everything from this marker
+# onward before running the per-request-noise scrubbers below. If the
+# pattern isn't found (binding-side errors, transport failures, any
+# exception that didn't go through the diagnostics formatter), the
+# whole string is normalised as before.
+_DIAGNOSTICS_BLOB_START = re.compile(r',\s*\{"Summary":')
+
 # Patterns used to scrub per-request noise out of exception messages
 # before comparing them across backends. Each entry is (regex, replacement).
 # Order matters only inasmuch as later substitutions see the output of
@@ -440,13 +462,36 @@ _EXCEPTION_MESSAGE_NOISE = [
 def _normalize_exception_message(exc: BaseException) -> str:
     """Strip per-request noise out of an exception's text for diffing.
 
-    Replaces UUIDs, RIDs, timestamps, and numeric counters with stable
-    placeholders. Truncates after the first 240 characters so an
-    arbitrarily long diagnostics blob does not dominate the report.
+    Two-stage normalisation:
+
+    1. If the message carries the SDK's appended ``, {"Summary":...``
+       diagnostics blob (the standard ``CosmosHttpResponseError``
+       formatter does this on every typed error from the gateway),
+       trim everything from that marker onward. The diagnostics blob
+       is per-backend by construction -- core-python emits a
+       ``DirectCalls`` summary, the rust path emits
+       ``DirectCalls`` + ``GatewayCalls`` because of its metadata-
+       cache pre-flights. Comparing it across backends is comparing
+       internal routing, not error behaviour.
+
+    2. Run the remaining text through the per-request-noise scrubbers
+       (UUIDs, RIDs, timestamps, numeric counters, whitespace).
+
+    Truncates after the first 240 characters so an arbitrarily long
+    pre-diagnostics message can't dominate the report.
     """
     if exc is None:
         return ""
     text = str(exc)
+    # Strip the appended diagnostics blob before scrubbing so the
+    # presence/shape of ``DirectCalls`` vs ``DirectCalls + GatewayCalls``
+    # doesn't end up in the diff. Search-and-truncate is intentionally
+    # done BEFORE the regex substitutions so the marker is matched
+    # against the unscrubbed text (the base64-ish RID scrubber would
+    # otherwise rewrite ``"Summary"`` to ``"<rid>"`` and break it).
+    blob_match = _DIAGNOSTICS_BLOB_START.search(text)
+    if blob_match:
+        text = text[:blob_match.start()]
     for pattern, replacement in _EXCEPTION_MESSAGE_NOISE:
         text = pattern.sub(replacement, text)
     text = text.strip()

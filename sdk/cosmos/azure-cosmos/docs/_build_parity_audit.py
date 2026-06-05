@@ -106,6 +106,22 @@ def _parse_descriptions(src: str) -> dict:
 # Mojibake produced when UTF-8 em-dashes / en-dashes get mis-decoded as
 # cp1252 during pytest output capture. Map them back to ASCII so the
 # audit doc never contains stray ``ΓÇö`` / ``ΓÇô`` sequences.
+#
+# Two distinct mojibake families show up depending on the capture path:
+#
+# 1. cp437 console -> UTF-16 via ``Tee-Object`` produces ``ΓÇö`` etc.
+#    (the cp437 representation of the UTF-8 bytes that encode the
+#    em-dash).
+# 2. cp1252 console -> UTF-16 via ``Tee-Object`` produces single
+#    Latin-1 / Latin-1-supplement characters: an em-dash (U+2014)
+#    round-tripped through Python's stdout encoding on a Windows
+#    console that defaults to cp1252, then re-read by Tee-Object as
+#    cp1252, ends up as U+00F9 (``\u00f9`` -- the byte 0x97 in
+#    cp1252 is the em-dash, but here it landed as 0xF9 because the
+#    cp1252 -> UTF-16 path treats 0xF9 as ``ù``). The other typographic
+#    quotes / dashes map to the same family of Latin-1-supplement
+#    codepoints; map the common ones here so a captured log never
+#    leaks them into the rendered scoreboard.
 _MOJIBAKE_FIXUPS = {
     "ΓÇö": "--",
     "ΓÇô": "-",
@@ -116,6 +132,12 @@ _MOJIBAKE_FIXUPS = {
     "ΓÇª": "...",
     "\u2014": "--",
     "\u2013": "-",
+    # cp1252 -> UTF-16 single-byte mojibake artefacts observed in
+    # captured parity logs. Order: em-dash (\u00f9 = ù), en-dash
+    # (\u00f7 = divide sign), curly apostrophes / quotes that land
+    # in the same Latin-1-supplement neighbourhood.
+    "\u00f9": "--",
+    "\u00f7": "-",
 }
 
 
@@ -123,6 +145,55 @@ def _sanitize(text: str) -> str:
     for bad, good in _MOJIBAKE_FIXUPS.items():
         text = text.replace(bad, good)
     return text
+
+
+# Inside a rendered PARITY CALL block the verdict shows up as the line
+# AFTER ``--- VERDICT ---``, indented with two spaces. Pulling it out
+# gives us the headline for the scoreboard's "Why" column on failed
+# tests (e.g. "FUNCTIONAL DIVERGENCE: response bodies or values differ
+# between the backends."). Falls back to None when the block carries
+# no verdict line (defensive -- format_report always emits one).
+_VERDICT_LINE_RE = re.compile(r"^---\s*VERDICT\s*---\s*$\s*^\s+(.+)$", re.MULTILINE)
+
+
+def _extract_verdict(block: str) -> str | None:
+    """Return the verdict line text from a rendered PARITY CALL block."""
+    if not block:
+        return None
+    m = _VERDICT_LINE_RE.search(block)
+    if not m:
+        return None
+    return m.group(1).strip()
+
+
+def _scoreboard_why(
+    status: str,
+    name: str,
+    description: str,
+    skip_reason: str | None,
+    block: str | None,
+) -> str:
+    """Status-specific 'why is this test in this state' for the scoreboard.
+
+    - FAILED  -> verdict line from the test's PARITY CALL block (e.g.
+                 "FUNCTIONAL DIVERGENCE: response bodies or values differ..."),
+                 falling back to the docstring if no block was matched.
+    - SKIPPED -> the @pytest.mark.skip ``reason=`` string from the source
+                 (the test file already names the specific limitation in
+                 plain English).
+    - STALE   -> a fixed note explaining the test wasn't in the transcript.
+    - PASSED  -> the docstring description (what the test actually checks).
+    """
+    if status == "FAILED":
+        verdict = _extract_verdict(block) if block else None
+        if verdict:
+            return verdict
+        return description or "(failed -- no PARITY CALL block in transcript)"
+    if status == "SKIPPED":
+        return "Skipped: " + (skip_reason or "(no reason given in source)")
+    if status == "STALE":
+        return "Not in transcript -- re-run pytest and rebuild this doc."
+    return description or "(no description)"
 
 
 def main() -> int:
@@ -354,17 +425,43 @@ def main() -> int:
     out.append("")
     out.append("## Scoreboard")
     out.append("")
-    out.append("| # | Test | Outcome | Description |")
+    out.append(
+        "Rows are sorted by status: failed tests first (so regressions are "
+        "the first thing the reader sees), then skipped, then passed. The "
+        "`#` column is the test's index in the source file -- click through "
+        "to the matching section in **Per-test reports** below for the full "
+        "PARITY CALL block. The `Why` column is status-specific: for "
+        "failures it is the verdict line from the parity helper; for skips "
+        "it is the `@pytest.mark.skip(reason=...)` text from the source; "
+        "for passes it is the test's docstring summary."
+    )
+    out.append("")
+    out.append("| # | Test | Outcome | Why |")
     out.append("| --- | --- | --- | --- |")
-    for i, n in enumerate(tests, 1):
-        marker = {
-            "PASSED": "**PASS**",
-            "FAILED": "**FAIL**",
-            "SKIPPED": "_SKIP_",
-            "STALE": "_STALE_",
-        }[statuses[n]]
-        desc = descriptions.get(n, "").replace("|", "\\|")
-        out.append(f"| {i} | `{n}` | {marker} | {desc} |")
+    marker_for = {
+        "PASSED": "**PASS**",
+        "FAILED": "**FAIL**",
+        "SKIPPED": "_SKIP_",
+        "STALE": "_STALE_",
+    }
+    # Group order: failures first, then skips, then stale, then passes.
+    # Within each group preserve source order so the # column reads
+    # monotonically per group and matches the per-test reports section.
+    status_order = {"FAILED": 0, "SKIPPED": 1, "STALE": 2, "PASSED": 3}
+    source_index = {n: i for i, n in enumerate(tests, 1)}
+    sortable = [(status_order[statuses[n]], source_index[n], n) for n in tests]
+    sortable.sort()
+    for _, i, n in sortable:
+        s = statuses[n]
+        why = _scoreboard_why(
+            s,
+            n,
+            descriptions.get(n, ""),
+            skipped.get(n),
+            block_for.get(n),
+        )
+        why = why.replace("|", "\\|").replace("\n", " ")
+        out.append(f"| {i} | `{n}` | {marker_for[s]} | {why} |")
     out.append("")
     out.append("---")
     out.append("")
@@ -399,8 +496,16 @@ def main() -> int:
             out.append(b)
             out.append("```")
         out.append("")
-    Path("docs/V5_PARITY_AUDIT.md").write_text("\n".join(out) + "\n", encoding="utf-8", newline="\n")
-    print(f"wrote docs/V5_PARITY_AUDIT.md ({sum(len(x)+1 for x in out)} chars)")
+    # Audit doc lives in ``docs/V5/`` alongside the other V5 design /
+    # parity references (``RUST_PARITY_PUSHBACKS.md``,
+    # ``V5_CREATE_ITEM_IMPLEMENTATION.md``, etc.). The earlier
+    # top-level ``docs/V5_PARITY_AUDIT.md`` location was a one-off from
+    # before that folder existed and would silently shadow the V5/
+    # copy if both were written; we now standardise on the V5/ path.
+    out_path = Path("docs/V5/V5_PARITY_AUDIT.md")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text("\n".join(out) + "\n", encoding="utf-8", newline="\n")
+    print(f"wrote {out_path.as_posix()} ({sum(len(x)+1 for x in out)} chars)")
     return 0
 if __name__ == "__main__":
     sys.exit(main())
