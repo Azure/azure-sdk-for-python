@@ -121,7 +121,7 @@ The `azure-ai-language-documents` client library provides both synchronous and a
 
 #### Submit a job
 
-This example submits a PII analysis job using strongly typed model objects:
+This example submits a PII analysis job using JSON-compatible dictionary inputs:
 
 <!-- SNIPPET:sample_submit_job.sample_submit_job -->
 
@@ -425,8 +425,6 @@ This library supports both:
 
 * **Strongly typed model inputs** via `AnalyzeDocumentsJob`
 * **JSON-compatible dictionary inputs** for direct request construction
-
-The typed-model approach is recommended for clarity, static analysis, and discoverability.
 
 ## Next steps
 
