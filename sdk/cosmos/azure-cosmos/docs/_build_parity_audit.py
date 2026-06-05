@@ -175,25 +175,37 @@ def _scoreboard_why(
 ) -> str:
     """Status-specific 'why is this test in this state' for the scoreboard.
 
+    The scoreboard also renders a separate ``Description`` column with
+    the test's docstring summary (what the test exercises), so the
+    ``Why`` column is reserved for the *current-run outcome reason*:
+
     - FAILED  -> verdict line from the test's PARITY CALL block (e.g.
                  "FUNCTIONAL DIVERGENCE: response bodies or values differ..."),
-                 falling back to the docstring if no block was matched.
+                 falling back to "(failed -- no PARITY CALL block in
+                 transcript)" if the transcript didn't carry one.
     - SKIPPED -> the @pytest.mark.skip ``reason=`` string from the source
                  (the test file already names the specific limitation in
                  plain English).
     - STALE   -> a fixed note explaining the test wasn't in the transcript.
-    - PASSED  -> the docstring description (what the test actually checks).
+    - PASSED  -> verdict line from the test's PARITY CALL block (e.g.
+                 "FULL PARITY: both backends produced equivalent outcomes."),
+                 falling back to a plain "Passed." when the transcript
+                 carried no block (e.g. ``pytest`` without ``-s``).
     """
     if status == "FAILED":
         verdict = _extract_verdict(block) if block else None
         if verdict:
             return verdict
-        return description or "(failed -- no PARITY CALL block in transcript)"
+        return "(failed -- no PARITY CALL block in transcript)"
     if status == "SKIPPED":
         return "Skipped: " + (skip_reason or "(no reason given in source)")
     if status == "STALE":
         return "Not in transcript -- re-run pytest and rebuild this doc."
-    return description or "(no description)"
+    # PASSED
+    verdict = _extract_verdict(block) if block else None
+    if verdict:
+        return verdict
+    return "Passed (no PARITY CALL block captured -- re-run with `pytest -s` to populate)."
 
 
 def main() -> int:
@@ -427,17 +439,22 @@ def main() -> int:
     out.append("")
     out.append(
         "Rows are sorted by status: failed tests first (so regressions are "
-        "the first thing the reader sees), then skipped, then passed. The "
-        "`#` column is the test's index in the source file -- click through "
-        "to the matching section in **Per-test reports** below for the full "
-        "PARITY CALL block. The `Why` column is status-specific: for "
-        "failures it is the verdict line from the parity helper; for skips "
-        "it is the `@pytest.mark.skip(reason=...)` text from the source; "
-        "for passes it is the test's docstring summary."
+        "the first thing the reader sees), then skipped, then stale, then "
+        "passed. The **Per-test reports** section below follows the same "
+        "order, so scrolling down reads top-to-bottom in the same priority. "
+        "The `#` column is the test's index in the source file -- click "
+        "through to the matching section in **Per-test reports** below for "
+        "the full PARITY CALL block. The `Description` column is the "
+        "test's docstring summary -- a short, customer-focused statement of "
+        "what scenario the test exercises -- and is filled in for every "
+        "row regardless of outcome. The `Why` column is the *outcome* "
+        "reason for this run: the verdict line from the parity helper on "
+        "passes and failures, the `@pytest.mark.skip(reason=...)` text from "
+        "the source on skips, and a stale-transcript note on stale rows."
     )
     out.append("")
-    out.append("| # | Test | Outcome | Why |")
-    out.append("| --- | --- | --- | --- |")
+    out.append("| # | Test | Description | Outcome | Why |")
+    out.append("| --- | --- | --- | --- | --- |")
     marker_for = {
         "PASSED": "**PASS**",
         "FAILED": "**FAIL**",
@@ -451,26 +468,41 @@ def main() -> int:
     source_index = {n: i for i, n in enumerate(tests, 1)}
     sortable = [(status_order[statuses[n]], source_index[n], n) for n in tests]
     sortable.sort()
+
+    def _cell(text: str) -> str:
+        """Escape pipes and collapse newlines so the cell stays on one row."""
+        return (text or "").replace("|", "\\|").replace("\n", " ")
+
     for _, i, n in sortable:
         s = statuses[n]
-        why = _scoreboard_why(
+        desc = _cell(descriptions.get(n, "(no description)"))
+        why = _cell(_scoreboard_why(
             s,
             n,
             descriptions.get(n, ""),
             skipped.get(n),
             block_for.get(n),
-        )
-        why = why.replace("|", "\\|").replace("\n", " ")
-        out.append(f"| {i} | `{n}` | {marker_for[s]} | {why} |")
+        ))
+        out.append(f"| {i} | `{n}` | {desc} | {marker_for[s]} | {why} |")
     out.append("")
     out.append("---")
     out.append("")
     out.append("## Per-test reports")
     out.append("")
-    for i, n in enumerate(tests, 1):
+    # Per-test reports follow the same failed -> skipped -> stale -> passed
+    # ordering as the scoreboard so the document reads top-to-bottom in the
+    # same priority: a reader who started at the scoreboard can scroll
+    # straight down into the matching block without re-sorting in their
+    # head. The heading number ``i`` stays the source-file index so the
+    # scoreboard's ``#`` column links unambiguously to the right block.
+    for _, i, n in sortable:
         s = statuses[n]
         out.append(f"### {i}. `{n}` \u2014 {s}")
         out.append("")
+        desc = descriptions.get(n, "")
+        if desc and desc != "(no description)":
+            out.append(f"> **What this test exercises:** {desc}")
+            out.append("")
         if s == "SKIPPED":
             out.append(f"> **Skip reason:** {skipped.get(n, '(no reason)')}")
             out.append("")
