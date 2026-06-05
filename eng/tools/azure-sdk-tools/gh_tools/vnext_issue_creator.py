@@ -236,7 +236,7 @@ def _try_auto_fix(
     if not eligible:
         logging.info(
             f"Issue #{issue.number} ({package_name}) is not auto-fix eligible "
-            f"(vnext_copilot_fix not set to true); skipping Copilot assignment"
+            f"(vnext_copilot_fix not set to true in pyproject.toml); skipping Copilot assignment"
         )
         return
 
