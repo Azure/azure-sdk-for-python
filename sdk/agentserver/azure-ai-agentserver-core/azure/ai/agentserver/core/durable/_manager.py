@@ -1149,22 +1149,49 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         if entry_mode != "recovered":
             turn_start_payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
 
-        # Transition to in_progress with new lease
-        await self._provider.update(
-            task_id,
-            TaskPatchRequest(
-                status="in_progress",
-                lease_owner=self._lease_owner,
-                lease_instance_id=self._instance_id,
-                lease_duration_seconds=lease_duration,
-                payload=turn_start_payload if turn_start_payload else None,
-            ),
-        )
+        # Decide whether this PATCH is actually necessary, and whether
+        # the status field belongs in it.
+        #
+        # On the recovery path the immediately-prior ``_reclaim_one``
+        # call already wrote the new lease against the stale
+        # in_progress task, AND we explicitly do NOT re-stamp
+        # ``_turn_started_at`` on recovery (FR-023 exception above)
+        # AND the existing task status is already ``in_progress``.
+        # In that case the PATCH would re-write the same status +
+        # same lease + an empty payload — a full network round-trip
+        # against the same record, with no observable change. Skip
+        # the call (and the follow-up re-fetch) entirely.
+        #
+        # For other entries (suspended/pending/queued -> in_progress)
+        # the PATCH is required for the status flip and/or turn-start
+        # write. The ``status`` field is only sent when the current
+        # status differs from in_progress, so we never re-write the
+        # same status onto a record that already carries it.
+        needs_status_flip = task_info.status != "in_progress"
+        needs_turn_start_write = bool(turn_start_payload)
+        if not needs_status_flip and not needs_turn_start_write:
+            # No-op PATCH would be sent — skip it. The reclaim has
+            # already established our lease; nothing else to write.
+            # The in-memory ``task_info`` already reflects the
+            # post-reclaim state we observed when ``_reclaim_one``
+            # returned, so the re-fetch is also unnecessary.
+            updated_info: TaskInfo | None = task_info
+        else:
+            await self._provider.update(
+                task_id,
+                TaskPatchRequest(
+                    status="in_progress" if needs_status_flip else None,
+                    lease_owner=self._lease_owner,
+                    lease_instance_id=self._instance_id,
+                    lease_duration_seconds=lease_duration,
+                    payload=turn_start_payload if turn_start_payload else None,
+                ),
+            )
 
-        # Re-fetch updated task
-        updated_info: TaskInfo | None = await self._provider.get(task_id)
-        if updated_info is None:
-            raise TaskNotFound(task_id)
+            # Re-fetch updated task
+            updated_info = await self._provider.get(task_id)
+            if updated_info is None:
+                raise TaskNotFound(task_id)
         task_info = updated_info
 
         # Resolve input: prefer caller-provided, fall back to persisted
@@ -1850,6 +1877,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             lost. (Spec 013 US4 scenario 11: the previously-existing durable
             backup write at ``_steering["generation_results"]`` was removed
             because no consumer existed.)
+        :keyword _conflict_attempt: Internal recursion-depth counter
+            for etag-conflict retries. Bounded so the hosted task
+            store's etag-comparator pre-fix behaviour cannot loop
+            forever.
         :return: New context for the drained generation, or None.
         """
         task_info = await self._provider.get(task_id)
@@ -1895,26 +1926,20 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         try:
             etag = getattr(task_info, "etag", None) or None
-            # Hosted task store etag bug workaround: empirically the
-            # hosted store returns 412 even when If-Match matches the
-            # etag the server JUST returned via GET (verified via wire
-            # logs — GET -> Etag: ""abc"" then PATCH If-Match: ""abc""
-            # -> 412, with no other writer between the two calls).
-            # Issue tracked with the hosted-task-store team. Until
-            # fixed, drop the etag precondition after a few retries
-            # so steering drain converges. Last-write-wins on the
-            # steering-state payload is acceptable here — the drain
-            # only runs from a single in-process call site (the task
-            # body's suspend boundary).
+            # Pre-deploy workaround for the hosted task store's etag
+            # comparator -- see ``_append_steering_input`` for the
+            # full note. Server-side fix is queued but not yet
+            # deployed; until then drop the etag precondition after
+            # 2 retries so the drain converges. Last-write-wins on
+            # the steering-state payload is acceptable here -- the
+            # drain only runs from a single in-process call site
+            # (the task body's suspend boundary).
             use_etag = etag if _conflict_attempt < 2 else None
             await self._provider.update(
                 task_id,
                 TaskPatchRequest(payload=payload, if_match=use_etag),
             )
         except (ValueError, TransportClassifiedError) as exc:
-            # Etag conflict — re-read and retry. Local provider raises
-            # ValueError; hosted task store raises
-            # TransportClassifiedError with classification="conflict".
             if isinstance(exc, TransportClassifiedError) and getattr(
                 exc, "classification", None
             ) != "conflict":
