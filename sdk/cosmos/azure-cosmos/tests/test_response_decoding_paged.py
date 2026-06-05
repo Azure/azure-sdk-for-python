@@ -213,6 +213,27 @@ class TestAsyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
         self.assertIn("caf", page1_body["Documents"][0]["x"])
         self.assertEqual(page2_body["Documents"][0]["x"], "hello")
 
+    def test_replace_mode_corrupt_page_does_not_poison_next_request_headers(self):
+        """Three async pages in a row (bad, good, bad) must each decode based on
+        their own bytes; no decoder state may leak across async requests."""
+        # patch.dict scopes the env var to this test and restores the prior
+        # value when the block exits, even if an assertion below raises.
+        with patch.dict(os.environ, {_MALFORMED_INPUT_ENV_VAR: "REPLACE"}):
+            results = self._drive_pages([
+                _PAGE_WITH_BAD_UTF8_IN_STRING_VALUE,
+                _PAGE_VALID_UTF8,
+                _PAGE_WITH_BAD_UTF8_IN_STRING_VALUE,
+            ])
+
+        self.assertEqual(len(results), 3)
+        page1_body, _ = results[0]
+        page2_body, _ = results[1]
+        page3_body, _ = results[2]
+
+        self.assertIn("\ufffd", page1_body["Documents"][0]["x"])
+        self.assertNotIn("\ufffd", page2_body["Documents"][0]["x"])
+        self.assertIn("\ufffd", page3_body["Documents"][0]["x"])
+
 
 if __name__ == "__main__":
     unittest.main()

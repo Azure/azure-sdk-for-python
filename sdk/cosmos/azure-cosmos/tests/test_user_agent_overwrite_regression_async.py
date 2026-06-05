@@ -66,24 +66,37 @@ class TestUserAgentOverwriteRegressionAsync(unittest.IsolatedAsyncioTestCase):
         result = await container.read()
         assert result["id"] == container.id
 
+    def _assert_user_agent_headers(self, capture: _AsyncUserAgentCaptureTransport, scenario: str) -> None:
+        assert capture.user_agents, f"no outbound requests captured for {scenario}"
+        assert all(ua.startswith("MyApp/1.0") for ua in capture.user_agents), (
+            "user-agent prefix dropped for {}. captured={}".format(scenario, capture.user_agents)
+        )
+        assert all("azsdk-python-cosmos-async/" in ua for ua in capture.user_agents), (
+            "async SDK user-agent missing for {}. captured={}".format(scenario, capture.user_agents)
+        )
+
     async def test_overwrite_with_connection_policy_async(self):
         """Builds a client with a custom connection policy and the overwrite flag."""
         cp = documents.ConnectionPolicy()
         cp.DisableSSLVerification = self.configs.is_emulator
+        capture = _AsyncUserAgentCaptureTransport()
         client = CosmosClient(
             self.host,
             self.masterKey,
             user_agent="MyApp/1.0",
             user_agent_overwrite=True,
             connection_policy=cp,
+            transport=capture,
         )
         try:
             await self._smoke_data_plane_call(client)
         finally:
             await client.close()
+        self._assert_user_agent_headers(capture, "connection_policy_async")
 
     async def test_overwrite_with_consistency_and_timeouts_async(self):
         """Builds a client combining the overwrite flag with consistency and timeout options."""
+        capture = _AsyncUserAgentCaptureTransport()
         client = CosmosClient(
             self.host,
             self.masterKey,
@@ -92,16 +105,19 @@ class TestUserAgentOverwriteRegressionAsync(unittest.IsolatedAsyncioTestCase):
             consistency_level="Session",
             connection_timeout=10,
             read_timeout=10,
+            transport=capture,
         )
         try:
             await self._smoke_data_plane_call(client)
         finally:
             await client.close()
+        self._assert_user_agent_headers(capture, "consistency_and_timeouts_async")
 
     async def test_overwrite_with_logger_and_diagnostics_async(self):
         """Builds a client combining the overwrite flag with a user-provided logger."""
         mock_handler = test_config.MockHandler()
         logger = create_logger("test_ua_overwrite_diag_async", mock_handler)
+        capture = _AsyncUserAgentCaptureTransport()
         client = CosmosClient(
             self.host,
             self.masterKey,
@@ -109,11 +125,13 @@ class TestUserAgentOverwriteRegressionAsync(unittest.IsolatedAsyncioTestCase):
             user_agent_overwrite=True,
             logger=logger,
             enable_diagnostics_logging=True,
+            transport=capture,
         )
         try:
             await self._smoke_data_plane_call(client)
         finally:
             await client.close()
+        self._assert_user_agent_headers(capture, "logger_and_diagnostics_async")
 
     async def test_overwrite_header_contains_user_prefix_under_both_flag_values_async(self):
         """User-supplied user-agent prefix appears on the wire with the flag on or off.
@@ -135,51 +153,43 @@ class TestUserAgentOverwriteRegressionAsync(unittest.IsolatedAsyncioTestCase):
                 await self._smoke_data_plane_call(client)
             finally:
                 await client.close()
-
-            assert capture.user_agents, (
-                "no outbound requests captured for overwrite={}".format(overwrite_value)
-            )
-            assert all(ua.startswith("MyApp/1.0") for ua in capture.user_agents), (
-                "user-agent prefix dropped with overwrite={}. captured={}".format(
-                    overwrite_value, capture.user_agents
-                )
-            )
-            assert all("azsdk-python-cosmos" in ua for ua in capture.user_agents), (
-                "SDK user-agent missing with overwrite={}. captured={}".format(
-                    overwrite_value, capture.user_agents
-                )
-            )
+            self._assert_user_agent_headers(capture, f"overwrite={overwrite_value}")
 
     async def test_overwrite_via_from_connection_string_async(self):
         """Builds a client from a connection string while also passing the overwrite flag."""
+        capture = _AsyncUserAgentCaptureTransport()
         client = CosmosClient.from_connection_string(
             self.connection_str,
             user_agent="MyApp/1.0",
             user_agent_overwrite=True,
+            transport=capture,
         )
         try:
             await self._smoke_data_plane_call(client)
         finally:
             await client.close()
+        self._assert_user_agent_headers(capture, "from_connection_string_async")
 
     @_skip_on_non_emulator
     async def test_overwrite_with_aad_emulator_credential_async(self):
         """Builds a client with an AAD credential while also passing the overwrite flag."""
         credential = CosmosEmulatorCredential()
+        capture = _AsyncUserAgentCaptureTransport()
         client = CosmosClient(
             self.host,
             credential,
             user_agent="MyApp/1.0",
             user_agent_overwrite=True,
+            transport=capture,
         )
         try:
             await self._smoke_data_plane_call(client)
         finally:
             await client.close()
+        self._assert_user_agent_headers(capture, "aad_emulator_credential_async")
 
 
 if __name__ == "__main__":
     unittest.main()
-
 
 

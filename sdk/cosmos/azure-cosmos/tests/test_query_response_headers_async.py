@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import asyncio
+import gc
 import os
 import tracemalloc
 import unittest
@@ -256,9 +257,9 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_long_pagination_bounded_memory_async(self):
-        """Paging through many pages does not grow the response-headers
-        state on the iterator: the headers dict size stays close to the
-        first page and overall memory growth stays under a small ceiling."""
+        """Paging through many pages does not grow the iterator's response-header
+        state. Document payloads are not retained during measurement so any growth
+        shown reflects only headers and SDK iterator overhead."""
         cid = "test_headers_long_pagination_async_" + str(uuid.uuid4())
         created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
@@ -275,65 +276,69 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 max_item_count=2,
             )
 
-            # Read the first page outside the memory window so one-time
-            # client setup is not counted as growth.
+            # Read the first page outside the measurement window so one-time
+            # client setup is not counted. Count items only; never retain pages.
             page_iter = query_iterable.by_page()
             first_page = await page_iter.__anext__()
-            first_page_items = [item async for item in first_page]
+            first_page_count = 0
+            async for _ in first_page:
+                first_page_count += 1
             baseline_headers = query_iterable.get_response_headers()
             assert baseline_headers is not None
 
+            # Collect transient setup objects so they don't show up as growth.
+            gc.collect()
             tracemalloc.start()
             snapshot_before = tracemalloc.take_snapshot()
 
             page_count = 1
+            items_total = first_page_count
             header_sizes = [len(baseline_headers)]
             all_keys_seen = set(baseline_headers.keys())
-            all_items = list(first_page_items)
 
             async for page in page_iter:
-                page_items = [item async for item in page]
-                all_items.extend(page_items)
+                # Count items without keeping a reference to any of them.
+                async for _ in page:
+                    items_total += 1
                 page_count += 1
                 headers = query_iterable.get_response_headers()
                 assert headers is not None
                 header_sizes.append(len(headers))
                 all_keys_seen.update(headers.keys())
+                # Drop the per-page header copy before the next iteration.
+                del headers
 
+            gc.collect()
             snapshot_after = tracemalloc.take_snapshot()
             top_stats = snapshot_after.compare_to(snapshot_before, "lineno")
             memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
             tracemalloc.stop()
 
-            # Make sure we really paginated and read all the items back.
-            assert page_count >= 20, (
-                "Expected many pages, got {}.".format(page_count)
-            )
-            assert len(all_items) == num_items
+            # We really paginated and read every item back.
+            assert page_count >= 20, f"Expected many pages, got {page_count}."
+            assert items_total == num_items
 
-            # The headers dict on any single page stays close to the first
-            # page's size, even after many pages.
+            # The per-page headers dict stays close to the first page's size.
             max_header_size = max(header_sizes)
             assert max_header_size <= len(baseline_headers) + 8, (
-                "Headers dict grew across pagination (max={}, baseline={}).".format(
-                    max_header_size, len(baseline_headers)
-                )
+                f"Headers dict grew across pagination (max={max_header_size}, "
+                f"baseline={len(baseline_headers)})."
             )
 
-            # The total set of header names seen across all pages stays
-            # bounded; it does not grow proportional to page count.
+            # The set of header names seen across all pages stays bounded.
             assert len(all_keys_seen) <= len(baseline_headers) + 16, (
-                "Header name set grew across pagination (seen={}, baseline={}).".format(
-                    len(all_keys_seen), len(baseline_headers)
-                )
+                f"Header name set grew across pagination (seen={len(all_keys_seen)}, "
+                f"baseline={len(baseline_headers)})."
             )
 
-            # Memory growth should stay well under a 2 MiB ceiling.
-            ceiling_bytes = 2 * 1024 * 1024
+            # Per-page ceiling so the check scales if num_items changes.
+            # Observed per-page overhead on a live account is around 24-29 KiB;
+            # 48 KiB gives roughly 2x headroom and still catches a real leak.
+            max_per_page_bytes = 48 * 1024
+            ceiling_bytes = max_per_page_bytes * page_count
             assert memory_growth < ceiling_bytes, (
-                "Memory grew by {} bytes over {} pages (ceiling {} bytes).".format(
-                    memory_growth, page_count, ceiling_bytes,
-                )
+                f"Iterator memory grew by {memory_growth} bytes over {page_count} pages "
+                f"(ceiling {ceiling_bytes} bytes)."
             )
 
         finally:
@@ -372,16 +377,14 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_concurrent_async(self):
-        """Test that response headers are captured correctly when multiple async queries run concurrently.
-        
-        This test verifies that each query operation captures its own headers independently,
-        without interference from concurrent queries. This is the key thread-safety guarantee.
-        """
+        """Each concurrent query must see only its own response headers.
+        Each task installs a response_hook that records every page it sees;
+        the iterator's final headers must match that task's own last hook payload."""
         cid = "test_headers_concurrent_async_" + str(uuid.uuid4())
 
         created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
-            # Create items with different partition keys
+            # Different partition keys so different tasks run different queries.
             num_partitions = 5
             items_per_partition = 10
             for pk_idx in range(num_partitions):
@@ -392,16 +395,22 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
             async def run_query(partition_key: str, query_id: int):
                 """Run a query and capture its headers."""
+                # Per-task hook: records what this iterator received.
+                captured_pages = []
+
+                def hook(headers, _result):
+                    captured_pages.append(dict(headers))
+
                 query = "SELECT * FROM c WHERE c.pk = @pk"
                 query_iterable = created_collection.query_items(
                     query=query,
                     parameters=[{"name": "@pk", "value": partition_key}],
                     partition_key=partition_key,
-                    max_item_count=2,  # Small page size to ensure multiple pages
-                    populate_query_metrics=True
+                    max_item_count=2,
+                    populate_query_metrics=True,
+                    response_hook=hook,
                 )
 
-                # Consume all items
                 items = [item async for item in query_iterable]
                 headers = query_iterable.get_response_headers()
 
@@ -409,10 +418,10 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                     "query_id": query_id,
                     "partition_key": partition_key,
                     "item_count": len(items),
-                    "headers": headers
+                    "headers": headers,
+                    "captured_pages": captured_pages,
                 }
 
-            # Run multiple queries concurrently using asyncio.gather
             num_queries = 10
             tasks = []
             for i in range(num_queries):
@@ -421,88 +430,118 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
             results = await asyncio.gather(*tasks)
 
-            # Verify all queries got results
             assert len(results) == num_queries
 
-            # Verify each query captured headers correctly
             for result in results:
                 assert result["item_count"] == items_per_partition, \
                     f"Query {result['query_id']} got wrong item count"
                 assert "x-ms-request-charge" in result["headers"], \
                     f"Query {result['query_id']} headers missing x-ms-request-charge"
 
-            # Verify that different queries have independent header dicts
+                # The iterator's final headers must match this task's own
+                # last hook payload, otherwise header state is shared.
+                assert len(result["captured_pages"]) > 0, \
+                    f"Query {result['query_id']} hook never fired"
+                last_hook = result["captured_pages"][-1]
+                assert result["headers"].get("x-ms-activity-id") == last_hook.get("x-ms-activity-id"), (
+                    f"Query {result['query_id']} got headers that did not come from its own response."
+                )
+                assert result["headers"].get("x-ms-request-charge") == last_hook.get("x-ms-request-charge"), (
+                    f"Query {result['query_id']} got a request charge that did not come from its own response."
+                )
+
+            # Each task holds its own headers dict, not a shared object.
             if len(results) >= 2:
                 assert results[0]["headers"] is not results[1]["headers"]
+
+            # Different partitions, so activity ids must not all be the same.
+            activity_ids = {r["headers"].get("x-ms-activity-id") for r in results}
+            assert len(activity_ids) > 1, (
+                "All tasks got the same activity id, which means header state is shared."
+            )
 
         finally:
             await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_high_concurrency_async(self):
-        """Test with high concurrency to stress-test the thread-safety.
-        
-        This test specifically targets the race condition that would occur if headers
-        were captured from a shared client.last_response_headers after fetch operations.
-        """
+        """Many tasks run the same query against the same partition at the same time.
+        Item counts and request charges look identical across tasks, so isolation is
+        checked on x-ms-activity-id, which the service assigns per request."""
         cid = "test_headers_stress_async_" + str(uuid.uuid4())
 
         created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
-            # Create enough items to ensure multiple pages
             for i in range(50):
                 await created_collection.create_item(
                     body={"pk": "shared", "id": f"item_{i}", "value": i}
                 )
 
-            # Use an event to synchronize all coroutines
             start_event = asyncio.Event()
 
             async def run_synchronized_query(query_id: int):
                 """Run a query with synchronization to maximize overlap."""
+                # Per-task hook: records what this iterator received.
+                captured_pages = []
+
+                def hook(headers, _result):
+                    captured_pages.append(dict(headers))
+
                 query_iterable = created_collection.query_items(
                     query="SELECT * FROM c WHERE c.pk = @pk",
                     parameters=[{"name": "@pk", "value": "shared"}],
                     partition_key="shared",
-                    max_item_count=5,  # Small pages = more fetches
-                    populate_query_metrics=True
+                    max_item_count=5,
+                    populate_query_metrics=True,
+                    response_hook=hook,
                 )
 
-                # Wait for the start signal
+                # Wait so all tasks start fetching at the same moment.
                 await start_event.wait()
 
-                # Now all coroutines fetch concurrently
                 items = [item async for item in query_iterable]
                 headers = query_iterable.get_response_headers()
 
                 return {
                     "query_id": query_id,
                     "item_count": len(items),
-                    "request_charge": float(headers.get("x-ms-request-charge", 0))
+                    "request_charge": float(headers.get("x-ms-request-charge", 0)),
+                    "headers": headers,
+                    "captured_pages": captured_pages,
                 }
 
-            # Create tasks but don't start fetching yet
             num_concurrent = 20
             tasks = [run_synchronized_query(i) for i in range(num_concurrent)]
 
-            # Schedule all tasks
             gathered = asyncio.gather(*tasks)
 
-            # Give tasks time to reach the wait point
+            # Give tasks time to reach the wait point.
             await asyncio.sleep(0.1)
-
-            # Signal all to start simultaneously
             start_event.set()
 
-            # Wait for all to complete
             results = await gathered
 
-            # Verify all queries completed correctly
             assert len(results) == num_concurrent
             for result in results:
                 assert result["item_count"] == 50, \
                     f"Query {result['query_id']} should have gotten all 50 items"
                 assert result["request_charge"] > 0, \
                     f"Query {result['query_id']} should have positive request charge"
+
+                # The iterator's final headers must match this task's own
+                # last hook payload (compared on activity id, unique per request).
+                assert len(result["captured_pages"]) > 0, \
+                    f"Query {result['query_id']} hook never fired"
+                last_hook = result["captured_pages"][-1]
+                assert result["headers"].get("x-ms-activity-id") == last_hook.get("x-ms-activity-id"), (
+                    f"Query {result['query_id']} got headers that did not come from its own response."
+                )
+
+            # Each task sent its own requests, so all activity ids must be distinct.
+            final_ids = [r["headers"].get("x-ms-activity-id") for r in results]
+            assert len(set(final_ids)) == len(final_ids), (
+                f"Two or more tasks got the same activity id, which means header state is shared. "
+                f"Ids: {final_ids}"
+            )
 
         finally:
             await self._delete_container_for_test(cid)
@@ -593,10 +632,12 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             items = [item async for item in paged]
             assert len(items) == 8
 
-            if hasattr(paged, "get_response_headers"):
-                headers = paged.get_response_headers()
-                assert isinstance(headers, CaseInsensitiveDict)
-                assert "x-ms-request-charge" in headers
+            assert hasattr(
+                paged, "get_response_headers"
+            ), "read_all_items pager must expose get_response_headers"
+            headers = paged.get_response_headers()
+            assert isinstance(headers, CaseInsensitiveDict)
+            assert "x-ms-request-charge" in headers
         finally:
             await self._delete_container_for_test(cid)
 

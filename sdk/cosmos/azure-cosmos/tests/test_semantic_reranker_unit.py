@@ -375,6 +375,40 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         self.assertNotIn("\ufffd", result["Scores"][0]["label"])
         self.assertIn("caf", result["Scores"][0]["label"])
 
+    def test_async_inference_ignore_env_var_lets_2xx_with_invalid_utf8_succeed(self):
+        """Async equivalent of the sync IGNORE test above: with IGNORE set, the
+        bad byte is dropped from the async inference response and parsing succeeds."""
+        async def run_test():
+            mock_connection = self._create_mock_connection()
+            mock_connection.connection_policy.DisableSSLVerification = False
+            service = _AsyncInferenceService(mock_connection)
+
+            invalid_utf8 = b'{"Scores":[{"index":0,"score":0.5,"label":"caf\xc3\x28"}]}'
+            mock_response = MagicMock()
+            mock_response.http_response.status_code = 200
+            mock_response.http_response.headers = {}
+            mock_response.http_response.body.return_value = invalid_utf8
+
+            # patch.dict scopes the env var to this test and restores the prior
+            # value when the block exits, even if rerank below raises.
+            with patch.dict(os.environ, {_MALFORMED_INPUT_ENV_VAR: "IGNORE"}):
+                with patch.object(
+                    service._inference_pipeline_client._pipeline, "run",
+                    return_value=mock_response,
+                ):
+                    result = await service.rerank(
+                        reranking_context="test query",
+                        documents=["doc1"],
+                    )
+
+            self.assertIn("Scores", result)
+            self.assertEqual(len(result["Scores"]), 1)
+            # IGNORE drops the bad byte instead of replacing it.
+            self.assertNotIn("\ufffd", result["Scores"][0]["label"])
+            self.assertIn("caf", result["Scores"][0]["label"])
+
+        asyncio.run(run_test())
+
     def test_sync_inference_response_timeout_raises_408(self):
         """Test that sync inference service converts ServiceResponseError to 408."""
         mock_connection = self._create_mock_connection()

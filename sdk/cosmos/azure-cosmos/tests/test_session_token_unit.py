@@ -412,8 +412,10 @@ class TestSetSessionTokenHeaderFeedRange(unittest.TestCase):
         )
 
         token = headers.get(HttpHeaders.SessionToken)
-        if token is not None:
-            self.assertNotIn(",", token, "Missing per-id state must not fall back to compound token.")
+        self.assertIsNone(
+            token,
+            "Missing per-id state must not set a session token header.",
+        )
 
 
 @pytest.mark.cosmosEmulator
@@ -452,3 +454,20 @@ class TestSetSessionTokenHeaderFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIn(",", token)
         parts = sorted(token.split(","))
         self.assertEqual(parts, sorted(["0:1#5", "1:1#10", "2:1#7"]))
+
+    async def test_per_partition_id_returns_no_compound_when_no_state_for_partition_async(self):
+        # Async equivalent of the sync test above: if there is no cached token
+        # for the targeted partition, the async helper must not fall back to a
+        # compound (cross-partition) token.
+        client = _SessionTokenClientStub(self.COLLECTION_LINK, self.COLLECTION_RID, self.PARTITION_TOKENS)
+        request, headers, path = _build_session_request(self.COLLECTION_LINK)
+
+        await set_session_token_header_async(
+            client, headers, path, request, {}, partition_key_range_id="999",
+        )
+
+        token = headers.get(HttpHeaders.SessionToken)
+        self.assertIsNone(
+            token,
+            "Missing per-id state must not set a session token header.",
+        )

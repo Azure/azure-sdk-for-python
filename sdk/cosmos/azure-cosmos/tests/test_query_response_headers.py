@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import gc
 import os
 import threading
 import tracemalloc
@@ -240,9 +241,9 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self._delete_container_for_test(container_id)
 
     def test_query_response_headers_long_pagination_bounded_memory(self):
-        """Paging through many pages does not grow the response-headers
-        state on the iterator: the headers dict size stays close to the
-        first page and overall memory growth stays under a small ceiling."""
+        """Paging through many pages does not grow the iterator's response-header
+        state. Document payloads are not retained during measurement so any growth
+        shown reflects only headers and SDK iterator overhead."""
         container_id = "test_headers_long_pagination_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
@@ -259,69 +260,67 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 max_item_count=2,
             )
 
-            # Read the first page outside the memory window so one-time
-            # client setup is not counted as growth.
+            # Read the first page outside the measurement window so one-time
+            # client setup is not counted. Count items only; never retain pages.
             page_iter = query_iterable.by_page()
             first_page = next(page_iter)
-            first_page_items = list(first_page)
+            first_page_count = sum(1 for _ in first_page)
             baseline_headers = query_iterable.get_response_headers()
             self.assertIsNotNone(baseline_headers)
 
+            # Collect transient setup objects so they don't show up as growth.
+            gc.collect()
             tracemalloc.start()
             snapshot_before = tracemalloc.take_snapshot()
 
             page_count = 1
+            items_total = first_page_count
             header_sizes = [len(baseline_headers)]
             all_keys_seen = set(baseline_headers.keys())
-            all_items = list(first_page_items)
 
             for page in page_iter:
-                page_items = list(page)
-                all_items.extend(page_items)
+                # Count items without keeping a reference to any of them.
+                items_total += sum(1 for _ in page)
                 page_count += 1
                 headers = query_iterable.get_response_headers()
                 self.assertIsNotNone(headers)
                 header_sizes.append(len(headers))
                 all_keys_seen.update(headers.keys())
+                # Drop the per-page header copy before the next iteration.
+                del headers
 
+            gc.collect()
             snapshot_after = tracemalloc.take_snapshot()
             top_stats = snapshot_after.compare_to(snapshot_before, "lineno")
             memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
             tracemalloc.stop()
 
-            # Make sure we really paginated and read all the items back.
-            self.assertGreaterEqual(
-                page_count, 20,
-                "Expected many pages, got {}.".format(page_count),
-            )
-            self.assertEqual(len(all_items), num_items)
+            # We really paginated and read every item back.
+            self.assertGreaterEqual(page_count, 20, f"Expected many pages, got {page_count}.")
+            self.assertEqual(items_total, num_items)
 
-            # The headers dict on any single page stays close to the first
-            # page's size, even after many pages.
+            # The per-page headers dict stays close to the first page's size.
             max_header_size = max(header_sizes)
             self.assertLessEqual(
                 max_header_size, len(baseline_headers) + 8,
-                "Headers dict grew across pagination (max={}, baseline={}).".format(
-                    max_header_size, len(baseline_headers)
-                ),
+                f"Headers dict grew across pagination (max={max_header_size}, baseline={len(baseline_headers)}).",
             )
 
-            # The total set of header names seen across all pages stays
-            # bounded; it does not grow proportional to page count.
+            # The set of header names seen across all pages stays bounded.
             self.assertLessEqual(
                 len(all_keys_seen), len(baseline_headers) + 16,
-                "Header name set grew across pagination (seen={}, baseline={}).".format(
-                    len(all_keys_seen), len(baseline_headers)
-                ),
+                f"Header name set grew across pagination (seen={len(all_keys_seen)}, baseline={len(baseline_headers)}).",
             )
 
-            # Memory growth should stay well under a 2 MiB ceiling.
-            ceiling_bytes = 2 * 1024 * 1024
+            # Per-page ceiling so the check scales if num_items changes.
+            # Observed per-page overhead on a live account is around 24-29 KiB;
+            # 48 KiB gives roughly 2x headroom and still catches a real leak.
+            max_per_page_bytes = 48 * 1024
+            ceiling_bytes = max_per_page_bytes * page_count
             self.assertLess(
                 memory_growth, ceiling_bytes,
-                "Memory grew by {} bytes over {} pages (ceiling {} bytes).".format(
-                    memory_growth, page_count, ceiling_bytes,
-                ),
+                f"Iterator memory grew by {memory_growth} bytes over {page_count} pages "
+                f"(ceiling {ceiling_bytes} bytes).",
             )
 
         finally:
@@ -359,15 +358,14 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self._delete_container_for_test(container_id)
 
     def test_query_response_headers_thread_safety(self):
-        """Test that response headers are captured correctly when multiple queries run concurrently.
-        
-        This test verifies that each query operation captures its own headers independently,
-        without interference from concurrent queries. This is the key thread-safety guarantee.
-        """
+        """Each concurrent query must see only its own response headers.
+        Each worker installs a response_hook that records every page it
+        sees; the iterator's final headers must match that worker's own
+        last hook payload."""
         container_id = "test_headers_thread_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
-            # Create items with different partition keys to ensure different queries
+            # Different partition keys so different threads run different queries.
             num_partitions = 5
             items_per_partition = 10
             for pk_idx in range(num_partitions):
@@ -376,7 +374,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
                         body={"pk": f"partition_{pk_idx}", "id": f"item_{pk_idx}_{item_idx}", "value": item_idx}
                     )
 
-            # Results storage - each thread will store its query results here
             results = {}
             errors = []
             lock = threading.Lock()
@@ -384,16 +381,22 @@ class TestQueryResponseHeaders(unittest.TestCase):
             def run_query(partition_key: str, thread_id: int):
                 """Run a query and capture its headers."""
                 try:
+                    # Per-thread hook: records what this iterator received.
+                    captured_pages = []
+
+                    def hook(headers, _result):
+                        captured_pages.append(dict(headers))
+
                     query = "SELECT * FROM c WHERE c.pk = @pk"
                     query_iterable = created_collection.query_items(
                         query=query,
                         parameters=[{"name": "@pk", "value": partition_key}],
                         partition_key=partition_key,
-                        max_item_count=2,  # Small page size to ensure multiple pages
-                        populate_query_metrics=True
+                        max_item_count=2,
+                        populate_query_metrics=True,
+                        response_hook=hook,
                     )
 
-                    # Consume all items
                     items = list(query_iterable)
                     headers = query_iterable.get_response_headers()
 
@@ -401,102 +404,155 @@ class TestQueryResponseHeaders(unittest.TestCase):
                         results[thread_id] = {
                             "partition_key": partition_key,
                             "item_count": len(items),
-                            "headers": headers
+                            "headers": headers,
+                            "captured_pages": captured_pages,
                         }
                 except Exception as e:
                     with lock:
                         errors.append((thread_id, str(e)))
 
-            # Run multiple queries concurrently
             num_threads = 10
             with ThreadPoolExecutor(max_workers=num_threads) as executor:
                 futures = []
                 for i in range(num_threads):
                     partition_key = f"partition_{i % num_partitions}"
                     futures.append(executor.submit(run_query, partition_key, i))
-                
-                # Wait for all to complete
                 for future in as_completed(futures):
-                    future.result()  # This will raise if the thread raised
+                    future.result()
 
-            # Verify no errors occurred
             self.assertEqual(len(errors), 0, f"Errors occurred: {errors}")
-
-            # Verify all threads got results
             self.assertEqual(len(results), num_threads)
 
-            # Verify each thread captured headers correctly
             for thread_id, result in results.items():
                 self.assertEqual(result["item_count"], items_per_partition,
                     f"Thread {thread_id} got wrong item count")
                 self.assertIn("x-ms-request-charge", result["headers"],
                     f"Thread {thread_id} headers missing x-ms-request-charge")
 
-            # Verify that different threads have independent header dicts
+                # The iterator's final headers must match this thread's own
+                # last hook payload, otherwise header state is shared.
+                self.assertGreater(
+                    len(result["captured_pages"]), 0,
+                    f"Thread {thread_id} hook never fired",
+                )
+                last_hook = result["captured_pages"][-1]
+                self.assertEqual(
+                    result["headers"].get("x-ms-activity-id"),
+                    last_hook.get("x-ms-activity-id"),
+                    f"Thread {thread_id} got headers that did not come from its own response.",
+                )
+                self.assertEqual(
+                    result["headers"].get("x-ms-request-charge"),
+                    last_hook.get("x-ms-request-charge"),
+                    f"Thread {thread_id} got a request charge that did not come from its own response.",
+                )
+
+            # Each thread holds its own headers dict, not a shared object.
             thread_ids = list(results.keys())
             if len(thread_ids) >= 2:
                 self.assertIsNot(results[thread_ids[0]]["headers"],
                     results[thread_ids[1]]["headers"])
 
+            # Different partitions, so activity ids must not all be the same.
+            activity_ids = {
+                r["headers"].get("x-ms-activity-id") for r in results.values()
+            }
+            self.assertGreater(
+                len(activity_ids), 1,
+                "All threads got the same activity id, which means header state is shared.",
+            )
+
         finally:
             self._delete_container_for_test(container_id)
 
     def test_query_response_headers_concurrent_same_container(self):
-        """Test concurrent queries on the same container with overlapping execution.
-        
-        This test specifically targets the race condition that would occur if headers
-        were captured from a shared client.last_response_headers after fetch_next_block().
-        """
+        """All threads run the same query against the same partition. Item counts
+        and request charges look identical across threads, so isolation is checked
+        on x-ms-activity-id, which the service assigns per request."""
         container_id = "test_headers_concurrent_" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
-            # Create enough items to ensure multiple pages
             for i in range(50):
                 created_collection.create_item(body={"pk": "shared", "id": f"item_{i}", "value": i})
 
-            barrier = threading.Barrier(5)  # Synchronize 5 threads
+            barrier = threading.Barrier(5)
             results = {}
+            errors = []
             lock = threading.Lock()
 
             def run_synchronized_query(thread_id: int):
                 """Run a query with synchronization to maximize overlap."""
-                query_iterable = created_collection.query_items(
-                    query="SELECT * FROM c WHERE c.pk = @pk",
-                    parameters=[{"name": "@pk", "value": "shared"}],
-                    partition_key="shared",
-                    max_item_count=5,  # Small pages = more fetches
-                    populate_query_metrics=True
-                )
+                try:
+                    # Per-thread hook: records what this iterator received.
+                    captured_pages = []
 
-                # Wait for all threads to be ready
-                barrier.wait()
+                    def hook(headers, _result):
+                        captured_pages.append(dict(headers))
 
-                # Now all threads fetch concurrently
-                items = list(query_iterable)
-                headers = query_iterable.get_response_headers()
+                    query_iterable = created_collection.query_items(
+                        query="SELECT * FROM c WHERE c.pk = @pk",
+                        parameters=[{"name": "@pk", "value": "shared"}],
+                        partition_key="shared",
+                        max_item_count=5,
+                        populate_query_metrics=True,
+                        response_hook=hook,
+                    )
 
-                with lock:
-                    results[thread_id] = {
-                        "item_count": len(items),
-                        "request_charge": float(headers.get("x-ms-request-charge", 0))
-                    }
+                    # Wait so all threads start fetching at the same moment.
+                    barrier.wait()
+
+                    items = list(query_iterable)
+                    headers = query_iterable.get_response_headers()
+
+                    with lock:
+                        results[thread_id] = {
+                            "item_count": len(items),
+                            "request_charge": float(headers.get("x-ms-request-charge", 0)),
+                            "headers": headers,
+                            "captured_pages": captured_pages,
+                        }
+                except Exception as e:
+                    with lock:
+                        errors.append((thread_id, str(e)))
 
             threads = []
             for i in range(5):
                 t = threading.Thread(target=run_synchronized_query, args=(i,))
                 threads.append(t)
                 t.start()
-
             for t in threads:
                 t.join(timeout=60)
 
-            # Verify all threads completed and got correct results
+            # Surface any worker exceptions in the main thread.
+            self.assertEqual(len(errors), 0, f"Worker errors: {errors}")
+
             self.assertEqual(len(results), 5)
             for thread_id, result in results.items():
                 self.assertEqual(result["item_count"], 50,
                     f"Thread {thread_id} should have gotten all 50 items")
                 self.assertGreater(result["request_charge"], 0,
                     f"Thread {thread_id} should have positive request charge")
+
+                # The iterator's final headers must match this thread's own
+                # last hook payload (compared on activity id, unique per request).
+                self.assertGreater(
+                    len(result["captured_pages"]), 0,
+                    f"Thread {thread_id} hook never fired",
+                )
+                last_hook = result["captured_pages"][-1]
+                self.assertEqual(
+                    result["headers"].get("x-ms-activity-id"),
+                    last_hook.get("x-ms-activity-id"),
+                    f"Thread {thread_id} got headers that did not come from its own response.",
+                )
+
+            # Each thread sent its own requests, so all activity ids must be distinct.
+            final_ids = [r["headers"].get("x-ms-activity-id") for r in results.values()]
+            self.assertEqual(
+                len(set(final_ids)), len(final_ids),
+                f"Two or more threads got the same activity id, which means header state is shared. "
+                f"Ids: {final_ids}",
+            )
 
         finally:
             self._delete_container_for_test(container_id)
@@ -597,10 +653,13 @@ class TestQueryResponseHeaders(unittest.TestCase):
             items = list(paged)
             self.assertEqual(len(items), 8)
 
-            if hasattr(paged, "get_response_headers"):
-                headers = paged.get_response_headers()
-                self.assertIsInstance(headers, CaseInsensitiveDict)
-                self.assertIn("x-ms-request-charge", headers)
+            self.assertTrue(
+                hasattr(paged, "get_response_headers"),
+                "read_all_items pager must expose get_response_headers",
+            )
+            headers = paged.get_response_headers()
+            self.assertIsInstance(headers, CaseInsensitiveDict)
+            self.assertIn("x-ms-request-charge", headers)
         finally:
             self._delete_container_for_test(container_id)
 
