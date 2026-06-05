@@ -39,9 +39,8 @@ jobs:
         run: .github/chronus/node_modules/.bin/chronus verify
 
       # Sticky comment is only post-able when GITHUB_TOKEN has write scope —
-      # i.e. PRs from the main repo. Fork PRs see only the error annotation
-      # below, which is fine because /chronus add doesn't work for forks anyway.
-      - name: Post sticky one-click-fix PR comment on failure
+      # i.e. PRs from the main repo. Fork PRs see only the error annotation below.
+      - name: Post sticky fix-instructions PR comment on failure
         if: failure() && steps.verify.conclusion == 'failure' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
@@ -55,25 +54,21 @@ jobs:
               'change description was found. CI requires every user-affecting',
               'change to have one.',
               '',
-              '#### ⚡ One-click fix',
+              '#### How to fix',
               '',
-              '**Comment `/chronus add` on this PR** and a bot will commit a',
-              'changelog entry for you, derived from your PR title.',
+              'Run the following from the repo root (or from within the package',
+              'directory) and push the new `.chronus/changes/*.md` file:',
               '',
-              'Customise the entry kind by appending it to the command:',
+              '```bash',
+              'azpysdk changelog add',
+              '```',
               '',
-              '- `/chronus add` &nbsp;→&nbsp; defaults to `internal`',
-              '- `/chronus add fix` &nbsp;→&nbsp; bug fix',
-              '- `/chronus add feature` &nbsp;→&nbsp; new feature',
-              '- `/chronus add breaking` &nbsp;→&nbsp; breaking change',
-              '- `/chronus add deprecation` &nbsp;→&nbsp; deprecation',
-              '- `/chronus add dependencies` &nbsp;→&nbsp; dependency bump',
+              'This adds a change entry for each modified package. If your change',
+              'is not user-facing (e.g. tests or docs only), choose the `internal`',
+              'kind to satisfy the check without bumping the version.',
               '',
-              '> ℹ️ For PRs from forks, run the command locally instead:',
-              '>',
-              '> ```bash',
-              '> azpysdk changelog add',
-              '> ```',
+              '> 💡 You can also ask **GitHub Copilot** to fix this failing check',
+              '> for you directly from the PR\'s *Checks* tab.',
               '',
               'See [`doc/dev/changelog_updates.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md) for full instructions.',
             ].join('\n');
@@ -103,5 +98,5 @@ jobs:
       - name: Emit annotation on failure
         if: failure() && steps.verify.conclusion == 'failure'
         run: |
-          echo "::error::Chronus verification failed. Comment '/chronus add' on this PR for an automated fix, or run 'azpysdk changelog add' locally."
+          echo "::error::Chronus verification failed. Run 'azpysdk changelog add' locally and push the new .chronus/changes/*.md file, or ask GitHub Copilot to fix this check from the PR's Checks tab."
           echo "::error::See https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md for instructions."

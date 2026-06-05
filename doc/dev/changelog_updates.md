@@ -108,10 +108,7 @@ Or using raw Chronus:
 npx chronus verify
 ```
 
-> **Note:** The CI workflow (`Chronus Verify`) runs `chronus verify` automatically on every pull request that modifies source files under `sdk/` (specifically files matching `sdk/*/*/**`). If it fails, you have two options:
->
-> - **One-click fix:** comment `/chronus add` on the PR (optionally followed by a kind, e.g. `/chronus add fix`). A bot will commit a Chronus entry derived from the PR title back to the branch. *Available for PRs from the main repository only — fork PRs should run the command locally.*
-> - **Locally:** run `azpysdk changelog add` and push the resulting `.chronus/changes/*.md` file.
+> **Note:** The CI workflow (`Chronus Verify`) runs `chronus verify` automatically on every pull request that modifies source files under `sdk/` (specifically files matching `sdk/*/*/**`). If it fails, run `azpysdk changelog add` locally and push the resulting `.chronus/changes/*.md` file. You can also ask GitHub Copilot to fix the failing check directly from the pull request's *Checks* tab.
 
 If your changes don't need a changelog entry (e.g., pure documentation or test-only changes unrelated to package behavior), you can add an `internal` change kind entry to satisfy the requirement without bumping the version.
 
