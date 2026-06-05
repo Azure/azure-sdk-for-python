@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sdk-dev-agent"
+version = "0.1.0"
+description = "Multi-agent assistant for working with the Azure AI Projects and Azure AI Agents Python SDKs."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Azure AI Foundry SDK team" }]
+dependencies = [
+    "azure-ai-projects>=1.0.0",
+    "azure-ai-agents>=1.0.0",
+    "azure-identity>=1.17.0",
+    "requests>=2.31.0",
+]
+
+[project.scripts]
+sdk-dev-agent = "sdk_dev_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+sdk_dev_agent = ["prompts/*.md"]
