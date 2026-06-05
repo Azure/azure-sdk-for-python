@@ -1,5 +1,11 @@
 # Release History
 
+## 1.17.1 (Unreleased)
+
+### Features Added
+
+- Enabled `ToolCallAccuracyEvaluator`, `_ToolInputAccuracyEvaluator`, and `_ToolCallSuccessEvaluator` to run on conversations that include built-in restricted tools (`bing_grounding`, `bing_custom_search`, `azure_ai_search`, `azure_fabric`, `sharepoint_grounding`). These three evaluators grade the agent's tool selection, input arguments, and call status — none of which require the (redacted) tool output body — so the previous unconditional rejection of conversations containing restricted tools is now lifted. Achieved by setting `check_for_unsupported_tools=False` on each evaluator's input validator. `GroundednessEvaluator` and `ToolOutputUtilizationEvaluator` continue to reject restricted tools because they consume the tool output body.
+
 ## 1.17.0 (2026-06-03)
 
 ### Breaking Changes
