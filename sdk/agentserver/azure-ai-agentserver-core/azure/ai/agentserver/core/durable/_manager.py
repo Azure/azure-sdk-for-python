@@ -1877,6 +1877,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             lost. (Spec 013 US4 scenario 11: the previously-existing durable
             backup write at ``_steering["generation_results"]`` was removed
             because no consumer existed.)
+        :keyword _conflict_attempt: Internal recursion-depth counter
+            for etag-conflict retries. Bounded so the hosted task
+            store's etag-comparator pre-fix behaviour cannot loop
+            forever.
         :return: New context for the drained generation, or None.
         """
         task_info = await self._provider.get(task_id)
@@ -1922,26 +1926,20 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         try:
             etag = getattr(task_info, "etag", None) or None
-            # Hosted task store etag bug workaround: empirically the
-            # hosted store returns 412 even when If-Match matches the
-            # etag the server JUST returned via GET (verified via wire
-            # logs — GET -> Etag: ""abc"" then PATCH If-Match: ""abc""
-            # -> 412, with no other writer between the two calls).
-            # Issue tracked with the hosted-task-store team. Until
-            # fixed, drop the etag precondition after a few retries
-            # so steering drain converges. Last-write-wins on the
-            # steering-state payload is acceptable here — the drain
-            # only runs from a single in-process call site (the task
-            # body's suspend boundary).
+            # Pre-deploy workaround for the hosted task store's etag
+            # comparator -- see ``_append_steering_input`` for the
+            # full note. Server-side fix is queued but not yet
+            # deployed; until then drop the etag precondition after
+            # 2 retries so the drain converges. Last-write-wins on
+            # the steering-state payload is acceptable here -- the
+            # drain only runs from a single in-process call site
+            # (the task body's suspend boundary).
             use_etag = etag if _conflict_attempt < 2 else None
             await self._provider.update(
                 task_id,
                 TaskPatchRequest(payload=payload, if_match=use_etag),
             )
         except (ValueError, TransportClassifiedError) as exc:
-            # Etag conflict — re-read and retry. Local provider raises
-            # ValueError; hosted task store raises
-            # TransportClassifiedError with classification="conflict".
             if isinstance(exc, TransportClassifiedError) and getattr(
                 exc, "classification", None
             ) != "conflict":
