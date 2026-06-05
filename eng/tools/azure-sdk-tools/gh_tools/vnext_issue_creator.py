@@ -40,48 +40,15 @@ COPILOT_AUTOFIX_END = "<!-- copilot-autofix:end -->"
 #: Copilot coding-agent bot login.
 DEFAULT_COPILOT_LOGIN = "copilot-swe-agent"
 
+#: Copilot coding-agent assignee handle for the REST API. The REST endpoint
+#: requires the exact bot handle ``copilot-swe-agent[bot]``; the shorter
+#: ``copilot`` / ``copilot-swe-agent`` forms return HTTP 422.
+COPILOT_ASSIGNEE_LOGIN = "copilot-swe-agent[bot]"
+
 
 # ---------------------------------------------------------------------------
 # Auto-fix helpers
 # ---------------------------------------------------------------------------
-
-
-def _resolve_copilot_node_id(issue, github_instance) -> Optional[str]:
-    """Return the Copilot bot node ID from GitHub's assignable actor data."""
-    login = DEFAULT_COPILOT_LOGIN
-    issue_node_id = issue.raw_data["node_id"]
-
-    # dynamically query GitHub for the assignable actor node ID for the Copilot bot
-    try:
-        _, data = github_instance._Github__requester.graphql_query(
-            """
-            query($assignableId: ID!, $login: String!) {
-              node(id: $assignableId) {
-                ... on Issue {
-                  suggestedActors(first: 10, query: $login) {
-                    nodes {
-                      __typename
-                      ... on Bot {
-                        id
-                        login
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            """,
-            {"assignableId": issue_node_id, "login": login},
-        )
-        actors = data.get("data", {}).get("node", {}).get("suggestedActors", {}).get("nodes", [])
-        for actor in actors:
-            if actor.get("login", "").lower() == login.lower() and actor.get("id"):
-                return actor["id"]
-    except Exception as e:
-        logging.warning(f"Failed to resolve Copilot node ID dynamically: {e}")
-
-    logging.warning(f"Could not find {DEFAULT_COPILOT_LOGIN} in suggested actors for issue #{issue.number}")
-    return None
 
 
 def is_auto_fix_eligible(
@@ -192,45 +159,41 @@ def _is_copilot_already_assigned(issue) -> bool:
     """Check whether the Copilot login is already among the issue assignees."""
     for assignee in issue.assignees:
         name = assignee.login if hasattr(assignee, "login") else str(assignee)
-        if name.lower() == DEFAULT_COPILOT_LOGIN.lower():
+        # Normalize away the "[bot]" suffix so both "copilot-swe-agent" and
+        # "copilot-swe-agent[bot]" forms are recognized.
+        normalized = name.lower().removesuffix("[bot]")
+        if normalized == DEFAULT_COPILOT_LOGIN.lower():
             return True
     return False
 
 
-def _unassign_copilot(issue, github_instance, copilot_node_id: str) -> bool:
+def _unassign_copilot(issue) -> bool:
     """Remove the Copilot coding agent from the issue assignees.
 
-    Uses the GraphQL ``removeAssigneesFromAssignable`` mutation.
+    Uses the REST ``DELETE /repos/{owner}/{repo}/issues/{number}/assignees``
+    endpoint (via :meth:`Issue.remove_from_assignees`).
     Treats "not currently assigned" as success (idempotent).
     """
-    issue_node_id = issue.raw_data["node_id"]
     try:
-        github_instance._Github__requester.graphql_named_mutation(
-            "removeAssigneesFromAssignable",
-            {
-                "assignableId": issue_node_id,
-                "assigneeIds": [copilot_node_id],
-            },
-            output_schema="assignable { ... on Issue { id } }",
-        )
-        logging.info(f"Unassigned {DEFAULT_COPILOT_LOGIN} from issue #{issue.number}")
+        issue.remove_from_assignees(COPILOT_ASSIGNEE_LOGIN)
+        logging.info(f"Unassigned {COPILOT_ASSIGNEE_LOGIN} from issue #{issue.number}")
         return True
     except Exception as e:
-        logging.warning(f"Failed to unassign {DEFAULT_COPILOT_LOGIN} from issue #{issue.number}: {e}")
+        logging.warning(f"Failed to unassign {COPILOT_ASSIGNEE_LOGIN} from issue #{issue.number}: {e}")
         return False
 
 
 def assign_copilot(
     issue,
-    github_instance,
-    copilot_node_id: str,
     package_name: str,
     check_type: str,
     force_reassign: bool = False,
 ) -> bool:
     """Attempt to assign the Copilot coding agent to the issue.
 
-    Uses the GraphQL ``addAssigneesToAssignable`` mutation.
+    Uses the REST ``POST /repos/{owner}/{repo}/issues/{number}/assignees``
+    endpoint (via :meth:`Issue.add_to_assignees`). The REST API requires the
+    exact bot handle ``copilot-swe-agent[bot]``.
 
     When *force_reassign* is True and Copilot is already assigned, the
     agent is first unassigned then reassigned so that a new Copilot
@@ -243,30 +206,21 @@ def assign_copilot(
             logging.info(f"Copilot already assigned to issue #{issue.number}, skipping")
             return True
         logging.info(f"Copilot already assigned to issue #{issue.number}, " f"re-assigning to trigger new session")
-        if not _unassign_copilot(issue, github_instance, copilot_node_id):
+        if not _unassign_copilot(issue):
             return False
 
-    issue_node_id = issue.raw_data["node_id"]
     try:
-        github_instance._Github__requester.graphql_named_mutation(
-            "addAssigneesToAssignable",
-            {
-                "assignableId": issue_node_id,
-                "assigneeIds": [copilot_node_id],
-            },
-            output_schema="assignable { ... on Issue { id } }",
-        )
-        logging.info(f"Assigned {DEFAULT_COPILOT_LOGIN} to issue #{issue.number} for {package_name}/{check_type}")
+        issue.add_to_assignees(COPILOT_ASSIGNEE_LOGIN)
+        logging.info(f"Assigned {COPILOT_ASSIGNEE_LOGIN} to issue #{issue.number} for {package_name}/{check_type}")
         return True
     except Exception as e:
-        logging.warning(f"Failed to assign {DEFAULT_COPILOT_LOGIN} to issue #{issue.number}: {e}")
+        logging.warning(f"Failed to assign {COPILOT_ASSIGNEE_LOGIN} to issue #{issue.number}: {e}")
         return False
 
 
 def _try_auto_fix(
     repo,
     issue,
-    github_instance,
     package_name: str,
     package_path: str,
     check_type: str,
@@ -304,14 +258,8 @@ def _try_auto_fix(
             exc,
         )
 
-    copilot_node_id = _resolve_copilot_node_id(issue, github_instance)
-    if not copilot_node_id:
-        return
-
     # Assign Copilot (force reassignment on version bumps)
-    if assign_copilot(
-        issue, github_instance, copilot_node_id, package_name, check_type, force_reassign=version_changed
-    ):
+    if assign_copilot(issue, package_name, check_type, force_reassign=version_changed):
         reconcile_auto_fix_labels(issue, eligible=True)
 
 
@@ -501,7 +449,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
                 logging.warning(f"Failed to assign {assignee} to issue for {package_name}: {e}")
 
         # Auto-fix: check eligibility and assign Copilot
-        _try_auto_fix(repo, issue, g, package_name, package_path, check_type, package_dir)
+        _try_auto_fix(repo, issue, package_name, package_path, check_type, package_dir)
         return
 
     # an issue exists, let's update it so it reflects the latest typing/linting errors
@@ -533,7 +481,6 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
     _try_auto_fix(
         repo,
         vnext_issue[0],
-        g,
         package_name,
         package_path,
         check_type,

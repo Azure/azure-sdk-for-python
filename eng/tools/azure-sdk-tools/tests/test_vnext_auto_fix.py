@@ -58,25 +58,6 @@ def _make_issue(
     return issue
 
 
-def _make_github_instance() -> MagicMock:
-    """Create a mock Github instance with a requester that supports graphql_named_mutation."""
-    g = MagicMock()
-    g._Github__requester = MagicMock()
-    g._Github__requester.graphql_query.return_value = (
-        {},
-        {
-            "data": {
-                "node": {
-                    "suggestedActors": {
-                        "nodes": [{"login": "copilot-swe-agent", "id": "BOT_dynamic"}],
-                    }
-                }
-            }
-        },
-    )
-    return g
-
-
 def _make_pr(
     title: str = "",
     body: str = "",
@@ -283,31 +264,32 @@ class TestAssignCopilot:
 
     def test_success(self):
         issue = _make_issue()
-        g = _make_github_instance()
-        assert assign_copilot(issue, g, "BOT_dynamic", "azure-ai-test", "pylint") is True
-        g._Github__requester.graphql_named_mutation.assert_called_once()
-        call_args = g._Github__requester.graphql_named_mutation.call_args
-        assert call_args[0][0] == "addAssigneesToAssignable"
-        assert call_args[0][1]["assigneeIds"] == ["BOT_dynamic"]
+        assert assign_copilot(issue, "azure-ai-test", "pylint") is True
+        issue.add_to_assignees.assert_called_once_with("copilot-swe-agent[bot]")
+        issue.remove_from_assignees.assert_not_called()
 
     def test_already_assigned_skips(self):
         issue = _make_issue(assignees=["copilot-swe-agent"])
-        g = _make_github_instance()
-        assert assign_copilot(issue, g, "BOT_dynamic", "azure-ai-test", "pylint") is True
-        g._Github__requester.graphql_named_mutation.assert_not_called()
+        assert assign_copilot(issue, "azure-ai-test", "pylint") is True
+        issue.add_to_assignees.assert_not_called()
 
     def test_failure_returns_false(self):
         issue = _make_issue()
-        g = _make_github_instance()
-        g._Github__requester.graphql_named_mutation.side_effect = Exception("mutation failed")
-        assert assign_copilot(issue, g, "BOT_dynamic", "azure-ai-test", "pylint") is False
+        issue.add_to_assignees.side_effect = Exception("assign failed")
+        assert assign_copilot(issue, "azure-ai-test", "pylint") is False
+
+    def test_force_reassign_unassigns_then_reassigns(self):
+        issue = _make_issue(assignees=["copilot-swe-agent[bot]"])
+        assert assign_copilot(issue, "azure-ai-test", "pylint", force_reassign=True) is True
+        issue.remove_from_assignees.assert_called_once_with("copilot-swe-agent[bot]")
+        issue.add_to_assignees.assert_called_once_with("copilot-swe-agent[bot]")
 
     def test_force_reassign_returns_false_when_unassign_fails(self):
         issue = _make_issue(assignees=["copilot-swe-agent"])
-        g = _make_github_instance()
-        g._Github__requester.graphql_named_mutation.side_effect = Exception("remove failed")
-        assert assign_copilot(issue, g, "BOT_dynamic", "azure-ai-test", "pylint", force_reassign=True) is False
-        g._Github__requester.graphql_named_mutation.assert_called_once()
+        issue.remove_from_assignees.side_effect = Exception("remove failed")
+        assert assign_copilot(issue, "azure-ai-test", "pylint", force_reassign=True) is False
+        issue.remove_from_assignees.assert_called_once()
+        issue.add_to_assignees.assert_not_called()
 
 
 # ---------------------------------------------------------------------------
@@ -329,6 +311,10 @@ class TestIsCopilotAlreadyAssigned:
         issue = _make_issue(assignees=["Copilot-SWE-Agent"])
         assert _is_copilot_already_assigned(issue) is True
 
+    def test_matches_bot_suffix(self):
+        issue = _make_issue(assignees=["copilot-swe-agent[bot]"])
+        assert _is_copilot_already_assigned(issue) is True
+
 
 # ---------------------------------------------------------------------------
 # Integration: _try_auto_fix tests
@@ -342,9 +328,8 @@ class TestTryAutoFix:
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
-        g = _make_github_instance()
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
+        _try_auto_fix(repo, issue, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
         # Labels reconciled
         issue.add_to_labels.assert_any_call(LABEL_AUTO_FIX)
@@ -352,9 +337,8 @@ class TestTryAutoFix:
         issue.edit.assert_called_once()
         body_arg = issue.edit.call_args[1]["body"]
         assert "Copilot instructions" in body_arg
-        # Copilot assigned via GraphQL
-        g._Github__requester.graphql_named_mutation.assert_called_once()
-        g._Github__requester.graphql_query.assert_called_once()
+        # Copilot assigned via REST
+        issue.add_to_assignees.assert_called_once_with("copilot-swe-agent[bot]")
 
     def test_eligible_with_duplicate_pr_skips(self, tmp_path):
         pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
@@ -363,30 +347,27 @@ class TestTryAutoFix:
             _make_pr(body="Fixes #1"),
         ]
         issue = _make_issue(number=1, labels=["pylint"])
-        g = _make_github_instance()
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
+        _try_auto_fix(repo, issue, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
         # Should NOT assign Copilot
-        g._Github__requester.graphql_named_mutation.assert_not_called()
+        issue.add_to_assignees.assert_not_called()
 
     def test_opt_out_pyproject_prevents_assignment(self, tmp_path):
         pkg = _write_pyproject(tmp_path, vnext_copilot_fix=False)
         repo = MagicMock()
         issue = _make_issue(labels=["pylint"])
-        g = _make_github_instance()
 
         _try_auto_fix(
             repo,
             issue,
-            g,
             "azure-ai-test",
             "sdk/ai/azure-ai-test",
             "pylint",
             pkg,
         )
 
-        g._Github__requester.graphql_named_mutation.assert_not_called()
+        issue.add_to_assignees.assert_not_called()
 
     def test_weekly_retry_reassigns_when_no_pr(self, tmp_path):
         """Simulates a weekly re-run: issue already has copilot-auto-fix label
@@ -395,37 +376,18 @@ class TestTryAutoFix:
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX])
-        g = _make_github_instance()
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
+        _try_auto_fix(repo, issue, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
-        g._Github__requester.graphql_named_mutation.assert_called_once()
+        issue.add_to_assignees.assert_called_once_with("copilot-swe-agent[bot]")
 
     def test_assignment_failure_does_not_crash(self, tmp_path):
         pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
-        g = _make_github_instance()
-        g._Github__requester.graphql_named_mutation.side_effect = Exception("mutation failed")
+        issue.add_to_assignees.side_effect = Exception("assign failed")
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
+        _try_auto_fix(repo, issue, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
-        issue.add_to_labels.assert_not_called()
-
-    def test_missing_copilot_node_id_skips_assignment(self, tmp_path):
-        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
-        repo = MagicMock()
-        repo.get_pulls.return_value = []
-        issue = _make_issue(labels=["pylint"])
-        g = _make_github_instance()
-        g._Github__requester.graphql_query.return_value = (
-            {},
-            {"data": {"node": {"suggestedActors": {"nodes": []}}}},
-        )
-
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
-
-        g._Github__requester.graphql_query.assert_called_once()
-        g._Github__requester.graphql_named_mutation.assert_not_called()
         issue.add_to_labels.assert_not_called()
