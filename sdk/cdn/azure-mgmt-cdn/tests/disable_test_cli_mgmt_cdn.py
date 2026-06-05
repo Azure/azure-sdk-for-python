@@ -1,10 +1,11 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -22,15 +23,14 @@ import unittest
 import azure.mgmt.cdn
 from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
+
 
 class TestMgmtCdn(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.cdn.CdnManagementClient
-        )
-    
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.cdn.CdnManagementClient)
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_cdn(self, resource_group):
@@ -48,12 +48,7 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
         ORIGIN_NAME = "origin1"
 
         # Profiles_Create[put]
-        BODY = {
-          "location": "WestUs",
-          "sku": {
-            "name": "Standard_Verizon"
-          }
-        }
+        BODY = {"location": "WestUs", "sku": {"name": "Standard_Verizon"}}
         result = self.mgmt_client.profiles.begin_create(resource_group.name, PROFILE_NAME, BODY)
         result = result.result()
 
@@ -169,81 +164,71 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
 
         # Endpoints_Create[put]
         BODY = {
-          "origin_host_header": "www.bing.com",
-          "origin_path": "/image",
-          "content_types_to_compress": [
-            "text/html",
-            "application/octet-stream"
-          ],
-          "is_compression_enabled": True,
-          "is_http_allowed": True,
-          "is_https_allowed": True,
-          "query_string_caching_behavior": "BypassCaching",
-          # "delivery_policy": {
-          #   "description": "Test description for a policy.",
-          #   "rules": [
-          #     {
-          #       "name": "rule1",
-          #       "order": "1",
-          #       "conditions": [
-          #         {
-          #           "name": "RemoteAddress",
-          #           "parameters": {
-          #             "operator": "IPMatch",
-          #             "negate_condition": True,
-          #             "match_values": [
-          #               "192.168.1.0/24",
-          #               "10.0.0.0/24"
-          #             ],
-          #             "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleRemoteAddressConditionParameters"
-          #           }
-          #         }
-          #       ],
-          #       "actions": [
-          #         {
-          #           "name": "CacheExpiration",
-          #           "parameters": {
-          #             "cache_behavior": "Override",
-          #             "cache_duration": "10:10:09",
-          #             "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters",
-          #             "cache_type": "All"
-          #           }
-          #         },
-          #         {
-          #           "name": "ModifyResponseHeader",
-          #           "parameters": {
-          #             "header_action": "Overwrite",
-          #             "header_name": "Access-Control-Allow-Origin",
-          #             "value": "*",
-          #             "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters"
-          #           }
-          #         },
-          #         {
-          #           "name": "ModifyRequestHeader",
-          #           "parameters": {
-          #             "header_action": "Overwrite",
-          #             "header_name": "Accept-Encoding",
-          #             "value": "gzip",
-          #             "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters"
-          #           }
-          #         }
-          #       ]
-          #     }
-          #   ]
-          # },
-          "origins": [
-            {
-              "name": "origin1",
-              "host_name": "host1.hello.com"
-            }
-          ],
-          # "web_application_firewall_policy_link": {
-          #   "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Cdn/CdnWebApplicationFirewallPolicies/" + CDN_WEB_APPLICATION_FIREWALL_POLICY_NAME + ""
-          # },
-          "location": "WestUs",
-          "tags": {
-            "kay1": "value1"
-          }
+            "origin_host_header": "www.bing.com",
+            "origin_path": "/image",
+            "content_types_to_compress": ["text/html", "application/octet-stream"],
+            "is_compression_enabled": True,
+            "is_http_allowed": True,
+            "is_https_allowed": True,
+            "query_string_caching_behavior": "BypassCaching",
+            # "delivery_policy": {
+            #   "description": "Test description for a policy.",
+            #   "rules": [
+            #     {
+            #       "name": "rule1",
+            #       "order": "1",
+            #       "conditions": [
+            #         {
+            #           "name": "RemoteAddress",
+            #           "parameters": {
+            #             "operator": "IPMatch",
+            #             "negate_condition": True,
+            #             "match_values": [
+            #               "192.168.1.0/24",
+            #               "10.0.0.0/24"
+            #             ],
+            #             "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleRemoteAddressConditionParameters"
+            #           }
+            #         }
+            #       ],
+            #       "actions": [
+            #         {
+            #           "name": "CacheExpiration",
+            #           "parameters": {
+            #             "cache_behavior": "Override",
+            #             "cache_duration": "10:10:09",
+            #             "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters",
+            #             "cache_type": "All"
+            #           }
+            #         },
+            #         {
+            #           "name": "ModifyResponseHeader",
+            #           "parameters": {
+            #             "header_action": "Overwrite",
+            #             "header_name": "Access-Control-Allow-Origin",
+            #             "value": "*",
+            #             "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters"
+            #           }
+            #         },
+            #         {
+            #           "name": "ModifyRequestHeader",
+            #           "parameters": {
+            #             "header_action": "Overwrite",
+            #             "header_name": "Accept-Encoding",
+            #             "value": "gzip",
+            #             "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters"
+            #           }
+            #         }
+            #       ]
+            #     }
+            #   ]
+            # },
+            "origins": [{"name": "origin1", "host_name": "host1.hello.com"}],
+            # "web_application_firewall_policy_link": {
+            #   "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Cdn/CdnWebApplicationFirewallPolicies/" + CDN_WEB_APPLICATION_FIREWALL_POLICY_NAME + ""
+            # },
+            "location": "WestUs",
+            "tags": {"kay1": "value1"},
         }
         result = self.mgmt_client.endpoints.begin_create(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
         result = result.result()
@@ -336,11 +321,10 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
         """
 
         # Origins_Update[patch]
-        BODY = {
-          "http_port": "42",
-          "https_port": "43"
-        }
-        result = self.mgmt_client.origins.begin_update(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, ORIGIN_NAME, BODY)
+        BODY = {"http_port": "42", "https_port": "43"}
+        result = self.mgmt_client.origins.begin_update(
+            resource_group.name, PROFILE_NAME, ENDPOINT_NAME, ORIGIN_NAME, BODY
+        )
         result = result.result()
 
         """
@@ -454,21 +438,17 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
         """
 
         # Endpoints_ValidateCustomDomain[post]
-        BODY = {
-          "host_name": "www.someDomain.com"
-        }
+        BODY = {"host_name": "www.someDomain.com"}
         # HOST_NAME = "www.someDomain.com"
-        result = self.mgmt_client.endpoints.validate_custom_domain(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
+        result = self.mgmt_client.endpoints.validate_custom_domain(
+            resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY
+        )
 
         # Endpoints_ListResourceUsage[post]
         result = self.mgmt_client.endpoints.list_resource_usage(resource_group.name, PROFILE_NAME, ENDPOINT_NAME)
 
         # Endpoints_PurgeContent[post]
-        BODY = {
-          "content_paths": [
-            "/folder1"
-          ]
-        }
+        BODY = {"content_paths": ["/folder1"]}
         # CONTENT_PATHS = ["/folder1"]
         result = self.mgmt_client.endpoints.begin_purge_content(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
         result = result.result()
@@ -482,11 +462,7 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
         result = result.result()
 
         # Endpoints_LoadContent[post]
-        BODY = {
-          "content_paths": [
-            "/folder1"
-          ]
-        }
+        BODY = {"content_paths": ["/folder1"]}
         # CONTENT_PATHS = ["/folder1"]
         result = self.mgmt_client.endpoints.begin_load_content(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
         result = result.result()
@@ -496,12 +472,10 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
 
         # Endpoints_Update[patch]
         BODY = {
-          "tags": {
-            "additional_properties": "Tag1"
-          },
-          # "web_application_firewall_policy_link": {
-          #   "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Cdn/CdnWebApplicationFirewallPolicies/" + CDN_WEB_APPLICATION_FIREWALL_POLICY_NAME + ""
-          # }
+            "tags": {"additional_properties": "Tag1"},
+            # "web_application_firewall_policy_link": {
+            #   "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Cdn/CdnWebApplicationFirewallPolicies/" + CDN_WEB_APPLICATION_FIREWALL_POLICY_NAME + ""
+            # }
         }
         result = self.mgmt_client.endpoints.begin_update(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
         result = result.result()
@@ -513,19 +487,12 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.profiles.generate_sso_uri(resource_group.name, PROFILE_NAME)
 
         # Profiles_Update[patch]
-        BODY = {
-          "tags": {
-            "additional_properties": "Tag1"
-          }
-        }
+        BODY = {"tags": {"additional_properties": "Tag1"}}
         result = self.mgmt_client.profiles.begin_update(resource_group.name, PROFILE_NAME, BODY)
         result = result.result()
 
         # CheckNameAvailabilityWithSubscription[post]
-        BODY = {
-          "name": "sampleName",
-          "type": "Microsoft.Cdn/Profiles/Endpoints"
-        }
+        BODY = {"name": "sampleName", "type": "Microsoft.Cdn/Profiles/Endpoints"}
         # CHECK_NAME = "sampleName"
         result = self.mgmt_client.check_name_availability_with_subscription(BODY)
 
@@ -533,22 +500,19 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.resource_usage.list()
 
         # ValidateProbe[post]
-        BODY = {
-          "probe_url": "https://www.bing.com/image"
-        }
+        BODY = {"probe_url": "https://www.bing.com/image"}
         # PROBEURL = "https://www.bing.com/image"
         result = self.mgmt_client.validate_probe(BODY)
 
         # CheckNameAvailability[post]
-        BODY = {
-          "name": "sampleName",
-          "type": "Microsoft.Cdn/Profiles/Endpoints"
-        }
+        BODY = {"name": "sampleName", "type": "Microsoft.Cdn/Profiles/Endpoints"}
         # CHECKNAME = "sampleName"
         result = self.mgmt_client.check_name_availability(BODY)
 
         # CustomDomains_Delete[delete]
-        result = self.mgmt_client.custom_domains.begin_delete(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, CUSTOM_DOMAIN_NAME)
+        result = self.mgmt_client.custom_domains.begin_delete(
+            resource_group.name, PROFILE_NAME, ENDPOINT_NAME, CUSTOM_DOMAIN_NAME
+        )
         result = result.result()
 
         """
@@ -565,6 +529,6 @@ class TestMgmtCdn(AzureMgmtRecordedTestCase):
         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

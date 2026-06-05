@@ -21,7 +21,7 @@ class TestDevTestLabsArtifactSourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_artifact_sources_list(self, resource_group):
         response = self.client.artifact_sources.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -33,7 +33,7 @@ class TestDevTestLabsArtifactSourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_artifact_sources_get(self, resource_group):
         response = await self.client.artifact_sources.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -46,7 +46,7 @@ class TestDevTestLabsArtifactSourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_artifact_sources_create_or_update(self, resource_group):
         response = await self.client.artifact_sources.create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -77,7 +77,7 @@ class TestDevTestLabsArtifactSourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_artifact_sources_delete(self, resource_group):
         response = await self.client.artifact_sources.delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -90,7 +90,7 @@ class TestDevTestLabsArtifactSourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_artifact_sources_update(self, resource_group):
         response = await self.client.artifact_sources.update(
             resource_group_name=resource_group.name,
             lab_name="str",

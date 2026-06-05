@@ -20,7 +20,7 @@ from azure.storage.blob import ContainerClient
 
 def main():
     try:
-        CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
+        CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
 
     except KeyError:
         print("STORAGE_CONNECTION_STRING must be set.")
@@ -30,7 +30,7 @@ def main():
     container.create_container()
     blob_list = container.list_blobs()
     for blob in blob_list:
-        print(blob.name + '\n')
+        print(blob.name + "\n")
 
 
 if __name__ == "__main__":

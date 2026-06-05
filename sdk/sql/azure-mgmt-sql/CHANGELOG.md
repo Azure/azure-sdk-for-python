@@ -1,5 +1,343 @@
 # Release History
 
+## 4.0.0b25 (2026-06-02)
+
+### Features Added
+
+  - Client `SqlManagementClient` added method `send_request`
+  - Client `SqlManagementClient` added operation group `instance_pool_operations`
+  - Client `SqlManagementClient` added operation group `network_security_perimeter_configurations`
+  - Model `Advisor` added property `system_data`
+  - Model `BackupShortTermRetentionPolicy` added property `system_data`
+  - Enum `CapabilityGroup` added member `SUPPORTED_JOB_AGENT_VERSIONS`
+  - Model `CheckNameAvailabilityRequest` added property `type`
+  - Model `DataMaskingPolicy` added property `system_data`
+  - Model `DataMaskingRule` added property `system_data`
+  - Model `DataWarehouseUserActivities` added property `system_data`
+  - Model `Database` added property `system_data`
+  - Model `DatabaseAutomaticTuning` added property `system_data`
+  - Model `DatabaseBlobAuditingPolicy` added property `system_data`
+  - Model `DatabaseColumn` added property `system_data`
+  - Model `DatabaseExtensions` added property `system_data`
+  - Model `DatabaseKey` added property `key_version`
+  - Model `DatabaseOperation` added property `system_data`
+  - Model `DatabaseSchema` added property `system_data`
+  - Model `DatabaseTable` added property `system_data`
+  - Model `DatabaseUsage` added property `system_data`
+  - Model `DatabaseVulnerabilityAssessment` added property `system_data`
+  - Model `DatabaseVulnerabilityAssessmentRuleBaseline` added property `system_data`
+  - Model `DatabaseVulnerabilityAssessmentScansExport` added property `system_data`
+  - Model `DeletedServer` added property `system_data`
+  - Model `DistributedAvailabilityGroup` added property `system_data`
+  - Model `EditionCapability` added property `zone_pinning`
+  - Model `ElasticPool` added property `system_data`
+  - Model `ElasticPoolEditionCapability` added property `zone_pinning`
+  - Model `ElasticPoolOperation` added property `system_data`
+  - Model `ElasticPoolPerDatabaseSettings` added property `auto_pause_delay`
+  - Model `ElasticPoolPerformanceLevelCapability` added property `supported_min_capacities`
+  - Model `ElasticPoolPerformanceLevelCapability` added property `supported_auto_pause_delay`
+  - Model `ElasticPoolPerformanceLevelCapability` added property `supported_per_database_auto_pause_delay`
+  - Model `ElasticPoolPerformanceLevelCapability` added property `supported_zones`
+  - Model `EncryptionProtector` added property `system_data`
+  - Model `EndpointCertificate` added property `system_data`
+  - Model `ExtendedDatabaseBlobAuditingPolicy` added property `system_data`
+  - Model `ExtendedServerBlobAuditingPolicy` added property `system_data`
+  - Model `FailoverGroup` added property `system_data`
+  - Model `GeoBackupPolicy` added property `system_data`
+  - Model `ImportExportExtensionsOperationResult` added property `system_data`
+  - Model `ImportExportOperationResult` added property `system_data`
+  - Model `InstanceFailoverGroup` added property `system_data`
+  - Model `InstancePool` added property `system_data`
+  - Model `Job` added property `system_data`
+  - Model `JobAgent` added property `identity`
+  - Model `JobAgent` added property `system_data`
+  - Model `JobAgentUpdate` added property `identity`
+  - Model `JobAgentUpdate` added property `sku`
+  - Model `JobCredential` added property `system_data`
+  - Model `JobExecution` added property `system_data`
+  - Model `JobPrivateEndpoint` added property `system_data`
+  - Model `JobStep` added property `system_data`
+  - Model `JobTargetGroup` added property `system_data`
+  - Model `JobVersion` added property `system_data`
+  - Model `LedgerDigestUploads` added property `system_data`
+  - Model `LocationCapabilities` added property `supported_job_agent_versions`
+  - Model `LocationCapabilities` added property `is_zone_resilient_provisioning_allowed`
+  - Model `LogicalDatabaseTransparentDataEncryption` added property `system_data`
+  - Model `LongTermRetentionBackup` added property `system_data`
+  - Model `LongTermRetentionBackupOperationResult` added property `system_data`
+  - Model `LongTermRetentionPolicy` added property `system_data`
+  - Model `MaintenanceWindowOptions` added property `system_data`
+  - Model `MaintenanceWindows` added property `system_data`
+  - Model `ManagedBackupShortTermRetentionPolicy` added property `system_data`
+  - Model `ManagedDatabase` added property `system_data`
+  - Model `ManagedDatabaseMoveOperationResult` added property `system_data`
+  - Model `ManagedDatabaseRestoreDetailsResult` added property `system_data`
+  - Model `ManagedDatabaseSecurityAlertPolicy` added property `system_data`
+  - Model `ManagedInstance` added property `system_data`
+  - Model `ManagedInstanceAdministrator` added property `system_data`
+  - Model `ManagedInstanceAzureADOnlyAuthentication` added property `system_data`
+  - Enum `ManagedInstanceDatabaseFormat` added member `SQL_SERVER2025`
+  - Model `ManagedInstanceDtc` added property `system_data`
+  - Model `ManagedInstanceEditionCapability` added property `is_general_purpose_v2`
+  - Model `ManagedInstanceEncryptionProtector` added property `system_data`
+  - Model `ManagedInstanceFamilyCapability` added property `zone_redundant`
+  - Model `ManagedInstanceKey` added property `system_data`
+  - Model `ManagedInstanceLongTermRetentionBackup` added property `system_data`
+  - Model `ManagedInstanceLongTermRetentionPolicy` added property `system_data`
+  - Model `ManagedInstanceOperation` added property `system_data`
+  - Model `ManagedInstancePrivateEndpointConnection` added property `system_data`
+  - Model `ManagedInstancePrivateLink` added property `system_data`
+  - Model `ManagedInstancePrivateLinkProperties` added property `required_zone_names`
+  - Model `ManagedInstanceQuery` added property `system_data`
+  - Model `ManagedInstanceVcoresCapability` added property `supported_memory_sizes_in_gb`
+  - Model `ManagedInstanceVcoresCapability` added property `supported_memory_limits_mb`
+  - Model `ManagedInstanceVcoresCapability` added property `included_storage_i_ops`
+  - Model `ManagedInstanceVcoresCapability` added property `supported_storage_i_ops`
+  - Model `ManagedInstanceVcoresCapability` added property `iops_min_value_override_factor_per_selected_storage_gb`
+  - Model `ManagedInstanceVcoresCapability` added property `iops_included_value_override_factor_per_selected_storage_gb`
+  - Model `ManagedInstanceVcoresCapability` added property `included_storage_throughput_m_bps`
+  - Model `ManagedInstanceVcoresCapability` added property `supported_storage_throughput_m_bps`
+  - Model `ManagedInstanceVcoresCapability` added property `throughput_m_bps_min_value_override_factor_per_selected_storage_gb`
+  - Model `ManagedInstanceVcoresCapability` added property `throughput_m_bps_included_value_override_factor_per_selected_storage_gb`
+  - Model `ManagedInstanceVulnerabilityAssessment` added property `system_data`
+  - Model `ManagedLedgerDigestUploads` added property `system_data`
+  - Model `ManagedServerDnsAlias` added property `system_data`
+  - Model `ManagedTransparentDataEncryption` added property `system_data`
+  - Enum `OperationMode` added member `EXPORT`
+  - Enum `OperationMode` added member `IMPORT`
+  - Model `OutboundFirewallRule` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `QueryStatistics` added property `system_data`
+  - Model `RecommendedAction` added property `system_data`
+  - Model `RecommendedSensitivityLabelUpdate` added property `system_data`
+  - Model `RecoverableDatabase` added property `system_data`
+  - Model `RecoverableManagedDatabase` added property `system_data`
+  - Model `RefreshExternalGovernanceStatusOperationResult` added property `system_data`
+  - Model `RefreshExternalGovernanceStatusOperationResultMI` added property `system_data`
+  - Model `ReplicationLink` added property `system_data`
+  - Model `ReplicationLinkUpdate` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `RestorableDroppedDatabase` added property `system_data`
+  - Model `RestorableDroppedManagedDatabase` added property `system_data`
+  - Model `RestorePoint` added property `system_data`
+  - Model `SecurityEvent` added property `system_data`
+  - Model `SensitivityLabel` added property `system_data`
+  - Model `SensitivityLabelUpdate` added property `system_data`
+  - Model `Server` added property `system_data`
+  - Model `ServerAutomaticTuning` added property `system_data`
+  - Model `ServerAzureADAdministrator` added property `system_data`
+  - Model `ServerAzureADOnlyAuthentication` added property `system_data`
+  - Model `ServerBlobAuditingPolicy` added property `system_data`
+  - Model `ServerConfigurationOption` added property `system_data`
+  - Model `ServerConnectionPolicy` added property `system_data`
+  - Model `ServerDnsAlias` added property `system_data`
+  - Model `ServerKey` added property `system_data`
+  - Model `ServerOperation` added property `system_data`
+  - Model `ServerTrustCertificate` added property `system_data`
+  - Model `ServerTrustGroup` added property `system_data`
+  - Model `ServerUsage` added property `id`
+  - Model `ServerUsage` added property `type`
+  - Model `ServerUsage` added property `system_data`
+  - Model `ServerVulnerabilityAssessment` added property `system_data`
+  - Model `ServiceObjectiveCapability` added property `zone_pinning`
+  - Model `ServiceObjectiveCapability` added property `supported_zones`
+  - Model `ServiceObjectiveCapability` added property `supported_free_limit_exhaustion_behaviors`
+  - Model `SqlAgentConfiguration` added property `system_data`
+  - Enum `StorageCapabilityStorageAccountType` added member `GZRS`
+  - Model `SubscriptionUsage` added property `system_data`
+  - Model `SynapseLinkWorkspace` added property `system_data`
+  - Model `SyncAgent` added property `system_data`
+  - Model `SyncAgentLinkedDatabase` added property `system_data`
+  - Model `SyncGroup` added property `system_data`
+  - Model `SyncMember` added property `system_data`
+  - Model `TdeCertificate` added property `system_data`
+  - Model `TimeZone` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Model `UpdateVirtualClusterDnsServersOperation` added property `system_data`
+  - Model `VirtualCluster` added property `system_data`
+  - Model `VirtualNetworkRule` added property `system_data`
+  - Model `VulnerabilityAssessmentScanRecord` added property `system_data`
+  - Model `WorkloadClassifier` added property `system_data`
+  - Model `WorkloadGroup` added property `system_data`
+  - Added enum `CheckNameAvailabilityResourceType`
+  - Added enum `ClientClassificationSource`
+  - Added enum `ErrorType`
+  - Added model `FreeLimitExhaustionBehaviorCapability`
+  - Added enum `InaccessibilityReason`
+  - Added model `InstancePoolOperation`
+  - Added model `InstancePoolOperationProperties`
+  - Added model `JobAgentEditionCapability`
+  - Added model `JobAgentIdentity`
+  - Added enum `JobAgentIdentityType`
+  - Added model `JobAgentServiceLevelObjectiveCapability`
+  - Added model `JobAgentUserAssignedIdentity`
+  - Added model `JobAgentVersionCapability`
+  - Added model `ManagedDatabaseExtendedAccessibilityInfo`
+  - Added model `ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest`
+  - Added model `MaxLimitRangeCapability`
+  - Added model `NSPConfigAccessRule`
+  - Added model `NSPConfigAccessRuleProperties`
+  - Added model `NSPConfigAssociation`
+  - Added model `NSPConfigNetworkSecurityPerimeterRule`
+  - Added model `NSPConfigPerimeter`
+  - Added model `NSPConfigProfile`
+  - Added model `NSPProvisioningIssue`
+  - Added model `NSPProvisioningIssueProperties`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `PerDatabaseAutoPauseDelayTimeRange`
+  - Added enum `PricingModel`
+  - Added enum `TransparentDataEncryptionScanState`
+  - Added model `UpsertManagedServerOperationStepWithEstimatesAndDuration`
+  - Added enum `UpsertManagedServerOperationStepWithEstimatesAndDurationStatus`
+  - Added model `ZonePinningCapability`
+  - Operation group `GeoBackupPoliciesOperations` added method `list`
+  - Operation group `LongTermRetentionManagedInstanceBackupsOperations` added parameter `skip` in method `list_by_location`
+  - Operation group `LongTermRetentionManagedInstanceBackupsOperations` added parameter `top` in method `list_by_location`
+  - Operation group `LongTermRetentionManagedInstanceBackupsOperations` added parameter `filter` in method `list_by_location`
+  - Operation group `LongTermRetentionManagedInstanceBackupsOperations` added parameter `skip` in method `list_by_resource_group_location`
+  - Operation group `LongTermRetentionManagedInstanceBackupsOperations` added parameter `top` in method `list_by_resource_group_location`
+  - Operation group `LongTermRetentionManagedInstanceBackupsOperations` added parameter `filter` in method `list_by_resource_group_location`
+  - Operation group `ManagedDatabaseSensitivityLabelsOperations` added method `list_by_database`
+  - Operation group `ManagedDatabasesOperations` added method `begin_reevaluate_inaccessible_database_state`
+  - Operation group `ManagedInstanceLongTermRetentionPoliciesOperations` added method `begin_delete`
+  - Operation group `ManagedInstancesOperations` added method `begin_reevaluate_inaccessible_database_state`
+  - Operation group `ManagedInstancesOperations` added method `begin_validate_azure_key_vault_encryption_key`
+  - Operation group `SensitivityLabelsOperations` added method `list_by_database`
+  - Operation group `TransparentDataEncryptionsOperations` added method `begin_resume`
+  - Operation group `TransparentDataEncryptionsOperations` added method `begin_suspend`
+  - Operation group `VirtualClustersOperations` added method `begin_create_or_update`
+  - Added operation group `InstancePoolOperationsOperations`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Deleted or renamed client operation group `SqlManagementClient.server_communication_links`
+  - Deleted or renamed client operation group `SqlManagementClient.service_objectives`
+  - Deleted or renamed client operation group `SqlManagementClient.elastic_pool_activities`
+  - Deleted or renamed client operation group `SqlManagementClient.elastic_pool_database_activities`
+  - Model `CopyLongTermRetentionBackupParameters` moved instance variable `target_subscription_id`, `target_resource_group`, `target_server_resource_id`, `target_server_fully_qualified_domain_name`, `target_database_name` and `target_backup_storage_redundancy` under property `properties` whose type is `CopyLongTermRetentionBackupParametersProperties`
+  - Model `DatabaseAdvancedThreatProtection` moved instance variable `state` and `creation_time` under property `properties` whose type is `AdvancedThreatProtectionProperties`
+  - Model `DatabaseSecurityAlertPolicy` moved instance variable `state`, `disabled_alerts`, `email_addresses`, `email_account_admins`, `storage_endpoint`, `storage_account_access_key`, `retention_days` and `creation_time` under property `properties` whose type is `SecurityAlertsPolicyProperties`
+  - Model `DatabaseVulnerabilityAssessmentScansExport` moved instance variable `exported_report_location` under property `properties` whose type is `DatabaseVulnerabilityAssessmentScanExportProperties`
+  - Model `FirewallRule` moved instance variable `start_ip_address` and `end_ip_address` under property `properties` whose type is `ServerFirewallRuleProperties`
+  - Model `FirewallRuleList` renamed its instance variable `values` to `values_property`
+  - Model `IPv6FirewallRule` moved instance variable `start_i_pv6_address` and `end_i_pv6_address` under property `properties` whose type is `IPv6ServerFirewallRuleProperties`
+  - Model `InstancePoolUpdate` moved instance variable `subnet_id`, `v_cores`, `license_type`, `dns_zone` and `maintenance_configuration_id` under property `properties` whose type is `InstancePoolProperties`
+  - Model `LogicalDatabaseTransparentDataEncryption` moved instance variable `state` under property `properties` whose type is `TransparentDataEncryptionProperties`
+  - Model `LongTermRetentionBackupOperationResult` moved instance variable `request_id`, `operation_type`, `from_backup_resource_id`, `to_backup_resource_id`, `target_backup_storage_redundancy`, `status` and `message` under property `properties` whose type is `LongTermRetentionOperationResultProperties`
+  - Model `ManagedDatabaseAdvancedThreatProtection` moved instance variable `state` and `creation_time` under property `properties` whose type is `AdvancedThreatProtectionProperties`
+  - Model `ManagedDatabaseRestoreDetailsResult` moved instance variable `type_properties_type`, `status`, `block_reason`, `last_uploaded_file_name`, `last_uploaded_file_time`, `last_restored_file_name`, `last_restored_file_time`, `percent_completed`, `current_restored_size_mb`, `current_restore_plan_size_mb`, `current_backup_type`, `current_restoring_file_name`, `number_of_files_detected`, `number_of_files_queued`, `number_of_files_skipped`, `number_of_files_restoring`, `number_of_files_restored`, `number_of_files_unrestorable`, `full_backup_sets`, `diff_backup_sets`, `log_backup_sets` and `unrestorable_files` under property `properties` whose type is `ManagedDatabaseRestoreDetailsProperties`
+  - Model `ManagedDatabaseSecurityAlertPolicy` moved instance variable `state`, `disabled_alerts`, `email_addresses`, `email_account_admins`, `storage_endpoint`, `storage_account_access_key`, `retention_days` and `creation_time` under property `properties` whose type is `SecurityAlertPolicyProperties`
+  - Model `ManagedDatabaseUpdate` moved instance variable `collation`, `status`, `creation_date`, `earliest_restore_point`, `restore_point_in_time`, `default_secondary_location`, `catalog_collation`, `create_mode`, `storage_container_uri`, `source_database_id`, `cross_subscription_source_database_id`, `restorable_dropped_database_id`, `cross_subscription_restorable_dropped_database_id`, `storage_container_identity`, `storage_container_sas_token`, `failover_group_id`, `recoverable_database_id`, `long_term_retention_backup_resource_id`, `auto_complete_restore`, `last_backup_name`, `cross_subscription_target_managed_instance_id` and `is_ledger_on` under property `properties` whose type is `ManagedDatabaseProperties`
+  - Model `ManagedInstanceAdvancedThreatProtection` moved instance variable `state` and `creation_time` under property `properties` whose type is `AdvancedThreatProtectionProperties`
+  - Model `ManagedInstanceAzureADOnlyAuthentication` moved instance variable `azure_ad_only_authentication` under property `properties` whose type is `ManagedInstanceAzureADOnlyAuthProperties`
+  - Model `ManagedInstanceEditionCapability` deleted or renamed its instance variable `zone_redundant`
+  - Model `ManagedInstancePrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `ManagedInstancePrivateEndpointConnectionProperties`
+  - Model `ManagedInstanceQuery` moved instance variable `query_text` under property `properties` whose type is `QueryProperties`
+  - Model `ManagedInstanceUpdate` moved instance variable `provisioning_state`, `managed_instance_create_mode`, `fully_qualified_domain_name`, `is_general_purpose_v2`, `administrator_login`, `administrator_login_password`, `subnet_id`, `state`, `license_type`, `hybrid_secondary_usage`, `hybrid_secondary_usage_detected`, `v_cores`, `storage_size_in_gb`, `storage_iops`, `storage_throughput_mbps`, `collation`, `dns_zone`, `dns_zone_partner`, `public_data_endpoint_enabled`, `source_managed_instance_id`, `restore_point_in_time`, `proxy_override`, `timezone_id`, `instance_pool_id`, `maintenance_configuration_id`, `private_endpoint_connections`, `minimal_tls_version`, `current_backup_storage_redundancy`, `requested_backup_storage_redundancy`, `zone_redundant`, `primary_user_assigned_identity_id`, `key_id`, `administrators`, `service_principal`, `virtual_cluster_id`, `external_governance_status`, `pricing_model`, `create_time`, `authentication_metadata` and `database_format` under property `properties` whose type is `ManagedInstanceProperties`
+  - Model `ManagedServerSecurityAlertPolicy` moved instance variable `state`, `disabled_alerts`, `email_addresses`, `email_account_admins`, `storage_endpoint`, `storage_account_access_key`, `retention_days` and `creation_time` under property `properties` whose type is `SecurityAlertsPolicyProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `group_ids`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `QueryStatistics` moved instance variable `database_name`, `query_id`, `start_time`, `end_time` and `intervals` under property `properties` whose type is `QueryStatisticsProperties`
+  - Model `RefreshExternalGovernanceStatusOperationResultMI` moved instance variable `request_id`, `request_type`, `queued_time`, `managed_instance_name`, `status` and `error_message` under property `properties` whose type is `RefreshExternalGovernanceStatusOperationResultPropertiesMI`
+  - Model `ServerAdvancedThreatProtection` moved instance variable `state` and `creation_time` under property `properties` whose type is `AdvancedThreatProtectionProperties`
+  - Model `ServerAutomaticTuning` moved instance variable `desired_state`, `actual_state` and `options` under property `properties` whose type is `AutomaticTuningServerProperties`
+  - Model `ServerAzureADAdministrator` moved instance variable `administrator_type`, `login`, `sid`, `tenant_id` and `azure_ad_only_authentication` under property `properties` whose type is `AdministratorProperties`
+  - Model `ServerAzureADOnlyAuthentication` moved instance variable `azure_ad_only_authentication` under property `properties` whose type is `AzureADOnlyAuthProperties`
+  - Model `ServerDevOpsAuditingSettings` moved instance variable `is_azure_monitor_target_enabled`, `is_managed_identity_in_use`, `state`, `storage_endpoint`, `storage_account_access_key` and `storage_account_subscription_id` under property `properties` whose type is `ServerDevOpsAuditSettingsProperties`
+  - Model `ServerSecurityAlertPolicy` moved instance variable `state`, `disabled_alerts`, `email_addresses`, `email_account_admins`, `storage_endpoint`, `storage_account_access_key`, `retention_days` and `creation_time` under property `properties` whose type is `SecurityAlertsPolicyProperties`
+  - Model `ServerUpdate` moved instance variable `administrator_login`, `administrator_login_password`, `version`, `state`, `fully_qualified_domain_name`, `private_endpoint_connections`, `minimal_tls_version`, `public_network_access`, `workspace_feature`, `primary_user_assigned_identity_id`, `federated_client_id`, `key_id`, `administrators`, `restrict_outbound_network_access`, `is_i_pv6_enabled`, `external_governance_status`, `retention_days` and `create_mode` under property `properties` whose type is `ServerProperties`
+  - Model `SqlVulnerabilityAssessment` moved instance variable `state` under property `properties` whose type is `SqlVulnerabilityAssessmentPolicyProperties`
+  - Model `SqlVulnerabilityAssessmentScanResults` moved instance variable `rule_id`, `status`, `error_message`, `is_trimmed`, `query_results`, `remediation`, `baseline_adjusted_result` and `rule_metadata` under property `properties` whose type is `SqlVulnerabilityAssessmentScanResultProperties`
+  - Model `UpdateLongTermRetentionBackupParameters` moved instance variable `requested_backup_storage_redundancy` under property `properties` whose type is `UpdateLongTermRetentionBackupParametersProperties`
+  - Model `UpdateVirtualClusterDnsServersOperation` moved instance variable `status` under property `properties` whose type is `VirtualClusterDnsServersProperties`
+  - Model `VirtualClusterUpdate` moved instance variable `subnet_id`, `version` and `child_resources` under property `properties` whose type is `VirtualClusterProperties`
+  - Deleted or renamed model `ElasticPoolActivity`
+  - Deleted or renamed model `ElasticPoolDatabaseActivity`
+  - Deleted or renamed model `FreemiumType`
+  - Deleted or renamed model `Metric`
+  - Deleted or renamed model `MetricAvailability`
+  - Deleted or renamed model `MetricDefinition`
+  - Deleted or renamed model `MetricName`
+  - Deleted or renamed model `MetricValue`
+  - Deleted or renamed model `OperationImpact`
+  - Deleted or renamed model `PrimaryAggregationType`
+  - Deleted or renamed model `QueryMetricIntervalAutoGenerated`
+  - Deleted or renamed model `ServerCommunicationLink`
+  - Deleted or renamed model `ServiceObjective`
+  - Deleted or renamed model `ServiceObjectiveName`
+  - Deleted or renamed model `SloUsageMetric`
+  - Deleted or renamed model `UnitDefinitionType`
+  - Deleted or renamed model `UnitType`
+  - Deleted or renamed model `UpsertManagedServerOperationStep`
+  - Deleted or renamed model `UpsertManagedServerOperationStepStatus`
+  - Method `CapabilitiesOperations.list_by_location` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
+  - Method `DatabaseAdvisorsOperations.list_by_database` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DatabaseColumnsOperations.list_by_database` changed its parameter `schema`/`table`/`column`/`order_by`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `DatabasesOperations.begin_failover` changed its parameter `replica_type` from `positional_or_keyword` to `keyword_only`
+  - Method `DatabasesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DatabasesOperations.list_by_server` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `DatabasesOperations.list_metric_definitions`
+  - Deleted or renamed method `DatabasesOperations.list_metrics`
+  - Deleted or renamed method `ElasticPoolsOperations.list_metric_definitions`
+  - Deleted or renamed method `ElasticPoolsOperations.list_metrics`
+  - Deleted or renamed method `GeoBackupPoliciesOperations.list_by_database`
+  - Method `JobExecutionsOperations.list_by_agent` changed its parameter `create_time_min`/`create_time_max`/`end_time_min`/`end_time_max`/`is_active` from `positional_or_keyword` to `keyword_only`
+  - Method `JobExecutionsOperations.list_by_job` changed its parameter `create_time_min`/`create_time_max`/`end_time_min`/`end_time_max`/`is_active` from `positional_or_keyword` to `keyword_only`
+  - Method `JobStepExecutionsOperations.list_by_job_execution` changed its parameter `create_time_min`/`create_time_max`/`end_time_min`/`end_time_max`/`is_active` from `positional_or_keyword` to `keyword_only`
+  - Method `JobTargetExecutionsOperations.list_by_job_execution` changed its parameter `create_time_min`/`create_time_max`/`end_time_min`/`end_time_max`/`is_active` from `positional_or_keyword` to `keyword_only`
+  - Method `JobTargetExecutionsOperations.list_by_step` changed its parameter `create_time_min`/`create_time_max`/`end_time_min`/`end_time_max`/`is_active` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionBackupsOperations.list_by_database` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionBackupsOperations.list_by_location` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionBackupsOperations.list_by_resource_group_database` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionBackupsOperations.list_by_resource_group_location` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionBackupsOperations.list_by_resource_group_server` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionBackupsOperations.list_by_server` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionManagedInstanceBackupsOperations.list_by_database` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionManagedInstanceBackupsOperations.list_by_instance` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionManagedInstanceBackupsOperations.list_by_location` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_database` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_instance` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location` changed its parameter `only_latest_per_database`/`database_state` from `positional_or_keyword` to `keyword_only`
+  - Method `MaintenanceWindowOptionsOperations.get` changed its parameter `maintenance_window_options_name` from `positional_or_keyword` to `keyword_only`
+  - Method `MaintenanceWindowsOperations.create_or_update` changed its parameter `maintenance_window_name` from `positional_or_keyword` to `keyword_only`
+  - Method `MaintenanceWindowsOperations.get` changed its parameter `maintenance_window_name` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedDatabaseColumnsOperations.list_by_database` changed its parameter `schema`/`table`/`column`/`order_by`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedDatabaseMoveOperationsOperations.list_by_location` changed its parameter `only_latest_per_database` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedDatabaseQueriesOperations.list_by_query` changed its parameter `start_time`/`end_time`/`interval` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedDatabaseSecurityEventsOperations.list_by_database` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedDatabaseSensitivityLabelsOperations.list_current_by_database` changed its parameter `skip_token`/`count` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedDatabaseSensitivityLabelsOperations.list_recommended_by_database` changed its parameter `skip_token`/`include_disabled_recommendations` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedInstancesOperations.begin_failover` changed its parameter `replica_type` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedInstancesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedInstancesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedInstancesOperations.list_by_instance_pool` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedInstancesOperations.list_by_managed_instance` changed its parameter `number_of_queries`/`databases`/`start_time`/`end_time`/`interval`/`aggregation_function`/`observation_metric` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagedInstancesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `OutboundFirewallRulesOperations.begin_create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `RecoverableDatabasesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableDroppedDatabasesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SensitivityLabelsOperations.list_current_by_database` changed its parameter `skip_token`/`count` from `positional_or_keyword` to `keyword_only`
+  - Method `SensitivityLabelsOperations.list_recommended_by_database` changed its parameter `skip_token`/`include_disabled_recommendations` from `positional_or_keyword` to `keyword_only`
+  - Method `ServerAdvisorsOperations.list_by_server` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ServersOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ServersOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ServersOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SyncGroupsOperations.list_logs` changed its parameter `start_time`/`end_time`/`type`/`continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `UsagesOperations.list_by_instance_pool` changed its parameter `expand_children` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed operation group `ElasticPoolActivitiesOperations`
+  - Deleted or renamed operation group `ElasticPoolDatabaseActivitiesOperations`
+  - Deleted or renamed operation group `ServerCommunicationLinksOperations`
+  - Deleted or renamed operation group `ServiceObjectivesOperations`
+
+### Other Changes
+
+  - Deleted model `OutboundEnvironmentEndpointCollection`/ `SecurityEventCollection`/`ManagedInstanceQueryStatistics`/`SecurityEventsFilterParameters` which actually were not used by SDK users
+
 ## 4.0.0b24 (2025-10-09)
 
 ### Bugs Fixed
