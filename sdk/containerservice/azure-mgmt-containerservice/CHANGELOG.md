@@ -11,7 +11,7 @@
   - Added model `MaintenanceWindowResource`
   - Added model `MaintenanceWindowResourceProperties`
   - Added enum `ResourceProvisioningState`
-  - Added model `MaintenanceWindowsOperations`
+  - Added operation group `MaintenanceWindowsOperations`
 
 ## 41.3.0 (2026-06-03)
 
