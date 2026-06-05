@@ -8,8 +8,8 @@ Requests transport class for WorkloadIdentityCredential with token proxy support
 import ssl
 from typing import Any, Optional
 
-from requests.adapters import HTTPAdapter
-from requests import Session
+from requests.adapters import HTTPAdapter  # pylint: disable=networking-import-outside-azure-core-transport
+from requests import Session  # pylint: disable=networking-import-outside-azure-core-transport
 from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
     RequestsTransport,
 )
