@@ -49,7 +49,6 @@ pytyped = ["py.typed"]
 pyright = false
 verifytypes = true
 black = true
-vnext_copilot_fix = true
 
 [tool.azure-sdk-conda]
 in_bundle = false
