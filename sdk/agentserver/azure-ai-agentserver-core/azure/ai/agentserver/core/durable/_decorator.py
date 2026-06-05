@@ -798,21 +798,24 @@ class Task(Generic[Input, Output]):
             if input_id is not None:
                 payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
 
-            # Hosted task store etag bug workaround: empirically the
-            # hosted store returns 412 even when If-Match matches the
-            # etag the server JUST returned via GET (verified via wire
-            # logs — GET -> Etag: ""abc"" then PATCH If-Match:
-            # ""abc"" -> 412, with no other writer between the two
-            # calls). Issue tracked with the hosted-task-store team.
-            # Until fixed, drop the etag precondition after a few
-            # retries so steering — which the framework contract
-            # requires to be transparent to callers — converges.
-            # Last-write-wins on the steering payload is acceptable
-            # because two concurrent steerers in the same ~100 ms
-            # window is unusual in any realistic UI flow, and the
-            # higher-level invariant ("no silent 500s on transparent
-            # steering") is what users observe.
             etag = getattr(task_info, "etag", None) or None
+            # Pre-deploy workaround for the hosted task store's etag
+            # comparator. The strip-and-wrap-once If-Match format we
+            # send (see ``_client.py:update``) matches what the
+            # working .http tests use, but the server-side fix that
+            # aligns the comparator with this format is queued and
+            # not yet deployed. Live PATCHes against the pre-fix
+            # server return 412 even when If-Match matches the etag
+            # from the immediately-prior GET (verified with
+            # interleaved GET + PATCH wire logs -- same etag, no
+            # other writer between the calls). Once the server fix
+            # deploys, the first attempt succeeds and the fallback
+            # never triggers; this workaround becomes inert.
+            # Until then, keep If-Match for the first 2 retries (so
+            # local-provider concurrent-write protection still works
+            # in tests) then drop it so steering -- which the
+            # framework contract requires to be transparent to
+            # callers -- converges.
             use_etag = etag if _attempt < 2 else None
             try:
                 await manager.provider.update(
@@ -827,12 +830,10 @@ class Task(Generic[Input, Output]):
                     active.context.cancel.set()
                 return
             except ValueError:
-                # Local provider etag conflict — retry
+                # Local provider etag conflict -- retry
                 continue
             except _TransportClassifiedError as exc:
-                # See workaround note above. We keep the retry branch
-                # because the local provider also goes through this
-                # path on legitimate concurrent writes.
+                # See workaround note above.
                 if getattr(exc, "classification", None) == "conflict":
                     continue
                 raise

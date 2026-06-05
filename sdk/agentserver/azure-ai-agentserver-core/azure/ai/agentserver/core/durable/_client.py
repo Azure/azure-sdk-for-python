@@ -511,23 +511,25 @@ class HostedTaskProvider:
 
         headers: dict[str, str] = {"Content-Type": "application/json"}
         if patch.if_match is not None:
-            # The hosted task store returns the etag inside the JSON body
-            # with its outer RFC 7232 quotes already embedded in the
-            # string value (e.g. ``"5e00450b-..."`` — the literal quote
-            # characters are PART of the value). Read that as-is and
-            # send it as the If-Match header verbatim (no extra
-            # wrapping) so the wire format matches the server's
-            # ``Etag`` response header byte-for-byte. The conditional
-            # below tolerates both shapes — etag values that already
-            # carry the outer quotes (hosted store path) and bare
-            # values from the local provider's ad-hoc etag generator
-            # (unit tests) — by adding the quotes only when they
-            # aren't already there.
-            raw = str(patch.if_match)
-            if raw.startswith('"') and raw.endswith('"'):
-                headers["If-Match"] = raw
-            else:
-                headers["If-Match"] = f'"{raw}"'
+            # The hosted task store returns the etag in the JSON body
+            # with literal RFC 7232 outer quotes already embedded in
+            # the string value (e.g. the body field is
+            # ``"etag": "\"5e00450b-...\""`` -- the inner quote
+            # characters are PART of the string value). The server's
+            # etag comparator expects a single set of outer quotes
+            # on the ``If-Match`` header, so we strip any embedded
+            # quotes off the body value and wrap exactly once.
+            # Send shape: ``If-Match: "5e00450b-..."``.
+            #
+            # Without the strip the wire ends up with TWO sets of
+            # outer quotes (the embedded pair from the body + the
+            # framework's wrap) which the server reads as a
+            # precondition failure -> 412 on every CAS write. The
+            # local provider's bare-value etag (no embedded quotes)
+            # passes through unchanged: strip is a no-op and the
+            # wrap adds the single RFC 7232 pair.
+            raw = str(patch.if_match).strip('"')
+            headers["If-Match"] = f'"{raw}"'
 
         url = f"{self._base_url}/{task_id}"
         http_request = HttpRequest(
