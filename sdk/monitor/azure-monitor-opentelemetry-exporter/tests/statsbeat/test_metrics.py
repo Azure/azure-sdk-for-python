@@ -1058,9 +1058,7 @@ class TestExtraObservationCallbacks(unittest.TestCase):
 
     def test_iter_callbacks_for_other_metrics_not_invoked(self):
         called = []
-        StatsbeatManager().add_metric_callback(
-            _REQ_FAILURE_NAME[0], lambda _options: called.append("failure") or []
-        )
+        StatsbeatManager().add_metric_callback(_REQ_FAILURE_NAME[0], lambda _options: called.append("failure") or [])
         list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None))
         self.assertEqual(called, [])
 
@@ -1101,5 +1099,6 @@ class TestExtraObservationCallbacks(unittest.TestCase):
         self.assertEqual(len(observations), 1)
         self.assertEqual(observations[0].value, 1)
         self.assertNotIn(unrelated, observations)
+
 
 # cSpell:enable

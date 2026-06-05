@@ -388,6 +388,13 @@ class StatsbeatManager(metaclass=Singleton):
     ) -> bool:
         """Register an extra observation callback that an SDK/Distro with its own network sdkstats metric can use to
         contribute rows to a built-in statsbeat metric.
+
+        :param metric_name: Name of the built-in statsbeat metric to extend.
+        :type metric_name: str
+        :param callback: OpenTelemetry observable-gauge callback ``(CallbackOptions) -> Iterable[Observation]``.
+        :type callback: Callable[[CallbackOptions], Iterable[Observation]]
+        :returns: ``True`` if newly registered, ``False`` if already registered.
+        :rtype: bool
         """
         with _ADDITIONAL_CALLBACKS_LOCK:
             callbacks = _ADDITIONAL_CALLBACKS.setdefault(metric_name, [])

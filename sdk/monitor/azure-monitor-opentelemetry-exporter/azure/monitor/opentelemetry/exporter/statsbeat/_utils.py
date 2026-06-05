@@ -172,9 +172,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         return None
 
 
-def _iter_extra_observations(
-    metric_name: str, options: CallbackOptions
-) -> Iterator[Observation]:
+def _iter_extra_observations(metric_name: str, options: CallbackOptions) -> Iterator[Observation]:
     """Yield observations contributed via :func:`add_metric_callback`.
 
     Invoked by the built-in ``_StatsbeatMetrics`` callbacks at collection time.
@@ -182,6 +180,13 @@ def _iter_extra_observations(
     mutation during iteration, then releases the lock before invoking user
     callbacks (so they cannot deadlock against the registry). Exceptions raised
     by individual callbacks are caught, logged, and skipped.
+
+    :param metric_name: Name of the built-in statsbeat metric being collected.
+    :type metric_name: str
+    :param options: OpenTelemetry callback options forwarded to each registered callback.
+    :type options: ~opentelemetry.metrics.CallbackOptions
+    :returns: Iterator over observations contributed by registered callbacks.
+    :rtype: Iterator[~opentelemetry.metrics.Observation]
     """
 
     with _ADDITIONAL_CALLBACKS_LOCK:
@@ -190,8 +195,7 @@ def _iter_extra_observations(
     iter_logger = logging.getLogger(__name__)
     for cb in callbacks:
         try:
-            for observation in cb(options):
-                yield observation
+            yield from cb(options)
         except Exception:  # pylint: disable=broad-except
             iter_logger.debug(
                 "Extra statsbeat callback %r for %r raised; skipping.",
