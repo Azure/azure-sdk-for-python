@@ -15,6 +15,15 @@ and always go through the load-balancer.
 The cache is invalidated on 5xx responses or transport errors so that a
 failover is respected on the next write.
 
+Redirect destination policy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Redirects are only followed when the target host is the original request host
+or one of its subdomains (e.g. an individual ledger node). Redirects to sibling
+ledgers, parent domains, unrelated hosts, or look-alike suffix domains are
+rejected and never followed or cached. This prevents a misconfigured or
+malicious load-balancer from redirecting requests (and their sensitive headers)
+to an unintended destination.
+
 Thread-safety
 ~~~~~~~~~~~~~
 * Reads of the cached value are lock-free (CPython GIL guarantees atomic
@@ -94,6 +103,29 @@ def _is_redirect(status_code: int) -> bool:
     return status_code in _REDIRECT_STATUS_CODES
 
 
+def _is_allowed_redirect_target(original_url: str, target_url: str) -> bool:
+    """Return whether *target_url* is an allowed redirect destination.
+
+    A redirect is permitted only when the target host is identical to the
+    original request host or is a subdomain of it.  All other targets — sibling
+    hosts, parent domains, unrelated hosts, and look-alike suffix domains — are
+    rejected.  Comparison is case-insensitive and ignores any port.
+
+    :param str original_url: The URL of the original request.
+    :param str target_url: The redirect target URL (e.g. from a ``Location`` header).
+    :return: True if the redirect target is permitted, otherwise False.
+    :rtype: bool
+    """
+    original_host = (urlparse(original_url).hostname or "").lower()
+    target_host = (urlparse(target_url).hostname or "").lower()
+
+    # Fail safe: if either host cannot be determined, do not follow the redirect.
+    if not original_host or not target_host:
+        return False
+
+    return target_host == original_host or target_host.endswith("." + original_host)
+
+
 class RedirectCachingPolicy(HTTPPolicy):
     """Synchronous redirect policy with write-URL caching.
 
@@ -121,6 +153,10 @@ class RedirectCachingPolicy(HTTPPolicy):
     def send(self, request: PipelineRequest) -> PipelineResponse:
         method = request.http_request.method.upper()
         is_write = method in _WRITE_METHODS
+
+        # Capture the pristine request host (before any cache rewrite) so that
+        # redirect targets are validated against the original ledger endpoint.
+        original_url = request.http_request.url
 
         # For writes, rewrite the URL to the cached primary (if warm).
         if is_write:
@@ -155,6 +191,15 @@ class RedirectCachingPolicy(HTTPPolicy):
         ):
             redirect_url = response.http_response.headers.get("Location")
             if not redirect_url:
+                break
+
+            # Enforce the redirect destination policy: only the original host or
+            # one of its subdomains may be followed.
+            if not _is_allowed_redirect_target(original_url, redirect_url):
+                _LOGGER.warning(
+                    "Refusing to follow redirect to disallowed target: %s",
+                    redirect_url,
+                )
                 break
 
             # Only cache for write methods.
@@ -205,6 +250,10 @@ class AsyncRedirectCachingPolicy(AsyncHTTPPolicy):
         method = request.http_request.method.upper()
         is_write = method in _WRITE_METHODS
 
+        # Capture the pristine request host (before any cache rewrite) so that
+        # redirect targets are validated against the original ledger endpoint.
+        original_url = request.http_request.url
+
         if is_write:
             cached = self._cache.get()
             if cached:
@@ -235,6 +284,15 @@ class AsyncRedirectCachingPolicy(AsyncHTTPPolicy):
         ):
             redirect_url = response.http_response.headers.get("Location")
             if not redirect_url:
+                break
+
+            # Enforce the redirect destination policy: only the original host or
+            # one of its subdomains may be followed.
+            if not _is_allowed_redirect_target(original_url, redirect_url):
+                _LOGGER.warning(
+                    "Refusing to follow redirect to disallowed target: %s",
+                    redirect_url,
+                )
                 break
 
             if is_write:
