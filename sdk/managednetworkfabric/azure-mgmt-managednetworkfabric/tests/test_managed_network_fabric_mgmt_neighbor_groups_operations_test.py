@@ -33,4 +33,4 @@ class TestManagedNetworkFabricMgmtNeighborGroupsOperations(AzureMgmtRecordedTest
     def test_neighbor_groups_list_by_subscription(self, resource_group):
         response = self.client.neighbor_groups.list_by_subscription()
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0

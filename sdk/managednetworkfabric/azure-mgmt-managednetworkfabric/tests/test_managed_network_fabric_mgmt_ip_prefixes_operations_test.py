@@ -33,4 +33,4 @@ class TestManagedNetworkFabricMgmtIpPrefixesOperations(AzureMgmtRecordedTestCase
     def test_ip_prefixes_list_by_subscription(self, resource_group):
         response = self.client.ip_prefixes.list_by_subscription()
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0

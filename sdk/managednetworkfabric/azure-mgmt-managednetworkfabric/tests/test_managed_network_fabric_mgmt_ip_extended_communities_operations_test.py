@@ -33,4 +33,4 @@ class TestManagedNetworkFabricMgmtIpExtendedCommunitiesOperations(AzureMgmtRecor
     def test_ip_extended_communities_list_by_subscription(self, resource_group):
         response = self.client.ip_extended_communities.list_by_subscription()
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0

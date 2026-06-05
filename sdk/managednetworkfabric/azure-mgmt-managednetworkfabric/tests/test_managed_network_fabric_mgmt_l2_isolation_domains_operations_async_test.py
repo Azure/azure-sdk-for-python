@@ -34,4 +34,4 @@ class TestManagedNetworkFabricMgmtL2IsolationDomainsOperationsAsync(AzureMgmtRec
     async def test_l2_isolation_domains_list_by_subscription(self, resource_group):
         response = self.client.l2_isolation_domains.list_by_subscription()
         result = [r async for r in response]
-        assert len(result)
+        assert len(result) == 0

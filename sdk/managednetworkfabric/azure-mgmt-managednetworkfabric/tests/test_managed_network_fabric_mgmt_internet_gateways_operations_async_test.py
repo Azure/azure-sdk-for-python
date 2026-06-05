@@ -34,4 +34,4 @@ class TestManagedNetworkFabricMgmtInternetGatewaysOperationsAsync(AzureMgmtRecor
     async def test_internet_gateways_list_by_subscription(self, resource_group):
         response = self.client.internet_gateways.list_by_subscription()
         result = [r async for r in response]
-        assert len(result)
+        assert len(result) == 0

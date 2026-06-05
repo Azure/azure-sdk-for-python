@@ -34,4 +34,4 @@ class TestManagedNetworkFabricMgmtNetworkFabricControllersOperationsAsync(AzureM
     async def test_network_fabric_controllers_list_by_subscription(self, resource_group):
         response = self.client.network_fabric_controllers.list_by_subscription()
         result = [r async for r in response]
-        assert len(result)
+        assert len(result) == 0

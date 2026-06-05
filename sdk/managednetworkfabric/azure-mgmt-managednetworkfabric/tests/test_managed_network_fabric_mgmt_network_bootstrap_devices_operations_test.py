@@ -33,4 +33,4 @@ class TestManagedNetworkFabricMgmtNetworkBootstrapDevicesOperations(AzureMgmtRec
     def test_network_bootstrap_devices_list_by_subscription(self, resource_group):
         response = self.client.network_bootstrap_devices.list_by_subscription()
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0

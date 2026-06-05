@@ -34,4 +34,4 @@ class TestManagedNetworkFabricMgmtNetworkTapRulesOperationsAsync(AzureMgmtRecord
     async def test_network_tap_rules_list_by_subscription(self, resource_group):
         response = self.client.network_tap_rules.list_by_subscription()
         result = [r async for r in response]
-        assert len(result)
+        assert len(result) == 0

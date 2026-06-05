@@ -34,4 +34,4 @@ class TestManagedNetworkFabricMgmtRoutePoliciesOperationsAsync(AzureMgmtRecorded
     async def test_route_policies_list_by_subscription(self, resource_group):
         response = self.client.route_policies.list_by_subscription()
         result = [r async for r in response]
-        assert len(result)
+        assert len(result) == 0

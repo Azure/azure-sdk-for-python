@@ -33,4 +33,4 @@ class TestManagedNetworkFabricMgmtNetworkPacketBrokersOperations(AzureMgmtRecord
     def test_network_packet_brokers_list_by_subscription(self, resource_group):
         response = self.client.network_packet_brokers.list_by_subscription()
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0

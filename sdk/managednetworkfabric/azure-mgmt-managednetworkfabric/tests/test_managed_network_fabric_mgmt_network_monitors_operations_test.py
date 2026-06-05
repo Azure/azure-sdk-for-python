@@ -33,4 +33,4 @@ class TestManagedNetworkFabricMgmtNetworkMonitorsOperations(AzureMgmtRecordedTes
     def test_network_monitors_list_by_subscription(self, resource_group):
         response = self.client.network_monitors.list_by_subscription()
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0

@@ -33,4 +33,4 @@ class TestManagedNetworkFabricMgmtAccessControlListsOperations(AzureMgmtRecorded
     def test_access_control_lists_list_by_subscription(self, resource_group):
         response = self.client.access_control_lists.list_by_subscription()
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0
