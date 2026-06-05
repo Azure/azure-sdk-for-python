@@ -114,9 +114,9 @@ def _write_pyproject(tmp_path, vnext_copilot_fix=None):
 class TestIsAutoFixEligible:
     """Tests for is_auto_fix_eligible."""
 
-    def test_eligible_by_default(self, tmp_path):
+    def test_not_eligible_by_default(self, tmp_path):
         pkg = _write_pyproject(tmp_path)
-        assert is_auto_fix_eligible(pkg) is True
+        assert is_auto_fix_eligible(pkg) is False
 
     def test_eligible_when_true(self, tmp_path):
         pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
@@ -338,7 +338,7 @@ class TestIsCopilotAlreadyAssigned:
 class TestTryAutoFix:
 
     def test_eligible_no_duplicate_assigns(self, tmp_path):
-        pkg = _write_pyproject(tmp_path)
+        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
@@ -357,7 +357,7 @@ class TestTryAutoFix:
         g._Github__requester.graphql_query.assert_called_once()
 
     def test_eligible_with_duplicate_pr_skips(self, tmp_path):
-        pkg = _write_pyproject(tmp_path)
+        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
         repo = MagicMock()
         repo.get_pulls.return_value = [
             _make_pr(body="Fixes #1"),
@@ -391,7 +391,7 @@ class TestTryAutoFix:
     def test_weekly_retry_reassigns_when_no_pr(self, tmp_path):
         """Simulates a weekly re-run: issue already has copilot-auto-fix label
         but no matching PR exists, so Copilot should be reassigned."""
-        pkg = _write_pyproject(tmp_path)
+        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX])
@@ -402,7 +402,7 @@ class TestTryAutoFix:
         g._Github__requester.graphql_named_mutation.assert_called_once()
 
     def test_assignment_failure_does_not_crash(self, tmp_path):
-        pkg = _write_pyproject(tmp_path)
+        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
@@ -414,7 +414,7 @@ class TestTryAutoFix:
         issue.add_to_labels.assert_not_called()
 
     def test_missing_copilot_node_id_skips_assignment(self, tmp_path):
-        pkg = _write_pyproject(tmp_path)
+        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
