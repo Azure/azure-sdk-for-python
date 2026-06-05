@@ -421,6 +421,11 @@
   - Added operation group `NetworkBootstrapDevicesOperations`
   - Added operation group `NetworkBootstrapInterfacesOperations`
   - Added operation group `NetworkMonitorsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ConnectedSubnetRoutePolicy` deleted or renamed its instance variable `export_route_policy_id`
   - Model `AccessControlList` moved instance variable `annotation`, `configuration_type`, `acls_url`, `match_configurations`, `dynamic_match_configurations`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `AccessControlListProperties`
   - Model `AccessControlListPatch` moved instance variable `configuration_type`, `acls_url`, `match_configurations`, `dynamic_match_configurations` and `annotation` under property `properties` whose type is `AccessControlListPatchProperties`
   - Model `ExternalNetwork` moved instance variable `annotation`, `import_route_policy_id`, `export_route_policy_id`, `import_route_policy`, `export_route_policy`, `network_to_network_interconnect_id`, `peering_option`, `option_b_properties`, `option_a_properties`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `ExternalNetworkProperties`
@@ -451,11 +456,6 @@
   - Model `NetworkTapRulePatch` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations` and `dynamic_match_configurations` under property `properties` whose type is `NetworkTapRulePatchProperties`
   - Model `RoutePolicy` moved instance variable `annotation`, `statements`, `network_fabric_id`, `address_family_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `RoutePolicyProperties`
   - Model `RoutePolicyPatch` moved instance variable `statements` under property `properties` whose type is `RoutePolicyPatchableProperties`
-
-### Breaking Changes
-
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Model `ConnectedSubnetRoutePolicy` deleted or renamed its instance variable `export_route_policy_id`
   - Model `ExternalNetworkPatch` deleted or renamed its instance variable `annotation`
   - Model `ExternalNetworkPatch` deleted or renamed its instance variable `import_route_policy_id`
   - Model `ExternalNetworkPatch` deleted or renamed its instance variable `export_route_policy_id`
@@ -522,6 +522,10 @@
   - Deleted or renamed model `TerminalServerPatchableProperties`
   - Deleted or renamed model `VpnConfigurationPatchablePropertiesOptionAProperties`
   - Deleted or renamed model `VpnConfigurationPropertiesOptionAProperties`
+
+### Other Changes
+
+  - Deleted model `ExternalNetworksList`/`InternalNetworksList`/`NetworkInterfacesList`/`NetworkToNetworkInterconnectsList` which actually were not used by SDK users
   - Method `AccessControlListsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `ExternalNetworksOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `ExternalNetworksOperations.begin_update_static_route_bfd_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
@@ -576,11 +580,6 @@
   - Method `NetworkToNetworkInterconnectsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
   - Method `NetworkToNetworkInterconnectsOperations.begin_update_npb_static_route_bfd_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
   - Method `RoutePoliciesOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
-
-
-### Other Changes
-
-  - Deleted model `ExternalNetworksList`/`InternalNetworksList`/`NetworkInterfacesList`/`NetworkToNetworkInterconnectsList` which actually were not used by SDK users
 
 ## 1.0.0 (2023-07-19)
 
