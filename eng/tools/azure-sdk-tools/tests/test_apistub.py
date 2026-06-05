@@ -91,7 +91,7 @@ class TestRunOutputDirectory:
     @patch("azpysdk.apistub.create_package_and_install")
     @patch("azpysdk.apistub.install_into_venv")
     @patch("azpysdk.apistub.set_envvar_defaults")
-    def test_dest_dir_creates_package_subfolder(
+    def test_dest_dir_uses_destination_directory(
         self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
     ):
         """When --dest-dir is given, output should go directly to <dest_dir>/."""
