@@ -1,9 +1,8 @@
 # Release History
 
-## 1.0.0b53 (2026-06-03)
+## 1.0.0b53 (2026-06-08)
 
 ### Features Added
-
 - Read for global feature sdkstats bitmap and add a 15 second delay timer
   ([#47031](https://github.com/Azure/azure-sdk-for-python/pull/47031))
 - Use `APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE` environment variable in `_is_attach_enabled` to
@@ -19,6 +18,10 @@
   ([#46966](https://github.com/Azure/azure-sdk-for-python/pull/46966))
 - Fix retry amplification storm in Azure Monitor OpenTelemetry exporter
   ([#47002](https://github.com/Azure/azure-sdk-for-python/pull/47002))
+
+### Other Changes
+- Track live metrics disabling in feature SDKstats
+  ([#47297](https://github.com/Azure/azure-sdk-for-python/pull/47297))
 
 ## 1.0.0b52 (2026-05-12)
 
