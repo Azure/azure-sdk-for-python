@@ -78,6 +78,9 @@ def find_existing_fix_prs(
 ) -> list:
     """Search for open PRs that likely address the same vnext failure.
 
+    A PR is considered a match only when it explicitly references the issue
+    number (e.g. ``#43899`` or a full ``/issues/43899`` URL).
+
     Returns a (possibly empty) list of matching PR objects.
     """
     matches = []
@@ -86,15 +89,9 @@ def find_existing_fix_prs(
         for pr in open_prs:
             body = pr.body or ""
             title = pr.title or ""
-            search_text = f"{title} {body}".lower()
 
-            # 1. PR explicitly references the issue number
-            has_issue_ref = _references_issue(f"{title} {body}", issue_number)
-
-            # 2. PR mentions package + check type
-            has_pkg_and_check = package_name.lower() in search_text and check_type.lower() in search_text
-
-            if has_issue_ref or has_pkg_and_check:
+            # PR explicitly references the issue number
+            if _references_issue(f"{title} {body}", issue_number):
                 matches.append(pr)
     except GithubException as e:
         logging.warning(f"Failed to search PRs for duplicate detection: {e}")

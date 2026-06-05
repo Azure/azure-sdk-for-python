@@ -147,13 +147,19 @@ class TestFindExistingFixPrs:
         result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
         assert len(result) == 1
 
-    def test_match_by_package_and_check(self):
+    def test_package_and_check_mention_alone_does_not_match(self):
+        # Regression: an unrelated PR that merely mentions the package path and
+        # the word "pylint" (e.g. in its validation command list) must NOT be
+        # treated as a duplicate fix PR. See false positive on issue #43899.
         repo = MagicMock()
         repo.get_pulls.return_value = [
-            _make_pr(title="Fix azure-ai-test pylint errors"),
+            _make_pr(
+                title="Validate built-in transport kwargs",
+                body="Validation: python eng/tox/run_pylint.py for sdk/identity/azure-ai-test",
+            ),
         ]
         result = find_existing_fix_prs(repo, 99, "azure-ai-test", "pylint")
-        assert len(result) == 1
+        assert len(result) == 0
 
     def test_no_match(self):
         repo = MagicMock()
