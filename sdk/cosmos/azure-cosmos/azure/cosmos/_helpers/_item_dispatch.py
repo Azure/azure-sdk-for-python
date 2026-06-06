@@ -5,16 +5,10 @@
 # -------------------------------------------------------------------------
 """Pure helpers shared by the sync and async item-helper classes.
 
-The sync ``ItemHelper`` and async ``AsyncItemHelper`` differ only in
-where they say ``await``: the dispatch decision, the option-dict
-build, and the kwarg-stamping for the user-agent policy are all the
-same logic. Putting that logic here means the two classes stay short
-and the dispatch / option-build behaviour cannot drift between sync
-and async by accident.
-
-Nothing in this module performs I/O or awaits anything; both helpers
-operate on plain dicts and return values the caller then routes
-through the appropriate sync or async I/O path.
+The sync ``ItemHelper`` and async ``AsyncItemHelper`` only differ in
+where they ``await``; the dispatch decision, option-dict build, and
+kwarg-stamping logic are identical. This module centralises them so
+the two helpers cannot drift. Nothing here performs I/O.
 """
 from __future__ import annotations
 
@@ -41,21 +35,14 @@ def merge_create_item_explicit_kwargs(
     availability_strategy: Any = None,
     response_hook: Any = None,
 ) -> None:
-    """Move every non-None explicit ``create_item`` kwarg into ``kwargs``.
+    """Copy every non-None explicit ``create_item`` kwarg into ``kwargs``.
 
-    The two ``Container.create_item`` methods (sync and async) each
-    used to inline ``if X is not None: kwargs['X'] = X`` for ten
-    optional kwargs. This helper folds that boilerplate into one
-    place so the two methods stay short and the option-name mapping
-    cannot drift between sync and async.
-
-    The async sibling does not expose ``response_hook`` as an explicit
-    parameter (it rides through ``**kwargs`` directly), so the async
-    caller simply leaves the default ``response_hook=None``.
-
+    Folds the ``if X is not None: kwargs['X'] = X`` boilerplate that
+    the two ``Container.create_item`` methods used to inline. Both the
+    sync and async ``create_item`` declare ``response_hook`` as an
+    explicit keyword-only parameter and forward it here.
     ``availability_strategy`` is passed through the hedging-strategy
-    validator here because both call sites used to do that inline and
-    the validator is pure.
+    validator.
     """
     if pre_trigger_include is not None:
         kwargs['pre_trigger_include'] = pre_trigger_include
@@ -80,30 +67,16 @@ def merge_create_item_explicit_kwargs(
 
 
 def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
-    """Return the backend the helper should hand operations to.
+    """Return the wired Rust backend, or ``None`` for the legacy path.
 
-    The decision was made once when the client was constructed and is
-    never reconsidered per call:
-
-    * If a Rust backend is wired on this connection, use it.
-    * Otherwise return ``None`` — the helper treats that as the signal
-      to fall through to the legacy ``client_connection.CreateItem``
-      path. There is no "core-python backend" class wrapping the
-      ``None``; the absence of a Rust backend is the absence of any
-      backend, by design (see ``_backend/factory.py``).
-
-    The Rust backend's per-feature support level is a property of the
-    backend itself, not of the call. If a kwarg the Rust backend does
-    not honor reaches the wire, that is either a known limitation or
-    a bug to fix in the Rust path; the dispatch site does not silently
-    re-route to a different backend.
+    A ``None`` return is the signal to fall through to the legacy
+    ``client_connection.CreateItem`` path; there is no "core-python
+    backend" class. The decision is made once at client construction
+    and never reconsidered per call.
 
     :param client_connection: The connection that owns the
-        ``_rust_backend`` attribute. The attribute may be missing on a
-        connection built outside ``CosmosClient`` (some unit tests);
-        the function tolerates that and returns ``None`` so the caller
-        falls through to the legacy code path.
-    :returns: The Rust backend instance when wired, otherwise ``None``.
+        ``_rust_backend`` attribute. Missing attribute is tolerated.
+    :returns: The Rust backend instance, or ``None``.
     """
     return getattr(client_connection, "_rust_backend", None)
 
@@ -117,33 +90,24 @@ def build_create_item_request_options(
 ) -> Dict[str, Any]:
     """Build the request-options dict the legacy ``CreateItem`` consumes.
 
-    Pure function. Same behaviour as the inline option-build that used
-    to live in ``Container.create_item``: the legacy
-    ``build_options(kwargs)`` produces the base dict, then the three
-    explicit container-method kwargs are stamped on top.
+    Pure function. ``populate_query_metrics`` is only meaningful on the
+    sync container method (the async sibling never exposed it); the
+    async caller passes ``None`` and the warning + option-key write are
+    skipped.
 
-    The ``populate_query_metrics`` parameter is only meaningful on
-    the sync container method (the async sibling never exposed it).
-    Pass ``None`` from the async caller; the warning + option-key
-    write are skipped in that case.
-
-    :param kwargs: The per-call kwargs dict. Forwarded to
-        ``build_options``; not mutated by this function.
+    :param kwargs: Per-call kwargs forwarded to ``build_options``;
+        not mutated by this function.
     :type kwargs: Dict[str, Any]
-    :param enable_automatic_id_generation: From the container's
-        explicit kwarg. The negation lands in
+    :param enable_automatic_id_generation: Negated into
         ``options["disableAutomaticIdGeneration"]``.
     :type enable_automatic_id_generation: bool
-    :param indexing_directive: From the container's explicit kwarg.
-        Written to ``options["indexingDirective"]`` when supplied.
+    :param indexing_directive: Written to ``options["indexingDirective"]``
+        when supplied.
     :type indexing_directive: Optional[int]
-    :param populate_query_metrics: From the sync container's explicit
-        kwarg. When truthy, emits the existing deprecation warning
-        and writes the option key. ``None`` (the async default)
-        skips both.
+    :param populate_query_metrics: When truthy, emits the deprecation
+        warning and writes ``options["populateQueryMetrics"]``.
     :type populate_query_metrics: Optional[bool]
-    :returns: The request-options dict, ready to be handed to the
-        cache-populate callback and then to ``CreateItem``.
+    :returns: The request-options dict.
     :rtype: Dict[str, Any]
     """
     request_options = build_options(kwargs)

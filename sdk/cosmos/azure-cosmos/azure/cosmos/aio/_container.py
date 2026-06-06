@@ -43,9 +43,8 @@ from .._base import (_build_properties_cache, _deserialize_throughput, _replace_
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
-from .._helpers._item_dispatch import merge_create_item_explicit_kwargs
+from .._helpers._item_dispatch import merge_create_item_explicit_kwargs, pick_backend
 from ._helpers.item_helper import AsyncItemHelper
-from .._helpers._item_dispatch import pick_backend
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -233,6 +232,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
@@ -287,10 +287,9 @@ class ContainerProxy:
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        # Move the explicit-keyword shortcuts into the kwargs dict so
-        # the AsyncItemHelper sees a single uniform source of truth.
-        # Shared with the sync sibling via ``_item_dispatch`` so the
-        # option-name mapping cannot drift between the two.
+        # Move the explicit kwargs into the kwargs dict so the
+        # AsyncItemHelper sees a single source of truth. Shared with
+        # the sync sibling via ``_item_dispatch`` to prevent drift.
         merge_create_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -302,15 +301,15 @@ class ContainerProxy:
             retry_write=retry_write,
             throughput_bucket=throughput_bucket,
             availability_strategy=availability_strategy,
+            response_hook=response_hook,
         )
 
-        # Hand off to the async per-call item helper. It owns the
-        # backend dispatch, request-options build, container-rid
-        # stamp, and the legacy ``CreateItem`` call. The
-        # ``ensure_container_cached`` callback delegates the
-        # cache-populate step back to this proxy so per-call options
-        # like ``excluded_locations`` and timeouts flow into the cache
-        # refresh exactly the way the legacy code path did.
+        # AsyncItemHelper owns backend dispatch, options build, rid
+        # stamp, and the legacy CreateItem fall-through. The
+        # ``ensure_container_cached`` callback routes the
+        # cache-populate step back through this proxy so per-call
+        # options (``excluded_locations``, timeouts) reach the cache
+        # refresh the same way they did on the legacy path.
         return await AsyncItemHelper(
             pick_backend(self.client_connection),
             self.client_connection,
@@ -1602,6 +1601,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -1665,6 +1665,8 @@ class ContainerProxy:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
+        if response_hook is not None:
+            kwargs['response_hook'] = response_hook
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)

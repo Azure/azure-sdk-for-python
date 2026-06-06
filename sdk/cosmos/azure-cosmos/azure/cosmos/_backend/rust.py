@@ -6,16 +6,13 @@
 """Sync Rust backend.
 
 This is the only Python module allowed to import the compiled PyO3
-module ``azure.cosmos._rust``. The import-guard test
-(``tests/test_backend_wiring_unit.py``) enforces that rule by walking
-every ``.py`` file under ``azure/cosmos/`` and failing the build if any
-other module reaches across the abstraction.
+module ``azure.cosmos._rust``; an import-guard unit test enforces that
+rule across the package.
 
-The compiled PyO3 module may not be present in every checkout (a fresh
-clone will not have run ``maturin develop`` yet). The import below is
-guarded with ``try / except ImportError`` so this file can still be
-loaded; ``RustBackend.create_item`` will then raise
-``NotImplementedError`` for any caller that asks for the Rust backend.
+The PyO3 module may not be present in every checkout (a fresh clone has
+not run ``maturin develop`` yet). The import is guarded with
+``try / except ImportError`` so this file still loads; operations then
+raise ``NotImplementedError`` with a message pointing at the build step.
 """
 from __future__ import annotations
 
@@ -34,8 +31,7 @@ from .constants import BACKEND_NAME_RUST
 
 _LOGGER = logging.getLogger(__name__)
 
-# Module-level reference set once at import time, under the GIL. Read-only
-# afterwards, so it is safe to share across threads and across clients.
+# Set once at import time under the GIL; read-only afterwards.
 _rust_module: Optional[Any] = None
 try:
     from azure.cosmos import _rust  # type: ignore[attr-defined]
@@ -50,21 +46,12 @@ except ImportError:
 class RustBackend(CosmosBackend):
     """Routes Cosmos operations through the in-tree Rust driver.
 
-    Construction takes the account endpoint and master key. On the
-    first operation the backend calls into the binding's
-    ``init_client`` to set up the per-process Tokio runtime + driver,
-    and stashes the handle the binding hands back. Subsequent calls
-    reuse the cached driver.
+    Construction takes the account endpoint and master key. The
+    binding's ``init_client`` is called lazily on the first operation
+    (one driver + Tokio runtime per process, cached on the instance).
 
-    The ``execute`` method dispatches on ``prepared.op`` and forwards
-    to the matching method on the binding. Today only
-    ``OP_CREATE_ITEM`` is supported; other operations land as the
-    binding gains support.
-
-    When the compiled module is *absent* (e.g. fresh clone before
-    ``maturin develop`` ran), every operation raises
-    ``NotImplementedError`` with a clear message pointing the developer
-    at the build step.
+    ``execute`` dispatches on ``prepared.op``. When the compiled module
+    is absent every operation raises ``NotImplementedError``.
     """
 
     name = BACKEND_NAME_RUST
@@ -88,7 +75,7 @@ class RustBackend(CosmosBackend):
 
     def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
         if prepared is None:
-            # Transitional contract: caller still owns request prep.
+            # Caller still owns request prep; nothing to do here.
             return None
         if _rust_module is None:
             raise NotImplementedError(

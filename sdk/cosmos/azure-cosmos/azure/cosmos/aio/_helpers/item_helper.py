@@ -5,15 +5,10 @@
 # -------------------------------------------------------------------------
 """Async sibling of ``azure.cosmos._helpers.item_helper.ItemHelper``.
 
-The behaviour, parameter contract, dispatch rules, and option-build
-sequence are byte-identical to the sync sibling. The option-build is
-imported from the shared ``_item_dispatch`` module so the two siblings
-cannot drift; what remains here is the per-call I/O wired up with
-``await``.
-
-Keeping the two as siblings rather than one mixed class follows the
-pattern the rest of the SDK uses (``Container`` vs ``aio.Container``,
-``CosmosClient`` vs ``aio.CosmosClient``).
+Same behaviour, parameter contract, dispatch rules, and option-build
+sequence as the sync sibling. The option-build is imported from the
+shared ``_item_dispatch`` module so the two cannot drift; what remains
+here is the per-call I/O wired with ``await``.
 """
 from __future__ import annotations
 

@@ -6,16 +6,13 @@
 """Async Rust backend.
 
 This is the only async-side module allowed to import the compiled PyO3
-module ``azure.cosmos._rust``. The import-guard test
-(``tests/test_backend_wiring_unit.py``) enforces that rule by walking
-every ``.py`` file under ``azure/cosmos/`` and failing the build if any
-other module imports the compiled module's name.
+module ``azure.cosmos._rust``; an import-guard unit test enforces that
+rule across the package.
 
-The compiled PyO3 module may not be present in every checkout (a fresh
-clone will not have run ``maturin develop`` yet). The import below is
-guarded with ``try / except ImportError`` so this file can still be
-loaded; ``AsyncRustBackend.create_item`` will then raise
-``NotImplementedError`` for any caller that asks for the Rust backend.
+The PyO3 module may not be present in every checkout. The import is
+guarded with ``try / except ImportError`` so this file still loads;
+operations then raise ``NotImplementedError`` pointing at the build
+step.
 """
 from __future__ import annotations
 
@@ -33,8 +30,7 @@ from .base import AsyncCosmosBackend, BackendResponse, PreparedRequest
 
 _LOGGER = logging.getLogger(__name__)
 
-# Module-level reference set once at import time, under the GIL. Read-only
-# afterwards, so it is safe to share across event loops and across clients.
+# Set once at import time under the GIL; read-only afterwards.
 _rust_module: Optional[Any] = None
 try:
     from azure.cosmos import _rust  # type: ignore[attr-defined]
@@ -49,19 +45,14 @@ except ImportError:
 class AsyncRustBackend(AsyncCosmosBackend):
     """Routes async Cosmos operations through the in-tree Rust driver.
 
-    The binding is synchronous from Python's perspective — its calls
-    block until the driver finishes, even though internally they run
-    on a Tokio runtime. To keep that blocking off the asyncio event
-    loop, every operation runs in the default thread-pool executor
-    via ``loop.run_in_executor``.
+    The binding is synchronous from Python's perspective (it blocks
+    until the driver finishes, even though internally it runs on a
+    Tokio runtime). To keep that blocking off the asyncio event loop,
+    every operation runs via ``loop.run_in_executor`` on the default
+    thread-pool.
 
-    The ``execute`` method dispatches on ``prepared.op``. Today only
-    ``OP_CREATE_ITEM`` is supported.
-
-    When the compiled module is *absent* (e.g. fresh clone before
-    ``maturin develop`` ran), every operation raises
-    ``NotImplementedError`` with a clear message pointing the developer
-    at the build step.
+    ``execute`` dispatches on ``prepared.op``. When the compiled module
+    is absent, operations raise ``NotImplementedError``.
     """
 
     name = BACKEND_NAME_RUST

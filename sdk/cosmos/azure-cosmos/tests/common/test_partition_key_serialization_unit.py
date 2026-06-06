@@ -38,6 +38,7 @@ Pure in-process; runs in milliseconds.
 """
 import json
 import unittest
+from collections.abc import Sequence
 
 from azure.cosmos._helpers._pk_wire import serialize_partition_key_to_wire
 from azure.cosmos.partition_key import (
@@ -209,7 +210,6 @@ class TestParityWithExistingHeaderBuilder(unittest.TestCase):
             return json.dumps([{}], separators=(",", ":"))
         if isinstance(pk_value, _Empty):
             return json.dumps([], separators=(",", ":"))
-        from collections.abc import Sequence
         is_sequence_not_string = (
             isinstance(pk_value, Sequence) and not isinstance(pk_value, str)
         )

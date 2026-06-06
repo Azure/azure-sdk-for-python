@@ -36,6 +36,7 @@ The function is pure modulo the one documented side effect (writing
 to ``client_connection.last_response_headers``). Both branches —
 with and without that side effect — are covered.
 """
+import json
 import unittest
 from typing import Any, cast
 
@@ -185,9 +186,8 @@ class TestSuccessWithEmptyBody(unittest.TestCase):
 
     def test_2xx_with_malformed_body_raises_jsondecodeerror(self):
         """2xx + non-JSON body → raises ``JSONDecodeError`` (legacy parity); the hook is not invoked."""
-        import json as _json
         captured = []
-        with self.assertRaises(_json.JSONDecodeError):
+        with self.assertRaises(json.JSONDecodeError):
             parse_backend_response(
                 _make_response(status_code=200, body=b"not-valid-json{"),
                 response_hook=lambda headers, parsed: captured.append(parsed),

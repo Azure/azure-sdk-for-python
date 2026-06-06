@@ -218,13 +218,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
-        # Pick which backend this client will hold. The factory returns
-        # either an AsyncRustBackend (when the caller selected ``rust``)
-        # or ``None`` (the default ``core-python`` selection — no class
-        # wraps it; ``None`` means "fall through to the legacy
-        # ``client_connection.CreateItem`` path"). Container methods
-        # read ``client_connection._rust_backend`` and dispatch
-        # accordingly.
+        # Pick the backend for this client (precedence: ``_backend=``
+        # kwarg > COSMOS_BACKEND env var > ``core-python``). The factory
+        # returns an ``AsyncRustBackend`` for the ``rust`` selection, or
+        # ``None`` for ``core-python`` — ``None`` is the signal that
+        # container methods should use the legacy ``CreateItem`` path.
         backend_choice = kwargs.pop("_backend", None)
         chosen = make_async_backend(backend_choice, url=url, credential=credential)
         self._rust_backend: Optional[AsyncRustBackend] = (
@@ -247,8 +245,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             **kwargs
         )
         # Expose the chosen backend on client_connection so async
-        # Container methods (which only see client_connection) can
-        # dispatch on it.
+        # Container methods can dispatch on it.
         self.client_connection._rust_backend = self._rust_backend  # pylint: disable=protected-access
 
     def __repr__(self) -> str:

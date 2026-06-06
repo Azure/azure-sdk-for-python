@@ -5,35 +5,23 @@
 # -------------------------------------------------------------------------
 """Factory that picks which backend a single client will use.
 
-A ``CosmosClient`` calls ``make_backend(...)`` exactly once at
-construction time and stores the returned object. Every subsequent
-``create_item`` call on every container created by that client dispatches
-through the same instance.
+``CosmosClient`` calls ``make_backend(...)`` exactly once at
+construction time and stores the returned object.
 
 Selection precedence (highest wins):
 
-  1. The value the caller passed to the client constructor as the
-     private kwarg ``_backend=``.
-  2. The value of the ``COSMOS_BACKEND`` environment variable.
-  3. The default, ``core-python``.
+1. ``_backend=`` kwarg passed to the client constructor.
+2. ``COSMOS_BACKEND`` environment variable.
+3. Default: ``core-python``.
 
-If a value comes in that is not ``"core-python"`` or ``"rust"``, the
-factory raises ``ValueError`` immediately at client construction time.
-Failing loud is intentional — a typo'd value silently falling back to
-the default would mask configuration drift in production.
+An invalid value raises ``ValueError`` at construction time.
 
-When ``rust`` is selected, the factory needs the account endpoint and a
-master key — the binding's ``init_client`` requires both to construct
-the underlying ``CosmosDriver``. The factory accepts them as keyword
-arguments and surfaces a clear ``ValueError`` if Rust was requested
-without a master-key credential.
+When ``rust`` is selected the factory needs the account endpoint and a
+master-key credential; other auth shapes are rejected upfront.
 
-When ``core-python`` is selected, the factory returns ``None``. There is
-no class wrapping it: the helper layer (`_helpers/_item_dispatch.py`)
-treats "no backend" as the signal to forward to the legacy
-``client_connection.CreateItem`` path. A class would have been a
-placeholder whose only job was returning ``None`` from ``execute`` —
-the same thing the dispatch logic does itself.
+When ``core-python`` is selected the factory returns ``None``; the
+helper layer treats absence-of-backend as the signal to use the legacy
+``client_connection.CreateItem`` path.
 """
 from __future__ import annotations
 
@@ -51,11 +39,10 @@ from .rust import RustBackend
 
 
 def resolve_backend_name(explicit: Optional[str]) -> str:
-    """Return one of the values in ``VALID_BACKEND_NAMES`` after applying
-    the precedence rules above.
+    """Apply the precedence rules above and return a name in ``VALID_BACKEND_NAMES``.
 
-    Shared between the sync and async factories so the precedence rules,
-    valid values, and error message live in one place.
+    Shared between the sync and async factories so the rules, valid
+    values, and error message live in one place.
     """
     if explicit is not None:
         choice = explicit
@@ -72,13 +59,12 @@ def resolve_backend_name(explicit: Optional[str]) -> str:
 
 
 def _master_key_or_raise(credential: Any) -> str:
-    """Pull a master-key string out of the credential, or fail loud.
+    """Pull a master-key string out of the credential, or raise ``ValueError``.
 
     The Rust binding's ``init_client`` only accepts master-key auth
-    today. Other credential shapes (Entra TokenCredential, resource
-    token, AAD) need driver-side support that doesn't exist yet, so we
-    refuse them at construction time rather than letting the failure
-    surface on the first request.
+    today. Other shapes (TokenCredential, resource token, AAD) need
+    driver support that doesn't exist yet, so reject them at
+    construction time rather than at first request.
     """
     if isinstance(credential, str):
         return credential
@@ -99,15 +85,9 @@ def make_backend(
 ) -> Optional[CosmosBackend]:
     """Build the backend instance a sync ``CosmosClient`` will hold.
 
-    ``explicit`` is what the caller passed as ``_backend=`` (or ``None`` if
-    they passed nothing — in which case the env var, then the default, are
-    consulted). ``url`` and ``credential`` come from the same client
-    constructor and are only used when the chosen backend is ``rust``.
-
-    Returns a :class:`RustBackend` when Rust is selected, or ``None`` when
-    core-python is selected. ``None`` is the signal to the dispatch layer
-    that no Rust adapter is wired and calls should go through the legacy
-    ``client_connection.CreateItem`` path.
+    Returns a :class:`RustBackend` when Rust is selected, or ``None``
+    when core-python is selected. ``url`` and ``credential`` are only
+    consulted for the Rust branch.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:

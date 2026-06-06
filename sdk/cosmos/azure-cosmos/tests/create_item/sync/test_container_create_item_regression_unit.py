@@ -39,6 +39,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from azure.cosmos._constants import _Constants as Constants
+from azure.cosmos.container import ContainerProxy
 
 
 def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
@@ -50,7 +51,6 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     the test can observe what was forwarded into ``CreateItem`` and
     what kwargs reached the cache-refresh ``read``.
     """
-    from azure.cosmos.container import ContainerProxy
 
     cc = MagicMock()
     container_link = "dbs/db/colls/c"

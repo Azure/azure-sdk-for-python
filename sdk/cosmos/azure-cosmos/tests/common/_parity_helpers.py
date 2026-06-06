@@ -3,59 +3,36 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Helpers for the create_item parity test suite.
+"""Shared helpers for the cross-backend parity test suites.
 
-These helpers do the boilerplate each parity test would otherwise
-repeat: build two ``CosmosClient``s (one core-python, one rust), run
-the same call against each, capture the return value +
-``last_response_headers`` + raised exception, and diff the two
-outcomes side-by-side. Each individual test only writes the *call
-shape* it cares about — setup, teardown, capture, and reporting all
-live in this module.
+Each individual test only writes the call shape it cares about; this
+module handles the rest: build a core-python and a rust ``CosmosClient``,
+invoke the same closure against each, capture return value plus
+``last_response_headers`` plus any raised exception, and diff the two
+outcomes.
 
-Despite the file name and the create_item-flavored running examples,
-**nothing in this module is specific to create_item**. The same
-helpers work for every CRUD operation:
+The helpers are operation-agnostic. ``run_on_both_backends(call_fn)``
+accepts any ``Callable[[CosmosClient], Any]`` so the same harness covers
+``create_item``, ``read_item``, ``delete_item``, ``query_items``, etc.
 
-* ``run_on_both_backends(call_fn)`` accepts any
-  ``Callable[[CosmosClient], Any]`` — the closure can call
-  ``read_item``, ``upsert_item``, ``replace_item``, ``delete_item``,
-  ``query_items``, even ``create_database``. The wrapper itself does
-  not know or care which operation ran.
-* ``diff_outcomes()`` accepts custom ``ignored_headers`` /
-  ``ignored_body_fields`` so non-item responses (database /
-  container metadata, query result pages) can plug in their own
-  ignore set instead of the item-shaped defaults that live here.
+Tests that hit a known driver gap are marked with
+``@pytest.mark.skip(reason="...")`` and use the reason string to name the
+limitation in plain English.
 
-This file implements:
-
-  * ``run_on_both_backends(call_fn)`` — runs the call against both
-    backends, returns a ``BackendComparison`` with the two outcomes
-    and a list of diffs.
-  * ``BackendComparison.print_report()`` — side-by-side dump of inputs
-    and outputs (run pytest with ``-s`` to see it).
-
-For tests that hit a known driver-side gap, mark them with pytest's
-built-in ``@pytest.mark.skip(reason="...")`` and use the *reason* string
-to name the specific limitation in plain English (e.g. "binding does
-not yet wire <X>"). A grep against a phrase from any one reason then
-finds every test waiting on the same fix. With only a handful of open
-driver-team gaps today, a custom xfail-with-strict-mode marker would be
-more machinery than the problem warrants.
-
-The suite skips cleanly when no Cosmos account is configured. A real
-parity run needs both the emulator (or a real account) **and** the
-compiled ``azure.cosmos._rust`` binding present; either missing → skip,
-not fail.
+The suite skips cleanly when ``ACCOUNT_URI`` / ``ACCOUNT_KEY`` are not
+set or when the compiled ``azure.cosmos._rust`` binding is not present.
 """
 from __future__ import annotations
 
+import json as _json
 import os
 import re
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
 import pytest
+
+from azure.cosmos import CosmosClient
 
 
 # ---------------------------------------------------------------------------
@@ -171,7 +148,6 @@ class BackendComparison:
 
     def format_report(self) -> str:
         """Return a side-by-side string dump of inputs + outputs."""
-        import json as _json
         lines: List[str] = []
         lines.append("=" * 78)
         lines.append("PARITY CALL: {}".format(self.call_description or "(unset)"))
@@ -606,7 +582,6 @@ ClientFactory = Callable[[str], Any]
 
 def _default_client_factory(backend_name: str):
     """Build a sync CosmosClient for the named backend against ACCOUNT_URI/KEY."""
-    from azure.cosmos import CosmosClient
     return CosmosClient(
         os.environ[ENV_ENDPOINT],
         os.environ[ENV_KEY],

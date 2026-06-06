@@ -40,6 +40,7 @@ covers that exact contract:
 """
 import unittest
 
+from azure.cosmos import _base
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._options import (
     COMMON_OPTIONS,
@@ -87,7 +88,6 @@ class TestCommonOptionsTableContent(unittest.TestCase):
 
     def test_legacy_alias_in_base_module_is_the_same_object(self):
         """``_base._COMMON_OPTIONS`` is the same dict object — catches a future contributor forking it."""
-        from azure.cosmos import _base
         self.assertIs(_base._COMMON_OPTIONS, COMMON_OPTIONS)
 
     def test_get_common_options_returns_the_canonical_mapping(self):

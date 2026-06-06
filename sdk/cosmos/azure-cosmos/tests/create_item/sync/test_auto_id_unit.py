@@ -25,6 +25,7 @@ import re
 import unittest
 import uuid
 
+from azure.cosmos._base import GenerateGuidId
 from azure.cosmos._helpers._auto_id import ensure_item_id
 
 # Standard UUID4 string shape: 8-4-4-4-12 hex with the version nibble
@@ -184,7 +185,6 @@ class TestParityWithLegacyGenerator(unittest.TestCase):
     def _legacy_mint_if_needed(document, generate):
         """Inline reproduction of the legacy mint branch, kept byte-for-byte."""
         if not document.get("id") and generate:
-            from azure.cosmos._base import GenerateGuidId
             document["id"] = GenerateGuidId()
             return document["id"]
         return document.get("id") if document.get("id") else None

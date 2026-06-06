@@ -54,8 +54,11 @@ from azure.cosmos._backend.constants import (
 )
 from azure.cosmos._backend.factory import make_backend
 from azure.cosmos._backend.rust import RustBackend
+from azure.cosmos._helpers.item_helper import ItemHelper
 from azure.cosmos.aio._backend.factory import make_async_backend
 from azure.cosmos.aio._backend.rust import AsyncRustBackend
+from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
+from azure.cosmos.container import ContainerProxy
 
 
 # ---------------------------------------------------------------------------
@@ -475,7 +478,6 @@ def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
     wiring, a successful Rust call would surface a raw BackendResponse
     to customer code and ``result["_etag"]`` would raise TypeError.
     """
-    from azure.cosmos._helpers.item_helper import ItemHelper
 
     backend = MagicMock()
     backend.name = BACKEND_NAME_RUST
@@ -561,7 +563,6 @@ def _make_sync_container_with_backends(rust_backend, core_python_backend):
     — it is no longer a real class today, so callers pass ``None`` (the
     "no backend wired, fall through to legacy" signal).
     """
-    from azure.cosmos.container import ContainerProxy
     mock_cc = MagicMock()
     mock_cc._rust_backend = rust_backend
     mock_cc._core_python_backend = core_python_backend
@@ -608,7 +609,6 @@ def test_container_dispatch_skipped_when_backend_attrs_absent():
     """Some existing tests build a ContainerProxy directly with a mocked
     client_connection that has no backend attributes. The dispatch site
     must silently skip itself in that case so those tests keep passing."""
-    from azure.cosmos.container import ContainerProxy
     bare_cc = MagicMock(spec=[])  # no _core_python_backend / _rust_backend at all
     container = ContainerProxy.__new__(ContainerProxy)
     container.client_connection = bare_cc
@@ -625,7 +625,6 @@ def test_container_dispatch_skipped_when_backend_attrs_absent():
 
 def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
     """Same Rust-routing contract on the async container."""
-    from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.create_item.return_value = (201, 0, {}, b"{}")

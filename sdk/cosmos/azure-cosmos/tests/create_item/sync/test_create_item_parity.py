@@ -48,10 +48,22 @@ The suite skips cleanly when:
 """
 from __future__ import annotations
 
+import copy
+import json
+import os
 import uuid
+import warnings
 from typing import Any, Dict
 
 import pytest
+
+from azure.core import MatchConditions
+from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import _cosmos_client_connection as _ccc_module
+from azure.cosmos._backend import rust as _rust_backend_module
+from azure.cosmos._backend.base import OP_CREATE_ITEM, PreparedRequest
+from azure.cosmos._backend.rust import RustBackend
+from azure.cosmos._constants import _Constants
 
 from common._parity_helpers import (
     run_on_both_backends,
@@ -73,8 +85,6 @@ pytestmark = [
 @pytest.fixture
 def container_for(request):
     """Build a fresh container per test, against a known db."""
-    from azure.cosmos import CosmosClient, PartitionKey
-    import os
     client = CosmosClient(os.environ["ACCOUNT_URI"], os.environ["ACCOUNT_KEY"])
     db = client.create_database_if_not_exists("parity_db")
     cname = "parity_" + request.node.name + "_" + uuid.uuid4().hex[:6]
@@ -95,14 +105,13 @@ def _call(container_id: str, body_or_factory, **kwargs):
     or a plain dict (deep-copied per backend with a fresh ``id`` so
     backend 2 never sees backend 1's id as a duplicate).
     """
-    import copy as _copy
     if callable(body_or_factory):
         builder = body_or_factory
     else:
         template = body_or_factory
 
         def builder():
-            fresh = _copy.deepcopy(template)
+            fresh = copy.deepcopy(template)
             if "id" in fresh:
                 fresh["id"] = uuid.uuid4().hex
             return fresh
@@ -237,11 +246,6 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
     Both wrappers are installed inside a ``try``/``finally`` so the
     originals are always restored, regardless of test outcome.
     """
-    from azure.cosmos import CosmosClient
-    from azure.cosmos import _cosmos_client_connection as _ccc_module
-    from azure.cosmos._backend import rust as _rust_backend_module
-    from azure.cosmos._constants import _Constants
-    import os
 
     intended_rid_header = "x-ms-cosmos-intended-collection-rid"
 
@@ -615,7 +619,6 @@ def test_L5_populate_query_metrics_deprecated(container_for):
     behave like the L0 baseline. The flag does not reach the wire, so both
     backends should produce equivalent results.
     """
-    import warnings
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     with warnings.catch_warnings(record=True) as recorded:
         warnings.simplefilter("always")
@@ -632,7 +635,6 @@ def test_L5_etag_deprecated_and_ignored(container_for):
     The Python entry point must emit a ``DeprecationWarning`` and the
     request must succeed regardless (the value is dropped, not honoured).
     """
-    import warnings
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     with warnings.catch_warnings(record=True) as recorded:
         warnings.simplefilter("always")
@@ -645,8 +647,6 @@ def test_L5_etag_deprecated_and_ignored(container_for):
 
 def test_L5_match_condition_deprecated_and_ignored(container_for):
     """L5: ``match_condition=MatchConditions.IfNotModified`` is deprecated/ignored."""
-    import warnings
-    from azure.core import MatchConditions
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     with warnings.catch_warnings(record=True) as recorded:
         warnings.simplefilter("always")
@@ -693,10 +693,6 @@ def test_L1_partitionless_container_rejected_by_rust_binding():
     chasing a flaky partitionless write knows exactly what they hit and
     which backend to use as a workaround.
     """
-    import os
-    import pytest
-    from azure.cosmos._backend.base import OP_CREATE_ITEM, PreparedRequest
-    from azure.cosmos._backend.rust import RustBackend
 
     # The endpoint / key are only needed to build the driver handle on
     # the first call. The request itself fails *before* any network IO
@@ -714,11 +710,10 @@ def test_L1_partitionless_container_rejected_by_rust_binding():
 
     backend = RustBackend(endpoint=endpoint, master_key=master_key)
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    import json as _json
     prepared = PreparedRequest(
         op=OP_CREATE_ITEM,
         container_link="dbs/parity_db/colls/does_not_matter",
-        body_bytes=_json.dumps(body).encode("utf-8"),
+        body_bytes=json.dumps(body).encode("utf-8"),
         partition_key_header="[]",  # the NonePartitionKey wire shape
         headers={},
     )

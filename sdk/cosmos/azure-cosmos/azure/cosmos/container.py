@@ -40,9 +40,8 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
-from ._helpers._item_dispatch import merge_create_item_explicit_kwargs
+from ._helpers._item_dispatch import merge_create_item_explicit_kwargs, pick_backend
 from ._helpers.item_helper import ItemHelper
-from ._helpers._item_dispatch import pick_backend
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -1435,10 +1434,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        # Move the explicit-keyword shortcuts into the kwargs dict so
-        # the ItemHelper sees a single uniform source of truth. Shared
-        # with the async sibling via ``_item_dispatch`` so the option-
-        # name mapping cannot drift between the two.
+        # Move the explicit kwargs into the kwargs dict so the
+        # ItemHelper sees a single source of truth. Shared with the
+        # async sibling via ``_item_dispatch`` to prevent drift.
         merge_create_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1453,14 +1451,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        # Hand off to the per-call item helper. It owns the backend
-        # dispatch, request-options build, container-rid stamp, and
-        # the legacy ``CreateItem`` call. The
-        # ``ensure_container_cached`` callback delegates the
-        # cache-populate step back to this proxy so the existing
-        # ``container_cache_lock`` is taken and per-call options like
-        # ``excluded_locations`` and timeouts flow into the cache
-        # refresh exactly the way the legacy code path did.
+        # ItemHelper owns backend dispatch, options build, rid stamp,
+        # and the legacy CreateItem fall-through. The
+        # ``ensure_container_cached`` callback routes the cache-populate
+        # step back through this proxy so the existing
+        # ``container_cache_lock`` and per-call options
+        # (``excluded_locations``, timeouts) reach the cache refresh
+        # the same way they did on the legacy path.
         return ItemHelper(
             pick_backend(self.client_connection),
             self.client_connection,
@@ -1749,11 +1746,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
+            # ``populate_query_metrics`` has no effect on a point DELETE
+            # (there are no query metrics for a single-document write).
+            # Warn the caller and drop the value here so the helper layer
+            # never sees it and the
+            # ``x-ms-documentdb-populatequerymetrics`` header is not sent.
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:

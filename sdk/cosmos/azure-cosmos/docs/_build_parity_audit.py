@@ -1,10 +1,29 @@
-﻿"""Parse a parity-run transcript and rewrite docs/V5_PARITY_AUDIT.md
-to contain only per-test reports (no commentary, no historical context)."""
+﻿"""Parse a parity-run transcript and rewrite the per-op V5 parity audit doc
+(``docs/V5/V5_PARITY_AUDIT_<op>.md``) to contain only per-test reports
+(no commentary, no historical context).
+
+Default ``--op`` is ``create_item`` so existing one-arg invocations
+(``python docs/_build_parity_audit.py <transcript.txt>``) keep working.
+Pass e.g. ``--op delete_item`` to render against
+``tests/delete_item/sync/test_delete_item_parity.py`` and write to
+``docs/V5/V5_PARITY_AUDIT_delete_item.md``.
+"""
 from __future__ import annotations
 import ast, os, re, sys
 from datetime import datetime, timezone
 from pathlib import Path
-TEST_FILE = Path("tests/create_item/sync/test_create_item_parity.py")
+
+DEFAULT_OP = "create_item"
+
+
+def _test_file_for(op: str) -> Path:
+    """Path to the per-op sync parity suite the audit doc describes."""
+    return Path("tests/{op}/sync/test_{op}_parity.py".format(op=op))
+
+
+def _out_path_for(op: str) -> Path:
+    """Output markdown path for the per-op audit doc."""
+    return Path("docs/V5/V5_PARITY_AUDIT_{op}.md".format(op=op))
 FAILED_LINE_RE = re.compile(r"^FAILED tests[\\/][^:]+::(test_\w+)", re.MULTILINE)
 PASSED_LINE_RE = re.compile(r"^PASSED tests[\\/][^:]+::(test_\w+)", re.MULTILINE)
 SKIPPED_LINE_RE = re.compile(r"^SKIPPED tests[\\/][^:]+::(test_\w+)", re.MULTILINE)
@@ -49,6 +68,68 @@ def _parse_test_order(src: str) -> tuple[list[str], dict[str, list[int]]]:
         order.append(name)
 
     return [n for n in order if n is not None], duplicates
+
+
+def _parse_tests_without_parity_call(src: str) -> set[str]:
+    """Return the set of ``test_*`` names whose body never calls
+    ``run_on_both_backends`` (directly or via a helper closure).
+
+    Such tests will never emit a ``PARITY CALL`` block in the transcript.
+    The renderer's source-order fallback must NOT consume an available
+    block on their behalf, or it will mis-attribute that block (stealing
+    it from the next test that genuinely produced one).
+
+    Detection is intentionally conservative -- we look for *any* ``Call``
+    AST node whose function name (``Name``) or attribute tail
+    (``Attribute.attr``) is ``run_on_both_backends`` anywhere inside the
+    test function's body. This catches both ``run_on_both_backends(...)``
+    and ``_run_delete(...)`` (which itself calls ``run_on_both_backends``
+    -- but the test as written calls the helper, so the helper's source
+    is implicitly part of the test's effective body for this purpose).
+    To handle the helper case we also walk module-level functions and
+    pre-compute which helpers transitively call ``run_on_both_backends``;
+    a test that calls one of those helpers counts as a producer.
+    """
+    tree = ast.parse(src)
+
+    def _calls_target(node: ast.AST, target_names: set[str]) -> bool:
+        for sub in ast.walk(node):
+            if not isinstance(sub, ast.Call):
+                continue
+            f = sub.func
+            if isinstance(f, ast.Name) and f.id in target_names:
+                return True
+            if isinstance(f, ast.Attribute) and f.attr in target_names:
+                return True
+        return False
+
+    # Pass 1: collect module-level helpers that produce a PARITY CALL
+    # block (i.e. transitively call ``run_on_both_backends``). Fixed
+    # point over a single source file converges in <=N iterations.
+    producers: set[str] = {"run_on_both_backends"}
+    helpers: dict[str, ast.FunctionDef] = {}
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and not node.name.startswith("test_"):
+            helpers[node.name] = node
+    changed = True
+    while changed:
+        changed = False
+        for name, fn in helpers.items():
+            if name in producers:
+                continue
+            if _calls_target(fn, producers):
+                producers.add(name)
+                changed = True
+
+    # Pass 2: a test is a "block producer" iff its body calls any
+    # function in ``producers``.
+    non_producers: set[str] = set()
+    for node in tree.body:
+        if not isinstance(node, ast.FunctionDef) or not node.name.startswith("test_"):
+            continue
+        if not _calls_target(node, producers):
+            non_producers.add(node.name)
+    return non_producers
 
 
 def _latest_run_slice(transcript: str) -> str:
@@ -172,6 +253,7 @@ def _scoreboard_why(
     description: str,
     skip_reason: str | None,
     block: str | None,
+    is_non_producer: bool = False,
 ) -> str:
     """Status-specific 'why is this test in this state' for the scoreboard.
 
@@ -205,14 +287,63 @@ def _scoreboard_why(
     verdict = _extract_verdict(block) if block else None
     if verdict:
         return verdict
+    if is_non_producer:
+        # The test deliberately bypasses ``run_on_both_backends`` (e.g.
+        # it monkey-patches a helper and exercises a single backend to
+        # pin a sync-only Python-wrapper contract). Saying "re-run with
+        # -s" here would be misleading -- no amount of pytest flags can
+        # produce a parity block for a test that does not call the
+        # parity harness.
+        return "Passed (test does not invoke the parity harness; see the per-test section for what it actually pins)."
     return "Passed (no PARITY CALL block captured -- re-run with `pytest -s` to populate)."
 
 
+def _parse_args(argv: list[str]) -> tuple[str, Path] | None:
+    """Return ``(op, transcript_path)`` or ``None`` on usage error.
+
+    Two accepted invocations:
+        python docs/_build_parity_audit.py <transcript.txt>
+        python docs/_build_parity_audit.py --op <name> <transcript.txt>
+
+    ``--op`` is the only option this script accepts; we keep the parser
+    deliberately hand-rolled (no ``argparse``) so the single-positional
+    legacy form remains a single ``len(argv) == 2`` branch and back-compat
+    is obvious to a reader.
+    """
+    if len(argv) == 2:
+        return DEFAULT_OP, Path(argv[1])
+    if len(argv) == 4 and argv[1] == "--op":
+        op = argv[2]
+        # Defensive: the op name is used to build a filesystem path and a
+        # markdown filename. Reject anything that could escape the docs
+        # tree (path separators, parent traversal, empty string).
+        if not op or "/" in op or "\\" in op or ".." in op:
+            print(
+                "error: --op must be a simple identifier (e.g. delete_item); got: {!r}".format(op),
+                file=sys.stderr,
+            )
+            return None
+        return op, Path(argv[3])
+    return None
+
+
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("usage: python docs/_build_parity_audit.py <transcript.txt>")
+    parsed = _parse_args(sys.argv)
+    if parsed is None:
+        print(
+            "usage: python docs/_build_parity_audit.py [--op <name>] <transcript.txt>\n"
+            "       --op defaults to '{}' (back-compat with the single-arg form).".format(DEFAULT_OP)
+        )
         return 2
-    transcript_path = Path(sys.argv[1])
+    op, transcript_path = parsed
+    test_file = _test_file_for(op)
+    if not test_file.is_file():
+        print(
+            "error: parity test file not found for op={!r}: {} does not exist"
+            .format(op, test_file.as_posix()),
+            file=sys.stderr,
+        )
+        return 2
     raw = transcript_path.read_bytes()
     # PowerShell's `Tee-Object` writes UTF-16 LE on Windows by default,
     # which prepends a BOM. Detect and decode accordingly so the regexes
@@ -227,7 +358,7 @@ def main() -> int:
         transcript = raw.decode("utf-8", errors="replace")
     transcript = _sanitize(transcript)
     transcript = _latest_run_slice(transcript)
-    src = TEST_FILE.read_text(encoding="utf-8")
+    src = test_file.read_text(encoding="utf-8")
     tests, duplicate_defs = _parse_test_order(src)
     if duplicate_defs:
         rendered = ", ".join(
@@ -241,6 +372,12 @@ def main() -> int:
         )
     skipped = _parse_skip_reasons(src)
     descriptions = _parse_descriptions(src)
+    # Tests whose body never calls ``run_on_both_backends`` (directly or
+    # via a helper). Such tests will never emit a ``PARITY CALL`` block,
+    # so the source-order fallback below must not consume an unclaimed
+    # block on their behalf -- doing so silently steals the block from
+    # the next genuine producer and mis-renders both rows.
+    non_producer_tests = _parse_tests_without_parity_call(src)
     failed = set(FAILED_LINE_RE.findall(transcript))
     # Tests pytest *actually saw* in this transcript. We harvest evidence
     # from every per-test signal pytest can emit: explicit PASSED /
@@ -324,7 +461,12 @@ def main() -> int:
         if m_lvl:
             tag = "_" + m_lvl.group(1) + "_"  # e.g. "_L5_"
             for n in tests:
-                if tag in n and n not in block_for and statuses[n] != "SKIPPED":
+                if (
+                    tag in n
+                    and n not in block_for
+                    and statuses[n] != "SKIPPED"
+                    and n not in non_producer_tests
+                ):
                     block_for[n] = rendered
                     assigned = True
                     break
@@ -334,6 +476,14 @@ def main() -> int:
 
     for n in tests:
         if statuses[n] == 'SKIPPED' or n in block_for:
+            continue
+        if n in non_producer_tests:
+            # This test never calls ``run_on_both_backends`` so it
+            # cannot have produced a block in the transcript. Leave it
+            # unmatched -- the row will render with the honest "no
+            # PARITY CALL block (test does not invoke the parity
+            # harness)" notice rather than stealing the next available
+            # block from a genuine producer.
             continue
         if not remaining:
             continue
@@ -361,10 +511,10 @@ def main() -> int:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     account = os.environ.get("ACCOUNT_URI") or os.environ.get("ACCOUNT_HOST") or "(env not set)"
     out = []
-    out.append("# `create_item` parity test results")
+    out.append("# `{}` parity test results".format(op))
     out.append("")
     out.append(f"**Generated:** {now}")
-    out.append(f"**Source:** `tests/create_item/sync/test_create_item_parity.py`")
+    out.append(f"**Source:** `{test_file.as_posix()}`")
     out.append(f"**Account:** `{account}`")
     out.append("")
     out.append(f"**Summary:** {summary}")
@@ -379,7 +529,7 @@ def main() -> int:
                 else ""
             )
             + ". The transcript is stale relative to the source -- re-run "
-              "`pytest tests/create_item/sync/test_create_item_parity.py -v -s` "
+              f"`pytest {test_file.as_posix()} -v -s` "
               "and rebuild this doc to get a faithful report. Tests with no "
               "evidence in the transcript are marked `_STALE_` in the "
               "scoreboard below (they did **not** silently pass; they were "
@@ -390,7 +540,7 @@ def main() -> int:
             out.append("> Missing from transcript: "
                        + ", ".join("`{}`".format(n) for n in stale_tests))
         out.append("")
-    out.append("Each test runs the same `create_item` call against both backends")
+    out.append("Each test runs the same `{}` call against both backends".format(op))
     out.append("(core-python and rust) and diffs the outcomes. This document is")
     out.append("the verbatim per-test report from the most recent run \u2014 no")
     out.append("commentary, no historical context. The `PARITY CALL` blocks are")
@@ -482,6 +632,7 @@ def main() -> int:
             descriptions.get(n, ""),
             skipped.get(n),
             block_for.get(n),
+            is_non_producer=n in non_producer_tests,
         ))
         out.append(f"| {i} | `{n}` | {desc} | {marker_for[s]} | {why} |")
     out.append("")
@@ -522,7 +673,16 @@ def main() -> int:
             continue
         b = block_for.get(n)
         if b is None:
-            out.append("_No PARITY CALL block found in transcript for this test._")
+            if n in non_producer_tests:
+                out.append(
+                    "_No PARITY CALL block: this test deliberately bypasses "
+                    "the parity harness (``run_on_both_backends``) -- it pins "
+                    "a single-backend wrapper-level contract rather than a "
+                    "cross-backend behavioural diff. See the test's docstring "
+                    "above for what it actually asserts._"
+                )
+            else:
+                out.append("_No PARITY CALL block found in transcript for this test._")
         else:
             out.append("```text")
             out.append(b)
@@ -534,7 +694,10 @@ def main() -> int:
     # top-level ``docs/V5_PARITY_AUDIT.md`` location was a one-off from
     # before that folder existed and would silently shadow the V5/
     # copy if both were written; we now standardise on the V5/ path.
-    out_path = Path("docs/V5/V5_PARITY_AUDIT.md")
+    # The filename carries the op name as a suffix so per-op runs don't
+    # overwrite each other (``..._create_item.md``, ``..._delete_item.md``,
+    # etc.).
+    out_path = _out_path_for(op)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(out) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {out_path.as_posix()} ({sum(len(x)+1 for x in out)} chars)")
