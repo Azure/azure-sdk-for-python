@@ -278,7 +278,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 reply_parts.append(delta)
                 # FR-011 gap 2 — emit delta as it arrives.
                 loop.create_task(
-                    _stream_and_persist(ctx, invocation_id, delta, reply_parts)
+                    _stream_and_persist(stream, invocation_id, delta, reply_parts)
                 )
             elif isinstance(data, AssistantMessageData):
                 # Fallback for SDK builds that emit only the assembled message.

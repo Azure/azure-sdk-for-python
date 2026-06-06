@@ -70,17 +70,17 @@ streams.use_in_memory_live()
 app = InvocationAgentServerHost()
 
 
-async def _sse_from_stream(
-    stream: EventStream, invocation_id: str, *, initial_status: str = "queued"
+async def _sse_from_iter(
+    subscription, invocation_id: str, *, initial_status: str = "queued"
 ) -> AsyncGenerator[bytes, None]:
-    """Convert an EventStream's payloads into SSE-formatted bytes."""
+    """Convert an already-attached subscriber iterator into SSE bytes."""
 
     yield (
         f"data: {json.dumps({'type': 'lifecycle', 'status': initial_status, 'invocation_id': invocation_id})}\n\n"
     ).encode()
 
     try:
-        async for chunk in stream.subscribe():
+        async for chunk in subscription:
             yield f"data: {json.dumps(chunk)}\n\n".encode()
         done_data = {"type": "done", "invocation_id": invocation_id}
         yield f"event: done\ndata: {json.dumps(done_data)}\n\n".encode()
@@ -119,17 +119,28 @@ async def handle_invoke(request: Request) -> Response:
 
     invocation_store.save(invocation_id, {"status": "queued"})
 
-    # Subscribe-before-start (streaming.md §5.1): attach SSE subscriber
-    # BEFORE starting the task. Handler reads invocation_id from
-    # ctx.input and obtains the SAME registry-cached stream.
+    wants_stream = "text/event-stream" in request.headers.get("accept", "")
+
+    # Subscribe-before-start (streaming.md §5.1): with use_in_memory_live()
+    # late subscribers see no prior events. We must attach the per-
+    # subscriber queue BEFORE the producer starts emitting. Calling
+    # iter() on the result of subscribe() forces __aiter__ to register
+    # the queue immediately so any emit() that lands between
+    # task.start() and the StreamingResponse iteration is captured.
     stream = await streams.get_or_create(invocation_id)
+    subscription = None
+    if wants_stream:
+        subscription = stream.subscribe()
+        # Force the subscriber queue to register NOW by invoking
+        # __aiter__ directly (subscription is an async iterator, not a
+        # plain iterable — sync ``iter()`` would reject it).
+        subscription = subscription.__aiter__()
+
     await copilot_session.start(task_id=task_id, input=task_input)
 
-    # SSE streaming mode
-    wants_stream = "text/event-stream" in request.headers.get("accept", "")
     if wants_stream:
         return StreamingResponse(
-            _sse_from_stream(stream, invocation_id),
+            _sse_from_iter(subscription, invocation_id),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
         )
