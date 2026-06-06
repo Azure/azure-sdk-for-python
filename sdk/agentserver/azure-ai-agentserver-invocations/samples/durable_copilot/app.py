@@ -58,10 +58,14 @@ from .agent import copilot_session, invocation_store
 
 logger = logging.getLogger(__name__)
 
-# In-memory multi-subscriber replay buffer; 10-min sliding window for
-# reconnects. Stream id is the per-turn ``invocation_id`` per
-# streaming.md §7.8.
-streams.use_in_memory_replay(ttl_seconds=600)
+# Default broadcast (in-memory live) backing: every subscriber attaches
+# BEFORE the producer starts (subscribe-before-start — see line 121),
+# so we don't need replay catch-up. The recovery path after a streaming
+# disconnect is GET /invocations/<id>, which returns the full snapshot
+# the Copilot SDK has accumulated upstream — the framework-level replay
+# buffer was redundant on top of that and held memory unnecessarily.
+# Stream id is the per-turn ``invocation_id`` per streaming.md §7.8.
+streams.use_in_memory_live()
 
 app = InvocationAgentServerHost()
 
