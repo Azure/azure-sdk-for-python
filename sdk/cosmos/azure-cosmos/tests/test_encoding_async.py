@@ -1,8 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Async versions of the encoding round-trip tests. Same checks as
-the sync file, but using the async client."""
+"""Async data-plane versions of the encoding round-trip tests.
+
+This mirrors the sync document/partition-key checks and emoji round-trips
+using the async client. The stored-procedure control-plane check remains in
+the sync file because it relies on key-auth script operations.
+"""
 import unittest
 import uuid
 
@@ -43,6 +47,35 @@ class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         await self.client.close()
+
+    async def test_unicode_characters_in_partition_key_async(self):
+        test_string = u'€€ کلید پارتیشن विभाजन कुंजी \t123'  # cspell:disable-line
+        document_definition = {
+            'pk': test_string,
+            'id': 'myid' + str(uuid.uuid4()),
+        }
+        created_doc = await self.created_container.create_item(body=document_definition)
+
+        read_doc = await self.created_container.read_item(
+            item=created_doc['id'],
+            partition_key=test_string,
+        )
+        self.assertEqual(read_doc['pk'], test_string)
+
+    async def test_create_document_with_line_separator_para_seperator_next_line_unicodes_async(self):
+        test_string = u'Line Separator (\u2028) & Paragraph Separator (\u2029) & Next Line (\x85) & نیم\u200cفاصله'  # cspell:disable-line
+        document_definition = {
+            'pk': 'pk',
+            'id': 'myid' + str(uuid.uuid4()),
+            'unicode_content': test_string,
+        }
+        created_doc = await self.created_container.create_item(body=document_definition)
+
+        read_doc = await self.created_container.read_item(
+            item=created_doc['id'],
+            partition_key='pk',
+        )
+        self.assertEqual(read_doc['unicode_content'], test_string)
 
     async def test_round_trip_emoji_document_through_full_sdk_stack_async(self):
         """Writes a document containing emoji, reads it back, and checks
@@ -92,4 +125,3 @@ class TestEncodingAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

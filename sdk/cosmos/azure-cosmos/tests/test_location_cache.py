@@ -1015,12 +1015,20 @@ class TestLocationCache:
             "the unavailable preferred region."
 
     def test_sync_health_check_set_includes_unavailable_endpoints(self):
-        # Unavailable endpoints must remain in the health-check probe set so
+        # Unavailable read endpoints must remain in the health-check probe set so
         # they can be re-marked available once the prober finds them healthy.
+        # First mark location1 write-unavailable so it is no longer the primary
+        # write probe endpoint; this isolates the read-unavailable assertion from
+        # write-endpoint inclusion.
         lc = refresh_location_cache(
             [location1_name, location2_name], use_multiple_write_locations=True
         )
         lc.perform_on_database_account_read(create_database_account(True))
+        lc.mark_endpoint_unavailable_for_write(
+            location1_endpoint, refresh_cache=True, context="test"
+        )
+        assert lc.get_write_regional_routing_contexts()[0].get_primary() == location2_endpoint, \
+            "Test precondition failed: location1 must not be the primary write endpoint."
 
         lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
         endpoints = lc.endpoints_to_health_check()

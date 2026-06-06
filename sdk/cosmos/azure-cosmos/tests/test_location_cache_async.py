@@ -432,6 +432,14 @@ class TestLocationCacheAsync(unittest.IsolatedAsyncioTestCase):
             [location1_name, location2_name], use_multiple_write_locations=True,
         )
         lc.perform_on_database_account_read(_create_database_account(True))
+        lc.mark_endpoint_unavailable_for_write(
+            location1_endpoint, refresh_cache=True, context="test"
+        )
+        self.assertEqual(
+            lc.get_write_regional_routing_contexts()[0].get_primary(),
+            location2_endpoint,
+            "Test precondition failed: location1 must not be the primary write endpoint.",
+        )
 
         lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=True)
         endpoints = lc.endpoints_to_health_check()

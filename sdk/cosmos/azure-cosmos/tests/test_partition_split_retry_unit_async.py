@@ -1546,11 +1546,11 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
                         f"token after the head is split; got {outbound_p1!r}"
                     )
                     assert decoded_p1[_FIELD_VERSION] == _TOKEN_VERSION
-                    assert len(decoded_p1["c"]) == 1, (
+                    assert len(decoded_p1[_FIELD_CONTINUATIONS]) == 1, (
                         "After draining the left child, only the right child "
-                        f"should remain in the outbound token; got {decoded_p1['c']!r}"
+                        f"should remain in the outbound token; got {decoded_p1[_FIELD_CONTINUATIONS]!r}"
                     )
-                    surviving = decoded_p1["c"][0]
+                    surviving = decoded_p1[_FIELD_CONTINUATIONS][0]
                     assert surviving["min"] == "7F" and surviving["max"] == "FF", (
                         "The remaining entry must be the right child's range; "
                         f"got {surviving!r}"
@@ -1597,4 +1597,3 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

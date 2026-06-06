@@ -20,19 +20,15 @@ from azure.cosmos import documents
 from azure.cosmos.aio import CosmosClient
 
 
-def _is_user_query_fetch(url: str) -> bool:
-    """True for the URLs that fetch user query results.
+def _is_query_document_fetch(url: str) -> bool:
+    """True for query/result fetches against ``/docs``.
 
     Filters out SDK-internal calls (partition-range fetches, container
-    properties reads, account-info probes) whose timeout policy is independent
-    of the user's per-call value.
+    properties reads, account-info probes) as well as non-document query
+    surfaces that are asserted separately in dedicated tests.
     """
     stripped = url.rstrip("/")
-    return (
-        stripped.endswith("/docs")
-        or stripped.endswith("/colls")
-        or stripped.endswith("/dbs")
-    )
+    return stripped.endswith("/docs")
 
 
 class _AsyncCaptureTransport(AioHttpTransport):
@@ -51,8 +47,8 @@ class _AsyncCaptureTransport(AioHttpTransport):
         })
         return await super().send(request, **kwargs)
 
-    def query_fetch_read_timeouts(self) -> list[Optional[float]]:
-        return [c["read_timeout"] for c in self.captured if _is_user_query_fetch(c["url"])]
+    def query_document_fetch_read_timeouts(self) -> list[Optional[float]]:
+        return [c["read_timeout"] for c in self.captured if _is_query_document_fetch(c["url"])]
 
 
 @pytest.mark.cosmosEmulator
@@ -82,32 +78,40 @@ class TestReadTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             db = seed.get_database_client(self.TEST_DATABASE_ID)
             for cid in (self.SINGLE_PARTITION_ID, self.MULTI_PARTITION_ID):
                 c = db.get_container_client(cid)
+                seeded_count = 0
+                seed_failures = []
                 for i in range(3):
                     try:
                         await c.upsert_item({
                             "id": f"read_timeout_seed_{cid}_{i}_async",
                             "pk": f"pk{i}",
                         })
-                    except Exception:
-                        pass
+                        seeded_count += 1
+                    except Exception as exc:
+                        seed_failures.append(f"{type(exc).__name__}: {exc}")
+                if seeded_count == 0:
+                    raise RuntimeError(
+                        f"Failed to seed any items into {cid}. "
+                        f"Seed errors: {seed_failures}"
+                    )
         self.__class__._seeded = True
 
     def _build_client(self, capture: _AsyncCaptureTransport, **kw) -> CosmosClient:
         """Builds a client routed through the capturing transport."""
         return self.configs.create_data_client_async(transport=capture, **kw)
 
-    def _assert_all_query_fetch_read_timeouts_equal(
+    def _assert_all_query_document_fetch_read_timeouts_equal(
         self, capture: _AsyncCaptureTransport, expected: float
     ) -> None:
-        observed = capture.query_fetch_read_timeouts()
+        observed = capture.query_document_fetch_read_timeouts()
         assert observed, (
-            "no user-facing query requests captured; the test did not run a query. "
+            "no /docs query requests captured; the test did not run a document query. "
             "captured={}".format(capture.captured)
         )
         bad = [v for v in observed if v != expected]
         assert not bad, (
-            "query request used read_timeout={} (expected {}). "
-            "all query read_timeouts: {}. all captures: {}".format(
+            "document query request used read_timeout={} (expected {}). "
+            "all /docs query read_timeouts: {}. all captures: {}".format(
                 bad, expected, observed, capture.captured
             )
         )
@@ -128,7 +132,7 @@ class TestReadTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             )]
         finally:
             await client.close()
-        self._assert_all_query_fetch_read_timeouts_equal(capture, 17.0)
+        self._assert_all_query_document_fetch_read_timeouts_equal(capture, 17.0)
 
     async def test_per_call_read_timeout_propagates_to_cross_partition_query_async(self):
         """Per-call ``read_timeout`` reaches the wire for a cross-partition query."""
@@ -145,7 +149,7 @@ class TestReadTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             )]
         finally:
             await client.close()
-        self._assert_all_query_fetch_read_timeouts_equal(capture, 18.0)
+        self._assert_all_query_document_fetch_read_timeouts_equal(capture, 18.0)
 
     async def test_per_call_read_timeout_propagates_to_change_feed_async(self):
         """Per-call ``read_timeout`` reaches the wire for change-feed reads."""
@@ -162,7 +166,7 @@ class TestReadTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             )]
         finally:
             await client.close()
-        self._assert_all_query_fetch_read_timeouts_equal(capture, 19.0)
+        self._assert_all_query_document_fetch_read_timeouts_equal(capture, 19.0)
 
     async def test_per_call_read_timeout_propagates_to_database_query_containers_async(self):
         """Per-call ``read_timeout`` reaches the wire when querying containers."""
@@ -176,7 +180,14 @@ class TestReadTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             )]
         finally:
             await client.close()
-        self._assert_all_query_fetch_read_timeouts_equal(capture, 20.0)
+        # query_containers hits the /colls endpoint.
+        observed = [c["read_timeout"] for c in capture.captured if "/colls" in c["url"]]
+        assert observed, "no /colls request captured: {}".format(capture.captured)
+        assert all(v == 20.0 for v in observed), (
+            "db.query_containers dropped per-call read_timeout. captured={}".format(
+                capture.captured
+            )
+        )
 
     async def test_per_call_read_timeout_propagates_to_client_query_databases_async(self):
         """Per-call ``read_timeout`` reaches the wire when querying databases."""
@@ -214,7 +225,7 @@ class TestReadTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             )]
         finally:
             await client.close()
-        self._assert_all_query_fetch_read_timeouts_equal(capture, 5.0)
+        self._assert_all_query_document_fetch_read_timeouts_equal(capture, 5.0)
 
     async def test_client_level_read_timeout_kwarg_propagates_to_queries_async(self):
         """``read_timeout`` set on the client constructor reaches the wire for queries."""
@@ -232,7 +243,7 @@ class TestReadTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             )]
         finally:
             await client.close()
-        self._assert_all_query_fetch_read_timeouts_equal(capture, 22.0)
+        self._assert_all_query_document_fetch_read_timeouts_equal(capture, 22.0)
 
     async def test_connection_policy_read_timeout_propagates_to_queries_async(self):
         """``ReadTimeout`` set on the connection policy reaches the wire for queries."""
@@ -252,10 +263,8 @@ class TestReadTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             )]
         finally:
             await client.close()
-        self._assert_all_query_fetch_read_timeouts_equal(capture, 23.0)
+        self._assert_all_query_document_fetch_read_timeouts_equal(capture, 23.0)
 
 
 if __name__ == "__main__":
     unittest.main()
-
-
