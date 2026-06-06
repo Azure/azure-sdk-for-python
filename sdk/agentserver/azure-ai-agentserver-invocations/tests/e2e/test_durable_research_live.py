@@ -78,8 +78,18 @@ def _harness(tmp_path: Path, *, num_phases: int = 2) -> CrashHarness:
         "TARGET_OUTPUT_TOKENS": "80",
         "INTRA_PHASE_COOLDOWN_SEC": "0",
         "INTER_PHASE_COOLDOWN_SEC": "0",
+        # Force AzureCliCredential when AZURE_AI_CREDENTIAL=cli is set
+        # in the parent (e.g. dev box with conflicting MSI). The
+        # default behavior — DefaultAzureCredential's full chain — is
+        # what hosted deployments use.
+        "AZURE_AI_CREDENTIAL": os.environ.get("AZURE_AI_CREDENTIAL", ""),
     }
-    (tmp_path / "home").mkdir(parents=True, exist_ok=True)
+    # Don't isolate $HOME if the parent enabled AZURE_AI_CREDENTIAL=cli —
+    # AzureCliCredential needs the real user's az login cache.
+    if env_extras["AZURE_AI_CREDENTIAL"] == "cli":
+        del env_extras["HOME"]
+    else:
+        (tmp_path / "home").mkdir(parents=True, exist_ok=True)
     (tmp_path / "streams").mkdir(parents=True, exist_ok=True)
     return CrashHarness(
         sample_module="durable_research.app",
@@ -235,13 +245,16 @@ async def test_crash_recovery_preserves_monotonic_sequence(tmp_path: Path) -> No
         )
         assert inv_id
 
-        # Watch the stream until we've seen a few events; then SIGKILL.
+        # Watch the stream until we see at least one phase_end (so
+        # ``completed_phases`` is >0 on recovery → handler emits the
+        # type=recovered marker per agent.py line ~219); then SIGKILL.
         pre_crash_seqs: list[int] = []
+        saw_phase_end = False
         async with harness.client.stream(
             "GET",
             f"/invocations/{inv_id}",
             headers={"Accept": "text/event-stream"},
-            timeout=120.0,
+            timeout=180.0,
         ) as resp:
             assert resp.status_code == 200
             async for line in resp.aiter_lines():
@@ -253,8 +266,15 @@ async def test_crash_recovery_preserves_monotonic_sequence(tmp_path: Path) -> No
                     seq = payload.get("sequence_number")
                     if seq is not None:
                         pre_crash_seqs.append(seq)
-                    if len(pre_crash_seqs) >= 4:
-                        break
+                    if payload.get("type") == "phase_end":
+                        saw_phase_end = True
+                        # Drain a couple more events to make the
+                        # sequence-number gap interesting, then break.
+                        if len(pre_crash_seqs) >= 6:
+                            break
+        assert saw_phase_end, (
+            f"never saw phase_end before crash budget exhausted: {pre_crash_seqs}"
+        )
         assert len(pre_crash_seqs) >= 3, (
             f"didn't see enough events before crash: {pre_crash_seqs}"
         )
