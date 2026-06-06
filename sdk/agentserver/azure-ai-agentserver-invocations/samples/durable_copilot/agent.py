@@ -75,17 +75,41 @@ async def _open_session(client: Any, session_id: str, entry_mode: str) -> Any:
     On ``"fresh"`` we use ``create_session``; on ``"resumed"`` or
     ``"recovered"`` we use ``resume_session`` (the SDK's reattach API).
     Both paths set ``streaming=True`` — this is FR-011 gap 1.
+
+    If ``resume_session`` raises "Session not found" (the upstream
+    Copilot CLI was not given enough time to persist the session
+    before the previous process exited — most common after SIGTERM
+    with a short grace, or SIGKILL), we fall back to
+    ``create_session``. We lose the pre-crash conversation context
+    for this turn, but the handler makes forward progress instead of
+    failing outright — upstream-dependency hiccups must NOT propagate
+    as task failures (which would orphan the invocation and fail any
+    queued steers). This mirrors the
+    ``sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py``
+    resilience pattern.
     """
     from copilot.session import PermissionHandler  # pylint: disable=import-outside-toplevel
 
-    if entry_mode == "fresh":
-        return await client.create_session(
-            session_id=session_id,
-            on_permission_request=PermissionHandler.approve_all,
-            streaming=True,
-        )
-    return await client.resume_session(
-        session_id,
+    if entry_mode != "fresh":
+        try:
+            return await client.resume_session(
+                session_id,
+                on_permission_request=PermissionHandler.approve_all,
+                streaming=True,
+            )
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            msg = str(exc)
+            if "Session not found" not in msg and "not found" not in msg.lower():
+                raise
+            logger.warning(
+                "Copilot session %s not found on resume (%s); creating fresh "
+                "session — pre-crash conversation context for this turn is lost.",
+                session_id,
+                msg,
+            )
+            # Fall through to create_session below.
+    return await client.create_session(
+        session_id=session_id,
         on_permission_request=PermissionHandler.approve_all,
         streaming=True,
     )
