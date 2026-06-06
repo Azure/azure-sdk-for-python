@@ -66,12 +66,11 @@ def _harness(tmp_path: Path) -> CrashHarness:
         "PYTHONPATH": (
             f"{_SAMPLES_DIR}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
         ).rstrip(os.pathsep),
-        # The sample writes per-invocation snapshots to
-        # ``~/.durable-sessions/copilot-invocations`` by default; pin it
-        # under tmp_path so the test starts clean.
-        "HOME": str(tmp_path / "home"),
+        # Do NOT override HOME — the Copilot CLI needs to find its auth
+        # config under the real user's $HOME. We accept a per-test bleed
+        # in ~/.durable-sessions/copilot-invocations; each test uses a
+        # different ``agent_session_id`` so they don't collide.
     }
-    (tmp_path / "home").mkdir(parents=True, exist_ok=True)
     return CrashHarness(
         sample_module="durable_copilot.app",
         tmp_path=tmp_path,
@@ -125,6 +124,7 @@ async def test_sse_stream_emits_text_deltas(tmp_path: Path) -> None:
             assert resp.status_code == 200, await resp.aread()
             saw_text_delta = False
             saw_session_idle = False
+            seen_types: list[str] = []
             async for line in resp.aiter_lines():
                 if not line.startswith("data:"):
                     continue
@@ -132,16 +132,29 @@ async def test_sse_stream_emits_text_deltas(tmp_path: Path) -> None:
                     payload = json.loads(line[len("data:"):].strip())
                 except json.JSONDecodeError:
                     continue
-                if payload.get("type") == "text_delta":
+                t = payload.get("type")
+                if t:
+                    seen_types.append(t)
+                if t == "text_delta":
                     saw_text_delta = True
-                if payload.get("type") == "session_idle":
+                if t == "session_idle":
                     saw_session_idle = True
+                # Break the moment we have what we need. After idle
+                # the stream stays open (task suspended) so iterating
+                # would block until httpx timeout.
+                if saw_text_delta and saw_session_idle:
+                    break
+                # Also break on idle alone — if no deltas arrived by
+                # idle, none will (FR-011 gap 2 regression).
+                if saw_session_idle:
                     break
             assert saw_text_delta, (
-                "no text_delta event in stream — FR-011 gap 2 regression?"
+                f"no text_delta event in stream — FR-011 gap 2 regression? "
+                f"types_seen={seen_types}"
             )
             assert saw_session_idle, (
-                "no session_idle event — FR-011 gap 3 regression?"
+                f"no session_idle event — FR-011 gap 3 regression? "
+                f"types_seen={seen_types}"
             )
 
 
