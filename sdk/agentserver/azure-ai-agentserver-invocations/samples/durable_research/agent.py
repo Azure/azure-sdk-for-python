@@ -112,11 +112,27 @@ def _get_client() -> Any:
     from azure.ai.projects.aio import (  # pylint: disable=import-outside-toplevel
         AIProjectClient,
     )
-    from azure.identity.aio import (  # pylint: disable=import-outside-toplevel
-        DefaultAzureCredential,
-    )
 
-    project = AIProjectClient(endpoint=_endpoint, credential=DefaultAzureCredential())
+    # Local-dev escape hatch: ``AZURE_AI_CREDENTIAL=cli`` forces use of
+    # AzureCliCredential alone. Useful in environments where IMDS is
+    # available but the assigned MSI doesn't have access to the target
+    # Foundry resource (e.g., dev VMs with their own MSI), so
+    # DefaultAzureCredential would grab the wrong identity from the
+    # chain. Production / hosted runs leave the env var unset and use
+    # the standard DefaultAzureCredential chain.
+    cred_mode = os.environ.get("AZURE_AI_CREDENTIAL", "").strip().lower()
+    if cred_mode == "cli":
+        from azure.identity.aio import (  # pylint: disable=import-outside-toplevel
+            AzureCliCredential,
+        )
+        credential: Any = AzureCliCredential()
+    else:
+        from azure.identity.aio import (  # pylint: disable=import-outside-toplevel
+            DefaultAzureCredential,
+        )
+        credential = DefaultAzureCredential()
+
+    project = AIProjectClient(endpoint=_endpoint, credential=credential)
     _openai_client = project.get_openai_client()
     return _openai_client
 
