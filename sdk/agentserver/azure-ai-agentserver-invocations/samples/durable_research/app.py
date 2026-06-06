@@ -1,46 +1,68 @@
 """HTTP host for the durable deep-research agent.
 
 Exposes the ``deep_research`` durable task over the invocations
-protocol. Supports both async-poll mode and live SSE streaming:
+protocol with the FULL pattern matrix:
 
 - ``POST /invocations`` with body ``{"topic": "..."}`` and an
   ``Accept: text/event-stream`` header — returns a live SSE stream of
-  token chunks as the research progresses.
+  events as the research progresses.
 - ``POST /invocations`` without the header — returns ``202`` with the
-  ``invocation_id``; the caller polls ``GET /invocations/{id}`` for
-  status, and once the research completes, gets the assembled report.
+  ``invocation_id``; clients then connect to the GET endpoint to
+  stream OR poll.
+- ``GET /invocations/{id}`` with ``Accept: text/event-stream`` and an
+  optional ``?last_event_id=N`` query — streams the per-turn events,
+  skipping anything the client already saw (the cursor is the
+  event's monotonic ``sequence_number``). Works for both freshly-
+  started turns and turns that have been running for a while.
+- ``GET /invocations/{id}`` without the SSE accept header — returns a
+  JSON snapshot of the task's current status / payload.
+- ``POST /invocations/{id}/cancel`` — operator cancel of the
+  per-session task (steering is automatic via re-POSTing instead).
 
 Streaming wiring (spec 017):
 
-- ``streams.use_in_memory_replay(...)`` is called once at module
-  import (app startup) per streaming.md §7.8 — selects an in-memory
-  replay-buffered backing for the registry.
+- ``streams.use_file_backed_replay(...)`` is called once at module
+  import (app startup) per streaming.md §7.8. The file-backed
+  backing persists events to disk so a subscriber reconnecting after
+  a container crash + restart sees the pre-crash + post-crash
+  events with no gap.
+- ``cursor_fn`` reads the event's ``sequence_number`` (stamped by
+  the agent's ``emit`` closure) so ``?last_event_id=N`` reconnects
+  skip exactly the events the client already received.
 - The HTTP layer extracts ``invocation_id`` from
   ``request.state.invocation_id`` (per-turn identifier per §7.8),
-  attaches the SSE subscriber to ``await streams.get_or_create(inv_id)``
-  BEFORE invoking the task (subscribe-before-start discipline per
-  §5.1), and propagates ``inv_id`` to the handler via
+  reserves the stream id BEFORE starting the task, and propagates
+  ``invocation_id`` to the handler via
   ``task.start(input={"invocation_id": inv_id, ...})``.
 - The handler reads ``ctx.input["invocation_id"]`` and calls
-  ``await streams.get_or_create(inv_id)`` — gets the SAME registry-
-  cached instance.
-- After the task completes, the HTTP layer cleans up via
-  ``await streams.delete(inv_id)``.
+  ``await streams.get_or_create(inv_id)`` — gets the SAME
+  registry-cached instance.
 
-Recovery: if the container crashes mid-research and is restarted, the
-framework re-invokes ``deep_research`` with ``ctx.entry_mode ==
-"recovered"`` and the same input — the handler reads its checkpoint
-from ``ctx.metadata`` and resumes at the next un-completed stage. The
-NEW invocation gets a NEW ``invocation_id`` and a fresh stream — this
-is the per-turn scoping per §7.8 (NOT ``task_id`` which survives
-recovery).
+Recovery: if the container crashes mid-research and is restarted,
+the framework re-invokes ``deep_research`` with
+``ctx.entry_mode == "recovered"`` and the same input. The same
+``invocation_id`` is preserved; the file-backed stream is rehydrated
+from disk so reconnecting subscribers (including the original POST-
+SSE client if it reattaches via GET) see the pre-crash events plus
+a fresh ``type: "recovered"`` marker plus the post-crash continuation.
+
+Steering: a new POST while a turn is running enqueues the input as a
+steering input — the agent winds down the current turn at the next
+checkpoint via ``_finish_turn`` (which closes the per-turn stream
+cleanly) and the framework re-enters with the new ``ctx.input``.
+The new turn gets a new ``invocation_id`` from the platform; the
+new ``invocation_id`` is the new stream id. The HTTP layer does not
+need to distinguish steered turns from fresh turns — see
+``agent.py`` for the discipline.
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 from collections.abc import AsyncGenerator
+from pathlib import Path
 from typing import Any
 
 from starlette.requests import Request
@@ -54,53 +76,107 @@ from azure.ai.agentserver.core.streaming import (
 )
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import deep_research, to_sse
+from .agent import deep_research
 
 logger = logging.getLogger(__name__)
 
-# ── Configure the streams registry once at module import ─────────────────
-# In-memory multi-subscriber replay buffer with 10-min sliding window so
-# multi-tab subscribers + reconnects within the window get the full
-# history. For durable cross-restart streaming, use
-# ``streams.use_file_backed_replay(storage_dir=..., ...)`` instead.
-streams.use_in_memory_replay(ttl_seconds=600)
+# --- Streams bootstrap (run once at module import) -------------------------
+
+# Per-turn streams persist to disk so they survive a container crash +
+# restart. ``cursor_fn`` reads the agent's natural sequence number so
+# ``?last_event_id=N`` reconnects skip already-delivered events.
+# ``ttl_seconds=600`` bounds disk usage: once a stream is closed and
+# all its events have aged out, the registry destroys it and removes
+# the file.
+_STREAM_DIR = Path(
+    os.environ.get("AGENTSERVER_STREAMS_DIR", str(Path.home() / ".durable-tasks" / "_streams"))
+)
+_STREAM_DIR.mkdir(parents=True, exist_ok=True)
+
+streams.use_file_backed_replay(
+    storage_dir=_STREAM_DIR,
+    cursor_fn=lambda ev: ev["sequence_number"],
+    ttl_seconds=600,
+)
 
 app = InvocationAgentServerHost()
 
 
+# --- SSE rendering ---------------------------------------------------------
+
+
 async def _sse_from_stream(
-    stream: EventStream, invocation_id: str
+    stream: EventStream, invocation_id: str, *, skip_after: int | None = None,
 ) -> AsyncGenerator[bytes, None]:
-    """Convert an EventStream's payloads into SSE-formatted bytes."""
+    """Render a stream's events as SSE-formatted bytes.
 
-    yield to_sse(
-        {"type": "lifecycle", "status": "running", "invocation_id": invocation_id}
-    )
-
+    Each event's ``sequence_number`` becomes the SSE ``id:`` field so
+    a reconnecting client can pass it back as ``Last-Event-ID`` (or
+    ``?last_event_id=N``) and pick up from there. The terminator
+    payload is emitted on clean stream close; ``EventStreamGoneError``
+    (the stream was destroyed under us) flushes a ``superseded``
+    event so the consumer can tell stream-end from "you got cut off".
+    """
     try:
-        async for chunk in stream.subscribe():
-            yield to_sse(chunk)
+        async for chunk in stream.subscribe(after=skip_after):
+            seq = chunk.get("sequence_number", "")
+            yield f"id: {seq}\ndata: {json.dumps(chunk)}\n\n".encode()
         done = {"type": "done", "invocation_id": invocation_id}
         yield f"event: done\ndata: {json.dumps(done)}\n\n".encode()
     except EventStreamGoneError:
-        # Stream destroyed mid-iteration (e.g. another tab called DELETE
-        # or the registry GC'd the slot). Emit a clean superseded event.
         superseded = {"type": "superseded", "invocation_id": invocation_id}
         yield f"event: superseded\ndata: {json.dumps(superseded)}\n\n".encode()
 
 
+# --- Invocation handlers ---------------------------------------------------
+
+
 @app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
-    data = await request.json()
+    """Dispatch a research task with full pattern coverage.
+
+    Body: ``{"topic": "<topic>"}``.
+
+    If ``Accept: text/event-stream`` is set, returns a live SSE
+    stream of the new turn's events (POST-SSE pattern). Otherwise
+    returns ``202 Accepted`` with the ``invocation_id`` for clients
+    that prefer to connect via GET (poll OR GET-SSE pattern).
+
+    A POST while a steerable run is already in progress on this
+    session enqueues the input as a steering input — the running
+    turn winds down at the next checkpoint and the framework
+    re-enters with the new topic. The new turn streams to the new
+    ``invocation_id`` reserved here.
+    """
+    body = await request.body()
+    try:
+        data = json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        data = {}
+    topic = str(data.get("topic") or data.get("message") or "").strip()
+    if not topic:
+        return JSONResponse(
+            {"error": "Provide a 'topic' field"},
+            status_code=400,
+        )
+
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
-    topic: str = data.get("topic", "")
+    # ONE durable task per session so steering finds the active run.
+    # invocation_id labels THIS turn; session_id labels the long-
+    # lived task.
     task_id = f"research-{session_id}"
 
-    # Subscribe-before-start (streaming.md §5.1): create the stream +
-    # attach SSE subscriber BEFORE invoking the task. Propagate
-    # ``invocation_id`` to the handler via ``ctx.input``.
+    # Reserve the per-turn stream id BEFORE starting the task. The
+    # file-backed replay backing means even if no subscriber attaches
+    # before the handler emits, the events go to disk and a later
+    # subscriber catches up via ``?last_event_id=N``.
     stream = await streams.get_or_create(invocation_id)
+
+    # Steering is transparent: for a ``steerable=True`` task,
+    # ``task.start()`` queues the input on the in-progress task's
+    # steering queue WITHOUT raising. See ``agent.py`` for the
+    # ``_finish_turn`` discipline that makes this safe.
     await deep_research.start(
         task_id=task_id,
         input={"topic": topic, "invocation_id": invocation_id},
@@ -114,26 +190,103 @@ async def handle_invoke(request: Request) -> Response:
         )
 
     return JSONResponse(
-        {"invocation_id": invocation_id, "status": "queued", "task_id": task_id},
+        {
+            "status": "started",
+            "invocation_id": invocation_id,
+            "session_id": session_id,
+            "task_id": task_id,
+        },
         status_code=202,
     )
 
 
 @app.get_invocation_handler
-async def poll_invocation(request: Request) -> Response:
-    """Poll the latest checkpointed state for the research task."""
+async def handle_get(request: Request) -> Response:
+    """Stream OR poll the per-invocation state.
 
+    With ``Accept: text/event-stream``: SSE stream of the turn's
+    events. ``?last_event_id=N`` (or the standard ``Last-Event-ID``
+    header) skips events whose ``sequence_number`` <= N — the
+    file-backed replay backing serves the gap from disk before
+    live-tailing.
+
+    Without the SSE accept header: returns the task's current
+    snapshot from ``deep_research.get(task_id)``.
+
+    HTTP mapping (from spec 017 streaming.md §exceptions table):
+      - 404 if the invocation id was never seen
+        (``EventStreamNotFoundError``).
+      - 410 if the stream was destroyed via TTL eviction or explicit
+        ``streams.delete`` (``EventStreamGoneError``).
+    """
+    invocation_id: str = request.state.invocation_id
+
+    wants_stream = "text/event-stream" in request.headers.get("accept", "")
+    if wants_stream:
+        last_event_id_q = request.query_params.get("last_event_id", "")
+        last_event_id_h = request.headers.get("last-event-id", "")
+        raw = last_event_id_q or last_event_id_h
+        skip_after: int | None = int(raw) if raw.isdigit() else None
+
+        try:
+            stream = await streams.get(invocation_id)
+        except EventStreamNotFoundError:
+            return JSONResponse(
+                {"status": "not_found",
+                 "message": "No stream for this invocation id."},
+                status_code=404,
+            )
+        except EventStreamGoneError:
+            return JSONResponse(
+                {"status": "gone",
+                 "message": "Stream for this invocation id has been destroyed."},
+                status_code=410,
+            )
+
+        return StreamingResponse(
+            _sse_from_stream(stream, invocation_id, skip_after=skip_after),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
+        )
+
+    # JSON-snapshot path (polling clients).
     session_id: str = request.state.session_id
     task_id = f"research-{session_id}"
-    info = await deep_research.get(task_id)  # type: ignore[attr-defined]
+    info: Any = await deep_research.get(task_id)  # type: ignore[attr-defined]
     if info is None:
         return JSONResponse({"error": "Task not found"}, status_code=404)
     return JSONResponse(
         {
             "task_id": task_id,
+            "invocation_id": invocation_id,
             "status": info.status,
             "payload": info.payload,
         }
+    )
+
+
+@app.cancel_invocation_handler
+async def handle_cancel(request: Request) -> Response:
+    """Cancel the running research task.
+
+    Cancel applies to the per-session durable task (``task_id ==
+    f"research-{session_id}"``). The handler observes
+    ``ctx.cancel.is_set()`` and runs its cooperative wind-down at
+    the next checkpoint, which closes the per-turn stream before
+    suspending.
+    """
+    session_id: str = request.state.session_id
+    task_id = f"research-{session_id}"
+
+    run = await deep_research.get_active_run(task_id)  # type: ignore[attr-defined]
+    if run is None:
+        return JSONResponse(
+            {"status": "not_found", "message": "No active task to cancel."}
+        )
+
+    await run.cancel()
+    return JSONResponse(
+        {"status": "cancelled", "message": "Task cancellation requested."}
     )
 
 

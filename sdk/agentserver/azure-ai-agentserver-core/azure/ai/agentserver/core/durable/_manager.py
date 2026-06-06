@@ -284,6 +284,7 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         "input_type",
         "opts",
         "retry",
+        "lease_last_refresh_monotonic",
     )
 
     def __init__(
@@ -313,6 +314,14 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         self.input_type = input_type
         self.opts = opts
         self.retry = retry
+        # ``asyncio.get_event_loop().time()`` value at the last successful
+        # lease refresh -- updated by the renewal loop AND by every
+        # payload PATCH that piggybacks lease ownership (see
+        # ``_lease_ext_kwargs`` / ``_note_lease_refreshed``). The
+        # renewal loop reads this to push out its next scheduled tick
+        # so it doesn't issue a redundant heartbeat the moment after a
+        # payload PATCH already refreshed the lease.
+        self.lease_last_refresh_monotonic: float = 0.0
 
 
 class TaskManager:  # pylint: disable=too-many-instance-attributes
@@ -900,6 +909,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 cancel_event=renewal_cancel,
                 on_cancel_callback=cancel_event,
                 steering_poll_callback=steering_poll_cb_cs,
+                last_refresh_provider=lambda tid=task_id: (
+                    self._active_tasks[tid].lease_last_refresh_monotonic
+                    if tid in self._active_tasks
+                    else 0.0
+                ),
             )
         )
 
@@ -1177,7 +1191,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             # returned, so the re-fetch is also unnecessary.
             updated_info: TaskInfo | None = task_info
         else:
-            await self._provider.update(
+            # PATCH returns the full updated TaskInfo -- no follow-up
+            # GET needed. (Saves one network round-trip per call.)
+            updated_info = await self._provider.update(
                 task_id,
                 TaskPatchRequest(
                     status="in_progress" if needs_status_flip else None,
@@ -1187,9 +1203,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     payload=turn_start_payload if turn_start_payload else None,
                 ),
             )
-
-            # Re-fetch updated task
-            updated_info = await self._provider.get(task_id)
             if updated_info is None:
                 raise TaskNotFound(task_id)
         task_info = updated_info
@@ -1305,6 +1318,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 cancel_event=renewal_cancel,
                 on_cancel_callback=cancel_event,
                 steering_poll_callback=steering_poll_cb,
+                last_refresh_provider=lambda tid=task_id: (
+                    self._active_tasks[tid].lease_last_refresh_monotonic
+                    if tid in self._active_tasks
+                    else 0.0
+                ),
             )
         )
 
@@ -1937,8 +1955,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             use_etag = etag if _conflict_attempt < 2 else None
             await self._provider.update(
                 task_id,
-                TaskPatchRequest(payload=payload, if_match=use_etag),
+                TaskPatchRequest(
+                    payload=payload,
+                    if_match=use_etag,
+                    **self._lease_ext_kwargs(task_id),
+                ),
             )
+            self._note_lease_refreshed(task_id)
         except (ValueError, TransportClassifiedError) as exc:
             if isinstance(exc, TransportClassifiedError) and getattr(
                 exc, "classification", None
@@ -2035,8 +2058,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         try:
             await self._provider.update(
                 task_id,
-                TaskPatchRequest(payload=payload),
+                TaskPatchRequest(
+                    payload=payload,
+                    **self._lease_ext_kwargs(task_id),
+                ),
             )
+            self._note_lease_refreshed(task_id)
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to clear drain_in_progress for %s", task_id)
 
@@ -2400,6 +2427,60 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             return next(iter(self._resume_callbacks.values()))
         return None
 
+    def _lease_ext_kwargs(self, task_id: str) -> dict[str, Any]:
+        """Return lease-ownership kwargs for piggyback on a payload PATCH.
+
+        Every framework-issued PATCH that mutates payload (metadata
+        flush, steering-queue append, steering drain, terminal complete
+        on a steerable task) can refresh the lease as a side effect by
+        including the lease ownership query params on the request. This
+        eliminates the once-per-30-second redundant heartbeat PATCH for
+        an active task and pushes the renewal-loop tick out via
+        ``_note_lease_refreshed`` below. Zero extra network round-trips:
+        the lease params land on the same PATCH that was already going
+        out for the payload mutation.
+
+        Returns the kwargs only when ``task_id`` is currently tracked
+        as an active local task. Otherwise returns an empty dict
+        (caller writes a plain payload-only PATCH; this is what
+        recovery/reclaim/restart paths want before they have bound a
+        new lease).
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: kwargs for ``TaskPatchRequest`` carrying lease params,
+            or ``{}`` if this task is not active locally.
+        :rtype: dict[str, Any]
+        """
+        if self._active_tasks.get(task_id) is None:
+            return {}
+        return {
+            "lease_owner": self._lease_owner,
+            "lease_instance_id": self._instance_id,
+            "lease_duration_seconds": _DEFAULT_LEASE_SECONDS,
+        }
+
+    def _note_lease_refreshed(self, task_id: str) -> None:
+        """Record that the lease for ``task_id`` was just refreshed.
+
+        Called by every PATCH path that piggybacks lease ownership
+        (see :meth:`_lease_ext_kwargs`) AND by the renewal loop itself
+        on a successful renewal. The renewal loop reads this timestamp
+        to push its next scheduled tick out -- so a payload PATCH that
+        already refreshed the lease delays the heartbeat by the same
+        margin, avoiding a redundant network round-trip.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        """
+        active = self._active_tasks.get(task_id)
+        if active is None:
+            return
+        try:
+            active.lease_last_refresh_monotonic = asyncio.get_event_loop().time()
+        except RuntimeError:  # no running loop (sync context)
+            pass
+
     def _make_metadata_flush(
         self, task_id: str
     ) -> Callable[[Optional[str], dict[str, Any]], Awaitable[None]]:
@@ -2421,8 +2502,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             slot = "metadata" if namespace is None else f"metadata:{namespace}"
             await self._provider.update(
                 task_id,
-                TaskPatchRequest(payload={slot: data}),
+                TaskPatchRequest(
+                    payload={slot: data},
+                    **self._lease_ext_kwargs(task_id),
+                ),
             )
+            self._note_lease_refreshed(task_id)
 
         return _flush
 

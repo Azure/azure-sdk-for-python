@@ -817,10 +817,26 @@ class Task(Generic[Input, Output]):
             # framework contract requires to be transparent to
             # callers -- converges.
             use_etag = etag if _attempt < 2 else None
+            # Piggyback lease ownership on the steering-append PATCH so
+            # the lease is refreshed as a side effect (see
+            # ``TaskManager._lease_ext_kwargs``). Zero extra round-
+            # trips: lease params land on the same PATCH that's
+            # already going out for the payload mutation. No-op when
+            # the caller is not the active owner of the task (the
+            # ``_lease_ext_kwargs`` helper returns ``{}`` in that
+            # case, so the wire format is unchanged).
+            lease_kwargs = manager._lease_ext_kwargs(  # pylint: disable=protected-access
+                task_id
+            )
             try:
                 await manager.provider.update(
                     task_id,
-                    TaskPatchRequest(payload=payload, if_match=use_etag),
+                    TaskPatchRequest(
+                        payload=payload, if_match=use_etag, **lease_kwargs
+                    ),
+                )
+                manager._note_lease_refreshed(  # pylint: disable=protected-access
+                    task_id
                 )
                 # Signal the running task's cancel event so it can short-circuit
                 active = manager._active_tasks.get(
@@ -1022,13 +1038,15 @@ class Task(Generic[Input, Output]):
                 if input_id is not None:
                     resume_payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
                 try:
-                    await manager.provider.update(
+                    # PATCH returns the updated TaskInfo -- capture it
+                    # to skip the post-patch refetch below.
+                    updated_info = await manager.provider.update(
                         task_id,
                         TaskPatchRequest(payload=resume_payload, if_match=etag),
                     )
                     break
                 except (ValueError, _TransportClassifiedError) as exc:
-                    # Etag conflict — re-fetch, re-check precondition, retry.
+                    # Etag conflict -- re-fetch, re-check precondition, retry.
                     # Local provider raises ValueError; hosted task store
                     # raises TransportClassifiedError with classification=
                     # "conflict" (412 etag mismatch or 409). Both are
@@ -1057,8 +1075,7 @@ class Task(Generic[Input, Output]):
                     f"Failed to apply suspended-resume input patch after "
                     f"{max_resume_retries} retries (task {task_id!r})"
                 )
-            # Re-fetch after input patch
-            updated_info = await manager.provider.get(task_id)
+            # PATCH already returned the updated TaskInfo -- no GET needed.
             if updated_info is None:
                 raise RuntimeError(f"Task {task_id!r} disappeared after input patch")
             return (

@@ -85,6 +85,7 @@ async def lease_renewal_loop(
     on_failure_count: int = 3,
     on_cancel_callback: asyncio.Event | None = None,
     steering_poll_callback: Callable[[], Awaitable[None]] | None = None,
+    last_refresh_provider: Callable[[], float] | None = None,
 ) -> None:
     """Run a background lease renewal loop at half the lease duration.
 
@@ -114,6 +115,16 @@ async def lease_renewal_loop(
     :keyword steering_poll_callback: Async callback invoked each renewal to poll
         for steering inputs. Called after successful lease renewal.
     :paramtype steering_poll_callback: Callable[[], Awaitable[None]] | None
+    :keyword last_refresh_provider: Optional ``() -> float`` callable
+        returning the ``asyncio.get_event_loop().time()`` value at the
+        most-recent lease refresh (heartbeat OR side-effect refresh
+        from a payload PATCH that piggybacked lease ownership via
+        ``TaskManager._lease_ext_kwargs``). When provided, the loop
+        skips the heartbeat for any tick whose due-time has been
+        pushed past by a more-recent refresh, avoiding a redundant
+        network round-trip. ``None`` preserves the legacy fixed-tick
+        behaviour for tests.
+    :paramtype last_refresh_provider: Callable[[], float] | None
     """
     interval = max(1, lease_duration_seconds // 2)
     consecutive_failures = 0
@@ -128,6 +139,29 @@ async def lease_renewal_loop(
             break
         except asyncio.TimeoutError:
             pass
+
+        # Every payload PATCH that piggybacks lease ownership
+        # (TaskManager._lease_ext_kwargs) refreshes the lease as a
+        # side effect. Skip a redundant heartbeat when a more-recent
+        # refresh has happened within the last ``interval`` seconds.
+        if last_refresh_provider is not None:
+            try:
+                last_refresh_t = float(last_refresh_provider())
+            except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
+                last_refresh_t = 0.0
+            if last_refresh_t > 0.0:
+                now_t = asyncio.get_event_loop().time()
+                age = now_t - last_refresh_t
+                if age < interval:
+                    remaining = interval - age
+                    try:
+                        await asyncio.wait_for(
+                            _wait_for_event(cancel_event),
+                            timeout=remaining,
+                        )
+                        break  # cancel fired
+                    except asyncio.TimeoutError:
+                        continue  # re-check on the next iteration
 
         try:
             await provider.update(
