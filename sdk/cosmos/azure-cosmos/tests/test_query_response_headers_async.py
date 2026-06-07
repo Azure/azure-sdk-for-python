@@ -290,30 +290,32 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             # Collect transient setup objects so they don't show up as growth.
             gc.collect()
             tracemalloc.start()
-            snapshot_before = tracemalloc.take_snapshot()
+            try:
+                snapshot_before = tracemalloc.take_snapshot()
 
-            page_count = 1
-            items_total = first_page_count
-            header_sizes = [len(baseline_headers)]
-            all_keys_seen = set(baseline_headers.keys())
+                page_count = 1
+                items_total = first_page_count
+                header_sizes = [len(baseline_headers)]
+                all_keys_seen = set(baseline_headers.keys())
 
-            async for page in page_iter:
-                # Count items without keeping a reference to any of them.
-                async for _ in page:
-                    items_total += 1
-                page_count += 1
-                headers = query_iterable.get_response_headers()
-                assert headers is not None
-                header_sizes.append(len(headers))
-                all_keys_seen.update(headers.keys())
-                # Drop the per-page header copy before the next iteration.
-                del headers
+                async for page in page_iter:
+                    # Count items without keeping a reference to any of them.
+                    async for _ in page:
+                        items_total += 1
+                    page_count += 1
+                    headers = query_iterable.get_response_headers()
+                    assert headers is not None
+                    header_sizes.append(len(headers))
+                    all_keys_seen.update(headers.keys())
+                    # Drop the per-page header copy before the next iteration.
+                    del headers
 
-            gc.collect()
-            snapshot_after = tracemalloc.take_snapshot()
-            top_stats = snapshot_after.compare_to(snapshot_before, "lineno")
-            memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
-            tracemalloc.stop()
+                gc.collect()
+                snapshot_after = tracemalloc.take_snapshot()
+                top_stats = snapshot_after.compare_to(snapshot_before, "lineno")
+                memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
+            finally:
+                tracemalloc.stop()
 
             # We really paginated and read every item back.
             assert page_count >= 20, f"Expected many pages, got {page_count}."
