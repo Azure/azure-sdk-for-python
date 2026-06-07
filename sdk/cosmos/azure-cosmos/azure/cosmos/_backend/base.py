@@ -29,6 +29,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 # Operation discriminator values for ``PreparedRequest.op``.
 OP_CREATE_ITEM = "create_item"
+OP_DELETE_ITEM = "delete_item"
 
 
 @dataclass(frozen=True)
@@ -45,7 +46,8 @@ class PreparedRequest:
     #: e.g. ``"dbs/{db}/colls/{coll}"``.
     container_link: str
 
-    #: Request body already serialized to JSON bytes.
+    #: Request body already serialized to JSON bytes. Empty for
+    #: bodiless ops (e.g. ``delete_item``).
     body_bytes: bytes
 
     #: Partition-key header value already serialized to its on-wire
@@ -55,6 +57,11 @@ class PreparedRequest:
     #: Everything else that needs to ride on the request: triggers,
     #: indexing directive, intended-collection-rid, etc.
     headers: Mapping[str, str] = field(default_factory=dict)
+
+    #: Target document id for ops where the id is not carried in
+    #: ``body_bytes`` (``delete_item`` has no body). ``None`` for ops
+    #: that derive the id from the body (``create_item``).
+    item_id: Optional[str] = None
 
 
 @dataclass(frozen=True)

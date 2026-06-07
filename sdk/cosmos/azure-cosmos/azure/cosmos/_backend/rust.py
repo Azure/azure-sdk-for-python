@@ -22,6 +22,7 @@ from typing import Any, Optional
 
 from .base import (
     OP_CREATE_ITEM,
+    OP_DELETE_ITEM,
     BackendResponse,
     CosmosBackend,
     PreparedRequest,
@@ -88,6 +89,8 @@ class RustBackend(CosmosBackend):
         handle = self._ensure_handle()
         if prepared.op == OP_CREATE_ITEM:
             status_code, sub_status, headers, body = _rust_module.create_item(handle, prepared)
+        elif prepared.op == OP_DELETE_ITEM:
+            status_code, sub_status, headers, body = _rust_module.delete_item(handle, prepared)
         else:
             raise NotImplementedError(
                 "RustBackend.execute does not yet support op={!r}.".format(prepared.op)

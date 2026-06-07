@@ -22,6 +22,7 @@ from typing import Any, Optional
 
 from azure.cosmos._backend.base import (
     OP_CREATE_ITEM,
+    OP_DELETE_ITEM,
     normalize_response_headers,
 )
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
@@ -93,6 +94,10 @@ class AsyncRustBackend(AsyncCosmosBackend):
         if prepared.op == OP_CREATE_ITEM:
             status_code, sub_status, headers, body = await loop.run_in_executor(
                 None, _rust_module.create_item, handle, prepared
+            )
+        elif prepared.op == OP_DELETE_ITEM:
+            status_code, sub_status, headers, body = await loop.run_in_executor(
+                None, _rust_module.delete_item, handle, prepared
             )
         else:
             raise NotImplementedError(

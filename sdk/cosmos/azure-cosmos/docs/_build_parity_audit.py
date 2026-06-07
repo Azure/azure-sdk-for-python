@@ -1,15 +1,15 @@
-﻿"""Parse a parity-run transcript and rewrite the per-op V5 parity audit doc
-(``docs/V5/V5_PARITY_AUDIT_<op>.md``) to contain only per-test reports
-(no commentary, no historical context).
+﻿"""Parse a parity-run transcript and rewrite the per-op audit markdown.
 
-Default ``--op`` is ``create_item`` so existing one-arg invocations
+Default ``--op`` is ``create_item`` so single-arg invocations
 (``python docs/_build_parity_audit.py <transcript.txt>``) keep working.
-Pass e.g. ``--op delete_item`` to render against
-``tests/delete_item/sync/test_delete_item_parity.py`` and write to
-``docs/V5/V5_PARITY_AUDIT_delete_item.md``.
+Pass e.g. ``--op delete_item`` to render the delete_item parity audit.
 """
 from __future__ import annotations
-import ast, os, re, sys
+
+import ast
+import os
+import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,25 +17,33 @@ DEFAULT_OP = "create_item"
 
 
 def _test_file_for(op: str) -> Path:
-    """Path to the per-op sync parity suite the audit doc describes."""
+    """Sync parity test file for the named op."""
     return Path("tests/{op}/sync/test_{op}_parity.py".format(op=op))
 
 
 def _out_path_for(op: str) -> Path:
     """Output markdown path for the per-op audit doc."""
     return Path("docs/V5/V5_PARITY_AUDIT_{op}.md".format(op=op))
+
+
 FAILED_LINE_RE = re.compile(r"^FAILED tests[\\/][^:]+::(test_\w+)", re.MULTILINE)
 PASSED_LINE_RE = re.compile(r"^PASSED tests[\\/][^:]+::(test_\w+)", re.MULTILINE)
 SKIPPED_LINE_RE = re.compile(r"^SKIPPED tests[\\/][^:]+::(test_\w+)", re.MULTILINE)
-# Verbose-mode per-test result lines (``pytest -v``):
-#   tests/create_item/sync/test_create_item_parity.py::test_X PASSED [..%]
+# pytest -v per-test result line: ``tests/.../test_X PASSED [..%]``.
 VERBOSE_RESULT_LINE_RE = re.compile(
     r"^tests[\\/][^:]+::(test_\w+)\s+(PASSED|FAILED|SKIPPED|XFAIL|XPASS|ERROR)",
     re.MULTILINE,
 )
-# Collection summary line (``collected N items``) so we can compare what
-# pytest actually saw against what the test file currently defines and
-# warn when the transcript is stale relative to the source.
+# Matches any line that begins with a pytest test id. Used to widen
+# "seen" detection when ``-v -s`` lets the test's own prints crowd
+# the status word off the line. Only feeds ``seen_in_transcript`` --
+# the FAIL / SKIP regexes above stay strict.
+SEEN_LINE_RE = re.compile(
+    r"^tests[\\/][^:]+::(test_\w+)\b",
+    re.MULTILINE,
+)
+# ``collected N items`` line; lets us flag transcripts that ran fewer
+# tests than the source currently defines.
 COLLECTED_RE = re.compile(r"^collected\s+(\d+)\s+items?", re.MULTILINE)
 SUMMARY_RE = re.compile(r"=+\s*((?:\d+\s+\w+(?:,?\s*)?)+)\s+in\s+\d[\d.]*s(?:\s*\([\d:]+\))?\s*=+", re.IGNORECASE)
 PARITY_BLOCK_RE = re.compile(r"=+\s*\nPARITY CALL: (?P<title>.+?)\n=+\s*\n(?P<body>.*?)\n=+\s*", re.DOTALL)
@@ -43,11 +51,11 @@ SESSION_START_RE = re.compile(r"=+\s*test session starts\s*=+", re.IGNORECASE)
 
 
 def _parse_test_order(src: str) -> tuple[list[str], dict[str, list[int]]]:
-    """Return (effective_test_order, duplicate_definitions).
+    """Return ``(test names in source order, duplicate definitions)``.
 
-    Test order is based on Python runtime semantics at module import time:
-    if the same test function name is defined multiple times, the last
-    definition wins and earlier ones are shadowed.
+    If the same test name is defined more than once, only the last
+    definition is kept (matches Python's import-time semantics) and
+    the earlier line numbers are reported as duplicates.
     """
     order: list[str | None] = []
     index_for: dict[str, int] = {}
@@ -71,24 +79,13 @@ def _parse_test_order(src: str) -> tuple[list[str], dict[str, list[int]]]:
 
 
 def _parse_tests_without_parity_call(src: str) -> set[str]:
-    """Return the set of ``test_*`` names whose body never calls
-    ``run_on_both_backends`` (directly or via a helper closure).
+    """Return test names whose body never calls ``run_on_both_backends``.
 
-    Such tests will never emit a ``PARITY CALL`` block in the transcript.
-    The renderer's source-order fallback must NOT consume an available
-    block on their behalf, or it will mis-attribute that block (stealing
-    it from the next test that genuinely produced one).
-
-    Detection is intentionally conservative -- we look for *any* ``Call``
-    AST node whose function name (``Name``) or attribute tail
-    (``Attribute.attr``) is ``run_on_both_backends`` anywhere inside the
-    test function's body. This catches both ``run_on_both_backends(...)``
-    and ``_run_delete(...)`` (which itself calls ``run_on_both_backends``
-    -- but the test as written calls the helper, so the helper's source
-    is implicitly part of the test's effective body for this purpose).
-    To handle the helper case we also walk module-level functions and
-    pre-compute which helpers transitively call ``run_on_both_backends``;
-    a test that calls one of those helpers counts as a producer.
+    Such tests never print a ``PARITY CALL`` block, so the renderer
+    must not hand them an unclaimed block from the transcript. The
+    check also follows module-level helpers one step: if a test calls
+    a helper that itself calls ``run_on_both_backends``, the test
+    counts as a block producer.
     """
     tree = ast.parse(src)
 
@@ -103,9 +100,8 @@ def _parse_tests_without_parity_call(src: str) -> set[str]:
                 return True
         return False
 
-    # Pass 1: collect module-level helpers that produce a PARITY CALL
-    # block (i.e. transitively call ``run_on_both_backends``). Fixed
-    # point over a single source file converges in <=N iterations.
+    # Collect module-level helpers that (transitively) call
+    # run_on_both_backends.
     producers: set[str] = {"run_on_both_backends"}
     helpers: dict[str, ast.FunctionDef] = {}
     for node in tree.body:
@@ -121,8 +117,7 @@ def _parse_tests_without_parity_call(src: str) -> set[str]:
                 producers.add(name)
                 changed = True
 
-    # Pass 2: a test is a "block producer" iff its body calls any
-    # function in ``producers``.
+    # A test is a non-producer iff its body calls no producer.
     non_producers: set[str] = set()
     for node in tree.body:
         if not isinstance(node, ast.FunctionDef) or not node.name.startswith("test_"):
@@ -133,7 +128,7 @@ def _parse_tests_without_parity_call(src: str) -> set[str]:
 
 
 def _latest_run_slice(transcript: str) -> str:
-    """Best-effort extraction of the latest pytest session from transcript."""
+    """Return the substring starting at the last pytest session start."""
     starts = [m.start() for m in SESSION_START_RE.finditer(transcript)]
     if starts:
         return transcript[starts[-1]:]
@@ -141,10 +136,10 @@ def _latest_run_slice(transcript: str) -> str:
 
 
 def _parse_skip_reasons(src: str) -> dict:
-    """Return {test_name: skip_reason} by walking the AST.
+    """Return ``{test_name: skip_reason}`` for ``@pytest.mark.skip`` decorators.
 
-    Handles multi-line implicit-concatenated string literals in the
-    ``reason=`` kwarg, which the previous regex-based parser missed.
+    Reads the AST so multi-line, implicit-concatenated string literals
+    in the ``reason=`` kwarg are picked up cleanly.
     """
     out = {}
     tree = ast.parse(src)
@@ -171,8 +166,10 @@ def _parse_skip_reasons(src: str) -> dict:
 
 
 def _parse_descriptions(src: str) -> dict:
-    """Return {test_name: short_description} from the first line of each
-    test function's docstring. Falls back to '(no description)'."""
+    """Return ``{test_name: first docstring line}`` for each test function.
+
+    Falls back to ``'(no description)'`` when the test has no docstring.
+    """
     out = {}
     tree = ast.parse(src)
     for node in tree.body:
@@ -184,25 +181,10 @@ def _parse_descriptions(src: str) -> dict:
     return out
 
 
-# Mojibake produced when UTF-8 em-dashes / en-dashes get mis-decoded as
-# cp1252 during pytest output capture. Map them back to ASCII so the
-# audit doc never contains stray ``ΓÇö`` / ``ΓÇô`` sequences.
-#
-# Two distinct mojibake families show up depending on the capture path:
-#
-# 1. cp437 console -> UTF-16 via ``Tee-Object`` produces ``ΓÇö`` etc.
-#    (the cp437 representation of the UTF-8 bytes that encode the
-#    em-dash).
-# 2. cp1252 console -> UTF-16 via ``Tee-Object`` produces single
-#    Latin-1 / Latin-1-supplement characters: an em-dash (U+2014)
-#    round-tripped through Python's stdout encoding on a Windows
-#    console that defaults to cp1252, then re-read by Tee-Object as
-#    cp1252, ends up as U+00F9 (``\u00f9`` -- the byte 0x97 in
-#    cp1252 is the em-dash, but here it landed as 0xF9 because the
-#    cp1252 -> UTF-16 path treats 0xF9 as ``ù``). The other typographic
-#    quotes / dashes map to the same family of Latin-1-supplement
-#    codepoints; map the common ones here so a captured log never
-#    leaks them into the rendered scoreboard.
+# Replacements for typographic punctuation that gets garbled when
+# pytest output is captured through a Windows console that re-encodes
+# bytes between UTF-8, cp437 and cp1252. Each key is a known
+# mis-decoded sequence; the value is the ASCII fallback we want.
 _MOJIBAKE_FIXUPS = {
     "ΓÇö": "--",
     "ΓÇô": "-",
@@ -213,10 +195,6 @@ _MOJIBAKE_FIXUPS = {
     "ΓÇª": "...",
     "\u2014": "--",
     "\u2013": "-",
-    # cp1252 -> UTF-16 single-byte mojibake artefacts observed in
-    # captured parity logs. Order: em-dash (\u00f9 = ù), en-dash
-    # (\u00f7 = divide sign), curly apostrophes / quotes that land
-    # in the same Latin-1-supplement neighbourhood.
     "\u00f9": "--",
     "\u00f7": "-",
 }
@@ -228,17 +206,13 @@ def _sanitize(text: str) -> str:
     return text
 
 
-# Inside a rendered PARITY CALL block the verdict shows up as the line
-# AFTER ``--- VERDICT ---``, indented with two spaces. Pulling it out
-# gives us the headline for the scoreboard's "Why" column on failed
-# tests (e.g. "FUNCTIONAL DIVERGENCE: response bodies or values differ
-# between the backends."). Falls back to None when the block carries
-# no verdict line (defensive -- format_report always emits one).
+# Verdict line in a PARITY CALL block: the line after ``--- VERDICT ---``,
+# indented by two spaces. Used to populate the scoreboard ``Why`` cell.
 _VERDICT_LINE_RE = re.compile(r"^---\s*VERDICT\s*---\s*$\s*^\s+(.+)$", re.MULTILINE)
 
 
 def _extract_verdict(block: str) -> str | None:
-    """Return the verdict line text from a rendered PARITY CALL block."""
+    """Return the verdict text from a rendered PARITY CALL block."""
     if not block:
         return None
     m = _VERDICT_LINE_RE.search(block)
@@ -255,24 +229,15 @@ def _scoreboard_why(
     block: str | None,
     is_non_producer: bool = False,
 ) -> str:
-    """Status-specific 'why is this test in this state' for the scoreboard.
+    """Return the ``Why`` cell text for one scoreboard row.
 
-    The scoreboard also renders a separate ``Description`` column with
-    the test's docstring summary (what the test exercises), so the
-    ``Why`` column is reserved for the *current-run outcome reason*:
-
-    - FAILED  -> verdict line from the test's PARITY CALL block (e.g.
-                 "FUNCTIONAL DIVERGENCE: response bodies or values differ..."),
-                 falling back to "(failed -- no PARITY CALL block in
-                 transcript)" if the transcript didn't carry one.
-    - SKIPPED -> the @pytest.mark.skip ``reason=`` string from the source
-                 (the test file already names the specific limitation in
-                 plain English).
-    - STALE   -> a fixed note explaining the test wasn't in the transcript.
-    - PASSED  -> verdict line from the test's PARITY CALL block (e.g.
-                 "FULL PARITY: both backends produced equivalent outcomes."),
-                 falling back to a plain "Passed." when the transcript
-                 carried no block (e.g. ``pytest`` without ``-s``).
+    - FAILED  -> verdict line from the test's PARITY CALL block,
+                 falling back to a "no block in transcript" note.
+    - SKIPPED -> the ``@pytest.mark.skip(reason=...)`` text from source.
+    - STALE   -> a fixed "not in transcript" note.
+    - PASSED  -> verdict line if present, else a plain "Passed" note.
+                 Non-producer tests get a tailored note because no
+                 pytest flag will produce a block for them.
     """
     if status == "FAILED":
         verdict = _extract_verdict(block) if block else None
@@ -288,35 +253,25 @@ def _scoreboard_why(
     if verdict:
         return verdict
     if is_non_producer:
-        # The test deliberately bypasses ``run_on_both_backends`` (e.g.
-        # it monkey-patches a helper and exercises a single backend to
-        # pin a sync-only Python-wrapper contract). Saying "re-run with
-        # -s" here would be misleading -- no amount of pytest flags can
-        # produce a parity block for a test that does not call the
-        # parity harness.
         return "Passed (test does not invoke the parity harness; see the per-test section for what it actually pins)."
     return "Passed (no PARITY CALL block captured -- re-run with `pytest -s` to populate)."
 
 
 def _parse_args(argv: list[str]) -> tuple[str, Path] | None:
-    """Return ``(op, transcript_path)`` or ``None`` on usage error.
+    """Return ``(op, transcript_path)`` or ``None`` on a usage error.
 
-    Two accepted invocations:
+    Two accepted forms::
+
         python docs/_build_parity_audit.py <transcript.txt>
         python docs/_build_parity_audit.py --op <name> <transcript.txt>
 
-    ``--op`` is the only option this script accepts; we keep the parser
-    deliberately hand-rolled (no ``argparse``) so the single-positional
-    legacy form remains a single ``len(argv) == 2`` branch and back-compat
-    is obvious to a reader.
+    The op name becomes part of a filesystem path, so reject anything
+    that contains a path separator or parent-traversal sequence.
     """
     if len(argv) == 2:
         return DEFAULT_OP, Path(argv[1])
     if len(argv) == 4 and argv[1] == "--op":
         op = argv[2]
-        # Defensive: the op name is used to build a filesystem path and a
-        # markdown filename. Reject anything that could escape the docs
-        # tree (path separators, parent traversal, empty string).
         if not op or "/" in op or "\\" in op or ".." in op:
             print(
                 "error: --op must be a simple identifier (e.g. delete_item); got: {!r}".format(op),
@@ -345,8 +300,8 @@ def main() -> int:
         )
         return 2
     raw = transcript_path.read_bytes()
-    # PowerShell's `Tee-Object` writes UTF-16 LE on Windows by default,
-    # which prepends a BOM. Detect and decode accordingly so the regexes
+    # PowerShell's ``Tee-Object`` writes UTF-16 LE with a BOM by default.
+    # Handle the common BOM-tagged encodings explicitly so the regexes
     # below see real text instead of NUL-separated bytes.
     if raw.startswith(b"\xff\xfe"):
         transcript = raw.decode("utf-16-le", errors="replace")
@@ -373,28 +328,23 @@ def main() -> int:
     skipped = _parse_skip_reasons(src)
     descriptions = _parse_descriptions(src)
     # Tests whose body never calls ``run_on_both_backends`` (directly or
-    # via a helper). Such tests will never emit a ``PARITY CALL`` block,
-    # so the source-order fallback below must not consume an unclaimed
-    # block on their behalf -- doing so silently steals the block from
-    # the next genuine producer and mis-renders both rows.
+    # via a helper). They will never produce a PARITY CALL block, so the
+    # source-order fallback below must not consume an unclaimed block
+    # on their behalf -- doing so would steal it from the next real
+    # producer and mis-render both rows.
     non_producer_tests = _parse_tests_without_parity_call(src)
     failed = set(FAILED_LINE_RE.findall(transcript))
-    # Tests pytest *actually saw* in this transcript. We harvest evidence
-    # from every per-test signal pytest can emit: explicit PASSED /
-    # FAILED / SKIPPED summary lines (``pytest -ra`` / ``-rA``), the
-    # verbose result lines (``pytest -v``), plus the AST-derived skip
-    # set (those *are* in the source even if the transcript predates
-    # them, so we deliberately do NOT count AST skips as "seen"). A
-    # test name absent from all of these is one the transcript did not
-    # exercise -- almost always because the transcript was captured
-    # against an older revision of the test file than the one we're
-    # rendering against now. Such tests get a STALE marker rather
-    # than silently defaulting to PASSED.
+    # Tests pytest actually exercised in this transcript. A test missing
+    # from every regex below is marked STALE rather than silently
+    # defaulting to PASSED. ``SEEN_LINE_RE`` is added last and only
+    # widens "seen" -- the FAIL / SKIP sets stay strict so a missing
+    # FAIL can never be silently upgraded to a PASS.
     seen_in_transcript: set[str] = set()
     seen_in_transcript.update(FAILED_LINE_RE.findall(transcript))
     seen_in_transcript.update(PASSED_LINE_RE.findall(transcript))
     seen_in_transcript.update(SKIPPED_LINE_RE.findall(transcript))
     seen_in_transcript.update(name for name, _ in VERBOSE_RESULT_LINE_RE.findall(transcript))
+    seen_in_transcript.update(SEEN_LINE_RE.findall(transcript))
     collected_match = COLLECTED_RE.search(transcript)
     collected_count = int(collected_match.group(1)) if collected_match else None
     summary_matches = list(SUMMARY_RE.finditer(transcript))
@@ -419,41 +369,32 @@ def main() -> int:
         elif n in seen_in_transcript:
             statuses[n] = "PASSED"
         else:
-            # No evidence in the transcript that pytest ran this test --
-            # it was added (or renamed) after the transcript was
-            # captured. Mark explicitly so the reader does not mistake
-            # silence for success.
+            # No evidence pytest ran this test; mark explicitly so the
+            # reader does not mistake silence for success.
             statuses[n] = "STALE"
     stale_tests = [n for n in tests if statuses[n] == "STALE"]
     block_for = {}
-    # First, claim by name for tests whose title embeds the test name
-    # (e.g. test_duplicate_id_raises_typed_exception: insert id=...).
+    # Pass 1: match blocks whose title embeds the test name
+    # (e.g. ``test_duplicate_id_raises_typed_exception: insert id=...``).
     name_to_block = {}
     for title, rendered in zip(title_blocks, blocks):
         for n in tests:
             if title.startswith(n + ':') or title.startswith(n + ' '):
                 name_to_block[n] = rendered
                 break
-    # Then fill the remaining ran tests in source order, consuming any
-    # block not already claimed by name (skip tests that produce no block,
-    # like test_response_hook_fires_once which runs its own loop).
     used_titles = set()
     for n, rendered in name_to_block.items():
         block_for[n] = rendered
-        # Find the title of this block to mark it used.
         for title, r2 in zip(title_blocks, blocks):
             if r2 == rendered:
                 used_titles.add(title)
                 break
     remaining = [(t, r) for t, r in zip(title_blocks, blocks) if t not in used_titles]
 
-    # Second pass: match unclaimed blocks to tests by their [Lx] level
-    # tag. The L5 block's title is "[L5] duplicate-id 409: ..." (no test
-    # name), so name-based matching above misses it. Without this pass
-    # the source-order fallback below would hand the L5 block to L4
-    # (which produces no block of its own because it runs its own loop
-    # instead of going through ``_run``).
-    level_re = re.compile(r"^\[(L\d+)\]")
+    # Pass 2: match unclaimed blocks to tests by their ``[Lx]`` level
+    # tag. Block titles like ``[L5] duplicate-id 409: ...`` carry no
+    # test name, so the name-match in pass 1 misses them.
+    level_re = re.compile(r"^\[(L\d+)]")
     still_remaining = []
     for title, rendered in remaining:
         m_lvl = level_re.match(title)
@@ -474,29 +415,18 @@ def main() -> int:
             still_remaining.append(rendered)
     remaining = still_remaining
 
+    # Pass 3: source-order fallback. Only match a leftover block to a
+    # test whose ``[Lx]`` level prefix matches the block's title; never
+    # to a non-producer. Leaves the row unmatched (so the doc renders
+    # the honest "No PARITY CALL block" note) rather than silently
+    # attaching the wrong block.
     for n in tests:
         if statuses[n] == 'SKIPPED' or n in block_for:
             continue
         if n in non_producer_tests:
-            # This test never calls ``run_on_both_backends`` so it
-            # cannot have produced a block in the transcript. Leave it
-            # unmatched -- the row will render with the honest "no
-            # PARITY CALL block (test does not invoke the parity
-            # harness)" notice rather than stealing the next available
-            # block from a genuine producer.
             continue
         if not remaining:
             continue
-        # Source-order fallback used to consume ``remaining[0]``
-        # unconditionally. That mis-maps freely when the transcript's
-        # block order doesn't match the source's test order (added /
-        # reordered / renamed tests between transcript capture and doc
-        # render). Constrain the fallback to only consume a block
-        # whose ``[Lx]`` level tag matches this test's level prefix
-        # (e.g. ``test_L2_*`` only consumes a ``[L2]``-titled block);
-        # leave the test unmatched otherwise so the doc renders the
-        # honest "No PARITY CALL block found" notice rather than
-        # silently attaching the wrong block.
         m_name_lvl = re.match(r"^test_(L\d+)_", n)
         if not m_name_lvl:
             continue
@@ -612,7 +542,7 @@ def main() -> int:
         "STALE": "_STALE_",
     }
     # Group order: failures first, then skips, then stale, then passes.
-    # Within each group preserve source order so the # column reads
+    # Within each group keep source order so the # column reads
     # monotonically per group and matches the per-test reports section.
     status_order = {"FAILED": 0, "SKIPPED": 1, "STALE": 2, "PASSED": 3}
     source_index = {n: i for i, n in enumerate(tests, 1)}
@@ -640,12 +570,10 @@ def main() -> int:
     out.append("")
     out.append("## Per-test reports")
     out.append("")
-    # Per-test reports follow the same failed -> skipped -> stale -> passed
-    # ordering as the scoreboard so the document reads top-to-bottom in the
-    # same priority: a reader who started at the scoreboard can scroll
-    # straight down into the matching block without re-sorting in their
-    # head. The heading number ``i`` stays the source-file index so the
-    # scoreboard's ``#`` column links unambiguously to the right block.
+    # Per-test reports use the same failed -> skipped -> stale -> passed
+    # ordering as the scoreboard so the doc reads top-to-bottom in the
+    # same priority. The heading number ``i`` stays the source-file
+    # index so the scoreboard's ``#`` column links unambiguously.
     for _, i, n in sortable:
         s = statuses[n]
         out.append(f"### {i}. `{n}` \u2014 {s}")
@@ -688,19 +616,14 @@ def main() -> int:
             out.append(b)
             out.append("```")
         out.append("")
-    # Audit doc lives in ``docs/V5/`` alongside the other V5 design /
-    # parity references (``RUST_PARITY_PUSHBACKS.md``,
-    # ``V5_CREATE_ITEM_IMPLEMENTATION.md``, etc.). The earlier
-    # top-level ``docs/V5_PARITY_AUDIT.md`` location was a one-off from
-    # before that folder existed and would silently shadow the V5/
-    # copy if both were written; we now standardise on the V5/ path.
-    # The filename carries the op name as a suffix so per-op runs don't
-    # overwrite each other (``..._create_item.md``, ``..._delete_item.md``,
-    # etc.).
+    # Filename carries the op name as a suffix so per-op runs do not
+    # overwrite each other (``..._create_item.md``, ``..._delete_item.md``).
     out_path = _out_path_for(op)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(out) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {out_path.as_posix()} ({sum(len(x)+1 for x in out)} chars)")
     return 0
+
+
 if __name__ == "__main__":
     sys.exit(main())

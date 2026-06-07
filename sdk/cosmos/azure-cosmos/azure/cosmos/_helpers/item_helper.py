@@ -3,17 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Per-client helper that runs every ``Container.create_item`` call.
+"""Per-client helper that runs every ``Container.create_item`` /
+``Container.delete_item`` call.
 
 ``ItemHelper`` is where backend dispatch and the request-prep logic
-(previously inlined in ``Container.create_item``) live. The container
-method just stamps its explicit kwargs into ``kwargs`` and hands off to
-one ``ItemHelper.create_item`` call.
+(previously inlined in the container methods) live. The container
+methods just stamp their explicit kwargs into ``kwargs`` and hand off
+to one ``ItemHelper.create_item`` / ``ItemHelper.delete_item`` call.
 
-Flow:
+Flow (same shape for both ops):
 
-1. Build the legacy-shape ``request_options`` via
-   ``build_create_item_request_options``.
+1. Build the legacy-shape ``request_options`` via the matching
+   ``build_*_request_options`` helper.
 2. Look up (or refresh) the container's ``_rid`` from the
    container-properties cache.
 3. If a backend (today: ``RustBackend``) is wired, build a
@@ -21,7 +22,7 @@ Flow:
    ``BackendResponse`` into a ``CosmosDict`` (raising the typed
    exception for non-2xx).
 4. When no backend is wired, fall through to the legacy
-   ``client_connection.CreateItem`` path.
+   ``client_connection.CreateItem`` / ``.DeleteItem`` path.
 """
 from __future__ import annotations
 
@@ -30,8 +31,11 @@ from typing import Any, Callable, Dict, Optional
 from .._backend.base import CosmosBackend
 from .._constants import _Constants as Constants
 from ..partition_key import _Empty
-from ._item_dispatch import build_create_item_request_options
-from ._request_prep import build_create_item_prepared
+from ._item_dispatch import (
+    build_create_item_request_options,
+    build_delete_item_request_options,
+)
+from ._request_prep import build_create_item_prepared, build_delete_item_prepared
 from ._response_parse import parse_backend_response
 
 
@@ -168,4 +172,81 @@ class ItemHelper:
         except Exception:  # pylint: disable=broad-except
             pass
         return _Empty()
+
+    def delete_item(
+        self,
+        *,
+        container_link: str,
+        document_link: str,
+        item_id: str,
+        **kwargs: Any,
+    ) -> Any:
+        """Run a single ``delete_item`` call end to end.
+
+        :param container_link: Container self-link.
+        :param document_link: The ``dbs/.../docs/<id-or-rid>`` link the
+            legacy ``DeleteItem`` consumes. Built by the caller via
+            ``Container._get_document_link``.
+        :param item_id: The document id the binding writes onto
+            ``PreparedRequest.item_id``.
+        :param kwargs: Caller's remaining kwargs. The caller has
+            already stamped ``partitionKey`` into ``request_options``
+            via ``Container._set_partition_key``.
+        """
+        # Snapshot kwargs before the legacy options build drains them.
+        # Same reason as create_item: ``_base.build_options`` pops every
+        # recognised key, but the rust prep still needs them.
+        kwargs_for_rust_prep = dict(kwargs)
+
+        request_options = build_delete_item_request_options(kwargs)
+
+        # The caller stamped the PK into ``request_options`` before
+        # getting here. Use that value so the rust prep does not need
+        # to re-derive the wire shape.
+        partition_key_value = request_options.get("partitionKey", _Empty())
+
+        # Container-rid lookup; best-effort, same shape as create_item.
+        container_rid: Optional[str] = None
+        try:
+            if self._ensure_container_cached is not None:
+                self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                container_rid = rid_value
+                request_options[Constants.ContainerRID] = container_rid
+        except Exception:  # pylint: disable=broad-except
+            container_rid = None
+
+        if self._backend is not None:
+            prepared = build_delete_item_prepared(
+                container_link=container_link,
+                item_id=item_id,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = self._backend.execute(prepared)
+            if backend_response is not None:
+                # Delete returns 204 with an empty body. We still
+                # invoke the response_hook so callers can observe
+                # response headers; the helper returns None because
+                # the public ``delete_item`` is typed ``-> None``.
+                parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+                return None
+
+        # Fall-through: legacy path.
+        return self.client_connection.DeleteItem(
+            document_link=document_link,
+            options=request_options,
+            **kwargs,
+        )
 

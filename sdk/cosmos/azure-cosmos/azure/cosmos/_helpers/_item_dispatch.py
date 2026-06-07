@@ -123,3 +123,62 @@ def build_create_item_request_options(
         request_options["indexingDirective"] = indexing_directive
     return request_options
 
+
+def merge_delete_item_explicit_kwargs(
+    kwargs: Dict[str, Any],
+    *,
+    pre_trigger_include: Any = None,
+    post_trigger_include: Any = None,
+    session_token: Any = None,
+    initial_headers: Any = None,
+    etag: Any = None,
+    match_condition: Any = None,
+    priority: Any = None,
+    retry_write: Any = None,
+    throughput_bucket: Any = None,
+    availability_strategy: Any = None,
+    response_hook: Any = None,
+) -> None:
+    """Copy every non-None explicit ``delete_item`` kwarg into ``kwargs``.
+
+    Same shape as ``merge_create_item_explicit_kwargs``. Adds ``etag``
+    and ``match_condition`` (meaningful on delete) and omits
+    ``no_response`` (delete has no body). ``availability_strategy`` is
+    passed through the hedging-strategy validator.
+    """
+    if pre_trigger_include is not None:
+        kwargs['pre_trigger_include'] = pre_trigger_include
+    if post_trigger_include is not None:
+        kwargs['post_trigger_include'] = post_trigger_include
+    if session_token is not None:
+        kwargs['session_token'] = session_token
+    if initial_headers is not None:
+        kwargs['initial_headers'] = initial_headers
+    if etag is not None:
+        kwargs['etag'] = etag
+    if match_condition is not None:
+        kwargs['match_condition'] = match_condition
+    if priority is not None:
+        kwargs['priority'] = priority
+    if retry_write is not None:
+        kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+    if throughput_bucket is not None:
+        kwargs["throughput_bucket"] = throughput_bucket
+    if availability_strategy is not None:
+        kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
+    if response_hook is not None:
+        kwargs['response_hook'] = response_hook
+
+
+def build_delete_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Build the request-options dict the legacy ``DeleteItem`` consumes.
+
+    Pure function. Delete has no ``disableAutomaticIdGeneration`` /
+    ``indexingDirective`` / ``populateQueryMetrics`` knobs, so this is
+    just a thin wrapper around ``build_options``. The container method
+    already drops ``populate_query_metrics`` (with a deprecation
+    warning) before kwargs reach here.
+    """
+    return build_options(kwargs)
+
+

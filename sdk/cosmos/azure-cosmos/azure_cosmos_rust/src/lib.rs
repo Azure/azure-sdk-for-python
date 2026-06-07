@@ -24,6 +24,14 @@
 //!         `CosmosResponse` into a 4-tuple matching the Python
 //!         `BackendResponse` dataclass.
 //!
+//!   * `delete_item(handle, prepared) -> (status, sub_status,
+//!                                         headers, body)`
+//!         Same shape as `create_item` but builds a
+//!         `CosmosOperation::delete_item` with no body. The document
+//!         id rides on `PreparedRequest.item_id` because there is no
+//!         body to extract it from. On success the driver returns
+//!         HTTP 204 with an empty body.
+//!
 //! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
 //! driver's typed operation fields. `responsePayloadOnWriteDisabled`
 //! is lifted to the typed `OperationOptions::content_response_on_write`
@@ -81,6 +89,7 @@ fn drivers() -> &'static RwLock<HashMap<String, Arc<CosmosDriver>>> {
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(init_client, m)?)?;
     m.add_function(wrap_pyfunction!(create_item, m)?)?;
+    m.add_function(wrap_pyfunction!(delete_item, m)?)?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     Ok(())
 }
@@ -178,148 +187,7 @@ fn create_item<'py>(
     let headers_obj = prepared.getattr("headers")?;
     let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
 
-    let mut activity_header: Option<String> = None;
-    let mut session_header: Option<String> = None;
-    // The Python helper writes the *internal option-key name*
-    // ``responsePayloadOnWriteDisabled`` into PreparedRequest.headers
-    // when the customer passed ``no_response=True``. The driver's
-    // ``OperationOptions::content_response_on_write`` defaults to
-    // ``Disabled`` ("suppresses the body to reduce bandwidth"); to
-    // make a successful create return the created item the binding
-    // must explicitly map ``no_response`` → ``Enabled`` / ``Disabled``
-    // here. ``None`` (kwarg never set) is treated as the customer
-    // wanting the body, so we default to Enabled.
-    let mut content_response_on_write: ContentResponseOnWrite =
-        ContentResponseOnWrite::Enabled;
-    // ``excluded_locations`` (Python kwarg) → driver
-    // ``OperationOptions::excluded_regions``. The Python helper writes
-    // the kwarg into ``PreparedRequest.headers`` under the internal
-    // option-key name ``excludedLocations`` (see
-    // ``_helpers/_options.COMMON_OPTIONS``) with the *raw value* — a
-    // ``Sequence[str]`` of region display names like
-    // ``["East US", "West US 2"]``. The driver models this as a typed
-    // field (``ExcludedRegions(Vec<Region>)``) and ``Region`` is
-    // case/whitespace-normalising via its ``From<String>`` impl, so we
-    // hand the strings straight in. ``None`` here means "kwarg never
-    // set" and the driver inherits from a lower-priority layer
-    // (account/runtime/env) per the layered-options model.
-    let mut excluded_regions_value: Option<ExcludedRegions> = None;
-    // ``timeout`` (Python kwarg, seconds) → driver
-    // ``OperationOptions::end_to_end_latency_policy``. The Python
-    // helper writes the value under the sentinel header name
-    // ``__overall_timeout_seconds`` (see
-    // ``_constants._Constants.OVERALL_TIMEOUT_SECONDS``). The legacy
-    // core-Python path consumes ``timeout`` via the azure-core
-    // pipeline; the rust path bypasses that pipeline entirely, so the
-    // binding lifts the value into the driver's typed end-to-end
-    // latency policy here. Sub-second values are clamped by the
-    // driver to its 1-second minimum (see
-    // ``EndToEndOperationLatencyPolicy::new``); ``None`` means
-    // "kwarg never set" and the driver inherits from a lower layer.
-    let mut end_to_end_timeout: Option<EndToEndOperationLatencyPolicy> = None;
-    // Custom headers the binding pushes through the driver's
-    // ``OperationOptions::with_custom_headers`` escape hatch. Used for
-    // every per-request header that the driver does not yet model as
-    // a typed field of its own (intended-collection-rid, indexing
-    // directive, pre/post triggers, priority, throughput bucket).
-    let mut custom_headers: HashMap<HeaderName, HeaderValue> = HashMap::new();
-    for (key, value) in headers_dict.iter() {
-        let key_str: String = key.extract()?;
-        let lower = key_str.to_ascii_lowercase();
-        // Headers the driver already exposes as typed fields on the
-        // operation itself — handled out of band, not via custom_headers.
-        if lower == "x-ms-activity-id" {
-            activity_header = Some(value.extract()?);
-            continue;
-        }
-        // Accept both the wire-name (`x-ms-session-token`) and the Python
-        // helper's camelCase option-key (`sessionToken`, produced by
-        // `_options.COMMON_OPTIONS` when the customer passes
-        // `session_token=`). The legacy core-Python path translates the
-        // option-key to the wire header via `_base.GetHeaders`; the Rust
-        // path does the same translation here so the kwarg is not
-        // silently lost on the way to the driver.
-        if lower == "x-ms-session-token" || lower == "sessiontoken" {
-            session_header = Some(value.extract()?);
-            continue;
-        }
-        // ``no_response`` lifted to the typed options field (see above).
-        if lower == "responsepayloadonwritedisabled" {
-            // Truthy → caller asked for "no body"; falsy → caller
-            // explicitly asked for the body (today indistinguishable
-            // from omission). ``bool`` lift via PyAny.is_truthy().
-            content_response_on_write = if value.is_truthy().unwrap_or(false) {
-                ContentResponseOnWrite::Disabled
-            } else {
-                ContentResponseOnWrite::Enabled
-            };
-            continue;
-        }
-        // ``excludedLocations`` (option-key form of the ``excluded_locations``
-        // kwarg) → typed ``ExcludedRegions`` on the driver. We accept any
-        // Python iterable of strings (the Python type is
-        // ``Sequence[str]``); each element is fed through ``Region::from``
-        // (case- and whitespace-normalising). Stripped from custom-headers
-        // because the driver does not want it on the wire as a header.
-        if lower == "excludedlocations" {
-            let regions: Vec<String> = value.extract().map_err(|e| {
-                PyValueError::new_err(format!(
-                    "excluded_locations must be a sequence of region name strings: {e}"
-                ))
-            })?;
-            excluded_regions_value =
-                Some(regions.into_iter().collect::<ExcludedRegions>());
-            continue;
-        }
-        // Sentinel header carrying the customer's ``timeout`` kwarg
-        // (overall operation timeout, seconds). Accepts int or float;
-        // negative / zero / non-finite values are ignored (treated
-        // as "kwarg never set") rather than surfaced as an error
-        // because the legacy path silently ignores them too.
-        if lower == "__overall_timeout_seconds" {
-            if let Ok(seconds) = value.extract::<f64>() {
-                if seconds.is_finite() && seconds > 0.0 {
-                    end_to_end_timeout = Some(EndToEndOperationLatencyPolicy::new(
-                        Duration::from_secs_f64(seconds),
-                    ));
-                }
-            }
-            continue;
-        }
-        // Everything else: translate the Python helper's option-key
-        // name (or accept an already-wire-name string) to the
-        // ``x-ms-...`` header the service expects, then push onto the
-        // custom-headers map. Unknown keys are skipped silently — the
-        // legacy ``_base.GetHeaders`` mapping table also drops keys
-        // it does not recognise, so the rust path matches that
-        // behaviour rather than 500ing on a stray option.
-        let wire_name: Option<&'static str> = match lower.as_str() {
-            "pretriggerinclude" => Some("x-ms-documentdb-pre-trigger-include"),
-            "posttriggerinclude" => Some("x-ms-documentdb-post-trigger-include"),
-            "indexingdirective" => Some("x-ms-indexing-directive"),
-            "prioritylevel" => Some("x-ms-cosmos-priority-level"),
-            "throughputbucket" => Some("x-ms-cosmos-throughput-bucket"),
-            "containerrid" => Some("x-ms-cosmos-intended-collection-rid"),
-            // Already a wire-name header (e.g. caller-supplied
-            // initial_headers, or a future site that writes the
-            // x-ms-... name directly). Forward as-is. We exclude the
-            // two typed-field names handled above.
-            other if other.starts_with("x-ms-") || other == "prefer" => None,
-            _ => continue,
-        };
-        // Stringify the value. Python may have written a non-str
-        // (e.g. an int for indexing_directive); we coerce via str()
-        // to match what the legacy path emits on the wire.
-        let value_str: String = match value.extract::<String>() {
-            Ok(s) => s,
-            Err(_) => value.str()?.to_string(),
-        };
-        let header_name = match wire_name {
-            Some(name) => HeaderName::from_static(name),
-            None => HeaderName::from(lower),
-        };
-        custom_headers.insert(header_name, HeaderValue::from(value_str));
-    }
+    let modifiers = extract_op_modifiers(headers_dict)?;
 
     let driver = drivers()
         .read()
@@ -349,60 +217,40 @@ fn create_item<'py>(
                 ItemReference::from_name(&container, partition_key, item_id);
             let mut op = CosmosOperation::create_item(item_ref).with_body(body_bytes);
 
-            if let Some(activity) = activity_header {
+            if let Some(activity) = modifiers.activity_header.as_ref() {
                 if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
                     op = op.with_activity_id(ActivityId::from(uuid.to_string()));
                 }
             }
-            if let Some(session) = session_header {
-                op = op.with_session_token(SessionToken::from(session));
+            if let Some(session) = modifiers.session_header.as_ref() {
+                op = op.with_session_token(SessionToken::from(session.clone()));
             }
 
-            // Build OperationOptions with the field(s) the binding maps
-            // from the Python side:
-            //   * ``content_response_on_write`` — from ``no_response``.
-            //   * ``custom_headers`` — every per-request header the
-            //     driver does not yet model as a typed field of its own
-            //     (intended-collection-rid, indexing directive,
-            //     pre/post triggers, priority, throughput bucket; plus
-            //     any caller-supplied ``x-ms-...`` / ``prefer`` key
-            //     that flowed through PreparedRequest.headers).
-            // Other fields stay ``None`` and the driver fills them
-            // from account / runtime / env defaults (the layered-
-            // options model — see ``OperationOptions`` doc).
-            let mut builder = OperationOptionsBuilder::new()
-                .with_content_response_on_write(content_response_on_write);
-            if let Some(regions) = excluded_regions_value {
-                builder = builder.with_excluded_regions(regions);
-            }
-            if let Some(policy) = end_to_end_timeout {
-                builder = builder.with_end_to_end_latency_policy(policy);
-            }
-            if !custom_headers.is_empty() {
-                builder = builder.with_custom_headers(custom_headers);
-            }
-            let options = builder.build();
+            // Build OperationOptions from the typed fields the
+            // binding lifted off the headers dict. Anything left as
+            // ``None`` falls back to the driver's default.
+            let options = build_operation_options(
+                Some(modifiers.content_response_on_write),
+                modifiers.excluded_regions_value,
+                modifiers.end_to_end_timeout,
+                modifiers.custom_headers,
+            );
 
             driver.execute_singleton_operation(op, options).await
         })
     });
 
     match response_result {
-        // Success: the driver hands back a wire response (status + headers
-        // + body). Body may legitimately be `ResponseBody::NoPayload` —
-        // most commonly when the caller passed `no_response=True` and the
-        // driver suppressed the body — and `response_body_to_vec` will
-        // map that to an empty `Vec<u8>` for the Python parser.
+        // Body may legitimately be empty when ``no_response=True``;
+        // response_body_to_vec maps NoPayload to an empty Vec for the
+        // Python parser.
         Ok(response) => backend_response_tuple_from_success(py, response),
         Err(cosmos_error) => {
-            // PUSHBACK #4 / Appendix B Gap 4: the v0.4.0 driver carries the
-            // wire response on its typed CosmosError, reachable via
-            // ``CosmosError::response()``. The binding extracts the typed
-            // status, parsed Cosmos headers, and body directly — no more
-            // format!-and-regex-parse-the-status round trip on the Python
-            // side. Falls through to a generic RuntimeError for synthetic
-            // errors (transport failures, client validation) where there
-            // is no wire response to surface.
+            // The driver carries the wire response on its typed
+            // CosmosError; extract status, headers, and body directly.
+            // Synthetic errors (transport failures, client validation)
+            // have no wire response and fall through to a generic
+            // RuntimeError.
             if let Some(raw_http_error) =
                 backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
             {
@@ -414,6 +262,276 @@ fn create_item<'py>(
             }
         }
     }
+}
+
+// ---------------------------------------------------------------------------
+// delete_item
+// ---------------------------------------------------------------------------
+//
+// Same input/output shape as create_item, but:
+//   * no request body (the wire DELETE is bodiless);
+//   * the document id comes from PreparedRequest.item_id, not the body;
+//   * content_response_on_write is left at the driver default — DELETE
+//     has no body to suppress, and the driver auto-injects
+//     `Prefer: return=minimal` for non-read ops anyway;
+//   * If-Match / If-None-Match conditional headers (built by the Python
+//     helper from etag + match_condition) flow through custom_headers.
+
+#[pyfunction]
+fn delete_item<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let container_link: String = prepared.getattr("container_link")?.extract()?;
+    let partition_key_header: String =
+        prepared.getattr("partition_key_header")?.extract()?;
+    let item_id: String = prepared
+        .getattr("item_id")?
+        .extract::<Option<String>>()?
+        .ok_or_else(|| {
+            PyValueError::new_err(
+                "delete_item: PreparedRequest.item_id is required for delete operations",
+            )
+        })?;
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+
+    let modifiers = extract_op_modifiers(headers_dict)?;
+
+    let driver = drivers()
+        .read()
+        .unwrap()
+        .get(handle)
+        .cloned()
+        .ok_or_else(|| {
+            PyRuntimeError::new_err(format!(
+                "no driver registered for handle {handle:?}; call init_client first"
+            ))
+        })?;
+
+    let (database_name, container_name) = parse_container_link(&container_link)?;
+    let partition_key = parse_partition_key_header(&partition_key_header)?;
+
+    let tokio_rt = TOKIO_RUNTIME.get().ok_or_else(|| {
+        PyRuntimeError::new_err("init_client must be called before delete_item")
+    })?;
+
+    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
+        tokio_rt.block_on(async {
+            let container = driver
+                .resolve_container(&database_name, &container_name)
+                .await?;
+            let item_ref =
+                ItemReference::from_name(&container, partition_key, item_id);
+            let mut op = CosmosOperation::delete_item(item_ref);
+
+            if let Some(activity) = modifiers.activity_header.as_ref() {
+                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
+                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
+                }
+            }
+            if let Some(session) = modifiers.session_header.as_ref() {
+                op = op.with_session_token(SessionToken::from(session.clone()));
+            }
+
+            // No content_response_on_write override for delete: pass
+            // None and let the driver default stand. custom_headers
+            // carries If-Match / If-None-Match plus any caller-supplied
+            // x-ms-* entries.
+            let options = build_operation_options(
+                None,
+                modifiers.excluded_regions_value,
+                modifiers.end_to_end_timeout,
+                modifiers.custom_headers,
+            );
+
+            driver.execute_singleton_operation(op, options).await
+        })
+    });
+
+    match response_result {
+        Ok(response) => backend_response_tuple_from_success(py, response),
+        Err(cosmos_error) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                Err(PyRuntimeError::new_err(format!(
+                    "driver execute_singleton_operation failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Shared header → modifier translation
+// ---------------------------------------------------------------------------
+//
+// Both create_item and delete_item walk PreparedRequest.headers and pick
+// out the entries the driver models as typed fields (activity-id,
+// session token, no_response, excluded_regions, end-to-end timeout).
+// Everything else goes through the driver's custom_headers escape hatch.
+
+struct OpModifiers {
+    activity_header: Option<String>,
+    session_header: Option<String>,
+    // ``no_response=True`` -> Disabled, otherwise Enabled. Only
+    // create_item consumes this; delete_item leaves the driver default
+    // in place because it has no body to suppress.
+    content_response_on_write: ContentResponseOnWrite,
+    excluded_regions_value: Option<ExcludedRegions>,
+    end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
+    custom_headers: HashMap<HeaderName, HeaderValue>,
+}
+
+fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifiers> {
+    let mut activity_header: Option<String> = None;
+    let mut session_header: Option<String> = None;
+    // ``no_response=True`` -> Disabled, otherwise Enabled. The driver
+    // default is Disabled, so we must set this explicitly to return a
+    // body on create when the caller did not opt out.
+    let mut content_response_on_write: ContentResponseOnWrite =
+        ContentResponseOnWrite::Enabled;
+    // ``excluded_locations`` kwarg -> typed ExcludedRegions on the
+    // driver. The Python helper writes the raw list of region names
+    // under the option-key ``excludedLocations``. ``None`` here means
+    // the kwarg was not set and the driver picks the default.
+    let mut excluded_regions_value: Option<ExcludedRegions> = None;
+    // ``timeout`` (seconds) kwarg -> driver end-to-end latency policy.
+    // The Python helper writes it under the sentinel header name
+    // ``__overall_timeout_seconds`` because the rust path skips the
+    // azure-core pipeline that would normally consume ``timeout``.
+    // Sub-second values are clamped by the driver to its 1-second
+    // minimum.
+    let mut end_to_end_timeout: Option<EndToEndOperationLatencyPolicy> = None;
+    // Per-request headers the driver does not model as typed fields
+    // (intended-collection-rid, indexing directive, pre/post triggers,
+    // priority, throughput bucket, If-Match / If-None-Match) flow
+    // through the driver's custom-headers escape hatch.
+    let mut custom_headers: HashMap<HeaderName, HeaderValue> = HashMap::new();
+    for (key, value) in headers_dict.iter() {
+        let key_str: String = key.extract()?;
+        let lower = key_str.to_ascii_lowercase();
+        // Typed fields on the driver operation — handled out of band.
+        if lower == "x-ms-activity-id" {
+            activity_header = Some(value.extract()?);
+            continue;
+        }
+        // Accept both the wire-name and the helper's camelCase
+        // option-key form so the value reaches the driver either way.
+        if lower == "x-ms-session-token" || lower == "sessiontoken" {
+            session_header = Some(value.extract()?);
+            continue;
+        }
+        // ``no_response`` lifted to the typed options field.
+        if lower == "responsepayloadonwritedisabled" {
+            // Truthy -> caller asked for "no body"; falsy -> caller
+            // explicitly asked for the body.
+            content_response_on_write = if value.is_truthy().unwrap_or(false) {
+                ContentResponseOnWrite::Disabled
+            } else {
+                ContentResponseOnWrite::Enabled
+            };
+            continue;
+        }
+        // ``excludedLocations`` -> typed ExcludedRegions on the driver.
+        // Accepts any iterable of region-name strings; each element is
+        // normalised by the driver via Region::from.
+        if lower == "excludedlocations" {
+            let regions: Vec<String> = value.extract().map_err(|e| {
+                PyValueError::new_err(format!(
+                    "excluded_locations must be a sequence of region name strings: {e}"
+                ))
+            })?;
+            excluded_regions_value =
+                Some(regions.into_iter().collect::<ExcludedRegions>());
+            continue;
+        }
+        // Sentinel header carrying the customer's ``timeout`` kwarg.
+        // Accepts int or float; non-positive or non-finite values are
+        // ignored to match the legacy behaviour.
+        if lower == "__overall_timeout_seconds" {
+            if let Ok(seconds) = value.extract::<f64>() {
+                if seconds.is_finite() && seconds > 0.0 {
+                    end_to_end_timeout = Some(EndToEndOperationLatencyPolicy::new(
+                        Duration::from_secs_f64(seconds),
+                    ));
+                }
+            }
+            continue;
+        }
+        // Everything else: translate the helper's option-key name
+        // (or accept an already-wire-name string) to the ``x-ms-...``
+        // header the service expects, then push to custom headers.
+        // Unknown keys are dropped, matching the legacy behaviour.
+        let wire_name: Option<&'static str> = match lower.as_str() {
+            "pretriggerinclude" => Some("x-ms-documentdb-pre-trigger-include"),
+            "posttriggerinclude" => Some("x-ms-documentdb-post-trigger-include"),
+            "indexingdirective" => Some("x-ms-indexing-directive"),
+            "prioritylevel" => Some("x-ms-cosmos-priority-level"),
+            "throughputbucket" => Some("x-ms-cosmos-throughput-bucket"),
+            "containerrid" => Some("x-ms-cosmos-intended-collection-rid"),
+            // If-Match / If-None-Match are listed explicitly because
+            // they do not start with ``x-ms-``.
+            "if-match" => Some("if-match"),
+            "if-none-match" => Some("if-none-match"),
+            // Already a wire-name header (caller-supplied
+            // initial_headers, or a future site writing the wire name
+            // directly). Forward as-is.
+            other if other.starts_with("x-ms-") || other == "prefer" => None,
+            _ => continue,
+        };
+        // Stringify the value: Python may have written a non-str
+        // (e.g. int for indexing_directive); coerce via str() so the
+        // wire bytes match the legacy path.
+        let value_str: String = match value.extract::<String>() {
+            Ok(s) => s,
+            Err(_) => value.str()?.to_string(),
+        };
+        let header_name = match wire_name {
+            Some(name) => HeaderName::from_static(name),
+            None => HeaderName::from(lower),
+        };
+        custom_headers.insert(header_name, HeaderValue::from(value_str));
+    }
+
+    Ok(OpModifiers {
+        activity_header,
+        session_header,
+        content_response_on_write,
+        excluded_regions_value,
+        end_to_end_timeout,
+        custom_headers,
+    })
+}
+
+/// Build an OperationOptions from the typed-field values the binding
+/// lifted out of the headers dict. ``content_response`` is ``Some(_)``
+/// only for write ops where the kwarg is meaningful (today: create_item);
+/// ``None`` leaves the driver default in place (used by delete_item).
+fn build_operation_options(
+    content_response: Option<ContentResponseOnWrite>,
+    excluded_regions: Option<ExcludedRegions>,
+    end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
+    custom_headers: HashMap<HeaderName, HeaderValue>,
+) -> azure_data_cosmos_driver::options::OperationOptions {
+    let mut builder = OperationOptionsBuilder::new();
+    if let Some(cr) = content_response {
+        builder = builder.with_content_response_on_write(cr);
+    }
+    if let Some(regions) = excluded_regions {
+        builder = builder.with_excluded_regions(regions);
+    }
+    if let Some(policy) = end_to_end_timeout {
+        builder = builder.with_end_to_end_latency_policy(policy);
+    }
+    if !custom_headers.is_empty() {
+        builder = builder.with_custom_headers(custom_headers);
+    }
+    builder.build()
 }
 
 fn backend_response_tuple<'py>(
@@ -439,9 +557,7 @@ fn backend_response_tuple_from_success<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     let status = response.status();
     let status_code = u16::from(status.status_code()) as i64;
-    // SubStatusCode is a `pub struct SubStatusCode(u16)` in driver v0.4.0
-    // (was a richer type with a `From<SubStatusCode> for u32` impl in 0.3.0).
-    // `.value()` returns the underlying u16.
+    // SubStatusCode wraps a u16; use ``.value()`` to read it.
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
 
     // Copy the driver's typed CosmosResponseHeaders fields into a Python
@@ -475,22 +591,12 @@ fn response_body_to_vec(body: ResponseBody) -> Vec<u8> {
     }
 }
 
-/// Build a `BackendResponse` 4-tuple from a driver `CosmosError` that carries
-/// a wire response.
+/// Build a `BackendResponse` 4-tuple from a driver `CosmosError` that
+/// carries a wire response.
 ///
-/// Returns `Ok(None)` when the error has no wire response attached (purely
-/// synthetic errors — transport failures, client validation, end-to-end
-/// timeouts before any HTTP round-trip). The caller falls back to a generic
-/// `PyRuntimeError` in that case.
-///
-/// PUSHBACK #4 / Appendix B Gap 4 status: the driver v0.4.0 `CosmosError`
-/// carries the wire response on its typed `.response()` accessor, so the
-/// binding no longer has to regex-parse the HTTP status out of `format!("{e}")`
-/// to keep the Python typed-exception contract honest. The
-/// `_backend/rust.py` shim that recovered status / sub_status from a
-/// `RuntimeError("driver execute_operation failed: HTTP NNN ...")` message
-/// is now dead code on the success path; it stays only for safety against
-/// the `None` synthetic-error case.
+/// Returns `Ok(None)` when the error has no wire response (transport
+/// failures, client validation, timeouts before any HTTP round-trip).
+/// The caller falls back to a generic `PyRuntimeError` in that case.
 fn backend_response_tuple_from_cosmos_error<'py>(
     py: Python<'py>,
     error: &CosmosError,
@@ -548,8 +654,7 @@ fn write_response_headers(
         out.set_item("x-ms-item-count", v)?;
     }
     if let Some(v) = h.substatus {
-        // Driver v0.4.0: SubStatusCode is `pub struct SubStatusCode(u16)`,
-        // expose the underlying number via `.value()`.
+        // SubStatusCode wraps a u16; ``.value()`` reads it.
         out.set_item("x-ms-substatus", v.value() as u32)?;
     }
     if let Some(v) = h.index_metrics.as_ref() {
@@ -651,13 +756,6 @@ fn write_response_headers(
     Ok(())
 }
 
-// Driver v0.4.0 surfaces wire responses on errors via
-// `CosmosError::response() -> Option<&CosmosResponse>`, which carries
-// typed `CosmosResponseHeaders` directly. The earlier `write_raw_response_headers`
-// helper (which copied an `azure_core::http::Headers` map verbatim) and the
-// matching `extract_sub_status` header probe are gone — both success and
-// error paths now go through `write_response_headers` and read the typed
-// status / sub-status fields off `CosmosStatus` directly.
 
 
 
@@ -737,11 +835,9 @@ fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<PartitionKey
             ))),
         },
         serde_json::Value::String(s) => Ok(PartitionKeyValue::from(s)),
-        // Empty JSON object `{}` is the wire shape for "PK path missing on
-        // this document" (Python's `_Undefined`). The driver has a dedicated
-        // representation for this — exposed as the `UNDEFINED` const on
-        // `PartitionKeyValue` in driver v0.4.0 (was a `::undefined()`
-        // constructor function in 0.3.0).
+        // Empty JSON object `{}` is the wire shape for "PK path missing
+        // on this document" (Python's `_Undefined`). Map it to the
+        // driver's dedicated ``UNDEFINED`` constant.
         serde_json::Value::Object(obj) if obj.is_empty() => Ok(PartitionKeyValue::UNDEFINED),
         // Anything else is not a valid partition-key component on the wire.
         other => Err(PyValueError::new_err(format!(

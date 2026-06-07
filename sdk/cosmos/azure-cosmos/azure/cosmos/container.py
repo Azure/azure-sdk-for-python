@@ -40,7 +40,11 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
-from ._helpers._item_dispatch import merge_create_item_explicit_kwargs, pick_backend
+from ._helpers._item_dispatch import (
+    merge_create_item_explicit_kwargs,
+    merge_delete_item_explicit_kwargs,
+    pick_backend,
+)
 from ._helpers.item_helper import ItemHelper
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
@@ -1725,44 +1729,52 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if priority is not None:
-            kwargs['priority'] = priority
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             # ``populate_query_metrics`` has no effect on a point DELETE
             # (there are no query metrics for a single-document write).
-            # Warn the caller and drop the value here so the helper layer
-            # never sees it and the
-            # ``x-ms-documentdb-populatequerymetrics`` header is not sent.
+            # Warn and drop so the header is never built.
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-        if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
+        # Pre-trigger / post-trigger are positional-or-keyword on the
+        # public method; stamp them alongside the keyword-only kwargs
+        # so the helper sees one dict.
+        merge_delete_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
+
+        # PK shape and ``document_link`` are computed here because the
+        # helper has no access to ``_set_partition_key`` or
+        # ``_get_document_link``.
+        kwargs["request_options"] = {
+            "partitionKey": self._set_partition_key(partition_key),
+        }
         document_link = self._get_document_link(item)
-        self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).delete_item(
+            container_link=self.container_link,
+            document_link=document_link,
+            item_id=item_id,
+            **kwargs,
+        )
 
     @distributed_trace
     def read_offer(self, **kwargs: Any) -> Offer:

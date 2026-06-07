@@ -15,8 +15,14 @@ from __future__ import annotations
 from typing import Any, Awaitable, Callable, Dict, Optional
 
 from ..._constants import _Constants as Constants
-from ..._helpers._item_dispatch import build_create_item_request_options
-from ..._helpers._request_prep import build_create_item_prepared
+from ..._helpers._item_dispatch import (
+    build_create_item_request_options,
+    build_delete_item_request_options,
+)
+from ..._helpers._request_prep import (
+    build_create_item_prepared,
+    build_delete_item_prepared,
+)
 from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
 from .._backend.base import AsyncCosmosBackend
@@ -145,4 +151,56 @@ class AsyncItemHelper:
         except Exception:  # pylint: disable=broad-except
             pass
         return _Empty()
+
+    async def delete_item(
+        self,
+        *,
+        container_link: str,
+        document_link: str,
+        item_id: str,
+        **kwargs: Any,
+    ) -> Any:
+        """Async sibling of ``ItemHelper.delete_item``. See sync docstring."""
+        kwargs_for_rust_prep = dict(kwargs)
+        request_options = build_delete_item_request_options(kwargs)
+        partition_key_value = request_options.get("partitionKey", _Empty())
+
+        container_rid: Optional[str] = None
+        try:
+            if self._ensure_container_cached is not None:
+                await self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    await self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                container_rid = rid_value
+                request_options[Constants.ContainerRID] = container_rid
+        except Exception:  # pylint: disable=broad-except
+            container_rid = None
+
+        if self._backend is not None:
+            prepared = build_delete_item_prepared(
+                container_link=container_link,
+                item_id=item_id,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = await self._backend.execute(prepared)
+            if backend_response is not None:
+                parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+                return None
+
+        return await self.client_connection.DeleteItem(
+            document_link=document_link,
+            options=request_options,
+            **kwargs,
+        )
 
