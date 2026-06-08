@@ -66,6 +66,7 @@ from ...utils._pipeline_transport_rest_shared import (
     _aiohttp_body_helper,
     _get_decompressor,
     _get_brotli_decompressor,
+    _drain_brotli_decompress,
     get_file_items,
 )
 from .._tools import is_rest as _is_rest
@@ -469,18 +470,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             elif enc == "br":
                 if not self._decompressor:
                     self._decompressor = _get_brotli_decompressor()
-                # Newer aiohttp exposes a synchronous ``decompress_sync``; older versions
-                # expose a synchronous ``decompress``. Prefer the former, fall back.
-                decompress = getattr(self._decompressor, "decompress_sync", None) or self._decompressor.decompress
-                decoded = decompress(chunk)
-                # The incremental Brotli decompressor caps output per call and holds the
-                # remainder, so drain everything available for this chunk before returning.
-                while True:
-                    more = decompress(b"")
-                    if not more:
-                        break
-                    decoded += more
-                chunk = decoded
+                chunk = _drain_brotli_decompress(self._decompressor, chunk)
             return chunk
         except _ResponseStopIteration:
             internal_response.close()

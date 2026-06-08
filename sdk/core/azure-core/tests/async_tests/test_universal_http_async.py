@@ -42,6 +42,11 @@ try:
 except ImportError:
     _HAS_BROTLI = False
 
+try:
+    import brotli as _brotli
+except ImportError:
+    _brotli = None
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -268,6 +273,22 @@ async def test_aiohttp_response_brotli_decompression_idempotent(http_response):
     second = res.body()
     assert second == first
     assert second == b"hello world"
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(not _HAS_BROTLI or _brotli is None, reason="Brotli support is not available")
+@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
+async def test_aiohttp_response_brotli_decompression_large(http_response):
+    # A br body larger than the decompressor's per-call output cap (~32 KB) must
+    # round-trip exactly, proving the buffered helper drains the held output and does
+    # not silently truncate.
+    payload = b"the quick brown fox jumps over the lazy dog. " * 1000
+    res = _create_aiohttp_response(
+        http_response,
+        _brotli.compress(payload),
+        {"Content-Type": "text/plain", "Content-Encoding": "br"},
+    )
+    assert res.body() == payload, "Large Brotli body was truncated"
 
 
 @pytest.mark.asyncio

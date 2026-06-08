@@ -430,6 +430,33 @@ def _get_brotli_decompressor():
     return BrotliDecompressor()
 
 
+def _drain_brotli_decompress(decompressor, data: bytes) -> bytes:
+    """Feed ``data`` to an aiohttp Brotli decompressor and drain its held output.
+
+    aiohttp's ``BrotliDecompressor.decompress_sync`` caps the bytes returned per call
+    and holds the remainder, so a single call can silently truncate large bodies. Feed
+    the data once, then repeatedly drain with empty input until no more output is
+    produced. Shared by the buffered helper and the streaming generator so the two sites
+    cannot diverge in how they handle the held output.
+
+    :param decompressor: A fresh-or-in-progress aiohttp Brotli decompressor.
+    :type decompressor: aiohttp.compression_utils.BrotliDecompressor
+    :param bytes data: The Brotli-compressed bytes to feed in.
+    :rtype: bytes
+    :return: All decoded bytes available after feeding ``data``.
+    """
+    # Newer aiohttp exposes a synchronous ``decompress_sync``; older versions expose a
+    # synchronous ``decompress``. Prefer the former and fall back to the latter.
+    decompress = getattr(decompressor, "decompress_sync", None) or decompressor.decompress
+    decoded = decompress(data)
+    while True:
+        more = decompress(b"")
+        if not more:
+            break
+        decoded += more
+    return decoded
+
+
 def _decode_brotli_content(content: bytes) -> bytes:
     """Decode a ``Content-Encoding: br`` body using aiohttp's Brotli support.
 
@@ -445,10 +472,7 @@ def _decode_brotli_content(content: bytes) -> bytes:
     :raises ~azure.core.exceptions.DecodeError: If Brotli support is unavailable.
     """
     decompressor = _get_brotli_decompressor()
-    # Newer aiohttp exposes a synchronous ``decompress_sync``; older versions expose a
-    # synchronous ``decompress``. Prefer the former and fall back to the latter.
-    decompress = getattr(decompressor, "decompress_sync", None) or decompressor.decompress
-    return decompress(content)
+    return _drain_brotli_decompress(decompressor, content)
 
 
 def _aiohttp_body_helper(
