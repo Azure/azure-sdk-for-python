@@ -120,7 +120,7 @@ class TestFindExistingFixPrs:
         repo.get_pulls.return_value = [
             _make_pr(title="Fix pylint for azure-ai-test #42"),
         ]
-        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        result = find_existing_fix_prs(repo, 42)
         assert len(result) == 1
 
     def test_match_by_issue_ref_in_body(self):
@@ -128,7 +128,7 @@ class TestFindExistingFixPrs:
         repo.get_pulls.return_value = [
             _make_pr(body="Fixes #42"),
         ]
-        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        result = find_existing_fix_prs(repo, 42)
         assert len(result) == 1
 
     def test_match_by_repo_qualified_issue_ref(self):
@@ -136,7 +136,7 @@ class TestFindExistingFixPrs:
         repo.get_pulls.return_value = [
             _make_pr(body="Fixes Azure/azure-sdk-for-python#42"),
         ]
-        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        result = find_existing_fix_prs(repo, 42)
         assert len(result) == 1
 
     def test_match_by_issue_url(self):
@@ -144,7 +144,7 @@ class TestFindExistingFixPrs:
         repo.get_pulls.return_value = [
             _make_pr(body="Fixes https://github.com/Azure/azure-sdk-for-python/issues/42"),
         ]
-        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        result = find_existing_fix_prs(repo, 42)
         assert len(result) == 1
 
     def test_package_and_check_mention_alone_does_not_match(self):
@@ -158,7 +158,7 @@ class TestFindExistingFixPrs:
                 body="Validation: python eng/tox/run_pylint.py for sdk/identity/azure-ai-test",
             ),
         ]
-        result = find_existing_fix_prs(repo, 99, "azure-ai-test", "pylint")
+        result = find_existing_fix_prs(repo, 99)
         assert len(result) == 0
 
     def test_no_match(self):
@@ -166,7 +166,7 @@ class TestFindExistingFixPrs:
         repo.get_pulls.return_value = [
             _make_pr(title="Unrelated PR", body="Nothing here"),
         ]
-        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        result = find_existing_fix_prs(repo, 42)
         assert len(result) == 0
 
     def test_issue_ref_does_not_match_longer_issue_number(self):
@@ -174,13 +174,13 @@ class TestFindExistingFixPrs:
         repo.get_pulls.return_value = [
             _make_pr(title="Fix issue #420"),
         ]
-        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        result = find_existing_fix_prs(repo, 42)
         assert len(result) == 0
 
     def test_github_exception_returns_empty(self):
         repo = MagicMock()
         repo.get_pulls.side_effect = GithubException(500, "error", None)
-        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        result = find_existing_fix_prs(repo, 42)
         assert result == []
 
 

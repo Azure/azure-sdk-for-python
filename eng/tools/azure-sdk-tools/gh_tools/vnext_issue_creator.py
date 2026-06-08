@@ -188,6 +188,9 @@ def _unassign_copilot(issue) -> bool:
             return True
         logging.warning(f"Failed to unassign {COPILOT_ASSIGNEE_LOGIN} from issue #{issue.number}: {e}")
         return False
+    except Exception as e:
+        logging.warning(f"Failed to unassign {COPILOT_ASSIGNEE_LOGIN} from issue #{issue.number}: {e}")
+        return False
 
 
 def assign_copilot(
@@ -251,7 +254,7 @@ def _try_auto_fix(
         return
 
     # Duplicate PR detection
-    matching_prs = find_existing_fix_prs(repo, issue.number, package_name, check_type)
+    matching_prs = find_existing_fix_prs(repo, issue.number)
     if matching_prs:
         pr_urls = ", ".join(pr.html_url for pr in matching_prs)
         logging.info(f"Skipping Copilot assignment for issue #{issue.number}: " f"matching PR(s) found: {pr_urls}")
