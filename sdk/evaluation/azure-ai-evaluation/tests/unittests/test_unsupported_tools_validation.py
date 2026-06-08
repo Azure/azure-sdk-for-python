@@ -181,4 +181,3 @@ class TestUnderlyingValidatorUnchanged:
         with pytest.raises(EvaluationException) as exc_info:
             validator.validate_eval_input(eval_input)
         assert "currently not supported" in str(exc_info.value)
-
