@@ -146,7 +146,7 @@ class AbstractiveSummarizationOperationAction(AnalyzeTextOperationAction, discri
     :ivar name: task name.
     :vartype name: str
     :ivar kind: The Abstractive Summarization kind of the long running task. Required. Abstractive
-     summarization task
+     summarization task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ABSTRACTIVE_SUMMARIZATION
     :ivar action_content: Parameters for the Abstractive Summarization task.
     :vartype action_content: ~azure.ai.textanalytics.models.AbstractiveSummarizationActionContent
@@ -154,7 +154,7 @@ class AbstractiveSummarizationOperationAction(AnalyzeTextOperationAction, discri
 
     kind: Literal[AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Abstractive Summarization kind of the long running task. Required. Abstractive
-     summarization task"""
+     summarization task."""
     action_content: Optional["_models.AbstractiveSummarizationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -260,7 +260,7 @@ class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminato
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Abstractive summarization LRO results
+    :ivar kind: Kind of the task. Required. Abstractive summarization LRO results.
     :vartype kind: str or
      ~azure.ai.textanalytics.models.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS
     :ivar results: Results of the task. Required.
@@ -268,7 +268,7 @@ class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminato
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Abstractive summarization LRO results"""
+    """Kind of the task. Required. Abstractive summarization LRO results."""
     results: "_models.AbstractiveSummarizationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -635,12 +635,12 @@ class AllowOverlapEntityPolicyType(EntityOverlapPolicy, discriminator="allowOver
     selection.
 
     :ivar policy_kind: The entity OverlapPolicy object kind. Required. Represents
-     AllowOverlapEntityPolicyType
+     AllowOverlapEntityPolicyType.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.ALLOW_OVERLAP
     """
 
     policy_kind: Literal[PolicyKind.ALLOW_OVERLAP] = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The entity OverlapPolicy object kind. Required. Represents AllowOverlapEntityPolicyType"""
+    """The entity OverlapPolicy object kind. Required. Represents AllowOverlapEntityPolicyType."""
 
     @overload
     def __init__(
@@ -699,14 +699,14 @@ class AnalyzeTextResult(_Model):
 class AnalyzeTextEntitiesResult(AnalyzeTextResult, discriminator="EntityRecognitionResults"):
     """Contains the entity task.
 
-    :ivar kind: kind of the task. Required. Entity recognition results
+    :ivar kind: kind of the task. Required. Entity recognition results.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_RECOGNITION_RESULTS
     :ivar results: Results for entity recognition. Required.
     :vartype results: ~azure.ai.textanalytics.models.EntitiesWithMetadataAutoResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """kind of the task. Required. Entity recognition results"""
+    """kind of the task. Required. Entity recognition results."""
     results: "_models.EntitiesWithMetadataAutoResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -734,14 +734,14 @@ class AnalyzeTextEntitiesResult(AnalyzeTextResult, discriminator="EntityRecognit
 class AnalyzeTextEntityLinkingResult(AnalyzeTextResult, discriminator="EntityLinkingResults"):
     """Contains the analyze text Entity linking task result.
 
-    :ivar kind: Kind of task result. Required. Entity linking results
+    :ivar kind: Kind of task result. Required. Entity linking results.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_LINKING_RESULTS
     :ivar results: Entity linking result. Required.
     :vartype results: ~azure.ai.textanalytics.models.EntityLinkingResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of task result. Required. Entity linking results"""
+    """Kind of task result. Required. Entity linking results."""
     results: "_models.EntityLinkingResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Entity linking result. Required."""
 
@@ -870,14 +870,14 @@ class AnalyzeTextInput(_Model):
 class AnalyzeTextKeyPhraseResult(AnalyzeTextResult, discriminator="KeyPhraseExtractionResults"):
     """Contains the analyze text KeyPhraseExtraction task result.
 
-    :ivar kind: Kind of the task results. Required. Key phrase extraction results
+    :ivar kind: Kind of the task results. Required. Key phrase extraction results.
     :vartype kind: str or ~azure.ai.textanalytics.models.KEY_PHRASE_EXTRACTION_RESULTS
     :ivar results: The list of Key phrase extraction results. Required.
     :vartype results: ~azure.ai.textanalytics.models.KeyPhraseResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task results. Required. Key phrase extraction results"""
+    """Kind of the task results. Required. Key phrase extraction results."""
     results: "_models.KeyPhraseResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of Key phrase extraction results. Required."""
 
@@ -903,14 +903,14 @@ class AnalyzeTextKeyPhraseResult(AnalyzeTextResult, discriminator="KeyPhraseExtr
 class AnalyzeTextLanguageDetectionResult(AnalyzeTextResult, discriminator="LanguageDetectionResults"):
     """Contains the language detection task result for the request.
 
-    :ivar kind: Kind of the task result. Required. Language detection results
+    :ivar kind: Kind of the task result. Required. Language detection results.
     :vartype kind: str or ~azure.ai.textanalytics.models.LANGUAGE_DETECTION_RESULTS
     :ivar results: Contains the language detection results. Required.
     :vartype results: ~azure.ai.textanalytics.models.LanguageDetectionResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task result. Required. Language detection results"""
+    """Kind of the task result. Required. Language detection results."""
     results: "_models.LanguageDetectionResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Contains the language detection results. Required."""
 
@@ -1028,14 +1028,14 @@ class AnalyzeTextOperationState(_Model):
 class AnalyzeTextPiiResult(AnalyzeTextResult, discriminator="PiiEntityRecognitionResults"):
     """Contains the analyze text PIIEntityRecognition LRO task.
 
-    :ivar kind: The kind of the task. Required. PII entity recognition results
+    :ivar kind: The kind of the task. Required. PII entity recognition results.
     :vartype kind: str or ~azure.ai.textanalytics.models.PII_ENTITY_RECOGNITION_RESULTS
     :ivar results: The list of pii results. Required.
     :vartype results: ~azure.ai.textanalytics.models.PiiResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of the task. Required. PII entity recognition results"""
+    """The kind of the task. Required. PII entity recognition results."""
     results: "_models.PiiResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of pii results. Required."""
 
@@ -1061,14 +1061,14 @@ class AnalyzeTextPiiResult(AnalyzeTextResult, discriminator="PiiEntityRecognitio
 class AnalyzeTextSentimentResult(AnalyzeTextResult, discriminator="SentimentAnalysisResults"):
     """Contains the analyze text SentimentAnalysis LRO task result.
 
-    :ivar kind: Kind of the task. Required. Sentiment analysis results
+    :ivar kind: Kind of the task. Required. Sentiment analysis results.
     :vartype kind: str or ~azure.ai.textanalytics.models.SENTIMENT_ANALYSIS_RESULTS
     :ivar results: The sentiment analysis results. Required.
     :vartype results: ~azure.ai.textanalytics.models.SentimentResult
     """
 
     kind: Literal[AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Sentiment analysis results"""
+    """Kind of the task. Required. Sentiment analysis results."""
     results: "_models.SentimentResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sentiment analysis results. Required."""
 
@@ -1465,7 +1465,7 @@ class ConfidenceScoreThresholdOverride(_Model):
     :ivar value: The confidence score threshold for the specified PII category. Required.
     :vartype value: float
     :ivar language: The 2 letter ISO 639-1 language for which the override applies. If not
-     specified, the override applies to all languages.
+     specified, the override applies to all languages. Required.
     :vartype language: str
     """
 
@@ -1535,9 +1535,9 @@ class ConfidenceScoreThresholdOverride(_Model):
      \"USMedicareBeneficiaryId\", \"Location\", \"City\", \"State\", \"Airport\", and \"GPE\"."""
     value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The confidence score threshold for the specified PII category. Required."""
-    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The 2 letter ISO 639-1 language for which the override applies. If not specified, the override
-     applies to all languages."""
+     applies to all languages. Required."""
 
     @overload
     def __init__(
@@ -1545,7 +1545,7 @@ class ConfidenceScoreThresholdOverride(_Model):
         *,
         entity: Union[str, "_models.PiiCategoriesExclude"],
         value: float,
-        language: Optional[str] = None,
+        language: str,
     ) -> None: ...
 
     @overload
@@ -1664,14 +1664,14 @@ class CustomEntitiesLROTask(AnalyzeTextOperationAction, discriminator="CustomEnt
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. Custom entity recognition task
+    :ivar kind: Kind of the task. Required. Custom entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.CUSTOM_ENTITY_RECOGNITION
     :ivar parameters: task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.CustomEntitiesActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom entity recognition task"""
+    """Kind of the task. Required. Custom entity recognition task."""
     parameters: Optional["_models.CustomEntitiesActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1819,7 +1819,7 @@ class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom entity recognition LRO results
+    :ivar kind: Kind of the task. Required. Custom entity recognition LRO results.
     :vartype kind: str or
      ~azure.ai.textanalytics.models.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS
     :ivar results: List of results. Required.
@@ -1827,7 +1827,7 @@ class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom entity recognition LRO results"""
+    """Kind of the task. Required. Custom entity recognition LRO results."""
     results: "_models.CustomEntitiesResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of results. Required."""
 
@@ -1954,7 +1954,7 @@ class CustomMultiLabelClassificationOperationAction(
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. Custom multi label classification task
+    :ivar kind: Kind of the task. Required. Custom multi label classification task.
     :vartype kind: str or ~azure.ai.textanalytics.models.CUSTOM_MULTI_LABEL_CLASSIFICATION
     :ivar action_content: Task parameters.
     :vartype action_content:
@@ -1962,7 +1962,7 @@ class CustomMultiLabelClassificationOperationAction(
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom multi label classification task"""
+    """Kind of the task. Required. Custom multi label classification task."""
     action_content: Optional["_models.CustomMultiLabelClassificationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2001,7 +2001,7 @@ class CustomMultiLabelClassificationOperationResult(
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom multi label classification LRO results
+    :ivar kind: Kind of the task. Required. Custom multi label classification LRO results.
     :vartype kind: str or
      ~azure.ai.textanalytics.models.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS
     :ivar results: List of results. Required.
@@ -2009,7 +2009,7 @@ class CustomMultiLabelClassificationOperationResult(
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom multi label classification LRO results"""
+    """Kind of the task. Required. Custom multi label classification LRO results."""
     results: "_models.CustomLabelClassificationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2084,7 +2084,7 @@ class CustomSingleLabelClassificationOperationAction(
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. Custom single label classification task
+    :ivar kind: Kind of the task. Required. Custom single label classification task.
     :vartype kind: str or ~azure.ai.textanalytics.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION
     :ivar action_content: Task parameters.
     :vartype action_content:
@@ -2092,7 +2092,7 @@ class CustomSingleLabelClassificationOperationAction(
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom single label classification task"""
+    """Kind of the task. Required. Custom single label classification task."""
     action_content: Optional["_models.CustomSingleLabelClassificationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2131,7 +2131,7 @@ class CustomSingleLabelClassificationOperationResult(
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Custom single label classification LRO results
+    :ivar kind: Kind of the task. Required. Custom single label classification LRO results.
     :vartype kind: str or
      ~azure.ai.textanalytics.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS
     :ivar results: List of results. Required.
@@ -2139,7 +2139,7 @@ class CustomSingleLabelClassificationOperationResult(
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Custom single label classification LRO results"""
+    """Kind of the task. Required. Custom single label classification LRO results."""
     results: "_models.CustomLabelClassificationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2567,14 +2567,14 @@ class EntitiesLROTask(AnalyzeTextOperationAction, discriminator="EntityRecogniti
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: The kind of task. Required. Entity recognition task
+    :ivar kind: The kind of task. Required. Entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_RECOGNITION
     :ivar parameters: Task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.EntitiesActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of task. Required. Entity recognition task"""
+    """The kind of task. Required. Entity recognition task."""
     parameters: Optional["_models.EntitiesActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2950,14 +2950,14 @@ class EntityLinkingLROTask(AnalyzeTextOperationAction, discriminator="EntityLink
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of task result. Required. Entity linking task
+    :ivar kind: Kind of task result. Required. Entity linking task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_LINKING
     :ivar parameters: Task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.EntityLinkingActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.ENTITY_LINKING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of task result. Required. Entity linking task"""
+    """Kind of task result. Required. Entity linking task."""
     parameters: Optional["_models.EntityLinkingActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3041,14 +3041,14 @@ class EntityLinkingOperationResult(AnalyzeTextLROResult, discriminator="EntityLi
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Entity linking LRO results
+    :ivar kind: Kind of the task. Required. Entity linking LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_LINKING_OPERATION_RESULTS
     :ivar results: Entity linking result. Required.
     :vartype results: ~azure.ai.textanalytics.models.EntityLinkingResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Entity linking LRO results"""
+    """Kind of the task. Required. Entity linking LRO results."""
     results: "_models.EntityLinkingResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Entity linking result. Required."""
 
@@ -3175,14 +3175,14 @@ class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="Enti
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Entity recognition LRO results
+    :ivar kind: Kind of the task. Required. Entity recognition LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_RECOGNITION_OPERATION_RESULTS
     :ivar results: Results for the task. Required.
     :vartype results: ~azure.ai.textanalytics.models.EntitiesResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Entity recognition LRO results"""
+    """Kind of the task. Required. Entity recognition LRO results."""
     results: "_models.EntitiesResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Results for the task. Required."""
 
@@ -3245,32 +3245,131 @@ class EntitySynonyms(_Model):
     """Object that allows the user to provide synonyms for context words that to enhance pii entity
     detection.
 
-    :ivar entity_type: The entity name. Required. Known values are: "Address", "Numeric", "Age",
-     "Currency", "Number", "NumberRange", "Percentage", "Ordinal", "Temperature", "Dimension",
-     "Length", "Weight", "Height", "Speed", "Area", "Volume", "Information", "Temporal", "Date",
-     "Time", "DateTime", "DateRange", "TimeRange", "DateTimeRange", "Duration", "SetTemporal",
-     "Event", "SportsEvent", "CulturalEvent", "NaturalEvent", "Location", "GPE", "City", "State",
-     "CountryRegion", "Continent", "Structural", "Airport", "Geological", "Organization",
-     "OrganizationMedical", "OrganizationStockExchange", "OrganizationSports", "Person",
-     "PersonType", "Email", "URL", "IP", "PhoneNumber", "Product", "ComputingProduct", and "Skill".
-    :vartype entity_type: str or ~azure.ai.textanalytics.models.EntityCategory
+    :ivar entity_type: The entity name. Required. Known values are: "ABARoutingNumber",
+     "ARNationalIdentityNumber", "AUBankAccountNumber", "AUDriversLicenseNumber",
+     "AUMedicalAccountNumber", "AUPassportNumber", "AUTaxFileNumber", "AUBusinessNumber",
+     "AUCompanyNumber", "ATIdentityCard", "ATTaxIdentificationNumber", "ATValueAddedTaxNumber",
+     "AzureDocumentDBAuthKey", "AzureIAASDatabaseConnectionAndSQLString",
+     "AzureIoTConnectionString", "AzurePublishSettingPassword", "AzureRedisCacheString", "AzureSAS",
+     "AzureServiceBusString", "AzureStorageAccountKey", "AzureStorageAccountGeneric",
+     "BENationalNumber", "BENationalNumberV2", "BEValueAddedTaxNumber", "BRCPFNumber",
+     "BRLegalEntityNumber", "BRNationalIDRG", "BGUniformCivilNumber", "CABankAccountNumber",
+     "CADriversLicenseNumber", "CAHealthServiceNumber", "CAPassportNumber",
+     "CAPersonalHealthIdentification", "CASocialInsuranceNumber", "CLIdentityCardNumber",
+     "CNResidentIdentityCardNumber", "CreditCardNumber", "HRIdentityCardNumber",
+     "HRNationalIDNumber", "HRPersonalIdentificationNumber", "HRPersonalIdentificationOIBNumberV2",
+     "CYIdentityCard", "CYTaxIdentificationNumber", "CZPersonalIdentityNumber",
+     "CZPersonalIdentityV2", "DKPersonalIdentificationNumber", "DKPersonalIdentificationV2",
+     "DrugEnforcementAgencyNumber", "EEPersonalIdentificationCode", "EUDebitCardNumber",
+     "EUDriversLicenseNumber", "EUGPSCoordinates", "EUNationalIdentificationNumber",
+     "EUPassportNumber", "EUSocialSecurityNumber", "EUTaxIdentificationNumber",
+     "FIEuropeanHealthNumber", "FINationalID", "FINationalIDV2", "FIPassportNumber",
+     "FRDriversLicenseNumber", "FRHealthInsuranceNumber", "FRNationalID", "FRPassportNumber",
+     "FRSocialSecurityNumber", "FRTaxIdentificationNumber", "FRValueAddedTaxNumber",
+     "DEDriversLicenseNumber", "DEPassportNumber", "DEIdentityCardNumber",
+     "DETaxIdentificationNumber", "DEValueAddedNumber", "GRNationalIDCard", "GRNationalIDV2",
+     "GRTaxIdentificationNumber", "HKIdentityCardNumber", "HUValueAddedNumber",
+     "HUPersonalIdentificationNumber", "HUTaxIdentificationNumber", "INPermanentAccount",
+     "INUniqueIdentificationNumber", "IDIdentityCardNumber", "InternationalBankingAccountNumber",
+     "IEPersonalPublicServiceNumber", "IEPersonalPublicServiceNumberV2", "ILBankAccountNumber",
+     "ILNationalID", "ITDriversLicenseNumber", "ITFiscalCode", "ITValueAddedTaxNumber",
+     "JPBankAccountNumber", "JPDriversLicenseNumber", "JPPassportNumber",
+     "JPResidentRegistrationNumber", "JPSocialInsuranceNumber", "JPMyNumberCorporate",
+     "JPMyNumberPersonal", "JPResidenceCardNumber", "LVPersonalCode", "LTPersonalCode",
+     "LUNationalIdentificationNumberNatural", "LUNationalIdentificationNumberNonNatural",
+     "MYIdentityCardNumber", "MTIdentityCardNumber", "MTTaxIDNumber", "NLCitizensServiceNumber",
+     "NLCitizensServiceNumberV2", "NLTaxIdentificationNumber", "NLValueAddedTaxNumber",
+     "NZBankAccountNumber", "NZDriversLicenseNumber", "NZInlandRevenueNumber",
+     "NZMinistryOfHealthNumber", "NZSocialWelfareNumber", "NOIdentityNumber",
+     "PHUnifiedMultiPurposeIDNumber", "PLIdentityCard", "PLNationalID", "PLNationalIDV2",
+     "PLPassportNumber", "PLTaxIdentificationNumber", "PLREGONNumber", "PTCitizenCardNumber",
+     "PTCitizenCardNumberV2", "PTTaxIdentificationNumber", "ROPersonalNumericalCode",
+     "RUPassportNumberDomestic", "RUPassportNumberInternational", "SANationalID",
+     "SGNationalRegistrationIdentityCardNumber", "SKPersonalNumber", "SITaxIdentificationNumber",
+     "SIUniqueMasterCitizenNumber", "ZAIdentificationNumber", "KRResidentRegistrationNumber",
+     "ESDNI", "ESSocialSecurityNumber", "ESTaxIdentificationNumber", "SQLServerConnectionString",
+     "SENationalID", "SENationalIDV2", "SEPassportNumber", "SETaxIdentificationNumber", "SWIFTCode",
+     "CHSocialSecurityNumber", "TWNationalID", "TWPassportNumber", "TWResidentCertificate",
+     "THPopulationIdentificationCode", "TRNationalIdentificationNumber", "UKDriversLicenseNumber",
+     "UKElectoralRollNumber", "UKNationalHealthNumber", "UKNationalInsuranceNumber",
+     "UKUniqueTaxpayerNumber", "USUKPassportNumber", "USBankAccountNumber",
+     "USDriversLicenseNumber", "USIndividualTaxpayerIdentification", "USSocialSecurityNumber",
+     "UAPassportNumberDomestic", "UAPassportNumberInternational", "Organization", "Email", "URL",
+     "Age", "PhoneNumber", "IPAddress", "Date", "Person", "Address", "DateOfBirth",
+     "BankAccountNumber", "PassportNumber", "DriversLicenseNumber", "Neighborhood", "SortCode",
+     "PIN", "VIN", "VehicleIdentificationNumber", "LicensePlate", "KRPassportNumber",
+     "KRDriversLicenseNumber", "KRSocialSecurityNumber", "GovernmentIssuedId", "Password",
+     "NationalId", "ZipCode", "CVV", "ExpirationDate", "CASocialIdentificationNumber",
+     "USMedicareBeneficiaryId", "Location", "City", "State", "Airport", and "GPE".
+    :vartype entity_type: str or ~azure.ai.textanalytics.models.PiiCategoriesExclude
     :ivar synonyms: The entity synonyms. Required.
     :vartype synonyms: list[~azure.ai.textanalytics.models.EntitySynonym]
     """
 
-    entity_type: Union[str, "_models.EntityCategory"] = rest_field(
+    entity_type: Union[str, "_models.PiiCategoriesExclude"] = rest_field(
         name="entityType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The entity name. Required. Known values are: \"Address\", \"Numeric\", \"Age\", \"Currency\",
-     \"Number\", \"NumberRange\", \"Percentage\", \"Ordinal\", \"Temperature\", \"Dimension\",
-     \"Length\", \"Weight\", \"Height\", \"Speed\", \"Area\", \"Volume\", \"Information\",
-     \"Temporal\", \"Date\", \"Time\", \"DateTime\", \"DateRange\", \"TimeRange\",
-     \"DateTimeRange\", \"Duration\", \"SetTemporal\", \"Event\", \"SportsEvent\",
-     \"CulturalEvent\", \"NaturalEvent\", \"Location\", \"GPE\", \"City\", \"State\",
-     \"CountryRegion\", \"Continent\", \"Structural\", \"Airport\", \"Geological\",
-     \"Organization\", \"OrganizationMedical\", \"OrganizationStockExchange\",
-     \"OrganizationSports\", \"Person\", \"PersonType\", \"Email\", \"URL\", \"IP\",
-     \"PhoneNumber\", \"Product\", \"ComputingProduct\", and \"Skill\"."""
+    """The entity name. Required. Known values are: \"ABARoutingNumber\",
+     \"ARNationalIdentityNumber\", \"AUBankAccountNumber\", \"AUDriversLicenseNumber\",
+     \"AUMedicalAccountNumber\", \"AUPassportNumber\", \"AUTaxFileNumber\", \"AUBusinessNumber\",
+     \"AUCompanyNumber\", \"ATIdentityCard\", \"ATTaxIdentificationNumber\",
+     \"ATValueAddedTaxNumber\", \"AzureDocumentDBAuthKey\",
+     \"AzureIAASDatabaseConnectionAndSQLString\", \"AzureIoTConnectionString\",
+     \"AzurePublishSettingPassword\", \"AzureRedisCacheString\", \"AzureSAS\",
+     \"AzureServiceBusString\", \"AzureStorageAccountKey\", \"AzureStorageAccountGeneric\",
+     \"BENationalNumber\", \"BENationalNumberV2\", \"BEValueAddedTaxNumber\", \"BRCPFNumber\",
+     \"BRLegalEntityNumber\", \"BRNationalIDRG\", \"BGUniformCivilNumber\", \"CABankAccountNumber\",
+     \"CADriversLicenseNumber\", \"CAHealthServiceNumber\", \"CAPassportNumber\",
+     \"CAPersonalHealthIdentification\", \"CASocialInsuranceNumber\", \"CLIdentityCardNumber\",
+     \"CNResidentIdentityCardNumber\", \"CreditCardNumber\", \"HRIdentityCardNumber\",
+     \"HRNationalIDNumber\", \"HRPersonalIdentificationNumber\",
+     \"HRPersonalIdentificationOIBNumberV2\", \"CYIdentityCard\", \"CYTaxIdentificationNumber\",
+     \"CZPersonalIdentityNumber\", \"CZPersonalIdentityV2\", \"DKPersonalIdentificationNumber\",
+     \"DKPersonalIdentificationV2\", \"DrugEnforcementAgencyNumber\",
+     \"EEPersonalIdentificationCode\", \"EUDebitCardNumber\", \"EUDriversLicenseNumber\",
+     \"EUGPSCoordinates\", \"EUNationalIdentificationNumber\", \"EUPassportNumber\",
+     \"EUSocialSecurityNumber\", \"EUTaxIdentificationNumber\", \"FIEuropeanHealthNumber\",
+     \"FINationalID\", \"FINationalIDV2\", \"FIPassportNumber\", \"FRDriversLicenseNumber\",
+     \"FRHealthInsuranceNumber\", \"FRNationalID\", \"FRPassportNumber\",
+     \"FRSocialSecurityNumber\", \"FRTaxIdentificationNumber\", \"FRValueAddedTaxNumber\",
+     \"DEDriversLicenseNumber\", \"DEPassportNumber\", \"DEIdentityCardNumber\",
+     \"DETaxIdentificationNumber\", \"DEValueAddedNumber\", \"GRNationalIDCard\",
+     \"GRNationalIDV2\", \"GRTaxIdentificationNumber\", \"HKIdentityCardNumber\",
+     \"HUValueAddedNumber\", \"HUPersonalIdentificationNumber\", \"HUTaxIdentificationNumber\",
+     \"INPermanentAccount\", \"INUniqueIdentificationNumber\", \"IDIdentityCardNumber\",
+     \"InternationalBankingAccountNumber\", \"IEPersonalPublicServiceNumber\",
+     \"IEPersonalPublicServiceNumberV2\", \"ILBankAccountNumber\", \"ILNationalID\",
+     \"ITDriversLicenseNumber\", \"ITFiscalCode\", \"ITValueAddedTaxNumber\",
+     \"JPBankAccountNumber\", \"JPDriversLicenseNumber\", \"JPPassportNumber\",
+     \"JPResidentRegistrationNumber\", \"JPSocialInsuranceNumber\", \"JPMyNumberCorporate\",
+     \"JPMyNumberPersonal\", \"JPResidenceCardNumber\", \"LVPersonalCode\", \"LTPersonalCode\",
+     \"LUNationalIdentificationNumberNatural\", \"LUNationalIdentificationNumberNonNatural\",
+     \"MYIdentityCardNumber\", \"MTIdentityCardNumber\", \"MTTaxIDNumber\",
+     \"NLCitizensServiceNumber\", \"NLCitizensServiceNumberV2\", \"NLTaxIdentificationNumber\",
+     \"NLValueAddedTaxNumber\", \"NZBankAccountNumber\", \"NZDriversLicenseNumber\",
+     \"NZInlandRevenueNumber\", \"NZMinistryOfHealthNumber\", \"NZSocialWelfareNumber\",
+     \"NOIdentityNumber\", \"PHUnifiedMultiPurposeIDNumber\", \"PLIdentityCard\", \"PLNationalID\",
+     \"PLNationalIDV2\", \"PLPassportNumber\", \"PLTaxIdentificationNumber\", \"PLREGONNumber\",
+     \"PTCitizenCardNumber\", \"PTCitizenCardNumberV2\", \"PTTaxIdentificationNumber\",
+     \"ROPersonalNumericalCode\", \"RUPassportNumberDomestic\", \"RUPassportNumberInternational\",
+     \"SANationalID\", \"SGNationalRegistrationIdentityCardNumber\", \"SKPersonalNumber\",
+     \"SITaxIdentificationNumber\", \"SIUniqueMasterCitizenNumber\", \"ZAIdentificationNumber\",
+     \"KRResidentRegistrationNumber\", \"ESDNI\", \"ESSocialSecurityNumber\",
+     \"ESTaxIdentificationNumber\", \"SQLServerConnectionString\", \"SENationalID\",
+     \"SENationalIDV2\", \"SEPassportNumber\", \"SETaxIdentificationNumber\", \"SWIFTCode\",
+     \"CHSocialSecurityNumber\", \"TWNationalID\", \"TWPassportNumber\", \"TWResidentCertificate\",
+     \"THPopulationIdentificationCode\", \"TRNationalIdentificationNumber\",
+     \"UKDriversLicenseNumber\", \"UKElectoralRollNumber\", \"UKNationalHealthNumber\",
+     \"UKNationalInsuranceNumber\", \"UKUniqueTaxpayerNumber\", \"USUKPassportNumber\",
+     \"USBankAccountNumber\", \"USDriversLicenseNumber\", \"USIndividualTaxpayerIdentification\",
+     \"USSocialSecurityNumber\", \"UAPassportNumberDomestic\", \"UAPassportNumberInternational\",
+     \"Organization\", \"Email\", \"URL\", \"Age\", \"PhoneNumber\", \"IPAddress\", \"Date\",
+     \"Person\", \"Address\", \"DateOfBirth\", \"BankAccountNumber\", \"PassportNumber\",
+     \"DriversLicenseNumber\", \"Neighborhood\", \"SortCode\", \"PIN\", \"VIN\",
+     \"VehicleIdentificationNumber\", \"LicensePlate\", \"KRPassportNumber\",
+     \"KRDriversLicenseNumber\", \"KRSocialSecurityNumber\", \"GovernmentIssuedId\", \"Password\",
+     \"NationalId\", \"ZipCode\", \"CVV\", \"ExpirationDate\", \"CASocialIdentificationNumber\",
+     \"USMedicareBeneficiaryId\", \"Location\", \"City\", \"State\", \"Airport\", and \"GPE\"."""
     synonyms: list["_models.EntitySynonym"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The entity synonyms. Required."""
 
@@ -3278,7 +3377,7 @@ class EntitySynonyms(_Model):
     def __init__(
         self,
         *,
-        entity_type: Union[str, "_models.EntityCategory"],
+        entity_type: Union[str, "_models.PiiCategoriesExclude"],
         synonyms: list["_models.EntitySynonym"],
     ) -> None: ...
 
@@ -3537,7 +3636,7 @@ class ExtractiveSummarizationOperationAction(AnalyzeTextOperationAction, discrim
     :ivar name: task name.
     :vartype name: str
     :ivar kind: The Extractive Summarization kind of the long running task. Required. Extractive
-     summarization task
+     summarization task.
     :vartype kind: str or ~azure.ai.textanalytics.models.EXTRACTIVE_SUMMARIZATION
     :ivar action_content: Parameters for the Extractive Summarization task.
     :vartype action_content: ~azure.ai.textanalytics.models.ExtractiveSummarizationActionContent
@@ -3545,7 +3644,7 @@ class ExtractiveSummarizationOperationAction(AnalyzeTextOperationAction, discrim
 
     kind: Literal[AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Extractive Summarization kind of the long running task. Required. Extractive summarization
-     task"""
+     task."""
     action_content: Optional["_models.ExtractiveSummarizationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3582,14 +3681,14 @@ class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Extractive summarization LRO results
+    :ivar kind: Kind of the task. Required. Extractive summarization LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS
     :ivar results: Results of the task. Required.
     :vartype results: ~azure.ai.textanalytics.models.ExtractiveSummarizationResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Extractive summarization LRO results"""
+    """Kind of the task. Required. Extractive summarization LRO results."""
     results: "_models.ExtractiveSummarizationResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3948,14 +4047,14 @@ class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResu
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Healthcare LRO results
+    :ivar kind: Kind of the task. Required. Healthcare LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.HEALTHCARE_OPERATION_RESULTS
     :ivar results: Results of the task. Required.
     :vartype results: ~azure.ai.textanalytics.models.HealthcareResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Healthcare LRO results"""
+    """Kind of the task. Required. Healthcare LRO results."""
     results: "_models.HealthcareResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Results of the task. Required."""
 
@@ -3986,14 +4085,14 @@ class HealthcareLROTask(AnalyzeTextOperationAction, discriminator="Healthcare"):
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Healthcare kind of the long running task. Required. Healthcare task
+    :ivar kind: Healthcare kind of the long running task. Required. Healthcare task.
     :vartype kind: str or ~azure.ai.textanalytics.models.HEALTHCARE
     :ivar parameters: Parameters for the Healthcare task.
     :vartype parameters: ~azure.ai.textanalytics.models.HealthcareTaskParameters
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.HEALTHCARE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Healthcare kind of the long running task. Required. Healthcare task"""
+    """Healthcare kind of the long running task. Required. Healthcare task."""
     parameters: Optional["_models.HealthcareTaskParameters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4397,14 +4496,14 @@ class KeyPhraseExtractionOperationResult(AnalyzeTextLROResult, discriminator="Ke
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Key phrase extraction LRO results
+    :ivar kind: Kind of the task. Required. Key phrase extraction LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS
     :ivar results: The list of Key phrase extraction results. Required.
     :vartype results: ~azure.ai.textanalytics.models.KeyPhraseResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Key phrase extraction LRO results"""
+    """Kind of the task. Required. Key phrase extraction LRO results."""
     results: "_models.KeyPhraseResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of Key phrase extraction results. Required."""
 
@@ -4435,14 +4534,14 @@ class KeyPhraseLROTask(AnalyzeTextOperationAction, discriminator="KeyPhraseExtra
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. Key phrase extraction task
+    :ivar kind: Kind of the task. Required. Key phrase extraction task.
     :vartype kind: str or ~azure.ai.textanalytics.models.KEY_PHRASE_EXTRACTION
     :ivar parameters: Key phrase extraction task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.KeyPhraseActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Key phrase extraction task"""
+    """Kind of the task. Required. Key phrase extraction task."""
     parameters: Optional["_models.KeyPhraseActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4891,12 +4990,12 @@ class MatchLongestEntityPolicyType(EntityOverlapPolicy, discriminator="matchLong
     Text Analytics) follow the above steps starting from 1.
 
     :ivar policy_kind: The entity OverlapPolicy object kind. Required. Represents
-     MatchLongestEntityPolicyType
+     MatchLongestEntityPolicyType.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.MATCH_LONGEST
     """
 
     policy_kind: Literal[PolicyKind.MATCH_LONGEST] = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The entity OverlapPolicy object kind. Required. Represents MatchLongestEntityPolicyType"""
+    """The entity OverlapPolicy object kind. Required. Represents MatchLongestEntityPolicyType."""
 
     @overload
     def __init__(
@@ -5536,14 +5635,14 @@ class PiiEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="P
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: The kind of the task. Required. PII entity recognition LRO results
+    :ivar kind: The kind of the task. Required. PII entity recognition LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.PII_ENTITY_RECOGNITION_OPERATION_RESULTS
     :ivar results: The list of pii results. Required.
     :vartype results: ~azure.ai.textanalytics.models.PiiResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of the task. Required. PII entity recognition LRO results"""
+    """The kind of the task. Required. PII entity recognition LRO results."""
     results: "_models.PiiResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of pii results. Required."""
 
@@ -5574,14 +5673,14 @@ class PiiLROTask(AnalyzeTextOperationAction, discriminator="PiiEntityRecognition
 
     :ivar name: task name.
     :vartype name: str
-    :ivar kind: Kind of the task. Required. PII entity recognition task
+    :ivar kind: Kind of the task. Required. PII entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.PII_ENTITY_RECOGNITION
     :ivar parameters: Pii task parameters.
     :vartype parameters: ~azure.ai.textanalytics.models.PiiActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. PII entity recognition task"""
+    """Kind of the task. Required. PII entity recognition task."""
     parameters: Optional["_models.PiiActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6097,14 +6196,14 @@ class SentimentAnalysisOperationAction(AnalyzeTextOperationAction, discriminator
     :ivar name: task name.
     :vartype name: str
     :ivar kind: The Sentiment Analysis kind of the long running task. Required. Sentiment analysis
-     task
+     task.
     :vartype kind: str or ~azure.ai.textanalytics.models.SENTIMENT_ANALYSIS
     :ivar parameters: Parameters for the Sentiment Analysis task.
     :vartype parameters: ~azure.ai.textanalytics.models.SentimentAnalysisActionContent
     """
 
     kind: Literal[AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Sentiment Analysis kind of the long running task. Required. Sentiment analysis task"""
+    """The Sentiment Analysis kind of the long running task. Required. Sentiment analysis task."""
     parameters: Optional["_models.SentimentAnalysisActionContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6180,14 +6279,14 @@ class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisL
     :vartype status: str or ~azure.ai.textanalytics.models.TextActionState
     :ivar task_name: task name.
     :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Sentiment analysis LRO results
+    :ivar kind: Kind of the task. Required. Sentiment analysis LRO results.
     :vartype kind: str or ~azure.ai.textanalytics.models.SENTIMENT_ANALYSIS_OPERATION_RESULTS
     :ivar results: The sentiment analysis results. Required.
     :vartype results: ~azure.ai.textanalytics.models.SentimentResult
     """
 
     kind: Literal[AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Sentiment analysis LRO results"""
+    """Kind of the task. Required. Sentiment analysis LRO results."""
     results: "_models.SentimentResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sentiment analysis results. Required."""
 
@@ -6688,7 +6787,7 @@ class TextActions(_Model):
 class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
     """Contains the analyze text Entity linking input.
 
-    :ivar kind: Kind for Entity linking input. Required. Entity linking task
+    :ivar kind: Kind for Entity linking input. Required. Entity linking task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_LINKING
     :ivar text_input: Contains the analysis input to be handled by the service.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6697,7 +6796,7 @@ class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
     """
 
     kind: Literal[AnalyzeTextInputKind.ENTITY_LINKING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind for Entity linking input. Required. Entity linking task"""
+    """Kind for Entity linking input. Required. Entity linking task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6730,7 +6829,7 @@ class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
 class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognition"):
     """The entity recognition analyze text input task request.
 
-    :ivar kind: The kind of task. Required. Entity recognition task
+    :ivar kind: The kind of task. Required. Entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.ENTITY_RECOGNITION
     :ivar text_input: The input to be analyzed.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6739,7 +6838,7 @@ class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognit
     """
 
     kind: Literal[AnalyzeTextInputKind.ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of task. Required. Entity recognition task"""
+    """The kind of task. Required. Entity recognition task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6772,7 +6871,7 @@ class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognit
 class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExtraction"):
     """Contains the analyze text KeyPhraseExtraction task input.
 
-    :ivar kind: Kind of the task. Required. Key phrase extraction task
+    :ivar kind: Kind of the task. Required. Key phrase extraction task.
     :vartype kind: str or ~azure.ai.textanalytics.models.KEY_PHRASE_EXTRACTION
     :ivar text_input: Contains the input documents.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6781,7 +6880,7 @@ class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExt
     """
 
     kind: Literal[AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Key phrase extraction task"""
+    """Kind of the task. Required. Key phrase extraction task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6814,7 +6913,7 @@ class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExt
 class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetection"):
     """Contains the language detection document analysis task input.
 
-    :ivar kind: Kind of the task. Required. Language detection task
+    :ivar kind: Kind of the task. Required. Language detection task.
     :vartype kind: str or ~azure.ai.textanalytics.models.LANGUAGE_DETECTION
     :ivar text_input: Documents to be analyzed.
     :vartype text_input: ~azure.ai.textanalytics.models.LanguageDetectionTextInput
@@ -6823,7 +6922,7 @@ class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetect
     """
 
     kind: Literal[AnalyzeTextInputKind.LANGUAGE_DETECTION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Language detection task"""
+    """Kind of the task. Required. Language detection task."""
     text_input: Optional["_models.LanguageDetectionTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6856,7 +6955,7 @@ class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetect
 class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntityRecognition"):
     """Contains the analyze text PIIEntityRecognition task input.
 
-    :ivar kind: Kind of the task. Required. PII entity recognition task
+    :ivar kind: Kind of the task. Required. PII entity recognition task.
     :vartype kind: str or ~azure.ai.textanalytics.models.PII_ENTITY_RECOGNITION
     :ivar text_input: Contains the input documents.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6865,7 +6964,7 @@ class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntity
     """
 
     kind: Literal[AnalyzeTextInputKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. PII entity recognition task"""
+    """Kind of the task. Required. PII entity recognition task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6898,7 +6997,7 @@ class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntity
 class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnalysis"):
     """Contains the analyze text SentimentAnalysis task input.
 
-    :ivar kind: Kind of the task. Required. Sentiment analysis task
+    :ivar kind: Kind of the task. Required. Sentiment analysis task.
     :vartype kind: str or ~azure.ai.textanalytics.models.SENTIMENT_ANALYSIS
     :ivar text_input: Contains the input documents.
     :vartype text_input: ~azure.ai.textanalytics.models.MultiLanguageTextInput
@@ -6907,7 +7006,7 @@ class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnaly
     """
 
     kind: Literal[AnalyzeTextInputKind.SENTIMENT_ANALYSIS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Sentiment analysis task"""
+    """Kind of the task. Required. Sentiment analysis task."""
     text_input: Optional["_models.MultiLanguageTextInput"] = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )

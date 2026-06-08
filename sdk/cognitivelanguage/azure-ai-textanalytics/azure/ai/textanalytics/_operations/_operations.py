@@ -48,7 +48,7 @@ def build_text_analysis_analyze_text_request(*, show_stats: Optional[bool] = Non
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -78,7 +78,7 @@ def build_text_analysis_get_job_status_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_text_analysis_analyze_text_job_request(**kwargs: Any) -> HttpRequest: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     # Construct URL
     _url = "/analyze-text/jobs"
 
@@ -126,7 +126,7 @@ def build_text_analysis_analyze_text_job_request(**kwargs: Any) -> HttpRequest: 
 def build_text_analysis_cancel_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
     # Construct URL
     _url = "/analyze-text/jobs/{jobId}:cancel"
     path_format_arguments = {
@@ -266,6 +266,7 @@ class _TextAnalysisClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -287,7 +288,7 @@ class _TextAnalysisClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AnalyzeTextResult, response.json())
 
@@ -354,6 +355,7 @@ class _TextAnalysisClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -375,7 +377,7 @@ class _TextAnalysisClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AnalyzeTextOperationState, response.json())
 
@@ -441,6 +443,7 @@ class _TextAnalysisClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -463,7 +466,7 @@ class _TextAnalysisClientOperationsMixin(
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -647,6 +650,7 @@ class _TextAnalysisClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -669,7 +673,7 @@ class _TextAnalysisClientOperationsMixin(
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

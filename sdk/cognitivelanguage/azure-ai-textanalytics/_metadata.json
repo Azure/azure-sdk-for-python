@@ -1,3 +1,10 @@
 {
-  "apiVersion": "2025-11-15-preview"
+  "apiVersion": "2026-05-15-preview",
+  "apiVersions": {
+    "Language.Text": "2026-05-15-preview"
+  },
+  "commit": "04869e1f580276ee3e7e51b74dd7e23df50902b8",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/cognitiveservices/data-plane/LanguageAnalyzeText",
+  "emitterVersion": "0.63.0"
 }
