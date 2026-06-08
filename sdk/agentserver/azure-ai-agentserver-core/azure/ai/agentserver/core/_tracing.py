@@ -294,14 +294,23 @@ class TraceContextMiddleware:
                 "x_request_id", x_request_id, context=ctx,
             )
 
-        token = _otel_context.attach(ctx)
-        try:
-            await self.app(scope, receive, send)
-        finally:
-            try:
-                _otel_context.detach(token)
-            except ValueError:
-                pass
+        # Create a NonRecordingSpan with the extracted trace context so that
+        # get_current_span() returns a span carrying the correct trace_id.
+        # Without this, the OTel LogRecord processor sees no active span and
+        # sets trace_id=0, causing zeroed operation_Id in Application Insights
+        # for logs emitted by Hypercorn's access logger.
+        span = trace.get_current_span(ctx)
+        span_ctx = span.get_span_context()
+        if span_ctx and span_ctx.trace_id:
+            non_recording = trace.NonRecordingSpan(span_ctx)
+            ctx = trace.set_span_in_context(non_recording, ctx)
+
+        # Attach the context and do NOT detach in finally.  Hypercorn emits
+        # its access log after the ASGI app returns but within the same async
+        # task.  Detaching here would clear the trace context before Hypercorn
+        # logs.  The context is cleaned up when the async task ends.
+        _otel_context.attach(ctx)
+        await self.app(scope, receive, send)
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
