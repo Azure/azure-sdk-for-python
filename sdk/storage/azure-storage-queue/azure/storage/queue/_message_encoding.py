@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from base64 import b64decode, b64encode
-from typing import Any, Callable, Dict, Iterable, Optional, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import DecodeError
 
@@ -18,6 +18,7 @@ from ._encryption import (
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
+    from ._generated.models import PeekedMessages, ReceivedMessages
 
 
 class MessageEncodePolicy(object):
@@ -76,7 +77,12 @@ class MessageDecodePolicy(object):
         self.key_encryption_key = None
         self.resolver = None
 
-    def __call__(self, response: "PipelineResponse", obj: Iterable, headers: Dict[str, Any]) -> object:
+    def __call__(
+        self,
+        response: "PipelineResponse",
+        obj: Union["PeekedMessages", "ReceivedMessages"],
+        headers: Dict[str, Any],
+    ) -> object:
         messages = obj.items_property
         for message in messages or []:
             if message.message_text in [None, "", b""]:

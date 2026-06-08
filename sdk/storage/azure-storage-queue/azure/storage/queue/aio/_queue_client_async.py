@@ -30,7 +30,7 @@ from .._shared.base_client_async import (
     parse_connection_str,
 )
 from .._shared.policies_async import ExponentialRetry
-from .._shared.request_handlers import add_metadata_headers, serialize_iso
+from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import (
     process_storage_error,
     return_headers_and_deserialized,
@@ -572,13 +572,12 @@ class QueueClient(  # type: ignore [misc]
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-                access_policy = value._to_generated()  # pylint: disable=protected-access
-            else:
-                access_policy = None
-            identifiers.append(SignedIdentifier(id=key, access_policy=access_policy))
+            access_policy = value._to_generated() if value else None  # pylint: disable=protected-access
+            # access_policy is optional on the wire (an identifier may reference a stored
+            # policy by id alone), but the generated model types it as required.
+            identifiers.append(
+                SignedIdentifier(id=key, access_policy=access_policy)  # type: ignore[arg-type]
+            )
         signed_identifiers_model = SignedIdentifiers(items_property=identifiers) if identifiers else None
         try:
             await self._client.queue.set_access_policy(queue_acl=signed_identifiers_model, timeout=timeout, **kwargs)

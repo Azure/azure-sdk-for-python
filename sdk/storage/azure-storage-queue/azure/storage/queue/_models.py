@@ -13,6 +13,7 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_context_and_deserialized,
 )
+from ._shared.request_handlers import serialize_iso
 from ._shared.models import DictMixin
 from ._generated.models._patch import BackCompatMixin as _BackCompatMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -442,7 +443,11 @@ class AccessPolicy(_BackCompatMixin):
         permission = self.permission
         if isinstance(permission, QueueSasPermissions):
             permission = str(permission)
-        return GenAccessPolicy(start=self.start, expiry=self.expiry, permission=permission)
+        return GenAccessPolicy(
+            start=serialize_iso(self.start),
+            expiry=serialize_iso(self.expiry),
+            permission=permission,
+        )
 
 
 class QueueMessage(DictMixin):
