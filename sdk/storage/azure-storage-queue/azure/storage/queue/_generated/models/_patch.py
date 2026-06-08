@@ -33,7 +33,6 @@ class BackCompatMixin:
     _attribute_map: Dict[str, Dict[str, Any]] = {}
     _validation: Dict[str, Dict[str, Any]] = {}
     _xml: Optional[Dict[str, Any]] = None
-    additional_properties: Optional[Dict[str, Any]] = {}
 
     def __eq__(self, other: Any) -> bool:
         """Compare objects by comparing all attributes.
@@ -59,18 +58,26 @@ class BackCompatMixin:
         return str(self.__dict__)
 
     @staticmethod
-    def _serialize_value(value: Any, keep_readonly: bool) -> Any:
+    def _serialize_value(value: Any, keep_readonly: bool, use_rest_key: bool) -> Any:
         """Recursively serialize a value for ``_to_dict``."""
         if isinstance(value, BackCompatMixin):
-            return value._to_dict(keep_readonly=keep_readonly)  # pylint: disable=protected-access
+            return value._to_dict(  # pylint: disable=protected-access
+                keep_readonly=keep_readonly, use_rest_key=use_rest_key
+            )
         if isinstance(value, list):
-            return [BackCompatMixin._serialize_value(v, keep_readonly) for v in value]
+            return [BackCompatMixin._serialize_value(v, keep_readonly, use_rest_key) for v in value]
         if isinstance(value, dict):
-            return {k: BackCompatMixin._serialize_value(v, keep_readonly) for k, v in value.items()}
+            return {k: BackCompatMixin._serialize_value(v, keep_readonly, use_rest_key) for k, v in value.items()}
         return value
 
-    def _to_dict(self, keep_readonly: bool) -> Dict[str, Any]:
-        """Build a dict from ``_attribute_map``, using the REST wire key."""
+    def _to_dict(self, keep_readonly: bool, use_rest_key: bool) -> Dict[str, Any]:
+        """Build a dict from ``_attribute_map``.
+
+        :param bool keep_readonly: If False, skip attributes marked readonly.
+        :param bool use_rest_key: If True, key the result by the REST wire name
+            (e.g. ``Enabled``); if False, key by the Python attribute name
+            (e.g. ``enabled``).
+        """
         result: Dict[str, Any] = {}
         for attr, desc in self._attribute_map.items():
             if not keep_readonly and self._validation.get(attr, {}).get("readonly", False):
@@ -78,7 +85,8 @@ class BackCompatMixin:
             value = getattr(self, attr, None)
             if value is None:
                 continue
-            result[desc["key"]] = self._serialize_value(value, keep_readonly)
+            key = desc["key"] if use_rest_key else attr
+            result[key] = self._serialize_value(value, keep_readonly, use_rest_key)
         return result
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> JSON:
@@ -90,7 +98,7 @@ class BackCompatMixin:
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_dict(keep_readonly=keep_readonly)
+        return self._to_dict(keep_readonly=keep_readonly, use_rest_key=True)
 
     def as_dict(
         self,
@@ -100,13 +108,16 @@ class BackCompatMixin:
     ) -> JSON:
         """Return a dict that can be serialized using json.dump.
 
+        Keys are the Python attribute names (snake_case), matching the old
+        autorest ``Model.as_dict`` default (``attribute_transformer``).
+
         :param bool keep_readonly: If you want to serialize the readonly attributes.
         :param function key_transformer: A key transformer function (accepted for
             signature compatibility but ignored).
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_dict(keep_readonly=keep_readonly)
+        return self._to_dict(keep_readonly=keep_readonly, use_rest_key=False)
 
     @classmethod
     def _from_data(cls, data: Any) -> Self:
@@ -172,7 +183,7 @@ class BackCompatMixin:
         generator for models that serialize to/from XML).
         """
         return bool(getattr(cls, "_xml", None))
-    
+
 
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 

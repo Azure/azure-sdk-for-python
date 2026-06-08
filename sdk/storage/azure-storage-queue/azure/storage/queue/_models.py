@@ -29,6 +29,7 @@ else:
 if TYPE_CHECKING:
     from datetime import datetime
 
+
 class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
