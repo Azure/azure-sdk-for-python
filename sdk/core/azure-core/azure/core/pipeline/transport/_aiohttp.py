@@ -64,6 +64,7 @@ from ._base import HttpRequest
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
 from ...utils._pipeline_transport_rest_shared import (
     _aiohttp_body_helper,
+    _get_decompressor,
     get_file_items,
 )
 from .._tools import is_rest as _is_rest
@@ -462,10 +463,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             enc = enc.lower()
             if enc in ("gzip", "deflate"):
                 if not self._decompressor:
-                    import zlib
-
-                    zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
-                    self._decompressor = zlib.decompressobj(wbits=zlib_mode)
+                    self._decompressor = _get_decompressor(enc)
                 chunk = self._decompressor.decompress(chunk)
             return chunk
         except _ResponseStopIteration:

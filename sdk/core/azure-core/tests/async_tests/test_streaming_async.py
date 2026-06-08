@@ -174,3 +174,69 @@ async def test_streaming_request_generator(port, http_request):
     response = await client.send_request(request)
     response.raise_for_status()
     assert response.text() == "test 123test 456"
+
+
+class _MockStreamContent:
+    """Yields the pre-split chunks regardless of the requested read size,
+    forcing the streaming generator to decode across multiple chunks."""
+
+    def __init__(self, chunks):
+        self._chunks = list(chunks)
+
+    async def read(self, size):
+        if self._chunks:
+            return self._chunks.pop(0)
+        return b""
+
+
+class _MockInternalResponse:
+    def __init__(self, chunks, headers):
+        self.content = _MockStreamContent(chunks)
+        self.headers = headers
+        self.closed = False
+
+    def close(self):
+        self.closed = True
+
+
+class _MockStreamResponse:
+    def __init__(self, internal_response, block_size):
+        self.request = None
+        self.internal_response = internal_response
+        self.block_size = block_size
+
+
+def _split(data, size):
+    return [data[i : i + size] for i in range(0, len(data), size)]
+
+
+@pytest.mark.asyncio
+async def test_streaming_decompress_multichunk_gzip():
+    from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
+
+    payload = b"the quick brown fox jumps over the lazy dog. " * 100
+    compressor = zlib.compressobj(wbits=16 + zlib.MAX_WBITS)
+    compressed = compressor.compress(payload) + compressor.flush()
+    chunks = _split(compressed, 7)
+    assert len(chunks) > 1  # ensure multiple compressed chunks
+    internal = _MockInternalResponse(chunks, {"Content-Encoding": "gzip"})
+    response = _MockStreamResponse(internal, block_size=7)
+    generator = AioHttpStreamDownloadGenerator(None, response, decompress=True)
+    decoded = b"".join([chunk async for chunk in generator])
+    assert decoded == payload
+
+
+@pytest.mark.asyncio
+async def test_streaming_decompress_multichunk_deflate():
+    from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
+
+    payload = b"the quick brown fox jumps over the lazy dog. " * 100
+    compressor = zlib.compressobj(wbits=-zlib.MAX_WBITS)
+    compressed = compressor.compress(payload) + compressor.flush()
+    chunks = _split(compressed, 7)
+    assert len(chunks) > 1
+    internal = _MockInternalResponse(chunks, {"Content-Encoding": "deflate"})
+    response = _MockStreamResponse(internal, block_size=7)
+    generator = AioHttpStreamDownloadGenerator(None, response, decompress=True)
+    decoded = b"".join([chunk async for chunk in generator])
+    assert decoded == payload

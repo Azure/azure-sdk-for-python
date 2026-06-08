@@ -378,6 +378,27 @@ def _format_data_helper(
     return (filename, cast(str, file_bytes))
 
 
+def _get_decompressor(encoding: str):
+    """Return a zlib decompressor for a supported Content-Encoding, else None.
+
+    Shared kernel for the aiohttp buffered and streaming decompression sites.
+    Takes an already-lowercased encoding value and returns a
+    ``zlib.decompressobj`` configured for ``gzip``/``deflate``. Any other
+    encoding returns ``None``. This helper does not own response objects,
+    chunks, idempotency flags, or headers.
+
+    :param str encoding: The already-lowercased ``Content-Encoding`` value.
+    :rtype: zlib.decompressobj or None
+    :return: A decompressor for supported encodings, otherwise ``None``.
+    """
+    if encoding in ("gzip", "deflate"):
+        import zlib
+
+        zlib_mode = (16 + zlib.MAX_WBITS) if encoding == "gzip" else -zlib.MAX_WBITS
+        return zlib.decompressobj(wbits=zlib_mode)
+    return None
+
+
 def _aiohttp_body_helper(
     response: "PipelineTransportAioHttpTransportResponse",
 ) -> bytes:
@@ -403,11 +424,8 @@ def _aiohttp_body_helper(
     if not enc:
         return response._content
     enc = enc.lower()
-    if enc in ("gzip", "deflate"):
-        import zlib
-
-        zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
-        decompressor = zlib.decompressobj(wbits=zlib_mode)
+    decompressor = _get_decompressor(enc)
+    if decompressor is not None:
         response._content = decompressor.decompress(response._content)
         response._decompressed_content = True
         return response._content
