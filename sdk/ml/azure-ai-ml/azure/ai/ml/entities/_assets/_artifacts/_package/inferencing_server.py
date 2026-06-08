@@ -7,9 +7,6 @@
 from typing import Any, Optional
 
 from azure.ai.ml._restclient.v2023_02_01_preview_tsp.models import (
-    AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
-)
-from azure.ai.ml._restclient.v2023_02_01_preview_tsp.models import (
     CustomInferencingServer as RestCustomInferencingServer,
 )
 from azure.ai.ml._restclient.v2023_02_01_preview_tsp.models import (
