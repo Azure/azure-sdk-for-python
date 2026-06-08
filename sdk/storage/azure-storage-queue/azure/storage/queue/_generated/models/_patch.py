@@ -9,7 +9,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
-import xml.etree.ElementTree as ET
 from collections.abc import MutableMapping
 from typing import Any, Callable, Dict, List, Optional
 
@@ -32,7 +31,6 @@ class BackCompatMixin:
 
     _attribute_map: Dict[str, Dict[str, Any]] = {}
     _validation: Dict[str, Dict[str, Any]] = {}
-    _xml: Optional[Dict[str, Any]] = None
 
     def __eq__(self, other: Any) -> bool:
         """Compare objects by comparing all attributes.
@@ -59,7 +57,7 @@ class BackCompatMixin:
 
     @staticmethod
     def _serialize_value(value: Any, keep_readonly: bool, use_rest_key: bool) -> Any:
-        """Recursively serialize a value for ``_to_dict``."""
+        """Recursively serialize a value for ``_to_dict``, kept simple for the few backcompat models that need it."""
         if isinstance(value, BackCompatMixin):
             return value._to_dict(  # pylint: disable=protected-access
                 keep_readonly=keep_readonly, use_rest_key=use_rest_key
@@ -137,16 +135,16 @@ class BackCompatMixin:
         return instance
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(
+        cls,
+        data: Any,
+        content_type: Optional[str] = None,  # pylint: disable=unused-argument
+    ) -> Self:
         """Backcompat classmethod for the old autorest ``Model.deserialize``.
 
-        Accepts either a JSON-compatible dict/str or (when ``content_type`` is
-        XML) an XML string or ``ElementTree.Element``.
+        Accepts a JSON-compatible dict with REST wire keys (e.g. from
+        ``serialize``).
         """
-        if content_type and "xml" in content_type.lower():
-            if isinstance(data, (bytes, str)):
-                data = ET.fromstring(data)  # nosec
-            return cls(data)
         return cls._from_data(data)
 
     @classmethod
@@ -154,17 +152,13 @@ class BackCompatMixin:
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, dict[str, Any], Any], Any]] = None,  # pylint: disable=unused-argument
-        content_type: Optional[str] = None,
+        content_type: Optional[str] = None,  # pylint: disable=unused-argument
     ) -> Self:
         """Backcompat classmethod for the old autorest ``Model.from_dict``.
 
         ``key_extractors`` is accepted for signature compatibility but ignored;
         keys are reverse-mapped via ``_attribute_map``.
         """
-        if content_type and "xml" in content_type.lower():
-            if isinstance(data, (bytes, str)):
-                data = ET.fromstring(data)  # nosec
-            return cls(data)
         return cls._from_data(data)
 
     @classmethod
@@ -179,10 +173,9 @@ class BackCompatMixin:
     def is_xml_model(cls) -> bool:
         """Backcompat classmethod for the old autorest ``Model.is_xml_model``.
 
-        Returns True when the model has an ``_xml`` class attribute (set by the
-        generator for models that serialize to/from XML).
+        Always ``False``: these backcompat models serialize to/from JSON, not XML.
         """
-        return bool(getattr(cls, "_xml", None))
+        return False
 
 
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level

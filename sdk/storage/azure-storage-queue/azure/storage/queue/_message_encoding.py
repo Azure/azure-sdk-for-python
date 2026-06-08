@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from base64 import b64decode, b64encode
-from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, Iterable, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import DecodeError
 
@@ -18,7 +18,6 @@ from ._encryption import (
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
-    from ._generated.models import PeekedMessages, ReceivedMessages
 
 
 class MessageEncodePolicy(object):
@@ -80,10 +79,12 @@ class MessageDecodePolicy(object):
     def __call__(
         self,
         response: "PipelineResponse",
-        obj: Union["PeekedMessages", "ReceivedMessages"],
+        obj: Iterable,
         headers: Dict[str, Any],
     ) -> object:
-        messages = obj.items_property
+        # ``obj`` is the deserialized container (PeekedMessages/ReceivedMessages)
+        # whose messages live on ``items_property``; to make typing happy
+        messages = getattr(obj, "items_property", obj)
         for message in messages or []:
             if message.message_text in [None, "", b""]:
                 continue

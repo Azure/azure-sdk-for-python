@@ -575,9 +575,7 @@ class QueueClient(  # type: ignore [misc]
             access_policy = value._to_generated() if value else None  # pylint: disable=protected-access
             # access_policy is optional on the wire (an identifier may reference a stored
             # policy by id alone), but the generated model types it as required.
-            identifiers.append(
-                SignedIdentifier(id=key, access_policy=access_policy)  # type: ignore[arg-type]
-            )
+            identifiers.append(SignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
         signed_identifiers_model = SignedIdentifiers(items_property=identifiers) if identifiers else None
         try:
             await self._client.queue.set_access_policy(queue_acl=signed_identifiers_model, timeout=timeout, **kwargs)
