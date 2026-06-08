@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import json
 import urllib.parse
 from typing import Any, List, Optional, Union, MutableMapping, Type
@@ -23,21 +25,21 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
-    AzureAppConfigurationClientOperationsMixin as AzureAppConfigClientOpGenerated,
+    _AzureAppConfigurationClientOperationsMixin as AzureAppConfigClientOpGenerated,
     ClsType,
     build_azure_app_configuration_get_key_values_request,
     build_azure_app_configuration_check_key_values_request,
 )
 from ..._operations._operations import prep_if_match, prep_if_none_match
 from ... import models as _models
-from ..._model_base import _deserialize
-from ..._serialization import Serializer
+from ..._utils.model_base import _deserialize
+from ..._utils.serialization import Serializer
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated):
+class _AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated):
     def _build_kv_error_map(
         self,
         match_condition: Optional[MatchConditions],
@@ -345,7 +347,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
 
 
 __all__: List[str] = [
-    "AzureAppConfigurationClientOperationsMixin"
+    "_AzureAppConfigurationClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 

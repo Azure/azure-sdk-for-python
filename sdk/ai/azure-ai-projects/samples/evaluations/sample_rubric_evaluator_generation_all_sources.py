@@ -50,14 +50,24 @@ USAGE:
 import os
 import time
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, List, cast
+from datetime import datetime, timedelta, timezone
+from typing import List, cast
 
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import JobStatus, RubricBasedEvaluatorDefinition
+from azure.ai.projects.models import (
+    AgentEvaluatorGenerationJobSource,
+    DatasetEvaluatorGenerationJobSource,
+    EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
+    EvaluatorGenerationJobSource,
+    JobStatus,
+    PromptEvaluatorGenerationJobSource,
+    RubricBasedEvaluatorDefinition,
+    TracesEvaluatorGenerationJobSource,
+)
 
 load_dotenv()
 
@@ -85,51 +95,49 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Combined Prompt + Agent + Dataset generation job.
-    multi_sources: List[Dict[str, Any]] = [
-        {
-            "type": "Prompt",
-            "description": "Inline application overview.",
-            "prompt": (
+    multi_sources: List[EvaluatorGenerationJobSource] = [
+        PromptEvaluatorGenerationJobSource(
+            description="Inline application overview.",
+            prompt=(
                 "You are evaluating a customer-support assistant that helps users "
                 "manage their accounts, troubleshoot issues, and place orders. The "
                 "assistant uses tools for account lookup, password reset, and order "
                 "creation. It must confirm intent before performing destructive "
                 "actions and maintain a patient, professional tone."
             ),
-        }
+        ),
     ]
     if agent_name:
         multi_sources.append(
-            {
-                "type": "Agent",
-                "description": "Agent metadata enriches the rubric with tool and instruction signals.",
-                "agent_name": agent_name,
-            }
+            AgentEvaluatorGenerationJobSource(
+                description="Agent metadata enriches the rubric with tool and instruction signals.",
+                agent_name=agent_name,
+            )
         )
     else:
         print("Skipping Agent source (FOUNDRY_AGENT_NAME not set).")
 
     if dataset_name and dataset_version:
         multi_sources.append(
-            {
-                "type": "Dataset",
-                "description": "Reference examples ground dimensions in real data.",
-                "name": dataset_name,
-                "version": dataset_version,
-            }
+            DatasetEvaluatorGenerationJobSource(
+                description="Reference examples ground dimensions in real data.",
+                name=dataset_name,
+                version=dataset_version,
+            )
         )
     else:
         print("Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set).")
 
     multi_job = project_client.beta.evaluators.create_generation_job(
-        job={
-            "model": model_name,
-            "name": "Multi-source generation",
-            "evaluator_name": multi_name,
-            "evaluator_display_name": "Customer Support Quality (multi-source)",
-            "evaluator_description": "Generated from prompt, agent, and dataset signals.",
-            "sources": multi_sources,
-        },
+        job=EvaluatorGenerationJob(
+            inputs=EvaluatorGenerationInputs(
+                model=model_name,
+                evaluator_name=multi_name,
+                evaluator_display_name="Customer Support Quality (multi-source)",
+                evaluator_description="Generated from prompt, agent, and dataset signals.",
+                sources=multi_sources,
+            ),
+        ),
         operation_id=f"rubric-multi-{short}",
     )
 
@@ -159,32 +167,31 @@ with (
     if not agent_name:
         print("Skipping traces job (requires FOUNDRY_AGENT_NAME for both the traces source and companion).")
     else:
-        now = int(time.time())
-        start_time = now - traces_window_days * 24 * 3600
-        end_time = now + 600  # small padding for clock skew
+        now = datetime.now(tz=timezone.utc)
+        start_time = now - timedelta(days=traces_window_days)
+        end_time = now + timedelta(seconds=600)  # small padding for clock skew
 
         traces_job = project_client.beta.evaluators.create_generation_job(
-            job={
-                "model": model_name,
-                "name": "Traces-source generation",
-                "evaluator_name": traces_name,
-                "evaluator_display_name": "Customer Support Quality (from traces)",
-                "evaluator_description": "Generated from real Application Insights conversation traces.",
-                "sources": [
-                    {
-                        "type": "traces",
-                        "description": "Application Insights conversation traces for the agent.",
-                        "agent_name": agent_name,
-                        "start_time": start_time,
-                        "end_time": end_time,
-                    },
-                    {
-                        "type": "Agent",
-                        "description": "Companion source (service rejects traces-only).",
-                        "agent_name": agent_name,
-                    },
-                ],
-            },
+            job=EvaluatorGenerationJob(
+                inputs=EvaluatorGenerationInputs(
+                    model=model_name,
+                    evaluator_name=traces_name,
+                    evaluator_display_name="Customer Support Quality (from traces)",
+                    evaluator_description="Generated from real Application Insights conversation traces.",
+                    sources=[
+                        TracesEvaluatorGenerationJobSource(
+                            description="Application Insights conversation traces for the agent.",
+                            agent_name=agent_name,
+                            start_time=start_time,
+                            end_time=end_time,
+                        ),
+                        AgentEvaluatorGenerationJobSource(
+                            description="Companion source (service rejects traces-only).",
+                            agent_name=agent_name,
+                        ),
+                    ],
+                ),
+            ),
             operation_id=f"rubric-traces-{short}",
         )
 
