@@ -77,7 +77,7 @@ class MessageDecodePolicy(object):
         self.resolver = None
 
     def __call__(self, response: "PipelineResponse", obj: Iterable, headers: Dict[str, Any]) -> object:
-        messages = obj.items_property if hasattr(obj, "items_property") else obj
+        messages = obj.items_property
         for message in messages or []:
             if message.message_text in [None, "", b""]:
                 continue
