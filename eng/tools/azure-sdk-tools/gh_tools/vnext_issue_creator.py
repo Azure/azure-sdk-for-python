@@ -60,8 +60,16 @@ def is_auto_fix_eligible(
     in the package's ``pyproject.toml`` via :class:`ParsedSetup`.  The
     setting defaults to ``False`` (not eligible) when absent.
     """
-    parsed = ParsedSetup.from_path(package_dir)
-    return bool(parsed.get_config_setting("vnext_copilot_fix", default=False))
+    try:
+        parsed = ParsedSetup.from_path(package_dir)
+        return bool(parsed.get_config_setting("vnext_copilot_fix", default=False))
+    except (ValueError, OSError) as exc:
+        logging.warning(
+            "Failed to parse pyproject.toml to determine vnext_copilot_fix eligibility, skipping Copilot assignment for %s: %s",
+            package_dir,
+            exc,
+        )
+        return False
 
 
 def _references_issue(text: str, issue_number: int) -> bool:
@@ -73,8 +81,6 @@ def _references_issue(text: str, issue_number: int) -> bool:
 def find_existing_fix_prs(
     repo,
     issue_number: int,
-    package_name: str,
-    check_type: str,
 ) -> list:
     """Search for open PRs that likely address the same vnext failure.
 
@@ -175,7 +181,11 @@ def _unassign_copilot(issue) -> bool:
         issue.remove_from_assignees(COPILOT_ASSIGNEE_LOGIN)
         logging.info(f"Unassigned {COPILOT_ASSIGNEE_LOGIN} from issue #{issue.number}")
         return True
-    except Exception as e:
+    except GithubException as e:
+        # Removing a non-existent assignee returns 422 (treat as idempotent success).
+        if e.status == 422:
+            logging.info(f"{COPILOT_ASSIGNEE_LOGIN} was not assigned to issue #{issue.number}; nothing to unassign")
+            return True
         logging.warning(f"Failed to unassign {COPILOT_ASSIGNEE_LOGIN} from issue #{issue.number}: {e}")
         return False
 

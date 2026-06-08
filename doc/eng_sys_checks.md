@@ -605,7 +605,7 @@ For `pylint`, `mypy`, `sphinx`, and `pyright` failures, the weekly pipeline can 
 - **Review the PR**: review and merge it like any other PR.
 - **If Copilot fails** to be assigned, the pipeline logs a warning and retries automatically on the next run.
 - **Version bumps**: when the checker version changes, Copilot is unassigned and reassigned to trigger a fresh fix attempt with the updated errors.
-- **Duplicate detection**: if an open PR already references the issue or mentions the package and check type, Copilot is not reassigned.
+- **Duplicate detection**: if an open PR already references the issue, Copilot is not reassigned.
 
 To test a "next" check locally, use `--next`:
 
