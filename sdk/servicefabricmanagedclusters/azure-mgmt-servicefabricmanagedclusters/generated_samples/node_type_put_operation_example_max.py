@@ -106,6 +106,14 @@ def main():
                 "multiplePlacementGroups": True,
                 "natGatewayId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resRg/providers/Microsoft.Network/natGateways/myNatGateway",
                 "placementProperties": {"HasSSD": "true", "NodeColor": "green", "SomeProperty": "5"},
+                "proxyAgentSettings": {
+                    "addProxyAgentExtension": True,
+                    "enabled": True,
+                    "imds": {"inVMAccessControlProfileReferenceId": "someReferenceId", "mode": "Audit"},
+                    "keyIncarnationId": 17,
+                    "wireServer": {"inVMAccessControlProfileReferenceId": "someReferenceId", "mode": "Audit"},
+                },
+                "scaleInPolicy": {"mode": "Default"},
                 "secureBootEnabled": True,
                 "securityEncryptionType": "DiskWithVMGuestState",
                 "securityType": "ConfidentialVM",
@@ -171,6 +179,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/NodeTypePutOperation_example_max.json
+# x-ms-original-file: 2026-05-01-preview/NodeTypePutOperation_example_max.json
 if __name__ == "__main__":
     main()

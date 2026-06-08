@@ -1866,7 +1866,7 @@ class OSProfile(_model_base.Model):
      characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):**
      123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity
      requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters
-     <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\W_])
+     <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\\W_])
      <br><br> **Disallowed values:** \"abc@123\", \"P@$$w0rd\", \"P@ssw0rd\", \"P@ssword123\",
      \"Pa$$word\", \"pass@word1\", \"Password!\", \"Password1\", \"Password22\", \"iloveyou!\"
      <br><br> For resetting the password, see `How to reset the Remote Desktop service or its login
