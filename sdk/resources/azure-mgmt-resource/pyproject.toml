@@ -6,11 +6,11 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-mgmt-resource-resources"
+name = "azure-mgmt-resource"
 authors = [
     { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Azure Resources Management Client Library for Python"
+description = "Microsoft Azure Resource Management Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",

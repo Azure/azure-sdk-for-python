@@ -14,7 +14,7 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
     python patch_tags_resource.py
 

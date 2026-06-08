@@ -1,6 +1,6 @@
 # Release History
 
-## 26.0.0b1 (2026-06-02)
+## 26.0.0b1 (2026-06-08)
 
 ### Features Added
 
@@ -51,10 +51,10 @@
   - Method `ResourcesOperations.get_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
   - Method `ResourcesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ResourcesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `ResourcesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'parameters', 'api_version', 'kwargs']`
-  - Method `ResourcesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'parameters', 'api_version', 'kwargs']`
   - Method `ResourcesOperations.begin_create_or_update_by_id` re-ordered its parameters from `['self', 'resource_id', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_id', 'parameters', 'api_version', 'kwargs']`
+  - Method `ResourcesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'parameters', 'api_version', 'kwargs']`
   - Method `ResourcesOperations.begin_update_by_id` re-ordered its parameters from `['self', 'resource_id', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_id', 'parameters', 'api_version', 'kwargs']`
+  - Method `ResourcesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'parameters', 'api_version', 'kwargs']`
 
 ## 25.0.0 (2026-02-04)
 

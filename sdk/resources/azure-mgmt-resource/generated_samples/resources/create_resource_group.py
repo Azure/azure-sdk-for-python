@@ -13,9 +13,9 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
-    python get_tags_subscription.py
+    python create_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.tags.get_at_scope(
-        scope="subscriptions/00000000-0000-0000-0000-000000000000",
+    response = client.resource_groups.create_or_update(
+        resource_group_name="my-resource-group",
+        parameters={"location": "eastus"},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/GetTagsSubscription.json
+# x-ms-original-file: 2025-04-01/CreateResourceGroup.json
 if __name__ == "__main__":
     main()

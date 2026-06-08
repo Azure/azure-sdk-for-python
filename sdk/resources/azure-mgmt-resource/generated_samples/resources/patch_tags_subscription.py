@@ -13,9 +13,9 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
-    python force_delete_vms_and_vmss_in_resource_group.py
+    python patch_tags_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,16 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.resource_groups.begin_delete(
-        resource_group_name="my-resource-group",
+    response = client.tags.begin_update_at_scope(
+        scope="subscriptions/00000000-0000-0000-0000-000000000000",
+        parameters={
+            "operation": "Replace",
+            "properties": {"tags": {"tagKey1": "tag-value-1", "tagKey2": "tag-value-2"}},
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-04-01/ForceDeleteVMsAndVMSSInResourceGroup.json
+# x-ms-original-file: 2025-04-01/PatchTagsSubscription.json
 if __name__ == "__main__":
     main()

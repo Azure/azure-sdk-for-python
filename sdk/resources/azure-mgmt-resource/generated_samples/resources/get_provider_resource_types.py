@@ -13,9 +13,9 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
-    python get_provider.py
+    python get_provider_resource_types.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.providers.get(
-        resource_provider_namespace="Microsoft.TestRP1",
+    response = client.provider_resource_types.list(
+        resource_provider_namespace="Microsoft.TestRP",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/GetProvider.json
+# x-ms-original-file: 2025-04-01/GetProviderResourceTypes.json
 if __name__ == "__main__":
     main()

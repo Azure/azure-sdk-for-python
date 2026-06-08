@@ -60,7 +60,7 @@ class ResourceManagementClientConfiguration:  # pylint: disable=too-many-instanc
         self.cloud_setting = cloud_setting
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "mgmt-resource-resources/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "mgmt-resource/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 

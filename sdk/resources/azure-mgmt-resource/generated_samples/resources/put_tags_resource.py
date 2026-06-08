@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,9 +14,9 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
-    python export_resource_group_as_bicep.py
+    python put_tags_resource.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,17 +31,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.resource_groups.begin_export_template(
-        resource_group_name="my-resource-group",
-        parameters={
-            "options": "IncludeParameterDefaultValue,IncludeComments",
-            "outputFormat": "Bicep",
-            "resources": ["*"],
-        },
+    response = client.tags.begin_create_or_update_at_scope(
+        scope="subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/my-resource-group/providers/myPRNameSpace/VM/myVm",
+        parameters={"properties": {"tags": {"tagKey1": "tag-value-1", "tagKey2": "tag-value-2"}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/ExportResourceGroupAsBicep.json
+# x-ms-original-file: 2025-04-01/PutTagsResource.json
 if __name__ == "__main__":
     main()

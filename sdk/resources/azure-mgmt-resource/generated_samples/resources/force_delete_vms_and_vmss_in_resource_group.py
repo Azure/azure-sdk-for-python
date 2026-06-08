@@ -13,9 +13,9 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
-    python get_provider_resource_types.py
+    python force_delete_vms_and_vmss_in_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.provider_resource_types.list(
-        resource_provider_namespace="Microsoft.TestRP",
-    )
-    print(response)
+    client.resource_groups.begin_delete(
+        resource_group_name="my-resource-group",
+    ).result()
 
 
-# x-ms-original-file: 2025-04-01/GetProviderResourceTypes.json
+# x-ms-original-file: 2025-04-01/ForceDeleteVMsAndVMSSInResourceGroup.json
 if __name__ == "__main__":
     main()

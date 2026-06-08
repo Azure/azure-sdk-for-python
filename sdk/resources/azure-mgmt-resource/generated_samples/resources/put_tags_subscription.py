@@ -13,9 +13,9 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
-    python get_named_provider_at_tenant.py
+    python put_tags_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.providers.get_at_tenant_scope(
-        resource_provider_namespace="Microsoft.Storage",
-    )
+    response = client.tags.begin_create_or_update_at_scope(
+        scope="subscriptions/00000000-0000-0000-0000-000000000000",
+        parameters={"properties": {"tags": {"tagKey1": "tag-value-1", "tagKey2": "tag-value-2"}}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/GetNamedProviderAtTenant.json
+# x-ms-original-file: 2025-04-01/PutTagsSubscription.json
 if __name__ == "__main__":
     main()

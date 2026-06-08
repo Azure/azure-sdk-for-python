@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,9 +13,9 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
-    python get_tags_resource.py
+    python force_delete_vms_in_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,12 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.tags.get_at_scope(
-        scope="subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/my-resource-group/providers/myPRNameSpace/VM/myVm",
-    )
-    print(response)
+    client.resource_groups.begin_delete(
+        resource_group_name="my-resource-group",
+    ).result()
 
 
-# x-ms-original-file: 2025-04-01/GetTagsResource.json
+# x-ms-original-file: 2025-04-01/ForceDeleteVMsInResourceGroup.json
 if __name__ == "__main__":
     main()

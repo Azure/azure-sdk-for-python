@@ -13,9 +13,9 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resource-resources
+    pip install azure-mgmt-resource
 # USAGE
-    python delete_tags_subscription.py
+    python get_named_provider_at_tenant.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.tags.begin_delete_at_scope(
-        scope="subscriptions/00000000-0000-0000-0000-000000000000",
-    ).result()
+    response = client.providers.get_at_tenant_scope(
+        resource_provider_namespace="Microsoft.Storage",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2025-04-01/DeleteTagsSubscription.json
+# x-ms-original-file: 2025-04-01/GetNamedProviderAtTenant.json
 if __name__ == "__main__":
     main()
