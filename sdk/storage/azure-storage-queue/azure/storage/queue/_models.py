@@ -14,12 +14,7 @@ from ._shared.response_handlers import (
     return_context_and_deserialized,
 )
 from ._shared.models import DictMixin
-# The msrest-style ``Model`` base from the generated serialization layer is
-# kept as the base of the publicly exported models below to preserve the
-# exact public API surface (``serialize``/``deserialize``/``as_dict``/
-# ``from_dict``/``is_xml_model``/``enable_additional_properties_sending``)
-# that customers depended on prior to the TypeSpec migration.
-from ._generated._utils.serialization import Model as _SerializationModel
+from ._generated.models._patch import BackCompatMixin as _BackCompatMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -34,8 +29,7 @@ else:
 if TYPE_CHECKING:
     from datetime import datetime
 
-
-class RetentionPolicy(_SerializationModel):
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -82,7 +76,7 @@ class RetentionPolicy(_SerializationModel):
         return GeneratedRetentionPolicy(enabled=self.enabled, days=self.days)
 
 
-class QueueAnalyticsLogging(_SerializationModel):
+class QueueAnalyticsLogging(_BackCompatMixin):
     """Azure Analytics Logging settings.
 
     All required parameters must be populated in order to send to Azure.
@@ -152,7 +146,7 @@ class QueueAnalyticsLogging(_SerializationModel):
         )
 
 
-class Metrics(_SerializationModel):
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -212,7 +206,7 @@ class Metrics(_SerializationModel):
         )
 
 
-class CorsRule(_SerializationModel):
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -379,7 +373,7 @@ class QueueSasPermissions(object):
         return parsed
 
 
-class AccessPolicy(_SerializationModel):
+class AccessPolicy(_BackCompatMixin):
     """Access Policy class used by the set and get access policy methods.
 
     A stored access policy can specify the start time, expiry time, and
