@@ -312,7 +312,6 @@
   - Added model `ManagedServiceIdentityPatch`
   - Added enum `ManagedServiceIdentitySelectorType`
   - Added enum `ManagedServiceIdentityType`
-  - Added model `ManagementNetworkPatchConfiguration`
   - Added enum `MicroBfdState`
   - Added enum `NNIDerivedUniqueRouteDistinguisherConfigurationState`
   - Added model `NativeIpv4PrefixLimitPatchProperties`
@@ -370,7 +369,6 @@
   - Added model `NniUpdateBfdAdministrativeStateResponseProperties`
   - Added model `NpbStaticRouteConfigurationPatch`
   - Added model `OperationStatusResult`
-  - Added model `OptionBLayer3ConfigurationPatchProperties`
   - Added model `OptionBLayer3PrefixLimitPatchProperties`
   - Added model `OptionBLayer3PrefixLimitProperties`
   - Added model `PoliceRateConfigurationProperties`
@@ -404,7 +402,6 @@
   - Added model `StorageAccountConfiguration`
   - Added model `StorageAccountPatchConfiguration`
   - Added enum `SynchronizationStatus`
-  - Added model `TerminalServerPatchConfiguration`
   - Added enum `UniqueRouteDistinguisherConfigurationState`
   - Added model `UniqueRouteDistinguisherPatchProperties`
   - Added model `UniqueRouteDistinguisherProperties`
@@ -420,7 +417,6 @@
   - Added model `VpnOptionAPatchProperties`
   - Added model `VpnOptionAProperties`
   - Added model `VpnOptionBPatchProperties`
-  - Added model `VpnOptionBProperties`
   - Model `ExternalNetworksOperations` added method `begin_update_bfd_administrative_state`
   - Model `InternalNetworksOperations` added method `begin_update_bfd_administrative_state`
   - Model `NeighborGroupsOperations` added method `begin_resync`
@@ -706,21 +702,21 @@
   - Deleted or renamed model `IpPrefixPatchableProperties`
   - Deleted or renamed model `L3IsolationDomainPatchableProperties`
   - Deleted or renamed model `L3OptionAProperties`
-  - Deleted or renamed model `ManagementNetworkConfigurationPatchableProperties`
+  - Renamed model `ManagementNetworkConfigurationPatchableProperties` to `ManagementNetworkPatchConfiguration`
   - Deleted or renamed model `NeighborGroupPatchableProperties`
   - Deleted or renamed model `NetworkDevicePatchableProperties`
   - Deleted or renamed model `NetworkFabricControllerPatchableProperties`
   - Deleted or renamed model `NetworkFabricPatchableProperties`
-  - Deleted or renamed model `NetworkFabricPatchablePropertiesTerminalServerConfiguration`
+  - Renamed model `NetworkFabricPatchablePropertiesTerminalServerConfiguration` to `TerminalServerPatchConfiguration`
   - Deleted or renamed model `NetworkInterfacesList`
   - Deleted or renamed model `NetworkTapPatchableParameters`
   - Deleted or renamed model `NetworkTapPatchableParametersDestinationsItem`
   - Deleted or renamed model `NetworkTapPropertiesDestinationsItem`
   - Deleted or renamed model `NetworkTapRulePatchableProperties`
-  - Deleted or renamed model `NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration`
+  - Renamed model `NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration` to `OptionBLayer3ConfigurationPatchProperties`
   - Deleted or renamed model `NetworkToNetworkInterconnectsList`
   - Deleted or renamed model `OptionAProperties`
-  - Deleted or renamed model `OptionBProperties`
+  - Renamed model `OptionBProperties` to `VpnOptionBProperties`
   - Deleted or renamed model `PollingIntervalInSeconds`
   - Deleted or renamed model `TerminalServerPatchableProperties`
   - Deleted or renamed model `VpnConfigurationPatchablePropertiesOptionAProperties`
