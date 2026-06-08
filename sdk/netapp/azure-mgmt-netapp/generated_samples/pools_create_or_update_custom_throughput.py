@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-12-15-preview/Pools_CreateOrUpdate_CustomThroughput.json
+# x-ms-original-file: 2026-01-01/Pools_CreateOrUpdate_CustomThroughput.json
 if __name__ == "__main__":
     main()

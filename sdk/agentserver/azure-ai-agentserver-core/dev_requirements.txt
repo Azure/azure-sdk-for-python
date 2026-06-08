@@ -1,5 +1,4 @@
 -e ../../../eng/tools/azure-sdk-tools
--e ../../monitor/azure-monitor-opentelemetry-exporter
 -e ../../monitor/azure-monitor-query
 -e ../../identity/azure-identity
 pytest

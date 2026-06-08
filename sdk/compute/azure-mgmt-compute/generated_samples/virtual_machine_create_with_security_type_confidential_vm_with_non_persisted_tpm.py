@@ -78,6 +78,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/virtualMachineExamples/VirtualMachine_Create_WithSecurityTypeConfidentialVMWithNonPersistedTPM.json
+# x-ms-original-file: 2025-11-01/virtualMachineExamples/VirtualMachine_Create_WithSecurityTypeConfidentialVMWithNonPersistedTPM.json
 if __name__ == "__main__":
     main()

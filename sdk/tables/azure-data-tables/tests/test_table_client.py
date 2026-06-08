@@ -1050,3 +1050,36 @@ class TestTableClientUnitTests(TableTestCase):
         assert tsc._primary_endpoint == "http://127.0.0.1:10002/devstoreaccount1"
         assert tsc._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
         assert not tsc._cosmos_endpoint
+
+    def test_list_entities_rejects_query_filter(self):
+        """Regression test: list_entities raises ValueError for query_filter instead of leaking to transport."""
+        credential = AzureNamedKeyCredential(
+            "fake_account", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        )
+        client = TableClient("https://fake_account.table.core.windows.net", "testtable", credential=credential)
+
+        with pytest.raises(ValueError, match="query_filter"):
+            client.list_entities(query_filter="PartitionKey eq 'pk001'")
+        client.close()
+
+    def test_list_entities_rejects_query_filter_with_parameters(self):
+        """Regression test: list_entities raises ValueError when query_filter is passed with parameters."""
+        credential = AzureNamedKeyCredential(
+            "fake_account", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        )
+        client = TableClient("https://fake_account.table.core.windows.net", "testtable", credential=credential)
+
+        with pytest.raises(ValueError, match="query_entities"):
+            client.list_entities(query_filter="PartitionKey eq @pk", parameters={"pk": "pk001"})
+        client.close()
+
+    def test_list_entities_rejects_parameters_without_query_filter(self):
+        """Regression test: list_entities raises ValueError when parameters are passed without query_filter."""
+        credential = AzureNamedKeyCredential(
+            "fake_account", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        )
+        client = TableClient("https://fake_account.table.core.windows.net", "testtable", credential=credential)
+
+        with pytest.raises(ValueError, match="parameters"):
+            client.list_entities(parameters={"pk": "pk001"})
+        client.close()

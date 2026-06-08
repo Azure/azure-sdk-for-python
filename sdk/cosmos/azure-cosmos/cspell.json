@@ -1,9 +1,18 @@
 {
     "ignoreWords": [
+        "hdrh",
+        "hdrhistogram",
+        "dedup",
+        "deduped",
+        "deduping",
+        "dedupe",
+        "dedups",
         "perfdb",
         "perfresults",
+        "pkrange",
         "ppcb",
-        "hdrh",
-        "hdrhistogram"
+        "reindexing",
+        "reranker",
+        "toctou"
     ]
 }

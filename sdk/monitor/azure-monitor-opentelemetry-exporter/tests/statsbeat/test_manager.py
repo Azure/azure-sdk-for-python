@@ -270,6 +270,8 @@ class TestStatsbeatManager(unittest.TestCase):
             self.manager._metrics = None
         if hasattr(self.manager, "_meter_provider"):
             self.manager._meter_provider = None
+        if hasattr(self.manager, "_warmup_timer"):
+            self.manager._warmup_timer = None
 
     def tearDown(self):
         """Clean up after tests."""
@@ -366,9 +368,16 @@ class TestStatsbeatManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
     def test_initialize_success(
-        self, mock_is_enabled, mock_statsbeat_metrics, mock_exporter_class, mock_reader_class, mock_meter_provider_class
+        self,
+        mock_is_enabled,
+        mock_timer_class,
+        mock_statsbeat_metrics,
+        mock_exporter_class,
+        mock_reader_class,
+        mock_meter_provider_class,
     ):
         """Test successful initialization."""
         mock_is_enabled.return_value = True
@@ -388,6 +397,7 @@ class TestStatsbeatManager(unittest.TestCase):
         # Mock the statsbeat metrics
         mock_metrics = Mock()
         mock_statsbeat_metrics.return_value = mock_metrics
+        mock_timer_class.return_value = Mock()
 
         config = self._create_valid_config()
 
@@ -404,8 +414,46 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_reader_class.assert_called_once()
         mock_meter_provider_class.assert_called_once()
         mock_statsbeat_metrics.assert_called_once()
-        mock_meter_provider.force_flush.assert_called_once()
+        mock_timer_class.assert_called_once()
+        mock_timer_class.return_value.start.assert_called_once()
+        mock_meter_provider.force_flush.assert_not_called()
         mock_metrics.init_non_initial_metrics.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._state.is_statsbeat_enabled")
+    def test_initialize_with_delay_schedules_non_blocking_flush(
+        self,
+        mock_is_enabled,
+        mock_statsbeat_metrics,
+        mock_exporter_class,
+        mock_reader_class,
+        mock_meter_provider_class,
+        mock_timer_class,
+    ):
+        """Test delayed initial statsbeat flush is scheduled asynchronously."""
+        mock_is_enabled.return_value = True
+
+        mock_exporter_class.return_value = Mock()
+        mock_reader_class.return_value = Mock()
+        mock_meter_provider = Mock()
+        mock_meter_provider_class.return_value = mock_meter_provider
+        mock_metrics = Mock()
+        mock_statsbeat_metrics.return_value = mock_metrics
+
+        mock_timer = Mock()
+        mock_timer_class.return_value = mock_timer
+
+        result = self.manager.initialize(self._create_valid_config())
+
+        self.assertTrue(result)
+        mock_timer_class.assert_called_once()
+        self.assertEqual(mock_timer_class.call_args[0][0], 15)
+        mock_timer.start.assert_called_once()
+        mock_meter_provider.force_flush.assert_not_called()
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
@@ -627,6 +675,8 @@ class TestStatsbeatManager(unittest.TestCase):
         self.manager._initialized = True
         mock_meter_provider = Mock()
         self.manager._meter_provider = mock_meter_provider
+        mock_timer = Mock()
+        self.manager._warmup_timer = mock_timer
         self.manager._metrics = Mock()
         config_mock = Mock()
         self.manager._config = config_mock
@@ -636,8 +686,10 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
+        self.assertIsNone(self.manager._warmup_timer)
         # Config is intact for potential re-initialization
         self.assertEqual(self.manager._config, config_mock)
+        mock_timer.cancel.assert_called_once()
         mock_meter_provider.shutdown.assert_called_once()
 
     def test_cleanup_without_shutdown(self):
@@ -646,6 +698,8 @@ class TestStatsbeatManager(unittest.TestCase):
         self.manager._initialized = True
         mock_meter_provider = Mock()
         self.manager._meter_provider = mock_meter_provider
+        mock_timer = Mock()
+        self.manager._warmup_timer = mock_timer
         self.manager._metrics = Mock()
         config_mock = Mock()
         self.manager._config = config_mock
@@ -655,8 +709,10 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
+        self.assertIsNone(self.manager._warmup_timer)
         # Config is intact for potential re-initialization
         self.assertEqual(self.manager._config, config_mock)
+        mock_timer.cancel.assert_called_once()
         mock_meter_provider.shutdown.assert_not_called()
 
     def test_cleanup_meter_provider_exception(self):

@@ -6,9 +6,9 @@ from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._common.utils import nltk_tokenize
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 
 class BleuScoreEvaluator(EvaluatorBase):
@@ -87,9 +87,14 @@ class BleuScoreEvaluator(EvaluatorBase):
             binary_result = score <= self._threshold
 
         return {
+            "bleu": score,
             "bleu_score": score,
+            "bleu_passed": binary_result,
             "bleu_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "bleu_reason": None,
+            "bleu_status": "completed",
             "bleu_threshold": self._threshold,
+            "bleu_properties": None,
         }
 
     @overload  # type: ignore

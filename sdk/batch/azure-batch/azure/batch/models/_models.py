@@ -9864,7 +9864,7 @@ class OutputFile(_Model):
     :vartype destination: ~azure.batch.models.OutputFileDestination
     :ivar upload_options: Additional options for the upload operation, including under what
      conditions to perform the upload. Required.
-    :vartype upload_options: ~azure.batch.models.OutputFileUploadConfig
+    :vartype upload_options: ~azure.batch.models.OutputFileUploadConfiguration
     """
 
     file_pattern: str = rest_field(name="filePattern", visibility=["read", "create", "update", "delete", "query"])
@@ -9886,7 +9886,7 @@ class OutputFile(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The destination for the output file(s). Required."""
-    upload_options: "_models.OutputFileUploadConfig" = rest_field(
+    upload_options: "_models.OutputFileUploadConfiguration" = rest_field(
         name="uploadOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional options for the upload operation, including under what conditions to perform the
@@ -9898,7 +9898,7 @@ class OutputFile(_Model):
         *,
         file_pattern: str,
         destination: "_models.OutputFileDestination",
-        upload_options: "_models.OutputFileUploadConfig",
+        upload_options: "_models.OutputFileUploadConfiguration",
     ) -> None: ...
 
     @overload
@@ -10014,7 +10014,7 @@ class OutputFileDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileUploadConfig(_Model):
+class OutputFileUploadConfiguration(_Model):
     """Options for an output file upload operation, including under what conditions to perform the
     upload.
 
@@ -10917,8 +10917,10 @@ class VirtualMachineConfiguration(_Model):
     """This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are: Windows_Server (the on-premises license is for Windows
-     Server) and Windows_Client (the on-premises license is for Windows Client)."""
+     applied. Values are:
+     
+     Server.
+      Windows_Client - The on-premises license is for Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )

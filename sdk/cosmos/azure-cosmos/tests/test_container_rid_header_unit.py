@@ -10,6 +10,7 @@ code path that can trigger a partition key range fetch.
 
 import unittest
 from typing import Optional, Mapping, Any
+from unittest.mock import patch
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.routing_map_provider import (
     PartitionKeyRangeCache,
@@ -17,6 +18,7 @@ from azure.cosmos._routing.routing_map_provider import (
 )
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos import _base, http_constants
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 # =====================================================================
@@ -149,7 +151,7 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         )
         assert "containerRID" not in client.captured_feed_options
 
-    def test_force_refresh_preserves_containerRID(self):
+    def test_incremental_refresh_preserves_containerRID(self):
         """A force_refresh (triggered by split/merge errors) must re-send
         containerRID to the service so the correct physical container is
         queried again."""
@@ -165,9 +167,97 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
             force_refresh=True,
             previous_routing_map=previous_map,
         )
-        # In this mock setup, incremental refresh has no split/merge deltas and
-        # falls back to a full refresh, so force-refresh performs two reads.
+        # The mock returns the same ranges (no split/merge deltas), so the
+        # incremental merge succeeds in a single fetch without falling back
+        # to a full refresh.
+        assert client.call_count == 2
+        assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
+
+    def test_incremental_retry_after_split_preserves_containerRID(self):
+        """When an incremental refresh encounters unresolvable parent ranges,
+        the routing map provider retries the incremental fetch once
+        (_INCOMPLETE_ROUTING_MAP_MAX_RETRIES=1). On the retry, if the ranges
+        resolve successfully, containerRID must still flow through."""
+        # Post-split ranges reference parents not in the original map
+        split_ranges = [
+            {"id": "3", "minInclusive": "", "maxExclusive": "1F", "parents": ["99"]},
+            {"id": "4", "minInclusive": "1F", "maxExclusive": "3F", "parents": ["99"]},
+        ]
+
+        class SplitMockClient:
+            def __init__(self):
+                self.captured_feed_options = None
+                self.call_count = 0
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                self.captured_feed_options = dict(feed_options) if feed_options else {}
+                self.call_count += 1
+                # First call: initial load returns original ranges
+                # Second call: incremental returns split ranges with unknown parents,
+                #              raising _IncrementalMergeFailed (caught → retry incremental, count 0→1)
+                # Third call: incremental retry succeeds with resolvable ranges
+                if self.call_count == 2:
+                    return iter(split_ranges)
+                return iter(PARTITION_KEY_RANGES)
+
+        client = SplitMockClient()
+        cache = PartitionKeyRangeCache(client)
+        feed_options = {"containerRID": CONTAINER_RID}
+        previous_map = cache.get_routing_map(COLLECTION_LINK, feed_options)
+        assert client.call_count == 1
+        assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
+        cache.get_routing_map(
+            COLLECTION_LINK,
+            feed_options,
+            force_refresh=True,
+            previous_routing_map=previous_map,
+        )
+        # Incremental fetch hits unresolvable parents → retries once → succeeds:
+        # 1 initial + 1 failed incremental + 1 successful retry = 3 calls.
         assert client.call_count == 3
+        assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
+
+    def test_full_refresh_fallback_after_exhausted_retries_preserves_containerRID(self):
+        """When incremental retries are exhausted (_INCOMPLETE_ROUTING_MAP_MAX_RETRIES=1),
+        the routing map provider falls back to a full refresh (current_previous_map=None).
+        containerRID must still flow through on the full refresh call."""
+        # Post-split ranges reference parents not in the original map
+        split_ranges = [
+            {"id": "3", "minInclusive": "", "maxExclusive": "1F", "parents": ["99"]},
+            {"id": "4", "minInclusive": "1F", "maxExclusive": "3F", "parents": ["99"]},
+        ]
+
+        class FullRefreshMockClient:
+            def __init__(self):
+                self.captured_feed_options = None
+                self.call_count = 0
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                self.captured_feed_options = dict(feed_options) if feed_options else {}
+                self.call_count += 1
+                # Call 1: initial load → good ranges
+                # Call 2: incremental → split ranges (unresolvable) → retry (count 0→1)
+                # Call 3: incremental retry → split ranges again (still unresolvable)
+                #         → retries exhausted → fall back to full refresh (previous_map=None)
+                # Call 4: full refresh → good ranges → success
+                if self.call_count in (2, 3):
+                    return iter(split_ranges)
+                return iter(PARTITION_KEY_RANGES)
+
+        client = FullRefreshMockClient()
+        cache = PartitionKeyRangeCache(client)
+        feed_options = {"containerRID": CONTAINER_RID}
+        previous_map = cache.get_routing_map(COLLECTION_LINK, feed_options)
+        assert client.call_count == 1
+        assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
+        cache.get_routing_map(
+            COLLECTION_LINK,
+            feed_options,
+            force_refresh=True,
+            previous_routing_map=previous_map,
+        )
+        # 1 initial + 1 failed incremental + 1 failed retry + 1 full refresh = 4 calls.
+        assert client.call_count == 4
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 
     # ----- Cache staleness detection -----
@@ -245,11 +335,10 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
             "returning a delta instead of the complete set of ranges"
         )
 
-    def test_full_load_with_incomplete_ranges_returns_none(self):
-        """When a full load (no previous routing map) returns ranges with gaps,
-        CompleteRoutingMap returns None. The method must return None immediately
-        without retrying — there is no incremental state to fall back from, and
-        repeating the identical request would produce the same result."""
+    def test_full_load_with_incomplete_ranges_surfaces_503(self):
+        """When a full load (no previous routing map) repeatedly returns gapped
+        ranges, the retry budget should be exhausted and _fetch_routing_map
+        should surface a retryable HTTP 503."""
 
         class IncompleteRangesClient:
             """Returns ranges with a gap — CompleteRoutingMap will return None."""
@@ -266,16 +355,15 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         client = IncompleteRangesClient()
         cache = PartitionKeyRangeCache(client)
 
-        result = cache._fetch_routing_map(
-            COLLECTION_LINK,
-            _base.GetResourceIdOrFullNameFromLink(COLLECTION_LINK),
-            None,  # full load (no previous map)
-            {},
-        )
-        assert result is None, (
-            "Full load with incomplete ranges must return None "
-            "instead of retrying infinitely"
-        )
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache._fetch_routing_map(
+                    COLLECTION_LINK,
+                    _base.GetResourceIdOrFullNameFromLink(COLLECTION_LINK),
+                    None,  # full load (no previous map)
+                    {},
+                )
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
     def test_incremental_fallback_to_full_load_succeeds(self):
         """When an incremental (change-feed) update fails because a returned

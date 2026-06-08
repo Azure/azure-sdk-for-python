@@ -78,6 +78,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "agentPoolProfiles": [
                             {
                                 "name": "str",
+                                "artifactStreamingProfile": {"enabled": bool},
                                 "availabilityZones": ["str"],
                                 "capacityReservationGroupID": "str",
                                 "count": 0,
@@ -262,6 +263,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                             "appMonitoring": {"autoInstrumentation": {"enabled": bool}},
                             "metrics": {
                                 "enabled": bool,
+                                "controlPlane": {"enabled": bool},
                                 "kubeStateMetrics": {
                                     "metricAnnotationsAllowList": "str",
                                     "metricLabelsAllowlist": "str",

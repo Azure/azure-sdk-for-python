@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-15-preview/AgentDeployment/get.json
+# x-ms-original-file: 2026-03-15-preview/AgentDeployment/get.json
 if __name__ == "__main__":
     main()

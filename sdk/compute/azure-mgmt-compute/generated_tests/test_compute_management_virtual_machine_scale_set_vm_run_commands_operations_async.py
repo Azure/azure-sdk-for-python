@@ -27,7 +27,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
             vm_scale_set_name="str",
             instance_id="str",
             run_command_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -156,7 +156,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                     },
                     "tags": {"str": "str"},
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -172,7 +172,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                 vm_scale_set_name="str",
                 instance_id="str",
                 run_command_name="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -186,7 +186,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

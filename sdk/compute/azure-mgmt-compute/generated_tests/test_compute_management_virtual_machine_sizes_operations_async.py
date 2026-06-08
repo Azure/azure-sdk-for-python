@@ -24,7 +24,7 @@ class TestComputeManagementVirtualMachineSizesOperationsAsync(AzureMgmtRecordedT
     async def test_virtual_machine_sizes_list(self, resource_group):
         response = self.client.virtual_machine_sizes.list(
             location="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

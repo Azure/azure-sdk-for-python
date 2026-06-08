@@ -41,6 +41,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "artifactStreamingProfile": {"enabled": bool},
                     "availabilityZones": ["str"],
                     "capacityReservationGroupID": "str",
                     "count": 0,

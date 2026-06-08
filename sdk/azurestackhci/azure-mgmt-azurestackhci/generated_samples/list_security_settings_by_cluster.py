@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-02-01/ListSecuritySettingsByCluster.json
+# x-ms-original-file: 2026-04-01-preview/ListSecuritySettingsByCluster.json
 if __name__ == "__main__":
     main()

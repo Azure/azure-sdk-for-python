@@ -4,16 +4,26 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-Tests to verify that a custom http_client can be passed to get_openai_client()
-and that the returned AsyncOpenAI client uses it instead of the default one.
+Tests covering caller-side overrides (http_client, api_key, base_url, default_headers)
+and the user-agent / token-provider / logging-transport branches of
+AIProjectClient.get_openai_client() (async).
 """
 
 import os
 from typing import Any
+from unittest.mock import patch
+
 import pytest
 import httpx
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.projects.aio import AIProjectClient
+
+from openai_test_helpers import (
+    ASYNC_OPENAI_PATCH,
+    ASYNC_TOKEN_PROVIDER_PATCH,
+    make_async_client,
+    mock_openai,
+)
 
 
 class DummyAsyncTokenCredential(AsyncTokenCredential):
@@ -138,3 +148,67 @@ class TestGetOpenAIClientWithOverridesAsync:
                 assert (
                     str(openai_client.base_url) == custom_base_url + "/"
                 ), f"Expected base_url '{custom_base_url}/', got '{openai_client.base_url}'"
+
+
+# ===========================================================================
+# api_key resolution branches (async)
+# ===========================================================================
+
+
+class TestApiKeyBranchesAsync:
+    @pytest.mark.asyncio
+    async def test_token_provider_used_when_no_api_key(self):
+        """Branch: no 'api_key' kwarg -> get_bearer_token_provider() is invoked."""
+        client = make_async_client()
+        mock_cls, _ = mock_openai()
+        with (
+            patch(ASYNC_OPENAI_PATCH, mock_cls),
+            patch(ASYNC_TOKEN_PROVIDER_PATCH, return_value="async-provider") as mock_tp,
+        ):
+            client.get_openai_client()
+        mock_tp.assert_called_once_with(client._config.credential, "https://ai.azure.com/.default")
+        for c in mock_cls.call_args_list:
+            assert c.kwargs["api_key"] == "async-provider"
+
+    @pytest.mark.asyncio
+    async def test_caller_api_key_skips_token_provider(self):
+        """Branch: 'api_key' in kwargs -> token provider is NOT called."""
+        client = make_async_client()
+        mock_cls, _ = mock_openai()
+        with patch(ASYNC_OPENAI_PATCH, mock_cls), patch(ASYNC_TOKEN_PROVIDER_PATCH) as mock_tp:
+            client.get_openai_client(api_key="async-secret")
+        mock_tp.assert_not_called()
+        for c in mock_cls.call_args_list:
+            assert c.kwargs["api_key"] == "async-secret"
+
+
+# ===========================================================================
+# http_client resolution branches (async)
+# ===========================================================================
+
+
+class TestHttpClientBranchesAsync:
+    @pytest.mark.asyncio
+    async def test_http_client_is_none_by_default(self):
+        """Branch: no override + console logging off -> http_client is None."""
+        client = make_async_client(console_logging=False)
+        mock_cls, _ = mock_openai()
+        with patch(ASYNC_OPENAI_PATCH, mock_cls), patch(ASYNC_TOKEN_PROVIDER_PATCH, return_value="tok"):
+            client.get_openai_client()
+        for c in mock_cls.call_args_list:
+            assert c.kwargs["http_client"] is None
+
+    @pytest.mark.asyncio
+    async def test_console_logging_creates_async_logging_transport(self):
+        """Branch: no override + _console_logging_enabled=True -> httpx.AsyncClient with logging transport."""
+        client = make_async_client(console_logging=True)
+        mock_cls, _ = mock_openai()
+        with (
+            patch(ASYNC_OPENAI_PATCH, mock_cls),
+            patch(ASYNC_TOKEN_PROVIDER_PATCH, return_value="tok"),
+            patch("azure.ai.projects.aio._patch.httpx") as mock_httpx,
+            patch("azure.ai.projects.aio._patch._OpenAILoggingTransport"),
+        ):
+            mock_httpx.AsyncClient.return_value = object()
+            client.get_openai_client()
+        mock_httpx.AsyncClient.assert_called_once()

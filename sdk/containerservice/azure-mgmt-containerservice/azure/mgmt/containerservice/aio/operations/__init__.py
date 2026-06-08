@@ -20,6 +20,7 @@ from ._operations import MachinesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import SnapshotsOperations  # type: ignore
 from ._operations import TrustedAccessRoleBindingsOperations  # type: ignore
+from ._operations import IdentityBindingsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import ResolvePrivateLinkServiceIdOperations  # type: ignore
@@ -38,6 +39,7 @@ __all__ = [
     "PrivateEndpointConnectionsOperations",
     "SnapshotsOperations",
     "TrustedAccessRoleBindingsOperations",
+    "IdentityBindingsOperations",
     "Operations",
     "PrivateLinkResourcesOperations",
     "ResolvePrivateLinkServiceIdOperations",

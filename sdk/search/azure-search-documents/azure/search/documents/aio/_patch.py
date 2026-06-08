@@ -35,10 +35,11 @@ class SearchClient(_SearchClient):
      ~azure.core.credentials_async.AsyncTokenCredential
     :param index_name: The name of the index. Required.
     :type index_name: str
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
-     and None. Default value is "2026-04-01". Note that overriding this default value may result in
-     unsupported behavior.
-    :paramtype api_version: str
+    :keyword api_version: The API version to use for this operation. Known values are
+     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+     ``ApiVersion.V2026_05_01_PREVIEW``. Note that overriding this default value may
+     result in unsupported behavior.
+    :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
      audience will be assumed.
@@ -221,7 +222,7 @@ class SearchIndexingBufferedSender:
                     if result.succeeded:
                         await self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):
-                        self._retry_action(action)
+                        await self._retry_action(action)
                         has_error = True
                     else:
                         await self._callback_fail(action)
@@ -231,7 +232,7 @@ class SearchIndexingBufferedSender:
             return has_error
         except Exception:  # pylint: disable=broad-except
             for action in actions:
-                self._retry_action(action)
+                await self._retry_action(action)
                 if raise_error:
                     raise
                 return True
@@ -354,9 +355,9 @@ class SearchIndexingBufferedSender:
         await self.close()
         await self._client.__aexit__(*args)
 
-    def _retry_action(self, action: IndexAction) -> None:
+    async def _retry_action(self, action: IndexAction) -> None:
         if not self._index_key:
-            asyncio.create_task(self._callback_fail(action))
+            await self._callback_fail(action)
             return
         key = cast(str, action.get(self._index_key) if action else "")
         counter = self._retry_counter.get(key)
@@ -369,7 +370,7 @@ class SearchIndexingBufferedSender:
             self._retry_counter[key] = counter + 1
             self._index_documents_batch.enqueue_actions(action)
         else:
-            asyncio.create_task(self._callback_fail(action))
+            await self._callback_fail(action)
 
     async def _callback_succeed(self, action: IndexAction) -> None:
         if self._on_remove:

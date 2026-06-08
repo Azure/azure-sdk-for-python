@@ -12,6 +12,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import http_constants, DatabaseProxy, _endpoint_discovery_retry_policy
+from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
@@ -19,11 +20,14 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADQuery
 class TestQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
+    key_db: DatabaseProxy = None
     config = test_config.TestConfig
     host = config.host
     connectionPolicy = config.connectionPolicy
@@ -36,11 +40,26 @@ class TestQuery(unittest.TestCase):
         use_multiple_write_locations = False
         if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             use_multiple_write_locations = True
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential, multiple_write_locations=use_multiple_write_locations)
+        # Keep multi-write-region routing enabled during circuit-breaker runs.
+        cls.key_client = cosmos_client.CosmosClient(
+            cls.host,
+            cls.credential,
+            multiple_write_locations=use_multiple_write_locations,
+        )
+        cls.key_db = cls.key_client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.client = test_config.TestConfig.create_data_client()
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
+    def _create_container_for_test(self, *args, **kwargs):
+        container_ref = self.key_db.create_container(*args, **kwargs)
+        return self.created_db.get_container_client(container_ref.id)
+
+    def _delete_container_for_test(self, *args, **kwargs):
+        return self.key_db.delete_container(*args, **kwargs)
+
+
     def test_first_and_last_slashes_trimmed_for_query_string(self):
-        created_collection = self.created_db.create_container(
+        created_collection = self._create_container_for_test(
             "test_trimmed_slashes", PartitionKey(path="/pk"))
         doc_id = 'myId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
@@ -53,10 +72,10 @@ class TestQuery(unittest.TestCase):
         )
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], doc_id)
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_populate_query_metrics(self):
-        created_collection = self.created_db.create_container("query_metrics_test",
+        created_collection = self._create_container_for_test("query_metrics_test",
                                                               PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
@@ -79,10 +98,10 @@ class TestQuery(unittest.TestCase):
         metrics = metrics_header.split(';')
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_populate_index_metrics(self):
-        created_collection = self.created_db.create_container("query_index_test",
+        created_collection = self._create_container_for_test("query_index_test",
                                                               PartitionKey(path="/pk"))
 
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -103,17 +122,25 @@ class TestQuery(unittest.TestCase):
         self.assertTrue(INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers)
         index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
         self.assertIsNotNone(index_metrics)
-        expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
-                                                             'FilterPreciseSet': True, 'IndexPreciseSet': True,
-                                                             'IndexImpactScore': 'High'}],
-                                  'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
-                                  'PotentialCompositeIndexes': []}
-        self.assertDictEqual(expected_index_metrics, index_metrics)
-        self.created_db.delete_container(created_collection.id)
+        self.assertIn('UtilizedSingleIndexes', index_metrics)
+        self.assertIn('PotentialSingleIndexes', index_metrics)
+        self.assertIn('UtilizedCompositeIndexes', index_metrics)
+        self.assertIn('PotentialCompositeIndexes', index_metrics)
+
+        # Backend index diagnostics can vary by region/build; validate a stable shape and key signal.
+        candidate_indexes = list(index_metrics.get('UtilizedSingleIndexes', []))
+        candidate_indexes.extend(index_metrics.get('PotentialSingleIndexes', []))
+        self.assertTrue(any(
+            idx.get('FilterExpression') == ''
+            and idx.get('IndexImpactScore') == 'High'
+            and idx.get('IndexSpec') in ('/pk/?', '/_epk/?')
+            for idx in candidate_indexes
+        ))
+        self._delete_container_for_test(created_collection.id)
 
     @pytest.mark.skip(reason="Emulator does not support query advisor yet")
     def test_populate_query_advice(self):
-        created_collection = self.created_db.create_container("query_advice_test",
+        created_collection = self._create_container_for_test("query_advice_test",
                                                               PartitionKey(path="/pk"))
 
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -195,12 +222,12 @@ class TestQuery(unittest.TestCase):
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
         self.assertIsNotNone(query_advice)
         self.assertIn("QA1009", query_advice)
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     # TODO: Need to validate the query request count logic
     @pytest.mark.skip
     def test_max_item_count_honored_in_order_by_query(self):
-        created_collection = self.created_db.create_container("test-max-item-count" + str(uuid.uuid4()),
+        created_collection = self._create_container_for_test("test-max-item-count" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
         docs = []
         for i in range(10):
@@ -222,7 +249,7 @@ class TestQuery(unittest.TestCase):
         )
 
         self.validate_query_requests_count(query_iterable, 5)
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
@@ -307,7 +334,7 @@ class TestQuery(unittest.TestCase):
         self.assertListEqual(list(query_iterable), [])
 
     def test_offset_limit(self):
-        created_collection = self.created_db.create_container("offset_limit_test_" + str(uuid.uuid4()),
+        created_collection = self._create_container_for_test("offset_limit_test_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
         values = []
         for i in range(10):
@@ -341,7 +368,7 @@ class TestQuery(unittest.TestCase):
         self._validate_offset_limit(created_collection=created_collection,
                                     query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
                                     results=[])
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def _validate_offset_limit(self, created_collection, query, results):
         query_iterable = created_collection.query_items(
@@ -362,7 +389,7 @@ class TestQuery(unittest.TestCase):
         pk_field = "pk"
         different_field = "different_field"
 
-        created_collection = self.created_db.create_container(
+        created_collection = self._create_container_for_test(
             id='collection with composite index ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
@@ -412,7 +439,7 @@ class TestQuery(unittest.TestCase):
                                 is_select=True,
                                 fields=[different_field])
 
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def _validate_distinct(self, created_collection, query, results, is_select, fields):
         query_iterable = created_collection.query_items(
@@ -432,8 +459,13 @@ class TestQuery(unittest.TestCase):
             result_strings = sorted(result_strings)
         self.assertListEqual(result_strings, query_results_strings)
 
+    # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
+    )
     def test_distinct_on_different_types_and_field_orders(self):
-        created_collection = self.created_db.create_container(
+        created_collection = self._create_container_for_test(
             id="test-distinct-container-" + str(uuid.uuid4()),
             partition_key=PartitionKey("/pk"),
             offer_throughput=self.config.THROUGHPUT_FOR_5_PARTITIONS)
@@ -504,7 +536,7 @@ class TestQuery(unittest.TestCase):
         _QueryExecutionContextBase.__next__ = self.OriginalExecuteFunction
         _QueryExecutionContextBase.next = self.OriginalExecuteFunction
 
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_paging_with_continuation_token(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -552,6 +584,48 @@ class TestQuery(unittest.TestCase):
         second_page_fetched_with_continuation_token = list(pager.next())[0]
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
+
+    def test_full_pk_continuation_emits_legacy_by_default(self):
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
+        created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
+
+        query_iterable = created_collection.query_items(
+            query='SELECT * from c',
+            partition_key='pk',
+            max_item_count=1,
+        )
+        pager = query_iterable.by_page()
+        pager.next()
+        token = pager.continuation_token
+
+        self.assertIsNotNone(token)
+        self.assertIsNone(_decode_token(token))
+
+
+    def test_full_pk_legacy_replay_resumes_same_page(self):
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
+        created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
+
+        query_iterable = created_collection.query_items(
+            query='SELECT * from c',
+            partition_key='pk',
+            max_item_count=1,
+        )
+        pager = query_iterable.by_page()
+        pager.next()
+        token = pager.continuation_token
+        second_page = list(pager.next())[0]
+
+        self.assertIsNotNone(token)
+        self.assertIsNone(_decode_token(token))
+
+        replay_pager = query_iterable.by_page(token)
+        replay_second_page = list(replay_pager.next())[0]
+        self.assertEqual(second_page['id'], replay_second_page['id'])
+
+
 
     def test_cross_partition_query_with_none_partition_key(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -626,7 +700,7 @@ class TestQuery(unittest.TestCase):
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
 
     def test_query_request_params_none_retry_policy(self):
-        created_collection = self.created_db.create_container(
+        created_collection = self._create_container_for_test(
             "query_request_params_none_retry_policy_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
         items = [
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
@@ -680,11 +754,11 @@ class TestQuery(unittest.TestCase):
             self.assertEqual(e.status_code, http_constants.StatusCodes.REQUEST_TIMEOUT)
             retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_query_pagination_with_max_item_count(self):
         """Test pagination showing per-page limits and total results counting."""
-        created_collection = self.created_db.create_container(
+        created_collection = self._create_container_for_test(
             "pagination_test_" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))
         
@@ -734,11 +808,11 @@ class TestQuery(unittest.TestCase):
         for i, item in enumerate(all_fetched_results):
             self.assertEqual(item['value'], i)
         
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
     
     def test_query_pagination_without_max_item_count(self):
         """Test pagination behavior without specifying max_item_count."""
-        created_collection = self.created_db.create_container(
+        created_collection = self._create_container_for_test(
             "pagination_no_max_test_" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))
         
@@ -765,7 +839,7 @@ class TestQuery(unittest.TestCase):
         all_results = list(query_iterable)
         self.assertEqual(len(all_results), total_items)
         
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_query_positional_args(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -852,7 +926,7 @@ class TestQuery(unittest.TestCase):
 
     def test_query_items_with_parameters_none(self):
         """Test that query_items handles parameters=None correctly (issue #43662)."""
-        created_collection = self.created_db.create_container(
+        created_collection = self._create_container_for_test(
             "test_params_none_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
         
         # Create test documents
@@ -900,11 +974,11 @@ class TestQuery(unittest.TestCase):
         results = list(query_iterable)
         self.assertEqual(len(results), 2)
 
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_query_items_parameters_none_with_options(self):
         """Test parameters=None works with various query options."""
-        created_collection = self.created_db.create_container(
+        created_collection = self._create_container_for_test(
             "test_params_none_opts_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
         
         # Create multiple test documents
@@ -947,8 +1021,9 @@ class TestQuery(unittest.TestCase):
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         self.assertTrue(metrics_header_name in created_collection.client_connection.last_response_headers)
 
-        self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
 
 if __name__ == "__main__":
     unittest.main()
+

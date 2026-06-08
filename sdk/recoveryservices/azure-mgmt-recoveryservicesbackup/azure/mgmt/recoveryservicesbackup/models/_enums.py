@@ -429,15 +429,15 @@ class InstanceProtectionReadiness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of instance protection."""
 
     UNKNOWN = "Unknown"
-    """UNKNOWN."""
+    """Instance protection readiness is unknown."""
     READY = "Ready"
-    """READY."""
+    """Instance is ready for protection."""
     SCHEDULE_DISABLED = "ScheduleDisabled"
-    """SCHEDULE_DISABLED."""
+    """Backup schedule is disabled for this instance."""
     PARTIAL_PROTECTION = "PartialProtection"
-    """PARTIAL_PROTECTION."""
+    """Instance is partially protected."""
     PROTECTION_ERROR = "ProtectionError"
-    """PROTECTION_ERROR."""
+    """Instance protection encountered an error."""
 
 
 class JobSupportedAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -724,9 +724,9 @@ class ProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Protection type in case protected as part of a parent."""
 
     DATABASE = "Database"
-    """DATABASE."""
+    """Protected at database level."""
     DATABASE_UNDER_INSTANCE = "DatabaseUnderInstance"
-    """DATABASE_UNDER_INSTANCE."""
+    """Database protected under an instance."""
 
 
 class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -948,24 +948,24 @@ class SourceSideScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat status of the container."""
 
     CONFIGURED = "Configured"
-    """CONFIGURED."""
+    """Source side scan is configured."""
     NOT_CONFIGURED = "NotConfigured"
-    """NOT_CONFIGURED."""
+    """Source side scan is not configured."""
     NOT_APPLICABLE = "NotApplicable"
-    """NOT_APPLICABLE."""
+    """Source side scan is not applicable."""
 
 
 class SourceSideScanSummary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat summary for the container."""
 
     UNKNOWN = "Unknown"
-    """UNKNOWN."""
+    """Scan summary is unknown."""
     NOT_APPLICABLE = "NotApplicable"
-    """NOT_APPLICABLE."""
+    """Scan summary is not applicable."""
     SUSPICIOUS = "Suspicious"
-    """SUSPICIOUS."""
+    """Scan summary is suspicious."""
     HEALTHY = "Healthy"
-    """HEALTHY."""
+    """Scan summary indicates healthy state."""
 
 
 class SQLDataDirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1037,41 +1037,41 @@ class ThreatSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat Severity Types."""
 
     CRITICAL = "Critical"
-    """CRITICAL."""
+    """Critical severity level."""
     HIGH = "High"
-    """HIGH."""
+    """High severity level."""
     WARNING = "Warning"
-    """WARNING."""
+    """Warning severity level."""
     INFORMATIONAL = "Informational"
-    """INFORMATIONAL."""
+    """Informational severity level."""
 
 
 class ThreatState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat Status Types."""
 
     ACTIVE = "Active"
-    """ACTIVE."""
+    """Threat is active."""
     IN_PROGRESS = "InProgress"
-    """IN_PROGRESS."""
+    """Threat remediation is in progress."""
     IGNORED = "Ignored"
-    """IGNORED."""
+    """Threat has been ignored."""
     RESOLVED = "Resolved"
-    """RESOLVED."""
+    """Threat has been resolved."""
 
 
 class ThreatStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat status of the recovery point."""
 
     UNKNOWN = "Unknown"
-    """UNKNOWN."""
+    """Threat status is unknown."""
     HEALTHY = "Healthy"
-    """HEALTHY."""
+    """Recovery point is healthy."""
     UN_HEALTHY = "UnHealthy"
-    """UN_HEALTHY."""
+    """Recovery point is unhealthy."""
     WARNING = "Warning"
-    """WARNING."""
+    """Recovery point has warning-level threats."""
     NOT_AVAILABLE = "NotAvailable"
-    """NOT_AVAILABLE."""
+    """Threat status is not available."""
 
 
 class TieringMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1138,13 +1138,13 @@ class VMWorkloadPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the protection policy."""
 
     INVALID = "Invalid"
-    """INVALID."""
+    """Invalid policy type."""
     SNAPSHOT_V1 = "SnapshotV1"
-    """SNAPSHOT_V1."""
+    """Snapshot V1 policy type."""
     SNAPSHOT_V2 = "SnapshotV2"
-    """SNAPSHOT_V2."""
+    """Snapshot V2 policy type."""
     STREAMING = "Streaming"
-    """STREAMING."""
+    """Streaming policy type."""
 
 
 class WeekOfMonth(str, Enum, metaclass=CaseInsensitiveEnumMeta):

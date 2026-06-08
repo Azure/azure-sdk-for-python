@@ -797,6 +797,29 @@ class IPVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """I_PV6."""
 
 
+class LifecycleHookAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action that will be applied to a target resource in the virtual machine scale set lifecycle
+    hook event if the platform does not receive a response from the customer for the target
+    resource before waitUntil.
+    """
+
+    APPROVE = "Approve"
+    """The lifecycle hook of a target resource in a lifecycle hook event will be approved."""
+    REJECT = "Reject"
+    """The lifecycle hook of a target resource in a lifecycle hook event will be rejected."""
+
+
+class LifecycleHookActionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Approval status of a target resource in a virtual machine scale set lifecycle hook event."""
+
+    WAITING = "Waiting"
+    """The lifecycle hook for the target resource is waiting for approval."""
+    APPROVED = "Approved"
+    """The lifecycle hook for the target resource is approved."""
+    REJECTED = "Rejected"
+    """The lifecycle hook for the target resource is rejected."""
+
+
 class LinuxPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.<br /><br />
     Possible values are:<br /><br /> **ImageDefault** - You control the timing of patch assessments
@@ -1402,11 +1425,13 @@ class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
-    enable UefiSettings. The default behavior is: UefiSettings will not be enabled unless this
-    property is set.
+    """Specifies the VM securityType; UefiSettings are enabled only when set to TrustedLaunch or
+    ConfidentialVM, and returns a Standard value starting API version 2025-11-01.
     """
 
+    STANDARD = "Standard"
+    """Indicates a VM without UEFI features such as SecureBoot or vTPM; returned as the default value
+    when securityType is not specified."""
     TRUSTED_LAUNCH = "TrustedLaunch"
     """TRUSTED_LAUNCH."""
     CONFIDENTIAL_VM = "ConfidentialVM"
@@ -1600,6 +1625,28 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """STANDARD_SSD_ZRS."""
     PREMIUM_V2_LRS = "PremiumV2_LRS"
     """PREMIUM_V2_LRS."""
+
+
+class StorageAlignmentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the storage alignment status for the disk."""
+
+    UNALIGNED = "Unaligned"
+    """Disk does not have Storage Fault Domain to Compute Fault Domain mapping. A single Storage Fault
+    Domain failure may impact all VMs that reference this disk profile."""
+    ALIGNED = "Aligned"
+    """Disk has Storage Fault Domain to Compute Fault Domain mapping. Storage Fault Domain failure is
+    contained to VMs in a single Compute Fault Domain."""
+
+
+class StorageFaultDomainAlignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the storage fault domain alignment type for the disk."""
+
+    ALIGNED = "Aligned"
+    """Disk Storage Fault Domains are mapped to Compute Fault Domains. Deployment fails if disk does
+    not support enough Fault Domains."""
+    BEST_EFFORT_ALIGNED = "BestEffortAligned"
+    """Attempt to map Storage Fault Domains to Compute Fault Domains. Disks are unaligned if disk does
+    not support enough Fault Domains."""
 
 
 class SupportedSecurityOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2157,6 +2204,31 @@ class VMGuestPatchRebootStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """COMPLETED."""
 
 
+class VMScaleSetLifecycleHookEventState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The states that a virtual machine scale set lifecycle hook event can be in. This is not
+    settable by the customer. It is set only by the platform.
+    """
+
+    ACTIVE = "Active"
+    """The lifecycle hook event is active. E.g., waiting on a response from the customer."""
+    COMPLETED = "Completed"
+    """The lifecycle hook event is completed. i.e., all the target resources in the event have moved
+    to a terminal state."""
+
+
+class VMScaleSetLifecycleHookEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the scenario for which the customer is interested in receiving virtual machine scale
+    set lifecycle hook events.
+    """
+
+    UPGRADE_AUTO_OS_SCHEDULING = "UpgradeAutoOSScheduling"
+    """Lifecycle hook event sent to the customer before an Auto OS Upgrade operation starts on the
+    virtual machine scale set."""
+    UPGRADE_AUTO_OS_ROLLING_BATCH_STARTING = "UpgradeAutoOSRollingBatchStarting"
+    """Lifecycle hook event sent to the customer before upgrade starts on a batch of virtual machines
+    belonging to a virtual machine scale set during an Auto OS Upgrade operation."""
+
+
 class WindowsPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of VM Guest patch assessment for the IaaS virtual machine.<br /><br />
     Possible values are:<br /><br /> **ImageDefault** - You control the timing of patch assessments
@@ -2214,6 +2286,9 @@ class ZonalPlatformFaultDomainAlignMode(str, Enum, metaclass=CaseInsensitiveEnum
     """ALIGNED."""
     UNALIGNED = "Unaligned"
     """UNALIGNED."""
+    BEST_EFFORT_ALIGNED = "BestEffortAligned"
+    """Offload Alignment to VMSS. VMSS aligns disks that support enough Storage Fault Domains, while
+    keeping others unaligned."""
 
 
 class ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

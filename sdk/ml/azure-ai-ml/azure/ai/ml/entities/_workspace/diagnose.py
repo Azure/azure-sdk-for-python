@@ -5,15 +5,15 @@
 import json
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import DiagnoseResponseResult as RestDiagnoseResponseResult
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import DiagnoseResponseResult as RestDiagnoseResponseResult
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import DiagnoseResult as RestDiagnoseResult
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import DiagnoseResult as RestDiagnoseResult
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters,
 )
 

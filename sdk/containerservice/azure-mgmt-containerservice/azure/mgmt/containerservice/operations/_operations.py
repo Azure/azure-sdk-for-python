@@ -38,6 +38,7 @@ from .._configuration import ContainerServiceClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match
+from .._validation import api_version_validation
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -54,7 +55,7 @@ def build_agent_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,7 +92,7 @@ def build_agent_pools_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -114,10 +115,10 @@ def build_agent_pools_create_or_update_request(  # pylint: disable=name-too-long
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -136,7 +137,7 @@ def build_agent_pools_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"
     path_format_arguments = {
@@ -158,10 +159,10 @@ def build_agent_pools_delete_request(
     # Construct headers
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -172,7 +173,7 @@ def build_agent_pools_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -199,7 +200,7 @@ def build_agent_pools_abort_latest_operation_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/abort"
     path_format_arguments = {
@@ -224,7 +225,7 @@ def build_agent_pools_delete_machines_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/deleteMachines"
     path_format_arguments = {
@@ -252,7 +253,7 @@ def build_agent_pools_upgrade_node_image_version_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -281,7 +282,7 @@ def build_agent_pools_get_available_agent_pool_versions_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -309,7 +310,7 @@ def build_agent_pools_get_upgrade_profile_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -338,7 +339,7 @@ def build_managed_clusters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -373,7 +374,7 @@ def build_managed_clusters_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -395,10 +396,10 @@ def build_managed_clusters_create_or_update_request(  # pylint: disable=name-too
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -416,7 +417,7 @@ def build_managed_clusters_update_tags_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -438,10 +439,10 @@ def build_managed_clusters_update_tags_request(  # pylint: disable=name-too-long
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -458,7 +459,7 @@ def build_managed_clusters_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
     path_format_arguments = {
@@ -475,10 +476,10 @@ def build_managed_clusters_delete_request(
     # Construct headers
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+        _headers["if-match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -489,7 +490,7 @@ def build_managed_clusters_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -514,7 +515,7 @@ def build_managed_clusters_list_request(subscription_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -540,7 +541,7 @@ def build_managed_clusters_get_access_profile_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -574,7 +575,7 @@ def build_managed_clusters_list_cluster_admin_credentials_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -610,7 +611,7 @@ def build_managed_clusters_list_cluster_user_credentials_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -647,7 +648,7 @@ def build_managed_clusters_list_cluster_monitoring_user_credentials_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -678,7 +679,7 @@ def build_managed_clusters_reset_service_principal_profile_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetServicePrincipalProfile"
     path_format_arguments = {
@@ -706,7 +707,7 @@ def build_managed_clusters_reset_aad_profile_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetAADProfile"
     path_format_arguments = {
@@ -732,7 +733,7 @@ def build_managed_clusters_rotate_cluster_certificates_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/rotateClusterCertificates"
     path_format_arguments = {
@@ -754,7 +755,7 @@ def build_managed_clusters_abort_latest_operation_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/abort"
     path_format_arguments = {
@@ -776,7 +777,7 @@ def build_managed_clusters_rotate_service_account_signing_keys_request(  # pylin
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/rotateServiceAccountSigningKeys"
     path_format_arguments = {
@@ -798,7 +799,7 @@ def build_managed_clusters_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/stop"
     path_format_arguments = {
@@ -820,7 +821,7 @@ def build_managed_clusters_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/start"
     path_format_arguments = {
@@ -844,7 +845,7 @@ def build_managed_clusters_run_command_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -874,7 +875,7 @@ def build_managed_clusters_get_command_result_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -903,7 +904,7 @@ def build_managed_clusters_list_outbound_network_dependencies_endpoints_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -931,7 +932,7 @@ def build_managed_clusters_get_upgrade_profile_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -959,7 +960,7 @@ def build_managed_clusters_get_mesh_revision_profile_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -987,7 +988,7 @@ def build_managed_clusters_list_mesh_revision_profiles_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1016,7 +1017,7 @@ def build_managed_clusters_get_mesh_upgrade_profile_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1045,7 +1046,7 @@ def build_managed_clusters_list_mesh_upgrade_profiles_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1073,7 +1074,7 @@ def build_managed_clusters_list_kubernetes_versions_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1102,7 +1103,7 @@ def build_maintenance_configurations_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1132,7 +1133,7 @@ def build_maintenance_configurations_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1162,7 +1163,7 @@ def build_maintenance_configurations_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations/{configName}"
     path_format_arguments = {
@@ -1186,7 +1187,7 @@ def build_maintenance_configurations_list_by_managed_cluster_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1214,7 +1215,7 @@ def build_managed_namespaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1244,7 +1245,7 @@ def build_managed_namespaces_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1276,7 +1277,7 @@ def build_managed_namespaces_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1306,7 +1307,7 @@ def build_managed_namespaces_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/managedNamespaces/{managedNamespaceName}"
     path_format_arguments = {
@@ -1330,7 +1331,7 @@ def build_managed_namespaces_list_by_managed_cluster_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1358,7 +1359,7 @@ def build_managed_namespaces_list_credential_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1392,7 +1393,7 @@ def build_machines_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1422,7 +1423,7 @@ def build_machines_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1455,7 +1456,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1491,7 +1492,7 @@ def build_private_endpoint_connections_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1527,7 +1528,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -1553,7 +1554,7 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1581,7 +1582,7 @@ def build_snapshots_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1610,7 +1611,7 @@ def build_snapshots_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1641,7 +1642,7 @@ def build_snapshots_update_tags_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1670,7 +1671,7 @@ def build_snapshots_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/snapshots/{resourceName}"
     path_format_arguments = {
@@ -1693,7 +1694,7 @@ def build_snapshots_list_by_resource_group_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1718,7 +1719,7 @@ def build_snapshots_list_request(subscription_id: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1748,7 +1749,7 @@ def build_trusted_access_role_bindings_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1784,7 +1785,7 @@ def build_trusted_access_role_bindings_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1820,7 +1821,7 @@ def build_trusted_access_role_bindings_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings/{trustedAccessRoleBindingName}"
     path_format_arguments = {
@@ -1846,7 +1847,7 @@ def build_trusted_access_role_bindings_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1868,11 +1869,123 @@ def build_trusted_access_role_bindings_list_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_identity_bindings_get_request(
+    resource_group_name: str, resource_name: str, identity_binding_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/identityBindings/{identityBindingName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "identityBindingName": _SERIALIZER.url("identity_binding_name", identity_binding_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_identity_bindings_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, resource_name: str, identity_binding_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/identityBindings/{identityBindingName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "identityBindingName": _SERIALIZER.url("identity_binding_name", identity_binding_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_identity_bindings_delete_request(
+    resource_group_name: str, resource_name: str, identity_binding_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/identityBindings/{identityBindingName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "identityBindingName": _SERIALIZER.url("identity_binding_name", identity_binding_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_identity_bindings_list_by_managed_cluster_request(  # pylint: disable=name-too-long
+    resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/identityBindings"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1893,7 +2006,7 @@ def build_private_link_resources_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1922,7 +2035,7 @@ def build_resolve_private_link_service_id_post_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1950,7 +2063,7 @@ def build_trusted_access_roles_list_request(location: str, subscription_id: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2576,7 +2689,10 @@ class AgentPoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4123,7 +4239,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4213,7 +4332,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5882,14 +6004,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.RunCommandResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -6058,7 +6176,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6299,7 +6420,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6473,7 +6597,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6993,7 +7120,10 @@ class MaintenanceConfigurationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7757,7 +7887,10 @@ class ManagedNamespacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8030,7 +8163,10 @@ class MachinesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9100,7 +9236,10 @@ class SnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9190,7 +9329,10 @@ class SnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9767,7 +9909,10 @@ class TrustedAccessRoleBindingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9782,6 +9927,657 @@ class TrustedAccessRoleBindingsOperations:
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.TrustedAccessRoleBinding],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class IdentityBindingsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.containerservice.ContainerServiceClient`'s
+        :attr:`identity_bindings` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerServiceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "identity_binding_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def get(
+        self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
+    ) -> _models.IdentityBinding:
+        """Gets the specified Identity Binding.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param identity_binding_name: The name of the identity binding. Required.
+        :type identity_binding_name: str
+        :return: IdentityBinding. The IdentityBinding is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservice.models.IdentityBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.IdentityBinding] = kwargs.pop("cls", None)
+
+        _request = build_identity_bindings_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            identity_binding_name=identity_binding_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.IdentityBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "identity_binding_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        identity_binding_name: str,
+        parameters: Union[_models.IdentityBinding, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_identity_bindings_create_or_update_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            identity_binding_name=identity_binding_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        identity_binding_name: str,
+        parameters: _models.IdentityBinding,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.IdentityBinding]:
+        """Creates or updates an identity binding in the specified managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param identity_binding_name: The name of the identity binding. Required.
+        :type identity_binding_name: str
+        :param parameters: The identity binding to create or update. Required.
+        :type parameters: ~azure.mgmt.containerservice.models.IdentityBinding
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns IdentityBinding. The IdentityBinding is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.models.IdentityBinding]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        identity_binding_name: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.IdentityBinding]:
+        """Creates or updates an identity binding in the specified managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param identity_binding_name: The name of the identity binding. Required.
+        :type identity_binding_name: str
+        :param parameters: The identity binding to create or update. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns IdentityBinding. The IdentityBinding is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.models.IdentityBinding]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        identity_binding_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.IdentityBinding]:
+        """Creates or updates an identity binding in the specified managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param identity_binding_name: The name of the identity binding. Required.
+        :type identity_binding_name: str
+        :param parameters: The identity binding to create or update. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns IdentityBinding. The IdentityBinding is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.models.IdentityBinding]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "identity_binding_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        identity_binding_name: str,
+        parameters: Union[_models.IdentityBinding, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.IdentityBinding]:
+        """Creates or updates an identity binding in the specified managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param identity_binding_name: The name of the identity binding. Required.
+        :type identity_binding_name: str
+        :param parameters: The identity binding to create or update. Is one of the following types:
+         IdentityBinding, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.containerservice.models.IdentityBinding or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns IdentityBinding. The IdentityBinding is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.models.IdentityBinding]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IdentityBinding] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                identity_binding_name=identity_binding_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.IdentityBinding, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.IdentityBinding].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.IdentityBinding](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "identity_binding_name",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_identity_bindings_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            identity_binding_name=identity_binding_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "identity_binding_name",
+            ]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def begin_delete(
+        self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes an identity binding in the specified managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param identity_binding_name: The name of the identity binding. Required.
+        :type identity_binding_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                identity_binding_name=identity_binding_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01",
+        params_added_on={
+            "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+        },
+        api_versions_list=["2026-04-01"],
+    )
+    def list_by_managed_cluster(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.IdentityBinding"]:
+        """Gets a list of identity bindings in the specified managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :return: An iterator like instance of IdentityBinding
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservice.models.IdentityBinding]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.IdentityBinding]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_identity_bindings_list_by_managed_cluster_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.IdentityBinding],
                 deserialized.get("value", []),
             )
             if cls:
@@ -9874,7 +10670,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10268,7 +11067,10 @@ class TrustedAccessRolesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
