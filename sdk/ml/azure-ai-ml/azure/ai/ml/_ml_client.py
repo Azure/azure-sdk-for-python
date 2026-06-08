@@ -22,8 +22,8 @@ from azure.ai.ml._azure_environments import (
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview_tsp import (
+    MachineLearningServicesClient as ServiceClient092020DataplanePreview,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview

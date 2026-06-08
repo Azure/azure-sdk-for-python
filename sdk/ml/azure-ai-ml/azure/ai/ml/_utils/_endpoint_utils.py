@@ -12,7 +12,7 @@ from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview_tsp.models import DataVersion, UriFileJobOutput
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, DefaultOpenEncoding, LROConfigurations

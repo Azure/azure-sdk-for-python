@@ -4,7 +4,7 @@
 
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview_tsp.models import BatchJobResource
 
 
 class BatchJob(object):

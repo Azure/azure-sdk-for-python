@@ -9,7 +9,7 @@ from typing import Any
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview_tsp.models import (
     BatchJob,
     CustomModelJobInput,
     CustomModelJobOutput,
