@@ -110,9 +110,7 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
     def setUpClass(cls):
         import os
 
-        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = (
-            "1234abcd-5678-4efa-8abc-1234567890ab"
-        )
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         os.environ["APPLICATIONINSIGHTS_SDKSTATS_DISABLED"] = "true"
 
@@ -268,9 +266,7 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
         # Redirect target differing from the default ingestion host
         # (`dc.services.visualstudio.com`) only in the leftmost DNS label,
         # so the cross-origin redirect guard permits it.
-        mock_response.headers = {
-            "location": "https://westus.services.visualstudio.com/v2/track"
-        }
+        mock_response.headers = {"location": "https://westus.services.visualstudio.com/v2/track"}
         redirect_error = HttpResponseError(
             message="Temporary Redirect",
             response=mock_response,
