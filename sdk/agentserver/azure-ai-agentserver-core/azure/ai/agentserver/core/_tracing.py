@@ -54,6 +54,7 @@ _ATTR_GEN_AI_AGENT_BLUEPRINT_ID = "microsoft.a365.agent.blueprint.id"
 _ATTR_GEN_AI_AGENT_TENANT_ID = "microsoft.tenant.id"
 _ATTR_GEN_AI_AGENT_NAME = "gen_ai.agent.name"
 _ATTR_GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
+_ATTR_GEN_AI_AGENT_SESSIONID = "gen_ai.agent.sessionid"
 _ATTR_GEN_AI_RESPONSE_ID = "gen_ai.response.id"
 _ATTR_GEN_AI_OPERATION_NAME = "gen_ai.operation.name"
 _ATTR_GEN_AI_CONVERSATION_ID = "gen_ai.conversation.id"
@@ -183,7 +184,12 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
             agent_tenant_id=agent_tenant_id,
         ),
     ]
-    log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
+    log_record_processors = [
+        _BaggageLogRecordProcessor(
+            agent_name=agent_name,
+            agent_version=agent_version,
+        )
+    ]  # type: ignore[list-item]
 
     try:
         _setup_distro_export(
@@ -484,6 +490,7 @@ class _FoundryEnrichmentSpanProcessor:
         session_id = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
         if session_id:
             span.set_attribute(_ATTR_SESSION_ID, session_id)
+            span.set_attribute(_ATTR_GEN_AI_AGENT_SESSIONID, session_id)
         conversation_id = _otel_baggage.get_baggage(_BAGGAGE_CONVERSATION_ID, context=ctx)
         if conversation_id:
             span.set_attribute(_ATTR_GEN_AI_CONVERSATION_ID, conversation_id)
@@ -536,6 +543,15 @@ class _BaggageLogRecordProcessor:
     for end-to-end correlation.
     """
 
+    def __init__(
+        self,
+        *,
+        agent_name: Optional[str] = None,
+        agent_version: Optional[str] = None,
+    ) -> None:
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+
     def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
         """Copy baggage entries into the log record's attributes.
 
@@ -545,6 +561,15 @@ class _BaggageLogRecordProcessor:
         try:
             ctx = _otel_context.get_current()
             entries = _otel_baggage.get_all(context=ctx)
+            if hasattr(log_data, 'log_record') and log_data.log_record:
+                attrs = log_data.log_record.attributes
+                if self.agent_name:
+                    attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name  # type: ignore[index]
+                if self.agent_version:
+                    attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version  # type: ignore[index]
+                session_id = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
+                if session_id:
+                    attrs[_ATTR_GEN_AI_AGENT_SESSIONID] = session_id  # type: ignore[index]
             if entries and hasattr(log_data, 'log_record') and log_data.log_record:
                 for key, value in entries.items():
                     log_data.log_record.attributes[key] = value  # type: ignore[index]
