@@ -24,6 +24,8 @@ from typing_extensions import Self
 
 _ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
 _ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
+_ENV_AZURE_AI_AGENT_NAME = "AZURE_AI_AGENT_NAME"
+_ENV_AZURE_AI_AGENT_VERSION = "AZURE_AI_AGENT_VERSION"
 _ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID = "FOUNDRY_AGENT_INSTANCE_CLIENT_ID"
 _ENV_FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID = "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID"
 _ENV_FOUNDRY_AGENT_TENANT_ID = "FOUNDRY_AGENT_TENANT_ID"
@@ -299,12 +301,16 @@ def resolve_agent_name() -> str:
 
     Resolution order:
     1. ``FOUNDRY_AGENT_NAME``
-    2. Hosted runtime fallback from ``AGENT_<stem>_NAME``
+    2. ``AZURE_AI_AGENT_NAME``
+    3. Hosted runtime fallback from ``AGENT_<stem>_NAME``
 
     :return: The agent name, or an empty string if not set.
     :rtype: str
     """
     agent_name = os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
+    if agent_name:
+        return agent_name
+    agent_name = os.environ.get(_ENV_AZURE_AI_AGENT_NAME, "")
     if agent_name:
         return agent_name
     hosted_agent_name, _ = _resolve_agent_name_version_from_hosted_env()
@@ -316,12 +322,16 @@ def resolve_agent_version() -> str:
 
     Resolution order:
     1. ``FOUNDRY_AGENT_VERSION``
-    2. Hosted runtime fallback from ``AGENT_<stem>_VERSION``
+    2. ``AZURE_AI_AGENT_VERSION``
+    3. Hosted runtime fallback from ``AGENT_<stem>_VERSION``
 
     :return: The agent version, or an empty string if not set.
     :rtype: str
     """
     agent_version = os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
+    if agent_version:
+        return agent_version
+    agent_version = os.environ.get(_ENV_AZURE_AI_AGENT_VERSION, "")
     if agent_version:
         return agent_version
     _, hosted_agent_version = _resolve_agent_name_version_from_hosted_env()
