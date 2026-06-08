@@ -36,7 +36,7 @@ class BatchJob(_Model):
     :ivar input_data: Input data for the job.
     :vartype input_data: dict[str,
      ~azure.ai.ml._restclient.v2020_09_01_dataplanepreview_tsp.models.JobInput]
-    :ivar interaction_endpoints: Dictonary of endpoint URIs, keyed by enumerated job endpoints.
+    :ivar interaction_endpoints: Dictionary of endpoint URIs, keyed by enumerated job endpoints.
     :vartype interaction_endpoints: dict[str,
      ~azure.ai.ml._restclient.v2020_09_01_dataplanepreview_tsp.models.JobEndpoint]
     :ivar logging_level: Logging level for batch inference operation. Known values are: "Info",
@@ -100,7 +100,7 @@ class BatchJob(_Model):
     interaction_endpoints: Optional[dict[str, "_models.JobEndpoint"]] = rest_field(
         name="interactionEndpoints", visibility=["read"]
     )
-    """Dictonary of endpoint URIs, keyed by enumerated job endpoints."""
+    """Dictionary of endpoint URIs, keyed by enumerated job endpoints."""
     logging_level: Optional[Union[str, "_models.BatchLoggingLevel"]] = rest_field(
         name="loggingLevel", visibility=["read", "create"]
     )
