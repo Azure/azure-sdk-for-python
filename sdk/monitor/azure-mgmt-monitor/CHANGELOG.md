@@ -1,5 +1,376 @@
 # Release History
 
+## 8.0.0b3 (2026-06-08)
+
+### Features Added
+
+  - Client `MonitorManagementClient` added method `send_request`
+  - Client `MonitorManagementClient` added operation group `private_link_resources`
+  - Client `MonitorManagementClient` added operation group `private_endpoint_connections`
+  - Client `MonitorManagementClient` added operation group `data_collection_endpoints`
+  - Client `MonitorManagementClient` added operation group `scheduled_query_rule`
+  - Client `MonitorManagementClient` added operation group `data_collection_rule_associations`
+  - Client `MonitorManagementClient` added operation group `data_collection_rules`
+  - Client `MonitorManagementClient` added operation group `private_link_scopes`
+  - Client `MonitorManagementClient` added operation group `private_link_scoped_resources`
+  - Client `MonitorManagementClient` added operation group `private_link_scope_operation_status`
+  - Client `MonitorManagementClient` added operation group `autoscale_settings`
+  - Client `MonitorManagementClient` added operation group `predictive_metric`
+  - Client `MonitorManagementClient` added operation group `activity_logs`
+  - Client `MonitorManagementClient` added operation group `event_categories`
+  - Client `MonitorManagementClient` added operation group `tenant_activity_logs`
+  - Client `MonitorManagementClient` added operation group `metric_definitions`
+  - Client `MonitorManagementClient` added operation group `metric_namespaces`
+  - Client `MonitorManagementClient` added operation group `metrics`
+  - Client `MonitorManagementClient` added operation group `diagnostic_settings`
+  - Client `MonitorManagementClient` added operation group `alert_rule_incidents`
+  - Client `MonitorManagementClient` added operation group `log_profiles`
+  - Client `MonitorManagementClient` added operation group `activity_log_alerts`
+  - Client `MonitorManagementClient` added operation group `metric_alerts`
+  - Client `MonitorManagementClient` added operation group `metric_alerts_status`
+  - Client `MonitorManagementClient` added operation group `scheduled_query_rules`
+  - Client `MonitorManagementClient` added operation group `baselines`
+  - Client `MonitorManagementClient` added operation group `action_groups`
+  - Model `ActionGroupPatchBody` added property `identity`
+  - Model `WebhookReceiver` added property `managed_identity`
+  - Added enum `AccessMode`
+  - Added model `AccessModeSettings`
+  - Added model `AccessModeSettingsExclusion`
+  - Added model `AccessRule`
+  - Added enum `AccessRuleDirection`
+  - Added model `AccessRuleProperties`
+  - Added model `AccessRulePropertiesSubscription`
+  - Added model `ActionDetail`
+  - Added model `ActionGroup`
+  - Added model `ActionGroupResource`
+  - Added model `ActionList`
+  - Added model `Actions`
+  - Added model `ActivityLogAlertActionGroup`
+  - Added model `ActivityLogAlertErrorResponse`
+  - Added model `ActivityLogAlertResource`
+  - Added model `AdxDestination`
+  - Added model `AgentSetting`
+  - Added model `AgentSettingsSpec`
+  - Added enum `AggregationType`
+  - Added enum `AggregationTypeEnum`
+  - Added model `AlertRuleAllOfCondition`
+  - Added model `AlertRuleAnyOfOrLeafCondition`
+  - Added model `AlertRuleLeafCondition`
+  - Added model `AlertRulePatchObject`
+  - Added model `AlertRulePatchProperties`
+  - Added model `AlertRuleProperties`
+  - Added enum `AlertSeverity`
+  - Added model `ApplicationInsights`
+  - Added model `ArmRoleReceiver`
+  - Added model `AutomationRunbookReceiver`
+  - Added model `AutoscaleErrorResponse`
+  - Added model `AutoscaleErrorResponseError`
+  - Added model `AutoscaleNotification`
+  - Added model `AutoscaleProfile`
+  - Added model `AutoscaleSetting`
+  - Added model `AutoscaleSettingResource`
+  - Added model `AutoscaleSettingResourcePatch`
+  - Added model `AzureFunctionReceiver`
+  - Added model `AzureMonitorMetricsDestination`
+  - Added model `AzureMonitorPrivateLinkScope`
+  - Added model `AzureMonitorPrivateLinkScopeProperties`
+  - Added model `BaselineMetadata`
+  - Added enum `BaselineSensitivity`
+  - Added model `ColumnDefinition`
+  - Added model `CommonErrorResponse`
+  - Added enum `ComparisonOperationType`
+  - Added model `Condition`
+  - Added model `ConditionFailingPeriods`
+  - Added enum `ConditionOperator`
+  - Added model `ConfigurationAccessEndpointSpec`
+  - Added model `Context`
+  - Added enum `CreatedByType`
+  - Added enum `CriterionType`
+  - Added model `DataCollectionEndpoint`
+  - Added model `DataCollectionEndpointConfigurationAccess`
+  - Added model `DataCollectionEndpointFailoverConfiguration`
+  - Added model `DataCollectionEndpointLogsIngestion`
+  - Added model `DataCollectionEndpointMetadata`
+  - Added model `DataCollectionEndpointMetricsIngestion`
+  - Added model `DataCollectionEndpointNetworkAcls`
+  - Added model `DataCollectionEndpointResource`
+  - Added model `DataCollectionEndpointResourceIdentity`
+  - Added model `DataCollectionEndpointResourceProperties`
+  - Added model `DataCollectionEndpointResourceSku`
+  - Added model `DataCollectionRule`
+  - Added model `DataCollectionRuleAgentSettings`
+  - Added model `DataCollectionRuleAssociation`
+  - Added model `DataCollectionRuleAssociationMetadata`
+  - Added model `DataCollectionRuleAssociationProxyOnlyResource`
+  - Added model `DataCollectionRuleAssociationProxyOnlyResourceProperties`
+  - Added model `DataCollectionRuleDataSources`
+  - Added model `DataCollectionRuleDestinations`
+  - Added model `DataCollectionRuleDirectDataSources`
+  - Added model `DataCollectionRuleEndpoints`
+  - Added model `DataCollectionRuleIngestionQuotas`
+  - Added model `DataCollectionRuleMetadata`
+  - Added model `DataCollectionRuleReferences`
+  - Added model `DataCollectionRuleResource`
+  - Added model `DataCollectionRuleResourceIdentity`
+  - Added model `DataCollectionRuleResourceProperties`
+  - Added model `DataCollectionRuleResourceSku`
+  - Added model `DataFlow`
+  - Added model `DataImportSources`
+  - Added model `DataImportSourcesEventHub`
+  - Added model `DataSourcesSpec`
+  - Added model `DataSourcesSpecDataImports`
+  - Added model `DestinationsSpec`
+  - Added model `DestinationsSpecAzureMonitorMetrics`
+  - Added model `Dimension`
+  - Added enum `DimensionOperator`
+  - Added model `DirectDataSourcesSpec`
+  - Added model `DynamicMetricCriteria`
+  - Added model `DynamicPromQLCriteria`
+  - Added model `DynamicThresholdFailingPeriods`
+  - Added enum `DynamicThresholdOperator`
+  - Added enum `DynamicThresholdSensitivity`
+  - Added model `EmailNotification`
+  - Added model `EnableRequest`
+  - Added model `EndpointsSpec`
+  - Added model `EnrichmentData`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorContract`
+  - Added model `ErrorDetail`
+  - Added model `ErrorDetailAdditionalInfoItem`
+  - Added model `ErrorDetailAutoGenerated`
+  - Added model `ErrorResponseAutoGenerated`
+  - Added model `ErrorResponseCommonV2`
+  - Added model `ErrorResponseError`
+  - Added model `ErrorResponseErrorAdditionalInfoItem`
+  - Added model `EtwProviderDataSource`
+  - Added model `EventData`
+  - Added model `EventHubDataSource`
+  - Added model `EventHubDestination`
+  - Added model `EventHubDirectDestination`
+  - Added model `EventHubReceiver`
+  - Added enum `EventLevel`
+  - Added model `ExtensionDataSource`
+  - Added model `ExtensionResource`
+  - Added model `FailoverConfigurationSpec`
+  - Added model `HttpRequestInfo`
+  - Added model `Identity`
+  - Added enum `IdentityType`
+  - Added model `IisLogsDataSource`
+  - Added model `Incident`
+  - Added enum `IncidentManagementService`
+  - Added model `IncidentReceiver`
+  - Added model `IncidentServiceConnection`
+  - Added model `IngestionQuotas`
+  - Added model `IngestionQuotasLogs`
+  - Added enum `IssueType`
+  - Added model `ItsmReceiver`
+  - Added enum `Kind`
+  - Added enum `KnownAgentSettingName`
+  - Added enum `KnownColumnDefinitionType`
+  - Added enum `KnownDataCollectionEndpointProvisioningState`
+  - Added enum `KnownDataCollectionEndpointResourceKind`
+  - Added enum `KnownDataCollectionRuleAssociationProvisioningState`
+  - Added enum `KnownDataCollectionRuleProvisioningState`
+  - Added enum `KnownDataCollectionRuleResourceKind`
+  - Added enum `KnownDataFlowStreams`
+  - Added enum `KnownEtwProviderDataSourceLogLevel`
+  - Added enum `KnownEtwProviderType`
+  - Added enum `KnownExtensionDataSourceStreams`
+  - Added enum `KnownLocationSpecProvisioningStatus`
+  - Added enum `KnownLogFileTextSettingsRecordStartTimestampFormat`
+  - Added enum `KnownLogFilesDataSourceFormat`
+  - Added enum `KnownOtelLogsDataSourceStreams`
+  - Added enum `KnownOtelLogsDirectDataSourceStreams`
+  - Added enum `KnownOtelTracesDataSourceStreams`
+  - Added enum `KnownOtelTracesDirectDataSourceStreams`
+  - Added enum `KnownPerfCounterDataSourceStreams`
+  - Added enum `KnownPerformanceCountersOTelDataSourceStreams`
+  - Added enum `KnownPrometheusForwarderDataSourceStreams`
+  - Added enum `KnownPublicNetworkAccessOptions`
+  - Added enum `KnownStorageBlobLookupType`
+  - Added enum `KnownSyslogDataSourceFacilityNames`
+  - Added enum `KnownSyslogDataSourceLogLevels`
+  - Added enum `KnownSyslogDataSourceStreams`
+  - Added enum `KnownWindowsEventLogDataSourceStreams`
+  - Added enum `KnownWindowsFirewallLogsDataSourceProfileFilter`
+  - Added model `LocalizableString`
+  - Added model `LocationSpec`
+  - Added model `LogAnalyticsDestination`
+  - Added model `LogFileSettings`
+  - Added model `LogFileSettingsText`
+  - Added model `LogFileTextSettings`
+  - Added model `LogFilesDataSource`
+  - Added model `LogFilesDataSourceSettings`
+  - Added model `LogProfileProperties`
+  - Added model `LogProfileResource`
+  - Added model `LogProfileResourcePatch`
+  - Added model `LogSettings`
+  - Added model `LogicAppReceiver`
+  - Added model `LogsIngestionEndpointSpec`
+  - Added model `LogsQuotaSpec`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `Metadata`
+  - Added model `MetadataValue`
+  - Added model `Metric`
+  - Added enum `MetricAggregationType`
+  - Added model `MetricAlertAction`
+  - Added model `MetricAlertCriteria`
+  - Added model `MetricAlertErrorResponse`
+  - Added model `MetricAlertMultipleResourceMultipleMetricCriteria`
+  - Added model `MetricAlertProperties`
+  - Added model `MetricAlertPropertiesPatch`
+  - Added model `MetricAlertResource`
+  - Added model `MetricAlertResourcePatch`
+  - Added model `MetricAlertSingleResourceMultipleMetricCriteria`
+  - Added model `MetricAlertStatus`
+  - Added model `MetricAlertStatusCollection`
+  - Added model `MetricAlertStatusProperties`
+  - Added model `MetricAvailability`
+  - Added model `MetricBaselinesErrorResponse`
+  - Added model `MetricBaselinesProperties`
+  - Added enum `MetricClass`
+  - Added model `MetricCriteria`
+  - Added model `MetricDefinition`
+  - Added model `MetricDimension`
+  - Added model `MetricNamespace`
+  - Added model `MetricNamespaceName`
+  - Added enum `MetricResultType`
+  - Added model `MetricSettings`
+  - Added model `MetricSingleDimension`
+  - Added enum `MetricStatisticType`
+  - Added model `MetricTrigger`
+  - Added enum `MetricUnit`
+  - Added model `MetricValue`
+  - Added model `MetricsIngestionEndpointSpec`
+  - Added model `MicrosoftFabricDestination`
+  - Added model `MonitoringAccountDestination`
+  - Added model `MultiMetricCriteria`
+  - Added model `MultiPromQLCriteria`
+  - Added enum `NamespaceClassification`
+  - Added model `NetworkRuleSet`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added enum `NetworkSecurityPerimeterConfigurationProvisioningState`
+  - Added model `NetworkSecurityProfile`
+  - Added model `NotificationRequestBody`
+  - Added enum `Odatatype`
+  - Added model `OperationStatus`
+  - Added enum `OperationType`
+  - Added enum `Operator`
+  - Added model `OtelDataSourceResourceAttributeRouting`
+  - Added model `OtelLogsDataSource`
+  - Added model `OtelLogsDataSourceResourceAttributeRouting`
+  - Added model `OtelLogsDirectDataSource`
+  - Added model `OtelMetricsDataSource`
+  - Added model `OtelMetricsDataSourceResourceAttributeRouting`
+  - Added model `OtelMetricsDirectDataSource`
+  - Added model `OtelTracesDataSource`
+  - Added model `OtelTracesDataSourceResourceAttributeRouting`
+  - Added model `OtelTracesDirectDataSource`
+  - Added model `PerfCounterDataSource`
+  - Added model `PerformanceCountersOTelDataSource`
+  - Added model `PlatformTelemetryDataSource`
+  - Added model `PredictiveAutoscalePolicy`
+  - Added enum `PredictiveAutoscalePolicyScaleMode`
+  - Added model `PredictiveResponse`
+  - Added model `PredictiveValue`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionListResult`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceListResult`
+  - Added model `PrivateLinkResourceProperties`
+  - Added enum `PrivateLinkScopeProvisioningState`
+  - Added model `PrivateLinkScopedResource`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added model `PromQLCriteria`
+  - Added model `PrometheusForwarderDataSource`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added model `ProxyResource`
+  - Added model `QueryFailingPeriods`
+  - Added model `Recurrence`
+  - Added enum `RecurrenceFrequency`
+  - Added model `RecurrentSchedule`
+  - Added model `ReferencesSpec`
+  - Added model `ReferencesSpecEnrichmentData`
+  - Added model `ResolveConfiguration`
+  - Added model `Resource`
+  - Added model `ResourceAssociation`
+  - Added enum `ResourceAssociationAccessMode`
+  - Added model `ResourceForUpdate`
+  - Added model `ResourceForUpdateIdentity`
+  - Added model `Response`
+  - Added enum `ResultType`
+  - Added model `RetentionPolicy`
+  - Added model `RuleResolveConfiguration`
+  - Added model `ScaleAction`
+  - Added model `ScaleCapacity`
+  - Added enum `ScaleDirection`
+  - Added model `ScaleRule`
+  - Added model `ScaleRuleMetricDimension`
+  - Added enum `ScaleRuleMetricDimensionOperationType`
+  - Added enum `ScaleType`
+  - Added model `ScheduledQueryRuleCriteria`
+  - Added model `ScheduledQueryRuleProperties`
+  - Added model `ScheduledQueryRuleResource`
+  - Added model `ScheduledQueryRuleResourcePatch`
+  - Added model `ScopedResource`
+  - Added enum `ScopedResourceKind`
+  - Added model `ScopedResourceProperties`
+  - Added enum `ScopedResourceProvisioningState`
+  - Added model `SenderAuthorization`
+  - Added model `ServiceDiagnosticSettings`
+  - Added model `ServiceDiagnosticSettingsResource`
+  - Added model `ServiceDiagnosticSettingsResourcePatch`
+  - Added enum `Severity`
+  - Added model `SingleBaseline`
+  - Added model `SingleMetricBaseline`
+  - Added model `Sku`
+  - Added enum `SkuTier`
+  - Added model `StaticPromQLCriteria`
+  - Added model `StorageBlob`
+  - Added model `StorageBlobDestination`
+  - Added model `StorageTableDestination`
+  - Added model `StreamDeclaration`
+  - Added model `SubscriptionScopeMetricDefinition`
+  - Added model `SubscriptionScopeMetricsRequestBodyParameters`
+  - Added model `SyslogDataSource`
+  - Added model `SystemData`
+  - Added model `TagsResource`
+  - Added model `TestNotificationDetailsResponse`
+  - Added enum `TimeAggregation`
+  - Added enum `TimeAggregationType`
+  - Added model `TimeSeriesBaseline`
+  - Added model `TimeSeriesElement`
+  - Added model `TimeWindow`
+  - Added model `TrackedResource`
+  - Added model `UserAssignedIdentity`
+  - Added model `UserIdentityProperties`
+  - Added model `WebhookNotification`
+  - Added model `WebtestLocationAvailabilityCriteria`
+  - Added model `WindowsEventLogDataSource`
+  - Added model `WindowsFirewallLogsDataSource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Deleted or renamed client operation group `MonitorManagementClient.tenant_action_groups`
+  - Parameter `subscription_id` of client `MonitorManagementClient` is now required
+  - Model `ActionGroupPatchBody` moved instance variable `enabled` under property `properties` whose type is `ActionGroupPatch`
+  - Deleted or renamed model `AzureResource`
+  - Deleted or renamed model `TenantActionGroupResource`
+  - Deleted or renamed operation group `TenantActionGroupsOperations`
+
+### Other Changes
+
+  - Deleted model `TenantActionGroupList` which actually were not used by SDK users
+
 ## 8.0.0b2 (2025-11-16)
 
 ### Features Added
