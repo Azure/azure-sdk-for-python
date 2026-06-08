@@ -463,6 +463,10 @@ function desiredBranchState(result) {
   };
 }
 
+function apiResultsHaveApiDiff(baseResult, targetResult) {
+  return !Buffer.from(baseResult.apiMd).equals(Buffer.from(targetResult.apiMd));
+}
+
 function branchStateMatchesDesired(actual, desired) {
   return (
     actual.hasApiMd === desired.hasApiMd &&
@@ -1027,6 +1031,13 @@ async function main() {
     });
     const targetVersion = targetResult.version;
 
+    if (!apiResultsHaveApiDiff(baseResult, targetResult)) {
+      logInfo(
+        `\nNo API differences found for ${args.packageName} between ${args.base} (version ${baseVersion}) and ${targetRef} (version ${targetVersion}). No API review branches or PR were created.`,
+      );
+      return 0;
+    }
+
     const apiPath = apiMdPath(packageDir);
     const apiRelative = apiMdRel(packageDir);
     const metaFilePath = metadataPath(packageDir);
@@ -1083,22 +1094,7 @@ async function main() {
         writeBytes(metaFilePath, targetResult.metadata);
         git(["add", metaRelative]);
       }
-
-      const diff = git(["diff", "--cached", "--quiet"], {
-        capture: true,
-        check: false,
-      });
-
-      if (diff.status === 0) {
-        git([
-          "commit",
-          "--allow-empty",
-          "-m",
-          `[API Review] api.md for ${args.packageName} ${targetVersion} (no diff vs baseline)`,
-        ]);
-      } else {
-        git(["commit", "-m", `[API Review] api.md for ${args.packageName} ${targetVersion}`]);
-      }
+      git(["commit", "-m", `[API Review] api.md for ${args.packageName} ${targetVersion}`]);
 
       git(["push", "--force-with-lease", REMOTE, reviewBranch]);
     }
@@ -1198,6 +1194,7 @@ if (require.main === module) {
     buildSyncMetadataBlock,
     buildSyncMetadataObject,
     buildReviewPrBody,
+    apiResultsHaveApiDiff,
     replaceSyncMetadataBlock,
     targetReferenceInfo,
   };

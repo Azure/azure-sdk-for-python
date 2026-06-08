@@ -13,9 +13,9 @@ If the user asks to create an API review PR for a new package, explain that new 
 
 ## Prerequisites
 
-1. The user must have `gh` CLI authenticated (`gh auth login`).
+1. The user must have `gh` CLI installed and authenticated (`gh auth login`).
 2. The working tree must be clean (no uncommitted changes).
-3. Node.js must be installed.
+3. The latest Node.js LTS must be installed.
 4. `azpysdk` must be installed (`pip install -e ./eng/tools/azure-sdk-tools`).
 
 ## Information to Gather
@@ -23,7 +23,7 @@ If the user asks to create an API review PR for a new package, explain that new 
 Ask the user for the following using `vscode_askQuestions`:
 
 ### 1. Package Name (required)
-The Azure SDK package name (e.g. `azure-storage-blob`, `azure-ai-projects`).
+The Azure SDK package name (e.g. `azure-storage-blob`, `azure-ai-projects`, `azure-servicebus`, `azure-planetarycomputer`).
 
 ### 2. Baseline (required)
 The release tag to use as the baseline for comparison. Tags follow the format `<package-name>_<version>` (e.g. `azure-storage-blob_12.29.0`).
@@ -52,6 +52,8 @@ This is a long-running operation. The script may take several minutes because it
 
 If `create_api_review_pr.js` fails while running this skill, do not patch the script, modify package files, retry with workaround edits, or try to manually complete branch/PR creation. Stop the workflow, report the failure clearly, include the relevant error details, and suggest practical next steps.
 
+If the script reports that there are no API differences, relay that message to the user and stop. Do not create branches or a PR manually.
+
 Run the following command from the repository root:
 
 ```bash
@@ -78,7 +80,7 @@ node scripts/api_md_workflow/create_api_review_pr.js --package-name azure-cosmos
 ## Post-Execution
 
 The script will:
-1. Generate `API.md` for both baseline and target
+1. Generate `api.md` for both baseline and target
 2. Push `apireview/base_<package>_<version>` and `apireview/review_<package>_<version>` branches
 3. Open a draft PR (or print a compare URL if `gh pr create` fails)
 

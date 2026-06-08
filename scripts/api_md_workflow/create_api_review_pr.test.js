@@ -314,6 +314,26 @@ test("buildReviewPrBody calls out static tag-to-tag reviews", () => {
   assert.equal(body.includes("api-md-review-sync"), false);
 });
 
+test("apiResultsHaveApiDiff returns false for identical API markdown", () => {
+  assert.equal(
+    workflow.apiResultsHaveApiDiff(
+      { apiMd: Buffer.from("# API\n\nclass Same\n"), metadata: Buffer.from("apiMdSha256: old") },
+      { apiMd: Buffer.from("# API\n\nclass Same\n"), metadata: Buffer.from("apiMdSha256: new") },
+    ),
+    false,
+  );
+});
+
+test("apiResultsHaveApiDiff returns true for changed API markdown", () => {
+  assert.equal(
+    workflow.apiResultsHaveApiDiff(
+      { apiMd: Buffer.from("# API\n\nclass Old\n") },
+      { apiMd: Buffer.from("# API\n\nclass New\n") },
+    ),
+    true,
+  );
+});
+
 test("replaceSyncMetadataBlock replaces stale hidden metadata", () => {
   const oldBlock = workflow.buildSyncMetadataBlock({
     schemaVersion: 1,
