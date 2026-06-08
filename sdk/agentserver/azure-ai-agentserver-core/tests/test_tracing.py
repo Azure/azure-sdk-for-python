@@ -17,7 +17,11 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_version,
     resolve_appinsights_connection_string,
 )
-from azure.ai.agentserver.core._tracing import TraceContextMiddleware, _FoundryEnrichmentSpanProcessor
+from azure.ai.agentserver.core._tracing import (
+    TraceContextMiddleware,
+    _FoundryEnrichmentSpanProcessor,
+    detach_context,
+)
 
 
 class _CollectorExporter(SpanExporter):
@@ -497,4 +501,15 @@ class TestTraceContextMiddleware:
 
         asyncio.run(run_test())
 
+
+class TestDetachContext:
+    """Tests for detach context helper behavior."""
+
+    def test_detach_context_ignores_value_error(self) -> None:
+        with mock.patch(
+            "azure.ai.agentserver.core._tracing._otel_context.detach",
+            side_effect=ValueError("non-current token"),
+        ) as detach_mock:
+            detach_context("token")
+            detach_mock.assert_called_once_with("token")
 
