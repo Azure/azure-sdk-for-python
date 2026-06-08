@@ -24,8 +24,6 @@ from typing_extensions import Self
 
 _ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
 _ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
-_ENV_AZURE_AI_AGENT_NAME = "AZURE_AI_AGENT_NAME"
-_ENV_AZURE_AI_AGENT_VERSION = "AZURE_AI_AGENT_VERSION"
 _ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID = "FOUNDRY_AGENT_INSTANCE_CLIENT_ID"
 _ENV_FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID = "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID"
 _ENV_FOUNDRY_AGENT_TENANT_ID = "FOUNDRY_AGENT_TENANT_ID"
@@ -271,71 +269,22 @@ def resolve_log_level(level: Optional[str]) -> str:
     return normalized
 
 
-def _resolve_agent_name_version_from_hosted_env() -> tuple[str, str]:
-    """Resolve agent name/version from ``AGENT_<stem>_NAME`` and ``AGENT_<stem>_VERSION`` env pairs."""
-    stems_to_name: dict[str, str] = {}
-    stems_to_version: dict[str, str] = {}
-
-    for key, value in os.environ.items():
-        if not value:
-            continue
-        if key.startswith("AGENT_") and key.endswith("_NAME"):
-            stem = key[len("AGENT_"):-len("_NAME")]
-            stems_to_name[stem] = value
-        elif key.startswith("AGENT_") and key.endswith("_VERSION"):
-            stem = key[len("AGENT_"):-len("_VERSION")]
-            stems_to_version[stem] = value
-
-    for stem, name in stems_to_name.items():
-        version = stems_to_version.get(stem, "")
-        if name or version:
-            return name, version
-
-    any_name = next(iter(stems_to_name.values()), "")
-    any_version = next(iter(stems_to_version.values()), "")
-    return any_name, any_version
-
-
 def resolve_agent_name() -> str:
-    """Resolve the agent name from environment variables.
-
-    Resolution order:
-    1. ``FOUNDRY_AGENT_NAME``
-    2. ``AZURE_AI_AGENT_NAME``
-    3. Hosted runtime fallback from ``AGENT_<stem>_NAME``
+    """Resolve the agent name from the ``FOUNDRY_AGENT_NAME`` environment variable.
 
     :return: The agent name, or an empty string if not set.
     :rtype: str
     """
-    agent_name = os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
-    if agent_name:
-        return agent_name
-    agent_name = os.environ.get(_ENV_AZURE_AI_AGENT_NAME, "")
-    if agent_name:
-        return agent_name
-    hosted_agent_name, _ = _resolve_agent_name_version_from_hosted_env()
-    return hosted_agent_name
+    return os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
 
 
 def resolve_agent_version() -> str:
-    """Resolve the agent version from environment variables.
-
-    Resolution order:
-    1. ``FOUNDRY_AGENT_VERSION``
-    2. ``AZURE_AI_AGENT_VERSION``
-    3. Hosted runtime fallback from ``AGENT_<stem>_VERSION``
+    """Resolve the agent version from the ``FOUNDRY_AGENT_VERSION`` environment variable.
 
     :return: The agent version, or an empty string if not set.
     :rtype: str
     """
-    agent_version = os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
-    if agent_version:
-        return agent_version
-    agent_version = os.environ.get(_ENV_AZURE_AI_AGENT_VERSION, "")
-    if agent_version:
-        return agent_version
-    _, hosted_agent_version = _resolve_agent_name_version_from_hosted_env()
-    return hosted_agent_version
+    return os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
 
 
 def resolve_agent_id() -> str:
@@ -353,8 +302,8 @@ def resolve_agent_id() -> str:
     agent_id = os.environ.get(_ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID, "")
     if agent_id:
         return agent_id
-    agent_name = resolve_agent_name()
-    agent_version = resolve_agent_version()
+    agent_name = os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
+    agent_version = os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
     if agent_name and agent_version:
         return f"{agent_name}:{agent_version}"
     return agent_name
