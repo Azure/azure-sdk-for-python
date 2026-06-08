@@ -33,6 +33,7 @@ tracing exporters, and span operations:
 OpenTelemetry is a required dependency — these functions always create
 real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
+import asyncio
 import logging
 import os
 from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
@@ -301,16 +302,18 @@ class TraceContextMiddleware:
         # for logs emitted by Hypercorn's access logger.
         span = trace.get_current_span(ctx)
         span_ctx = span.get_span_context()
-        if span_ctx and span_ctx.trace_id:
+        if span_ctx and span_ctx.is_valid:
             non_recording = trace.NonRecordingSpan(span_ctx)
             ctx = trace.set_span_in_context(non_recording, ctx)
 
-        # Attach the context and do NOT detach in finally.  Hypercorn emits
-        # its access log after the ASGI app returns but within the same async
-        # task.  Detaching here would clear the trace context before Hypercorn
-        # logs.  The context is cleaned up when the async task ends.
-        _otel_context.attach(ctx)
-        await self.app(scope, receive, send)
+        # Attach request context for app execution and defer detach by one
+        # event-loop turn so server-side access logging that runs immediately
+        # after app return can still observe the request trace context.
+        token = _otel_context.attach(ctx)
+        try:
+            await self.app(scope, receive, send)
+        finally:
+            asyncio.get_running_loop().call_soon(detach_context, token)
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:

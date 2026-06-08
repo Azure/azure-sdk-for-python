@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
+import asyncio
 import os
 from unittest import mock
 
@@ -16,7 +17,7 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_version,
     resolve_appinsights_connection_string,
 )
-from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
+from azure.ai.agentserver.core._tracing import TraceContextMiddleware, _FoundryEnrichmentSpanProcessor
 
 
 class _CollectorExporter(SpanExporter):
@@ -430,5 +431,70 @@ class TestAgentIdentityResolution:
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
 
+
+class TestTraceContextMiddleware:
+    """Trace context middleware lifecycle behavior."""
+
+    def test_detach_is_deferred_until_after_app_returns(self) -> None:
+        events = []
+
+        async def app(scope, receive, send):
+            events.append("app-called")
+
+        async def run_test():
+            middleware = TraceContextMiddleware(app)
+            scope = {"type": "http", "headers": []}
+
+            async def receive():
+                return {}
+
+            async def send(_message):
+                return None
+
+            with mock.patch("azure.ai.agentserver.core._tracing._otel_context.attach", return_value="token") as attach_mock, \
+                    mock.patch("azure.ai.agentserver.core._tracing._otel_context.detach") as detach_mock:
+                await middleware(scope, receive, send)
+                assert events == ["app-called"]
+                attach_mock.assert_called_once()
+                detach_mock.assert_not_called()
+
+                await asyncio.sleep(0)
+                detach_mock.assert_called_once_with("token")
+
+        asyncio.run(run_test())
+
+    def test_detach_still_happens_when_app_raises(self) -> None:
+        class _AppError(RuntimeError):
+            pass
+
+        async def app(scope, receive, send):
+            raise _AppError("boom")
+
+        async def run_test():
+            middleware = TraceContextMiddleware(app)
+            scope = {"type": "http", "headers": []}
+
+            async def receive():
+                return {}
+
+            async def send(_message):
+                return None
+
+            with mock.patch("azure.ai.agentserver.core._tracing._otel_context.attach", return_value="token") as attach_mock, \
+                    mock.patch("azure.ai.agentserver.core._tracing._otel_context.detach") as detach_mock:
+                try:
+                    await middleware(scope, receive, send)
+                except _AppError:
+                    pass
+                else:
+                    raise AssertionError("expected middleware to propagate app exception")
+
+                attach_mock.assert_called_once()
+                detach_mock.assert_not_called()
+
+                await asyncio.sleep(0)
+                detach_mock.assert_called_once_with("token")
+
+        asyncio.run(run_test())
 
 
