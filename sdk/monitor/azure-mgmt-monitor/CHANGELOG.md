@@ -32,7 +32,6 @@
   - Client `MonitorManagementClient` added operation group `baselines`
   - Client `MonitorManagementClient` added operation group `action_groups`
   - Model `ActionGroupPatchBody` added property `identity`
-  - Model `ActionGroupPatchBody` added property `properties`
   - Model `WebhookReceiver` added property `managed_identity`
   - Added enum `AccessMode`
   - Added model `AccessModeSettings`
@@ -43,7 +42,6 @@
   - Added model `AccessRulePropertiesSubscription`
   - Added model `ActionDetail`
   - Added model `ActionGroup`
-  - Added model `ActionGroupPatch`
   - Added model `ActionGroupResource`
   - Added model `ActionList`
   - Added model `Actions`
@@ -361,13 +359,17 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed client operation group `MonitorManagementClient.tenant_action_groups`
-  - Method `MonitorManagementClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
-  - Model `ActionGroupPatchBody` deleted or renamed its instance variable `enabled`
+  - Parameter `subscription_id` of client `MonitorManagementClient` is now required
+  - Model `ActionGroupPatchBody` moved instance variable `enabled` under property `properties` whose type is `ActionGroupPatch`
   - Deleted or renamed model `AzureResource`
-  - Deleted or renamed model `TenantActionGroupList`
   - Deleted or renamed model `TenantActionGroupResource`
-  - Deleted or renamed model `TenantActionGroupsOperations`
+  - Deleted or renamed operation group `TenantActionGroupsOperations`
+
+### Other Changes
+
+  - Deleted model `TenantActionGroupList` which actually were not used by SDK users
 
 ## 8.0.0b2 (2025-11-16)
 
