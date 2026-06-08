@@ -1,11 +1,22 @@
 {
-  "commit": "0136b7fc4e1d0e198e254b667ee71d2538d673e8",
+  "apiVersions": {
+    "ActionGroupsApi": "2024-10-01-preview",
+    "ActivityLogAlertsApi": "2023-01-01-preview",
+    "ActivityLogsApi": "2015-04-01",
+    "AlertRulesIncidentsApi": "2016-03-01",
+    "AutoScaleApi": "2022-10-01",
+    "DataCollectionApi": "2024-03-11",
+    "LogProfilesApi": "2016-03-01",
+    "MetricAlertApi": "2024-03-01-preview",
+    "MetricBaselinesApi": "2019-03-01",
+    "MetricsApi": "2024-02-01",
+    "NetworkSecurityPerimeterApi": "2021-10-01",
+    "PrivateLinkScopesApi": "2023-06-01-preview",
+    "ScheduledQueryRuleApi": "2025-01-01-preview",
+    "ServiceDiagnosticsSettingsApi": "2016-09-01"
+  },
+  "commit": "f53fe643995c3f2b8ac12a387691bd180af6a2f6",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/monitor/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=D:\\spec\\worktrees\\sdk-azure-mgmt-monitor\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/monitor/resource-manager/readme.md"
+  "typespec_src": "specification/monitor/resource-manager/Microsoft.Insights/Insights",
+  "emitterVersion": "0.63.0"
 }
