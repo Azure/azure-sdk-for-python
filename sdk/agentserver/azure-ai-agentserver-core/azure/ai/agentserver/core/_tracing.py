@@ -54,7 +54,6 @@ _ATTR_GEN_AI_AGENT_BLUEPRINT_ID = "microsoft.a365.agent.blueprint.id"
 _ATTR_GEN_AI_AGENT_TENANT_ID = "microsoft.tenant.id"
 _ATTR_GEN_AI_AGENT_NAME = "gen_ai.agent.name"
 _ATTR_GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
-_ATTR_GEN_AI_AGENT_SESSIONID = "gen_ai.agent.sessionid"
 _ATTR_GEN_AI_RESPONSE_ID = "gen_ai.response.id"
 _ATTR_GEN_AI_OPERATION_NAME = "gen_ai.operation.name"
 _ATTR_GEN_AI_CONVERSATION_ID = "gen_ai.conversation.id"
@@ -173,6 +172,14 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
     agent_version = _config.resolve_agent_version() or None
     project_id = _config.resolve_project_id() or None
     agent_id = _config.resolve_agent_id() or None
+    # Hosted runtime can expose agent identity as AGENT_<name>_NAME / _VERSION
+    # rather than FOUNDRY_AGENT_NAME / _VERSION. Fill missing fields from that
+    # environment shape to ensure log enrichment has stable dimensions.
+    env_agent_name, env_agent_version = _resolve_agent_name_version_from_env()
+    if not agent_name:
+        agent_name = env_agent_name
+    if not agent_version:
+        agent_version = env_agent_version
     agent_blueprint_id = _config.resolve_agent_blueprint_id() or None
     agent_tenant_id = _config.resolve_agent_tenant_id() or None
 
@@ -490,7 +497,6 @@ class _FoundryEnrichmentSpanProcessor:
         session_id = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
         if session_id:
             span.set_attribute(_ATTR_SESSION_ID, session_id)
-            span.set_attribute(_ATTR_GEN_AI_AGENT_SESSIONID, session_id)
         conversation_id = _otel_baggage.get_baggage(_BAGGAGE_CONVERSATION_ID, context=ctx)
         if conversation_id:
             span.set_attribute(_ATTR_GEN_AI_CONVERSATION_ID, conversation_id)
@@ -567,9 +573,6 @@ class _BaggageLogRecordProcessor:
                     attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name  # type: ignore[index]
                 if self.agent_version:
                     attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version  # type: ignore[index]
-                session_id = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
-                if session_id:
-                    attrs[_ATTR_GEN_AI_AGENT_SESSIONID] = session_id  # type: ignore[index]
             if entries and hasattr(log_data, 'log_record') and log_data.log_record:
                 for key, value in entries.items():
                     log_data.log_record.attributes[key] = value  # type: ignore[index]
@@ -598,6 +601,32 @@ def _create_resource() -> Any:
     agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
     service_name = agent_name or _SERVICE_NAME_VALUE
     return Resource.create({_ATTR_SERVICE_NAME: service_name})
+
+
+def _resolve_agent_name_version_from_env() -> tuple[Optional[str], Optional[str]]:
+    """Resolve agent name/version from AGENT_*_NAME / AGENT_*_VERSION env pairs."""
+    stems_to_name: dict[str, str] = {}
+    stems_to_version: dict[str, str] = {}
+    for key, value in os.environ.items():
+        if not value:
+            continue
+        if key.startswith("AGENT_") and key.endswith("_NAME"):
+            stem = key[len("AGENT_"):-len("_NAME")]
+            stems_to_name[stem] = value
+        elif key.startswith("AGENT_") and key.endswith("_VERSION"):
+            stem = key[len("AGENT_"):-len("_VERSION")]
+            stems_to_version[stem] = value
+
+    # Prefer a matched pair from the same stem.
+    for stem, name in stems_to_name.items():
+        version = stems_to_version.get(stem)
+        if name or version:
+            return (name or None, version or None)
+
+    # Fallback to any available values.
+    any_name = next(iter(stems_to_name.values()), None)
+    any_version = next(iter(stems_to_version.values()), None)
+    return any_name, any_version
 
 
 def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] = None) -> Any:
