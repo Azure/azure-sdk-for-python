@@ -37,6 +37,42 @@ except ImportError:
 from serialization_helper import ToolDecoder, ThreadRunDecoder
 
 
+class _HybridDict(dict):
+    """Dict subclass that also exposes its keys as attributes.
+
+    The converter (`break_tool_call_into_messages`) mixes subscript access on the request side
+    (`tool_call.details["type"]`, `tool_call.details["bing_grounding"]["requesturl"]`) with attribute
+    access on the result side (`tool_call.details.type`, `tool_call.details.azure_ai_search["output"]`).
+    The production code path uses typed runtime models (`RunStep*ToolCall`) that satisfy both shapes;
+    `_HybridDict` mimics that surface in unit tests without depending on the agents SDK models, which
+    have moved between packages and are not guaranteed to be importable in every test environment.
+    """
+
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError as e:
+            raise AttributeError(name) from e
+
+
+def _build_builtin_tool_call(call_id: str, tool_type: str, payload: dict) -> ToolCall:
+    """Construct a `ToolCall` for a built-in tool without going through `ToolDecoder`.
+
+    `payload` is the per-tool sub-object (e.g. `{"requesturl": "..."}` for Bing or
+    `{"input": "...", "output": {...}}` for SharePoint). The returned `ToolCall.details` is a
+    nested `_HybridDict` so both subscript and attribute access work.
+    """
+    details = _HybridDict(
+        {
+            "id": call_id,
+            "type": tool_type,
+            tool_type: _HybridDict(payload),
+        }
+    )
+    now = datetime.now()
+    return ToolCall(created=now, completed=now, details=details)
+
+
 class TestAIAgentConverter(unittest.TestCase):
     def test_is_agent_tool_call(self):
         # Test case where message is an agent tool call
@@ -199,6 +235,110 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertTrue(
             tool_call_content["arguments"] == {"requesturl": "https://api.bing.microsoft.com/v7.0/search?q="}
         )
+
+    def test_bing_custom_search_tool_calls(self):
+        # bing_custom_search mirrors bing_grounding: arguments-only tool_call, no tool_result
+        # (results are redacted upstream for Bing-family tools).
+        # Built directly rather than via ToolDecoder so the test does not depend on the
+        # RunStepBingCustomSearchToolCall model being present in the installed agents SDK.
+        tool_call = _build_builtin_tool_call(
+            call_id="call_BCS123",
+            tool_type="bing_custom_search",
+            payload={"requesturl": "https://api.bing.microsoft.com/v7.0/custom/search?customconfig=abc&q=foo"},
+        )
+        messages = break_tool_call_into_messages(tool_call, "abc123")
+        self.assertTrue(len(messages) == 1)  # Bing variants emit no tool_result
+        self.assertTrue(isinstance(messages[0], AssistantMessage))
+        tool_call_content = messages[0].content[0]
+        self.assertTrue(tool_call_content["type"] == "tool_call")
+        self.assertTrue(tool_call_content["tool_call_id"] == "call_BCS123")
+        self.assertTrue(tool_call_content["name"] == "bing_custom_search")
+        self.assertTrue(
+            tool_call_content["arguments"]
+            == {"requesturl": "https://api.bing.microsoft.com/v7.0/custom/search?customconfig=abc&q=foo"}
+        )
+
+    def test_sharepoint_grounding_tool_calls(self):
+        # sharepoint_grounding mirrors azure_ai_search: arguments + dumped output.
+        # Exercises the `input` argument key on the request side.
+        tool_call = _build_builtin_tool_call(
+            call_id="call_SP123",
+            tool_type="sharepoint_grounding",
+            payload={
+                "input": "quarterly sales report",
+                "output": {
+                    "documents": [
+                        {
+                            "title": "Q3 Sales",
+                            "url": "https://contoso.sharepoint.com/Q3.docx",
+                            "content": "Q3 was up 12%",
+                        }
+                    ]
+                },
+            },
+        )
+        messages = break_tool_call_into_messages(tool_call, "abc123")
+        self.assertTrue(len(messages) == 2)
+        self.assertTrue(isinstance(messages[0], AssistantMessage))
+        tool_call_content = messages[0].content[0]
+        self.assertTrue(tool_call_content["type"] == "tool_call")
+        self.assertTrue(tool_call_content["tool_call_id"] == "call_SP123")
+        self.assertTrue(tool_call_content["name"] == "sharepoint_grounding")
+        self.assertTrue(tool_call_content["arguments"] == {"input": "quarterly sales report"})
+        self.assertTrue(isinstance(messages[1], ToolMessage))
+        self.assertTrue(messages[1].content[0]["type"] == "tool_result")
+        self.assertTrue(
+            messages[1].content[0]["tool_result"]
+            == {
+                "documents": [
+                    {
+                        "title": "Q3 Sales",
+                        "url": "https://contoso.sharepoint.com/Q3.docx",
+                        "content": "Q3 was up 12%",
+                    }
+                ]
+            }
+        )
+
+    def test_sharepoint_grounding_tool_calls_query_key_fallback(self):
+        # Live agent traces emit the search term under `query` instead of `input` for SharePoint.
+        # The converter must fall back to `query` so downstream evaluators see a non-empty argument.
+        tool_call = _build_builtin_tool_call(
+            call_id="call_SP456",
+            tool_type="sharepoint_grounding",
+            payload={"query": "vacation policy", "output": {"documents": []}},
+        )
+        messages = break_tool_call_into_messages(tool_call, "abc123")
+        self.assertTrue(len(messages) == 2)
+        tool_call_content = messages[0].content[0]
+        self.assertTrue(tool_call_content["arguments"] == {"input": "vacation policy"})
+
+    def test_azure_ai_search_tool_calls_query_key_fallback(self):
+        # Live agent traces emit the search term under `query` instead of `input` for Azure AI Search.
+        # The converter must fall back to `query` so downstream evaluators see a non-empty argument.
+        tool_call = _build_builtin_tool_call(
+            call_id="call_AIS789",
+            tool_type="azure_ai_search",
+            payload={"query": "refund policy", "output": []},
+        )
+        messages = break_tool_call_into_messages(tool_call, "abc123")
+        self.assertTrue(len(messages) == 2)
+        tool_call_content = messages[0].content[0]
+        self.assertTrue(tool_call_content["name"] == "azure_ai_search")
+        self.assertTrue(tool_call_content["arguments"] == {"input": "refund policy"})
+
+    def test_fabric_dataagent_tool_calls_query_key_fallback(self):
+        # Same `query` vs `input` drift for fabric_dataagent.
+        tool_call = _build_builtin_tool_call(
+            call_id="call_FAB012",
+            tool_type="fabric_dataagent",
+            payload={"query": "top customers by revenue", "output": {}},
+        )
+        messages = break_tool_call_into_messages(tool_call, "abc123")
+        self.assertTrue(len(messages) == 2)
+        tool_call_content = messages[0].content[0]
+        self.assertTrue(tool_call_content["name"] == "fabric_dataagent")
+        self.assertTrue(tool_call_content["arguments"] == {"input": "top customers by revenue"})
 
     def test_extract_tool_definitions(self):
         thread_run_data = """{
