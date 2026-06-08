@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 
 """
@@ -32,7 +34,7 @@ def main():
     response = client.network_fabrics.begin_upgrade(
         resource_group_name="example-rg",
         network_fabric_name="example-fabric",
-        body={"version": "version1"},
+        body={"action": "Start", "version": "3.x.x"},
     ).result()
     print(response)
 

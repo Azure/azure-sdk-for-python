@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 
 """
@@ -37,6 +39,7 @@ def main():
             "properties": {
                 "addressFamilyType": "IPv4",
                 "annotation": "annotation",
+                "defaultAction": "Deny",
                 "networkFabricId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/networkFabrics/example-fabric",
                 "statements": [
                     {
