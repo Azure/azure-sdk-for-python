@@ -313,7 +313,10 @@ class TraceContextMiddleware:
         try:
             await self.app(scope, receive, send)
         finally:
-            asyncio.get_running_loop().call_soon(_detach_token_safely, token)
+            try:
+                asyncio.get_running_loop().call_soon(_detach_token_safely, token)
+            except RuntimeError:
+                _detach_token_safely(token)
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
