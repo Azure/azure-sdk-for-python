@@ -37,6 +37,11 @@ import pytest
 from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
 from azure.core.pipeline._tools import is_rest
 
+try:
+    from aiohttp.compression_utils import HAS_BROTLI as _HAS_BROTLI
+except ImportError:
+    _HAS_BROTLI = False
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -219,14 +224,72 @@ async def test_aiohttp_response_decompression_idempotent(http_response):
 @pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
 async def test_aiohttp_response_unknown_encoding_passthrough(http_response):
     # Characterization test: an unknown Content-Encoding passes through raw
-    # and raises nothing.
+    # and raises nothing. Uses ``zstd`` because ``br`` is now decoded by the
+    # buffered helper (see Sub-item 2); ``zstd`` remains unsupported there.
     raw = b"some-not-compressed-bytes"
     res = _create_aiohttp_response(
         http_response,
         raw,
-        {"Content-Type": "text/plain", "Content-Encoding": "br"},
+        {"Content-Type": "text/plain", "Content-Encoding": "zstd"},
     )
     assert res.body() == raw
+
+
+_BROTLI_HELLO_WORLD = b"\x0b\x05\x80hello world\x03"
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(not _HAS_BROTLI, reason="Brotli support is not available")
+@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
+async def test_aiohttp_response_brotli_decompression(http_response):
+    # A Content-Encoding: br body is decoded transparently by the buffered helper.
+    res = _create_aiohttp_response(
+        http_response,
+        _BROTLI_HELLO_WORLD,
+        {"Content-Type": "text/plain", "Content-Encoding": "br"},
+    )
+    assert res.body() == b"hello world", "Brotli decompression didn't work"
+    assert res.text() == "hello world"
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(not _HAS_BROTLI, reason="Brotli support is not available")
+@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
+async def test_aiohttp_response_brotli_decompression_idempotent(http_response):
+    # A second body() call returns the same decoded bytes without re-decompressing.
+    res = _create_aiohttp_response(
+        http_response,
+        _BROTLI_HELLO_WORLD,
+        {"Content-Type": "text/plain", "Content-Encoding": "br"},
+    )
+    first = res.body()
+    assert first == b"hello world"
+    assert res._decompressed_content is True
+    second = res.body()
+    assert second == first
+    assert second == b"hello world"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
+async def test_aiohttp_response_brotli_missing_library(http_response, monkeypatch):
+    # When Brotli support is unavailable, a br body raises an actionable DecodeError
+    # instead of returning raw bytes or an opaque import error.
+    import aiohttp.compression_utils
+    from azure.core.exceptions import DecodeError
+
+    monkeypatch.setattr(aiohttp.compression_utils, "HAS_BROTLI", False)
+
+    res = _create_aiohttp_response(
+        http_response,
+        _BROTLI_HELLO_WORLD,
+        {"Content-Type": "text/plain", "Content-Encoding": "br"},
+    )
+    with pytest.raises(DecodeError) as err:
+        res.body()
+    message = str(err.value)
+    assert "Content-Encoding: br" in message or "'Content-Encoding: br'" in message
+    assert "Brotli" in message
 
 
 @pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)

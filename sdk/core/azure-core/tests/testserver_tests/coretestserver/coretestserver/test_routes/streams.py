@@ -94,6 +94,16 @@ def decompress_header():
     return Response(compressed_stream(), status=200, headers={"Content-Encoding": "gzip"})
 
 
+def brotli_stream():
+    # Brotli-compressed bytes for b"test".
+    yield b"\x8b\x01\x80test\x03"
+
+
+@streams_api.route("/brotli_decompress_header", methods=["GET"])
+def brotli_decompress_header():
+    return Response(brotli_stream(), status=200, headers={"Content-Encoding": "br"})
+
+
 @streams_api.route("/upload", methods=["POST"])
 def upload():
     chunk_size = 1024

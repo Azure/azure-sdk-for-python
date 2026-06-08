@@ -99,3 +99,12 @@ def deflate_content_encoding():
     r.headers["Content-Type"] = "text/plain"
     r.headers["Content-Encoding"] = "deflate"
     return r
+
+
+@encoding_api.route("/br", methods=["GET"])
+def brotli_content_encoding():
+    # Brotli-compressed bytes for b"hello world".
+    r = Response(b"\x0b\x05\x80hello world\x03", status=200)
+    r.headers["Content-Type"] = "text/plain"
+    r.headers["Content-Encoding"] = "br"
+    return r

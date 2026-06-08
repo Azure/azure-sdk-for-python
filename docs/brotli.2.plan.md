@@ -308,3 +308,27 @@ and NOT in any plan step above.
   `Content-Encoding` parsing, would live near here. Noted only. (G16.)
 - The streaming aiohttp path (`__anext__`) is also wrong for `br` today. It is Sub-item 3,
   sequenced after this fix, and will reuse the Step 1 private helper.
+
+---
+
+## 12. Plan changes (recorded during implementation)
+
+### PC1 — Update the Sub-item 1 unknown-encoding pass-through test to stop using `br`
+
+- **What changed:** `tests/async_tests/test_universal_http_async.py::test_aiohttp_response_unknown_encoding_passthrough`
+  (added by Sub-item 1) asserts that a `Content-Encoding: br` body passes through
+  raw and raises nothing. Sub-item 2 intentionally changes `br` behavior: `br` is
+  now decoded, or raises `DecodeError` when Brotli support is unavailable. In a
+  test environment without a Brotli library that test would now fail (the body no
+  longer passes through; it raises `DecodeError`).
+- **Deviation:** The plan (Step 2, Gate B) requires the existing async/transport
+  suite to stay green and treats `br` as no longer "unknown", but it did not
+  anticipate that a Sub-item 1 characterization test had pinned `br` specifically
+  as the unknown-encoding example.
+- **Resolution / rationale:** Re-point that test's example encoding from `br` to
+  `zstd` (still genuinely unsupported by the buffered helper: `_get_decompressor`
+  returns `None` for it and there is no `br` branch match). This preserves the
+  test's original intent — proving truly unknown encodings pass through raw — while
+  removing the conflict with the new `br` behavior. No production behavior for
+  `zstd` changes (it still falls through to raw). This is the minimal change needed
+  to keep Gate B satisfiable; it is tied to Step 2.

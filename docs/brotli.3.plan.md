@@ -325,6 +325,38 @@ transports, or `ContentDecodePolicy`.
 
 ---
 
+## Plan changes (recorded during implementation)
+
+These deviations were recorded before the corresponding code was written, per the
+execution rules. They resolve the plan's own open implementation notes (D2/D3 notes,
+Step 0(c)/(d), and the conditional Step 3).
+
+- **PC1 — Extract a shared `_get_brotli_decompressor()` factory and route the buffered
+  helper through it.** Step 0(c), Gate D, and risk R4 require the streaming missing-library
+  error to be byte-identical to the buffered one. To guarantee this with zero drift, a new
+  module-level factory `_get_brotli_decompressor()` in
+  `azure/core/utils/_pipeline_transport_rest_shared.py` becomes the single source of both
+  the guarded aiohttp Brotli import and the missing-library `DecodeError` message, and
+  returns a fresh incremental `BrotliDecompressor`. Sub-item 2's `_decode_brotli_content`
+  is refactored (3 lines) to delegate its import/guard/construction to this factory; its
+  decode behavior is otherwise unchanged. Rationale: the plan says Step 2 "reuses" the
+  buffered error; a shared source is the faithful, drift-free implementation, and it is
+  exactly the shared-helper observation the plan's own Section 11 flags. Verified by
+  Sub-item 2's existing buffered `br` tests staying green (Gate B).
+
+- **PC2 — Step 3 (separate end-of-stream finalization) is dropped; per-chunk draining is
+  used instead.** Step 0(d) investigation (recorded in the execution log) shows aiohttp's
+  incremental Brotli decompressor (backed by `brotli.Decompressor.process`) caps output at
+  roughly 32 KB per `decompress_sync` call and holds the remainder, while aiohttp's
+  `flush()` is a no-op for the `Brotli` package. The correct incremental pattern is to fully
+  drain each chunk via repeated `decompress_sync(b"")` until it yields no more bytes. With
+  per-chunk draining, the last network chunk's tail is emitted before the stream ends, so a
+  distinct end-of-stream flush step adds nothing. The conditional Step 3 is therefore
+  dropped (the plan explicitly allows this: "included only if Step 0(d) confirms it is
+  required; otherwise dropped"). A multi-chunk round-trip test guards completeness (R3).
+
+---
+
 ## 11. Out-of-scope observations
 
 Noticed while planning. Recorded so they are not lost. NOT part of any plan step above.

@@ -1,5 +1,12 @@
 # Release History
 
+## 1.42.0 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed an issue where the buffered aiohttp response path did not decode `Content-Encoding: br` (Brotli) bodies, which could surface as a `UnicodeDecodeError` when reading text. Brotli bodies are now decoded using aiohttp's existing Brotli support; if Brotli support is unavailable, a clear `DecodeError` is raised. #47186
+- Fixed an issue where the streamed aiohttp response path (`stream_download` / `iter_bytes`) did not decode `Content-Encoding: br` (Brotli) bodies, returning still-compressed chunks. Streamed Brotli bodies are now decoded incrementally using aiohttp's existing Brotli support; if Brotli support is unavailable, a clear `DecodeError` is raised. #47186
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
