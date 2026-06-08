@@ -313,7 +313,7 @@ class TraceContextMiddleware:
         try:
             await self.app(scope, receive, send)
         finally:
-            asyncio.get_running_loop().call_soon(detach_context, token)
+            asyncio.get_running_loop().call_soon(_safe_detach_context_callback, token)
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
@@ -400,14 +400,11 @@ def set_current_span(span: Any) -> Any:
     return _otel_context.attach(ctx)
 
 
-def detach_context(token: Any) -> None:
-    """Detach a context previously attached by :func:`set_current_span`.
+def _safe_detach_context_callback(token: Any) -> None:
+    """Best-effort detach for deferred callback contexts.
 
-    Best-effort no-op when *token* is ``None`` or when the token is no
-    longer the current OpenTelemetry context.
-
-    :param token: The token returned by :func:`set_current_span`.
-    :type token: Any
+    This is safe to schedule via event-loop callbacks (e.g. ``call_soon``)
+    because invalid/non-current tokens are ignored.
     """
     if token is not None:
         try:
@@ -417,6 +414,18 @@ def detach_context(token: Any) -> None:
                 "Ignoring OpenTelemetry context detach for a non-current token.",
                 exc_info=True,
             )
+
+
+def detach_context(token: Any) -> None:
+    """Detach a context previously attached by :func:`set_current_span`.
+
+    Best-effort no-op when *token* is ``None`` or when the token is no
+    longer the current OpenTelemetry context.
+
+    :param token: The token returned by :func:`set_current_span`.
+    :type token: Any
+    """
+    _safe_detach_context_callback(token)
 
 
 async def trace_stream(
