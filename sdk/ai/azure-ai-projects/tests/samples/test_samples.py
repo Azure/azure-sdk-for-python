@@ -257,6 +257,7 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_routines_with_schedule_trigger.py",  # Specify through AdditionalSampleTestDetail
                 "sample_routines_crud.py",  # Skipped due to service serialization issues
                 "sample_routines_with_timer_trigger.py",  # Skipped due to service serialization issues
+                "sample_routines_with_dispatch.py",  # 403: test identity lacks routines/dispatch data-action
             ],
         ),
     )
