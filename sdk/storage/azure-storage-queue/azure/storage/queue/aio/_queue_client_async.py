@@ -575,7 +575,10 @@ class QueueClient(  # type: ignore [misc]
             if value:
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+                access_policy = value._to_generated()  # pylint: disable=protected-access
+            else:
+                access_policy = None
+            identifiers.append(SignedIdentifier(id=key, access_policy=access_policy))
         signed_identifiers_model = SignedIdentifiers(items_property=identifiers) if identifiers else None
         try:
             await self._client.queue.set_access_policy(queue_acl=signed_identifiers_model, timeout=timeout, **kwargs)
