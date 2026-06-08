@@ -1,22 +1,48 @@
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { pathToFileURL } = require("url");
 
-function runNode(scriptRelativePath, workspace, core) {
-  const result = spawnSync("node", [scriptRelativePath], {
-    cwd: workspace,
-    env: process.env,
-    encoding: "utf-8",
-  });
+const SHARED_SRC_ROOT = path.resolve(__dirname, "..", "..", "..", "shared", "src");
+const sharedModuleCache = new Map();
 
-  if (result.stdout) {
-    core.info(result.stdout.trimEnd());
+async function loadSharedModule(fileName) {
+  if (sharedModuleCache.has(fileName)) {
+    return sharedModuleCache.get(fileName);
   }
-  if (result.stderr) {
-    core.info(result.stderr.trimEnd());
-  }
-  if (result.status !== 0) {
-    throw new Error(`Command failed (${result.status}): node ${scriptRelativePath}`);
+
+  const filePath = path.join(SHARED_SRC_ROOT, fileName);
+  const modulePromise = import(pathToFileURL(filePath).href);
+  sharedModuleCache.set(fileName, modulePromise);
+  return modulePromise;
+}
+
+async function runNode(scriptRelativePath, workspace, core) {
+  const { execFile, isExecError } = await loadSharedModule("exec.js");
+
+  try {
+    const result = await execFile("node", [scriptRelativePath], {
+      cwd: workspace,
+      logger: core,
+    });
+
+    if (result.stdout) {
+      core.info(result.stdout.trimEnd());
+    }
+    if (result.stderr) {
+      core.info(result.stderr.trimEnd());
+    }
+  } catch (error) {
+    if (isExecError(error)) {
+      if (error.stdout) {
+        core.info(error.stdout.trimEnd());
+      }
+      if (error.stderr) {
+        core.info(error.stderr.trimEnd());
+      }
+    }
+
+    const status = isExecError(error) && Number.isInteger(error.code) ? error.code : 1;
+    throw new Error(`Command failed (${status}): node ${scriptRelativePath}`);
   }
 }
 
@@ -53,7 +79,7 @@ function formatIssueSection(title, apiFiles) {
 module.exports = async function apiMdConsistency({ core }) {
   const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
 
-  runNode("scripts/api_md_workflow/find_affected.js", workspace, core);
+  await runNode("scripts/api_md_workflow/find_affected.js", workspace, core);
 
   const affected = readLines(process.env.API_MD_PACKAGES_FILE, workspace);
   const changedCount = affected.length;
@@ -71,8 +97,8 @@ module.exports = async function apiMdConsistency({ core }) {
     };
   }
 
-  runNode("scripts/api_md_workflow/regenerate.js", workspace, core);
-  runNode("scripts/api_md_workflow/find_mismatches.js", workspace, core);
+  await runNode("scripts/api_md_workflow/regenerate.js", workspace, core);
+  await runNode("scripts/api_md_workflow/find_mismatches.js", workspace, core);
 
   const mismatches = readLines(process.env.API_MD_MISMATCHES_FILE, workspace);
   const missing = readLines(process.env.API_MD_MISSING_FILE, workspace);
