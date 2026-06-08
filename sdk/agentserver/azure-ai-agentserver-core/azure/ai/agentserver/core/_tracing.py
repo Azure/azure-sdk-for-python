@@ -313,7 +313,7 @@ class TraceContextMiddleware:
         try:
             await self.app(scope, receive, send)
         finally:
-            asyncio.get_running_loop().call_soon(detach_context, token)
+            asyncio.get_running_loop().call_soon(_detach_token_safely, token)
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
@@ -417,6 +417,19 @@ def detach_context(token: Any) -> None:
                 "Ignoring OpenTelemetry context detach for a non-current token.",
                 exc_info=True,
             )
+
+
+def _detach_token_safely(token: Any) -> None:
+    """Best-effort detach callback for deferred token cleanup."""
+    if token is None:
+        return
+    try:
+        _otel_context.detach(token)
+    except ValueError:
+        logging.getLogger(__name__).debug(
+            "Ignoring OpenTelemetry context detach for a non-current token.",
+            exc_info=True,
+        )
 
 
 async def trace_stream(
