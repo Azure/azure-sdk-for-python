@@ -33,7 +33,6 @@ tracing exporters, and span operations:
 OpenTelemetry is a required dependency — these functions always create
 real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
-import asyncio
 import logging
 import os
 from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
@@ -172,14 +171,6 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
     agent_version = _config.resolve_agent_version() or None
     project_id = _config.resolve_project_id() or None
     agent_id = _config.resolve_agent_id() or None
-    # Hosted runtime can expose agent identity as AGENT_<name>_NAME / _VERSION
-    # rather than FOUNDRY_AGENT_NAME / _VERSION. Fill missing fields from that
-    # environment shape to ensure log enrichment has stable dimensions.
-    env_agent_name, env_agent_version = _resolve_agent_name_version_from_env()
-    if not agent_name:
-        agent_name = env_agent_name
-    if not agent_version:
-        agent_version = env_agent_version
     agent_blueprint_id = _config.resolve_agent_blueprint_id() or None
     agent_tenant_id = _config.resolve_agent_tenant_id() or None
 
@@ -319,17 +310,13 @@ class TraceContextMiddleware:
             non_recording = trace.NonRecordingSpan(span_ctx)
             ctx = trace.set_span_in_context(non_recording, ctx)
 
-        # Attach request context for app execution and defer detach by one
-        # event-loop turn so server-side access logging that runs immediately
-        # after app return can still observe the request trace context.
+        # Attach request context for app execution and detach in the same
+        # Task/context to avoid leaking contextvars across requests.
         token = _otel_context.attach(ctx)
         try:
             await self.app(scope, receive, send)
         finally:
-            try:
-                asyncio.get_running_loop().call_soon(detach_context, token)
-            except RuntimeError:
-                detach_context(token)
+            detach_context(token)
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
@@ -598,35 +585,9 @@ def _create_resource() -> Any:
         logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
     # service.name maps to cloud_RoleName in App Insights
-    agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
+    agent_name = _config.resolve_agent_name() or ""
     service_name = agent_name or _SERVICE_NAME_VALUE
     return Resource.create({_ATTR_SERVICE_NAME: service_name})
-
-
-def _resolve_agent_name_version_from_env() -> tuple[Optional[str], Optional[str]]:
-    """Resolve agent name/version from AGENT_*_NAME / AGENT_*_VERSION env pairs."""
-    stems_to_name: dict[str, str] = {}
-    stems_to_version: dict[str, str] = {}
-    for key, value in os.environ.items():
-        if not value:
-            continue
-        if key.startswith("AGENT_") and key.endswith("_NAME"):
-            stem = key[len("AGENT_"):-len("_NAME")]
-            stems_to_name[stem] = value
-        elif key.startswith("AGENT_") and key.endswith("_VERSION"):
-            stem = key[len("AGENT_"):-len("_VERSION")]
-            stems_to_version[stem] = value
-
-    # Prefer a matched pair from the same stem.
-    for stem, name in stems_to_name.items():
-        version = stems_to_version.get(stem)
-        if name or version:
-            return (name or None, version or None)
-
-    # Fallback to any available values.
-    any_name = next(iter(stems_to_name.values()), None)
-    any_version = next(iter(stems_to_version.values()), None)
-    return any_name, any_version
 
 
 def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] = None) -> Any:
