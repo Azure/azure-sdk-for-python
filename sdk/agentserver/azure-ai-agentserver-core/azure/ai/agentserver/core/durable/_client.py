@@ -511,14 +511,25 @@ class HostedTaskProvider:
 
         headers: dict[str, str] = {"Content-Type": "application/json"}
         if patch.if_match is not None:
-            # Pass the service-returned etag straight through. The
-            # hosted task store's comparator (since the server-side
-            # fix landed) treats the etag value verbatim — no client-
-            # side stripping or wrapping. The local provider already
-            # accepts bare values; both providers therefore round-
-            # trip the same byte-for-byte value from a prior GET /
-            # PATCH response into the next If-Match.
-            headers["If-Match"] = str(patch.if_match)
+            # The hosted task store returns the etag in the JSON body
+            # with literal RFC 7232 outer quotes already embedded in
+            # the string value (e.g. the body field is
+            # ``"etag": "\"5e00450b-...\""`` -- the inner quote
+            # characters are PART of the string value). The server's
+            # etag comparator expects a single set of outer quotes
+            # on the ``If-Match`` header, so we strip any embedded
+            # quotes off the body value and wrap exactly once.
+            # Send shape: ``If-Match: "5e00450b-..."``.
+            #
+            # Without the strip the wire ends up with TWO sets of
+            # outer quotes (the embedded pair from the body + the
+            # framework's wrap) which the server reads as a
+            # precondition failure -> 412 on every CAS write. The
+            # local provider's bare-value etag (no embedded quotes)
+            # passes through unchanged: strip is a no-op and the
+            # wrap adds the single RFC 7232 pair.
+            raw = str(patch.if_match).strip('"')
+            headers["If-Match"] = f'"{raw}"'
 
         url = f"{self._base_url}/{task_id}"
         http_request = HttpRequest(

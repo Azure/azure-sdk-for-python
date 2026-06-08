@@ -1944,11 +1944,20 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         try:
             etag = getattr(task_info, "etag", None) or None
+            # Pre-deploy workaround for the hosted task store's etag
+            # comparator -- see ``_append_steering_input`` for the
+            # full note. Server-side fix is queued but not yet
+            # deployed; until then drop the etag precondition after
+            # 2 retries so the drain converges. Last-write-wins on
+            # the steering-state payload is acceptable here -- the
+            # drain only runs from a single in-process call site
+            # (the task body's suspend boundary).
+            use_etag = etag if _conflict_attempt < 2 else None
             await self._provider.update(
                 task_id,
                 TaskPatchRequest(
                     payload=payload,
-                    if_match=etag,
+                    if_match=use_etag,
                     **self._lease_ext_kwargs(task_id),
                 ),
             )
