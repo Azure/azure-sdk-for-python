@@ -109,9 +109,15 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         :return: A frozen config with resolved values.
         :rtype: AgentConfig
         """
-        agent_name = resolve_agent_name()
-        agent_version = resolve_agent_version()
-        agent_id = resolve_agent_id()
+        agent_name = os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
+        agent_version = os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
+
+        if agent_name and agent_version:
+            agent_id = f"{agent_name}:{agent_version}"
+        elif agent_name:
+            agent_id = agent_name
+        else:
+            agent_id = ""
 
         return cls(
             agent_name=agent_name,

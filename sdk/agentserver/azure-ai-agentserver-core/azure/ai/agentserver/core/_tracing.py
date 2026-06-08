@@ -182,12 +182,7 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
             agent_tenant_id=agent_tenant_id,
         ),
     ]
-    log_record_processors = [
-        _BaggageLogRecordProcessor(
-            agent_name=agent_name,
-            agent_version=agent_version,
-        )
-    ]  # type: ignore[list-item]
+    log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
 
     try:
         _setup_distro_export(
@@ -536,15 +531,6 @@ class _BaggageLogRecordProcessor:
     for end-to-end correlation.
     """
 
-    def __init__(
-        self,
-        *,
-        agent_name: Optional[str] = None,
-        agent_version: Optional[str] = None,
-    ) -> None:
-        self.agent_name = agent_name
-        self.agent_version = agent_version
-
     def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
         """Copy baggage entries into the log record's attributes.
 
@@ -554,12 +540,6 @@ class _BaggageLogRecordProcessor:
         try:
             ctx = _otel_context.get_current()
             entries = _otel_baggage.get_all(context=ctx)
-            if hasattr(log_data, 'log_record') and log_data.log_record:
-                attrs = log_data.log_record.attributes
-                if self.agent_name:
-                    attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name  # type: ignore[index]
-                if self.agent_version:
-                    attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version  # type: ignore[index]
             if entries and hasattr(log_data, 'log_record') and log_data.log_record:
                 for key, value in entries.items():
                     log_data.log_record.attributes[key] = value  # type: ignore[index]
@@ -585,7 +565,7 @@ def _create_resource() -> Any:
         logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
     # service.name maps to cloud_RoleName in App Insights
-    agent_name = _config.resolve_agent_name() or ""
+    agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
     service_name = agent_name or _SERVICE_NAME_VALUE
     return Resource.create({_ATTR_SERVICE_NAME: service_name})
 
