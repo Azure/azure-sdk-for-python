@@ -799,24 +799,6 @@ class Task(Generic[Input, Output]):
                 payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
 
             etag = getattr(task_info, "etag", None) or None
-            # Pre-deploy workaround for the hosted task store's etag
-            # comparator. The strip-and-wrap-once If-Match format we
-            # send (see ``_client.py:update``) matches what the
-            # working .http tests use, but the server-side fix that
-            # aligns the comparator with this format is queued and
-            # not yet deployed. Live PATCHes against the pre-fix
-            # server return 412 even when If-Match matches the etag
-            # from the immediately-prior GET (verified with
-            # interleaved GET + PATCH wire logs -- same etag, no
-            # other writer between the calls). Once the server fix
-            # deploys, the first attempt succeeds and the fallback
-            # never triggers; this workaround becomes inert.
-            # Until then, keep If-Match for the first 2 retries (so
-            # local-provider concurrent-write protection still works
-            # in tests) then drop it so steering -- which the
-            # framework contract requires to be transparent to
-            # callers -- converges.
-            use_etag = etag if _attempt < 2 else None
             # Piggyback lease ownership on the steering-append PATCH so
             # the lease is refreshed as a side effect (see
             # ``TaskManager._lease_ext_kwargs``). Zero extra round-
@@ -832,7 +814,7 @@ class Task(Generic[Input, Output]):
                 await manager.provider.update(
                     task_id,
                     TaskPatchRequest(
-                        payload=payload, if_match=use_etag, **lease_kwargs
+                        payload=payload, if_match=etag, **lease_kwargs
                     ),
                 )
                 manager._note_lease_refreshed(  # pylint: disable=protected-access
@@ -846,10 +828,10 @@ class Task(Generic[Input, Output]):
                     active.context.cancel.set()
                 return
             except ValueError:
-                # Local provider etag conflict -- retry
+                # Local provider etag conflict -- retry with the new etag
                 continue
             except _TransportClassifiedError as exc:
-                # See workaround note above.
+                # Hosted task store etag conflict (412 / 409) -- retry.
                 if getattr(exc, "classification", None) == "conflict":
                     continue
                 raise
