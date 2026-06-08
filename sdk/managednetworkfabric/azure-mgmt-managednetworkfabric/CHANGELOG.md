@@ -369,6 +369,7 @@
   - Added model `NniUpdateBfdAdministrativeStateResponseProperties`
   - Added model `NpbStaticRouteConfigurationPatch`
   - Added model `OperationStatusResult`
+  - Added model `OptionBLayer3ConfigurationPatchProperties`
   - Added model `OptionBLayer3PrefixLimitPatchProperties`
   - Added model `OptionBLayer3PrefixLimitProperties`
   - Added model `PoliceRateConfigurationProperties`
@@ -415,7 +416,6 @@
   - Added model `VlanGroupPatchProperties`
   - Added model `VlanMatchConditionPatch`
   - Added model `VpnOptionAPatchProperties`
-  - Added model `VpnOptionAProperties`
   - Added model `VpnOptionBPatchProperties`
   - Model `ExternalNetworksOperations` added method `begin_update_bfd_administrative_state`
   - Model `InternalNetworksOperations` added method `begin_update_bfd_administrative_state`
@@ -713,9 +713,9 @@
   - Deleted or renamed model `NetworkTapPatchableParametersDestinationsItem`
   - Deleted or renamed model `NetworkTapPropertiesDestinationsItem`
   - Deleted or renamed model `NetworkTapRulePatchableProperties`
-  - Renamed model `NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration` to `OptionBLayer3ConfigurationPatchProperties`
+  - Deleted or renamed model `NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration`
   - Deleted or renamed model `NetworkToNetworkInterconnectsList`
-  - Deleted or renamed model `OptionAProperties`
+  - Renamed model `OptionAProperties` to `VpnOptionAProperties`
   - Renamed model `OptionBProperties` to `VpnOptionBProperties`
   - Deleted or renamed model `PollingIntervalInSeconds`
   - Deleted or renamed model `TerminalServerPatchableProperties`
