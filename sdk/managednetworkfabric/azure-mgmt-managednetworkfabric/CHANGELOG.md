@@ -8,12 +8,10 @@
   - Client `ManagedNetworkFabricMgmtClient` added operation group `network_monitors`
   - Client `ManagedNetworkFabricMgmtClient` added operation group `network_bootstrap_devices`
   - Client `ManagedNetworkFabricMgmtClient` added operation group `network_bootstrap_interfaces`
-  - Model `AccessControlList` added property `properties`
   - Model `AccessControlListAction` added property `remark_comment`
   - Model `AccessControlListAction` added property `police_rate_configuration`
   - Model `AccessControlListMatchCondition` added property `protocol_neighbors`
   - Model `AccessControlListMatchCondition` added property `icmp_configuration`
-  - Model `AccessControlListPatch` added property `properties`
   - Model `AccessControlListPatchProperties` added property `control_plane_acl_configuration`
   - Model `AccessControlListPatchProperties` added property `acl_type`
   - Model `AccessControlListPatchProperties` added property `device_role`
@@ -38,7 +36,6 @@
   - Enum `DeviceAdministrativeState` added member `UNGRACEFUL_QUARANTINE`
   - Enum `DeviceAdministrativeState` added member `UNGRACEFUL_RMA`
   - Enum `EnableDisableState` added member `UNDER_MAINTENANCE`
-  - Model `ExternalNetwork` added property `properties`
   - Model `ExternalNetworkPatchProperties` added property `static_route_configuration`
   - Model `ExternalNetworkPatchPropertiesOptionAProperties` added property `bmp_configuration`
   - Model `ExternalNetworkPatchPropertiesOptionAProperties` added property `v4_over_v6_bgp_session`
@@ -53,31 +50,24 @@
   - Model `ExternalNetworkPropertiesOptionAProperties` added property `v6_over_v4_bgp_session`
   - Model `ExternalNetworkPropertiesOptionAProperties` added property `native_ipv4_prefix_limit`
   - Model `ExternalNetworkPropertiesOptionAProperties` added property `native_ipv6_prefix_limit`
-  - Model `InternalNetwork` added property `properties`
   - Model `InternalNetworkPatchProperties` added property `native_ipv4_prefix_limit`
   - Model `InternalNetworkPatchProperties` added property `native_ipv6_prefix_limit`
   - Model `InternalNetworkProperties` added property `native_ipv4_prefix_limit`
   - Model `InternalNetworkProperties` added property `native_ipv6_prefix_limit`
   - Model `InternalNetworkProperties` added property `last_operation`
   - Model `InternalNetworkProperties` added property `network_fabric_id`
-  - Model `InternetGateway` added property `properties`
   - Model `InternetGatewayProperties` added property `internet_gateway_type`
   - Model `InternetGatewayProperties` added property `last_operation`
-  - Model `InternetGatewayRule` added property `properties`
   - Model `InternetGatewayRuleProperties` added property `last_operation`
-  - Model `IpCommunity` added property `properties`
   - Model `IpCommunityPatch` added property `properties`
   - Model `IpCommunityProperties` added property `network_fabric_id`
   - Model `IpCommunityProperties` added property `last_operation`
-  - Model `IpExtendedCommunity` added property `properties`
   - Model `IpExtendedCommunityPatch` added property `properties`
   - Model `IpExtendedCommunityProperties` added property `network_fabric_id`
   - Model `IpExtendedCommunityProperties` added property `last_operation`
-  - Model `IpPrefix` added property `properties`
   - Model `IpPrefixPatch` added property `properties`
   - Model `IpPrefixProperties` added property `network_fabric_id`
   - Model `IpPrefixProperties` added property `last_operation`
-  - Model `L2IsolationDomain` added property `properties`
   - Model `L2IsolationDomain` added property `identity`
   - Model `L2IsolationDomainPatch` added property `properties`
   - Model `L2IsolationDomainPatch` added property `identity`
@@ -86,9 +76,7 @@
   - Model `L2IsolationDomainProperties` added property `extended_vlan`
   - Model `L2IsolationDomainProperties` added property `network_to_network_interconnect_id`
   - Model `L2IsolationDomainProperties` added property `last_operation`
-  - Model `L3IsolationDomain` added property `properties`
   - Model `L3IsolationDomain` added property `identity`
-  - Model `L3IsolationDomainPatch` added property `properties`
   - Model `L3IsolationDomainPatch` added property `identity`
   - Model `L3IsolationDomainPatchProperties` added property `static_route_policy`
   - Model `L3IsolationDomainPatchProperties` added property `v4_route_prefix_limit`
@@ -103,14 +91,12 @@
   - Enum `Layer4Protocol` added member `SCTP`
   - Model `NeighborAddress` added property `bfd_administrative_state`
   - Model `NeighborAddress` added property `bgp_administrative_state`
-  - Model `NeighborGroup` added property `properties`
   - Model `NeighborGroup` added property `identity`
   - Model `NeighborGroupPatch` added property `properties`
   - Model `NeighborGroupPatch` added property `identity`
   - Model `NeighborGroupProperties` added property `network_fabric_ids`
   - Model `NeighborGroupProperties` added property `last_operation`
   - Model `NeighborGroupProperties` added property `configuration_state`
-  - Model `NetworkDevice` added property `properties`
   - Model `NetworkDevice` added property `identity`
   - Model `NetworkDevicePatchParameters` added property `properties`
   - Model `NetworkDevicePatchParameters` added property `identity`
@@ -121,13 +107,10 @@
   - Model `NetworkDeviceProperties` added property `secret_rotation_status`
   - Model `NetworkDeviceProperties` added property `certificate_rotation_status`
   - Model `NetworkDeviceProperties` added property `network_fabric_id`
-  - Model `NetworkFabric` added property `properties`
   - Model `NetworkFabric` added property `identity`
-  - Model `NetworkFabricController` added property `properties`
   - Model `NetworkFabricController` added property `identity`
   - Model `NetworkFabricControllerPatch` added property `identity`
   - Model `NetworkFabricControllerProperties` added property `last_operation`
-  - Model `NetworkFabricPatch` added property `properties`
   - Model `NetworkFabricPatch` added property `identity`
   - Model `NetworkFabricPatchProperties` added property `storage_account_configuration`
   - Model `NetworkFabricPatchProperties` added property `hardware_alert_threshold`
@@ -150,7 +133,6 @@
   - Model `NetworkFabricProperties` added property `last_operation`
   - Model `NetworkFabricProperties` added property `authorized_transceiver`
   - Model `NetworkFabricProperties` added property `qos_configuration`
-  - Model `NetworkInterface` added property `properties`
   - Model `NetworkInterface` added property `identity`
   - Model `NetworkInterfacePatchProperties` added property `additional_description`
   - Model `NetworkInterfaceProperties` added property `description`
@@ -160,17 +142,13 @@
   - Model `NetworkInterfaceProperties` added property `configuration_state`
   - Model `NetworkPacketBroker` added property `identity`
   - Model `NetworkPacketBrokerPatch` added property `identity`
-  - Model `NetworkRack` added property `properties`
   - Model `NetworkRackProperties` added property `last_operation`
   - Model `NetworkRackProperties` added property `configuration_state`
-  - Model `NetworkTap` added property `properties`
   - Model `NetworkTap` added property `identity`
   - Model `NetworkTapPatch` added property `identity`
   - Model `NetworkTapProperties` added property `network_fabric_ids`
   - Model `NetworkTapProperties` added property `last_operation`
-  - Model `NetworkTapRule` added property `properties`
   - Model `NetworkTapRule` added property `identity`
-  - Model `NetworkTapRulePatch` added property `properties`
   - Model `NetworkTapRulePatch` added property `identity`
   - Model `NetworkTapRulePatchProperties` added property `identity_selector`
   - Model `NetworkTapRulePatchProperties` added property `global_network_tap_rule_actions`
@@ -183,7 +161,6 @@
   - Model `OptionBLayer3Configuration` added property `bmp_configuration`
   - Model `OptionBLayer3Configuration` added property `prefix_limits`
   - Enum `PortType` added member `BIDIRECTIONAL`
-  - Model `RoutePolicy` added property `properties`
   - Model `RoutePolicyPatch` added property `properties`
   - Model `RoutePolicyProperties` added property `last_operation`
   - Model `RuleProperties` added property `condition`
@@ -417,58 +394,36 @@
   - Added model `VlanMatchConditionPatch`
   - Added model `VpnOptionAPatchProperties`
   - Added model `VpnOptionBPatchProperties`
-  - Model `ExternalNetworksOperations` added method `begin_update_bfd_administrative_state`
-  - Model `InternalNetworksOperations` added method `begin_update_bfd_administrative_state`
-  - Model `NeighborGroupsOperations` added method `begin_resync`
-  - Model `NetworkDevicesOperations` added method `begin_resync_certificates`
-  - Model `NetworkDevicesOperations` added method `begin_resync_passwords`
-  - Model `NetworkDevicesOperations` added method `begin_run_ro_command`
-  - Model `NetworkDevicesOperations` added method `begin_run_rw_command`
-  - Model `NetworkFabricsOperations` added method `begin_arm_configuration_diff`
-  - Model `NetworkFabricsOperations` added method `begin_commit_batch_status`
-  - Model `NetworkFabricsOperations` added method `begin_discard_commit_batch`
-  - Model `NetworkFabricsOperations` added method `begin_lock_fabric`
-  - Model `NetworkFabricsOperations` added method `begin_resync_certificates`
-  - Model `NetworkFabricsOperations` added method `begin_resync_passwords`
-  - Model `NetworkFabricsOperations` added method `begin_rotate_certificates`
-  - Model `NetworkFabricsOperations` added method `begin_rotate_passwords`
-  - Model `NetworkFabricsOperations` added method `begin_view_device_configuration`
-  - Model `NetworkToNetworkInterconnectsOperations` added method `begin_update_bfd_administrative_state`
-  - Added model `NetworkBootstrapDevicesOperations`
-  - Added model `NetworkBootstrapInterfacesOperations`
-  - Added model `NetworkMonitorsOperations`
+  - Operation group `ExternalNetworksOperations` added method `begin_update_bfd_administrative_state`
+  - Operation group `InternalNetworksOperations` added method `begin_update_bfd_administrative_state`
+  - Operation group `NeighborGroupsOperations` added method `begin_resync`
+  - Operation group `NetworkDevicesOperations` added method `begin_resync_certificates`
+  - Operation group `NetworkDevicesOperations` added method `begin_resync_passwords`
+  - Operation group `NetworkDevicesOperations` added method `begin_run_ro_command`
+  - Operation group `NetworkDevicesOperations` added method `begin_run_rw_command`
+  - Operation group `NetworkFabricsOperations` added method `begin_arm_configuration_diff`
+  - Operation group `NetworkFabricsOperations` added method `begin_commit_batch_status`
+  - Operation group `NetworkFabricsOperations` added method `begin_discard_commit_batch`
+  - Operation group `NetworkFabricsOperations` added method `begin_lock_fabric`
+  - Operation group `NetworkFabricsOperations` added method `begin_resync_certificates`
+  - Operation group `NetworkFabricsOperations` added method `begin_resync_passwords`
+  - Operation group `NetworkFabricsOperations` added method `begin_rotate_certificates`
+  - Operation group `NetworkFabricsOperations` added method `begin_rotate_passwords`
+  - Operation group `NetworkFabricsOperations` added method `begin_view_device_configuration`
+  - Operation group `NetworkToNetworkInterconnectsOperations` added method `begin_update_bfd_administrative_state`
+  - Added operation group `NetworkBootstrapDevicesOperations`
+  - Added operation group `NetworkBootstrapInterfacesOperations`
+  - Added operation group `NetworkMonitorsOperations`
 
 ### Breaking Changes
 
-  - Model `AccessControlList` deleted or renamed its instance variable `annotation`
-  - Model `AccessControlList` deleted or renamed its instance variable `configuration_type`
-  - Model `AccessControlList` deleted or renamed its instance variable `acls_url`
-  - Model `AccessControlList` deleted or renamed its instance variable `default_action`
-  - Model `AccessControlList` deleted or renamed its instance variable `match_configurations`
-  - Model `AccessControlList` deleted or renamed its instance variable `dynamic_match_configurations`
-  - Model `AccessControlList` deleted or renamed its instance variable `last_synced_time`
-  - Model `AccessControlList` deleted or renamed its instance variable `configuration_state`
-  - Model `AccessControlList` deleted or renamed its instance variable `provisioning_state`
-  - Model `AccessControlList` deleted or renamed its instance variable `administrative_state`
-  - Model `AccessControlListPatch` deleted or renamed its instance variable `configuration_type`
-  - Model `AccessControlListPatch` deleted or renamed its instance variable `acls_url`
-  - Model `AccessControlListPatch` deleted or renamed its instance variable `default_action`
-  - Model `AccessControlListPatch` deleted or renamed its instance variable `match_configurations`
-  - Model `AccessControlListPatch` deleted or renamed its instance variable `dynamic_match_configurations`
-  - Model `AccessControlListPatch` deleted or renamed its instance variable `annotation`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AccessControlList` moved instance variable `annotation`, `configuration_type`, `acls_url`, `default_action`, `match_configurations`, `dynamic_match_configurations`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `AccessControlListProperties`
+  - Model `AccessControlListPatch` moved instance variable `configuration_type`, `acls_url`, `default_action`, `match_configurations`, `dynamic_match_configurations` and `annotation` under property `properties` whose type is `AccessControlListPatchProperties`
   - Model `ConnectedSubnetRoutePolicy` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `annotation`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `network_to_network_interconnect_id`
+  - Model `ExternalNetwork` moved instance variable `annotation`, `network_to_network_interconnect_id`, `import_route_policy`, `export_route_policy`, `peering_option`, `option_b_properties`, `option_a_properties`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `ExternalNetworkProperties`
   - Model `ExternalNetwork` deleted or renamed its instance variable `import_route_policy_id`
   - Model `ExternalNetwork` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `import_route_policy`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `export_route_policy`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `peering_option`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `option_b_properties`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `option_a_properties`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `configuration_state`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `provisioning_state`
-  - Model `ExternalNetwork` deleted or renamed its instance variable `administrative_state`
   - Model `ExternalNetworkPatch` deleted or renamed its instance variable `annotation`
   - Model `ExternalNetworkPatch` deleted or renamed its instance variable `network_to_network_interconnect_id`
   - Model `ExternalNetworkPatch` deleted or renamed its instance variable `import_route_policy_id`
@@ -482,24 +437,9 @@
   - Model `ExternalNetworkPatchProperties` deleted or renamed its instance variable `export_route_policy_id`
   - Model `ExternalNetworkProperties` deleted or renamed its instance variable `import_route_policy_id`
   - Model `ExternalNetworkProperties` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `InternalNetwork` deleted or renamed its instance variable `annotation`
-  - Model `InternalNetwork` deleted or renamed its instance variable `mtu`
-  - Model `InternalNetwork` deleted or renamed its instance variable `connected_i_pv4_subnets`
-  - Model `InternalNetwork` deleted or renamed its instance variable `connected_i_pv6_subnets`
+  - Model `InternalNetwork` moved instance variable `annotation`, `mtu`, `connected_i_pv4_subnets`, `connected_i_pv6_subnets`, `import_route_policy`, `export_route_policy`, `ingress_acl_id`, `egress_acl_id`, `is_monitoring_enabled`, `extension`, `vlan_id`, `bgp_configuration`, `static_route_configuration`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `InternalNetworkProperties`
   - Model `InternalNetwork` deleted or renamed its instance variable `import_route_policy_id`
   - Model `InternalNetwork` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `InternalNetwork` deleted or renamed its instance variable `import_route_policy`
-  - Model `InternalNetwork` deleted or renamed its instance variable `export_route_policy`
-  - Model `InternalNetwork` deleted or renamed its instance variable `ingress_acl_id`
-  - Model `InternalNetwork` deleted or renamed its instance variable `egress_acl_id`
-  - Model `InternalNetwork` deleted or renamed its instance variable `is_monitoring_enabled`
-  - Model `InternalNetwork` deleted or renamed its instance variable `extension`
-  - Model `InternalNetwork` deleted or renamed its instance variable `vlan_id`
-  - Model `InternalNetwork` deleted or renamed its instance variable `bgp_configuration`
-  - Model `InternalNetwork` deleted or renamed its instance variable `static_route_configuration`
-  - Model `InternalNetwork` deleted or renamed its instance variable `configuration_state`
-  - Model `InternalNetwork` deleted or renamed its instance variable `provisioning_state`
-  - Model `InternalNetwork` deleted or renamed its instance variable `administrative_state`
   - Model `InternalNetworkPatch` deleted or renamed its instance variable `annotation`
   - Model `InternalNetworkPatch` deleted or renamed its instance variable `mtu`
   - Model `InternalNetworkPatch` deleted or renamed its instance variable `connected_i_pv4_subnets`
@@ -517,180 +457,50 @@
   - Model `InternalNetworkPatchProperties` deleted or renamed its instance variable `export_route_policy_id`
   - Model `InternalNetworkProperties` deleted or renamed its instance variable `import_route_policy_id`
   - Model `InternalNetworkProperties` deleted or renamed its instance variable `export_route_policy_id`
-  - Model `InternetGateway` deleted or renamed its instance variable `annotation`
-  - Model `InternetGateway` deleted or renamed its instance variable `internet_gateway_rule_id`
-  - Model `InternetGateway` deleted or renamed its instance variable `ipv4_address`
-  - Model `InternetGateway` deleted or renamed its instance variable `port`
+  - Model `InternetGateway` moved instance variable `annotation`, `internet_gateway_rule_id`, `ipv4_address`, `port`, `network_fabric_controller_id` and `provisioning_state` under property `properties` whose type is `InternetGatewayProperties`
   - Model `InternetGateway` deleted or renamed its instance variable `type_properties_type`
-  - Model `InternetGateway` deleted or renamed its instance variable `network_fabric_controller_id`
-  - Model `InternetGateway` deleted or renamed its instance variable `provisioning_state`
-  - Model `InternetGatewayRule` deleted or renamed its instance variable `annotation`
-  - Model `InternetGatewayRule` deleted or renamed its instance variable `rule_properties`
-  - Model `InternetGatewayRule` deleted or renamed its instance variable `provisioning_state`
-  - Model `InternetGatewayRule` deleted or renamed its instance variable `internet_gateway_ids`
-  - Model `IpCommunity` deleted or renamed its instance variable `annotation`
-  - Model `IpCommunity` deleted or renamed its instance variable `ip_community_rules`
-  - Model `IpCommunity` deleted or renamed its instance variable `configuration_state`
-  - Model `IpCommunity` deleted or renamed its instance variable `provisioning_state`
-  - Model `IpCommunity` deleted or renamed its instance variable `administrative_state`
+  - Model `InternetGatewayRule` moved instance variable `annotation`, `rule_properties`, `provisioning_state` and `internet_gateway_ids` under property `properties` whose type is `InternetGatewayRuleProperties`
+  - Model `IpCommunity` moved instance variable `annotation`, `ip_community_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpCommunityProperties`
   - Model `IpCommunityPatch` deleted or renamed its instance variable `ip_community_rules`
-  - Model `IpExtendedCommunity` deleted or renamed its instance variable `annotation`
-  - Model `IpExtendedCommunity` deleted or renamed its instance variable `ip_extended_community_rules`
-  - Model `IpExtendedCommunity` deleted or renamed its instance variable `configuration_state`
-  - Model `IpExtendedCommunity` deleted or renamed its instance variable `provisioning_state`
-  - Model `IpExtendedCommunity` deleted or renamed its instance variable `administrative_state`
+  - Model `IpExtendedCommunity` moved instance variable `annotation`, `ip_extended_community_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpExtendedCommunityProperties`
   - Model `IpExtendedCommunityPatch` deleted or renamed its instance variable `ip_extended_community_rules`
   - Model `IpExtendedCommunityPatch` deleted or renamed its instance variable `annotation`
-  - Model `IpPrefix` deleted or renamed its instance variable `annotation`
-  - Model `IpPrefix` deleted or renamed its instance variable `ip_prefix_rules`
-  - Model `IpPrefix` deleted or renamed its instance variable `configuration_state`
-  - Model `IpPrefix` deleted or renamed its instance variable `provisioning_state`
-  - Model `IpPrefix` deleted or renamed its instance variable `administrative_state`
+  - Model `IpPrefix` moved instance variable `annotation`, `ip_prefix_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpPrefixProperties`
   - Model `IpPrefixPatch` deleted or renamed its instance variable `annotation`
   - Model `IpPrefixPatch` deleted or renamed its instance variable `ip_prefix_rules`
-  - Model `L2IsolationDomain` deleted or renamed its instance variable `annotation`
-  - Model `L2IsolationDomain` deleted or renamed its instance variable `network_fabric_id`
-  - Model `L2IsolationDomain` deleted or renamed its instance variable `vlan_id`
-  - Model `L2IsolationDomain` deleted or renamed its instance variable `mtu`
-  - Model `L2IsolationDomain` deleted or renamed its instance variable `configuration_state`
-  - Model `L2IsolationDomain` deleted or renamed its instance variable `provisioning_state`
-  - Model `L2IsolationDomain` deleted or renamed its instance variable `administrative_state`
+  - Model `L2IsolationDomain` moved instance variable `annotation`, `network_fabric_id`, `vlan_id`, `mtu`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `L2IsolationDomainProperties`
   - Model `L2IsolationDomainPatch` deleted or renamed its instance variable `annotation`
   - Model `L2IsolationDomainPatch` deleted or renamed its instance variable `mtu`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `annotation`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `redistribute_connected_subnets`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `redistribute_static_routes`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `aggregate_route_configuration`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `connected_subnet_route_policy`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `network_fabric_id`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `configuration_state`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `provisioning_state`
-  - Model `L3IsolationDomain` deleted or renamed its instance variable `administrative_state`
-  - Model `L3IsolationDomainPatch` deleted or renamed its instance variable `annotation`
-  - Model `L3IsolationDomainPatch` deleted or renamed its instance variable `redistribute_connected_subnets`
-  - Model `L3IsolationDomainPatch` deleted or renamed its instance variable `redistribute_static_routes`
-  - Model `L3IsolationDomainPatch` deleted or renamed its instance variable `aggregate_route_configuration`
-  - Model `L3IsolationDomainPatch` deleted or renamed its instance variable `connected_subnet_route_policy`
-  - Model `NeighborGroup` deleted or renamed its instance variable `annotation`
-  - Model `NeighborGroup` deleted or renamed its instance variable `destination`
-  - Model `NeighborGroup` deleted or renamed its instance variable `network_tap_ids`
-  - Model `NeighborGroup` deleted or renamed its instance variable `network_tap_rule_ids`
-  - Model `NeighborGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `L3IsolationDomain` moved instance variable `annotation`, `redistribute_connected_subnets`, `redistribute_static_routes`, `aggregate_route_configuration`, `connected_subnet_route_policy`, `network_fabric_id`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `L3IsolationDomainProperties`
+  - Model `L3IsolationDomainPatch` moved instance variable `annotation`, `redistribute_connected_subnets`, `redistribute_static_routes`, `aggregate_route_configuration` and `connected_subnet_route_policy` under property `properties` whose type is `L3IsolationDomainPatchProperties`
+  - Model `NeighborGroup` moved instance variable `annotation`, `destination`, `network_tap_ids`, `network_tap_rule_ids` and `provisioning_state` under property `properties` whose type is `NeighborGroupProperties`
   - Model `NeighborGroupPatch` deleted or renamed its instance variable `annotation`
   - Model `NeighborGroupPatch` deleted or renamed its instance variable `destination`
-  - Model `NetworkDevice` deleted or renamed its instance variable `annotation`
-  - Model `NetworkDevice` deleted or renamed its instance variable `host_name`
-  - Model `NetworkDevice` deleted or renamed its instance variable `serial_number`
-  - Model `NetworkDevice` deleted or renamed its instance variable `version`
-  - Model `NetworkDevice` deleted or renamed its instance variable `network_device_sku`
-  - Model `NetworkDevice` deleted or renamed its instance variable `network_device_role`
-  - Model `NetworkDevice` deleted or renamed its instance variable `network_rack_id`
-  - Model `NetworkDevice` deleted or renamed its instance variable `management_ipv4_address`
-  - Model `NetworkDevice` deleted or renamed its instance variable `management_ipv6_address`
-  - Model `NetworkDevice` deleted or renamed its instance variable `configuration_state`
-  - Model `NetworkDevice` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkDevice` deleted or renamed its instance variable `administrative_state`
+  - Model `NetworkDevice` moved instance variable `annotation`, `host_name`, `serial_number`, `version`, `network_device_sku`, `network_device_role`, `network_rack_id`, `management_ipv4_address`, `management_ipv6_address`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkDeviceProperties`
   - Model `NetworkDevicePatchParameters` deleted or renamed its instance variable `annotation`
   - Model `NetworkDevicePatchParameters` deleted or renamed its instance variable `host_name`
   - Model `NetworkDevicePatchParameters` deleted or renamed its instance variable `serial_number`
-  - Model `NetworkFabric` deleted or renamed its instance variable `annotation`
-  - Model `NetworkFabric` deleted or renamed its instance variable `network_fabric_sku`
-  - Model `NetworkFabric` deleted or renamed its instance variable `fabric_version`
-  - Model `NetworkFabric` deleted or renamed its instance variable `router_ids`
-  - Model `NetworkFabric` deleted or renamed its instance variable `network_fabric_controller_id`
-  - Model `NetworkFabric` deleted or renamed its instance variable `rack_count`
-  - Model `NetworkFabric` deleted or renamed its instance variable `server_count_per_rack`
-  - Model `NetworkFabric` deleted or renamed its instance variable `ipv4_prefix`
-  - Model `NetworkFabric` deleted or renamed its instance variable `ipv6_prefix`
-  - Model `NetworkFabric` deleted or renamed its instance variable `fabric_asn`
-  - Model `NetworkFabric` deleted or renamed its instance variable `terminal_server_configuration`
-  - Model `NetworkFabric` deleted or renamed its instance variable `management_network_configuration`
-  - Model `NetworkFabric` deleted or renamed its instance variable `racks`
-  - Model `NetworkFabric` deleted or renamed its instance variable `l2_isolation_domains`
-  - Model `NetworkFabric` deleted or renamed its instance variable `l3_isolation_domains`
-  - Model `NetworkFabric` deleted or renamed its instance variable `configuration_state`
-  - Model `NetworkFabric` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkFabric` deleted or renamed its instance variable `administrative_state`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `annotation`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `infrastructure_express_route_connections`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `workload_express_route_connections`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `infrastructure_services`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `workload_services`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `managed_resource_group_configuration`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `network_fabric_ids`
+  - Model `NetworkFabric` moved instance variable `annotation`, `network_fabric_sku`, `fabric_version`, `router_ids`, `network_fabric_controller_id`, `rack_count`, `server_count_per_rack`, `ipv4_prefix`, `ipv6_prefix`, `fabric_asn`, `terminal_server_configuration`, `management_network_configuration`, `racks`, `l2_isolation_domains`, `l3_isolation_domains`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkFabricProperties`
+  - Model `NetworkFabricController` moved instance variable `annotation`, `infrastructure_express_route_connections`, `workload_express_route_connections`, `infrastructure_services`, `workload_services`, `managed_resource_group_configuration`, `network_fabric_ids`, `is_workload_management_network_enabled`, `tenant_internet_gateway_ids`, `ipv4_address_space`, `ipv6_address_space`, `nfc_sku` and `provisioning_state` under property `properties` whose type is `NetworkFabricControllerProperties`
   - Model `NetworkFabricController` deleted or renamed its instance variable `workload_management_network`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `is_workload_management_network_enabled`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `tenant_internet_gateway_ids`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `ipv4_address_space`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `ipv6_address_space`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `nfc_sku`
-  - Model `NetworkFabricController` deleted or renamed its instance variable `provisioning_state`
   - Model `NetworkFabricControllerProperties` deleted or renamed its instance variable `workload_management_network`
-  - Model `NetworkFabricPatch` deleted or renamed its instance variable `annotation`
-  - Model `NetworkFabricPatch` deleted or renamed its instance variable `rack_count`
-  - Model `NetworkFabricPatch` deleted or renamed its instance variable `server_count_per_rack`
-  - Model `NetworkFabricPatch` deleted or renamed its instance variable `ipv4_prefix`
-  - Model `NetworkFabricPatch` deleted or renamed its instance variable `ipv6_prefix`
-  - Model `NetworkFabricPatch` deleted or renamed its instance variable `fabric_asn`
-  - Model `NetworkFabricPatch` deleted or renamed its instance variable `terminal_server_configuration`
-  - Model `NetworkFabricPatch` deleted or renamed its instance variable `management_network_configuration`
-  - Model `NetworkInterface` deleted or renamed its instance variable `annotation`
-  - Model `NetworkInterface` deleted or renamed its instance variable `physical_identifier`
-  - Model `NetworkInterface` deleted or renamed its instance variable `connected_to`
-  - Model `NetworkInterface` deleted or renamed its instance variable `interface_type`
-  - Model `NetworkInterface` deleted or renamed its instance variable `ipv4_address`
-  - Model `NetworkInterface` deleted or renamed its instance variable `ipv6_address`
-  - Model `NetworkInterface` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkInterface` deleted or renamed its instance variable `administrative_state`
+  - Model `NetworkFabricPatch` moved instance variable `annotation`, `rack_count`, `server_count_per_rack`, `ipv4_prefix`, `ipv6_prefix`, `fabric_asn`, `terminal_server_configuration` and `management_network_configuration` under property `properties` whose type is `NetworkFabricPatchProperties`
+  - Model `NetworkInterface` moved instance variable `annotation`, `physical_identifier`, `connected_to`, `interface_type`, `ipv4_address`, `ipv6_address`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkInterfaceProperties`
   - Model `NetworkInterfacePatch` deleted or renamed its instance variable `annotation`
-  - Model `NetworkRack` deleted or renamed its instance variable `annotation`
-  - Model `NetworkRack` deleted or renamed its instance variable `network_rack_type`
-  - Model `NetworkRack` deleted or renamed its instance variable `network_fabric_id`
-  - Model `NetworkRack` deleted or renamed its instance variable `network_devices`
-  - Model `NetworkRack` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkTap` deleted or renamed its instance variable `annotation`
-  - Model `NetworkTap` deleted or renamed its instance variable `network_packet_broker_id`
-  - Model `NetworkTap` deleted or renamed its instance variable `source_tap_rule_id`
-  - Model `NetworkTap` deleted or renamed its instance variable `destinations`
-  - Model `NetworkTap` deleted or renamed its instance variable `polling_type`
-  - Model `NetworkTap` deleted or renamed its instance variable `configuration_state`
-  - Model `NetworkTap` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkTap` deleted or renamed its instance variable `administrative_state`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `annotation`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `configuration_type`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `tap_rules_url`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `match_configurations`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `dynamic_match_configurations`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `network_tap_id`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `polling_interval_in_seconds`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `last_synced_time`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `configuration_state`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkTapRule` deleted or renamed its instance variable `administrative_state`
-  - Model `NetworkTapRulePatch` deleted or renamed its instance variable `annotation`
-  - Model `NetworkTapRulePatch` deleted or renamed its instance variable `configuration_type`
-  - Model `NetworkTapRulePatch` deleted or renamed its instance variable `tap_rules_url`
-  - Model `NetworkTapRulePatch` deleted or renamed its instance variable `match_configurations`
-  - Model `NetworkTapRulePatch` deleted or renamed its instance variable `dynamic_match_configurations`
-  - Model `RoutePolicy` deleted or renamed its instance variable `annotation`
-  - Model `RoutePolicy` deleted or renamed its instance variable `default_action`
-  - Model `RoutePolicy` deleted or renamed its instance variable `statements`
-  - Model `RoutePolicy` deleted or renamed its instance variable `network_fabric_id`
-  - Model `RoutePolicy` deleted or renamed its instance variable `address_family_type`
-  - Model `RoutePolicy` deleted or renamed its instance variable `configuration_state`
-  - Model `RoutePolicy` deleted or renamed its instance variable `provisioning_state`
-  - Model `RoutePolicy` deleted or renamed its instance variable `administrative_state`
+  - Model `NetworkRack` moved instance variable `annotation`, `network_rack_type`, `network_fabric_id`, `network_devices` and `provisioning_state` under property `properties` whose type is `NetworkRackProperties`
+  - Model `NetworkTap` moved instance variable `annotation`, `network_packet_broker_id`, `source_tap_rule_id`, `destinations`, `polling_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkTapProperties`
+  - Model `NetworkTapRule` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations`, `dynamic_match_configurations`, `network_tap_id`, `polling_interval_in_seconds`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkTapRuleProperties`
+  - Model `NetworkTapRulePatch` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations` and `dynamic_match_configurations` under property `properties` whose type is `NetworkTapRulePatchProperties`
+  - Model `RoutePolicy` moved instance variable `annotation`, `default_action`, `statements`, `network_fabric_id`, `address_family_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `RoutePolicyProperties`
   - Model `RoutePolicyPatch` deleted or renamed its instance variable `default_action`
   - Model `RoutePolicyPatch` deleted or renamed its instance variable `statements`
   - Deleted or renamed model `AccessControlListPatchableProperties`
   - Deleted or renamed model `ExtendedLocation`
   - Deleted or renamed model `ExtensionEnumProperty`
   - Deleted or renamed model `ExternalNetworkPatchableProperties`
-  - Deleted or renamed model `ExternalNetworksList`
   - Deleted or renamed model `InternalNetworkPatchableProperties`
   - Deleted or renamed model `InternalNetworkPropertiesBgpConfiguration`
   - Deleted or renamed model `InternalNetworkPropertiesStaticRouteConfiguration`
-  - Deleted or renamed model `InternalNetworksList`
   - Deleted or renamed model `InternetGatewayPatchableProperties`
   - Deleted or renamed model `IpCommunityAddOperationProperties`
   - Deleted or renamed model `IpCommunityDeleteOperationProperties`
@@ -708,46 +518,17 @@
   - Deleted or renamed model `NetworkFabricControllerPatchableProperties`
   - Deleted or renamed model `NetworkFabricPatchableProperties`
   - Renamed model `NetworkFabricPatchablePropertiesTerminalServerConfiguration` to `TerminalServerPatchConfiguration`
-  - Deleted or renamed model `NetworkInterfacesList`
   - Deleted or renamed model `NetworkTapPatchableParameters`
   - Deleted or renamed model `NetworkTapPatchableParametersDestinationsItem`
   - Deleted or renamed model `NetworkTapPropertiesDestinationsItem`
   - Deleted or renamed model `NetworkTapRulePatchableProperties`
   - Deleted or renamed model `NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration`
-  - Deleted or renamed model `NetworkToNetworkInterconnectsList`
   - Renamed model `OptionAProperties` to `VpnOptionAProperties`
   - Renamed model `OptionBProperties` to `VpnOptionBProperties`
   - Deleted or renamed model `PollingIntervalInSeconds`
   - Deleted or renamed model `TerminalServerPatchableProperties`
   - Deleted or renamed model `VpnConfigurationPatchablePropertiesOptionAProperties`
   - Deleted or renamed model `VpnConfigurationPropertiesOptionAProperties`
-  - Method `AccessControlListsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `ExternalNetworksOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `ExternalNetworksOperations.begin_update_static_route_bfd_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `InternalNetworksOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `InternalNetworksOperations.begin_update_bgp_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[InternalNetworkUpdateBgpAdministrativeStateResponse]`
-  - Method `InternalNetworksOperations.begin_update_static_route_bfd_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `L2IsolationDomainsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForDeviceUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `L3IsolationDomainsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForDeviceUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `NetworkDevicesOperations.begin_reboot` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[OperationStatusResult]`
-  - Method `NetworkDevicesOperations.begin_refresh_configuration` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[NetworkDeviceRefreshConfigurationResponse]`
-  - Method `NetworkDevicesOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[NetworkDeviceUpdateAdministrativeStateResponse]`
-  - Method `NetworkDevicesOperations.begin_upgrade` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[NetworkDeviceUpgradeResponse]`
-  - Method `NetworkFabricsOperations.begin_commit_configuration` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[CommitConfigurationResponse]`
-  - Method `NetworkFabricsOperations.begin_deprovision` changed return type from `AsyncLROPoller[CommonPostActionResponseForDeviceUpdate]` to `AsyncLROPoller[OperationStatusResult]`
-  - Method `NetworkFabricsOperations.begin_get_topology` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[GetTopologyResponse]`
-  - Method `NetworkFabricsOperations.begin_provision` changed return type from `AsyncLROPoller[CommonPostActionResponseForDeviceUpdate]` to `AsyncLROPoller[OperationStatusResult]`
-  - Method `NetworkFabricsOperations.begin_refresh_configuration` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[OperationStatusResult]`
-  - Method `NetworkFabricsOperations.begin_update_infra_management_bfd_configuration` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `NetworkFabricsOperations.begin_update_workload_management_bfd_configuration` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `NetworkFabricsOperations.begin_upgrade` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[OperationStatusResult]`
-  - Method `NetworkInterfacesOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `NetworkTapRulesOperations.begin_resync` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[NetworkTapRuleResyncResponse]`
-  - Method `NetworkTapsOperations.begin_resync` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[NetworkTapResyncResponse]`
-  - Method `NetworkTapsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForDeviceUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `NetworkToNetworkInterconnectsOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `NetworkToNetworkInterconnectsOperations.begin_update_npb_static_route_bfd_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForStateUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
-  - Method `RoutePoliciesOperations.begin_update_administrative_state` changed return type from `AsyncLROPoller[CommonPostActionResponseForDeviceUpdate]` to `AsyncLROPoller[UpdateAdministrativeStateResponse]`
   - Method `AccessControlListsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
   - Method `ExternalNetworksOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
   - Method `ExternalNetworksOperations.begin_update_static_route_bfd_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
@@ -775,6 +556,10 @@
   - Method `NetworkToNetworkInterconnectsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
   - Method `NetworkToNetworkInterconnectsOperations.begin_update_npb_static_route_bfd_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
   - Method `RoutePoliciesOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+
+### Other Changes
+
+  - Deleted model `ExternalNetworksList`/`InternalNetworksList`/`NetworkInterfacesList`/`NetworkToNetworkInterconnectsList` which actually were not used by SDK users
 
 ## 1.0.0 (2023-07-19)
 
