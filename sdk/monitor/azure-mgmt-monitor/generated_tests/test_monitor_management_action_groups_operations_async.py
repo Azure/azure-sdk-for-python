@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor.aio import MonitorManagementClient
+from azure.mgmt.monitor.v2017_04_01.aio import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -27,7 +27,6 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
             action_group_name="str",
             action_group={
                 "location": "str",
-                "armRoleReceivers": [{"name": "str", "roleId": "str", "useCommonAlertSchema": False}],
                 "automationRunbookReceivers": [
                     {
                         "automationAccountId": "str",
@@ -36,33 +35,11 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
                         "webhookResourceId": "str",
                         "name": "str",
                         "serviceUri": "str",
-                        "useCommonAlertSchema": False,
                     }
                 ],
                 "azureAppPushReceivers": [{"emailAddress": "str", "name": "str"}],
-                "azureFunctionReceivers": [
-                    {
-                        "functionAppResourceId": "str",
-                        "functionName": "str",
-                        "httpTriggerUrl": "str",
-                        "name": "str",
-                        "useCommonAlertSchema": False,
-                    }
-                ],
-                "emailReceivers": [
-                    {"emailAddress": "str", "name": "str", "status": "str", "useCommonAlertSchema": False}
-                ],
+                "emailReceivers": [{"emailAddress": "str", "name": "str", "status": "str"}],
                 "enabled": True,
-                "eventHubReceivers": [
-                    {
-                        "eventHubName": "str",
-                        "eventHubNameSpace": "str",
-                        "name": "str",
-                        "subscriptionId": "str",
-                        "tenantId": "str",
-                        "useCommonAlertSchema": False,
-                    }
-                ],
                 "groupShortName": "str",
                 "id": "str",
                 "itsmReceivers": [
@@ -74,27 +51,13 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
                         "workspaceId": "str",
                     }
                 ],
-                "logicAppReceivers": [
-                    {"callbackUrl": "str", "name": "str", "resourceId": "str", "useCommonAlertSchema": False}
-                ],
                 "name": "str",
                 "smsReceivers": [{"countryCode": "str", "name": "str", "phoneNumber": "str", "status": "str"}],
                 "tags": {"str": "str"},
                 "type": "str",
-                "voiceReceivers": [{"countryCode": "str", "name": "str", "phoneNumber": "str"}],
-                "webhookReceivers": [
-                    {
-                        "name": "str",
-                        "serviceUri": "str",
-                        "identifierUri": "str",
-                        "objectId": "str",
-                        "tenantId": "str",
-                        "useAadAuth": False,
-                        "useCommonAlertSchema": False,
-                    }
-                ],
+                "webhookReceivers": [{"name": "str", "serviceUri": "str"}],
             },
-            api_version="2023-01-01",
+            api_version="2017-04-01",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +69,7 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.action_groups.get(
             resource_group_name=resource_group.name,
             action_group_name="str",
-            api_version="2023-01-01",
+            api_version="2017-04-01",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +81,7 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.action_groups.delete(
             resource_group_name=resource_group.name,
             action_group_name="str",
-            api_version="2023-01-01",
+            api_version="2017-04-01",
         )
 
         # please add some check logic here by yourself
@@ -131,97 +94,7 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             action_group_name="str",
             action_group_patch={"enabled": True, "tags": {"str": "str"}},
-            api_version="2023-01-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_action_groups_begin_create_notifications_at_action_group_resource_level(self, resource_group):
-        response = await (
-            await self.client.action_groups.begin_create_notifications_at_action_group_resource_level(
-                resource_group_name=resource_group.name,
-                action_group_name="str",
-                notification_request={
-                    "alertType": "str",
-                    "armRoleReceivers": [{"name": "str", "roleId": "str", "useCommonAlertSchema": False}],
-                    "automationRunbookReceivers": [
-                        {
-                            "automationAccountId": "str",
-                            "isGlobalRunbook": bool,
-                            "runbookName": "str",
-                            "webhookResourceId": "str",
-                            "name": "str",
-                            "serviceUri": "str",
-                            "useCommonAlertSchema": False,
-                        }
-                    ],
-                    "azureAppPushReceivers": [{"emailAddress": "str", "name": "str"}],
-                    "azureFunctionReceivers": [
-                        {
-                            "functionAppResourceId": "str",
-                            "functionName": "str",
-                            "httpTriggerUrl": "str",
-                            "name": "str",
-                            "useCommonAlertSchema": False,
-                        }
-                    ],
-                    "emailReceivers": [
-                        {"emailAddress": "str", "name": "str", "status": "str", "useCommonAlertSchema": False}
-                    ],
-                    "eventHubReceivers": [
-                        {
-                            "eventHubName": "str",
-                            "eventHubNameSpace": "str",
-                            "name": "str",
-                            "subscriptionId": "str",
-                            "tenantId": "str",
-                            "useCommonAlertSchema": False,
-                        }
-                    ],
-                    "itsmReceivers": [
-                        {
-                            "connectionId": "str",
-                            "name": "str",
-                            "region": "str",
-                            "ticketConfiguration": "str",
-                            "workspaceId": "str",
-                        }
-                    ],
-                    "logicAppReceivers": [
-                        {"callbackUrl": "str", "name": "str", "resourceId": "str", "useCommonAlertSchema": False}
-                    ],
-                    "smsReceivers": [{"countryCode": "str", "name": "str", "phoneNumber": "str", "status": "str"}],
-                    "voiceReceivers": [{"countryCode": "str", "name": "str", "phoneNumber": "str"}],
-                    "webhookReceivers": [
-                        {
-                            "name": "str",
-                            "serviceUri": "str",
-                            "identifierUri": "str",
-                            "objectId": "str",
-                            "tenantId": "str",
-                            "useAadAuth": False,
-                            "useCommonAlertSchema": False,
-                        }
-                    ],
-                },
-                api_version="2023-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_action_groups_get_test_notifications_at_action_group_resource_level(self, resource_group):
-        response = await self.client.action_groups.get_test_notifications_at_action_group_resource_level(
-            resource_group_name=resource_group.name,
-            action_group_name="str",
-            notification_id="str",
-            api_version="2023-01-01",
+            api_version="2017-04-01",
         )
 
         # please add some check logic here by yourself
@@ -231,7 +104,7 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
     @recorded_by_proxy_async
     async def test_action_groups_list_by_subscription_id(self, resource_group):
         response = self.client.action_groups.list_by_subscription_id(
-            api_version="2023-01-01",
+            api_version="2017-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -242,7 +115,7 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
     async def test_action_groups_list_by_resource_group(self, resource_group):
         response = self.client.action_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-01-01",
+            api_version="2017-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -255,7 +128,7 @@ class TestMonitorManagementActionGroupsOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             action_group_name="str",
             enable_request={"receiverName": "str"},
-            api_version="2023-01-01",
+            api_version="2017-04-01",
         )
 
         # please add some check logic here by yourself

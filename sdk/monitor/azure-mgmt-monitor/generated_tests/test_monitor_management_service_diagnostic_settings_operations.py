@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2015_07_01 import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -23,7 +23,7 @@ class TestMonitorManagementServiceDiagnosticSettingsOperations(AzureMgmtRecorded
     def test_service_diagnostic_settings_get(self, resource_group):
         response = self.client.service_diagnostic_settings.get(
             resource_uri="str",
-            api_version="2016-09-01",
+            api_version="2015-07-01",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,6 @@ class TestMonitorManagementServiceDiagnosticSettingsOperations(AzureMgmtRecorded
             resource_uri="str",
             parameters={
                 "location": "str",
-                "eventHubAuthorizationRuleId": "str",
                 "id": "str",
                 "logs": [{"enabled": bool, "category": "str", "retentionPolicy": {"days": 0, "enabled": bool}}],
                 "metrics": [
@@ -49,29 +48,7 @@ class TestMonitorManagementServiceDiagnosticSettingsOperations(AzureMgmtRecorded
                 "type": "str",
                 "workspaceId": "str",
             },
-            api_version="2016-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_service_diagnostic_settings_update(self, resource_group):
-        response = self.client.service_diagnostic_settings.update(
-            resource_uri="str",
-            service_diagnostic_settings_resource={
-                "eventHubAuthorizationRuleId": "str",
-                "logs": [{"enabled": bool, "category": "str", "retentionPolicy": {"days": 0, "enabled": bool}}],
-                "metrics": [
-                    {"enabled": bool, "timeGrain": "1 day, 0:00:00", "retentionPolicy": {"days": 0, "enabled": bool}}
-                ],
-                "serviceBusRuleId": "str",
-                "storageAccountId": "str",
-                "tags": {"str": "str"},
-                "workspaceId": "str",
-            },
-            api_version="2016-09-01",
+            api_version="2015-07-01",
         )
 
         # please add some check logic here by yourself

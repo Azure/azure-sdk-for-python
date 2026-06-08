@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor.aio import MonitorManagementClient
+from azure.mgmt.monitor.v2015_07_01.aio import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,21 +21,10 @@ class TestMonitorManagementMetricDefinitionsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_metric_definitions_list_at_subscription_scope(self, resource_group):
-        response = self.client.metric_definitions.list_at_subscription_scope(
-            region="str",
-            api_version="2024-02-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_metric_definitions_list(self, resource_group):
         response = self.client.metric_definitions.list(
             resource_uri="str",
-            api_version="2024-02-01",
+            api_version="2015-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

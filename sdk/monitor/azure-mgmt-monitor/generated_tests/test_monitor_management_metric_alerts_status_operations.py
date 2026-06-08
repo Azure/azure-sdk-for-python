@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2018_03_01 import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestMonitorManagementMetricAlertsStatusOperations(AzureMgmtRecordedTestCas
         response = self.client.metric_alerts_status.list(
             resource_group_name=resource_group.name,
             rule_name="str",
-            api_version="2024-03-01-preview",
+            api_version="2018-03-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestMonitorManagementMetricAlertsStatusOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             rule_name="str",
             status_name="str",
-            api_version="2024-03-01-preview",
+            api_version="2018-03-01",
         )
 
         # please add some check logic here by yourself

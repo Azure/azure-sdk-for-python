@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2021_06_03_preview import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestMonitorManagementMonitorOperationsOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_monitor_operations_list(self, resource_group):
         response = self.client.monitor_operations.list(
-            api_version="2023-04-03",
+            api_version="2021-06-03-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

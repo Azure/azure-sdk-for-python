@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor.aio import MonitorManagementClient
+from azure.mgmt.monitor.v2021_04_01.aio import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -24,7 +24,7 @@ class TestMonitorManagementDataCollectionEndpointsOperationsAsync(AzureMgmtRecor
     async def test_data_collection_endpoints_list_by_resource_group(self, resource_group):
         response = self.client.data_collection_endpoints.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-03-11",
+            api_version="2021-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestMonitorManagementDataCollectionEndpointsOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_data_collection_endpoints_list_by_subscription(self, resource_group):
         response = self.client.data_collection_endpoints.list_by_subscription(
-            api_version="2023-03-11",
+            api_version="2021-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestMonitorManagementDataCollectionEndpointsOperationsAsync(AzureMgmtRecor
         response = await self.client.data_collection_endpoints.get(
             resource_group_name=resource_group.name,
             data_collection_endpoint_name="str",
-            api_version="2023-03-11",
+            api_version="2021-04-01",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestMonitorManagementDataCollectionEndpointsOperationsAsync(AzureMgmtRecor
         response = await self.client.data_collection_endpoints.create(
             resource_group_name=resource_group.name,
             data_collection_endpoint_name="str",
-            api_version="2023-03-11",
+            api_version="2021-04-01",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestMonitorManagementDataCollectionEndpointsOperationsAsync(AzureMgmtRecor
         response = await self.client.data_collection_endpoints.update(
             resource_group_name=resource_group.name,
             data_collection_endpoint_name="str",
-            api_version="2023-03-11",
+            api_version="2021-04-01",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestMonitorManagementDataCollectionEndpointsOperationsAsync(AzureMgmtRecor
         response = await self.client.data_collection_endpoints.delete(
             resource_group_name=resource_group.name,
             data_collection_endpoint_name="str",
-            api_version="2023-03-11",
+            api_version="2021-04-01",
         )
 
         # please add some check logic here by yourself

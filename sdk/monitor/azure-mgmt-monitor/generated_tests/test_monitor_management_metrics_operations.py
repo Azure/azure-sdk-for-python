@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2016_09_01 import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,33 +20,11 @@ class TestMonitorManagementMetricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_metrics_list_at_subscription_scope(self, resource_group):
-        response = self.client.metrics.list_at_subscription_scope(
-            region="str",
-            api_version="2024-02-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_metrics_list_at_subscription_scope_post(self, resource_group):
-        response = self.client.metrics.list_at_subscription_scope_post(
-            region="str",
-            api_version="2024-02-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_metrics_list(self, resource_group):
         response = self.client.metrics.list(
             resource_uri="str",
-            api_version="2024-02-01",
+            api_version="2016-09-01",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

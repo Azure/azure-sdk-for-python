@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor.aio import MonitorManagementClient
+from azure.mgmt.monitor.v2017_03_01_preview.aio import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,28 +25,19 @@ class TestMonitorManagementActivityLogAlertsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.activity_log_alerts.create_or_update(
             resource_group_name=resource_group.name,
             activity_log_alert_name="str",
-            activity_log_alert_rule={
+            activity_log_alert={
+                "location": "str",
                 "actions": {"actionGroups": [{"actionGroupId": "str", "webhookProperties": {"str": "str"}}]},
-                "condition": {
-                    "allOf": [
-                        {
-                            "anyOf": [{"containsAny": ["str"], "equals": "str", "field": "str"}],
-                            "containsAny": ["str"],
-                            "equals": "str",
-                            "field": "str",
-                        }
-                    ]
-                },
+                "condition": {"allOf": [{"equals": "str", "field": "str"}]},
                 "description": "str",
                 "enabled": True,
                 "id": "str",
-                "location": "global",
                 "name": "str",
                 "scopes": ["str"],
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2020-10-01",
+            api_version="2017-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +49,7 @@ class TestMonitorManagementActivityLogAlertsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.activity_log_alerts.get(
             resource_group_name=resource_group.name,
             activity_log_alert_name="str",
-            api_version="2020-10-01",
+            api_version="2017-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +61,7 @@ class TestMonitorManagementActivityLogAlertsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.activity_log_alerts.delete(
             resource_group_name=resource_group.name,
             activity_log_alert_name="str",
-            api_version="2020-10-01",
+            api_version="2017-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -82,8 +73,15 @@ class TestMonitorManagementActivityLogAlertsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.activity_log_alerts.update(
             resource_group_name=resource_group.name,
             activity_log_alert_name="str",
-            activity_log_alert_rule_patch={"enabled": True, "tags": {"str": "str"}},
-            api_version="2020-10-01",
+            activity_log_alert_patch={
+                "location": "str",
+                "enabled": True,
+                "id": "str",
+                "name": "str",
+                "tags": {"str": "str"},
+                "type": "str",
+            },
+            api_version="2017-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +91,7 @@ class TestMonitorManagementActivityLogAlertsOperationsAsync(AzureMgmtRecordedTes
     @recorded_by_proxy_async
     async def test_activity_log_alerts_list_by_subscription_id(self, resource_group):
         response = self.client.activity_log_alerts.list_by_subscription_id(
-            api_version="2020-10-01",
+            api_version="2017-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -104,7 +102,7 @@ class TestMonitorManagementActivityLogAlertsOperationsAsync(AzureMgmtRecordedTes
     async def test_activity_log_alerts_list_by_resource_group(self, resource_group):
         response = self.client.activity_log_alerts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2020-10-01",
+            api_version="2017-03-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

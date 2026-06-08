@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2017_05_01_preview import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestMonitorManagementDiagnosticSettingsOperations(AzureMgmtRecordedTestCas
         response = self.client.diagnostic_settings.get(
             resource_uri="str",
             name="str",
-            api_version="2021-05-01-preview",
+            api_version="2017-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -41,15 +41,7 @@ class TestMonitorManagementDiagnosticSettingsOperations(AzureMgmtRecordedTestCas
                 "eventHubName": "str",
                 "id": "str",
                 "logAnalyticsDestinationType": "str",
-                "logs": [
-                    {
-                        "enabled": bool,
-                        "category": "str",
-                        "categoryGroup": "str",
-                        "retentionPolicy": {"days": 0, "enabled": bool},
-                    }
-                ],
-                "marketplacePartnerId": "str",
+                "logs": [{"enabled": bool, "category": "str", "retentionPolicy": {"days": 0, "enabled": bool}}],
                 "metrics": [
                     {
                         "enabled": bool,
@@ -61,18 +53,10 @@ class TestMonitorManagementDiagnosticSettingsOperations(AzureMgmtRecordedTestCas
                 "name": "str",
                 "serviceBusRuleId": "str",
                 "storageAccountId": "str",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
                 "type": "str",
                 "workspaceId": "str",
             },
-            api_version="2021-05-01-preview",
+            api_version="2017-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -84,7 +68,7 @@ class TestMonitorManagementDiagnosticSettingsOperations(AzureMgmtRecordedTestCas
         response = self.client.diagnostic_settings.delete(
             resource_uri="str",
             name="str",
-            api_version="2021-05-01-preview",
+            api_version="2017-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -95,8 +79,8 @@ class TestMonitorManagementDiagnosticSettingsOperations(AzureMgmtRecordedTestCas
     def test_diagnostic_settings_list(self, resource_group):
         response = self.client.diagnostic_settings.list(
             resource_uri="str",
-            api_version="2021-05-01-preview",
+            api_version="2017-05-01-preview",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...

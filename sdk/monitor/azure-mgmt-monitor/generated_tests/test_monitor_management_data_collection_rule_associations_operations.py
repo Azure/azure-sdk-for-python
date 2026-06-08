@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2019_11_01_preview import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -23,7 +23,7 @@ class TestMonitorManagementDataCollectionRuleAssociationsOperations(AzureMgmtRec
     def test_data_collection_rule_associations_list_by_resource(self, resource_group):
         response = self.client.data_collection_rule_associations.list_by_resource(
             resource_uri="str",
-            api_version="2023-03-11",
+            api_version="2019-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,19 +35,7 @@ class TestMonitorManagementDataCollectionRuleAssociationsOperations(AzureMgmtRec
         response = self.client.data_collection_rule_associations.list_by_rule(
             resource_group_name=resource_group.name,
             data_collection_rule_name="str",
-            api_version="2023-03-11",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_data_collection_rule_associations_list_by_data_collection_endpoint(self, resource_group):
-        response = self.client.data_collection_rule_associations.list_by_data_collection_endpoint(
-            resource_group_name=resource_group.name,
-            data_collection_endpoint_name="str",
-            api_version="2023-03-11",
+            api_version="2019-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -59,7 +47,7 @@ class TestMonitorManagementDataCollectionRuleAssociationsOperations(AzureMgmtRec
         response = self.client.data_collection_rule_associations.get(
             resource_uri="str",
             association_name="str",
-            api_version="2023-03-11",
+            api_version="2019-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +59,7 @@ class TestMonitorManagementDataCollectionRuleAssociationsOperations(AzureMgmtRec
         response = self.client.data_collection_rule_associations.create(
             resource_uri="str",
             association_name="str",
-            api_version="2023-03-11",
+            api_version="2019-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +71,7 @@ class TestMonitorManagementDataCollectionRuleAssociationsOperations(AzureMgmtRec
         response = self.client.data_collection_rule_associations.delete(
             resource_uri="str",
             association_name="str",
-            api_version="2023-03-11",
+            api_version="2019-11-01-preview",
         )
 
         # please add some check logic here by yourself

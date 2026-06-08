@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2021_05_01_preview import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -29,7 +29,7 @@ class TestMonitorManagementPredictiveMetricOperations(AzureMgmtRecordedTestCase)
             metric_namespace="str",
             metric_name="str",
             aggregation="str",
-            api_version="2022-10-01",
+            api_version="2021-05-01-preview",
         )
 
         # please add some check logic here by yourself

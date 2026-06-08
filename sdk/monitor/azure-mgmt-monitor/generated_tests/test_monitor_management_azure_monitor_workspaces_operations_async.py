@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor.aio import MonitorManagementClient
+from azure.mgmt.monitor.v2021_06_03_preview.aio import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -24,7 +24,7 @@ class TestMonitorManagementAzureMonitorWorkspacesOperationsAsync(AzureMgmtRecord
     async def test_azure_monitor_workspaces_list_by_resource_group(self, resource_group):
         response = self.client.azure_monitor_workspaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-04-03",
+            api_version="2021-06-03-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestMonitorManagementAzureMonitorWorkspacesOperationsAsync(AzureMgmtRecord
     @recorded_by_proxy_async
     async def test_azure_monitor_workspaces_list_by_subscription(self, resource_group):
         response = self.client.azure_monitor_workspaces.list_by_subscription(
-            api_version="2023-04-03",
+            api_version="2021-06-03-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestMonitorManagementAzureMonitorWorkspacesOperationsAsync(AzureMgmtRecord
         response = await self.client.azure_monitor_workspaces.get(
             resource_group_name=resource_group.name,
             azure_monitor_workspace_name="str",
-            api_version="2023-04-03",
+            api_version="2021-06-03-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,31 +69,7 @@ class TestMonitorManagementAzureMonitorWorkspacesOperationsAsync(AzureMgmtRecord
                 "id": "str",
                 "metrics": {"internalId": "str", "prometheusQueryEndpoint": "str"},
                 "name": "str",
-                "privateEndpointConnections": [
-                    {
-                        "groupIds": ["str"],
-                        "id": "str",
-                        "name": "str",
-                        "privateEndpoint": {"id": "str"},
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str",
-                        },
-                        "provisioningState": "str",
-                        "systemData": {
-                            "createdAt": "2020-02-20 00:00:00",
-                            "createdBy": "str",
-                            "createdByType": "str",
-                            "lastModifiedAt": "2020-02-20 00:00:00",
-                            "lastModifiedBy": "str",
-                            "lastModifiedByType": "str",
-                        },
-                        "type": "str",
-                    }
-                ],
                 "provisioningState": "str",
-                "publicNetworkAccess": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -105,7 +81,7 @@ class TestMonitorManagementAzureMonitorWorkspacesOperationsAsync(AzureMgmtRecord
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-04-03",
+            api_version="2021-06-03-preview",
         )
 
         # please add some check logic here by yourself
@@ -117,7 +93,7 @@ class TestMonitorManagementAzureMonitorWorkspacesOperationsAsync(AzureMgmtRecord
         response = await self.client.azure_monitor_workspaces.update(
             resource_group_name=resource_group.name,
             azure_monitor_workspace_name="str",
-            api_version="2023-04-03",
+            api_version="2021-06-03-preview",
         )
 
         # please add some check logic here by yourself
@@ -125,14 +101,12 @@ class TestMonitorManagementAzureMonitorWorkspacesOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_azure_monitor_workspaces_begin_delete(self, resource_group):
-        response = await (
-            await self.client.azure_monitor_workspaces.begin_delete(
-                resource_group_name=resource_group.name,
-                azure_monitor_workspace_name="str",
-                api_version="2023-04-03",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+    async def test_azure_monitor_workspaces_delete(self, resource_group):
+        response = await self.client.azure_monitor_workspaces.delete(
+            resource_group_name=resource_group.name,
+            azure_monitor_workspace_name="str",
+            api_version="2021-06-03-preview",
+        )
 
         # please add some check logic here by yourself
         # ...

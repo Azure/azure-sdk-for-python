@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2017_12_01_preview import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -23,7 +23,7 @@ class TestMonitorManagementMetricNamespacesOperations(AzureMgmtRecordedTestCase)
     def test_metric_namespaces_list(self, resource_group):
         response = self.client.metric_namespaces.list(
             resource_uri="str",
-            api_version="2024-02-01",
+            api_version="2017-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

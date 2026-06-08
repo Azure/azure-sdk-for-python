@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.monitor import MonitorManagementClient
+from azure.mgmt.monitor.v2018_09_01 import MonitorManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -23,7 +23,7 @@ class TestMonitorManagementBaselinesOperations(AzureMgmtRecordedTestCase):
     def test_baselines_list(self, resource_group):
         response = self.client.baselines.list(
             resource_uri="str",
-            api_version="2019-03-01",
+            api_version="2018-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
