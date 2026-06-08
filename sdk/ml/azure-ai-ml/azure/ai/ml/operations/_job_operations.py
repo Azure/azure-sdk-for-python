@@ -710,7 +710,26 @@ class JobOperations(_ScopeDependentOperations):
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
-        result = self._create_or_update_with_different_version_api(rest_job_resource=rest_job_resource, **kwargs)
+        # For a pipeline job that was previously fetched (i.e. already exists on the
+        # service), round-tripping the high-level entity through to_rest_job_object()
+        # does not produce a byte-identical REST body. MFE then sees a delta in
+        # immutable fields such as InputBindings and rejects the PUT with
+        # JobPropertyImmutable. Per the service contract, only description, tags,
+        # displayName, properties and isArchived are updatable. When this is clearly
+        # an update of an existing pipeline job, overlay just those fields onto the
+        # stored REST representation instead of sending the round-tripped body.
+        if (
+            rest_job_resource.properties.job_type == RestJobType.PIPELINE
+            and getattr(job, "creation_context", None) is not None
+            and rest_job_resource.name
+        ):
+            result = self._update_existing_pipeline_job_editable_fields(
+                rest_job_resource=rest_job_resource, **kwargs
+            )
+        else:
+            result = self._create_or_update_with_different_version_api(
+                rest_job_resource=rest_job_resource, **kwargs
+            )
 
         if is_local_run(result):
             ws_base_url = self._all_operations.all_operations[
@@ -779,6 +798,25 @@ class JobOperations(_ScopeDependentOperations):
         )
 
         return result
+
+    def _update_existing_pipeline_job_editable_fields(
+        self, rest_job_resource: JobBase, **kwargs: Any
+    ) -> JobBase:
+        """Apply an in-place update to an existing pipeline job using only the
+        editable fields. Avoids JobPropertyImmutable / InputBindings errors that
+        occur when the round-tripped REST body diverges from the stored one.
+
+        Per the service contract, only description, tags, displayName, properties
+        and isArchived are updatable on an existing job.
+        """
+        stored = self._get_job_2401(rest_job_resource.name)
+        new_props = rest_job_resource.properties
+        stored.properties.description = new_props.description
+        stored.properties.display_name = new_props.display_name
+        stored.properties.tags = new_props.tags
+        stored.properties.properties = new_props.properties
+        stored.properties.is_archived = new_props.is_archived
+        return self._create_or_update_with_different_version_api(rest_job_resource=stored, **kwargs)
 
     def _archive_or_restore(self, name: str, is_archived: bool) -> None:
         job_object = self._get_job(name)
