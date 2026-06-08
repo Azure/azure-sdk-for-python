@@ -1,0 +1,4 @@
+directory: specification/machinelearningservices/MachineLearningServices.Management.v2022_02_01_preview
+commit: f6ef4ce44b4cd6c50ebb85fba455be8c8ff1ac35
+repo: saanikaguptamicrosoft/azure-rest-api-specs
+additionalDirectories: []

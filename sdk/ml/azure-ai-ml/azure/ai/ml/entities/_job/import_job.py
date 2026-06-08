@@ -7,8 +7,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import JobBaseData
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants import JobType

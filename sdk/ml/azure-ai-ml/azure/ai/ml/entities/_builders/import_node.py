@@ -8,8 +8,8 @@ from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import JobBaseData
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ComponentSource, NodeType

@@ -654,10 +654,10 @@ class TestBatchDeploymentSDK:
             assert deployment.provisioning_state == deployment_rest.properties.provisioning_state
 
     def test_deployment_from_rest_object_for_batch_deployment(self) -> None:
-        from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData as RestBatchDeploymentData
+        from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import BatchDeploymentData as RestBatchDeploymentData
 
         with open(TestBatchDeploymentSDK.DEPLOYMENT_REST, "r") as f:
-            deployment_rest = RestBatchDeploymentData.deserialize(json.load(f))
+            deployment_rest = _deserialize(RestBatchDeploymentData, json.load(f))
             deployment = Deployment._from_rest_object(deployment_rest)
             assert isinstance(deployment, BatchDeployment)
             assert deployment.name == deployment_rest.name

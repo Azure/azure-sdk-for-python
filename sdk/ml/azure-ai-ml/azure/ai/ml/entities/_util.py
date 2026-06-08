@@ -12,7 +12,7 @@ from unittest import mock
 import msrest
 from marshmallow.exceptions import ValidationError
 
-from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
+from .._restclient.v2022_02_01_preview_tsp.models import JobInputType as JobInputType02
 from .._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
 from .._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput

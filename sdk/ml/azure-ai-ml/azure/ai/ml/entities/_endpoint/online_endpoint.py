@@ -9,11 +9,11 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union, cast
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import EndpointAuthKeys as RestEndpointAuthKeys
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import EndpointAuthMode
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import EndpointAuthToken as RestEndpointAuthToken
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import OnlineEndpointData
+from azure.ai.ml._restclient.v2022_02_01_preview_tsp.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._restclient.arm_ml_service.models import (
     ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
 )
@@ -182,7 +182,6 @@ class OnlineEndpoint(Endpoint):
         properties = RestOnlineEndpoint(
             description=self.description,
             auth_mode=OnlineEndpoint._yaml_auth_mode_to_rest_auth_mode(self.auth_mode),
-            endpoint=self.name,
             traffic=self.traffic,
             properties=self.properties,
         )
