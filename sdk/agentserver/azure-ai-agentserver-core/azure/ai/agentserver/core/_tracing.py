@@ -294,17 +294,6 @@ class TraceContextMiddleware:
                 "x_request_id", x_request_id, context=ctx,
             )
 
-        # Create a NonRecordingSpan with the extracted trace context so that
-        # get_current_span() returns a span carrying the correct trace_id.
-        # Without this, the OTel LogRecord processor sees no active span and
-        # sets trace_id=0, causing zeroed operation_Id in Application Insights
-        # for logs emitted by Hypercorn's access logger.
-        span = trace.get_current_span(ctx)
-        span_ctx = span.get_span_context()
-        if span_ctx and span_ctx.is_valid:
-            non_recording = trace.NonRecordingSpan(span_ctx)
-            ctx = trace.set_span_in_context(non_recording, ctx)
-
         # Attach request context for app execution and detach in the same
         # Task/context to avoid leaking contextvars across requests.
         token = _otel_context.attach(ctx)
