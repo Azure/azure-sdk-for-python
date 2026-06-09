@@ -6,8 +6,8 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Literal, Optional, Union
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as RestBatchDeployment
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview_tsp.models import BatchDeployment as RestBatchDeployment
+from azure.ai.ml._restclient.v2023_02_01_preview_tsp.models import (
     BatchDeploymentProperties,
     BatchPipelineComponentDeploymentConfiguration,
     IdAssetReference,
@@ -115,11 +115,12 @@ class PipelineComponentBatchDeployment(BatchDeployment):
 
     @classmethod
     def _from_rest_object(cls, deployment: RestBatchDeployment) -> "PipelineComponentBatchDeployment":
+        deployment_config = deployment.properties.deployment_configuration
         return PipelineComponentBatchDeployment(
             name=deployment.name,
             tags=deployment.tags,
-            component=deployment.properties.additional_properties["deploymentConfiguration"]["componentId"]["assetId"],
-            settings=deployment.properties.additional_properties["deploymentConfiguration"]["settings"],
+            component=deployment_config.component_id.asset_id,
+            settings=deployment_config.settings,
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
         )
 

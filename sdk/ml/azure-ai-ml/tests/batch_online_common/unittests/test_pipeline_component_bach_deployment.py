@@ -6,14 +6,7 @@ import json
 
 import pytest
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as RestBatchDeployment
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    BatchDeploymentProperties as RestBatchDeploymentProperties,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    BatchPipelineComponentDeploymentConfiguration as RestBatchPipelineComponentDeploymentConfiguration,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview.models import IdAssetReference
+from azure.ai.ml._restclient.v2023_02_01_preview_tsp.models import BatchDeployment as RestBatchDeployment
 from azure.ai.ml.entities import PipelineComponent
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._load_functions import load_pipeline_component_batch_deployment
@@ -82,25 +75,34 @@ class TestPipelineComponentBatchDeployment:
     def test_from_rest_object(self) -> None:
 
         with open(TestPipelineComponentBatchDeployment.HELLO_BATCH_DEPLOYMENT_REST, "r") as file:
-            pipeline_component_rest = RestBatchDeployment.from_dict(json.load(file))
-            pipeline_component_rest.properties.additional_properties = {
-                "deploymentConfiguration": {
-                    "componentId": {"assetId": "azureml:hello_batch@latest"},
-                    "settings": {"componentId": "azureml:hello_batch@latest"},
-                }
+            raw = json.load(file)
+            raw["properties"]["deploymentConfiguration"] = {
+                "deploymentConfigurationType": "PipelineComponent",
+                "componentId": {"referenceType": "Id", "assetId": "azureml:hello_batch@latest"},
+                "settings": {"componentId": "azureml:hello_batch@latest"},
             }
+            pipeline_component_rest = RestBatchDeployment._deserialize(raw, [])
             pipeline_component_from_rest = PipelineComponentBatchDeployment._from_rest_object(pipeline_component_rest)
             assert pipeline_component_from_rest.component == "azureml:hello_batch@latest"
-            assert (
-                pipeline_component_from_rest.settings["componentId"]
-                == pipeline_component_rest.properties.additional_properties["deploymentConfiguration"]["componentId"][
-                    "assetId"
-                ]
-            )
-            assert (
-                pipeline_component_from_rest.component
-                == pipeline_component_rest.properties.additional_properties["deploymentConfiguration"]["componentId"][
-                    "assetId"
-                ]
-            )
+            assert pipeline_component_from_rest.settings["componentId"] == "azureml:hello_batch@latest"
             assert pipeline_component_from_rest.endpoint_name == "achauhan-endpoint-name"
+
+    def test_to_rest_object_is_json_serializable_by_tsp_encoder(self) -> None:
+        """Regression test: the body produced by ``_to_rest_object`` is passed as ``body=`` to
+        ``v2023_02_01_preview_tsp.BatchDeploymentsOperations.begin_create_or_update``, which
+        serializes via ``SdkJSONEncoder``. The encoder fails with
+        ``TypeError: Object of type BatchDeployment is not JSON serializable`` if the body is
+        a non-TSP (msrest) object. Caught only by sample-pipelines previously."""
+        from azure.ai.ml._restclient.v2023_02_01_preview_tsp._utils.model_base import SdkJSONEncoder
+
+        pipeline_component = load_pipeline_component_batch_deployment(
+            TestPipelineComponentBatchDeployment.HELLO_BATCH_DEPLOYMENT
+        )
+        rest_obj = pipeline_component._to_rest_object(location="eastus")
+        payload = json.loads(json.dumps(rest_obj, cls=SdkJSONEncoder, exclude_readonly=True))
+        assert payload["location"] == "eastus"
+        assert (
+            payload["properties"]["deploymentConfiguration"]["componentId"]["assetId"]
+            == pipeline_component.component
+        )
+        assert payload["properties"]["deploymentConfiguration"]["deploymentConfigurationType"] == "PipelineComponent"
