@@ -143,7 +143,7 @@ def assign_rbac():  # pylint: disable=too-many-statements
 
             # Define the Azure AI User role definition ID
             # This is the built-in role ID for "Azure AI User"
-            azure_ai_user_role_id = "64702f94-c441-49e6-a78b-ef80e0188fee"
+            azure_ai_user_role_id = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
 
             # Create the scope (project level)
             scope = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.CognitiveServices/accounts/{account_name}/projects/{project_name}"

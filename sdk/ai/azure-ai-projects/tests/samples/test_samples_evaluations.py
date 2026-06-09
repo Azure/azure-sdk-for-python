@@ -168,6 +168,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_rubric_evaluator_generation_basic.py",  # PR #47057: recording not yet available
                 "sample_rubric_evaluator_manual.py",  # PR #47057: recording not yet available
                 "sample_rubric_evaluator_generation_iterate.py",  # PR #47057: recording not yet available
+                "sample_agent_trace_evaluation_smart_filter.py",  # PR #47217: recording not yet available
+                "sample_scheduled_agent_traces_evaluation_smart_filter.py",  # PR #47217: recording not yet available
             ],
         ),
     )

@@ -133,16 +133,16 @@ from ...operations._operations import (
     build_beta_schedules_get_run_request,
     build_beta_schedules_list_request,
     build_beta_schedules_list_runs_request,
-    build_beta_skills_create_from_package_request,
+    build_beta_skills_create_from_files_request,
     build_beta_skills_create_request,
     build_beta_skills_delete_request,
-    build_beta_skills_delete_skill_version_request,
+    build_beta_skills_delete_version_request,
     build_beta_skills_download_request,
+    build_beta_skills_download_version_request,
     build_beta_skills_get_request,
-    build_beta_skills_get_skill_version_content_request,
-    build_beta_skills_get_skill_version_request,
+    build_beta_skills_get_version_request,
     build_beta_skills_list_request,
-    build_beta_skills_list_skill_versions_request,
+    build_beta_skills_list_versions_request,
     build_beta_skills_update_request,
     build_beta_toolboxes_create_version_request,
     build_beta_toolboxes_delete_request,
@@ -308,9 +308,10 @@ class AgentsOperations:
 
         :param agent_name: The name of the agent to delete. Required.
         :type agent_name: str
-        :keyword force: For Hosted Agents, if true, force-deletes the agent even if its versions have
-         active sessions, cascading deletion to all associated sessions. Defaults to ``false``. This
-         value is not relevant for other Agent types. Default value is None.
+        :keyword force: For Hosted Agents, if ``true``, force-deletes the agent even if its versions
+         have active sessions, cascading deletion to all associated sessions. The service defaults to
+         ``false`` if a value is not specified by the caller. This value is not relevant for other Agent
+         types. Default value is None.
         :paramtype force: bool
         :return: DeleteAgentResponse. The DeleteAgentResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DeleteAgentResponse
@@ -959,9 +960,10 @@ class AgentsOperations:
         :type agent_name: str
         :param agent_version: The version of the agent to delete. Required.
         :type agent_version: str
-        :keyword force: For Hosted Agents, if true, force-deletes the version even if it has active
-         sessions, cascading deletion to all associated sessions. Defaults to ``false``. This value is
-         not relevant for other Agent types. Default value is None.
+        :keyword force: For Hosted Agents, if ``true``, force-deletes the version even if it has active
+         sessions, cascading deletion to all associated sessions. The service defaults to ``false`` if a
+         value is not specified by the caller. This value is not relevant for other Agent types. Default
+         value is None.
         :paramtype force: bool
         :return: DeleteAgentVersionResponse. The DeleteAgentVersionResponse is compatible with
          MutableMapping
@@ -4367,8 +4369,8 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword path: The file or directory path to delete, relative to the session home directory.
          Required.
         :paramtype path: str
-        :keyword recursive: Whether to recursively delete directory contents. Defaults to false.
-         Default value is None.
+        :keyword recursive: Whether to recursively delete directory contents. The service defaults to
+         ``false`` if a value is not specified by the caller. Default value is None.
         :paramtype recursive: bool
         :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
          (responses, conversations, sessions) to a specific end user. Default value is None.
@@ -9752,7 +9754,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        body: _models.UpdateModelVersionRequest,
+        model_version_update: _models.UpdateModelVersionRequest,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -9764,29 +9766,8 @@ class BetaModelsOperations:
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param body: The UpdateModelVersionRequest to create or update. Required.
-        :type body: ~azure.ai.projects.models.UpdateModelVersionRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.ModelVersion:
-        """Update an existing ModelVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
-         Required.
-        :type version: str
-        :param body: The UpdateModelVersionRequest to create or update. Required.
-        :type body: JSON
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
+        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -9800,7 +9781,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        body: IO[bytes],
+        model_version_update: JSON,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -9812,8 +9793,35 @@ class BetaModelsOperations:
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param body: The UpdateModelVersionRequest to create or update. Required.
-        :type body: IO[bytes]
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
+        :type model_version_update: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ModelVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        name: str,
+        version: str,
+        model_version_update: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.ModelVersion:
+        """Update an existing ModelVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
+         Required.
+        :type version: str
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
+        :type model_version_update: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -9824,7 +9832,11 @@ class BetaModelsOperations:
 
     @distributed_trace_async
     async def update(
-        self, name: str, version: str, body: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        model_version_update: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ModelVersion:
         """Update an existing ModelVersion with the given version id.
 
@@ -9833,9 +9845,10 @@ class BetaModelsOperations:
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param body: The UpdateModelVersionRequest to create or update. Is one of the following types:
-         UpdateModelVersionRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.UpdateModelVersionRequest or JSON or IO[bytes]
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Is one of the
+         following types: UpdateModelVersionRequest, JSON, IO[bytes] Required.
+        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest or JSON or
+         IO[bytes]
         :return: ModelVersion. The ModelVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ModelVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9856,10 +9869,10 @@ class BetaModelsOperations:
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(model_version_update, (IOBase, bytes)):
+            _content = model_version_update
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(model_version_update, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_models_update_request(
             name=name,
@@ -13331,7 +13344,7 @@ class BetaSkillsOperations:
         _data_fields: list[str] = ["default"]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_beta_skills_create_from_package_request(
+        _request = build_beta_skills_create_from_files_request(
             name=name,
             api_version=self._config.api_version,
             files=_files,
@@ -13421,7 +13434,7 @@ class BetaSkillsOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_skills_list_skill_versions_request(
+            _request = build_beta_skills_list_versions_request(
                 name=name,
                 limit=limit,
                 order=order,
@@ -13493,7 +13506,7 @@ class BetaSkillsOperations:
 
         cls: ClsType[_models.SkillVersion] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_get_skill_version_request(
+        _request = build_beta_skills_get_version_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -13626,7 +13639,7 @@ class BetaSkillsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_get_skill_version_content_request(
+        _request = build_beta_skills_download_version_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -13670,16 +13683,16 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_version(self, name: str, version: str, **kwargs: Any) -> _models.DeleteSkillVersionResponse:
+    async def delete_version(self, name: str, version: str, **kwargs: Any) -> _models.DeleteSkillVersionResult:
         """Delete a specific version of a skill.
 
         :param name: The name of the skill. Required.
         :type name: str
         :param version: The version identifier to delete. Required.
         :type version: str
-        :return: DeleteSkillVersionResponse. The DeleteSkillVersionResponse is compatible with
+        :return: DeleteSkillVersionResult. The DeleteSkillVersionResult is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteSkillVersionResponse
+        :rtype: ~azure.ai.projects.models.DeleteSkillVersionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13693,9 +13706,9 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteSkillVersionResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeleteSkillVersionResult] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_delete_skill_version_request(
+        _request = build_beta_skills_delete_version_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -13731,7 +13744,7 @@ class BetaSkillsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteSkillVersionResponse, response.json())
+            deserialized = _deserialize(_models.DeleteSkillVersionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

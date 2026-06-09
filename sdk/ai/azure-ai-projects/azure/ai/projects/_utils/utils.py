@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import json
+import os
 from typing import Any, IO, Mapping, Optional, Union
 
 from .._utils.model_base import Model, SdkJSONEncoder
@@ -29,6 +30,39 @@ def serialize_multipart_data_entry(data_entry: Any) -> Any:
     return data_entry
 
 
+def _normalize_multipart_file_entry(field_name: str, entry: Any, index: int) -> Any:
+    """Ensure each multipart file entry carries a filename so that it is encoded
+    as a file part (with ``filename=``) rather than a plain form field.
+
+    Servers commonly distinguish multipart file parts from form-data parts by
+    the presence of ``filename=`` in the part's ``Content-Disposition`` header.
+    When callers pass bare bytes / str / IO objects (e.g.
+    ``Path("x.zip").read_bytes()``), the underlying HTTP client emits the part
+    without a filename, which several Foundry endpoints reject with errors like
+    "At least one file must be uploaded". This helper synthesizes a filename
+    from the IO object's ``name`` attribute when available, otherwise falls
+    back to a stable default.
+
+    :param field_name: The multipart form field name, used as a fallback filename.
+    :type field_name: str
+    :param entry: The file entry to normalize. May be a tuple, bytes, str, or IO object.
+    :type entry: any
+    :param index: Position of the entry within its field's list, used to disambiguate fallback filenames.
+    :type index: int
+    :return: A ``(filename, entry)`` tuple if ``entry`` was not already a tuple, otherwise ``entry`` unchanged.
+    :rtype: any
+    """
+    if isinstance(entry, tuple):
+        return entry
+    filename: Optional[str] = None
+    name_attr = getattr(entry, "name", None)
+    if isinstance(name_attr, str) and name_attr:
+        filename = os.path.basename(name_attr)
+    if not filename:
+        filename = f"{field_name}_{index}" if index else field_name
+    return (filename, entry)
+
+
 def prepare_multipart_form_data(
     body: Mapping[str, Any], multipart_fields: list[str], data_fields: list[str]
 ) -> list[FileType]:
@@ -47,8 +81,9 @@ def prepare_multipart_form_data(
     for multipart_field in multipart_fields:
         multipart_entry = body.get(multipart_field)
         if isinstance(multipart_entry, list):
-            files.extend([(multipart_field, e) for e in multipart_entry])
+            for idx, e in enumerate(multipart_entry):
+                files.append((multipart_field, _normalize_multipart_file_entry(multipart_field, e, idx)))
         elif multipart_entry:
-            files.append((multipart_field, multipart_entry))
+            files.append((multipart_field, _normalize_multipart_file_entry(multipart_field, multipart_entry, 0)))
 
     return files
