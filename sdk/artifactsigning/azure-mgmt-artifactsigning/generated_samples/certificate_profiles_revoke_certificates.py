@@ -15,7 +15,7 @@ from azure.mgmt.artifactsigning import ArtifactSigningMgmtClient
     pip install azure-identity
     pip install azure-mgmt-artifactsigning
 # USAGE
-    python certificate_profiles_revoke_certificate.py
+    python certificate_profiles_revoke_certificates.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,20 +30,31 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.certificate_profiles.revoke_certificate(
+    client.certificate_profiles.revoke_certificates(
         resource_group_name="MyResourceGroup",
         account_name="MyAccount",
         profile_name="profileA",
         body={
-            "effectiveAt": "2023-11-12T23:40:25+00:00",
-            "reason": "KeyCompromised",
-            "remarks": "test",
-            "serialNumber": "xxxxxxxxxxxxxxxxxx",
-            "thumbprint": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "revokeCertificates": [
+                {
+                    "effectiveAt": "2023-11-12T23:40:25+00:00",
+                    "reason": "KeyCompromised",
+                    "remarks": "test",
+                    "serialNumber": "xxxxxxxxxxxxxxxxxx",
+                    "thumbprint": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                },
+                {
+                    "effectiveAt": "2023-11-12T23:40:25+00:00",
+                    "reason": "KeyCompromised",
+                    "remarks": "test",
+                    "serialNumber": "yyyyyyyyyyyyyyyyyy",
+                    "thumbprint": "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+                },
+            ]
         },
     )
 
 
-# x-ms-original-file: 2025-10-13/CertificateProfiles_RevokeCertificate.json
+# x-ms-original-file: 2026-05-15-preview/CertificateProfiles_RevokeCertificates.json
 if __name__ == "__main__":
     main()
