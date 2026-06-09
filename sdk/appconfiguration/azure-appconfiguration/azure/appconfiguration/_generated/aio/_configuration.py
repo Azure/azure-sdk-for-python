@@ -29,7 +29,7 @@ class AzureAppConfigurationClientConfiguration:  # pylint: disable=too-many-inst
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "2024-09-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -38,7 +38,7 @@ class AzureAppConfigurationClientConfiguration:  # pylint: disable=too-many-inst
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-09-01")
+        api_version: str = kwargs.pop("api_version", "2026-04-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
