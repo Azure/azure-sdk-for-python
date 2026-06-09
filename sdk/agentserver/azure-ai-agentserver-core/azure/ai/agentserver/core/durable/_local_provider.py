@@ -17,6 +17,10 @@ import os
 from pathlib import Path
 from typing import Any
 
+from ._attachments import (
+    _validate_attachment_count,
+    _validate_attachment_size,
+)
 from ._exceptions import TaskNotFound
 from ._models import (
     LeaseInfo,
@@ -142,6 +146,25 @@ class LocalFileTaskProvider:
             if status == "in_progress":
                 started_at = now
 
+        # Spec 018 — validate + persist initial attachments (mirrors
+        # HostedTaskProvider client-side enforcement).
+        attachments: dict[str, Any] | None = None
+        if request.attachments is not None:
+            additions = sum(
+                1 for v in request.attachments.values() if v is not None
+            )
+            _validate_attachment_count(
+                task_id=task_id, current_count=0, additions=additions
+            )
+            for k, v in request.attachments.items():
+                _validate_attachment_size(
+                    task_id=task_id, attachment_key=k, value=v
+                )
+            # Drop any null-valued entries — create has no prior state to delete.
+            attachments = {
+                k: v for k, v in request.attachments.items() if v is not None
+            }
+
         task = TaskInfo(
             id=task_id,
             agent_name=request.agent_name,
@@ -153,6 +176,7 @@ class LocalFileTaskProvider:
             payload=request.payload,
             tags=request.tags,
             source=request.source,
+            attachments=attachments,
             created_at=now,
             updated_at=now,
             started_at=started_at,
@@ -301,6 +325,35 @@ class LocalFileTaskProvider:
                     task.tags.pop(key, None)
                 else:
                     task.tags[key] = value
+
+        # Spec 018 — Attachments null-as-delete merge (same shape as tags).
+        if patch.attachments is not None:
+            if task.attachments is None:
+                task.attachments = {}
+            # Validate per-value size for non-deletes first, then count
+            # would-be-final state against the per-task cap.
+            for key, value in patch.attachments.items():
+                _validate_attachment_size(
+                    task_id=task_id, attachment_key=key, value=value
+                )
+            # Project the would-be-final attachment count and validate.
+            projected = dict(task.attachments)
+            for key, value in patch.attachments.items():
+                if value is None:
+                    projected.pop(key, None)
+                else:
+                    projected[key] = value
+            _validate_attachment_count(
+                task_id=task_id,
+                current_count=len(projected),
+                additions=0,
+            )
+            # Apply the merge in-place on the task.
+            for key, value in patch.attachments.items():
+                if value is None:
+                    task.attachments.pop(key, None)
+                else:
+                    task.attachments[key] = value
 
         if patch.error is not None:
             task.error = patch.error

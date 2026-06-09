@@ -100,6 +100,15 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
     :type started_at: str | None
     :param completed_at: ISO 8601 timestamp of ``completed`` transition.
     :type completed_at: str | None
+    :param source: Source/initiator metadata (free-form key/value).
+    :type source: dict[str, Any] | None
+    :param attachments: Optional companion store (spec 018) for
+        per-input payloads larger than the framework's inline-payload
+        thresholds. Maximum 20 entries, each ≤ 2 MB. Keys starting with
+        ``_`` are reserved for the framework (``_input``,
+        ``_steering_input_<seq>``). See
+        ``sdk/agentserver/specs/task-attachments.md``.
+    :type attachments: dict[str, Any] | None
     """
 
     __slots__ = (
@@ -120,6 +129,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
         "started_at",
         "completed_at",
         "source",
+        "attachments",
     )
 
     def __init__(
@@ -141,6 +151,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
         started_at: str | None = None,
         completed_at: str | None = None,
         source: dict[str, Any] | None = None,
+        attachments: dict[str, Any] | None = None,
     ) -> None:
         self.id = id
         self.agent_name = agent_name
@@ -159,6 +170,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
         self.started_at = started_at
         self.completed_at = completed_at
         self.source = source
+        self.attachments = attachments
 
     def __repr__(self) -> str:
         return f"TaskInfo(id={self.id!r}, status={self.status!r}, agent_name={self.agent_name!r})"
@@ -202,6 +214,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
             started_at=data.get("started_at"),
             completed_at=data.get("completed_at"),
             source=data.get("source"),
+            attachments=data.get("attachments"),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -241,6 +254,8 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
             result["suspension_reason"] = self.suspension_reason
         if self.source is not None:
             result["source"] = self.source
+        if self.attachments is not None:
+            result["attachments"] = self.attachments
         result["etag"] = self.etag
         result["created_at"] = self.created_at
         result["updated_at"] = self.updated_at
@@ -274,6 +289,11 @@ class TaskCreateRequest:  # pylint: disable=too-many-instance-attributes
     :type lease_instance_id: str | None
     :param lease_duration_seconds: Lease TTL. Required with lease params.
     :type lease_duration_seconds: int | None
+    :param attachments: Optional initial attachments map (spec 018).
+        Each value must be ≤ 2 MB; total entries ≤ 20. Keys starting
+        with ``_`` are reserved for the framework. See
+        ``sdk/agentserver/specs/task-attachments.md``.
+    :type attachments: dict[str, Any] | None
     """
 
     __slots__ = (
@@ -289,6 +309,7 @@ class TaskCreateRequest:  # pylint: disable=too-many-instance-attributes
         "lease_owner",
         "lease_instance_id",
         "lease_duration_seconds",
+        "attachments",
     )
 
     def __init__(
@@ -305,6 +326,7 @@ class TaskCreateRequest:  # pylint: disable=too-many-instance-attributes
         lease_owner: str | None = None,
         lease_instance_id: str | None = None,
         lease_duration_seconds: int | None = None,
+        attachments: dict[str, Any] | None = None,
     ) -> None:
         self.agent_name = agent_name
         self.session_id = session_id
@@ -318,6 +340,7 @@ class TaskCreateRequest:  # pylint: disable=too-many-instance-attributes
         self.lease_owner = lease_owner
         self.lease_instance_id = lease_instance_id
         self.lease_duration_seconds = lease_duration_seconds
+        self.attachments = attachments
 
 
 class TaskPatchRequest:
@@ -343,6 +366,12 @@ class TaskPatchRequest:
     :type lease_duration_seconds: int | None
     :param if_match: ETag for optimistic concurrency.
     :type if_match: str | None
+    :param attachments: Attachments patch (spec 018). Same null-as-
+        delete semantics as ``tags``: keys with a non-``None`` value are
+        upserted; keys with value ``None`` are deleted; keys absent
+        from the dict are unchanged. ``None`` for the field itself
+        means "no attachments changes in this PATCH".
+    :type attachments: dict[str, Any] | None
     """
 
     __slots__ = (
@@ -355,6 +384,7 @@ class TaskPatchRequest:
         "lease_instance_id",
         "lease_duration_seconds",
         "if_match",
+        "attachments",
     )
 
     def __init__(
@@ -368,6 +398,7 @@ class TaskPatchRequest:
         lease_instance_id: str | None = None,
         lease_duration_seconds: int | None = None,
         if_match: str | None = None,
+        attachments: dict[str, Any] | None = None,
     ) -> None:
         self.status = status
         self.payload = payload
@@ -378,3 +409,4 @@ class TaskPatchRequest:
         self.lease_instance_id = lease_instance_id
         self.lease_duration_seconds = lease_duration_seconds
         self.if_match = if_match
+        self.attachments = attachments
