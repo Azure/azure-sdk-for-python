@@ -182,7 +182,15 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
             agent_tenant_id=agent_tenant_id,
         ),
     ]
-    log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
+    session_id = os.environ.get(_config._ENV_FOUNDRY_AGENT_SESSION_ID, "") or None  # pylint: disable=protected-access
+    log_record_processors = [  # type: ignore[list-item]
+        _BaggageLogRecordProcessor(),
+        _FoundryEnrichmentLogRecordProcessor(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            session_id=session_id,
+        ),
+    ]
 
     try:
         _setup_distro_export(
@@ -533,6 +541,53 @@ class _BaggageLogRecordProcessor:
             if entries and hasattr(log_data, 'log_record') and log_data.log_record:
                 for key, value in entries.items():
                     log_data.log_record.attributes[key] = value  # type: ignore[index]
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+    def shutdown(self) -> None:
+        pass
+
+    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
+        return True
+
+
+class _FoundryEnrichmentLogRecordProcessor:
+    """Populate stable Foundry dimensions on log records.
+
+    This ensures key metadata (agent name/version/session) is present even for
+    logs emitted when no active span is available (for example, post-response
+    access logs where operation_Id can be zeroed).
+    """
+
+    def __init__(
+        self,
+        *,
+        agent_name: Optional[str] = None,
+        agent_version: Optional[str] = None,
+        session_id: Optional[str] = None,
+    ) -> None:
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+        self.session_id = session_id
+
+    def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
+        try:
+            if not hasattr(log_data, "log_record") or not log_data.log_record:
+                return
+
+            attrs = log_data.log_record.attributes  # type: ignore[assignment]
+
+            if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+            if self.agent_version and _ATTR_GEN_AI_AGENT_VERSION not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+
+            # Prefer request-scoped baggage session ID; fallback to platform env.
+            ctx = _otel_context.get_current()
+            bag_session = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
+            resolved_session = bag_session or self.session_id
+            if resolved_session and _ATTR_SESSION_ID not in attrs:
+                attrs[_ATTR_SESSION_ID] = resolved_session
         except Exception:  # pylint: disable=broad-except
             pass
 
