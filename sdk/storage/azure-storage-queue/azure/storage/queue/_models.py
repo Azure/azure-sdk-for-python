@@ -15,7 +15,7 @@ from ._shared.response_handlers import (
 )
 from ._shared.request_handlers import serialize_iso
 from ._shared.models import DictMixin
-from ._generated._utils import serialization as _serialization
+from ._generated.models import _attach_msrest_compat
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -29,33 +29,6 @@ else:
 
 if TYPE_CHECKING:
     from datetime import datetime
-
-
-# These public models inherited (transitively) from the autorest
-# msrest model, which exposed ``serialize``, ``deserialize``,
-# ``from_dict``, ``as_dict``, ``is_xml_model``, and
-# ``enable_additional_properties_sending``. After the migration the generated models
-# use a different base class. To preserve the public method surface, the methods
-# are grafted onto each public class at module load time via the
-# ``@_attach_msrest_compat`` decorator.
-def _attach_msrest_compat(cls: type) -> type:
-    if not hasattr(cls, "_attribute_map"):
-        raise TypeError(f"{cls.__name__} must define _attribute_map to use _attach_msrest_compat")
-    if not hasattr(cls, "_validation"):
-        cls._validation = {}  # type: ignore[attr-defined]
-    cls.additional_properties = None  # type: ignore[attr-defined]
-    for _name in (
-        "serialize",
-        "deserialize",
-        "from_dict",
-        "as_dict",
-        "is_xml_model",
-        "enable_additional_properties_sending",
-        "_infer_class_models",
-        "_create_xml_node",
-    ):
-        setattr(cls, _name, vars(_serialization.Model)[_name])
-    return cls
 
 
 @_attach_msrest_compat
