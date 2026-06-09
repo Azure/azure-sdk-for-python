@@ -24,7 +24,6 @@ from azure.storage.blob import (
     generate_blob_sas,
 )
 
-
 # ------------------------------------------------------------------------------
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
 NEW_TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=NEW_CPK_KEY_VALUE, key_hash=NEW_CPK_KEY_HASH)

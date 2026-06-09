@@ -31,7 +31,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.validation import calculate_content_md5
 
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "blob"
 SMALL_BLOB_SIZE = 1024
@@ -422,8 +421,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         # Act part 2: put block from url with wrong md5
         with pytest.raises(HttpResponseError):
             destination_blob_client.append_block_from_url(
-                source_blob_client.url + '?' + sas,
-                source_content_md5=calculate_content_md5(b"POTATO"))
+                source_blob_client.url + "?" + sas, source_content_md5=calculate_content_md5(b"POTATO")
+            )
 
     @BlobPreparer()
     @recorded_by_proxy

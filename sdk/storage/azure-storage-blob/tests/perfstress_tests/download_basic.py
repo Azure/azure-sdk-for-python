@@ -14,7 +14,6 @@ from devtools_testutils.perfstress_tests import RandomStream
 
 from ._test_base import _BlobTest
 
-
 TOKEN_SCOPE = "https://storage.azure.com/.default"
 
 

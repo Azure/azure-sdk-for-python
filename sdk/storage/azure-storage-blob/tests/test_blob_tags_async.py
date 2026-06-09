@@ -20,7 +20,6 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.storage.blob import BlobBlock, BlobSasPermissions, generate_blob_sas
 from azure.storage.blob.aio import BlobServiceClient
 
-
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "container"
 TEST_BLOB_PREFIX = "blob"

@@ -19,7 +19,6 @@ from azure.storage.blob import BlobSasPermissions, StandardBlobTier, StorageErro
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.storage.blob._shared.validation import calculate_content_md5
 
-
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
 

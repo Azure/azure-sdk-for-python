@@ -18,7 +18,6 @@ from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import DelimitedJsonDialect, DelimitedTextDialect
 from azure.storage.blob.aio import BlobServiceClient
 
-
 # ------------------------------------------------------------------------------
 from azure.storage.blob._models import ArrowDialect, ArrowType, QuickQueryDialect
 

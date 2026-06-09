@@ -35,7 +35,6 @@ from azure.storage.blob import (
     StandardBlobTier,
 )
 
-
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "container"
 # ------------------------------------------------------------------------------
@@ -1204,7 +1203,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        blob_name = "dir1/dir2/file\uFFFF.blob"
+        blob_name = "dir1/dir2/file\uffff.blob"
         container = self._create_container(bsc, prefix="cont1")
         data = b"hello world"
         bc = container.get_blob_client(blob_name)

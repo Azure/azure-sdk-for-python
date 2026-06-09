@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
-import asyncio
 from datetime import datetime, timedelta
 
 import pytest
@@ -30,7 +29,6 @@ from azure.storage.blob import (
     ResourceTypes,
 )
 from azure.storage.blob.aio import BlobServiceClient
-
 
 # ------------------------------------------------------------------------------
 # For local testing, ensure these encryption scopes are created for your account.

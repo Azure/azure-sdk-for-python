@@ -21,7 +21,6 @@ from azure.storage.blob import BlobBlock
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.blob.aio import BlobServiceClient
 
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "largestblob"
 LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024

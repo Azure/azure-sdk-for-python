@@ -21,7 +21,6 @@ USAGE:
     4) STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
-
 import os
 import sys
 import asyncio

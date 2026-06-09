@@ -36,7 +36,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.validation import calculate_content_md5
 
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "blob"
 SMALL_BLOB_SIZE = 1024

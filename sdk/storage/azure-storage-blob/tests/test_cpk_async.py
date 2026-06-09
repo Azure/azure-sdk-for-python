@@ -25,7 +25,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob.aio import BlobServiceClient
 
-
 # ------------------------------------------------------------------------------
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
 NEW_TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=NEW_CPK_KEY_VALUE, key_hash=NEW_CPK_KEY_HASH)

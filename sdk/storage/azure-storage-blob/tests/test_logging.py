@@ -26,7 +26,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
-
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse
 else:

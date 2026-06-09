@@ -60,7 +60,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._generated.models import RehydratePriority
 
-
 # ------------------------------------------------------------------------------
 SMALL_BLOB_SIZE = 1024
 TEST_CONTAINER_PREFIX = "container"

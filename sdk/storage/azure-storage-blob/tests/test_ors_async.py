@@ -12,7 +12,6 @@ from settings.testcase import BlobPreparer
 from azure.storage.blob import BlobProperties
 from azure.storage.blob.aio import BlobServiceClient
 
-
 # ------------------------------------------------------------------------------
 
 

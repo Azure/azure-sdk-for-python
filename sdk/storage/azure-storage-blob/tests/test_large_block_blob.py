@@ -18,7 +18,6 @@ from settings.testcase import BlobPreparer
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobServiceClient, ContentSettings
 
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "largeblob"
 LARGE_BLOB_SIZE = 12 * 1024 * 1024

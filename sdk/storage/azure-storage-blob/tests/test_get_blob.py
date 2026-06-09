@@ -22,7 +22,6 @@ from test_helpers import NonSeekableStream, ProgressTracker
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import BlobProperties, BlobServiceClient, StorageErrorCode
 
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "blob"
 # ------------------------------------------------------------------------------

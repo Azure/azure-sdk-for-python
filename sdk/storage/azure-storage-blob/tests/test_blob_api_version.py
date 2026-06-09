@@ -22,7 +22,6 @@ from azure.storage.blob import (
 from azure.storage.blob._shared.constants import X_MS_VERSION
 from azure.storage.blob._shared.response_handlers import SV_DOCS_URL
 
-
 INVALID_X_MS_VERSION = "2099-11-05"
 TEST_BLOB_PREFIX = "blob"
 

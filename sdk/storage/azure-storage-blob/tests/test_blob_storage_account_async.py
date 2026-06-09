@@ -14,7 +14,6 @@ from azure.storage.blob import StandardBlobTier
 from azure.storage.blob._generated.models import RehydratePriority
 from azure.storage.blob.aio import BlobServiceClient
 
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "blob"
 # ------------------------------------------------------------------------------

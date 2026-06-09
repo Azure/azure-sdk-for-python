@@ -29,7 +29,6 @@ from azure.storage.blob import (
     ResourceTypes,
 )
 
-
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "container"
 TEST_BLOB_PREFIX = "blob"

@@ -38,6 +38,7 @@ _FUNCTIONS_WORKER_RUNTIME = "FUNCTIONS_WORKER_RUNTIME"
 _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY = "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY"
 _AKS_ARM_NAMESPACE_ID = "AKS_ARM_NAMESPACE_ID"
 _KUBERNETES_SERVICE_HOST = "KUBERNETES_SERVICE_HOST"
+_APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE = "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE"
 
 # Network
 
@@ -46,6 +47,17 @@ _INVALID_STATUS_CODES = (400,)  # Invalid Instrumentation Key/data
 _REDIRECT_STATUS_CODES = (
     307,  # Temporary redirect
     308,  # Permanent redirect
+)
+
+_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = (
+    ".livediagnostics.monitor.azure.com",
+    ".monitor.azure.com",
+    ".services.visualstudio.com",
+    ".applicationinsights.azure.com",
+    ".monitor.azure.us",
+    ".applicationinsights.azure.us",
+    ".monitor.azure.cn",
+    ".applicationinsights.azure.cn",
 )
 
 _RETRYABLE_STATUS_CODES = (

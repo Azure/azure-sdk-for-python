@@ -20,7 +20,6 @@ from azure.storage.blob import BlobSasPermissions, ContainerSasPermissions, gene
 from azure.storage.blob.aio import BlobClient, BlobServiceClient, ContainerClient
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
-
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse
 else:

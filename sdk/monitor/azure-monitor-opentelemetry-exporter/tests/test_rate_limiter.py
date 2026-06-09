@@ -262,7 +262,10 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
 
         # First call raises a 307 redirect, second call succeeds
         mock_response = mock.Mock()
-        mock_response.headers = {"location": "https://redirected.example.com/v2/track"}
+        # Redirect target differing from the default ingestion host
+        # (`dc.services.visualstudio.com`) only in the leftmost DNS label,
+        # so the cross-origin redirect guard permits it.
+        mock_response.headers = {"location": "https://westus.services.visualstudio.com/v2/track"}
         redirect_error = HttpResponseError(
             message="Temporary Redirect",
             response=mock_response,

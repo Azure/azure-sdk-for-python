@@ -33,7 +33,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.validation import calculate_content_md5
 
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "blob"
 LARGE_BLOB_SIZE = 10 * 1024 + 512
@@ -768,7 +767,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
                 offset=0,
                 length=SOURCE_BLOB_SIZE,
                 source_offset=0,
-                source_content_md5=calculate_content_md5(b"POTATO"))
+                source_content_md5=calculate_content_md5(b"POTATO"),
+            )
 
     @BlobPreparer()
     @recorded_by_proxy

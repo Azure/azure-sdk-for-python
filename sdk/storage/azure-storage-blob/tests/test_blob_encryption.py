@@ -30,7 +30,6 @@ from azure.storage.blob._encryption import (
     _validate_and_unwrap_cek,
 )
 
-
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "encryption_container"
 TEST_BLOB_PREFIXES = {"BlockBlob": "encryption_block_blob", "PageBlob": "encryption_page_blob", "AppendBlob": "foo"}

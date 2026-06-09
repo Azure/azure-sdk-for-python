@@ -22,7 +22,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._models import ArrowDialect, ArrowType, QuickQueryDialect
 
-
 # ------------------------------------------------------------------------------
 
 CSV_DATA = (

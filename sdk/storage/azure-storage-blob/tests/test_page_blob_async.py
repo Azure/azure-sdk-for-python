@@ -32,7 +32,6 @@ from azure.storage.blob import (
 from azure.storage.blob._shared.validation import calculate_content_md5
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "blob"
 LARGE_BLOB_SIZE = 10 * 1024 + 512
@@ -713,7 +712,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
                 0,
                 SOURCE_BLOB_SIZE,
                 0,
-                source_content_md5=calculate_content_md5(b"POTATO")
+                source_content_md5=calculate_content_md5(b"POTATO"),
             )
 
     @BlobPreparer()

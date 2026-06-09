@@ -64,7 +64,6 @@ from azure.storage.blob.aio import (
     upload_blob_to_url,
 )
 
-
 # ------------------------------------------------------------------------------
 SMALL_BLOB_SIZE = 1024
 TEST_CONTAINER_PREFIX = "container"

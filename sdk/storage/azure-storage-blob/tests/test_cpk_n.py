@@ -29,7 +29,6 @@ from azure.storage.blob import (
     ResourceTypes,
 )
 
-
 # ------------------------------------------------------------------------------
 # For local testing, ensure these encryption scopes are created for your account.
 # For Live pipeline, these are created by ARM template.

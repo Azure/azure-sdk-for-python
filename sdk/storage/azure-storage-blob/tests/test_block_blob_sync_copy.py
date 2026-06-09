@@ -24,7 +24,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.validation import calculate_content_md5
 
-
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
 

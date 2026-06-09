@@ -13,6 +13,7 @@ USAGE: python blob_samples_service.py
     Set the environment variables with your own values before running the sample:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
+
 import os
 import sys
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
