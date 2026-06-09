@@ -15,7 +15,10 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
+from ..enumvalue.aio.operations import EnumValueOperations
 from ..model.aio.operations import ModelOperations
+from ..operation.aio.operations import OperationOperations
+from ..parameter.aio.operations import ParameterOperations
 from ..property.aio.operations import PropertyOperations
 from ._configuration import ExactNameClientConfiguration
 
@@ -32,6 +35,15 @@ class ExactNameClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype model: specs.azure.clientgenerator.core.exactname.aio.operations.ModelOperations
     :ivar property: PropertyOperations operations
     :vartype property: specs.azure.clientgenerator.core.exactname.aio.operations.PropertyOperations
+    :ivar enum_value: EnumValueOperations operations
+    :vartype enum_value:
+     specs.azure.clientgenerator.core.exactname.aio.operations.EnumValueOperations
+    :ivar operation: OperationOperations operations
+    :vartype operation:
+     specs.azure.clientgenerator.core.exactname.aio.operations.OperationOperations
+    :ivar parameter: ParameterOperations operations
+    :vartype parameter:
+     specs.azure.clientgenerator.core.exactname.aio.operations.ParameterOperations
     :keyword endpoint: Service host. Default value is "http://localhost:3000".
     :paramtype endpoint: str
     """
@@ -66,6 +78,9 @@ class ExactNameClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize.client_side_validation = False
         self.model = ModelOperations(self._client, self._config, self._serialize, self._deserialize)
         self.property = PropertyOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.enum_value = EnumValueOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation = OperationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.parameter = ParameterOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

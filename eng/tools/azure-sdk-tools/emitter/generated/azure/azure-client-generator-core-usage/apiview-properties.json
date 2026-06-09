@@ -2,6 +2,8 @@
     "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.Usage",
     "CrossLanguageDefinitionId": {
         "specs.azure.clientgenerator.core.usage.models.InputModel": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.InputModel",
+        "specs.azure.clientgenerator.core.usage.models.NamespaceModel": "_Specs_.Azure.ClientGenerator.Core.Usage.Models.NamespaceModel",
+        "specs.azure.clientgenerator.core.usage.models.NestedNamespaceModel": "_Specs_.Azure.ClientGenerator.Core.Usage.Models.Nested.NestedNamespaceModel",
         "specs.azure.clientgenerator.core.usage.models.OrphanModel": "_Specs_.Azure.ClientGenerator.Core.Usage.OrphanModel",
         "specs.azure.clientgenerator.core.usage.models.OutputModel": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.OutputModel",
         "specs.azure.clientgenerator.core.usage.models.ResultModel": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.ResultModel",
@@ -13,7 +15,9 @@
         "specs.azure.clientgenerator.core.usage.operations.ModelInOperationOperations.model_in_read_only_property": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.modelInReadOnlyProperty",
         "specs.azure.clientgenerator.core.usage.aio.operations.ModelInOperationOperations.model_in_read_only_property": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.modelInReadOnlyProperty",
         "specs.azure.clientgenerator.core.usage.operations.ModelInOperationOperations.orphan_model_serializable": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.orphanModelSerializable",
-        "specs.azure.clientgenerator.core.usage.aio.operations.ModelInOperationOperations.orphan_model_serializable": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.orphanModelSerializable"
+        "specs.azure.clientgenerator.core.usage.aio.operations.ModelInOperationOperations.orphan_model_serializable": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.orphanModelSerializable",
+        "specs.azure.clientgenerator.core.usage.operations.NamespaceUsageOperations.namespace_model_serializable": "_Specs_.Azure.ClientGenerator.Core.Usage.NamespaceUsage.namespaceModelSerializable",
+        "specs.azure.clientgenerator.core.usage.aio.operations.NamespaceUsageOperations.namespace_model_serializable": "_Specs_.Azure.ClientGenerator.Core.Usage.NamespaceUsage.namespaceModelSerializable"
     },
-    "CrossLanguageVersion": "fa69fb13e4f3"
+    "CrossLanguageVersion": "1443e84b75d8"
 }

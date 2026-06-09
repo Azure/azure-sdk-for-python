@@ -43,6 +43,62 @@ class InputModel(_Model):
         super().__init__(*args, **kwargs)
 
 
+class NamespaceModel(_Model):
+    """NamespaceModel.
+
+    :ivar name: Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NestedNamespaceModel(_Model):
+    """NestedNamespaceModel.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class OrphanModel(_Model):
     """Not used anywhere, but access is override to public so still need to be generated and exported
     with serialization.
