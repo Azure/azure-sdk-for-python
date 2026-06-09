@@ -16,7 +16,10 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ExactNameClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
+from .enumvalue.operations import EnumValueOperations
 from .model.operations import ModelOperations
+from .operation.operations import OperationOperations
+from .parameter.operations import ParameterOperations
 from .property.operations import PropertyOperations
 
 if sys.version_info >= (3, 11):
@@ -32,6 +35,12 @@ class ExactNameClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype model: specs.azure.clientgenerator.core.exactname.operations.ModelOperations
     :ivar property: PropertyOperations operations
     :vartype property: specs.azure.clientgenerator.core.exactname.operations.PropertyOperations
+    :ivar enum_value: EnumValueOperations operations
+    :vartype enum_value: specs.azure.clientgenerator.core.exactname.operations.EnumValueOperations
+    :ivar operation: OperationOperations operations
+    :vartype operation: specs.azure.clientgenerator.core.exactname.operations.OperationOperations
+    :ivar parameter: ParameterOperations operations
+    :vartype parameter: specs.azure.clientgenerator.core.exactname.operations.ParameterOperations
     :keyword endpoint: Service host. Default value is "http://localhost:3000".
     :paramtype endpoint: str
     """
@@ -66,6 +75,9 @@ class ExactNameClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize.client_side_validation = False
         self.model = ModelOperations(self._client, self._config, self._serialize, self._deserialize)
         self.property = PropertyOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.enum_value = EnumValueOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation = OperationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.parameter = ParameterOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

@@ -1,12 +1,20 @@
 {
     "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.ExactName",
     "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.exactname.enumvalue.models.EndpointConfig": "_Specs_.Azure.ClientGenerator.Core.ExactName.EnumValue.EndpointConfig",
         "specs.azure.clientgenerator.core.exactname.model.models.My_model": "_Specs_.Azure.ClientGenerator.Core.ExactName.Model.ExactModel",
         "specs.azure.clientgenerator.core.exactname.property.models.ScopedModel": "_Specs_.Azure.ClientGenerator.Core.ExactName.Property.ScopedModel",
+        "specs.azure.clientgenerator.core.exactname.models.AgentEndpointProtocol": "_Specs_.Azure.ClientGenerator.Core.ExactName.EnumValue.AgentEndpointProtocol",
         "specs.azure.clientgenerator.core.exactname.operations.ModelOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Model.send",
         "specs.azure.clientgenerator.core.exactname.aio.operations.ModelOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Model.send",
         "specs.azure.clientgenerator.core.exactname.operations.PropertyOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Property.send",
-        "specs.azure.clientgenerator.core.exactname.aio.operations.PropertyOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Property.send"
+        "specs.azure.clientgenerator.core.exactname.aio.operations.PropertyOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Property.send",
+        "specs.azure.clientgenerator.core.exactname.operations.EnumValueOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.EnumValue.send",
+        "specs.azure.clientgenerator.core.exactname.aio.operations.EnumValueOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.EnumValue.send",
+        "specs.azure.clientgenerator.core.exactname.operations.OperationOperations.myOp": "_Specs_.Azure.ClientGenerator.Core.ExactName.Operation.myOp",
+        "specs.azure.clientgenerator.core.exactname.aio.operations.OperationOperations.myOp": "_Specs_.Azure.ClientGenerator.Core.ExactName.Operation.myOp",
+        "specs.azure.clientgenerator.core.exactname.operations.ParameterOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Parameter.send",
+        "specs.azure.clientgenerator.core.exactname.aio.operations.ParameterOperations.send": "_Specs_.Azure.ClientGenerator.Core.ExactName.Parameter.send"
     },
-    "CrossLanguageVersion": "cc4f69ca2424"
+    "CrossLanguageVersion": "29dab5aacd02"
 }

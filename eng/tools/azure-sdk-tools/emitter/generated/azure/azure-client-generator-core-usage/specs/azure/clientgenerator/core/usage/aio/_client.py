@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import UsageClientConfiguration
-from .operations import ModelInOperationOperations
+from .operations import ModelInOperationOperations, NamespaceUsageOperations
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -30,6 +30,9 @@ class UsageClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar model_in_operation: ModelInOperationOperations operations
     :vartype model_in_operation:
      specs.azure.clientgenerator.core.usage.aio.operations.ModelInOperationOperations
+    :ivar namespace_usage: NamespaceUsageOperations operations
+    :vartype namespace_usage:
+     specs.azure.clientgenerator.core.usage.aio.operations.NamespaceUsageOperations
     :keyword endpoint: Service host. Default value is "http://localhost:3000".
     :paramtype endpoint: str
     """
@@ -65,6 +68,7 @@ class UsageClient:  # pylint: disable=client-accepts-api-version-keyword
         self.model_in_operation = ModelInOperationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.namespace_usage = NamespaceUsageOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
