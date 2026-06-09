@@ -374,3 +374,190 @@ async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(
     assert "_steering_input_0" not in keys_after
     assert "_steering_input_1" not in keys_after
     assert "_input" in keys_after  # non-steering attachment untouched
+
+
+# --------------------------------------------------------------------------- #
+# TDD-gap tests (added retroactively to make the suite a true contract guard)
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.asyncio
+async def test_steering_append_oversized_raises_input_too_large(
+    manager_local: TaskManager,
+) -> None:
+    """Parity with function input: steering input > 2 MB raises InputTooLarge.
+
+    Gap-fill: previously only the function-input path was tested for the
+    oversize-raises behavior. The steering-input path goes through the
+    same ``_resolve_input_storage`` helper, but only the helper-level
+    test (``test_resolve_raises_inputtoolarge_when_over_cap``) verified
+    it. This pins the behavior end-to-end through ``_append_steering_input``.
+    """
+    from azure.ai.agentserver.core.durable._attachments import (
+        _MAX_ATTACHMENT_SIZE_BYTES,
+    )
+    from azure.ai.agentserver.core.durable._exceptions import InputTooLarge
+
+    started = asyncio.Event()
+    block = asyncio.Event()
+
+    @task(name="t-steer-oversized", steerable=True)
+    async def runner(ctx: TaskContext[dict]) -> dict:
+        started.set()
+        await block.wait()
+        return await ctx.suspend(reason="done")
+
+    run = await runner.start(task_id="t-steer-oversize-1", input={"initial": True})
+    await asyncio.wait_for(started.wait(), timeout=2.0)
+
+    huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 200)
+    with pytest.raises(InputTooLarge) as excinfo:
+        await runner.start(task_id="t-steer-oversize-1", input=huge)
+    assert excinfo.value.task_id == "t-steer-oversize-1"
+
+    block.set()
+    await run.cancel()
+
+
+@pytest.mark.asyncio
+async def test_drain_inline_entry_leaves_attachments_untouched(
+    manager_local: TaskManager,
+) -> None:
+    """Symmetric to test_drain_co_deletes_attachment: a drain of an inline
+    queue entry MUST NOT issue an attachments delete.
+
+    Mixed-shape queue safety: if pending_inputs has both inline and ref
+    entries, draining the inline one must not accidentally touch the
+    ref one's attachment.
+    """
+    big = "b" * (_STEERING_THRESHOLD_BYTES + 100)
+    drain_signal = asyncio.Event()
+
+    @task(name="t-steer-mixed", steerable=True)
+    async def runner(ctx: TaskContext[dict]) -> dict:
+        await drain_signal.wait()
+        drain_signal.clear()
+        return await ctx.suspend(reason="done")
+
+    run = await runner.start(task_id="t-mixed-1", input={"initial": True})
+    await asyncio.sleep(0.1)
+
+    # Queue an INLINE first (small), then a REF second (large).
+    await runner.start(task_id="t-mixed-1", input={"inline-small": True})
+    await runner.start(task_id="t-mixed-1", input=big)
+
+    info_pre = await manager_local.provider.get("t-mixed-1")
+    assert info_pre is not None
+    pending_pre = info_pre.payload["_steering"]["pending_inputs"]
+    assert len(pending_pre) == 2
+    assert not _is_ref(pending_pre[0])  # inline
+    assert _is_ref(pending_pre[1])  # ref
+    big_key = _ref_key(pending_pre[1])
+    assert info_pre.attachments[big_key] == big
+
+    # First drain pops the INLINE entry — the ref's attachment MUST stay.
+    drain_signal.set()
+    await asyncio.sleep(0.5)
+
+    info_mid = await manager_local.provider.get("t-mixed-1")
+    assert info_mid is not None
+    # The large ref's attachment is still present (only the inline drained).
+    assert info_mid.attachments is not None
+    assert big_key in info_mid.attachments
+    assert info_mid.attachments[big_key] == big
+    # And the queue now has only the ref left.
+    pending_mid = info_mid.payload["_steering"]["pending_inputs"]
+    assert len(pending_mid) == 1
+    assert _is_ref(pending_mid[0])
+    assert _ref_key(pending_mid[0]) == big_key
+
+    # Second drain pops the REF — its attachment IS deleted.
+    drain_signal.set()
+    await asyncio.sleep(0.5)
+
+    info_post = await manager_local.provider.get("t-mixed-1")
+    assert info_post is not None
+    assert big_key not in (info_post.attachments or {})
+
+    drain_signal.set()
+    await run.cancel()
+
+
+@pytest.mark.asyncio
+async def test_post_drain_new_append_gets_next_seq_not_zero(
+    manager_local: TaskManager,
+) -> None:
+    """Monotonic invariant tighter: next_input_seq survives drains.
+
+    Plant a task with ``next_input_seq=5``, empty pending queue, NO
+    steering attachments. Append a large input. The new attachment
+    key MUST be ``_steering_input_5`` (NOT ``_steering_input_0``),
+    proving the seq counter doesn't regress just because the queue is
+    momentarily empty.
+
+    This tightens the invariant beyond
+    ``test_drain_does_not_renumber_existing_attachments`` (which
+    covers "other entries' keys stay stable across drain").
+    """
+    from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+    big = "z" * (_STEERING_THRESHOLD_BYTES + 100)
+    started = asyncio.Event()
+    block = asyncio.Event()
+
+    @task(name="t-seq-mono-plant", steerable=True)
+    async def runner(ctx: TaskContext[dict]) -> dict:
+        started.set()
+        await block.wait()
+        return await ctx.suspend(reason="done")
+
+    # Plant: task is in_progress, queue empty, next_input_seq is 5
+    # (simulating a long-running session that has steered 5 times in
+    # the past).
+    await manager_local.provider.create(
+        TaskCreateRequest(
+            agent_name=manager_local._config.agent_name,
+            session_id=manager_local._config.session_id,
+            id="t-seq-plant-1",
+            title="seq-plant",
+            status="in_progress",
+            lease_owner=manager_local._lease_owner,
+            lease_instance_id=manager_local._instance_id,
+            lease_duration_seconds=60,
+            payload={
+                "input": {"initial": True},
+                "metadata": {},
+                "_steering": {
+                    "pending_inputs": [],
+                    "next_input_seq": 5,
+                    "cancel_requested": False,
+                },
+            },
+            tags={"task_name": "t-seq-mono-plant"},
+            source={"name": "t-seq-mono-plant"},
+        )
+    )
+
+    # Start the in-process tracking so subsequent .start() append-paths
+    # see the task as in-progress. Register the callback first.
+    manager_local._resume_callbacks["t-seq-mono-plant"] = runner._fn  # type: ignore[attr-defined]
+    manager_local._resume_opts["t-seq-mono-plant"] = runner._opts  # type: ignore[attr-defined]
+    await manager_local._recover_stale_tasks()
+    await asyncio.wait_for(started.wait(), timeout=2.0)
+
+    # Now append a large steering input — it MUST get _steering_input_5.
+    await runner.start(task_id="t-seq-plant-1", input=big)
+
+    info = await manager_local.provider.get("t-seq-plant-1")
+    assert info is not None
+    pending = info.payload["_steering"]["pending_inputs"]
+    assert len(pending) == 1
+    assert _is_ref(pending[0])
+    assert _ref_key(pending[0]) == "_steering_input_5", (
+        f"Expected key _steering_input_5 (planted next_input_seq=5); "
+        f"got {_ref_key(pending[0])!r}. next_input_seq regressed!"
+    )
+    # And next_input_seq has advanced to 6.
+    assert info.payload["_steering"]["next_input_seq"] == 6
+
+    block.set()
