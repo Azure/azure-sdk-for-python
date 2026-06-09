@@ -15,13 +15,31 @@ function stubGitNoTags() {
   return commandResult("", 1);
 }
 
-function stubGhWithSearchResults(results) {
+function stubGitBranches(branches) {
+  const branchSet = new Set(branches);
   return (args) => {
-    if (args.includes("--search")) {
-      return commandResult(JSON.stringify(results));
+    if (args[0] === "fetch" && branchSet.has(args[2])) {
+      return commandResult("", 0);
     }
 
-    return commandResult("[]");
+    return commandResult("", 1);
+  };
+}
+
+function stubGithubApi({ headResults = [], searchResults = [], onLookup = null } = {}) {
+  async function lookup(results) {
+    if (onLookup) {
+      onLookup();
+    }
+    return results;
+  }
+
+  return {
+    listPullRequestsByHead: async () => lookup(headResults),
+    searchPullRequests: async () => lookup(searchResults),
+    listPullRequestsByBranches: async () => [],
+    updatePullRequestBody: async () => {},
+    createDraftPullRequest: async () => ({ html_url: "https://github.com/Azure/azure-sdk-for-python/pull/1" }),
   };
 }
 
@@ -33,99 +51,124 @@ function parseSyncMetadataBlock(block) {
   return JSON.parse(jsonText);
 }
 
-test("targetReferenceInfo links matching open PR from direct head query", () => {
-  workflow.__setCommandRunners({
-    git: stubGitNoTags,
-    gh: (args) => {
-      if (args.includes("--head")) {
-        return commandResult(
-          JSON.stringify([
-            {
-              number: 45678,
-              url: "https://github.com/Azure/azure-sdk-for-python/pull/45678",
-              state: "OPEN",
-              updatedAt: "2026-06-05T00:00:00Z",
-              headRefName: "users/example/direct-feature",
-              headRepositoryOwner: { login: "example" },
-            },
-          ]),
-        );
-      }
+test("targetReferenceInfo links matching open PR from direct head query", async () => {
+  workflow.__setCommandRunners({ git: stubGitBranches(["users/example/direct-feature"]) });
+  workflow.__setGithubApi(
+    stubGithubApi({
+      headResults: [
+        {
+          number: 45678,
+          url: "https://github.com/Azure/azure-sdk-for-python/pull/45678",
+          state: "OPEN",
+          updatedAt: "2026-06-05T00:00:00Z",
+          headRefName: "users/example/direct-feature",
+          headRepositoryOwner: { login: "example" },
+        },
+      ],
+    }),
+  );
 
-      return commandResult("[]");
-    },
-  });
-
-  assert.deepEqual(workflow.targetReferenceInfo("example:users/example/direct-feature"), {
+  assert.deepEqual(await workflow.targetReferenceInfo("example:users/example/direct-feature"), {
     label: "Working PR",
     markdown: "[PR #45678](https://github.com/Azure/azure-sdk-for-python/pull/45678)",
   });
 });
 
-test("targetReferenceInfo links matching open PR for owner-qualified branch target", () => {
-  workflow.__setCommandRunners({
-    git: stubGitNoTags,
-    gh: stubGhWithSearchResults([
-      {
-        number: 12345,
-        url: "https://github.com/Azure/azure-sdk-for-python/pull/12345",
-        state: "OPEN",
-        updatedAt: "2026-06-05T00:00:00Z",
-        headRefName: "users/example/feature",
-        headRepositoryOwner: { login: "example" },
-      },
-    ]),
-  });
+test("targetReferenceInfo links matching open PR for owner-qualified branch target", async () => {
+  workflow.__setCommandRunners({ git: stubGitBranches(["users/example/feature"]) });
+  workflow.__setGithubApi(
+    stubGithubApi({
+      searchResults: [
+        {
+          number: 12345,
+          url: "https://github.com/Azure/azure-sdk-for-python/pull/12345",
+          state: "OPEN",
+          updatedAt: "2026-06-05T00:00:00Z",
+          headRefName: "users/example/feature",
+          headRepositoryOwner: { login: "example" },
+        },
+      ],
+    }),
+  );
 
-  assert.deepEqual(workflow.targetReferenceInfo("example:users/example/feature"), {
+  assert.deepEqual(await workflow.targetReferenceInfo("example:users/example/feature"), {
     label: "Working PR",
     markdown: "[PR #12345](https://github.com/Azure/azure-sdk-for-python/pull/12345)",
   });
 });
 
-test("targetReferenceInfo keeps origin/main as branch when search returns fork PRs named main", () => {
-  workflow.__setCommandRunners({
-    git: stubGitNoTags,
-    gh: stubGhWithSearchResults([
-      {
-        number: 23456,
-        url: "https://github.com/Azure/azure-sdk-for-python/pull/23456",
-        state: "OPEN",
-        updatedAt: "2026-06-05T00:00:00Z",
-        headRefName: "main",
-        headRepositoryOwner: { login: "example" },
-      },
-    ]),
-  });
+test("targetReferenceInfo keeps origin/main as branch when search returns fork PRs named main", async () => {
+  workflow.__setCommandRunners({ git: stubGitBranches(["main"]) });
+  workflow.__setGithubApi(
+    stubGithubApi({
+      searchResults: [
+        {
+          number: 23456,
+          url: "https://github.com/Azure/azure-sdk-for-python/pull/23456",
+          state: "OPEN",
+          updatedAt: "2026-06-05T00:00:00Z",
+          headRefName: "main",
+          headRepositoryOwner: { login: "example" },
+        },
+      ],
+    }),
+  );
 
-  assert.deepEqual(workflow.targetReferenceInfo("origin/main"), {
+  assert.deepEqual(await workflow.targetReferenceInfo("origin/main"), {
     label: "Working branch",
     markdown: "[branch `origin/main`](https://github.com/Azure/azure-sdk-for-python/tree/main)",
   });
 });
 
-test("targetReferenceInfo keeps branch reference when no open PR matches both owner and branch", () => {
-  workflow.__setCommandRunners({
-    git: stubGitNoTags,
-    gh: stubGhWithSearchResults([
-      {
-        number: 34567,
-        url: "https://github.com/Azure/azure-sdk-for-python/pull/34567",
-        state: "OPEN",
-        updatedAt: "2026-06-05T00:00:00Z",
-        headRefName: "users/example/feature",
-        headRepositoryOwner: { login: "someone-else" },
-      },
-    ]),
-  });
+test("targetReferenceInfo keeps main as branch without probing it as a target tag", async () => {
+  let tagLookupCount = 0;
 
-  assert.deepEqual(workflow.targetReferenceInfo("example:users/example/feature"), {
+  workflow.__setCommandRunners({
+    git: (args) => {
+      if (args[0] === "fetch" && args[2] === "main") {
+        return commandResult("", 0);
+      }
+
+      if (args[0] === "rev-parse" && args.includes("refs/tags/main")) {
+        tagLookupCount += 1;
+      }
+
+      return commandResult("", 1);
+    },
+  });
+  workflow.__setGithubApi(stubGithubApi());
+
+  assert.deepEqual(await workflow.targetReferenceInfo("main", "azure-example"), {
+    label: "Working branch",
+    markdown: "[branch `main`](https://github.com/Azure/azure-sdk-for-python/tree/main)",
+  });
+  assert.equal(tagLookupCount, 0);
+});
+
+test("targetReferenceInfo keeps branch reference when no open PR matches both owner and branch", async () => {
+  workflow.__setCommandRunners({ git: stubGitBranches(["users/example/feature"]) });
+  workflow.__setGithubApi(
+    stubGithubApi({
+      searchResults: [
+        {
+          number: 34567,
+          url: "https://github.com/Azure/azure-sdk-for-python/pull/34567",
+          state: "OPEN",
+          updatedAt: "2026-06-05T00:00:00Z",
+          headRefName: "users/example/feature",
+          headRepositoryOwner: { login: "someone-else" },
+        },
+      ],
+    }),
+  );
+
+  assert.deepEqual(await workflow.targetReferenceInfo("example:users/example/feature"), {
     label: "Working branch",
     markdown: "[branch `example:users/example/feature`](https://github.com/example/azure-sdk-for-python/tree/users%2Fexample%2Ffeature)",
   });
 });
 
-test("targetReferenceInfo treats existing target tag as tag and does not query PRs", () => {
+test("targetReferenceInfo treats existing target tag as tag and does not query PRs", async () => {
   let prLookupCount = 0;
 
   workflow.__setCommandRunners({
@@ -140,43 +183,34 @@ test("targetReferenceInfo treats existing target tag as tag and does not query P
 
       return commandResult("", 1);
     },
-    gh: () => {
-      prLookupCount += 1;
-      return commandResult("[]");
-    },
   });
+  workflow.__setGithubApi(stubGithubApi({ onLookup: () => { prLookupCount += 1; } }));
 
-  assert.deepEqual(workflow.targetReferenceInfo("azure-example_1.2.3"), {
+  assert.deepEqual(await workflow.targetReferenceInfo("azure-example_1.2.3"), {
     label: "Target tag",
     markdown: "[tag `azure-example_1.2.3`](https://github.com/Azure/azure-sdk-for-python/commit/abc123def456)",
   });
   assert.equal(prLookupCount, 0);
 });
 
-test("buildSyncMetadataObject creates hidden metadata for origin branch target", () => {
-  workflow.__setCommandRunners({
-    git: stubGitNoTags,
-    gh: (args) => {
-      if (args.includes("--head")) {
-        return commandResult(
-          JSON.stringify([
-            {
-              number: 47203,
-              url: "https://github.com/Azure/azure-sdk-for-python/pull/47203",
-              state: "OPEN",
-              updatedAt: "2026-06-05T00:00:00Z",
-              headRefName: "feature/api-change",
-              headRepositoryOwner: { login: "Azure" },
-            },
-          ]),
-        );
-      }
+test("buildSyncMetadataObject creates hidden metadata for origin branch target", async () => {
+  workflow.__setCommandRunners({ git: stubGitBranches(["feature/api-change"]) });
+  workflow.__setGithubApi(
+    stubGithubApi({
+      headResults: [
+        {
+          number: 47203,
+          url: "https://github.com/Azure/azure-sdk-for-python/pull/47203",
+          state: "OPEN",
+          updatedAt: "2026-06-05T00:00:00Z",
+          headRefName: "feature/api-change",
+          headRepositoryOwner: { login: "Azure" },
+        },
+      ],
+    }),
+  );
 
-      return commandResult("[]");
-    },
-  });
-
-  const metadata = workflow.buildSyncMetadataObject({
+  const metadata = await workflow.buildSyncMetadataObject({
     packageName: "azure-example",
     packageDir: "sdk/service/azure-example",
     baseBranch: "apireview/base_azure-example_1.0.0",
@@ -200,22 +234,24 @@ test("buildSyncMetadataObject creates hidden metadata for origin branch target",
   });
 });
 
-test("buildSyncMetadataObject records fork owner and branch target", () => {
-  workflow.__setCommandRunners({
-    git: stubGitNoTags,
-    gh: stubGhWithSearchResults([
-      {
-        number: 47204,
-        url: "https://github.com/Azure/azure-sdk-for-python/pull/47204",
-        state: "OPEN",
-        updatedAt: "2026-06-05T00:00:00Z",
-        headRefName: "users/example/feature",
-        headRepositoryOwner: { login: "example" },
-      },
-    ]),
-  });
+test("buildSyncMetadataObject records fork owner and branch target", async () => {
+  workflow.__setCommandRunners({ git: stubGitBranches(["users/example/feature"]) });
+  workflow.__setGithubApi(
+    stubGithubApi({
+      searchResults: [
+        {
+          number: 47204,
+          url: "https://github.com/Azure/azure-sdk-for-python/pull/47204",
+          state: "OPEN",
+          updatedAt: "2026-06-05T00:00:00Z",
+          headRefName: "users/example/feature",
+          headRepositoryOwner: { login: "example" },
+        },
+      ],
+    }),
+  );
 
-  const metadata = workflow.buildSyncMetadataObject({
+  const metadata = await workflow.buildSyncMetadataObject({
     packageName: "azure-example",
     packageDir: "sdk/service/azure-example",
     baseBranch: "apireview/base_azure-example_1.0.0",
@@ -228,7 +264,7 @@ test("buildSyncMetadataObject records fork owner and branch target", () => {
   assert.equal(metadata.workingPrNumber, 47204);
 });
 
-test("buildSyncMetadataObject omits metadata for tag targets", () => {
+test("buildSyncMetadataObject omits metadata for tag targets", async () => {
   let prLookupCount = 0;
 
   workflow.__setCommandRunners({
@@ -239,14 +275,11 @@ test("buildSyncMetadataObject omits metadata for tag targets", () => {
 
       return commandResult("", 1);
     },
-    gh: () => {
-      prLookupCount += 1;
-      return commandResult("[]");
-    },
   });
+  workflow.__setGithubApi(stubGithubApi({ onLookup: () => { prLookupCount += 1; } }));
 
   assert.equal(
-    workflow.buildSyncMetadataObject({
+    await workflow.buildSyncMetadataObject({
       packageName: "azure-example",
       packageDir: "sdk/service/azure-example",
       baseBranch: "apireview/base_azure-example_1.0.0",
@@ -258,13 +291,11 @@ test("buildSyncMetadataObject omits metadata for tag targets", () => {
   assert.equal(prLookupCount, 0);
 });
 
-test("buildSyncMetadataObject records main branch target", () => {
-  workflow.__setCommandRunners({
-    git: stubGitNoTags,
-    gh: () => commandResult("[]"),
-  });
+test("buildSyncMetadataObject records main branch target", async () => {
+  workflow.__setCommandRunners({ git: stubGitBranches(["main"]) });
+  workflow.__setGithubApi(stubGithubApi());
 
-  const metadata = workflow.buildSyncMetadataObject({
+  const metadata = await workflow.buildSyncMetadataObject({
     packageName: "azure-example",
     packageDir: "sdk/service/azure-example",
     baseBranch: "apireview/base_azure-example_1.0.0",
@@ -277,13 +308,11 @@ test("buildSyncMetadataObject records main branch target", () => {
   assert.equal(metadata.workingPrNumber, null);
 });
 
-test("buildSyncMetadataObject records null working PR for branch target without PR", () => {
-  workflow.__setCommandRunners({
-    git: stubGitNoTags,
-    gh: () => commandResult("[]"),
-  });
+test("buildSyncMetadataObject records null working PR for branch target without PR", async () => {
+  workflow.__setCommandRunners({ git: stubGitBranches(["feature/no-pr"]) });
+  workflow.__setGithubApi(stubGithubApi());
 
-  const metadata = workflow.buildSyncMetadataObject({
+  const metadata = await workflow.buildSyncMetadataObject({
     packageName: "azure-example",
     packageDir: "sdk/service/azure-example",
     baseBranch: "apireview/base_azure-example_1.0.0",
@@ -312,6 +341,37 @@ test("buildReviewPrBody calls out static tag-to-tag reviews", () => {
   assert.ok(body.includes("Static tag-to-tag review"));
   assert.ok(body.includes("cannot be automatically updated from a working branch"));
   assert.equal(body.includes("api-md-review-sync"), false);
+});
+
+test("buildReviewPrBody includes sync metadata for working branch reviews", () => {
+  const metadataBlock = workflow.buildSyncMetadataBlock({
+    schemaVersion: 1,
+    repository: "Azure/azure-sdk-for-python",
+    packageName: "azure-example",
+    packageDir: "sdk/service/azure-example",
+    baseBranch: "apireview/base_azure-example_1.0.0",
+    reviewBranch: "apireview/review_azure-example_1.1.0",
+    workingOwner: "Azure",
+    workingBranch: "main",
+    workingPrNumber: null,
+  });
+
+  const body = workflow.buildReviewPrBody({
+    packageName: "azure-example",
+    targetVersion: "1.1.0b1",
+    baseVersion: "1.0.0",
+    workingReference: {
+      label: "Working branch",
+      markdown: "[branch `main`](https://github.com/Azure/azure-sdk-for-python/tree/main)",
+    },
+    baselineRef: "[tag `azure-example_1.0.0`](https://github.com/Azure/azure-sdk-for-python/commit/def456)",
+    syncMetadataBlock: metadataBlock,
+  });
+
+  assert.ok(body.includes("- **Working branch:**"));
+  assert.equal(body.includes("Static tag-to-tag review"), false);
+  assert.ok(body.includes("<!-- api-md-review-sync"));
+  assert.ok(body.includes('"workingBranch": "main"'));
 });
 
 test("apiResultsHaveApiDiff returns false for identical API markdown", () => {

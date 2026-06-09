@@ -2,16 +2,22 @@
 
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { execFileSync } = require("child_process");
+const { simpleGit } = require("simple-git");
 const { getDefaultLogger } = require("./common");
 const { loadAdapter, loadWorkflowConfig } = require("./adapter_config");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
+const REPO_OWNER = "Azure";
+const REPO_NAME = "azure-sdk-for-python";
+const REPO_SLUG = `${REPO_OWNER}/${REPO_NAME}`;
 const REMOTE = "origin";
 const MAIN_REF = `${REMOTE}/main`;
 const SYNC_METADATA_MARKER = "api-md-review-sync";
 const SYNC_METADATA_WARNING = "DO NOT MODIFY THESE CONTENTS!";
 let logger = console;
+let githubApi = null;
+let simpleGitClient = null;
 
 function logInfo(message) {
   logger.info(message);
@@ -78,97 +84,197 @@ function parseArgs(argv) {
   return args;
 }
 
-function run(cmd, args, options = {}) {
-  const printable = [cmd, ...args].join(" ");
-  logInfo(`$ ${printable}`);
-  const result = spawnSync(cmd, args, {
-    cwd: options.cwd ?? REPO_ROOT,
-    env: options.env,
-    encoding: "utf-8",
-    stdio: options.capture ? "pipe" : "inherit",
-    shell: false,
-  });
-
-  if (result.error) {
-    const errorMessage = result.error instanceof Error ? result.error.message : String(result.error);
-    throw new Error(`Command failed to start: ${printable}\n${errorMessage}`);
+function getSimpleGitClient() {
+  if (simpleGitClient) {
+    return simpleGitClient;
   }
 
-  if ((options.check ?? true) && result.status !== 0) {
-    throw new Error(`Command failed (${result.status}): ${printable}`);
-  }
-
-  return result;
+  simpleGitClient = simpleGit({ baseDir: REPO_ROOT });
+  return simpleGitClient;
 }
 
-let cachedGitExecutable = undefined;
-let cachedGitAwareEnv = undefined;
+let git = async function gitCommand(args, options = {}) {
+  const printable = ["git", ...args].join(" ");
+  logInfo(`$ ${printable}`);
 
-function resolveGitExecutable() {
-  if (cachedGitExecutable !== undefined) {
-    return cachedGitExecutable;
+  try {
+    const stdout = await getSimpleGitClient().raw(args);
+    return {
+      status: 0,
+      stdout,
+      stderr: "",
+    };
+  } catch (error) {
+    const status = Number.isInteger(error.exitCode) ? error.exitCode : 1;
+    if (options.check ?? true) {
+      throw new Error(`Command failed (${status}): ${printable}`);
+    }
+
+    return {
+      status,
+      stdout: error.output || "",
+      stderr: error.message || "",
+    };
+  }
+};
+
+async function gitOut(args) {
+  return (await git(args, { capture: true })).stdout.trim();
+}
+
+function normalizePullRequest(pr) {
+  if (!pr || typeof pr !== "object") {
+    return null;
   }
 
-  if (process.platform !== "win32") {
-    const resolved = spawnSync("git", ["--exec-path"], {
+  return {
+    number: pr.number,
+    url: pr.url || pr.html_url,
+    state: pr.state,
+    updatedAt: pr.updatedAt || pr.updated_at,
+    body: pr.body,
+    headRefName: pr.headRefName || (pr.head && pr.head.ref),
+    headRepositoryOwner:
+      pr.headRepositoryOwner ||
+      (pr.head && pr.head.repo && pr.head.repo.owner
+        ? { login: pr.head.repo.owner.login }
+        : { login: undefined }),
+  };
+}
+
+async function createOctokitGithubApi() {
+  const { Octokit } = await import("@octokit/rest");
+  const token = resolveGithubToken();
+  const octokit = new Octokit(token ? { auth: token } : {});
+
+  async function searchPullRequests(query, limit) {
+    const result = await octokit.graphql(
+      `query($query: String!, $first: Int!) {
+        search(query: $query, type: ISSUE, first: $first) {
+          nodes {
+            ... on PullRequest {
+              number
+              url
+              state
+              updatedAt
+              body
+              headRefName
+              headRepositoryOwner {
+                login
+              }
+            }
+          }
+        }
+      }`,
+      { query, first: limit },
+    );
+
+    return (result.search.nodes || []).map(normalizePullRequest).filter(Boolean);
+  }
+
+  return {
+    async listPullRequestsByHead(head, limit) {
+      const result = await octokit.rest.pulls.list({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        head,
+        state: "open",
+        per_page: limit,
+      });
+      return result.data.map(normalizePullRequest).filter(Boolean);
+    },
+
+    searchPullRequests,
+
+    async listPullRequestsByBranches(base, head, limit) {
+      const result = await octokit.rest.pulls.list({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        base,
+        head: `${REPO_OWNER}:${head}`,
+        state: "open",
+        per_page: limit,
+      });
+      return result.data.map(normalizePullRequest).filter(Boolean);
+    },
+
+    async updatePullRequestBody(number, body) {
+      await octokit.rest.pulls.update({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        pull_number: number,
+        body,
+      });
+    },
+
+    async createDraftPullRequest(base, head, title, body) {
+      const result = await octokit.rest.pulls.create({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        base,
+        head,
+        title,
+        body,
+        draft: true,
+      });
+      return result.data;
+    },
+  };
+}
+
+function resolveGithubToken() {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (token) {
+    return token;
+  }
+
+  try {
+    return execFileSync("gh", ["auth", "token"], {
       cwd: REPO_ROOT,
       encoding: "utf-8",
-      env: process.env,
-    });
-    cachedGitExecutable = resolved.status === 0 ? "git" : "git";
-    return cachedGitExecutable;
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
+async function getGithubApi() {
+  if (!githubApi) {
+    githubApi = await createOctokitGithubApi();
   }
 
-  cachedGitExecutable = findPreferredGitExecutable() || "git";
-  return cachedGitExecutable;
+  return githubApi;
 }
 
-let git = function gitCommand(args, options = {}) {
-  return run(resolveGitExecutable(), args, {
-    ...options,
-    env: buildGitAwareEnv(options.env),
-  });
-};
-
-let gh = function ghCommand(args, options = {}) {
-  return run("gh", args, {
-    ...options,
-    env: buildGitAwareEnv(options.env),
-  });
-};
-
-function gitOut(args) {
-  return git(args, { capture: true }).stdout.trim();
-}
-
-function ensureCleanWorktree() {
-  const status = gitOut(["status", "--porcelain"]);
+async function ensureCleanWorktree() {
+  const status = await gitOut(["status", "--porcelain"]);
   if (status) {
     throw new Error(`ERROR: working tree is not clean. Commit or stash changes before running.\n${status}`);
   }
 }
 
-function currentBranch() {
+async function currentBranch() {
   return gitOut(["rev-parse", "--abbrev-ref", "HEAD"]);
 }
 
-function currentBranchOrSha() {
-  const name = currentBranch();
+async function currentBranchOrSha() {
+  const name = await currentBranch();
   if (name === "HEAD") {
     return gitOut(["rev-parse", "--short", "HEAD"]);
   }
   return name;
 }
 
-function tagExists(tag) {
-  const result = git(["rev-parse", "--verify", "--quiet", `refs/tags/${tag}`], {
+async function tagExists(tag) {
+  const result = await git(["rev-parse", "--verify", "--quiet", `refs/tags/${tag}`], {
     capture: true,
     check: false,
   });
   return result.status === 0;
 }
 
-function validateBaseTag(packageName, baseTag) {
+async function validateBaseTag(packageName, baseTag) {
   if (!baseTag.startsWith(`${packageName}_`)) {
     throw new Error(`ERROR: --base tag '${baseTag}' must start with '${packageName}_'.`);
   }
@@ -178,35 +284,74 @@ function validateBaseTag(packageName, baseTag) {
     throw new Error(`ERROR: --base tag '${baseTag}' is missing the version suffix.`);
   }
 
-  if (!tagExists(baseTag)) {
+  if (!(await tagExists(baseTag))) {
     throw new Error(`ERROR: tag '${baseTag}' does not exist in this repository.`);
   }
 
   return version;
 }
 
-function resolveTargetTag(target) {
-  if (tagExists(target)) {
+function isExplicitPackageTag(target, packageName = null) {
+  if (target.includes(":")) {
+    return false;
+  }
+
+  if (packageName) {
+    return target.startsWith(`${packageName}_`);
+  }
+
+  return target.includes("_");
+}
+
+async function resolveTargetTag(target, packageName = null) {
+  if (!isExplicitPackageTag(target, packageName)) {
+    return null;
+  }
+
+  if (await tagExists(target)) {
     return target;
   }
 
-  git(["fetch", REMOTE, "tag", target], { check: false, capture: true });
-  return tagExists(target) ? target : null;
+  await git(["fetch", REMOTE, "tag", target], { check: false, capture: true });
+  return (await tagExists(target)) ? target : null;
 }
 
-function remoteBranchRef(branch) {
-  git(["fetch", REMOTE, branch]);
-  return `${REMOTE}/${branch}`;
+async function tryRemoteBranchRef(branch) {
+  const result = await git(["fetch", REMOTE, branch], { check: false, capture: true });
+  return result.status === 0 ? `${REMOTE}/${branch}` : null;
 }
 
-function resolveTargetRef(target) {
-  const targetTag = resolveTargetTag(target);
-  if (targetTag) {
-    return targetTag;
+async function remoteBranchRef(branch) {
+  const branchRef = await tryRemoteBranchRef(branch);
+  if (!branchRef) {
+    throw new Error(`ERROR: branch '${branch}' does not exist on ${REMOTE}.`);
   }
 
+  return branchRef;
+}
+
+function forkUrl(owner) {
+  return `https://github.com/${owner}/azure-sdk-for-python.git`;
+}
+
+async function tryForkBranchRef(owner, branch) {
+  const result = await git(["fetch", forkUrl(owner), branch], { check: false, capture: true });
+  return result.status === 0 ? "FETCH_HEAD" : null;
+}
+
+async function resolveTargetRef(target, packageName = null) {
   if (!target.includes(":")) {
-    return remoteBranchRef(target);
+    const branchRef = await tryRemoteBranchRef(target);
+    if (branchRef) {
+      return branchRef;
+    }
+
+    const targetTag = await resolveTargetTag(target, packageName);
+    if (targetTag) {
+      return targetTag;
+    }
+
+    throw new Error(`ERROR: --target '${target}' is neither a branch on ${REMOTE} nor a tag in this repository.`);
   }
 
   const [owner, branch] = target.split(":", 2);
@@ -214,9 +359,12 @@ function resolveTargetRef(target) {
     throw new Error(`ERROR: invalid --target '${target}'. Expected 'tag', 'branch', or 'owner:branch'.`);
   }
 
-  const forkUrl = `https://github.com/${owner}/azure-sdk-for-python.git`;
-  git(["fetch", forkUrl, branch]);
-  return "FETCH_HEAD";
+  const branchRef = await tryForkBranchRef(owner, branch);
+  if (!branchRef) {
+    throw new Error(`ERROR: branch '${branch}' does not exist in fork '${owner}'.`);
+  }
+
+  return branchRef;
 }
 
 function packageRelDir(packageDir) {
@@ -251,142 +399,6 @@ function apiReviewBranchName(kind, packageName, version) {
   return `apireview/${kind}_${packageName}_${version}`;
 }
 
-function scoreGitCandidate(candidate) {
-  const normalized = candidate.replace(/\//g, "\\").toLowerCase();
-  if (normalized.includes("\\program files\\git\\cmd\\git.exe")) {
-    return 0;
-  }
-
-  if (normalized.includes("\\program files\\git\\bin\\git.exe")) {
-    return 1;
-  }
-
-  if (normalized.includes("\\git\\cmd\\git.exe")) {
-    return 2;
-  }
-
-  if (normalized.includes("\\git\\bin\\git.exe")) {
-    return 3;
-  }
-
-  if (normalized.includes("\\windows\\")) {
-    return 100;
-  }
-
-  return 10;
-}
-
-function findPreferredGitExecutable() {
-  if (process.platform !== "win32") {
-    return null;
-  }
-
-  const candidates = new Set();
-  const roots = [process.env.ProgramW6432, process.env.ProgramFiles, process.env["ProgramFiles(x86)"], process.env.LocalAppData];
-  for (const root of roots) {
-    if (!root) {
-      continue;
-    }
-
-    candidates.add(path.join(root, "Git", "cmd", "git.exe"));
-    candidates.add(path.join(root, "Git", "bin", "git.exe"));
-    candidates.add(path.join(root, "Programs", "Git", "cmd", "git.exe"));
-    candidates.add(path.join(root, "Programs", "Git", "bin", "git.exe"));
-  }
-
-  const pathKey = getPathEnvKey(process.env);
-  for (const rawEntry of (process.env[pathKey] || "").split(path.delimiter)) {
-    const entry = rawEntry.replace(/^"|"$/g, "");
-    if (!entry) {
-      continue;
-    }
-
-    candidates.add(path.join(entry, "git.exe"));
-  }
-
-  const existing = [...candidates].filter((candidate) => fs.existsSync(candidate));
-  existing.sort((left, right) => scoreGitCandidate(left) - scoreGitCandidate(right) || left.localeCompare(right));
-  return existing[0] || null;
-}
-
-function getGitExecPath(gitExecutable) {
-  if (process.platform === "win32" && !path.isAbsolute(gitExecutable)) {
-    return null;
-  }
-
-  const result = spawnSync(gitExecutable, ["--exec-path"], {
-    cwd: REPO_ROOT,
-    encoding: "utf-8",
-  });
-
-  if (result.status !== 0) {
-    return null;
-  }
-
-  return result.stdout.trim() || null;
-}
-
-function samePathEntry(left, right) {
-  if (process.platform === "win32") {
-    return left.replace(/\\+$/, "").toLowerCase() === right.replace(/\\+$/, "").toLowerCase();
-  }
-
-  return left === right;
-}
-
-function getPathEnvKey(env) {
-  return Object.keys(env).find((key) => key.toLowerCase() === "path") || "PATH";
-}
-
-function buildGitAwareEnv(baseEnv = process.env) {
-  if (baseEnv === process.env && cachedGitAwareEnv) {
-    return cachedGitAwareEnv;
-  }
-
-  const env = { ...baseEnv };
-  const pathKey = getPathEnvKey(env);
-  const gitExecutable = resolveGitExecutable();
-  const gitExecPath = getGitExecPath(gitExecutable);
-
-  if (path.isAbsolute(gitExecutable)) {
-    const gitDir = path.dirname(gitExecutable);
-    const currentEntries = (env[pathKey] || "").split(path.delimiter).filter(Boolean);
-    const first = currentEntries[0] || "";
-    if (!first || !samePathEntry(first, gitDir)) {
-      env[pathKey] = [gitDir, ...currentEntries].join(path.delimiter);
-      logInfo(`(using resolved git executable: ${gitExecutable})`);
-    }
-  }
-
-  if (gitExecPath) {
-    env.GIT_EXEC_PATH = gitExecPath;
-  }
-
-  if (baseEnv === process.env) {
-    cachedGitAwareEnv = env;
-  }
-
-  return env;
-}
-
-function parseJsonOrNull(text) {
-  try {
-    const value = JSON.parse(text || "[]");
-    return Array.isArray(value) ? value : null;
-  } catch {
-    return null;
-  }
-}
-
-function parseJsonObjectOrNull(text) {
-  try {
-    const value = JSON.parse(text || "null");
-    return value && typeof value === "object" && !Array.isArray(value) ? value : null;
-  } catch {
-    return null;
-  }
-}
-
 function parseSimpleYaml(text) {
   const result = {};
   for (const line of text.split(/\r?\n/)) {
@@ -411,8 +423,8 @@ function branchRemoteRef(branch) {
   return `${REMOTE}/${branch}`;
 }
 
-function listRemoteBranchesWithPrefix(prefix) {
-  const result = git(["ls-remote", "--heads", REMOTE, `refs/heads/${prefix}*`], {
+async function listRemoteBranchesWithPrefix(prefix) {
+  const result = await git(["ls-remote", "--heads", REMOTE, `refs/heads/${prefix}*`], {
     capture: true,
     check: false,
   });
@@ -429,13 +441,13 @@ function listRemoteBranchesWithPrefix(prefix) {
     .filter((branch) => branch === prefix || branch.startsWith(`${prefix}_`));
 }
 
-function fetchRemoteBranch(branch) {
-  git(["fetch", REMOTE, branch]);
+async function fetchRemoteBranch(branch) {
+  await git(["fetch", REMOTE, branch]);
   return branchRemoteRef(branch);
 }
 
-function readRefFileBytes(ref, relativePath) {
-  const result = git(["show", `${ref}:${relativePath}`], {
+async function readRefFileBytes(ref, relativePath) {
+  const result = await git(["show", `${ref}:${relativePath}`], {
     capture: true,
     check: false,
   });
@@ -475,9 +487,9 @@ function branchStateMatchesDesired(actual, desired) {
   );
 }
 
-function readBranchState(ref, apiRelative, metaRelative) {
-  const metadataBytes = readRefFileBytes(ref, metaRelative);
-  const apiMdBytes = readRefFileBytes(ref, apiRelative);
+async function readBranchState(ref, apiRelative, metaRelative) {
+  const metadataBytes = await readRefFileBytes(ref, metaRelative);
+  const apiMdBytes = await readRefFileBytes(ref, apiRelative);
 
   return {
     hasApiMd: Boolean(apiMdBytes),
@@ -523,28 +535,28 @@ function nextAvailableBranchName(preferredBranch, existingBranches) {
   return `${preferredBranch}_${branchSuffixFromIndex(index)}`;
 }
 
-function isAncestorRef(ancestorRef, branchRef) {
-  const result = git(["merge-base", "--is-ancestor", ancestorRef, branchRef], {
+async function isAncestorRef(ancestorRef, branchRef) {
+  const result = await git(["merge-base", "--is-ancestor", ancestorRef, branchRef], {
     capture: true,
     check: false,
   });
   return result.status === 0;
 }
 
-function resolveBranchSelection({ preferredBranch, desiredState, apiRelative, metaRelative, requiredAncestorRef = null }) {
-  const existingBranches = new Set(listRemoteBranchesWithPrefix(preferredBranch));
+async function resolveBranchSelection({ preferredBranch, desiredState, apiRelative, metaRelative, requiredAncestorRef = null }) {
+  const existingBranches = new Set(await listRemoteBranchesWithPrefix(preferredBranch));
   const orderedCandidates = [...existingBranches].sort((left, right) =>
     compareBranchCandidates(left, right, preferredBranch),
   );
 
   for (const candidateBranch of orderedCandidates) {
-    const remoteRef = fetchRemoteBranch(candidateBranch);
-    const actualState = readBranchState(remoteRef, apiRelative, metaRelative);
+    const remoteRef = await fetchRemoteBranch(candidateBranch);
+    const actualState = await readBranchState(remoteRef, apiRelative, metaRelative);
     if (!branchStateMatchesDesired(actualState, desiredState)) {
       continue;
     }
 
-    if (requiredAncestorRef && !isAncestorRef(requiredAncestorRef, remoteRef)) {
+    if (requiredAncestorRef && !(await isAncestorRef(requiredAncestorRef, remoteRef))) {
       continue;
     }
 
@@ -607,22 +619,35 @@ function branchReferenceParts(headSelector) {
   };
 }
 
-function syncWorkingBranchInfo(headSelector) {
+async function targetBranchExists(headSelector) {
+  const { owner, branch } = branchReferenceParts(headSelector);
+  if (owner === "Azure") {
+    return Boolean(await tryRemoteBranchRef(branch));
+  }
+
+  return Boolean(await tryForkBranchRef(owner, branch));
+}
+
+async function syncWorkingBranchInfo(headSelector, packageName = null) {
   if (!headSelector) {
     return null;
   }
 
-  const targetTag = resolveTargetTag(headSelector);
+  if (await targetBranchExists(headSelector)) {
+    const { owner, branch } = branchReferenceParts(headSelector);
+    return { owner, branch };
+  }
+
+  const targetTag = await resolveTargetTag(headSelector, packageName);
   if (targetTag) {
     return null;
   }
 
-  const { owner, branch } = branchReferenceParts(headSelector);
-  return { owner, branch };
+  return null;
 }
 
-function buildSyncMetadataObject({ packageName, packageDir, baseBranch, reviewBranch, headSelector }) {
-  const workingBranch = syncWorkingBranchInfo(headSelector);
+async function buildSyncMetadataObject({ packageName, packageDir, baseBranch, reviewBranch, headSelector }) {
+  const workingBranch = await syncWorkingBranchInfo(headSelector, packageName);
   if (!workingBranch) {
     return null;
   }
@@ -638,7 +663,7 @@ function buildSyncMetadataObject({ packageName, packageDir, baseBranch, reviewBr
     workingBranch: workingBranch.branch,
   };
 
-  const workingPr = findOpenPrForHead(headSelector);
+  const workingPr = await findOpenPrForHead(headSelector);
   metadata.workingPrNumber = workingPr && Number.isInteger(workingPr.number) ? workingPr.number : null;
 
   return metadata;
@@ -686,21 +711,12 @@ function buildReviewPrBody({ packageName, targetVersion, baseVersion, workingRef
   return replaceSyncMetadataBlock(lines.join("\n"), syncMetadataBlock);
 }
 
-function updatePrBody(prNumber, body) {
-  return gh(
-    [
-      "api",
-      `repos/Azure/azure-sdk-for-python/pulls/${prNumber}`,
-      "--method",
-      "PATCH",
-      "--field",
-      `body=${body}`,
-    ],
-    { check: false, capture: true },
-  );
+async function updatePrBody(prNumber, body) {
+  const github = await getGithubApi();
+  await github.updatePullRequestBody(prNumber, body);
 }
 
-function ensurePrBodySyncMetadata(pr, metadataBlock) {
+async function ensurePrBodySyncMetadata(pr, metadataBlock) {
   if (!metadataBlock || !pr || !Number.isInteger(pr.number)) {
     return;
   }
@@ -710,75 +726,33 @@ function ensurePrBodySyncMetadata(pr, metadataBlock) {
     return;
   }
 
-  const result = updatePrBody(pr.number, desiredBody);
-  if (result.status === 0) {
+  try {
+    await updatePrBody(pr.number, desiredBody);
     logInfo(`Updated API review sync metadata on PR #${pr.number}.`);
     return;
+  } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    logWarning(`WARNING: failed to update API review sync metadata on PR #${pr.number}.` + (details ? `\n  ${details}` : ""));
   }
-
-  const details = [
-    result.stderr ? `stderr: ${result.stderr.replace(/\r?\n/g, " ").trim()}` : "",
-    result.stdout ? `stdout: ${result.stdout.replace(/\r?\n/g, " ").trim()}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n  ");
-  logWarning(`WARNING: failed to update API review sync metadata on PR #${pr.number}.` + (details ? `\n  ${details}` : ""));
 }
 
-function findOpenPrForHead(headSelector) {
+async function findOpenPrForHead(headSelector) {
   const { owner, branch } = branchReferenceParts(headSelector);
   const selector = `${owner}:${branch}`;
   const allPrs = [];
+  const github = await getGithubApi();
 
-  const direct = gh(
-    [
-      "pr",
-      "list",
-      "--repo",
-      "Azure/azure-sdk-for-python",
-      "--head",
-      selector,
-      "--state",
-      "open",
-      "--json",
-      "number,url,state,updatedAt,headRefName,headRepositoryOwner",
-      "--limit",
-      "50",
-    ],
-    { check: false, capture: true },
-  );
-
-  if (direct.status === 0) {
-    const prs = parseJsonOrNull(direct.stdout);
-    if (prs) {
-      allPrs.push(...prs);
-    }
+  try {
+    allPrs.push(...(await github.listPullRequestsByHead(selector, 50)));
+  } catch {
+    // Fall back to search below. GitHub's head filtering can be stricter for fork branch names.
   }
 
-  const searchQuery = `repo:Azure/azure-sdk-for-python is:pr is:open head:${branch}`;
-  const search = gh(
-    [
-      "pr",
-      "list",
-      "--repo",
-      "Azure/azure-sdk-for-python",
-      "--search",
-      searchQuery,
-      "--state",
-      "open",
-      "--json",
-      "number,url,state,updatedAt,headRefName,headRepositoryOwner",
-      "--limit",
-      "50",
-    ],
-    { check: false, capture: true },
-  );
-
-  if (search.status === 0) {
-    const prs = parseJsonOrNull(search.stdout);
-    if (prs) {
-      allPrs.push(...prs);
-    }
+  const searchQuery = `repo:${REPO_SLUG} is:pr is:open head:${branch}`;
+  try {
+    allPrs.push(...(await github.searchPullRequests(searchQuery, 50)));
+  } catch {
+    // Treat lookup failures as no matching working PR; the PR body can still link the branch.
   }
 
   if (allPrs.length === 0) {
@@ -802,95 +776,45 @@ function findOpenPrForHead(headSelector) {
   return selectBestPr([...deduped.values()]);
 }
 
-function findOpenPrForBranches(baseBranch, headBranch) {
-  const direct = gh(
-    [
-      "pr",
-      "list",
-      "--repo",
-      "Azure/azure-sdk-for-python",
-      "--base",
-      baseBranch,
-      "--head",
-      headBranch,
-      "--state",
-      "open",
-      "--json",
-      "number,url,state,updatedAt,body",
-      "--limit",
-      "20",
-    ],
-    { check: false, capture: true },
-  );
+async function findOpenPrForBranches(baseBranch, headBranch) {
+  const github = await getGithubApi();
 
-  if (direct.status === 0) {
-    const prs = parseJsonOrNull(direct.stdout);
-    if (prs && prs.length > 0) {
+  try {
+    const prs = await github.listPullRequestsByBranches(baseBranch, headBranch, 20);
+    if (prs.length > 0) {
       return selectBestPr(prs);
     }
+  } catch {
+    // Fall back to search below.
   }
 
-  const search = gh(
-    [
-      "pr",
-      "list",
-      "--repo",
-      "Azure/azure-sdk-for-python",
-      "--search",
-      `repo:Azure/azure-sdk-for-python is:pr is:open head:${headBranch} base:${baseBranch}`,
-      "--json",
-      "number,url,state,updatedAt,body",
-      "--limit",
-      "20",
-    ],
-    { check: false, capture: true },
-  );
-
-  if (search.status !== 0) {
+  try {
+    const prs = await github.searchPullRequests(`repo:${REPO_SLUG} is:pr is:open head:${headBranch} base:${baseBranch}`, 20);
+    return selectBestPr(prs);
+  } catch {
     return null;
   }
-
-  const prs = parseJsonOrNull(search.stdout);
-  return prs ? selectBestPr(prs) : null;
 }
 
-function createDraftPr(baseBranch, headBranch, title, body) {
-  const result = gh(
-    [
-      "api",
-      "repos/Azure/azure-sdk-for-python/pulls",
-      "--method",
-      "POST",
-      "--field",
-      `base=${baseBranch}`,
-      "--field",
-      `head=${headBranch}`,
-      "--field",
-      `title=${title}`,
-      "--field",
-      `body=${body}`,
-      "--field",
-      "draft=true",
-    ],
-    { check: false, capture: true },
-  );
+async function createDraftPr(baseBranch, headBranch, title, body) {
+  const github = await getGithubApi();
 
-  if (result.status === 0) {
-    const createdPr = parseJsonObjectOrNull(result.stdout);
+  try {
+    const createdPr = await github.createDraftPullRequest(baseBranch, headBranch, title, body);
     return {
       ok: true,
-      url: createdPr && typeof createdPr.html_url === "string" ? createdPr.html_url : "",
-      stderr: result.stderr || "",
-      stdout: result.stdout || "",
+      url: createdPr && typeof createdPr.html_url === "string" ? createdPr.html_url : createdPr.url || "",
+      stderr: "",
+      stdout: "",
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      status: error && Number.isInteger(error.status) ? error.status : 1,
+      stdout: "",
+      stderr: error instanceof Error ? error.message : String(error),
     };
   }
-
-  return {
-    ok: false,
-    status: result.status,
-    stdout: result.stdout || "",
-    stderr: result.stderr || "",
-  };
 }
 
 function branchReferenceMarkdown(headSelector) {
@@ -899,30 +823,37 @@ function branchReferenceMarkdown(headSelector) {
   return `[branch \`${display}\`](${branchUrl})`;
 }
 
-function baselineReferenceMarkdown(baseTag) {
+async function baselineReferenceMarkdown(baseTag) {
   if (!baseTag) {
     return "empty";
   }
 
-  const commitSha = gitOut(["rev-list", "-n", "1", baseTag]);
+  const commitSha = await gitOut(["rev-list", "-n", "1", baseTag]);
   const commitUrl = `https://github.com/Azure/azure-sdk-for-python/commit/${commitSha}`;
   return `[tag \`${baseTag}\`](${commitUrl})`;
 }
 
-function targetReferenceInfo(headSelector) {
-  const targetTag = resolveTargetTag(headSelector);
-  if (targetTag) {
+async function targetReferenceInfo(headSelector, packageName = null) {
+  if (await targetBranchExists(headSelector)) {
+    const pr = await findOpenPrForHead(headSelector);
+    if (pr) {
+      return {
+        label: "Working PR",
+        markdown: `[PR #${pr.number}](${pr.url})`,
+      };
+    }
+
     return {
-      label: "Target tag",
-      markdown: baselineReferenceMarkdown(targetTag),
+      label: "Working branch",
+      markdown: branchReferenceMarkdown(headSelector),
     };
   }
 
-  const pr = findOpenPrForHead(headSelector);
-  if (pr) {
+  const targetTag = await resolveTargetTag(headSelector, packageName);
+  if (targetTag) {
     return {
-      label: "Working PR",
-      markdown: `[PR #${pr.number}](${pr.url})`,
+      label: "Target tag",
+      markdown: await baselineReferenceMarkdown(targetTag),
     };
   }
 
@@ -951,7 +882,7 @@ async function generateApiBytesForRef({
   logInfo(`Overlaying package source from ${refLabel} (${ref})`);
 
   // Overlay just the package directory from the target ref onto the working tree
-  git(["checkout", ref, "--", packageRelative]);
+  await git(["checkout", ref, "--", packageRelative]);
 
   try {
     const version = adapter.readVersion(packageDir);
@@ -979,10 +910,10 @@ async function generateApiBytesForRef({
     return result;
   } finally {
     // Restore the package directory to the current branch state
-    git(["reset", "--", packageRelative], { check: false });
-    git(["checkout", "HEAD", "--", packageRelative]);
+    await git(["reset", "--", packageRelative], { check: false });
+    await git(["checkout", "HEAD", "--", packageRelative]);
     // Clean any untracked files that the generation may have left behind
-    git(["clean", "-fd", "--", packageRelative], { check: false });
+    await git(["clean", "-fd", "--", packageRelative], { check: false });
   }
 }
 
@@ -993,17 +924,17 @@ async function main() {
   const packageDir = adapter.findPackageDir(REPO_ROOT, args.packageName);
   logInfo(`Found package at: ${packageDir}`);
 
-  ensureCleanWorktree();
-  const originalBranch = currentBranch();
+  await ensureCleanWorktree();
+  const originalBranch = await currentBranch();
   if (originalBranch === "HEAD") {
     throw new Error("ERROR: refusing to run from a detached HEAD.");
   }
 
-  git(["fetch", REMOTE, "main"]);
+  await git(["fetch", REMOTE, "main"]);
 
-  const baseVersion = validateBaseTag(args.packageName, args.base);
+  const baseVersion = await validateBaseTag(args.packageName, args.base);
 
-  const targetRef = args.target ? resolveTargetRef(args.target) : MAIN_REF;
+  const targetRef = args.target ? await resolveTargetRef(args.target, args.packageName) : MAIN_REF;
 
   try {
     logInfo(`\n=== Capturing baseline api.md from tag ${args.base} ===`);
@@ -1048,7 +979,7 @@ async function main() {
     ensureBranchStateHasMetadataSha("baseline API result", desiredBaseState);
     ensureBranchStateHasMetadataSha("target API result", desiredReviewState);
 
-    const baseSelection = resolveBranchSelection({
+    const baseSelection = await resolveBranchSelection({
       preferredBranch: apiReviewBranchName("base", args.packageName, baseVersion),
       desiredState: desiredBaseState,
       apiRelative,
@@ -1058,22 +989,22 @@ async function main() {
 
     if (baseSelection.reused) {
       logInfo(`\n=== Reusing base branch ${baseBranch} ===`);
-      git(["checkout", "-B", baseBranch, baseSelection.remoteRef]);
+      await git(["checkout", "-B", baseBranch, baseSelection.remoteRef]);
     } else {
       logInfo(`\n=== Creating base branch ${baseBranch} ===`);
-      git(["checkout", "-B", baseBranch, MAIN_REF]);
+      await git(["checkout", "-B", baseBranch, MAIN_REF]);
       writeBytes(apiPath, baseResult.apiMd);
-      git(["add", apiRelative]);
+      await git(["add", apiRelative]);
       if (baseResult.metadata) {
         writeBytes(metaFilePath, baseResult.metadata);
-        git(["add", metaRelative]);
+        await git(["add", metaRelative]);
       }
-      git(["commit", "-m", `[API Review] Baseline api.md for ${args.packageName} ${baseVersion}`]);
+      await git(["commit", "-m", `[API Review] Baseline api.md for ${args.packageName} ${baseVersion}`]);
 
-      git(["push", "--force-with-lease", REMOTE, baseBranch]);
+      await git(["push", "--force-with-lease", REMOTE, baseBranch]);
     }
 
-    const reviewSelection = resolveBranchSelection({
+    const reviewSelection = await resolveBranchSelection({
       preferredBranch: apiReviewBranchName("review", args.packageName, targetVersion),
       desiredState: desiredReviewState,
       apiRelative,
@@ -1084,26 +1015,26 @@ async function main() {
 
     if (reviewSelection.reused) {
       logInfo(`\n=== Reusing review branch ${reviewBranch} ===`);
-      git(["checkout", "-B", reviewBranch, reviewSelection.remoteRef]);
+      await git(["checkout", "-B", reviewBranch, reviewSelection.remoteRef]);
     } else {
       logInfo(`\n=== Creating review branch ${reviewBranch} ===`);
-      git(["checkout", "-B", reviewBranch, baseBranch]);
+      await git(["checkout", "-B", reviewBranch, baseBranch]);
       writeBytes(apiPath, targetResult.apiMd);
-      git(["add", apiRelative]);
+      await git(["add", apiRelative]);
       if (targetResult.metadata) {
         writeBytes(metaFilePath, targetResult.metadata);
-        git(["add", metaRelative]);
+        await git(["add", metaRelative]);
       }
-      git(["commit", "-m", `[API Review] api.md for ${args.packageName} ${targetVersion}`]);
+      await git(["commit", "-m", `[API Review] api.md for ${args.packageName} ${targetVersion}`]);
 
-      git(["push", "--force-with-lease", REMOTE, reviewBranch]);
+      await git(["push", "--force-with-lease", REMOTE, reviewBranch]);
     }
 
     const title = `[API Review] ${args.packageName} ${targetVersion} (base ${baseVersion})`;
     const workingSelector = args.target || "main";
-    const workingReference = targetReferenceInfo(workingSelector);
-    const baselineRef = baselineReferenceMarkdown(args.base);
-    const syncMetadata = buildSyncMetadataObject({
+    const workingReference = await targetReferenceInfo(workingSelector, args.packageName);
+    const baselineRef = await baselineReferenceMarkdown(args.base);
+    const syncMetadata = await buildSyncMetadataObject({
       packageName: args.packageName,
       packageDir,
       baseBranch,
@@ -1122,9 +1053,9 @@ async function main() {
     });
 
     if (baseSelection.reused && reviewSelection.reused) {
-      const existingPr = findOpenPrForBranches(baseBranch, reviewBranch);
+      const existingPr = await findOpenPrForBranches(baseBranch, reviewBranch);
       if (existingPr) {
-        ensurePrBodySyncMetadata(existingPr, syncMetadataBlock);
+        await ensurePrBodySyncMetadata(existingPr, syncMetadataBlock);
         logInfo(`\n=== Reusing existing PR #${existingPr.number} ===`);
         logInfo(existingPr.url);
         return 0;
@@ -1133,16 +1064,16 @@ async function main() {
 
     logInfo("\n=== Opening PR ===");
     const compareUrl = `https://github.com/Azure/azure-sdk-for-python/compare/${baseBranch}...${reviewBranch}?expand=1`;
-    const prCreate = createDraftPr(baseBranch, reviewBranch, title, body);
+    const prCreate = await createDraftPr(baseBranch, reviewBranch, title, body);
 
     if (prCreate.ok) {
       if (prCreate.url) {
         logInfo(prCreate.url);
       }
     } else {
-      const existingPr = findOpenPrForBranches(baseBranch, reviewBranch);
+      const existingPr = await findOpenPrForBranches(baseBranch, reviewBranch);
       if (existingPr) {
-        ensurePrBodySyncMetadata(existingPr, syncMetadataBlock);
+        await ensurePrBodySyncMetadata(existingPr, syncMetadataBlock);
         logInfo(`\n=== Reusing existing PR #${existingPr.number} ===`);
         logInfo(existingPr.url);
         return 0;
@@ -1152,12 +1083,12 @@ async function main() {
         `Exit code: ${prCreate.status}`,
         prCreate.stderr ? `stderr: ${prCreate.stderr.replace(/\r?\n/g, " ").trim()}` : "",
         prCreate.stdout ? `stdout: ${prCreate.stdout.replace(/\r?\n/g, " ").trim()}` : "",
-        "Debug repro: GH_DEBUG=1 gh api repos/Azure/azure-sdk-for-python/pulls --method POST --field base=<base> --field head=<head> --field title=<title> --field body=<body> --field draft=true",
+        "Debug repro: use the GitHub REST API endpoint POST /repos/Azure/azure-sdk-for-python/pulls with base/head/title/body/draft=true.",
       ]
         .filter(Boolean)
         .join("\n  ");
       logWarning(
-        "\nWARNING: `gh api` PR creation failed. Both branches were pushed successfully -- open the PR manually here:\n" +
+        "\nWARNING: GitHub PR creation failed. Both branches were pushed successfully -- open the PR manually here:\n" +
           `  ${compareUrl}\n` +
           `  Title: ${title}` +
           (errorDetails ? `\n  ${errorDetails}` : ""),
@@ -1166,7 +1097,7 @@ async function main() {
 
     return 0;
   } finally {
-    git(["checkout", originalBranch], { check: false });
+    await git(["checkout", originalBranch], { check: false });
   }
 }
 
@@ -1183,13 +1114,13 @@ if (require.main === module) {
   })();
 } else {
   module.exports = {
-    __setCommandRunners({ git: gitRunner, gh: ghRunner }) {
+    __setCommandRunners({ git: gitRunner }) {
       if (gitRunner) {
         git = gitRunner;
       }
-      if (ghRunner) {
-        gh = ghRunner;
-      }
+    },
+    __setGithubApi(api) {
+      githubApi = api;
     },
     buildSyncMetadataBlock,
     buildSyncMetadataObject,

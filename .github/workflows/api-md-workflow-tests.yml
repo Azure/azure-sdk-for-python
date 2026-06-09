@@ -22,5 +22,10 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Install Node dependencies
+        run: npm ci
+        working-directory: scripts/api_md_workflow
+
       - name: Run API.md workflow unit tests
-        run: node --test scripts/api_md_workflow/*.test.js
+        run: npm test
+        working-directory: scripts/api_md_workflow

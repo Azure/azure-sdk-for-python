@@ -13,10 +13,11 @@ If the user asks to create an API review PR for a new package, explain that new 
 
 ## Prerequisites
 
-1. The user must have `gh` CLI installed and authenticated (`gh auth login`).
+1. The user must have `gh` CLI installed and authenticated (`gh auth login`), or `GITHUB_TOKEN`/`GH_TOKEN` set with permission to create and update pull requests in this repository.
 2. The working tree must be clean (no uncommitted changes).
 3. The latest Node.js LTS must be installed.
-4. `azpysdk` must be installed (`pip install -e ./eng/tools/azure-sdk-tools`).
+4. API.md workflow Node dependencies must be installed (`npm ci` from `scripts/api_md_workflow`).
+5. `azpysdk` must be installed (`pip install -e ./eng/tools/azure-sdk-tools`).
 
 ## Information to Gather
 
