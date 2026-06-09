@@ -441,3 +441,103 @@ def test_local_patch_attachments_unchanged_when_field_absent(local_provider):
         assert info.attachments == {"_input": "stays-put"}
 
     asyncio.run(_go())
+
+
+# --------------------------------------------------------------------------- #
+# TDD-gap tests (added retroactively to make the suite a true contract guard)
+# --------------------------------------------------------------------------- #
+
+
+def test_local_patch_attachments_over_count_cap_raises(local_provider):
+    """PATCH path (not just CREATE) MUST enforce the 20-entry cap.
+
+    Gap-fill: ``test_local_create_over_count_raises`` only exercised the
+    CREATE path. The PATCH path's count validation is a separate code
+    branch in ``_local_provider.update``; pin it.
+    """
+
+    async def _go():
+        # Pre-populate a task with 19 attachments.
+        existing = {f"k{i}": str(i) for i in range(19)}
+        await local_provider.create(
+            TaskCreateRequest(
+                agent_name="a",
+                session_id="s",
+                id="t-patch-cap-1",
+                title="x",
+                attachments=existing,
+            )
+        )
+        # PATCH adding 2 more would push us to 21 → must raise.
+        with pytest.raises(AttachmentLimitExceeded):
+            await local_provider.update(
+                "t-patch-cap-1",
+                TaskPatchRequest(
+                    attachments={"new-a": "1", "new-b": "2"},
+                ),
+            )
+        # PATCH that adds exactly 1 (to reach 20) MUST succeed.
+        await local_provider.update(
+            "t-patch-cap-1",
+            TaskPatchRequest(attachments={"new-c": "3"}),
+        )
+        info = await local_provider.get("t-patch-cap-1")
+        assert info is not None
+        assert len(info.attachments) == 20
+
+    asyncio.run(_go())
+
+
+def test_local_patch_attachments_delete_makes_room_for_add(local_provider):
+    """A PATCH that deletes an old key AND adds a new key in one call
+    must be allowed even at the cap, because the projected final count
+    is still ≤ 20.
+    """
+
+    async def _go():
+        existing = {f"k{i}": str(i) for i in range(20)}  # at the cap
+        await local_provider.create(
+            TaskCreateRequest(
+                agent_name="a",
+                session_id="s",
+                id="t-patch-swap",
+                title="x",
+                attachments=existing,
+            )
+        )
+        # PATCH: delete one, add one. Projected count is still 20.
+        await local_provider.update(
+            "t-patch-swap",
+            TaskPatchRequest(
+                attachments={"k0": None, "k-new": "value"},
+            ),
+        )
+        info = await local_provider.get("t-patch-swap")
+        assert info is not None
+        assert len(info.attachments) == 20
+        assert "k0" not in info.attachments
+        assert info.attachments["k-new"] == "value"
+
+    asyncio.run(_go())
+
+
+def test_local_patch_attachments_oversize_value_raises(local_provider):
+    """PATCH path MUST validate per-value size cap (not just CREATE)."""
+
+    async def _go():
+        await local_provider.create(
+            TaskCreateRequest(
+                agent_name="a",
+                session_id="s",
+                id="t-patch-oversize",
+                title="x",
+            )
+        )
+        huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 5)
+        with pytest.raises(AttachmentTooLarge):
+            await local_provider.update(
+                "t-patch-oversize",
+                TaskPatchRequest(attachments={"big": huge}),
+            )
+
+    asyncio.run(_go())

@@ -215,3 +215,74 @@ async def test_suspend_with_promoted_input_deletes_attachment_atomically(
     assert info.attachments is None or _FUNCTION_INPUT_KEY not in (info.attachments or {})
     # payload["input"] must also be cleared.
     assert info.payload is None or info.payload.get("input") is None
+
+
+# --------------------------------------------------------------------------- #
+# TDD-gap tests (added retroactively to make the suite a true contract guard)
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.asyncio
+async def test_recovery_surfaces_promoted_input_as_ctx_input(
+    manager_local: TaskManager,
+) -> None:
+    """SC-3 end-to-end: after a "crash" (manager teardown + fresh manager
+    + recovery), a task whose input was promoted MUST present that input
+    to ``ctx.input`` exactly as the caller passed it.
+
+    This pins the read path through the recovery code path, not just
+    the cold-start read path (covered by
+    ``test_large_input_promoted_to_attachment``).
+    """
+    big = {"v": "r" * (_INPUT_THRESHOLD_BYTES + 100), "marker": "recovery-probe"}
+
+    # Define + register the handler. @task decoration is lazy: the
+    # callback only enters _resume_callbacks at the first .start() call.
+    # We manually register so recovery dispatch works without a prior
+    # in-band start.
+    captured: dict[str, Any] = {}
+
+    @task(name="t-recovery-capture", steerable=True)
+    async def recover(ctx: TaskContext[dict]) -> dict:
+        captured["input"] = ctx.input
+        captured["entry_mode"] = ctx.entry_mode
+        return await ctx.suspend(reason="captured")
+
+    manager_local._resume_callbacks["t-recovery-capture"] = recover._fn  # type: ignore[attr-defined]
+    manager_local._resume_opts["t-recovery-capture"] = recover._opts  # type: ignore[attr-defined]
+
+    # Plant a task in the store with a promoted input shape — simulates
+    # what a previous lifetime would have written before being evicted.
+    from azure.ai.agentserver.core.durable._attachments import (
+        _FUNCTION_INPUT_KEY,
+        _make_ref,
+    )
+    from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+    ref = _make_ref(_FUNCTION_INPUT_KEY, big)
+    await manager_local.provider.create(
+        TaskCreateRequest(
+            agent_name=manager_local._config.agent_name,
+            session_id=manager_local._config.session_id,
+            id="t-recovery-1",
+            title="recovery-probe",
+            status="in_progress",
+            lease_owner=manager_local._lease_owner,
+            lease_instance_id="prior-instance-that-died",
+            lease_duration_seconds=60,
+            payload={"input": ref, "metadata": {}},
+            attachments={_FUNCTION_INPUT_KEY: big},
+            tags={"task_name": "t-recovery-capture"},
+            source={"name": "t-recovery-capture"},
+        )
+    )
+
+    # Drive recovery scan directly (simulates the periodic loop / startup).
+    await manager_local._recover_stale_tasks()
+    # Allow the recovered handler to run.
+    await asyncio.sleep(0.5)
+
+    # The handler MUST have seen the original input — promotion is invisible.
+    assert "input" in captured, "recovered handler never ran"
+    assert captured["input"] == big
+    assert captured["entry_mode"] == "recovered"
