@@ -60,7 +60,10 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
     JobStatus,
+    PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
     TestingCriterionAzureAIEvaluator,
 )
@@ -86,31 +89,31 @@ with (
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
     job = project_client.beta.evaluators.create_generation_job(
-        job={
-            "model": model_name,
-            "name": "Reservation Quality (Generated)",
-            "evaluator_name": evaluator_name,
-            "evaluator_display_name": "Reservation Quality (Generated)",
-            "evaluator_description": "Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
-            "sources": [
-                {
-                    "type": "Prompt",
-                    "description": "Application overview - purpose, capabilities, and tools.",
-                    "prompt": (
-                        "You are evaluating a restaurant reservation assistant. The assistant helps "
-                        "users create, modify, and cancel reservations at participating restaurants. "
-                        "It can:\n"
-                        "  - Search for restaurants by name, cuisine, or neighborhood.\n"
-                        "  - Check table availability for a requested date, time, and party size.\n"
-                        "  - Create, update, and cancel reservations on behalf of the user.\n"
-                        "  - Send SMS or email confirmations through a notifications tool.\n"
-                        "It must always confirm the user's intent before committing changes, "
-                        "ask follow-up questions when details are missing, and maintain a polite "
-                        "restaurant-host tone."
+        job=EvaluatorGenerationJob(
+            inputs=EvaluatorGenerationInputs(
+                model=model_name,
+                evaluator_name=evaluator_name,
+                evaluator_display_name="Reservation Quality (Generated)",
+                evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
+                sources=[
+                    PromptEvaluatorGenerationJobSource(
+                        description="Application overview - purpose, capabilities, and tools.",
+                        prompt=(
+                            "You are evaluating a restaurant reservation assistant. The assistant helps "
+                            "users create, modify, and cancel reservations at participating restaurants. "
+                            "It can:\n"
+                            "  - Search for restaurants by name, cuisine, or neighborhood.\n"
+                            "  - Check table availability for a requested date, time, and party size.\n"
+                            "  - Create, update, and cancel reservations on behalf of the user.\n"
+                            "  - Send SMS or email confirmations through a notifications tool.\n"
+                            "It must always confirm the user's intent before committing changes, "
+                            "ask follow-up questions when details are missing, and maintain a polite "
+                            "restaurant-host tone."
+                        ),
                     ),
-                }
-            ],
-        },
+                ],
+            ),
+        ),
         # `operation_id` makes the call idempotent - re-submitting the same id returns the existing job.
         operation_id=f"rubric-eval-basic-{short}",
     )
