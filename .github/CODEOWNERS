@@ -10,7 +10,7 @@
 
 # Core
 # PRLabel: %Core.Http
-/sdk/core/corehttp/                                                  @lmazuel @annatisch @johanste @iscai-msft @kashifkhan
+/sdk/core/corehttp/                                                  @lmazuel @johanste @iscai-msft @kashifkhan
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Core.Http
@@ -19,12 +19,12 @@
 # ServiceLabel: %Azure.Core
 
 # PRLabel: %Azure.Core
-/sdk/core/                                                           @lmazuel @annatisch @johanste
-/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @iscai-msft @kashifkhan
+/sdk/core/                                                           @lmazuel @johanste
+/sdk/core/azure-core/                                                @lmazuel @johanste @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
-/common/smoketest/                                                   @lmazuel @chlowell @annatisch @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @lmazuel @chlowell @mccoyp @shurd @southpolesteve
 
 ####################
 # Client Libraries
@@ -753,7 +753,7 @@
 # ServiceOwners: @amber-yujueWang @rhurey @xitzhang @pankopon @emilyjiji
 
 # PRLabel: %Storage
-/sdk/storage/    @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
+/sdk/storage/    @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
 # ServiceLabel: %Storage
 # ServiceOwners: @jalauzon-msft @vincenttran-msft

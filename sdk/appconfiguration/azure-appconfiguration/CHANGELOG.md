@@ -7,6 +7,8 @@
 - Added `check_configuration_settings()` method to efficiently check for configuration changes using HEAD requests, returning only headers (ETags) without response bodies.
 - `list_configuration_settings()` and `check_configuration_settings()` now return `ConfigurationSettingPaged` (sync) / `ConfigurationSettingPagedAsync` (async) to expose the `by_page(match_conditions=...)` API and per-page `etag` attribute for change detection.
 - `ConfigurationSettingPaged` and `ConfigurationSettingPagedAsync` are now publicly exported from `azure.appconfiguration`.
+- Added a `description` property to `ConfigurationSetting` and `SecretReferenceConfigurationSetting` representing the description of the key-value (requires API version `2026-04-01` or later).
+- Added a `description` property and a `description` keyword argument to `ConfigurationSnapshot`, and a `description` keyword argument to `begin_create_snapshot()` for both sync and async clients (requires API version `2026-04-01` or later).
 
 ### Breaking Changes
 
