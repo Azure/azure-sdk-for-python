@@ -186,3 +186,100 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
             f"expected last_input_id={expected_last_input_id!r}, "
             f"actual={actual_last_input_id!r}",
         )
+
+
+# --- Spec 018 (task attachments) — input + attachment size/count errors ----
+
+
+class InputTooLarge(ValueError):
+    """Raised when an input's serialized size exceeds the per-attachment cap.
+
+    The hosted task store caps a single attachment value at 2 MB. The
+    framework promotes inputs exceeding the inline-payload threshold
+    (200 KiB for function inputs, 20 KiB for steering inputs) into
+    attachments; any input whose serialized size exceeds the
+    per-attachment cap cannot be stored and is rejected client-side
+    before any HTTP call.
+
+    :param task_id: The task identifier this input was bound for.
+    :type task_id: str
+    :param size_bytes: The observed serialized size of the input.
+    :type size_bytes: int
+    :param max_bytes: The per-attachment cap (default 2 MB).
+    :type max_bytes: int
+    """
+
+    __slots__ = ("task_id", "size_bytes", "max_bytes")
+
+    def __init__(self, task_id: str, size_bytes: int, max_bytes: int) -> None:
+        self.task_id = task_id
+        self.size_bytes = size_bytes
+        self.max_bytes = max_bytes
+        super().__init__(
+            f"Input for task {task_id!r} is too large to persist: "
+            f"{size_bytes} bytes > {max_bytes} byte per-attachment cap."
+        )
+
+
+class AttachmentTooLarge(ValueError):
+    """Raised when a single attachment value exceeds the per-attachment cap.
+
+    Same constraint as :class:`InputTooLarge` but raised from the
+    transport-layer client when arbitrary attachments (not necessarily
+    framework-managed inputs) violate the cap. Both are
+    :class:`ValueError` subclasses.
+
+    :param task_id: The task identifier this attachment was bound for.
+    :type task_id: str
+    :param attachment_key: The attachment key that exceeded the cap.
+    :type attachment_key: str
+    :param size_bytes: The observed serialized size of the attachment value.
+    :type size_bytes: int
+    :param max_bytes: The per-attachment cap (default 2 MB).
+    :type max_bytes: int
+    """
+
+    __slots__ = ("task_id", "attachment_key", "size_bytes", "max_bytes")
+
+    def __init__(
+        self,
+        task_id: str,
+        attachment_key: str,
+        size_bytes: int,
+        max_bytes: int,
+    ) -> None:
+        self.task_id = task_id
+        self.attachment_key = attachment_key
+        self.size_bytes = size_bytes
+        self.max_bytes = max_bytes
+        super().__init__(
+            f"Attachment {attachment_key!r} on task {task_id!r} is too large: "
+            f"{size_bytes} bytes > {max_bytes} byte per-attachment cap."
+        )
+
+
+class AttachmentLimitExceeded(ValueError):
+    """Raised when a write would exceed the per-task attachment count cap.
+
+    The hosted task store caps a task at 20 attachments. The framework
+    detects this client-side (counting current + about-to-be-added
+    attachments) and rejects before the HTTP call.
+
+    :param task_id: The task identifier.
+    :type task_id: str
+    :param current_count: The number of attachments currently on the task.
+    :type current_count: int
+    :param max_count: The per-task attachment count cap (default 20).
+    :type max_count: int
+    """
+
+    __slots__ = ("task_id", "current_count", "max_count")
+
+    def __init__(self, task_id: str, current_count: int, max_count: int) -> None:
+        self.task_id = task_id
+        self.current_count = current_count
+        self.max_count = max_count
+        super().__init__(
+            f"Task {task_id!r} already has {current_count} attachments; "
+            f"per-task cap is {max_count}. Cannot add another."
+        )

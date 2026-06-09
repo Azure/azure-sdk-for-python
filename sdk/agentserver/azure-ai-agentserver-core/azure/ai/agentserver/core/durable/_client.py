@@ -44,6 +44,10 @@ from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.rest import HttpRequest
 
 from .._version import VERSION
+from ._attachments import (
+    _validate_attachment_count,
+    _validate_attachment_size,
+)
 from ._exceptions import TaskNotFound
 from ._models import (
     TaskCreateRequest,
@@ -444,6 +448,24 @@ class HostedTaskProvider:
             body["tags"] = request.tags
         if request.source is not None:
             body["source"] = request.source
+        if request.attachments is not None:
+            # Spec 018 — enforce per-attachment 2 MB and per-task 20-entry
+            # caps client-side before the HTTP call. Create cannot
+            # delete anything (no null values meaningful here), so
+            # count is the number of entries.
+            additions = sum(1 for v in request.attachments.values() if v is not None)
+            _validate_attachment_count(
+                task_id=request.id or "<new>",
+                current_count=0,
+                additions=additions,
+            )
+            for k, v in request.attachments.items():
+                _validate_attachment_size(
+                    task_id=request.id or "<new>",
+                    attachment_key=k,
+                    value=v,
+                )
+            body["attachments"] = request.attachments
 
         http_request = HttpRequest(
             "POST",
@@ -508,6 +530,21 @@ class HostedTaskProvider:
             body["error"] = patch.error
         if patch.suspension_reason is not None:
             body["suspension_reason"] = patch.suspension_reason
+        if patch.attachments is not None:
+            # Spec 018 — enforce per-attachment 2 MB cap on every
+            # non-null value in the patch. (We don't enforce the
+            # per-task 20-entry cap here because we don't have the
+            # current attachment count without a GET; callers that
+            # need pre-flight count enforcement should call
+            # `_validate_attachment_count` themselves. Server will
+            # reject if exceeded.)
+            for k, v in patch.attachments.items():
+                _validate_attachment_size(
+                    task_id=task_id,
+                    attachment_key=k,
+                    value=v,
+                )
+            body["attachments"] = patch.attachments
 
         headers: dict[str, str] = {"Content-Type": "application/json"}
         if patch.if_match is not None:
