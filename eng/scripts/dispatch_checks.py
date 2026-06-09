@@ -100,6 +100,7 @@ async def _tee_stream(
         if stream is None:
             return ""
         chunks: List[str] = []
+        dropped = 0
         while True:
             line_b = await stream.readline()
             if not line_b:
@@ -109,9 +110,26 @@ async def _tee_stream(
             try:
                 sink.write(prefix + line)
                 sink.flush()
-            except Exception:
+            except (BrokenPipeError, OSError, ValueError):
                 # Never let a write failure on the parent's stdio kill the pump.
-                pass
+                # This typically means the parent's log destination is already
+                # gone (e.g. the pipeline cancelled the job at its timeout and
+                # closed the log pipe). Keep accumulating so the full output is
+                # still captured for the final CheckResult, but note it once and
+                # report how many lines never made it to the live log.
+                if dropped == 0:
+                    logger.warning(
+                        "Lost parent stdio while mirroring output for %s; "
+                        "continuing to capture for the final result.",
+                        prefix.strip(),
+                    )
+                dropped += 1
+        if dropped:
+            logger.warning(
+                "Suppressed %d stdio write error(s) while mirroring output for %s.",
+                dropped,
+                prefix.strip(),
+            )
         return "".join(chunks)
 
     stdout_text, stderr_text = await asyncio.gather(
