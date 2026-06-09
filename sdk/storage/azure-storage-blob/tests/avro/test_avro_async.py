@@ -15,7 +15,6 @@ from azure.storage.blob._shared.avro.avro_io_async import AsyncDatumReader
 from azure.storage.blob._shared.avro.datafile_async import AsyncDataFileReader
 from .test_avro import SCHEMAS_TO_VALIDATE
 
-
 CODECS_TO_VALIDATE = ["null"]
 
 CHANGE_FEED_RECORD = {

@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -30,7 +29,6 @@ from azure.storage.blob._encryption import (
     _GCM_TAG_LENGTH,
     _validate_and_unwrap_cek,
 )
-
 
 TEST_CONTAINER_PREFIX = "encryptionv2_container"
 TEST_BLOB_PREFIX = "encryptionv2_blob"
