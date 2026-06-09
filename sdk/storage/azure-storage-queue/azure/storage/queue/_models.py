@@ -15,7 +15,7 @@ from ._shared.response_handlers import (
 )
 from ._shared.request_handlers import serialize_iso
 from ._shared.models import DictMixin
-from ._generated.models._patch import BackCompatMixin as _BackCompatMixin
+from ._generated._utils import serialization as _serialization
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -31,7 +31,35 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class RetentionPolicy(_BackCompatMixin):
+# These public models inherited (transitively) from the autorest
+# msrest model, which exposed ``serialize``, ``deserialize``,
+# ``from_dict``, ``as_dict``, ``is_xml_model``, and
+# ``enable_additional_properties_sending``. After the migration the generated models
+# use a different base class. To preserve the public method surface, the methods
+# are grafted onto each public class at module load time via the
+# ``@_attach_msrest_compat`` decorator.
+def _attach_msrest_compat(cls: type) -> type:
+    if not hasattr(cls, "_attribute_map"):
+        raise TypeError(f"{cls.__name__} must define _attribute_map to use _attach_msrest_compat")
+    if not hasattr(cls, "_validation"):
+        cls._validation = {}  # type: ignore[attr-defined]
+    cls.additional_properties = None  # type: ignore[attr-defined]
+    for _name in (
+        "serialize",
+        "deserialize",
+        "from_dict",
+        "as_dict",
+        "is_xml_model",
+        "enable_additional_properties_sending",
+        "_infer_class_models",
+        "_create_xml_node",
+    ):
+        setattr(cls, _name, vars(_serialization.Model)[_name])
+    return cls
+
+
+@_attach_msrest_compat
+class RetentionPolicy:
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -78,7 +106,8 @@ class RetentionPolicy(_BackCompatMixin):
         return GeneratedRetentionPolicy(enabled=self.enabled, days=self.days)
 
 
-class QueueAnalyticsLogging(_BackCompatMixin):
+@_attach_msrest_compat
+class QueueAnalyticsLogging:
     """Azure Analytics Logging settings.
 
     All required parameters must be populated in order to send to Azure.
@@ -148,7 +177,8 @@ class QueueAnalyticsLogging(_BackCompatMixin):
         )
 
 
-class Metrics(_BackCompatMixin):
+@_attach_msrest_compat
+class Metrics:
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -208,7 +238,8 @@ class Metrics(_BackCompatMixin):
         )
 
 
-class CorsRule(_BackCompatMixin):
+@_attach_msrest_compat
+class CorsRule:
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -375,7 +406,8 @@ class QueueSasPermissions(object):
         return parsed
 
 
-class AccessPolicy(_BackCompatMixin):
+@_attach_msrest_compat
+class AccessPolicy:
     """Access Policy class used by the set and get access policy methods.
 
     A stored access policy can specify the start time, expiry time, and
