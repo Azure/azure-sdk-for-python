@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python private_link_scope_private_link_resource_list_get.py
+    python get_service_diagnostic_setting.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_link_resources.list_by_private_link_scope(
-        resource_group_name="MyResourceGroup",
-        scope_name="MyPrivateLinkScope",
+    response = client.diagnostic_settings.get(
+        resource_uri="subscriptions/1a66ce04-b633-4a0b-b2bc-a912ec8986a6/resourcegroups/viruela1/providers/microsoft.logic/workflows/viruela6",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2023-06-01-preview/PrivateLinkScopePrivateLinkResourceListGet.json
+# x-ms-original-file: 2016-09-01/getServiceDiagnosticSetting.json
 if __name__ == "__main__":
     main()

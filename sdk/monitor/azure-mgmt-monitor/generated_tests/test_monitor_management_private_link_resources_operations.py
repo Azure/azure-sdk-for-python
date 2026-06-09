@@ -39,6 +39,6 @@ class TestMonitorManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTestC
             scope_name="str",
             api_version="2023-06-01-preview",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

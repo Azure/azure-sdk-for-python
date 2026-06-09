@@ -35,11 +35,11 @@ class TestMonitorManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecorded
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_private_link_resources_list_by_private_link_scope(self, resource_group):
-        response = await self.client.private_link_resources.list_by_private_link_scope(
+        response = self.client.private_link_resources.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
             api_version="2023-06-01-preview",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

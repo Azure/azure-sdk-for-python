@@ -145,7 +145,7 @@
         "azure.mgmt.monitor.models.LogProfileProperties": "LogProfilesApi.LogProfileProperties",
         "azure.mgmt.monitor.models.LogProfileResource": "LogProfilesApi.LogProfileResource",
         "azure.mgmt.monitor.models.LogProfileResourcePatch": "LogProfilesApi.LogProfileResourcePatch",
-        "azure.mgmt.monitor.models.LogSettings": "ServiceDiagnosticsSettingsApi.LogSettings",
+        "azure.mgmt.monitor.models.LogSettings": "Microsoft.InsightsCombinedClient.LogSettings",
         "azure.mgmt.monitor.models.MetadataValue": "MetricsApi.MetadataValue",
         "azure.mgmt.monitor.models.Metric": "MetricsApi.Metric",
         "azure.mgmt.monitor.models.MetricAlertAction": "MetricAlertApi.MetricAlertAction",
@@ -168,7 +168,7 @@
         "azure.mgmt.monitor.models.MetricDimension": "MetricAlertApi.MetricDimension",
         "azure.mgmt.monitor.models.MetricNamespace": "MetricsApi.MetricNamespace",
         "azure.mgmt.monitor.models.MetricNamespaceName": "MetricsApi.MetricNamespaceName",
-        "azure.mgmt.monitor.models.MetricSettings": "ServiceDiagnosticsSettingsApi.MetricSettings",
+        "azure.mgmt.monitor.models.MetricSettings": "Microsoft.InsightsCombinedClient.MetricSettings",
         "azure.mgmt.monitor.models.MetricSingleDimension": "MetricBaselinesApi.MetricSingleDimension",
         "azure.mgmt.monitor.models.MetricTrigger": "AutoScaleApi.MetricTrigger",
         "azure.mgmt.monitor.models.MetricValue": "MetricsApi.MetricValue",
@@ -198,10 +198,8 @@
         "azure.mgmt.monitor.models.PredictiveValue": "AutoScaleApi.PredictiveValue",
         "azure.mgmt.monitor.models.PrivateEndpoint": "Azure.ResourceManager.CommonTypes.PrivateEndpoint",
         "azure.mgmt.monitor.models.PrivateEndpointConnection": "PrivateLinkScopesApi.PrivateEndpointConnection",
-        "azure.mgmt.monitor.models.PrivateEndpointConnectionListResult": "PrivateLinkScopesApi.PrivateEndpointConnectionListResult",
         "azure.mgmt.monitor.models.PrivateEndpointConnectionProperties": "Azure.ResourceManager.CommonTypes.PrivateEndpointConnectionProperties",
         "azure.mgmt.monitor.models.PrivateLinkResource": "PrivateLinkScopesApi.PrivateLinkResource",
-        "azure.mgmt.monitor.models.PrivateLinkResourceListResult": "Azure.ResourceManager.ResourceListResult",
         "azure.mgmt.monitor.models.PrivateLinkResourceProperties": "Azure.ResourceManager.CommonTypes.PrivateLinkResourceProperties",
         "azure.mgmt.monitor.models.PrivateLinkScopedResource": "DataCollectionApi.PrivateLinkScopedResource",
         "azure.mgmt.monitor.models.PrivateLinkServiceConnectionState": "Azure.ResourceManager.CommonTypes.PrivateLinkServiceConnectionState",
@@ -534,5 +532,5 @@
         "azure.mgmt.monitor.operations.ActionGroupsOperations.begin_reconcile_nsp": "NetworkSecurityPerimeterApi.NetworkSecurityPerimeterConfigurations.reconcileNSP",
         "azure.mgmt.monitor.aio.operations.ActionGroupsOperations.begin_reconcile_nsp": "NetworkSecurityPerimeterApi.NetworkSecurityPerimeterConfigurations.reconcileNSP"
     },
-    "CrossLanguageVersion": "cdee731d8c56"
+    "CrossLanguageVersion": "32c8010764cf"
 }

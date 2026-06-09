@@ -34,7 +34,8 @@ def main():
         resource_group_name="MyResourceGroup",
         scope_name="MyPrivateLinkScope",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
 # x-ms-original-file: 2023-06-01-preview/PrivateEndpointConnectionList.json

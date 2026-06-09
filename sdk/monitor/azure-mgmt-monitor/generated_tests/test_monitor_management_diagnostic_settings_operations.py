@@ -40,12 +40,20 @@ class TestMonitorManagementDiagnosticSettingsOperations(AzureMgmtRecordedTestCas
                 "name": "str",
                 "properties": {
                     "eventHubAuthorizationRuleId": "str",
-                    "logs": [{"enabled": bool, "category": "str", "retentionPolicy": {"days": 0, "enabled": bool}}],
+                    "logs": [
+                        {
+                            "enabled": bool,
+                            "category": "str",
+                            "categoryGroup": "str",
+                            "retentionPolicy": {"days": 0, "enabled": bool},
+                        }
+                    ],
                     "metrics": [
                         {
                             "enabled": bool,
-                            "timeGrain": "1 day, 0:00:00",
+                            "category": "str",
                             "retentionPolicy": {"days": 0, "enabled": bool},
+                            "timeGrain": "1 day, 0:00:00",
                         }
                     ],
                     "serviceBusRuleId": "str",
@@ -77,12 +85,20 @@ class TestMonitorManagementDiagnosticSettingsOperations(AzureMgmtRecordedTestCas
             service_diagnostic_settings_resource={
                 "properties": {
                     "eventHubAuthorizationRuleId": "str",
-                    "logs": [{"enabled": bool, "category": "str", "retentionPolicy": {"days": 0, "enabled": bool}}],
+                    "logs": [
+                        {
+                            "enabled": bool,
+                            "category": "str",
+                            "categoryGroup": "str",
+                            "retentionPolicy": {"days": 0, "enabled": bool},
+                        }
+                    ],
                     "metrics": [
                         {
                             "enabled": bool,
-                            "timeGrain": "1 day, 0:00:00",
+                            "category": "str",
                             "retentionPolicy": {"days": 0, "enabled": bool},
+                            "timeGrain": "1 day, 0:00:00",
                         }
                     ],
                     "serviceBusRuleId": "str",

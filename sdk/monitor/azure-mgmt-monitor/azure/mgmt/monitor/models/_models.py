@@ -6700,6 +6700,10 @@ class LogSettings(_Model):
      to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
      diagnostic settings operation.
     :vartype category: str
+    :ivar category_group: Name of a Diagnostic Log category group for a resource type this setting
+     is applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a
+     GET diagnostic settings operation.
+    :vartype category_group: str
     :ivar enabled: a value indicating whether this log is enabled. Required.
     :vartype enabled: bool
     :ivar retention_policy: the retention policy for this log.
@@ -6710,6 +6714,12 @@ class LogSettings(_Model):
     """Name of a Diagnostic Log category for a resource type this setting is applied to. To obtain the
      list of Diagnostic Log categories for a resource, first perform a GET diagnostic settings
      operation."""
+    category_group: Optional[str] = rest_field(
+        name="categoryGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of a Diagnostic Log category group for a resource type this setting is applied to. To
+     obtain the list of Diagnostic Log categories for a resource, first perform a GET diagnostic
+     settings operation."""
     enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """a value indicating whether this log is enabled. Required."""
     retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
@@ -6723,6 +6733,7 @@ class LogSettings(_Model):
         *,
         enabled: bool,
         category: Optional[str] = None,
+        category_group: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
     ) -> None: ...
 
@@ -8014,31 +8025,40 @@ class MetricNamespaceName(_Model):
 class MetricSettings(_Model):
     """Part of MultiTenantDiagnosticSettings. Specifies the settings for a particular metric.
 
-    :ivar time_grain: the timegrain of the metric in ISO8601 format. Required.
+    :ivar time_grain: the timegrain of the metric in ISO8601 format.
     :vartype time_grain: ~datetime.timedelta
-    :ivar enabled: a value indicating whether this timegrain is enabled. Required.
+    :ivar category: Name of a Diagnostic Metric category for a resource type this setting is
+     applied to. To obtain the list of Diagnostic metric categories for a resource, first perform a
+     GET diagnostic settings operation.
+    :vartype category: str
+    :ivar enabled: a value indicating whether this category is enabled. Required.
     :vartype enabled: bool
-    :ivar retention_policy: the retention policy for this timegrain.
+    :ivar retention_policy: the retention policy for this category.
     :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
     """
 
-    time_grain: datetime.timedelta = rest_field(
+    time_grain: Optional[datetime.timedelta] = rest_field(
         name="timeGrain", visibility=["read", "create", "update", "delete", "query"]
     )
-    """the timegrain of the metric in ISO8601 format. Required."""
+    """the timegrain of the metric in ISO8601 format."""
+    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of a Diagnostic Metric category for a resource type this setting is applied to. To obtain
+     the list of Diagnostic metric categories for a resource, first perform a GET diagnostic
+     settings operation."""
     enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """a value indicating whether this timegrain is enabled. Required."""
+    """a value indicating whether this category is enabled. Required."""
     retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
         name="retentionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """the retention policy for this timegrain."""
+    """the retention policy for this category."""
 
     @overload
     def __init__(
         self,
         *,
-        time_grain: datetime.timedelta,
         enabled: bool,
+        time_grain: Optional[datetime.timedelta] = None,
+        category: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
     ) -> None: ...
 
@@ -9628,36 +9648,6 @@ class PrivateEndpointConnection(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionListResult(_Model):
-    """List of private endpoint connection associated with the specified storage account.
-
-    :ivar value: Array of private endpoint connections.
-    :vartype value: list[~azure.mgmt.monitor.models.PrivateEndpointConnection]
-    """
-
-    value: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Array of private endpoint connections."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: Optional[list["_models.PrivateEndpointConnection"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class PrivateEndpointConnectionProperties(_Model):
     """Properties of the private endpoint connection.
 
@@ -9735,39 +9725,6 @@ class PrivateLinkResource(Resource):
         self,
         *,
         properties: Optional["_models.PrivateLinkResourceProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PrivateLinkResourceListResult(_Model):
-    """The response of a PrivateLinkResource list operation.
-
-    :ivar value: The PrivateLinkResource items on this page. Required.
-    :vartype value: list[~azure.mgmt.monitor.models.PrivateLinkResource]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["_models.PrivateLinkResource"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The PrivateLinkResource items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.PrivateLinkResource"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
