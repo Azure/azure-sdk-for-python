@@ -85,4 +85,5 @@ sample_link = ""
 title = "ResourceManagementClient"
 package_nspkg = "azure-mgmt-nspkg"
 is_arm = true
+sub_namespace = "resources"
 exclude_folders = ""
