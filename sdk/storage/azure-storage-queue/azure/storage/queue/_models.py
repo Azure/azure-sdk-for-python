@@ -15,7 +15,7 @@ from ._shared.response_handlers import (
 )
 from ._shared.request_handlers import serialize_iso
 from ._shared.models import DictMixin
-from ._generated.models import _attach_msrest_compat
+from ._generated.models._patch import _attach_msrest_compat
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging

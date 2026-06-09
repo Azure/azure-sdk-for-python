@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List
 from .._utils import serialization as _serialization
 
+
 # These public models inherited (transitively) from the autorest
 # msrest model, which exposed ``serialize``, ``deserialize``,
 # ``from_dict``, ``as_dict``, ``is_xml_model``, and
@@ -36,8 +37,7 @@ def _attach_msrest_compat(cls: type) -> type:
     return cls
 
 
-
-__all__: List[str] = ["_attach_msrest_compat"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
