@@ -25,6 +25,8 @@ class ConfigurationSettingFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Last modified field."""
     TAGS = "tags"
     """Tags field."""
+    DESCRIPTION = "description"
+    """Description field."""
     LOCKED = "locked"
     """Locked field."""
     ETAG = "etag"
@@ -85,6 +87,8 @@ class SnapshotFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Items count field."""
     TAGS = "tags"
     """Tags field."""
+    DESCRIPTION = "description"
+    """Description field."""
     ETAG = "etag"
     """Etag field."""
 
