@@ -42,8 +42,9 @@ def _wrap_item(item):
         return {"name": item.name, "is_directory": True}
     return {"name": item.name, "size": item.properties.content_length, "is_directory": False}
 
+
 @_attach_msrest_compat
-class RetentionPolicy():
+class RetentionPolicy:
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -90,7 +91,7 @@ class RetentionPolicy():
 
 
 @_attach_msrest_compat
-class Metrics():
+class Metrics:
     """A summary of request statistics grouped by API in hour or minute aggregates
     for files.
 
@@ -146,14 +147,16 @@ class Metrics():
             version=self.version,
             enabled=self.enabled,
             include_apis=self.include_apis,
-            retention_policy=self.retention_policy._to_generated()  # pylint: disable=protected-access
-            if self.retention_policy
-            else None,
+            retention_policy=(
+                self.retention_policy._to_generated()  # pylint: disable=protected-access
+                if self.retention_policy
+                else None
+            ),
         )
 
 
 @_attach_msrest_compat
-class CorsRule():
+class CorsRule:
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -241,8 +244,9 @@ class CorsRule():
             max_age_in_seconds=generated.max_age_in_seconds,
         )
 
+
 @_attach_msrest_compat
-class SmbMultichannel():
+class SmbMultichannel:
     """Settings for Multichannel.
 
     :keyword bool enabled: If SMB Multichannel is enabled.
@@ -261,9 +265,15 @@ class SmbMultichannel():
     def _to_generated(self):
         return GeneratedSmbMultichannel(enabled=self.enabled)
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(enabled=generated.enabled)
+
 
 @_attach_msrest_compat
-class SmbEncryptionInTransit():
+class SmbEncryptionInTransit:
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -282,9 +292,15 @@ class SmbEncryptionInTransit():
     def _to_generated(self):
         return GeneratedSmbEncryptionInTransit(required=self.required)
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(required=generated.required)
+
 
 @_attach_msrest_compat
-class ShareSmbSettings():
+class ShareSmbSettings:
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
@@ -315,15 +331,30 @@ class ShareSmbSettings():
 
     def _to_generated(self):
         return GeneratedShareSmbSettings(
-            multichannel=self.multichannel._to_generated() if self.multichannel else None,  # pylint: disable=protected-access
-            encryption_in_transit=self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
-            if self.encryption_in_transit
-            else None,
+            multichannel=(
+                self.multichannel._to_generated() if self.multichannel else None
+            ),  # pylint: disable=protected-access
+            encryption_in_transit=(
+                self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
+                if self.encryption_in_transit
+                else None
+            ),
+        )
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(
+            multichannel=SmbMultichannel._from_generated(generated.multichannel),  # pylint: disable=protected-access
+            encryption_in_transit=SmbEncryptionInTransit._from_generated(  # pylint: disable=protected-access
+                generated.encryption_in_transit
+            ),
         )
 
 
 @_attach_msrest_compat
-class NfsEncryptionInTransit():
+class NfsEncryptionInTransit:
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -342,9 +373,15 @@ class NfsEncryptionInTransit():
     def _to_generated(self):
         return GeneratedNfsEncryptionInTransit(required=self.required)
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(required=generated.required)
+
 
 @_attach_msrest_compat
-class ShareNfsSettings():
+class ShareNfsSettings:
     """Settings for the NFS protocol.
 
     :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
@@ -362,14 +399,26 @@ class ShareNfsSettings():
 
     def _to_generated(self):
         return GeneratedShareNfsSettings(
-            encryption_in_transit=self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
-            if self.encryption_in_transit
-            else None,
+            encryption_in_transit=(
+                self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
+                if self.encryption_in_transit
+                else None
+            ),
+        )
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(
+            encryption_in_transit=NfsEncryptionInTransit._from_generated(  # pylint: disable=protected-access
+                generated.encryption_in_transit
+            ),
         )
 
 
 @_attach_msrest_compat
-class ShareProtocolSettings():
+class ShareProtocolSettings:
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
     Contains protocol properties of the share service such as the SMB and NFS setting of the share service.
@@ -398,7 +447,12 @@ class ShareProtocolSettings():
 
     @classmethod
     def _from_generated(cls, generated):
-        return cls(smb=generated.smb, nfs=generated.nfs)
+        if not generated:
+            return None
+        return cls(
+            smb=ShareSmbSettings._from_generated(generated.smb),  # pylint: disable=protected-access
+            nfs=ShareNfsSettings._from_generated(generated.nfs),  # pylint: disable=protected-access
+        )
 
     def _to_generated(self):
         return GeneratedShareProtocolSettings(
@@ -483,8 +537,9 @@ class ShareSasPermissions:
 
         return parsed
 
+
 @_attach_msrest_compat
-class AccessPolicy():
+class AccessPolicy:
     """Access Policy class used by the set and get acl methods in each service.
 
     A stored access policy can specify the start time, expiry time, and

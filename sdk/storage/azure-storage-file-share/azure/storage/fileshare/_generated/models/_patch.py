@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List
 from .._utils import serialization as _serialization
 
+
 def _attach_msrest_compat(cls: type) -> type:
     """Class decorator that grafts old msrest ``Model`` methods onto a class
     that defines ``_attribute_map`` (and optionally ``_validation``).
