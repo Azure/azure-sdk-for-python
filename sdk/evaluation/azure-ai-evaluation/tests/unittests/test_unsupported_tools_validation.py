@@ -2,21 +2,27 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """
-Regression tests for the change that lets the three tool evaluators
-(ToolCallAccuracy, _ToolInputAccuracy, _ToolCallSuccess) accept
-conversations containing restricted built-in tools.
+Regression tests for the change that lets two tool evaluators
+(``ToolCallAccuracy`` and ``_ToolInputAccuracy``) accept conversations
+containing restricted built-in tools.
 
-These evaluators previously rejected any conversation containing tools in
-``ConversationValidator.UNSUPPORTED_TOOLS`` (e.g. ``bing_grounding``,
-``azure_ai_search``). Because none of the three grades require the
-(redacted) tool output body, the rejection has been lifted by setting
+These two evaluators previously rejected any conversation containing tools
+in ``ConversationValidator.UNSUPPORTED_TOOLS`` (e.g. ``bing_grounding``,
+``azure_ai_search``). Because neither grade requires the (often redacted)
+tool output body, the rejection has been lifted by setting
 ``check_for_unsupported_tools=False`` on each evaluator's input validator.
+
+``_ToolCallSuccess`` is intentionally **not** part of this enablement: its
+rubric still depends on the tool output body to judge success, so it keeps
+``check_for_unsupported_tools=True`` and continues to reject restricted
+tools. Coverage for that contract lives in this file alongside the TCA/TIA
+acceptance tests so the two stay in lockstep.
 
 The tests below exercise the validator directly so they do not need the
 prompty flow or a real model deployment. They also confirm that the
 underlying validator class still rejects restricted tools when
 ``check_for_unsupported_tools=True``, so the behavior change is limited
-to the evaluator wiring.
+to the per-evaluator wiring.
 """
 
 import pytest
@@ -94,13 +100,16 @@ class TestRestrictedToolValidationLifted:
         assert evaluator._validator.validate_eval_input(eval_input) is True
 
     @pytest.mark.parametrize("tool_name", RESTRICTED_TOOL_NAMES)
-    def test_tool_call_success_accepts_restricted_tool(self, mock_model_config, tool_name):
+    def test_tool_call_success_still_rejects_restricted_tool(self, mock_model_config, tool_name):
+        """TCS keeps the restricted-tool block (its rubric depends on the tool output body)."""
         evaluator = _ToolCallSuccessEvaluator(model_config=mock_model_config)
         eval_input = {
             "response": _restricted_response(tool_name),
             "tool_definitions": [_restricted_tool_definition(tool_name)],
         }
-        assert evaluator._validator.validate_eval_input(eval_input) is True
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator._validator.validate_eval_input(eval_input)
+        assert "currently not supported" in str(exc_info.value)
 
     def test_mixed_function_and_restricted_tool_accepted(self, mock_model_config):
         """Conversation containing both a function call and a restricted tool call validates cleanly."""

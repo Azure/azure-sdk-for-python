@@ -78,7 +78,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator = ToolDefinitionsValidator(
             error_target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             requires_query=False,
-            check_for_unsupported_tools=False,
+            check_for_unsupported_tools=True,
         )
 
         super().__init__(
@@ -179,37 +179,6 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
 
-        # Short-circuit: if the agent runtime already reported a failed tool
-        # execution via a known-failure ``status`` (e.g. "failed", "error",
-        # "incomplete"), deterministically return ``fail`` without calling the
-        # LLM. The evaluator's scoring contract is binary -- "FALSE: at least
-        # one tool call failed" -- and the prompty rubric doesn't see the
-        # ``status`` field, so it would otherwise grade only the (typically
-        # empty) result body and frequently mis-score the conversation as a
-        # pass. ``status`` is only populated by upstream converters that
-        # preserve it; absent ``status``, behavior is unchanged.
-        if isinstance(eval_input.get("response"), list):
-            failed_statuses = _collect_failed_tool_statuses(eval_input["response"])
-            if failed_statuses:
-                reason = (
-                    "Detected failed tool execution(s) with status "
-                    + ", ".join(sorted(set(failed_statuses)))
-                    + ". Marked as fail without LLM grading."
-                )
-                return {
-                    self._result_key: 0.0,
-                    f"{self._result_key}_score": 0.0,
-                    f"{self._result_key}_passed": False,
-                    f"{self._result_key}_result": "fail",
-                    f"{self._result_key}_reason": reason,
-                    f"{self._result_key}_status": "completed",
-                    f"{self._result_key}_threshold": self._threshold,
-                    f"{self._result_key}_properties": {
-                        "short_circuit": "tool_status",
-                        "failed_statuses": sorted(set(failed_statuses)),
-                    },
-                }
-
         if isinstance(eval_input.get("response"), list):
             eval_input["response"] = _preprocess_messages(eval_input["response"])
             eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
@@ -302,45 +271,35 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
         return tool_definitions
 
 
-_FAILED_TOOL_STATUSES = frozenset({"failed", "error", "incomplete", "cancelled", "canceled"})
+def _format_status_suffix(status):
+    """Build the trailing ``[STATUS] <value>`` annotation for a content block.
 
+    Returns the empty string when ``status`` is absent or not a non-empty
+    string, so callers can unconditionally concatenate the return value
+    without affecting back-compat output.
 
-def _collect_failed_tool_statuses(agent_response_msgs):
-    """Return the list of failure statuses seen on any ``tool_call`` or
-    ``tool_result`` content block in ``agent_response_msgs``.
-
-    Inputs are intentionally tolerated -- malformed messages / non-dict
-    content blocks are skipped rather than raised on, so this helper is safe
-    to call on freshly-deserialized agent traces.
-
-    :param agent_response_msgs: The agent's response message list (already
-        validated to be a list by the caller).
-    :type agent_response_msgs: list
-    :return: A list (with duplicates preserved) of lowercased failure status
-        strings. Empty list means no failure signal was found.
-    :rtype: list[str]
+    :param status: The raw ``status`` field from a ``tool_call`` or
+        ``tool_result`` content block.
+    :type status: Any
+    :return: ``" [STATUS] <value>"`` when ``status`` is a non-empty string,
+        otherwise ``""``.
+    :rtype: str
     """
-    found = []
-    if not isinstance(agent_response_msgs, list):
-        return found
-    for msg in agent_response_msgs:
-        if not isinstance(msg, dict):
-            continue
-        content = msg.get("content")
-        if not isinstance(content, list):
-            continue
-        for block in content:
-            if not isinstance(block, dict):
-                continue
-            if block.get("type") in ("tool_call", "tool_result"):
-                status = block.get("status")
-                if isinstance(status, str) and status.lower() in _FAILED_TOOL_STATUSES:
-                    found.append(status.lower())
-    return found
+    if isinstance(status, str) and status:
+        return f" [STATUS] {status}"
+    return ""
 
 
 def _get_tool_calls_results(agent_response_msgs):
-    """Extract formatted agent tool calls and results from response."""
+    """Extract formatted agent tool calls and results from response.
+
+    Each emitted ``[TOOL_CALL]`` / ``[TOOL_RESULT]`` line is suffixed with
+    ``[STATUS] <value>`` when the source content block carries a ``status``
+    field. The prompty rubric uses this annotation as a strong failure signal
+    (see ``tool_call_success.prompty``). When ``status`` is absent the suffix
+    is omitted and the rubric falls back to payload-only judgment, so the
+    formatted output is byte-identical to the pre-pass-through wire format.
+    """
     agent_response_text = []
     tool_results = {}
 
@@ -351,7 +310,8 @@ def _get_tool_calls_results(agent_response_msgs):
             for content in msg.get("content", []):
                 if content.get("type") == "tool_result":
                     result = content.get("tool_result")
-                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}"
+                    status_suffix = _format_status_suffix(content.get("status"))
+                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}{status_suffix}"
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
@@ -370,7 +330,8 @@ def _get_tool_calls_results(agent_response_msgs):
                         func_name = content.get("name", "")
                         args = content.get("arguments", {})
                     args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
-                    call_line = f"[TOOL_CALL] {func_name}({args_str})"
+                    status_suffix = _format_status_suffix(content.get("status"))
+                    call_line = f"[TOOL_CALL] {func_name}({args_str}){status_suffix}"
                     agent_response_text.append(call_line)
                     if tool_call_id in tool_results:
                         agent_response_text.append(tool_results[tool_call_id])

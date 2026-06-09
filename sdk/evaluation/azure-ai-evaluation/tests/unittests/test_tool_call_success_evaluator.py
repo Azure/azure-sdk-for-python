@@ -1,172 +1,202 @@
-from unittest.mock import MagicMock
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+"""Tests for ToolCallSuccess runtime status pass-through to the LLM rubric.
+
+The evaluator's source-side preprocessing emits ``[STATUS] <value>`` annotations
+on each formatted ``[TOOL_CALL]`` / ``[TOOL_RESULT]`` line whenever the source
+content block carries a ``status`` field. The prompty rubric is taught to treat
+these annotations as a strong (authoritative) failure signal when the status is
+in {failed, error, incomplete, cancelled, canceled}, and to fall back to
+payload-only judgment when ``status`` is absent.
+
+These tests cover the source-side preprocessing only (the ``[STATUS]`` string
+emission). End-to-end rubric behavior is covered by the existing behavior
+suites that exercise the full evaluator with a mocked LLM.
+"""
 
 import pytest
 
-from azure.ai.evaluation import _ToolCallSuccessEvaluator
 from azure.ai.evaluation._evaluators._tool_call_success._tool_call_success import (
-    _collect_failed_tool_statuses,
+    _format_status_suffix,
+    _get_tool_calls_results,
 )
 
 
-# Default prompty mock that always grades as PASS. Tests that exercise the
-# deterministic short-circuit path rely on this mock NOT being called.
-async def _flow_pass(timeout, **kwargs):  # pylint: disable=unused-argument
-    return {
-        "llm_output": {
-            "reason": "All tool calls completed successfully.",
-            "score": 1,
-            "properties": {},
-        }
-    }
+# region helpers
 
 
-def _assistant_tool_call(tool_call_id="call_1", name="get_weather", arguments=None, status=None):
+def _assistant_tool_call(tool_call_id, name, arguments, status=None):
+    """Build an assistant message carrying a single tool_call content block."""
     block = {
         "type": "tool_call",
         "tool_call_id": tool_call_id,
         "name": name,
-        "arguments": arguments or {"location": "NYC"},
+        "arguments": arguments,
     }
     if status is not None:
         block["status"] = status
     return {"role": "assistant", "content": [block]}
 
 
-def _tool_result(tool_call_id="call_1", result="72F sunny", status=None):
-    block = {"type": "tool_result", "tool_result": result}
+def _tool_result(tool_call_id, result, status=None):
+    """Build a tool message carrying a single tool_result content block."""
+    block = {
+        "type": "tool_result",
+        "tool_call_id": tool_call_id,
+        "tool_result": result,
+    }
     if status is not None:
         block["status"] = status
-    return {"role": "tool", "tool_call_id": tool_call_id, "content": [block]}
+    return {
+        "role": "tool",
+        "tool_call_id": tool_call_id,
+        "content": [block],
+    }
 
 
-# ---------------------------------------------------------------------------
-# _collect_failed_tool_statuses
-# ---------------------------------------------------------------------------
+def _assistant_parallel_tool_calls(blocks):
+    """Build a single assistant message that emits multiple tool_call blocks in one turn.
+
+    ``blocks`` is a list of ``(tool_call_id, name, arguments, status)`` tuples.
+    This is the modern Responses-API topology for parallel function-call
+    invocation: multiple ``tool_call`` content blocks under one assistant
+    message, in contrast to one assistant message per call.
+    """
+    content = []
+    for tool_call_id, name, arguments, status in blocks:
+        block = {
+            "type": "tool_call",
+            "tool_call_id": tool_call_id,
+            "name": name,
+            "arguments": arguments,
+        }
+        if status is not None:
+            block["status"] = status
+        content.append(block)
+    return {"role": "assistant", "content": content}
 
 
-class TestCollectFailedToolStatuses:
-    def test_no_status_returns_empty(self):
-        msgs = [_assistant_tool_call(), _tool_result()]
-        assert _collect_failed_tool_statuses(msgs) == []
-
-    def test_completed_status_returns_empty(self):
-        msgs = [
-            _assistant_tool_call(status="completed"),
-            _tool_result(status="completed"),
-        ]
-        assert _collect_failed_tool_statuses(msgs) == []
-
-    @pytest.mark.parametrize("status", ["failed", "error", "incomplete", "cancelled", "canceled"])
-    def test_known_failure_status_on_tool_call_is_collected(self, status):
-        msgs = [_assistant_tool_call(status=status)]
-        assert _collect_failed_tool_statuses(msgs) == [status]
-
-    @pytest.mark.parametrize("status", ["FAILED", "Error", "Incomplete"])
-    def test_failure_status_is_case_insensitive(self, status):
-        msgs = [_assistant_tool_call(status=status)]
-        assert _collect_failed_tool_statuses(msgs) == [status.lower()]
-
-    def test_failure_status_on_tool_result_is_collected(self):
-        msgs = [_assistant_tool_call(), _tool_result(status="failed")]
-        assert _collect_failed_tool_statuses(msgs) == ["failed"]
-
-    def test_unknown_status_string_is_ignored(self):
-        msgs = [_assistant_tool_call(status="something_weird")]
-        assert _collect_failed_tool_statuses(msgs) == []
-
-    def test_non_string_status_is_ignored(self):
-        msgs = [_assistant_tool_call(status=500)]
-        assert _collect_failed_tool_statuses(msgs) == []
-
-    def test_malformed_inputs_are_tolerated(self):
-        # Non-list input
-        assert _collect_failed_tool_statuses(None) == []
-        assert _collect_failed_tool_statuses("not a list") == []
-        # List with non-dict items + dicts with non-list content
-        msgs = [
-            "string entry",
-            42,
-            {"role": "assistant"},  # no content
-            {"role": "assistant", "content": "not a list"},
-            {"role": "assistant", "content": [None, 1, "x", _assistant_tool_call(status="failed")["content"][0]]},
-        ]
-        assert _collect_failed_tool_statuses(msgs) == ["failed"]
+# endregion
 
 
-# ---------------------------------------------------------------------------
-# _do_eval short-circuit
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
-class TestToolCallSuccessShortCircuit:
-    def test_short_circuits_on_failed_tool_call_status(self, mock_model_config):
-        evaluator = _ToolCallSuccessEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=_flow_pass)
+class TestFormatStatusSuffix:
+    """Unit tests for the ``_format_status_suffix`` helper."""
 
-        response = [_assistant_tool_call(status="failed"), _tool_result()]
-        result = evaluator(response=response)
+    def test_known_failure_status_emits_suffix(self):
+        """A known-failure status string produces a ``[STATUS] <value>`` suffix."""
+        assert _format_status_suffix("failed") == " [STATUS] failed"
 
-        evaluator._flow.assert_not_called()
-        assert result["tool_call_success"] == 0.0
-        assert result["tool_call_success_score"] == 0.0
-        assert result["tool_call_success_passed"] is False
-        assert result["tool_call_success_result"] == "fail"
-        assert result["tool_call_success_status"] == "completed"
-        assert "failed" in result["tool_call_success_reason"]
-        props = result["tool_call_success_properties"]
-        assert props["short_circuit"] == "tool_status"
-        assert props["failed_statuses"] == ["failed"]
+    def test_completed_status_emits_suffix(self):
+        """A success status string also emits a suffix (the rubric distinguishes the two)."""
+        assert _format_status_suffix("completed") == " [STATUS] completed"
 
-    def test_short_circuits_on_failed_tool_result_status(self, mock_model_config):
-        evaluator = _ToolCallSuccessEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=_flow_pass)
+    def test_arbitrary_status_string_emits_suffix(self):
+        """Any non-empty string status emits a suffix; the rubric judges semantics, not Python."""
+        assert _format_status_suffix("rate_limited") == " [STATUS] rate_limited"
 
-        response = [_assistant_tool_call(), _tool_result(status="error")]
-        result = evaluator(response=response)
+    def test_none_status_emits_empty(self):
+        """Absent status (``None``) emits the empty string for back-compat."""
+        assert _format_status_suffix(None) == ""
 
-        evaluator._flow.assert_not_called()
-        assert result["tool_call_success_result"] == "fail"
-        assert result["tool_call_success_properties"]["failed_statuses"] == ["error"]
+    def test_empty_string_status_emits_empty(self):
+        """Empty string status emits the empty string (treated same as absent)."""
+        assert _format_status_suffix("") == ""
 
-    def test_dedupes_and_sorts_failed_statuses_in_reason(self, mock_model_config):
-        evaluator = _ToolCallSuccessEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=_flow_pass)
+    def test_non_string_status_emits_empty(self):
+        """Non-string statuses (int, dict, list) are ignored rather than raised on."""
+        assert _format_status_suffix(42) == ""
+        assert _format_status_suffix({"x": 1}) == ""
+        assert _format_status_suffix(["failed"]) == ""
 
-        response = [
-            _assistant_tool_call(tool_call_id="a", status="failed"),
-            _tool_result(tool_call_id="a", status="failed"),
-            _assistant_tool_call(tool_call_id="b", status="error"),
+
+@pytest.mark.unittest
+class TestGetToolCallsResultsStatusPassthrough:
+    """Integration tests for ``[STATUS]`` annotation emission via ``_get_tool_calls_results``."""
+
+    def test_status_on_tool_call_is_appended_to_tool_call_line(self):
+        """When ``status`` is set on a tool_call block, the ``[TOOL_CALL]`` line carries the annotation."""
+        msgs = [
+            _assistant_tool_call("c1", "send_email", {"to": "x@example.com"}, status="failed"),
+            _tool_result("c1", ""),
         ]
-        result = evaluator(response=response)
+        lines = _get_tool_calls_results(msgs)
+        assert lines[0] == '[TOOL_CALL] send_email(to="x@example.com") [STATUS] failed'
+        # Tool result has no status -> no suffix.
+        assert lines[1] == "[TOOL_RESULT] "
 
-        evaluator._flow.assert_not_called()
-        # Reason joins deduped, sorted statuses
-        assert "error, failed" in result["tool_call_success_reason"]
-        assert result["tool_call_success_properties"]["failed_statuses"] == ["error", "failed"]
-
-    def test_no_short_circuit_when_all_statuses_completed(self, mock_model_config):
-        evaluator = _ToolCallSuccessEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=_flow_pass)
-
-        response = [
-            _assistant_tool_call(status="completed"),
-            _tool_result(status="completed"),
+    def test_status_on_tool_result_is_appended_to_tool_result_line(self):
+        """When ``status`` is set on a tool_result block, the ``[TOOL_RESULT]`` line carries the annotation."""
+        msgs = [
+            _assistant_tool_call("c1", "send_email", {"to": "x@example.com"}),
+            _tool_result("c1", "", status="error"),
         ]
-        result = evaluator(response=response)
+        lines = _get_tool_calls_results(msgs)
+        assert lines[0] == '[TOOL_CALL] send_email(to="x@example.com")'
+        assert lines[1] == "[TOOL_RESULT]  [STATUS] error"
 
-        evaluator._flow.assert_called_once()  # Goes to LLM
-        assert result["tool_call_success_passed"] is True
+    def test_completed_status_is_passed_through_too(self):
+        """``[STATUS] completed`` is emitted alongside failure statuses; the rubric decides semantics."""
+        msgs = [
+            _assistant_tool_call("c1", "fetch_weather", {"city": "Seattle"}, status="completed"),
+            _tool_result("c1", "Sunny, 72F.", status="completed"),
+        ]
+        lines = _get_tool_calls_results(msgs)
+        assert lines[0] == '[TOOL_CALL] fetch_weather(city="Seattle") [STATUS] completed'
+        assert lines[1] == "[TOOL_RESULT] Sunny, 72F. [STATUS] completed"
 
-    def test_no_short_circuit_when_status_absent(self, mock_model_config):
-        """Back-compat: traces produced by converters that do not preserve
-        ``status`` continue to be graded by the LLM as before."""
-        evaluator = _ToolCallSuccessEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=_flow_pass)
+    def test_absent_status_produces_no_suffix_back_compat(self):
+        """When ``status`` is absent on every block, output matches the pre-status-pass-through format exactly."""
+        msgs = [
+            _assistant_tool_call("c1", "fetch_weather", {"city": "Seattle"}),
+            _tool_result("c1", "Sunny, 72F."),
+        ]
+        lines = _get_tool_calls_results(msgs)
+        assert lines == [
+            '[TOOL_CALL] fetch_weather(city="Seattle")',
+            "[TOOL_RESULT] Sunny, 72F.",
+        ]
 
-        response = [_assistant_tool_call(), _tool_result()]
-        result = evaluator(response=response)
+    def test_parallel_tool_calls_in_one_assistant_message_each_get_their_own_status(self):
+        """Multiple ``tool_call`` blocks in one assistant message each emit their own ``[STATUS]`` annotation.
 
-        evaluator._flow.assert_called_once()
-        assert result["tool_call_success_passed"] is True
+        This is the modern Responses-API topology and exercises that the
+        formatter walks into the content list rather than only processing the
+        first block per message.
+        """
+        msgs = [
+            _assistant_parallel_tool_calls([
+                ("c1", "fetch_weather", {"city": "Seattle"}, "completed"),
+                ("c2", "send_email",   {"to": "x@example.com"}, "failed"),
+                ("c3", "lookup_user",  {"id": "u42"}, "completed"),
+            ]),
+            _tool_result("c1", "Sunny, 72F.", status="completed"),
+            _tool_result("c2", "", status="failed"),
+            _tool_result("c3", {"user_id": "u42"}, status="completed"),
+        ]
+        lines = _get_tool_calls_results(msgs)
+        assert lines == [
+            '[TOOL_CALL] fetch_weather(city="Seattle") [STATUS] completed',
+            "[TOOL_RESULT] Sunny, 72F. [STATUS] completed",
+            '[TOOL_CALL] send_email(to="x@example.com") [STATUS] failed',
+            "[TOOL_RESULT]  [STATUS] failed",
+            '[TOOL_CALL] lookup_user(id="u42") [STATUS] completed',
+            "[TOOL_RESULT] {'user_id': 'u42'} [STATUS] completed",
+        ]
+
+    def test_mixed_status_present_and_absent_across_calls(self):
+        """A response with status on some calls and not others produces a mixed-suffix output."""
+        msgs = [
+            _assistant_tool_call("c1", "fetch_weather", {"city": "Seattle"}, status="completed"),
+            _tool_result("c1", "Sunny, 72F."),
+            _assistant_tool_call("c2", "send_email", {"to": "x@example.com"}),
+            _tool_result("c2", "", status="failed"),
+        ]
+        lines = _get_tool_calls_results(msgs)
+        assert lines == [
+            '[TOOL_CALL] fetch_weather(city="Seattle") [STATUS] completed',
+            "[TOOL_RESULT] Sunny, 72F.",
+            '[TOOL_CALL] send_email(to="x@example.com")',
+            "[TOOL_RESULT]  [STATUS] failed",
+        ]
