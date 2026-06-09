@@ -259,11 +259,10 @@ class SmbMultichannel:
         "enabled": {"key": "Enabled", "type": "bool"},
     }
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.enabled = enabled
 
     def _to_generated(self):
-        return GeneratedSmbMultichannel(enabled=self.enabled)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -286,7 +285,7 @@ class SmbEncryptionInTransit:
         "required": {"key": "Required", "type": "bool"},
     }
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
     def _to_generated(self):
@@ -322,7 +321,7 @@ class ShareSmbSettings:
         *,
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
-        **kwargs: Any
+        **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
         self.multichannel = multichannel
         self.encryption_in_transit = encryption_in_transit
@@ -367,7 +366,7 @@ class NfsEncryptionInTransit:
         "required": {"key": "Required", "type": "bool"},
     }
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
     def _to_generated(self):
@@ -394,7 +393,7 @@ class ShareNfsSettings:
         "encryption_in_transit": {"key": "EncryptionInTransit", "type": "NfsEncryptionInTransit"},
     }
 
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.encryption_in_transit = encryption_in_transit
 
     def _to_generated(self):
@@ -438,7 +437,7 @@ class ShareProtocolSettings:
     }
 
     def __init__(
-        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
+        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
         self.smb = smb
         self.nfs = nfs

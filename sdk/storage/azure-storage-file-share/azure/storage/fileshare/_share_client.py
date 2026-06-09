@@ -24,7 +24,7 @@ from ._parser import _parse_snapshot, _strip_snapshot_from_url
 from ._serialize import get_access_conditions, get_api_version
 from ._share_client_helpers import _create_permission_for_share_options, _format_url, _from_share_url, _parse_url
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
-from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
 
 if TYPE_CHECKING:
@@ -846,7 +846,10 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            identifiers.append(SignedIdentifier(id=key, access_policy=value._to_generated() if value else None))
+            identifiers.append(SignedIdentifier(
+                id=key,
+                access_policy=value._to_generated() if value else None,  # pylint: disable=protected-access
+            ))
         try:
             return cast(
                 Dict[str, Any],

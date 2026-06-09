@@ -848,7 +848,10 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            identifiers.append(SignedIdentifier(id=key, access_policy=value._to_generated() if value else None))
+            identifiers.append(SignedIdentifier(
+                id=key,
+                access_policy=value._to_generated() if value else None,  # pylint: disable=protected-access
+            ))
         try:
             return cast(
                 Dict[str, Any],
