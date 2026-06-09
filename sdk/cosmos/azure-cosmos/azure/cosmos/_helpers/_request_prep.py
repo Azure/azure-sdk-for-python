@@ -27,13 +27,28 @@ Two public builders:
   rides on ``PreparedRequest.item_id``; reads ``accessCondition``
   out of the options dict and emits the equivalent ``If-Match`` /
   ``If-None-Match`` wire header for the binding to forward.
+- ``build_read_item_prepared`` — bodiless request; the document id
+  rides on ``PreparedRequest.item_id``; same access-condition
+  translation as delete (``If-Match`` / ``If-None-Match``) but the
+  dominant case is ``If-None-Match`` (conditional GET / cache
+  validation, success surfaces as 304); additionally emits
+  ``x-ms-dedicatedgateway-max-age`` from
+  ``options["maxIntegratedCacheStaleness"]`` **only when truthy** —
+  ``0`` is a silent no-op on the wire, matching the legacy
+  behaviour.
 """
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Tuple
 
-from .._backend.base import OP_CREATE_ITEM, OP_DELETE_ITEM, PreparedRequest
+from .._backend.base import (
+    OP_CREATE_ITEM,
+    OP_DELETE_ITEM,
+    OP_READ_ITEM,
+    PreparedRequest,
+)
 from .._constants import _Constants as Constants
+from ..http_constants import HttpHeaders
 from ._auto_id import ensure_item_id
 from ._body_wire import serialize_body_to_bytes
 from ._container_rid import stamp_container_rid
@@ -126,12 +141,11 @@ def build_create_item_prepared(
         # that bypasses ``options`` still sees the rid.
         headers[Constants.ContainerRID] = container_rid
 
-    # ``timeout`` (seconds, float) is the customer-facing overall
-    # request timeout. On the legacy path azure-core consumes it; the
-    # Rust path bypasses azure-core, so we forward the value under a
-    # sentinel header name the binding lifts into its typed
-    # ``EndToEndOperationLatencyPolicy``. We do not pop the kwarg —
-    # the legacy path still needs it intact.
+    # timeout (seconds, float) is the customer-facing overall request
+    # timeout. On the legacy path azure-core consumes it; the rust
+    # path bypasses azure-core, so we copy the value into a dedicated
+    # header the binding reads into its typed timeout policy. The
+    # kwarg is not popped -- the legacy path still needs it intact.
     if kwargs is not None and "timeout" in kwargs:
         timeout_value = kwargs.get("timeout")
         if timeout_value is not None:
@@ -205,10 +219,10 @@ def build_delete_item_prepared(
             for inner_name, inner_value in option_value.items():
                 headers[inner_name] = inner_value
             continue
-        # ``accessCondition`` is the internal shape ``_base.build_options``
-        # produces from ``etag`` + ``match_condition``. Translate it to
+        # accessCondition is the internal shape the legacy options
+        # build produces from etag + match_condition. Translate it to
         # the wire header here because the rust path does not run the
-        # legacy ``GetHeaders`` step that would normally emit them.
+        # legacy header step that would normally emit it.
         if option_key == "accessCondition" and isinstance(option_value, dict):
             condition = option_value.get("condition")
             cond_type = option_value.get("type")
@@ -221,9 +235,9 @@ def build_delete_item_prepared(
     if container_rid is not None:
         headers[Constants.ContainerRID] = container_rid
 
-    # ``timeout`` (seconds, float): forward under the sentinel header
-    # the binding lifts into the driver's typed timeout policy. Same
-    # mechanism as ``build_create_item_prepared``.
+    # timeout (seconds, float) rides under a dedicated header the
+    # binding reads into the driver's typed timeout policy. Same
+    # mechanism as create_item.
     if kwargs is not None and "timeout" in kwargs:
         timeout_value = kwargs.get("timeout")
         if timeout_value is not None:
@@ -231,6 +245,108 @@ def build_delete_item_prepared(
 
     return PreparedRequest(
         op=OP_DELETE_ITEM,
+        container_link=container_link,
+        body_bytes=b"",
+        partition_key_header=partition_key_header,
+        headers=headers,
+        item_id=item_id,
+    )
+
+
+def build_read_item_prepared(
+    *,
+    container_link: str,
+    item_id: str,
+    partition_key_value: Any,
+    container_rid: Optional[str],
+    kwargs: Optional[Dict[str, Any]] = None,
+) -> PreparedRequest:
+    """Build a ``PreparedRequest`` for a single ``read_item`` call.
+
+    Pure: does not read caches. Same structure as
+    ``build_delete_item_prepared`` — both are bodiless, both translate
+    ``accessCondition`` to ``If-Match`` / ``If-None-Match``, both carry
+    the document id on ``PreparedRequest.item_id``. Read adds one
+    header: ``x-ms-dedicatedgateway-max-age`` from
+    ``options["maxIntegratedCacheStaleness"]``, emitted **only when
+    the value is truthy** so that ``0`` ships no header (matching the
+    legacy behaviour, where ``0`` is a documented no-op).
+
+    :param container_link: Container self-link, e.g.
+        ``"dbs/{db}/colls/{coll}"``.
+    :type container_link: str
+    :param item_id: The id of the document to read. The binding carries
+        it on ``PreparedRequest.item_id`` because GET has no body.
+    :type item_id: str
+    :param partition_key_value: PK value the caller supplied. Accepted
+        shapes are documented on ``serialize_partition_key_to_wire``.
+    :type partition_key_value: Any
+    :param container_rid: The container's resource id, or ``None`` to
+        skip rid stamping.
+    :type container_rid: Optional[str]
+    :param kwargs: Remaining customer kwargs. **Mutated** — recognised
+        option-shortcut keys are popped via
+        ``compose_options_from_kwargs``.
+    :type kwargs: Optional[Dict[str, Any]]
+    :returns: The prepared request.
+    :rtype: PreparedRequest
+    """
+    # Translate kwarg shortcuts to internal option keys.
+    options = compose_options_from_kwargs(kwargs if kwargs is not None else {})
+
+    if container_rid is not None:
+        stamp_container_rid(
+            options,
+            container_link,
+            get_rid=lambda _link: container_rid,
+        )
+
+    partition_key_header = serialize_partition_key_to_wire(partition_key_value)
+
+    # Headers map: every option-key except three special-cased ones:
+    #   * initialHeaders is flattened so each inner x-ms-... rides as
+    #     its own header instead of as a nested dict.
+    #   * accessCondition becomes If-Match / If-None-Match.
+    #   * maxIntegratedCacheStaleness becomes
+    #     x-ms-dedicatedgateway-max-age (truthy-only).
+    headers: Dict[str, str] = {}
+    for option_key, option_value in options.items():
+        if option_key == "initialHeaders" and isinstance(option_value, dict):
+            for inner_name, inner_value in option_value.items():
+                headers[inner_name] = inner_value
+            continue
+        # Access-condition shape, same as delete. On read the common
+        # case is If-None-Match (cache validation, success returns
+        # 304); If-Match is the rare write-style precondition.
+        if option_key == "accessCondition" and isinstance(option_value, dict):
+            condition = option_value.get("condition")
+            cond_type = option_value.get("type")
+            if isinstance(condition, str) and cond_type == "IfMatch":
+                headers["If-Match"] = condition
+            elif isinstance(condition, str) and cond_type == "IfNoneMatch":
+                headers["If-None-Match"] = condition
+            continue
+        # Dedicated-gateway max-age: emit only when truthy. Zero is a
+        # documented no-op and must NOT produce
+        # x-ms-dedicatedgateway-max-age: 0. None / missing also skip.
+        if option_key == "maxIntegratedCacheStaleness":
+            if option_value:
+                headers[HttpHeaders.DedicatedGatewayCacheStaleness] = str(option_value)
+            continue
+        headers[option_key] = option_value
+    if container_rid is not None:
+        headers[Constants.ContainerRID] = container_rid
+
+    # timeout (seconds, float) rides under a dedicated header the
+    # binding reads into the driver's typed timeout policy. Same
+    # mechanism as create_item / delete_item.
+    if kwargs is not None and "timeout" in kwargs:
+        timeout_value = kwargs.get("timeout")
+        if timeout_value is not None:
+            headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout_value
+
+    return PreparedRequest(
+        op=OP_READ_ITEM,
         container_link=container_link,
         body_bytes=b"",
         partition_key_header=partition_key_header,

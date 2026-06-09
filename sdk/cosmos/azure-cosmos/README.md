@@ -181,20 +181,22 @@ If you don't set the env vars, the suite skips cleanly. If you set them
 but never built the Rust extension, the suite skips with a "run maturin
 develop" message.
 
-After a parity run, regenerate the per-test report:
+The in-process parity tests above are a CI gate, not an audit-doc
+source. Each test runs both backends inside one pytest process via
+`BackendComparison` and asserts on the diff; a failure prints the full
+`PARITY CALL:` block to the CI log so the contributor sees the
+evidence directly.
 
-```powershell
-python -m pytest tests/create_item/sync/test_create_item_parity.py -v -s -rA --tb=short *>&1 | Tee-Object .parity_run.log
-python docs/_build_parity_audit.py .parity_run.log
-# -> writes docs/V5/V5_PARITY_AUDIT.md
-```
+A rolling, human-readable per-operation audit doc is produced by a
+separate workflow: two pytest runs against per-op `legacy/` folders
+(one on core-python, one on rust), then `scripts/v5/build_legacy_parity_audit.py`
+pairs the two transcripts and writes the audit markdown. The rendered
+markdown is per-developer-run output and is not checked in.
 
 Tests marked `@pytest.mark.skip(reason="...")` cover known driver- or
 binding-side gaps; the reason string names the specific limitation in
 plain English. `git grep "Permanent skip"` finds every test waiting on
-a Python-only feature that the Rust path can't match. See
-`docs/V5/RUST_PARITY_PUSHBACKS.md` for the driver-team gap list and
-`docs/V5/V5_PARITY_AUDIT.md` for the most recent per-test report.
+a Python-only feature that the Rust path can't match.
 
 ---
 

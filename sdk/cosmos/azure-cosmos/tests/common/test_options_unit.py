@@ -80,6 +80,10 @@ class TestCommonOptionsTableContent(unittest.TestCase):
         "throughput_bucket": "throughputBucket",
         "excluded_locations": Constants.Kwargs.EXCLUDED_LOCATIONS,
         "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY,
+        # ``max_integrated_cache_staleness_in_ms`` translates to
+        # ``x-ms-dedicatedgateway-max-age``. Truthy-only gate, so ``0``
+        # is a documented silent no-op (no header on the wire).
+        "max_integrated_cache_staleness_in_ms": "maxIntegratedCacheStaleness",
     }
 
     def test_table_has_exactly_the_documented_entries(self):

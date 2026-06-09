@@ -46,6 +46,7 @@ from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .._helpers._item_dispatch import (
     merge_create_item_explicit_kwargs,
     merge_delete_item_explicit_kwargs,
+    merge_read_item_explicit_kwargs,
     pick_backend,
 )
 from ._helpers.item_helper import AsyncItemHelper
@@ -291,9 +292,8 @@ class ContainerProxy:
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        # Move the explicit kwargs into the kwargs dict so the
-        # AsyncItemHelper sees a single source of truth. Shared with
-        # the sync sibling via ``_item_dispatch`` to prevent drift.
+        # Move the explicit kwargs into the kwargs dict so the helper
+        # sees a single dict.
         merge_create_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -308,12 +308,9 @@ class ContainerProxy:
             response_hook=response_hook,
         )
 
-        # AsyncItemHelper owns backend dispatch, options build, rid
-        # stamp, and the legacy CreateItem fall-through. The
-        # ``ensure_container_cached`` callback routes the
-        # cache-populate step back through this proxy so per-call
-        # options (``excluded_locations``, timeouts) reach the cache
-        # refresh the same way they did on the legacy path.
+        # The ensure_container_cached callback routes the cache lookup
+        # back through this proxy, so the per-call options
+        # (excluded_locations, timeouts) still reach the refresh path.
         return await AsyncItemHelper(
             pick_backend(self.client_connection),
             self.client_connection,
@@ -385,28 +382,41 @@ class ContainerProxy:
                 :name: update_item
         """
         doc_link = self._get_document_link(item)
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-
-        request_options = _build_options(kwargs)
-        request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        # Validate the cache-staleness value here so a ValueError points
+        # at the caller, not three frames deep in the helper. None
+        # skips validation. Zero is allowed; the prep layer treats it
+        # as a no-op and emits no x-ms-dedicatedgateway-max-age header.
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
-        return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        merge_read_item_explicit_kwargs(
+            kwargs,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            max_integrated_cache_staleness_in_ms=max_integrated_cache_staleness_in_ms,
+            priority=priority,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+        )
+
+        # Compute the partition-key wire shape here; the helper does
+        # not see the container proxy's private methods.
+        kwargs["request_options"] = {
+            "partitionKey": await self._set_partition_key(partition_key),
+        }
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).read_item(
+            container_link=self.container_link,
+            document_link=doc_link,
+            item_id=item_id,
+            **kwargs,
+        )
 
     @distributed_trace
     def read_all_items(
@@ -1664,9 +1674,9 @@ class ContainerProxy:
             response_hook=response_hook,
         )
 
-        # PK shape and ``document_link`` are computed here because the
-        # helper has no access to ``_set_partition_key`` or
-        # ``_get_document_link``.
+        # Compute the partition-key wire shape and the document link
+        # here; the helper does not see the container proxy's private
+        # methods.
         kwargs["request_options"] = {
             "partitionKey": await self._set_partition_key(partition_key),
         }

@@ -30,6 +30,7 @@ from azure.core.utils import CaseInsensitiveDict
 # Operation discriminator values for ``PreparedRequest.op``.
 OP_CREATE_ITEM = "create_item"
 OP_DELETE_ITEM = "delete_item"
+OP_READ_ITEM = "read_item"
 
 
 @dataclass(frozen=True)

@@ -28,7 +28,7 @@ import json as _json
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple
 
 import pytest
 
@@ -132,10 +132,14 @@ class BackendComparison:
         in that state while the printed report still calls the gap out
         in the VERDICT line. Use ``assert_parity`` (strict) for tests
         that explicitly cover header-surface parity itself.
+
+        The "header diff" filter must match the prefixes ``_verdict``
+        recognises (see ``_HEADER_DIFF_PREFIXES``) so the two helpers
+        agree on what counts as a header-only divergence.
         """
         non_header_diffs = [
             d for d in self.diffs
-            if not d.startswith("headers only on ") and not d.startswith("header ")
+            if not any(d.startswith(p) for p in self._HEADER_DIFF_PREFIXES)
         ]
         if non_header_diffs:
             print(self.format_report())
@@ -203,12 +207,128 @@ class BackendComparison:
         for d in self.diffs:
             lines.append("  - " + d)
         lines.append("--- VERDICT ---")
-        lines.append("  " + self._verdict())
+        # The verdict may be multi-line when it lists the pushback
+        # cross-references for a REPORTING GAP. Indent every line so
+        # the VERDICT section stays visually aligned with DIFFS above.
+        for vl in self._verdict().splitlines() or [""]:
+            lines.append("  " + vl)
         lines.append("=" * 78)
         return "\n".join(lines)
 
+    # ----- Verdict helpers ---------------------------------------------------
+    #
+    # The three diff-line shapes that count as "header diffs" -- prefixes
+    # we recognise in ``_verdict`` and ``assert_functional_parity``. Any
+    # diff line not matching one of these is a body / return-value diff
+    # and means a real functional divergence.
+    _HEADER_DIFF_PREFIXES: ClassVar[Tuple[str, ...]] = (
+        "headers only on ",       # presence: header set differs
+        "header ",                # value: same header, different value
+        "value-volatile header ", # presence: required volatile header missing one side
+    )
+
+    # Header-name -> pushback cross-reference. Used by ``_verdict`` to
+    # tell a reader, for every header gap in DIFFS, whether the gap is
+    # already tracked as a known rust-side pushback and where. Keys are
+    # lower-cased header names; values are the pushback number plus a
+    # one-line summary of that pushback's status. Any header mentioned
+    # in a diff line and not in this dict gets bucketed under "not yet
+    # recorded" so the next reviewer knows whether to file a new entry
+    # or strengthen an existing one.
+    _PUSHBACK_RAW_HEADERS: ClassVar[Tuple[int, str]] = (
+        6,
+        "raw-headers accessor on the diagnostics object — half-landed "
+        "(error path shipped in driver v0.4.0; success path still open)",
+    )
+    _PUSHBACK_TYPED_HEADERS: ClassVar[Tuple[int, str]] = (
+        7,
+        "five typed headers missing from CosmosResponseHeaders — open "
+        "against driver v0.4.0",
+    )
+    _PUSHBACK_CONTAINER_IDENTITY: ClassVar[Tuple[int, str]] = (
+        8,
+        "container-identity headers parsed but pub(crate) in the driver "
+        "— wont-fix (revisit only with a customer escalation)",
+    )
+    _PUSHBACK_LSN_ALIAS_SYNTHESIS: ClassVar[Tuple[int, str]] = (
+        11,
+        "rust binding synthesises un-prefixed double-l LSN aliases "
+        "(``x-ms-llsn``, ``x-ms-item-llsn``) the legacy SDK never "
+        "emitted; new rust-only surface, not a back-compat shim",
+    )
+    _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {
+        # #6 — HTTP framing headers azure-core surfaces but the rust
+        # binding's typed projection drops.
+        "date": _PUSHBACK_RAW_HEADERS,
+        "server": _PUSHBACK_RAW_HEADERS,
+        "content-type": _PUSHBACK_RAW_HEADERS,
+        "content-length": _PUSHBACK_RAW_HEADERS,
+        # #7 — five typed Cosmos headers not modelled on
+        # CosmosResponseHeaders.
+        "x-ms-cosmos-physical-partition-id": _PUSHBACK_TYPED_HEADERS,
+        "x-ms-current-replica-set-size": _PUSHBACK_TYPED_HEADERS,
+        "x-ms-current-write-quorum": _PUSHBACK_TYPED_HEADERS,
+        "x-ms-xp-role": _PUSHBACK_TYPED_HEADERS,
+        "x-ms-schemaversion": _PUSHBACK_TYPED_HEADERS,
+        # #8 — container-identity headers explicitly declined.
+        "x-ms-alt-content-path": _PUSHBACK_CONTAINER_IDENTITY,
+        "x-ms-content-path": _PUSHBACK_CONTAINER_IDENTITY,
+        # #11 — synthetic LSN aliases the rust binding writes that the
+        # legacy core-python path never produced.
+        "x-ms-llsn": _PUSHBACK_LSN_ALIAS_SYNTHESIS,
+        "x-ms-item-llsn": _PUSHBACK_LSN_ALIAS_SYNTHESIS,
+    }
+
+    def _is_header_diff(self, line: str) -> bool:
+        return any(line.startswith(p) for p in self._HEADER_DIFF_PREFIXES)
+
+    @staticmethod
+    def _extract_header_names(line: str) -> List[str]:
+        """Pull the header name(s) referenced by a diff line.
+
+        Returns a list because ``headers only on core-python: ['a', 'b']``
+        names more than one. The other shapes name exactly one.
+        Returns ``[]`` for any line we don't recognise as a header diff.
+        """
+        # "headers only on core-python: ['a', 'b']" or same with rust
+        if line.startswith("headers only on "):
+            try:
+                bracket_open = line.index("[")
+                bracket_close = line.rindex("]")
+                inner = line[bracket_open + 1:bracket_close]
+                return [
+                    s.strip().strip("'").strip('"').lower()
+                    for s in inner.split(",")
+                    if s.strip()
+                ]
+            except ValueError:
+                return []
+        # "header x-ms-foo: core-python '...' / rust '...'"
+        if line.startswith("header "):
+            rest = line[len("header "):]
+            if ":" in rest:
+                return [rest.split(":", 1)[0].strip().lower()]
+            return []
+        # "value-volatile header 'x-ms-foo': present on core-python, missing on rust"
+        if line.startswith("value-volatile header "):
+            rest = line[len("value-volatile header "):]
+            if "'" in rest:
+                # name is single-quoted
+                first_q = rest.index("'")
+                second_q = rest.index("'", first_q + 1)
+                return [rest[first_q + 1:second_q].lower()]
+            return []
+        return []
+
     def _verdict(self) -> str:
-        """Plain-English summary of what the diff means."""
+        """Plain-English summary of what the diff means.
+
+        For REPORTING-GAP verdicts the output is multi-line: the first
+        line names the bucket, then a per-pushback breakdown lists
+        every header gap in DIFFS grouped by the pushback that already
+        tracks it (or under "not yet recorded" so the next reviewer
+        knows to file a new entry).
+        """
         core_ok = self.core_python.succeeded
         rust_ok = self.rust.succeeded
         if not self.diffs:
@@ -217,17 +337,54 @@ class BackendComparison:
             return ("FUNCTIONAL DIVERGENCE: one backend succeeded, the other "
                     "raised. The operation behaves differently -- investigate.")
         if core_ok and rust_ok:
-            non_header = [d for d in self.diffs
-                          if not d.startswith("headers only on ")
-                          and not d.startswith("header ")]
-            if not non_header:
-                return ("FUNCTIONAL PARITY, REPORTING GAP: both backends "
-                        "performed the operation successfully and returned "
-                        "equivalent response bodies. The rust backend exposes "
-                        "a smaller set of response headers -- this is a known "
-                        "rust-binding limitation, not a create_item failure.")
-            return ("FUNCTIONAL DIVERGENCE: response bodies or values differ "
-                    "between the backends.")
+            header_diffs = [d for d in self.diffs if self._is_header_diff(d)]
+            body_diffs = [d for d in self.diffs if not self._is_header_diff(d)]
+            if body_diffs:
+                return ("FUNCTIONAL DIVERGENCE: response bodies or values "
+                        "differ between the backends. {} body-or-value diff(s); "
+                        "{} header diff(s).".format(len(body_diffs), len(header_diffs)))
+            # Header-only divergence. Group by pushback.
+            grouped: Dict[tuple, List[str]] = {}
+            unrecorded: List[str] = []
+            seen: set = set()
+            for d in header_diffs:
+                for name in self._extract_header_names(d):
+                    if name in seen:
+                        continue
+                    seen.add(name)
+                    pb = self._HEADER_TO_PUSHBACK.get(name)
+                    if pb is None:
+                        unrecorded.append(name)
+                    else:
+                        grouped.setdefault(pb, []).append(name)
+            out: List[str] = [
+                "FUNCTIONAL PARITY, REPORTING GAP: both backends performed "
+                "the operation successfully and returned response bodies "
+                "that match on every customer-visible field (the harness "
+                "filters the six per-document server-stamped fields it "
+                "treats as test noise: id, _rid, _self, _ts, _etag, "
+                "_attachments). The header-surface differences below are "
+                "all known rust-binding gaps; cross-references to "
+                "docs/V5/RUST_PARITY_PUSHBACKS.md follow."
+            ]
+            # Render recorded buckets in pushback-number order.
+            for pb_key in sorted(grouped.keys(), key=lambda k: k[0]):
+                pb_num, pb_desc = pb_key
+                hdrs = sorted(grouped[pb_key])
+                out.append("  - Pushback #{n} ({desc}):".format(n=pb_num, desc=pb_desc))
+                out.append("      {}".format(", ".join(hdrs)))
+            if unrecorded:
+                out.append(
+                    "  - NOT YET RECORDED in docs/V5/RUST_PARITY_PUSHBACKS.md "
+                    "(file a new entry if this persists):"
+                )
+                out.append("      {}".format(", ".join(sorted(unrecorded))))
+            else:
+                out.append(
+                    "  - NOT YET RECORDED in docs/V5/RUST_PARITY_PUSHBACKS.md: "
+                    "(none — every header gap above is already tracked.)"
+                )
+            return "\n".join(out)
         return ("EXCEPTION DIVERGENCE: both backends raised, but the typed "
                 "exception or status code differs.")
 
@@ -278,14 +435,34 @@ _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     # LSN family — replica/replication-progress counters. Different
     # replicas legitimately answer different calls so the value
     # legitimately differs, but the presence is part of the diagnostics
-    # contract. The Rust binding rewrites the ``cosmos-``-prefixed
-    # spellings (``x-ms-cosmos-llsn`` etc.) to the un-prefixed legacy
-    # names in ``_backend/base.py::normalize_response_headers``, so a
-    # single canonical name is checked here.
+    # contract. Two related families coexist on the wire:
+    #   * the cosmos-prefixed double-l names (``x-ms-cosmos-llsn``,
+    #     ``x-ms-cosmos-item-llsn``) which the gateway emits on every
+    #     response and which both backends faithfully surface;
+    #   * the un-prefixed single-l names (``x-ms-item-lsn``, ``lsn``)
+    #     which the gateway also emits and which both backends surface;
+    #   * the un-prefixed *double*-l names (``x-ms-llsn``,
+    #     ``x-ms-item-llsn``) which the gateway never emits and which
+    #     only the rust binding produces, as synthetic aliases written
+    #     by ``azure/cosmos/_backend/base.py::normalize_response_headers``.
+    #     The synthesis is documented in pushback #11 (the legacy SDK
+    #     never produced these names, so the alias is not a
+    #     compatibility shim but a new rust-only surface).
+    # All five names are presence-checked here; value-skipped on all.
     "x-ms-llsn",
     "x-ms-item-llsn",
-    "x-ms-quorum-acked-lsn",
-    "x-ms-quorum-acked-llsn",
+    "x-ms-cosmos-llsn",
+    "x-ms-cosmos-item-llsn",
+    "x-ms-item-lsn",
+    # NOTE: ``x-ms-quorum-acked-lsn``, ``x-ms-quorum-acked-llsn``, and
+    # ``x-ms-cosmos-quorum-acked-llsn`` used to be in this presence-
+    # required bucket. They were moved to ``_WIRE_NONDETERMINISTIC_HEADERS``
+    # below in June 2026 after the V5_PARITY_AUDIT_read_item.md audit
+    # showed the gateway emits them non-deterministically -- the same
+    # header appeared as "only on core-python" in one test and "only
+    # on rust" in another test in the same audit run. Enforcing
+    # presence on every call produced false-positive "rust gaps" the
+    # binding could not fix.
     # Topology / diagnostic IDs — which replica answered, the routing
     # decision the gateway made, the schema version of the responding
     # replica. Values differ across replicas / calls; presence is part
@@ -297,6 +474,20 @@ _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     "x-ms-current-replica-set-size",
     "x-ms-xp-role",
     "x-ms-schemaversion",
+    # Per-container internal-partition UUID. Both backends emit it,
+    # but the value is a fresh GUID minted per physical partition by
+    # the service, so each backend's freshly-created test container
+    # gets its own value. Presence is part of the diagnostics surface
+    # support engineers correlate against; value is per-container
+    # noise.
+    "x-ms-cosmos-internal-partition-id",
+    # Cluster-side "last partition-map state change" timestamp. Both
+    # backends surface it, but the value moves whenever the cluster's
+    # partition map ticks (which happens at minute-scale intervals on
+    # a live account), so two parity calls captured even seconds apart
+    # routinely land on different values. Presence is part of the
+    # routing-diagnosis surface; value is wall-clock noise.
+    "x-ms-last-state-change-utc",
 })
 
 # Headers (and one body-field leftover) where both value and presence
@@ -329,11 +520,41 @@ _FULLY_IGNORED_HEADERS = frozenset({
     "_etag",
 })
 
+# Headers the Cosmos gateway emits *non-deterministically* -- whether
+# the header appears on a given response depends on which replica
+# answered, the consistency level on the request, and other server-
+# side conditions outside the SDK's control. The V5_PARITY_AUDIT
+# evidence is that the SAME header can appear "only on core-python"
+# in one test and "only on rust" in the next test of the same audit
+# run (see the ``read_item`` audit's ``TestNoneOptions`` vs
+# ``TestNoneOptionsAsync`` rows). Enforcing presence here would
+# produce false-positive "rust gaps" the binding cannot fix, so
+# these headers are dropped from BOTH the value diff (they're in
+# ``_DEFAULT_IGNORED_HEADERS`` below) AND the value-volatile
+# presence-required loop (``diff_outcomes`` skips them explicitly).
+#
+# The bar for adding to this set is high: pick this only when audit
+# evidence shows the gateway sometimes-emits-sometimes-omits on the
+# SAME backend, not just "one backend doesn't surface it". The
+# latter is a real binding gap and belongs in a pushback.
+_WIRE_NONDETERMINISTIC_HEADERS = frozenset({
+    # Quorum-acked family -- replication-quorum diagnostics that the
+    # gateway emits per request based on which replica answered.
+    "x-ms-quorum-acked-lsn",
+    "x-ms-quorum-acked-llsn",
+    "x-ms-cosmos-quorum-acked-llsn",
+})
+
 # Combined set used to filter the value-diff. Tests that want a custom
 # scope can pass their own frozenset to ``diff_outcomes(ignored_headers=...)``.
 # The presence check below always runs against ``_VALUE_VOLATILE_REQUIRED_HEADERS``
-# regardless of what's passed for ``ignored_headers``.
-_DEFAULT_IGNORED_HEADERS = _VALUE_VOLATILE_REQUIRED_HEADERS | _FULLY_IGNORED_HEADERS
+# regardless of what's passed for ``ignored_headers``, but
+# ``_WIRE_NONDETERMINISTIC_HEADERS`` is excluded from BOTH passes.
+_DEFAULT_IGNORED_HEADERS = (
+    _VALUE_VOLATILE_REQUIRED_HEADERS
+    | _FULLY_IGNORED_HEADERS
+    | _WIRE_NONDETERMINISTIC_HEADERS
+)
 
 # Body fields that legitimately differ between create calls and so
 # are excluded from return-value diffs by default:
@@ -555,7 +776,13 @@ def diff_outcomes(
     # cross-backend contract.
     core_names = {k.lower() for k in (core.response_headers or {})}
     rust_names = {k.lower() for k in (rust.response_headers or {})}
-    for header in sorted(_VALUE_VOLATILE_REQUIRED_HEADERS):
+    # Wire-nondeterministic headers are excluded from BOTH the key-set
+    # diff above (via ``_DEFAULT_IGNORED_HEADERS``) and this presence
+    # loop. See ``_WIRE_NONDETERMINISTIC_HEADERS`` for the rationale.
+    presence_check_headers = (
+        _VALUE_VOLATILE_REQUIRED_HEADERS - _WIRE_NONDETERMINISTIC_HEADERS
+    )
+    for header in sorted(presence_check_headers):
         in_core = header in core_names
         in_rust = header in rust_names
         if in_core and not in_rust:

@@ -4,14 +4,15 @@
 # license information.
 # -------------------------------------------------------------------------
 """Per-client helper that runs every ``Container.create_item`` /
-``Container.delete_item`` call.
+``Container.read_item`` / ``Container.delete_item`` call.
 
 ``ItemHelper`` is where backend dispatch and the request-prep logic
 (previously inlined in the container methods) live. The container
 methods just stamp their explicit kwargs into ``kwargs`` and hand off
-to one ``ItemHelper.create_item`` / ``ItemHelper.delete_item`` call.
+to one ``ItemHelper.create_item`` / ``ItemHelper.read_item`` /
+``ItemHelper.delete_item`` call.
 
-Flow (same shape for both ops):
+Flow (same shape for all three ops):
 
 1. Build the legacy-shape ``request_options`` via the matching
    ``build_*_request_options`` helper.
@@ -22,7 +23,8 @@ Flow (same shape for both ops):
    ``BackendResponse`` into a ``CosmosDict`` (raising the typed
    exception for non-2xx).
 4. When no backend is wired, fall through to the legacy
-   ``client_connection.CreateItem`` / ``.DeleteItem`` path.
+   ``client_connection.CreateItem`` / ``.ReadItem`` / ``.DeleteItem``
+   path.
 """
 from __future__ import annotations
 
@@ -34,16 +36,22 @@ from ..partition_key import _Empty
 from ._item_dispatch import (
     build_create_item_request_options,
     build_delete_item_request_options,
+    build_read_item_request_options,
 )
-from ._request_prep import build_create_item_prepared, build_delete_item_prepared
+from ._request_prep import (
+    build_create_item_prepared,
+    build_delete_item_prepared,
+    build_read_item_prepared,
+)
 from ._response_parse import parse_backend_response
 
 
 class ItemHelper:
-    """Per-call request-prep + dispatch for ``create_item``.
+    """Per-call request-prep + dispatch for ``create_item``,
+    ``read_item``, and ``delete_item``.
 
     Cheap to construct (only holds references). One instance per
-    ``Container.create_item`` invocation today.
+    container-method invocation today.
     """
 
     def __init__(
@@ -82,12 +90,9 @@ class ItemHelper:
     ) -> Any:
         """Run a single ``create_item`` call end to end."""
 
-        # Snapshot kwargs BEFORE the legacy options build drains them:
-        # ``_base.build_options`` (called inside
-        # ``build_create_item_request_options`` below) pops every
-        # recognised kwarg. The Rust prep needs to see them later
-        # (``compose_options_from_kwargs`` reads this dict to build
-        # ``PreparedRequest.headers``), so keep a fresh copy here.
+        # Snapshot kwargs before the legacy options build pops them.
+        # The rust prep still needs the originals to populate the
+        # PreparedRequest.headers map.
         kwargs_for_rust_prep = dict(kwargs)
 
         request_options = build_create_item_request_options(
@@ -97,9 +102,9 @@ class ItemHelper:
             populate_query_metrics=populate_query_metrics,
         )
 
-        # Container-rid lookup. Best effort: bare-mock connections in
+        # Container-rid lookup. Best-effort: bare-mock connections in
         # unit tests may not produce a real rid. We continue with
-        # ``container_rid=None`` so the backend still gets called.
+        # container_rid=None so the backend still gets called.
         container_rid: Optional[str] = None
         try:
             if self._ensure_container_cached is not None:
@@ -153,12 +158,12 @@ class ItemHelper:
     ) -> Any:
         """Pull the partition-key value to put on the wire.
 
-        Precedence (matches legacy ``_AddPartitionKey``):
+        Precedence (matches the legacy private path):
 
         1. ``request_options["partitionKey"]`` if the caller set it.
         2. Extracted from ``body`` using the container's PK definition.
         3. ``_Empty()`` fallback for bare-mock connections that have
-           no ``_AddPartitionKey`` method.
+           no PK-extraction method.
         """
         if "partitionKey" in request_options:
             return request_options["partitionKey"]
@@ -185,24 +190,21 @@ class ItemHelper:
 
         :param container_link: Container self-link.
         :param document_link: The ``dbs/.../docs/<id-or-rid>`` link the
-            legacy ``DeleteItem`` consumes. Built by the caller via
-            ``Container._get_document_link``.
+            legacy ``DeleteItem`` consumes. Built by the caller.
         :param item_id: The document id the binding writes onto
             ``PreparedRequest.item_id``.
         :param kwargs: Caller's remaining kwargs. The caller has
-            already stamped ``partitionKey`` into ``request_options``
-            via ``Container._set_partition_key``.
+            already stamped ``partitionKey`` into ``request_options``.
         """
-        # Snapshot kwargs before the legacy options build drains them.
-        # Same reason as create_item: ``_base.build_options`` pops every
-        # recognised key, but the rust prep still needs them.
+        # Snapshot kwargs before the legacy options build pops them.
+        # The rust prep still needs the originals to populate the
+        # PreparedRequest.headers map.
         kwargs_for_rust_prep = dict(kwargs)
 
         request_options = build_delete_item_request_options(kwargs)
 
-        # The caller stamped the PK into ``request_options`` before
-        # getting here. Use that value so the rust prep does not need
-        # to re-derive the wire shape.
+        # The caller stamped the PK into request_options before
+        # getting here, so the rust prep can use it directly.
         partition_key_value = request_options.get("partitionKey", _Empty())
 
         # Container-rid lookup; best-effort, same shape as create_item.
@@ -232,10 +234,10 @@ class ItemHelper:
             )
             backend_response = self._backend.execute(prepared)
             if backend_response is not None:
-                # Delete returns 204 with an empty body. We still
-                # invoke the response_hook so callers can observe
-                # response headers; the helper returns None because
-                # the public ``delete_item`` is typed ``-> None``.
+                # Delete returns 204 with an empty body. Invoke the
+                # response_hook so callers can observe response
+                # headers; return None because the public delete_item
+                # is typed -> None.
                 parse_backend_response(
                     backend_response,
                     client_connection=self.client_connection,
@@ -245,6 +247,88 @@ class ItemHelper:
 
         # Fall-through: legacy path.
         return self.client_connection.DeleteItem(
+            document_link=document_link,
+            options=request_options,
+            **kwargs,
+        )
+
+    def read_item(
+        self,
+        *,
+        container_link: str,
+        document_link: str,
+        item_id: str,
+        **kwargs: Any,
+    ) -> Any:
+        """Run a single ``read_item`` call end to end.
+
+        Same shape as ``delete_item`` (kwarg snapshot, legacy options
+        build, container-rid cache lookup, backend dispatch with legacy
+        fall-through). Returns the ``CosmosDict`` the response parser
+        produces: a body for 200, an empty dict for 304 (a conditional
+        ``If-None-Match`` read whose etag matched).
+
+        :param container_link: Container self-link.
+        :param document_link: The ``dbs/.../docs/<id-or-rid>`` link the
+            legacy ``ReadItem`` consumes. Built by the caller.
+        :param item_id: The document id the binding writes onto
+            ``PreparedRequest.item_id``.
+        :param kwargs: Caller's remaining kwargs. The caller has
+            already stamped ``partitionKey`` into ``request_options``.
+        """
+        # Snapshot kwargs before the legacy options build pops them.
+        # The rust prep still needs the originals to populate the
+        # PreparedRequest.headers map.
+        kwargs_for_rust_prep = dict(kwargs)
+
+        # build_read_item_request_options runs the legacy match-headers
+        # check; that is where ValueError("'etag' specified without
+        # 'match_condition'.") (and the inverse) fires, on the
+        # caller's frame, before any network call.
+        request_options = build_read_item_request_options(kwargs)
+
+        # The caller stamped the PK into request_options before
+        # getting here.
+        partition_key_value = request_options.get("partitionKey", _Empty())
+
+        # Container-rid lookup; best-effort, same shape as delete_item.
+        container_rid: Optional[str] = None
+        try:
+            if self._ensure_container_cached is not None:
+                self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                container_rid = rid_value
+                request_options[Constants.ContainerRID] = container_rid
+        except Exception:  # pylint: disable=broad-except
+            container_rid = None
+
+        if self._backend is not None:
+            prepared = build_read_item_prepared(
+                container_link=container_link,
+                item_id=item_id,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = self._backend.execute(prepared)
+            if backend_response is not None:
+                # 200 returns the parsed body; 304 returns an empty
+                # CosmosDict with response headers carrying the current
+                # etag. The parser fires response_hook once on either.
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        # Fall-through: legacy path.
+        return self.client_connection.ReadItem(
             document_link=document_link,
             options=request_options,
             **kwargs,

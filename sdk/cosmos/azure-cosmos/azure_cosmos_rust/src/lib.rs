@@ -32,6 +32,20 @@
 //!         body to extract it from. On success the driver returns
 //!         HTTP 204 with an empty body.
 //!
+//!   * `read_item(handle, prepared) -> (status, sub_status,
+//!                                       headers, body)`
+//!         Same input shape as `delete_item` (bodiless GET, document
+//!         id on `PreparedRequest.item_id`). On success returns HTTP
+//!         200 with the document JSON. Conditional reads
+//!         (`If-None-Match` driven by Python's `etag` +
+//!         `MatchConditions.IfModified`) surface as **HTTP 304** with
+//!         an empty body when the customer's cached etag still
+//!         matches the server version — the Python parser treats 304
+//!         as a non-error and returns an empty `CosmosDict`.
+//!         `x-ms-dedicatedgateway-max-age` (driven by
+//!         `max_integrated_cache_staleness_in_ms`) is forwarded
+//!         through `custom_headers` like any other per-request header.
+//!
 //! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
 //! driver's typed operation fields. `responsePayloadOnWriteDisabled`
 //! is lifted to the typed `OperationOptions::content_response_on_write`
@@ -90,6 +104,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(init_client, m)?)?;
     m.add_function(wrap_pyfunction!(create_item, m)?)?;
     m.add_function(wrap_pyfunction!(delete_item, m)?)?;
+    m.add_function(wrap_pyfunction!(read_item, m)?)?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     Ok(())
 }
@@ -367,6 +382,118 @@ fn delete_item<'py>(
 }
 
 // ---------------------------------------------------------------------------
+// read_item
+// ---------------------------------------------------------------------------
+//
+// Same input/output shape as delete_item:
+//   * no request body (GET is bodiless);
+//   * the document id comes from PreparedRequest.item_id;
+//   * content_response_on_write is left at the driver default — reads
+//     have no write-body to suppress (the kwarg is not even on
+//     ``Container.read_item``);
+//   * If-Match / If-None-Match conditional headers (built by the
+//     Python helper from etag + match_condition) flow through
+//     custom_headers; the dominant case on read is `If-None-Match`
+//     (cache validation), which surfaces as HTTP 304 with an empty
+//     body when the customer's cached etag still matches. The Python
+//     parser treats 304 as a non-error and returns an empty
+//     `CosmosDict`. ``x-ms-dedicatedgateway-max-age`` (driven by
+//     Python's ``max_integrated_cache_staleness_in_ms`` kwarg) also
+//     rides through custom_headers — see the wire-name match in
+//     extract_op_modifiers.
+
+#[pyfunction]
+fn read_item<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let container_link: String = prepared.getattr("container_link")?.extract()?;
+    let partition_key_header: String =
+        prepared.getattr("partition_key_header")?.extract()?;
+    let item_id: String = prepared
+        .getattr("item_id")?
+        .extract::<Option<String>>()?
+        .ok_or_else(|| {
+            PyValueError::new_err(
+                "read_item: PreparedRequest.item_id is required for read operations",
+            )
+        })?;
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+
+    let modifiers = extract_op_modifiers(headers_dict)?;
+
+    let driver = drivers()
+        .read()
+        .unwrap()
+        .get(handle)
+        .cloned()
+        .ok_or_else(|| {
+            PyRuntimeError::new_err(format!(
+                "no driver registered for handle {handle:?}; call init_client first"
+            ))
+        })?;
+
+    let (database_name, container_name) = parse_container_link(&container_link)?;
+    let partition_key = parse_partition_key_header(&partition_key_header)?;
+
+    let tokio_rt = TOKIO_RUNTIME.get().ok_or_else(|| {
+        PyRuntimeError::new_err("init_client must be called before read_item")
+    })?;
+
+    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
+        tokio_rt.block_on(async {
+            let container = driver
+                .resolve_container(&database_name, &container_name)
+                .await?;
+            let item_ref =
+                ItemReference::from_name(&container, partition_key, item_id);
+            let mut op = CosmosOperation::read_item(item_ref);
+
+            if let Some(activity) = modifiers.activity_header.as_ref() {
+                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
+                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
+                }
+            }
+            if let Some(session) = modifiers.session_header.as_ref() {
+                op = op.with_session_token(SessionToken::from(session.clone()));
+            }
+
+            // No content_response_on_write override for read: the
+            // driver default is correct (reads always return a body
+            // when one exists, and 304 returns no body whether the
+            // option is set or not). custom_headers carries
+            // If-Match / If-None-Match plus the
+            // x-ms-dedicatedgateway-max-age header.
+            let options = build_operation_options(
+                None,
+                modifiers.excluded_regions_value,
+                modifiers.end_to_end_timeout,
+                modifiers.custom_headers,
+            );
+
+            driver.execute_singleton_operation(op, options).await
+        })
+    });
+
+    match response_result {
+        Ok(response) => backend_response_tuple_from_success(py, response),
+        Err(cosmos_error) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                Err(PyRuntimeError::new_err(format!(
+                    "driver execute_singleton_operation failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Shared header → modifier translation
 // ---------------------------------------------------------------------------
 //
@@ -474,6 +601,11 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
             "prioritylevel" => Some("x-ms-cosmos-priority-level"),
             "throughputbucket" => Some("x-ms-cosmos-throughput-bucket"),
             "containerrid" => Some("x-ms-cosmos-intended-collection-rid"),
+            // Read-side cache-validation kwarg. Accept the option-key
+            // form as a defensive fallback; the Python prep already
+            // writes the wire-name form directly (truthy-only gate
+            // means `0` never reaches here).
+            "maxintegratedcachestaleness" => Some("x-ms-dedicatedgateway-max-age"),
             // If-Match / If-None-Match are listed explicitly because
             // they do not start with ``x-ms-``.
             "if-match" => Some("if-match"),

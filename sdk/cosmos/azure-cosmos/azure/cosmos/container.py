@@ -43,6 +43,7 @@ from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._helpers._item_dispatch import (
     merge_create_item_explicit_kwargs,
     merge_delete_item_explicit_kwargs,
+    merge_read_item_explicit_kwargs,
     pick_backend,
 )
 from ._helpers.item_helper import ItemHelper
@@ -279,34 +280,54 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :caption: Get an item from the database and update one of its properties:
         """
         doc_link = self._get_document_link(item)
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        # populate_query_metrics is deprecated on read_item. Warn and
+        # drop it before the helper builds the request so no header
+        # goes on the wire.
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
+
+        # Validate the cache-staleness value here so a ValueError points
+        # at the caller, not three frames deep in the helper. None
+        # skips validation. Zero is allowed; the prep layer treats it
+        # as a no-op and emits no x-ms-dedicatedgateway-max-age header.
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+
+        # Move the positional-or-keyword post_trigger_include into
+        # kwargs so the helper sees one unified dict.
+        merge_read_item_explicit_kwargs(
+            kwargs,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            max_integrated_cache_staleness_in_ms=max_integrated_cache_staleness_in_ms,
+            priority=priority,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
+
+        # Compute the partition-key wire shape and the document link
+        # here; the helper does not see the container proxy's private
+        # methods.
+        kwargs["request_options"] = {
+            "partitionKey": self._set_partition_key(partition_key),
+        }
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).read_item(
+            container_link=self.container_link,
+            document_link=doc_link,
+            item_id=item_id,
+            **kwargs,
+        )
 
     @distributed_trace
     def read_items(
@@ -1438,9 +1459,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        # Move the explicit kwargs into the kwargs dict so the
-        # ItemHelper sees a single source of truth. Shared with the
-        # async sibling via ``_item_dispatch`` to prevent drift.
+        # Move the explicit kwargs into the kwargs dict so the helper
+        # sees a single dict.
         merge_create_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1455,13 +1475,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        # ItemHelper owns backend dispatch, options build, rid stamp,
-        # and the legacy CreateItem fall-through. The
-        # ``ensure_container_cached`` callback routes the cache-populate
-        # step back through this proxy so the existing
-        # ``container_cache_lock`` and per-call options
-        # (``excluded_locations``, timeouts) reach the cache refresh
-        # the same way they did on the legacy path.
+        # The ensure_container_cached callback routes the cache lookup
+        # back through this proxy, so the existing container-cache
+        # lock and per-call options (excluded_locations, timeouts)
+        # still reach the refresh path.
         return ItemHelper(
             pick_backend(self.client_connection),
             self.client_connection,
@@ -1730,7 +1747,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         if populate_query_metrics is not None:
-            # ``populate_query_metrics`` has no effect on a point DELETE
+            # populate_query_metrics has no effect on a point DELETE
             # (there are no query metrics for a single-document write).
             # Warn and drop so the header is never built.
             warnings.warn(
@@ -1738,9 +1755,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning,
             )
 
-        # Pre-trigger / post-trigger are positional-or-keyword on the
-        # public method; stamp them alongside the keyword-only kwargs
-        # so the helper sees one dict.
+        # pre_trigger_include and post_trigger_include are positional-
+        # or-keyword on the public method; move them into kwargs so
+        # the helper sees one unified dict.
         merge_delete_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1756,9 +1773,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        # PK shape and ``document_link`` are computed here because the
-        # helper has no access to ``_set_partition_key`` or
-        # ``_get_document_link``.
+        # Compute the partition-key wire shape and the document link
+        # here; the helper does not see the container proxy's private
+        # methods.
         kwargs["request_options"] = {
             "partitionKey": self._set_partition_key(partition_key),
         }

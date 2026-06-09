@@ -4,6 +4,13 @@
 import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
 
+# Register the in-repo parity-capture pytest plugin. The plugin
+# itself is dormant unless the env var COSMOS_PARITY_CAPTURE_OP is
+# set to a known operation name. Listed here so pytest auto-loads it
+# for every test run without requiring contributors to install
+# anything.
+pytest_plugins = ["common.parity_capture_plugin"]
+
 cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
 
 

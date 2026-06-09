@@ -69,10 +69,11 @@ def merge_create_item_explicit_kwargs(
 def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
     """Return the wired Rust backend, or ``None`` for the legacy path.
 
-    A ``None`` return is the signal to fall through to the legacy
-    ``client_connection.CreateItem`` path; there is no "core-python
-    backend" class. The decision is made once at client construction
-    and never reconsidered per call.
+    A ``None`` return is the signal for the helper to fall through to
+    the legacy client-connection method (``CreateItem`` / ``ReadItem``
+    / ``DeleteItem``); there is no "core-python backend" class. The
+    decision is made once at client construction and never reconsidered
+    per call.
 
     :param client_connection: The connection that owns the
         ``_rust_backend`` attribute. Missing attribute is tolerated.
@@ -178,6 +179,69 @@ def build_delete_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     just a thin wrapper around ``build_options``. The container method
     already drops ``populate_query_metrics`` (with a deprecation
     warning) before kwargs reach here.
+    """
+    return build_options(kwargs)
+
+
+def merge_read_item_explicit_kwargs(
+    kwargs: Dict[str, Any],
+    *,
+    post_trigger_include: Any = None,
+    session_token: Any = None,
+    initial_headers: Any = None,
+    etag: Any = None,
+    match_condition: Any = None,
+    max_integrated_cache_staleness_in_ms: Any = None,
+    priority: Any = None,
+    throughput_bucket: Any = None,
+    availability_strategy: Any = None,
+    response_hook: Any = None,
+) -> None:
+    """Copy every non-None explicit ``read_item`` kwarg into ``kwargs``.
+
+    Differences from ``merge_delete_item_explicit_kwargs``:
+
+    * No ``pre_trigger_include`` (read_item has no pre-trigger surface).
+    * No ``retry_write`` / ``no_response`` (reads are idempotent and
+      have no body to suppress).
+    * Adds ``max_integrated_cache_staleness_in_ms``, the dedicated-
+      gateway cache-staleness knob that only exists on reads.
+
+    The caller validates ``max_integrated_cache_staleness_in_ms``
+    (negative / non-int) so the ``ValueError`` traceback points at the
+    customer's call line, not this helper. ``availability_strategy``
+    is passed through the hedging-strategy validator.
+    """
+    if post_trigger_include is not None:
+        kwargs['post_trigger_include'] = post_trigger_include
+    if session_token is not None:
+        kwargs['session_token'] = session_token
+    if initial_headers is not None:
+        kwargs['initial_headers'] = initial_headers
+    if etag is not None:
+        kwargs['etag'] = etag
+    if match_condition is not None:
+        kwargs['match_condition'] = match_condition
+    if max_integrated_cache_staleness_in_ms is not None:
+        kwargs['max_integrated_cache_staleness_in_ms'] = max_integrated_cache_staleness_in_ms
+    if priority is not None:
+        kwargs['priority'] = priority
+    if throughput_bucket is not None:
+        kwargs["throughput_bucket"] = throughput_bucket
+    if availability_strategy is not None:
+        kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
+    if response_hook is not None:
+        kwargs['response_hook'] = response_hook
+
+
+def build_read_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Build the request-options dict the legacy ``ReadItem`` consumes.
+
+    Thin wrapper around ``build_options`` -- read has no
+    ``disableAutomaticIdGeneration`` / ``indexingDirective`` knobs, and
+    ``populate_query_metrics`` is dropped (with a deprecation warning)
+    by the sync public method before reaching here. The async sibling
+    does not expose ``populate_query_metrics`` at all.
     """
     return build_options(kwargs)
 

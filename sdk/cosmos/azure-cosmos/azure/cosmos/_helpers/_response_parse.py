@@ -9,8 +9,15 @@
   and invoke ``response_hook(headers, parsed)`` exactly once.
 - 2xx with empty body (``no_response=True`` / 204): build an empty
   ``CosmosDict({}, response_headers)`` so customer code keeps working.
-- Non-2xx: raise the typed exception subclass for the status code via
-  ``map_backend_response_to_exception``.
+- **304 Not Modified** (conditional ``read_item`` whose
+  ``If-None-Match`` etag matched the current server version): treated
+  as non-error success. The body is empty; the response headers
+  carry the current etag (equal to what the customer sent in). The
+  SDK returns an empty ``CosmosDict({}, response_headers)`` so
+  customer code can check ``len(result)`` or compare
+  ``result.get_response_headers()["etag"]``.
+- Non-2xx (and non-304): raise the typed exception subclass for the
+  status code via ``map_backend_response_to_exception``.
 
 In all paths the headers are also written to
 ``client_connection.last_response_headers`` (the one documented side
@@ -18,7 +25,8 @@ effect, matching the legacy behaviour).
 
 This module is used when a backend returns a real ``BackendResponse``
 (today: ``RustBackend``). The "core-python" path bypasses it entirely
-and goes straight to legacy ``client_connection.CreateItem``.
+and goes straight to the legacy client-connection methods
+(``CreateItem`` / ``ReadItem`` / ``DeleteItem``).
 """
 from __future__ import annotations
 
@@ -74,12 +82,22 @@ def parse_backend_response(
     if client_connection is not None:
         client_connection.last_response_headers = headers
 
-    if not is_success_status(response.status_code):
+    # 304 Not Modified is the conditional-GET success signal on
+    # read_item (see module docstring). It is < 400 but not in the
+    # 2xx range, so is_success_status rejects it; handle it as a
+    # non-error empty body before that check. The service guarantees
+    # an empty body for 304, so falling into the no-body branch below
+    # is safe.
+    is_not_modified = response.status_code == 304
+
+    if not is_not_modified and not is_success_status(response.status_code):
         message = extract_message_from_body(response.body)
         raise map_backend_response_to_exception(response, message=message)
 
     if not response.body:
         # ``no_response=True`` returns an empty CosmosDict, not None.
+        # 304 lands here too: empty body, headers carry the current
+        # etag (equal to the customer's ``If-None-Match``).
         parsed: Any = {}
     else:
         parsed = json.loads(response.body)

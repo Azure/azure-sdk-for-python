@@ -20,8 +20,8 @@ Input value                                         On-wire header value
 ``["t1", _Empty()]`` (hierarchical, missing leaf)   ``["t1",null]``
 ==================================================  =================================
 
-Pure-function helper; matches the byte output of the existing
-``_base.GetHeaders`` path so both backends produce identical headers.
+Pure-function helper; produces the same byte output as the legacy
+header-build path so both backends ship identical headers.
 """
 from __future__ import annotations
 

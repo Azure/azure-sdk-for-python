@@ -11,8 +11,7 @@ internal option-dict keys (``preTriggerInclude``, ``priorityLevel``,
 ``throughputBucket``). ``COMMON_OPTIONS`` is that mapping.
 
 Both backends consume it so they produce byte-identical request
-headers. ``_base.py`` re-exports it as ``_COMMON_OPTIONS`` for legacy
-imports.
+headers.
 """
 from __future__ import annotations
 
@@ -42,21 +41,20 @@ COMMON_OPTIONS: Dict[str, str] = {
     "throughput_bucket": "throughputBucket",
     "excluded_locations": Constants.Kwargs.EXCLUDED_LOCATIONS,
     "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY,
+    "max_integrated_cache_staleness_in_ms": "maxIntegratedCacheStaleness",
 }
 
 
 def compose_options_from_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     """Pop every recognised kwarg out of ``kwargs`` into a fresh options dict.
 
-    Pure sibling of ``_base.build_options``: handles only the
-    kwarg-name -> option-key translation. Does not stamp timing fields,
-    does not handle ``etag`` / ``match_condition`` (those route through
-    ``_base._get_match_headers``), and does not pull
-    ``read_timeout`` / ``timeout``.
+    Handles only the kwarg-name -> option-key translation. Does not
+    stamp timing fields, does not handle ``etag`` / ``match_condition``
+    (those go through the legacy match-headers helper), and does not
+    pull ``read_timeout`` / ``timeout``.
 
     A pre-existing ``request_options`` dict in ``kwargs`` is consumed
-    as the starting point (matching ``build_options``); kwarg shortcuts
-    override entries from it.
+    as the starting point; kwarg shortcuts override entries from it.
 
     :param kwargs: Caller's ``**kwargs``. **Mutated:** every recognised
         key (and ``request_options``) is popped.

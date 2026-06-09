@@ -8,20 +8,24 @@
 Mirrors the layout of ``tests/create_item/sync/test_create_item_parity.py``.
 The graduated structure (L0..L5) and the verdict grammar (FULL PARITY /
 FUNCTIONAL PARITY, REPORTING GAP / FUNCTIONAL DIVERGENCE / EXCEPTION
-DIVERGENCE) match that file so the docs/_build_parity_audit.py renderer
-can produce a per-op audit doc with the same shape.
+DIVERGENCE) match that file so a contributor reading one in-process
+parity test recognises the shape of every other one.
 
-What this file pins for ``delete_item`` -- grounded in
-``docs/V5/REQUEST_OPTIONS.md`` and the "Running log: per-op deltas"
-table at the bottom of that doc:
+This file is a CI gate, not an audit-doc source. Each test runs both
+backends inside one pytest process via ``BackendComparison`` and
+asserts on the diff. A failure prints the full ``PARITY CALL:`` block
+to the CI log so the contributor sees the evidence directly. The
+per-operation audit doc (the rolling, human-readable artefact) is
+produced separately by the legacy-folder workflow's reporter script.
+
+What this file pins for ``delete_item``:
 
 * **L0 baseline.** Create one item, then delete it by bare id with the
   mandatory ``partition_key``. Both backends must succeed and return
   ``None`` (DELETE has no useful payload).
 * **L1 -- ``item`` is polymorphic.** Pass the read-back document dict
   (which carries ``_self``) instead of the bare id; the SDK resolves
-  it via ``Container._get_document_link``. Documented in the
-  "Picking which existing document an operation acts on" section.
+  it via ``Container._get_document_link``.
 * **L2 -- header-bearing kwargs.** One per test: ``pre_trigger_include``,
   ``post_trigger_include``, ``session_token``, ``initial_headers``,
   ``priority``, ``throughput_bucket``. Each is the L0 shape + exactly
@@ -31,9 +35,8 @@ table at the bottom of that doc:
   ``excluded_locations``, ``read_timeout``, ``connection_timeout`` are
   Python-only or partially-mapped on the rust path and are skipped with
   plain-English reasons (same skip pattern as the create_item suite).
-* **L4 -- ``response_hook`` fires exactly once per backend.** Documented
-  in the "Catching every response without wrapping every call" section
-  of REQUEST_OPTIONS.md.
+* **L4 -- ``response_hook`` fires exactly once per backend.** Captures
+  the response without wrapping every call.
 * **L5 -- typed-exception parity.**
   * Missing id => ``CosmosResourceNotFoundError`` (HTTP 404) on both
     backends.
@@ -175,13 +178,11 @@ def test_L0_baseline_delete_by_id(container_for):
 def test_L1_delete_by_document_dict(container_for):
     """L1: delete by passing the document dict (uses ``_self`` lookup).
 
-    REQUEST_OPTIONS.md "Picking which existing document an operation
-    acts on": ``Container._get_document_link`` accepts either a bare
-    id string or a dict the SDK previously returned (which carries
-    ``_self``). The bare-id path is exercised by L0; this test pins
-    the dict-path so a binding change that drops ``_self`` resolution
-    surfaces here rather than as an obscure ``KeyError`` from inside
-    the SDK.
+    ``Container._get_document_link`` accepts either a bare id string
+    or a dict the SDK previously returned (which carries ``_self``).
+    The bare-id path is exercised by L0; this test pins the dict-path
+    so a binding change that drops ``_self`` resolution surfaces here
+    rather than as an obscure ``KeyError`` from inside the SDK.
     """
     _run_delete(container_for, level="L1",
                 summary="delete by document dict",
@@ -236,9 +237,8 @@ def test_L2_session_token(container_for):
 def test_L2_initial_headers(container_for):
     """L2: L0 + ``initial_headers={'x-ms-test-parity': 'v1'}`` -- caller-injected.
 
-    Per REQUEST_OPTIONS.md "Threading the customer's own correlation
-    id through": the SDK forwards customer-supplied headers verbatim,
-    no interpretation. Both backends must surface the same outcome.
+    The SDK forwards customer-supplied headers verbatim, no
+    interpretation. Both backends must surface the same outcome.
     """
     _run_delete(container_for, level="L2",
                 summary="L0 + initial_headers",
@@ -294,11 +294,22 @@ def test_L3_availability_strategy(container_for):
                 availability_strategy=True).assert_functional_parity()
 
 
-@pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only routing knob); "
-                          "parity assertion is also hard to make end-to-end against a single-region "
-                          "test account. Same skip rationale as create_item's L3_excluded_locations.")
+@pytest.mark.skip(reason="Skipped: binding forwards excluded_locations to the driver's typed "
+                          "ExcludedRegions field, but the parity assertion is hard to make "
+                          "end-to-end against a single-region test account. Same skip rationale "
+                          "as create_item's L3_excluded_locations.")
 def test_L3_excluded_locations(container_for):
-    """L3: L0 + ``excluded_locations=['East US']`` (Python-only routing override)."""
+    """L3: L0 + ``excluded_locations=['East US']``.
+
+    Binding translates this kwarg into the driver's typed
+    ``OperationOptions::excluded_regions`` field (see
+    ``azure_cosmos_rust/src/lib.rs`` -- the ``excludedlocations`` arm
+    builds an ``ExcludedRegions`` from the supplied region names via
+    ``Region::from`` and attaches it through
+    ``OperationOptionsBuilder::with_excluded_regions``). The skip is
+    kept *only* because the parity assertion is hard to make
+    end-to-end against a single-region test account.
+    """
     _run_delete(container_for, level="L3",
                 summary="L0 + excluded_locations",
                 excluded_locations=["East US"]).assert_functional_parity()
@@ -397,10 +408,10 @@ def test_L5_missing_id_raises_typed_not_found(container_for):
 def test_L5_stale_etag_if_not_modified_raises_412(container_for):
     """L5: stale ``etag`` + ``MatchConditions.IfNotModified`` => HTTP 412.
 
-    This is THE delete-vs-create delta REQUEST_OPTIONS.md calls out:
-    on ``delete_item`` the ``etag``+``match_condition`` pair is the
-    optimistic-concurrency primitive (on ``create_item`` it is inert
-    and warns). The contract:
+    This is the delete-vs-create delta: on ``delete_item`` the
+    ``etag``+``match_condition`` pair is the optimistic-concurrency
+    primitive (on ``create_item`` it is inert and warns). The
+    contract:
 
     1. Create the row.
     2. Replace it -- the row's etag on the server changes.
@@ -458,8 +469,8 @@ def test_L5_stale_etag_if_not_modified_raises_412(container_for):
 # ---------------------------------------------------------------------------
 # L5 (sync-only) -- deprecated kwargs whose contract is
 # "ignored AND dropped before the wire, but emit a DeprecationWarning".
-# REQUEST_OPTIONS.md: ``populate_query_metrics`` is sync-only-and-deprecated
-# on ``delete_item``; the async sibling does not expose it at all.
+# ``populate_query_metrics`` is sync-only-and-deprecated on
+# ``delete_item``; the async sibling does not expose it at all.
 # ---------------------------------------------------------------------------
 
 def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
@@ -530,9 +541,9 @@ def test_L5_populate_query_metrics_deprecated_and_not_on_wire(container_for):
     _assert_deprecation_warning_fired(recorded, "populate_query_metrics")
     pqm_header = HttpHeaders.PopulateQueryMetrics  # 'x-ms-documentdb-populatequerymetrics'
     assert pqm_header not in captured_delete_headers, (
-        "REQUEST_OPTIONS.md requires ``populate_query_metrics`` to be DROPPED "
-        "before the helper layer on delete_item -- the wire header {!r} must NOT "
-        "be on the outgoing DELETE. Captured headers: {!r}".format(
+        "``populate_query_metrics`` must be DROPPED before the helper "
+        "layer on delete_item -- the wire header {!r} must NOT be on "
+        "the outgoing DELETE. Captured headers: {!r}".format(
             pqm_header, sorted(captured_delete_headers)
         )
     )
@@ -547,11 +558,10 @@ def test_L5_populate_query_metrics_deprecated_and_not_on_wire(container_for):
 def test_L5_etag_meaningful_not_deprecated(container_for):
     """L5: ``etag`` + ``match_condition`` are meaningful on delete_item.
 
-    Contract from REQUEST_OPTIONS.md "Optimistic concurrency on update
-    / delete": unlike ``create_item`` where these two kwargs are inert
-    and warn, on ``delete_item`` they are the optimistic-concurrency
-    primitive. Passing a *current* etag with ``IfNotModified`` must
-    succeed and must NOT emit any DeprecationWarning.
+    Unlike ``create_item`` where these two kwargs are inert and warn,
+    on ``delete_item`` they are the optimistic-concurrency primitive.
+    Passing a *current* etag with ``IfNotModified`` must succeed and
+    must NOT emit any DeprecationWarning.
     """
     def _do(client):
         cont = client.get_database_client("parity_db").get_container_client(container_for.id)
@@ -580,7 +590,7 @@ def test_L5_etag_meaningful_not_deprecated(container_for):
                  and ("etag" in str(w.message) or "match_condition" in str(w.message))]
     assert not offending, (
         "delete_item must NOT emit DeprecationWarning for etag/match_condition "
-        "(REQUEST_OPTIONS.md: meaningful on delete, inert only on create). "
+        "(meaningful on delete, inert only on create). "
         "Got: {}".format([str(w.message) for w in offending])
     )
     cmp.assert_functional_parity()

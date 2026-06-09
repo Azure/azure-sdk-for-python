@@ -12,9 +12,8 @@ when the SDK's cached rid does not match the live rid the service
 returns a typed error so the SDK can refresh and retry, rather than
 silently writing to the wrong container.
 
-This helper centralises stamping ``Constants.ContainerRID`` (which
-``_base.GetHeaders`` maps to the wire header) so both backends produce
-the same value.
+This helper centralises stamping ``Constants.ContainerRID`` so both
+backends produce the same value.
 """
 from __future__ import annotations
 

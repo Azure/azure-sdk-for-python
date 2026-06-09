@@ -18,10 +18,12 @@ from ..._constants import _Constants as Constants
 from ..._helpers._item_dispatch import (
     build_create_item_request_options,
     build_delete_item_request_options,
+    build_read_item_request_options,
 )
 from ..._helpers._request_prep import (
     build_create_item_prepared,
     build_delete_item_prepared,
+    build_read_item_prepared,
 )
 from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
@@ -29,7 +31,8 @@ from .._backend.base import AsyncCosmosBackend
 
 
 class AsyncItemHelper:
-    """Async per-call orchestrator for ``Container.create_item``.
+    """Async per-call helper for ``Container.create_item``,
+    ``Container.read_item``, and ``Container.delete_item``.
 
     See the sync sibling ``azure.cosmos._helpers.item_helper.ItemHelper``
     for the design rationale and the per-parameter docs.
@@ -72,11 +75,10 @@ class AsyncItemHelper:
     ) -> Any:
         """Run a single async ``create_item`` call end to end."""
 
-        # Snapshot kwargs before the legacy options build drains them — see
-        # the sync sibling for the full rationale. Without this snapshot,
-        # ``pre_trigger_include`` / ``no_response`` / ``priority`` / etc.
-        # never reach the binding because ``_base.build_options`` pops
-        # every recognized key out of the dict.
+        # Snapshot kwargs before the legacy options build pops them.
+        # See the sync sibling for the full rationale. Without this
+        # snapshot, recognised kwargs (pre_trigger_include, no_response,
+        # priority, etc.) never reach the binding.
         kwargs_for_rust_prep = dict(kwargs)
 
         request_options = build_create_item_request_options(
@@ -199,6 +201,57 @@ class AsyncItemHelper:
                 return None
 
         return await self.client_connection.DeleteItem(
+            document_link=document_link,
+            options=request_options,
+            **kwargs,
+        )
+
+    async def read_item(
+        self,
+        *,
+        container_link: str,
+        document_link: str,
+        item_id: str,
+        **kwargs: Any,
+    ) -> Any:
+        """Async sibling of ``ItemHelper.read_item``. See sync docstring."""
+        kwargs_for_rust_prep = dict(kwargs)
+        request_options = build_read_item_request_options(kwargs)
+        partition_key_value = request_options.get("partitionKey", _Empty())
+
+        container_rid: Optional[str] = None
+        try:
+            if self._ensure_container_cached is not None:
+                await self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    await self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                container_rid = rid_value
+                request_options[Constants.ContainerRID] = container_rid
+        except Exception:  # pylint: disable=broad-except
+            container_rid = None
+
+        if self._backend is not None:
+            prepared = build_read_item_prepared(
+                container_link=container_link,
+                item_id=item_id,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = await self._backend.execute(prepared)
+            if backend_response is not None:
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        return await self.client_connection.ReadItem(
             document_link=document_link,
             options=request_options,
             **kwargs,
