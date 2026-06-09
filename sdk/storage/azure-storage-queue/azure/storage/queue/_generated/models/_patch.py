@@ -32,6 +32,9 @@ def _attach_msrest_compat(cls: type) -> type:
         "enable_additional_properties_sending",
         "_infer_class_models",
         "_create_xml_node",
+        "__eq__",
+        "__ne__",
+        "__str__",
     ):
         setattr(cls, _name, vars(_serialization.Model)[_name])
     return cls
