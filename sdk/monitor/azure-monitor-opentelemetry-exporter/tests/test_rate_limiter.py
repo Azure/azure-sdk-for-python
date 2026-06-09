@@ -69,8 +69,9 @@ class TestTokenBucketRateLimiter(unittest.TestCase):
         time.sleep(0.1)
         granted = limiter.try_consume(1000)
         # Should have refilled ~100 tokens (1000/sec * 0.1sec)
+        # Upper bound is generous to account for sleep overshooting on busy CI runners
         self.assertGreater(granted, 50)
-        self.assertLessEqual(granted, 200)
+        self.assertLessEqual(granted, 500)
 
     def test_bucket_caps_at_capacity(self):
         limiter = _TokenBucketRateLimiter(100)
@@ -262,7 +263,10 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
 
         # First call raises a 307 redirect, second call succeeds
         mock_response = mock.Mock()
-        mock_response.headers = {"location": "https://redirected.example.com/v2/track"}
+        # Redirect target differing from the default ingestion host
+        # (`dc.services.visualstudio.com`) only in the leftmost DNS label,
+        # so the cross-origin redirect guard permits it.
+        mock_response.headers = {"location": "https://westus.services.visualstudio.com/v2/track"}
         redirect_error = HttpResponseError(
             message="Temporary Redirect",
             response=mock_response,

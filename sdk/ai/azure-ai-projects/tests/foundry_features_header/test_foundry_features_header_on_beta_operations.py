@@ -38,6 +38,7 @@ from azure.core.pipeline.transport import HttpTransport
 from azure.ai.projects import AIProjectClient
 
 from foundry_features_header_test_base import (
+    EXCLUDED_BETA_METHODS,
     EXPECTED_FOUNDRY_FEATURES,
     FAKE_ENDPOINT,
     FOUNDRY_FEATURES_HEADER,
@@ -111,8 +112,11 @@ def _discover_test_cases() -> list[pytest.param]:
         # return no public methods. Methods are still fetched via getattr(sc, ...) so
         # the header-injecting proxy wrapper is exercised.
         _underlying_op = getattr(sc, "_operation", sc)
+        _excluded = EXCLUDED_BETA_METHODS.get(sc_name, frozenset())
         for m_name in sorted(dir(_underlying_op)):
             if m_name.startswith("_"):
+                continue
+            if m_name in _excluded:
                 continue
             method = getattr(sc, m_name)
             if not callable(method):

@@ -14,7 +14,7 @@ from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import (
     CustomModelFineTuningJob,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     FineTuningJob as RestFineTuningJob,
 )
 

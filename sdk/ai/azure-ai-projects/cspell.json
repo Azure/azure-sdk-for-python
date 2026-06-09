@@ -6,13 +6,17 @@
     "aiservices",
     "ansii",
     "aread",
+    "azcopy",
+    "Azcopy",
     "azureai",
     "azureopenai",
     "balapvbyostoragecanary",
     "closefd",
     "cogsvc",
     "CSDL",
+    "dargilco",
     "dedup",
+    "deser",
     "evals",
     "FineTuning",
     "fspath",
@@ -27,12 +31,16 @@
     "Ministral",
     "mpkjc",
     "quantitive",
+    "recsmplmdl",
     "reraises",
+    "simpleqna",
+    "skoid",
     "Tadmaq",
     "Udbk",
     "UPIA",
+    "Vnext",
     "xhigh",
-    "Vnext"
+    "likert"
   ],
   "ignorePaths": [
     "*.csv",
@@ -40,6 +48,8 @@
     "*.jsonl"
   ],
   "words": [
-    "Pxqzykebv"
+    "Pxqzykebv",
+    "qtumf",
+    "sess"
   ]
 }

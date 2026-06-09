@@ -12,7 +12,8 @@ FILE: async_mcp_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to use the Azure AI Voice Live SDK asynchronously
-    with MCP capabilities. It shows how to define mcp servers, handle mcp call events.
+    with MCP capabilities. It shows how to define mcp servers, handle mcp call events,
+    and connects with API version 2026-04-10 because MCP support requires that service version.
 
 USAGE:
     python async_mcp_sample.py
@@ -753,4 +754,3 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("\n👋 Voice Live MCP shut down.")
-

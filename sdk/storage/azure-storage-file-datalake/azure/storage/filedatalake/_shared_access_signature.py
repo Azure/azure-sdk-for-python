@@ -13,7 +13,6 @@ from azure.storage.blob import generate_blob_sas, generate_container_sas
 from ._shared.models import Services
 from ._shared.shared_access_signature import QueryStringConstants
 
-
 if TYPE_CHECKING:
     from azure.storage.blob import BlobSasPermissions, ContainerSasPermissions
     from azure.storage.blob._shared.models import Services as BlobServices
