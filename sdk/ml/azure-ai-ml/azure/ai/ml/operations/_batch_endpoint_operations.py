@@ -360,10 +360,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             v2_dataset_dictionary = convert_v1_dataset_to_v2(batch_job.output_dataset, batch_job.output_file_name)
             batch_job.output_dataset = None
             batch_job.output_file_name = None
-            request = BatchJobResource(properties=batch_job).serialize()  # pylint: disable=no-member
+            request = BatchJobResource(properties=batch_job).as_dict()
             request["properties"]["outputData"] = v2_dataset_dictionary
         else:
-            request = BatchJobResource(properties=batch_job).serialize()  # pylint: disable=no-member
+            request = BatchJobResource(properties=batch_job).as_dict()
 
         endpoint = self._batch_operation.get(
             resource_group_name=self._resource_group_name,
@@ -399,7 +399,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             raise MlException(message=retry_msg, no_personal_data_message=retry_msg, target=ErrorTarget.BATCH_ENDPOINT)
         validate_response(response)
         batch_job = json.loads(response.text())
-        return BatchJobResource.deserialize(batch_job)  # pylint: disable=no-member
+        return BatchJobResource._deserialize(batch_job, [])
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
