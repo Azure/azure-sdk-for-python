@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Bugs Fixed
+
+- `_derive_resource_url_from_project_endpoint` now matches the project endpoint host by suffix instead of substring, so a look-alike host (e.g. `<name>.services.ai.azure.com.example`) no longer derives an attacker-controlled resource URL.
+
 ## 1.0.0b2 (2026-04-24)
 
 ### Breaking Changes
