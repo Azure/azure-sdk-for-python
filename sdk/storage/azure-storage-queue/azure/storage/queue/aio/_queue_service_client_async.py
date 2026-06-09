@@ -385,12 +385,12 @@ class QueueServiceClient(  # type: ignore [misc]
         """
         props = StorageServiceProperties(
             logging=(
-                analytics_logging._to_generated() if analytics_logging else None
-            ),  # pylint: disable=protected-access
+                analytics_logging._to_generated() if analytics_logging else None  # pylint: disable=protected-access
+            ),
             hour_metrics=hour_metrics._to_generated() if hour_metrics else None,  # pylint: disable=protected-access
             minute_metrics=(
-                minute_metrics._to_generated() if minute_metrics else None
-            ),  # pylint: disable=protected-access
+                minute_metrics._to_generated() if minute_metrics else None  # pylint: disable=protected-access
+            ),
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
         )
         try:
