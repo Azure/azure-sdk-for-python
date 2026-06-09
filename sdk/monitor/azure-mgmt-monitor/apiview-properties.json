@@ -445,12 +445,12 @@
         "azure.mgmt.monitor.aio.operations.MetricsOperations.list_at_subscription_scope_post": "MetricsApi.MetricsOperationGroup.listAtSubscriptionScopePost",
         "azure.mgmt.monitor.operations.MetricsOperations.list": "MetricsApi.MetricsOperationGroup.list",
         "azure.mgmt.monitor.aio.operations.MetricsOperations.list": "MetricsApi.MetricsOperationGroup.list",
-        "azure.mgmt.monitor.operations.DiagnosticSettingsOperations.get": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.get",
-        "azure.mgmt.monitor.aio.operations.DiagnosticSettingsOperations.get": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.get",
-        "azure.mgmt.monitor.operations.DiagnosticSettingsOperations.create_or_update": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.createOrUpdate",
-        "azure.mgmt.monitor.aio.operations.DiagnosticSettingsOperations.create_or_update": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.createOrUpdate",
-        "azure.mgmt.monitor.operations.DiagnosticSettingsOperations.update": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.update",
-        "azure.mgmt.monitor.aio.operations.DiagnosticSettingsOperations.update": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.update",
+        "azure.mgmt.monitor.operations.ServiceDiagnosticSettingsOperations.get": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.get",
+        "azure.mgmt.monitor.aio.operations.ServiceDiagnosticSettingsOperations.get": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.get",
+        "azure.mgmt.monitor.operations.ServiceDiagnosticSettingsOperations.create_or_update": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.createOrUpdate",
+        "azure.mgmt.monitor.aio.operations.ServiceDiagnosticSettingsOperations.create_or_update": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.createOrUpdate",
+        "azure.mgmt.monitor.operations.ServiceDiagnosticSettingsOperations.update": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.update",
+        "azure.mgmt.monitor.aio.operations.ServiceDiagnosticSettingsOperations.update": "ServiceDiagnosticsSettingsApi.ServiceDiagnosticSettingsResources.update",
         "azure.mgmt.monitor.operations.AlertRuleIncidentsOperations.get": "AlertRulesIncidentsApi.AlertRuleIncidentsOperationGroup.get",
         "azure.mgmt.monitor.aio.operations.AlertRuleIncidentsOperations.get": "AlertRulesIncidentsApi.AlertRuleIncidentsOperationGroup.get",
         "azure.mgmt.monitor.operations.AlertRuleIncidentsOperations.list_by_alert_rule": "AlertRulesIncidentsApi.AlertRuleIncidentsOperationGroup.listByAlertRule",
@@ -532,5 +532,5 @@
         "azure.mgmt.monitor.operations.ActionGroupsOperations.begin_reconcile_nsp": "NetworkSecurityPerimeterApi.NetworkSecurityPerimeterConfigurations.reconcileNSP",
         "azure.mgmt.monitor.aio.operations.ActionGroupsOperations.begin_reconcile_nsp": "NetworkSecurityPerimeterApi.NetworkSecurityPerimeterConfigurations.reconcileNSP"
     },
-    "CrossLanguageVersion": "32c8010764cf"
+    "CrossLanguageVersion": "eb84896741bc"
 }

@@ -1810,7 +1810,9 @@ def build_metrics_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_diagnostic_settings_get_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
+def build_service_diagnostic_settings_get_request(  # pylint: disable=name-too-long
+    resource_uri: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1834,7 +1836,7 @@ def build_diagnostic_settings_get_request(resource_uri: str, **kwargs: Any) -> H
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_diagnostic_settings_create_or_update_request(  # pylint: disable=name-too-long
+def build_service_diagnostic_settings_create_or_update_request(  # pylint: disable=name-too-long
     resource_uri: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1863,7 +1865,9 @@ def build_diagnostic_settings_create_or_update_request(  # pylint: disable=name-
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_diagnostic_settings_update_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
+def build_service_diagnostic_settings_update_request(  # pylint: disable=name-too-long
+    resource_uri: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -10172,14 +10176,14 @@ class MetricsOperations:
         return deserialized  # type: ignore
 
 
-class DiagnosticSettingsOperations:
+class ServiceDiagnosticSettingsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.monitor.MonitorManagementClient`'s
-        :attr:`diagnostic_settings` attribute.
+        :attr:`service_diagnostic_settings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -10216,7 +10220,7 @@ class DiagnosticSettingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[_models.ServiceDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
-        _request = build_diagnostic_settings_get_request(
+        _request = build_service_diagnostic_settings_get_request(
             resource_uri=resource_uri,
             api_version=api_version,
             headers=_headers,
@@ -10370,7 +10374,7 @@ class DiagnosticSettingsOperations:
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_diagnostic_settings_create_or_update_request(
+        _request = build_service_diagnostic_settings_create_or_update_request(
             resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,
@@ -10537,7 +10541,7 @@ class DiagnosticSettingsOperations:
         else:
             _content = json.dumps(service_diagnostic_settings_resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_diagnostic_settings_update_request(
+        _request = build_service_diagnostic_settings_update_request(
             resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,

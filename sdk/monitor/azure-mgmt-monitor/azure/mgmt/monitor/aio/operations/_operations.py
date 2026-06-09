@@ -87,9 +87,6 @@ from ...operations._operations import (
     build_data_collection_rules_list_by_resource_group_request,
     build_data_collection_rules_list_by_subscription_request,
     build_data_collection_rules_update_request,
-    build_diagnostic_settings_create_or_update_request,
-    build_diagnostic_settings_get_request,
-    build_diagnostic_settings_update_request,
     build_event_categories_list_request,
     build_log_profiles_create_or_update_request,
     build_log_profiles_delete_request,
@@ -137,6 +134,9 @@ from ...operations._operations import (
     build_scheduled_query_rules_list_by_resource_group_request,
     build_scheduled_query_rules_list_by_subscription_request,
     build_scheduled_query_rules_update_request,
+    build_service_diagnostic_settings_create_or_update_request,
+    build_service_diagnostic_settings_get_request,
+    build_service_diagnostic_settings_update_request,
     build_tenant_activity_logs_list_request,
 )
 from .._configuration import MonitorManagementClientConfiguration
@@ -7306,14 +7306,14 @@ class MetricsOperations:
         return deserialized  # type: ignore
 
 
-class DiagnosticSettingsOperations:
+class ServiceDiagnosticSettingsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.monitor.aio.MonitorManagementClient`'s
-        :attr:`diagnostic_settings` attribute.
+        :attr:`service_diagnostic_settings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -7350,7 +7350,7 @@ class DiagnosticSettingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[_models.ServiceDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
-        _request = build_diagnostic_settings_get_request(
+        _request = build_service_diagnostic_settings_get_request(
             resource_uri=resource_uri,
             api_version=api_version,
             headers=_headers,
@@ -7504,7 +7504,7 @@ class DiagnosticSettingsOperations:
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_diagnostic_settings_create_or_update_request(
+        _request = build_service_diagnostic_settings_create_or_update_request(
             resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,
@@ -7671,7 +7671,7 @@ class DiagnosticSettingsOperations:
         else:
             _content = json.dumps(service_diagnostic_settings_resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_diagnostic_settings_update_request(
+        _request = build_service_diagnostic_settings_update_request(
             resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,

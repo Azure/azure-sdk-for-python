@@ -29,7 +29,6 @@ from .operations import (
     DataCollectionEndpointsOperations,
     DataCollectionRuleAssociationsOperations,
     DataCollectionRulesOperations,
-    DiagnosticSettingsOperations,
     EventCategoriesOperations,
     LogProfilesOperations,
     MetricAlertsOperations,
@@ -45,6 +44,7 @@ from .operations import (
     PrivateLinkScopesOperations,
     ScheduledQueryRuleOperations,
     ScheduledQueryRulesOperations,
+    ServiceDiagnosticSettingsOperations,
     TenantActivityLogsOperations,
 )
 
@@ -101,8 +101,9 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     :vartype metric_namespaces: azure.mgmt.monitor.aio.operations.MetricNamespacesOperations
     :ivar metrics: MetricsOperations operations
     :vartype metrics: azure.mgmt.monitor.aio.operations.MetricsOperations
-    :ivar diagnostic_settings: DiagnosticSettingsOperations operations
-    :vartype diagnostic_settings: azure.mgmt.monitor.aio.operations.DiagnosticSettingsOperations
+    :ivar service_diagnostic_settings: ServiceDiagnosticSettingsOperations operations
+    :vartype service_diagnostic_settings:
+     azure.mgmt.monitor.aio.operations.ServiceDiagnosticSettingsOperations
     :ivar alert_rule_incidents: AlertRuleIncidentsOperations operations
     :vartype alert_rule_incidents: azure.mgmt.monitor.aio.operations.AlertRuleIncidentsOperations
     :ivar log_profiles: LogProfilesOperations operations
@@ -228,7 +229,7 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.metrics = MetricsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.diagnostic_settings = DiagnosticSettingsOperations(
+        self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.alert_rule_incidents = AlertRuleIncidentsOperations(
