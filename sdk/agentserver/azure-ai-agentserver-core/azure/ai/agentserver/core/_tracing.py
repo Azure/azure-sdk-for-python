@@ -33,7 +33,6 @@ tracing exporters, and span operations:
 OpenTelemetry is a required dependency — these functions always create
 real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
-import asyncio
 import logging
 import os
 from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
