@@ -112,7 +112,9 @@ class apistub(Check):
             )
             logger.info(f"Processing {package_name} for apistub check")
 
-            if getattr(args, "install_deps", False):
+            install_deps = getattr(args, "install_deps", False) or getattr(args, "isolate", False)
+
+            if install_deps:
                 # install dependencies
                 self.install_dev_reqs(executable, args, package_dir)
 
@@ -143,7 +145,7 @@ class apistub(Check):
                     python_executable=executable,
                 )
 
-            if getattr(args, "install_deps", False):
+            if install_deps:
                 self.pip_freeze(executable)
 
             pkg_path = get_package_wheel_path(package_dir)

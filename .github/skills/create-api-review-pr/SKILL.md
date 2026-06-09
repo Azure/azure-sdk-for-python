@@ -18,6 +18,7 @@ If the user asks to create an API review PR for a new package, explain that new 
 3. The latest Node.js LTS must be installed.
 4. API.md workflow Node dependencies must be installed (`npm ci` from `scripts/api_md_workflow`).
 5. `azpysdk` must be installed (`pip install -e ./eng/tools/azure-sdk-tools`).
+6. ApiView stub generator dependencies must be installed (`pip install -r ./eng/apiview_reqs.txt`).
 
 ## Information to Gather
 
