@@ -124,39 +124,21 @@ your handler and branch on it.
   does not impose a checkpoint schema. `ctx.metadata` is a
   small-watermark store, not a bulk-data store.
 
-### Attachments & input promotion (spec 018)
+### Input size limits
 
-The hosted task store has two slots: `payload` (capped at 1 MB,
-shared by user metadata + framework state + the function input) and
-`attachments` (up to 20 entries, each up to 2 MB, decoupled from the
-payload budget).
+| Limit | Value | Raised as |
+|---|---|---|
+| Per-input maximum size | **2 MB** (after JSON serialization) — applies to both the function input and each steering input | `InputTooLarge` from `Task.start(...)`, pre-network |
+| Maximum queued steering inputs | **9** concurrent | `SteeringQueueFull` from `Task.start(...)` |
 
-To support **per-input payloads up to 2 MB** without crowding the
-shared 1 MB payload budget, the framework promotes large inputs into
-attachments automatically:
+These limits apply to any value you pass as the `input` argument to
+`Task.start(...)`. The framework handles persistence transparently —
+you don't need to do anything special to use the full 2 MB ceiling,
+whether the input is small or large.
 
-| Input class | Stays inline if ≤ | Promoted to attachment if > | Hard ceiling |
-|---|---|---|---|
-| Function input | 200 KiB | 200 KiB | 2 MB (raises `InputTooLarge`) |
-| Steering input | 20 KiB | 20 KiB | 2 MB (raises `InputTooLarge`) |
-
-When promoted, the actual value lives in
-`task.attachments[<key>]` (key is `_input` for the function input,
-`_steering_input_<seq>` for each queued steering input, where
-`<seq>` is a monotonically increasing counter — never reused). The
-payload slot becomes a small **ref dict** carrying the attachment key
-+ a `sha256:<hex>` content hash. Handlers see `ctx.input` as the
-deserialized value either way — promotion is invisible.
-
-The steering queue is hard-capped at **9** entries. The 10th
-`Task.start(...)` against an in-flight task raises
-`SteeringQueueFull`. Combined with the 1 reserved slot for the
-function input, the framework uses at most 10 of the 20 attachment
-slots; the other 10 remain free for future features.
-
-For the authoritative wire-shape contract, list-bandwidth analysis,
-conformance items, and design rationale, see
-[`sdk/agentserver/specs/task-attachments.md`](../../../specs/task-attachments.md).
+If you have a use case that genuinely needs > 2 MB per input,
+externalize it (write to blob storage, pass a reference) and treat
+the reference as your input.
 
 ---
 

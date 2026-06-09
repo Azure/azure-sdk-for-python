@@ -192,20 +192,23 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
 
 
 class InputTooLarge(ValueError):
-    """Raised when an input's serialized size exceeds the per-attachment cap.
+    """Raised when an input's serialized size exceeds the per-input cap.
 
-    The hosted task store caps a single attachment value at 2 MB. The
-    framework promotes inputs exceeding the inline-payload threshold
-    (200 KiB for function inputs, 20 KiB for steering inputs) into
-    attachments; any input whose serialized size exceeds the
-    per-attachment cap cannot be stored and is rejected client-side
-    before any HTTP call.
+    The framework supports per-input payloads up to 2 MB (after JSON
+    serialization), for both the initial function input and each
+    queued steering input. An input whose serialized size exceeds
+    this cap is rejected client-side before any network call, with
+    this exception.
+
+    If you have a use case that needs > 2 MB per input, externalize
+    it (write to blob storage, pass a reference) and treat the
+    reference as your input.
 
     :param task_id: The task identifier this input was bound for.
     :type task_id: str
     :param size_bytes: The observed serialized size of the input.
     :type size_bytes: int
-    :param max_bytes: The per-attachment cap (default 2 MB).
+    :param max_bytes: The per-input cap (2 MB).
     :type max_bytes: int
     """
 
@@ -216,8 +219,9 @@ class InputTooLarge(ValueError):
         self.size_bytes = size_bytes
         self.max_bytes = max_bytes
         super().__init__(
-            f"Input for task {task_id!r} is too large to persist: "
-            f"{size_bytes} bytes > {max_bytes} byte per-attachment cap."
+            f"Input for task {task_id!r} exceeds the per-input cap: "
+            f"{size_bytes} bytes > {max_bytes} byte cap. Externalize the "
+            f"value (e.g., to blob storage) and pass a reference instead."
         )
 
 

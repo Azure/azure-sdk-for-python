@@ -4,40 +4,23 @@
 
 ### Features Added
 
-- **Task attachments — per-input payloads up to 2 MB** (spec 018).
-  The framework now uses the hosted task store's new `attachments`
-  companion to lift the practical per-input cap from "whatever fits in
-  payload alongside everything else" to **2 MB per input**, for both
-  the initial function input and each queued steering input.
+- **Per-input payloads up to 2 MB** for both the initial function
+  input and each queued steering input. Pass arbitrarily large input
+  values to `Task.start(...)` (up to the 2 MB ceiling) and the
+  framework handles persistence transparently.
 
-  Promotion is automatic and invisible to handlers:
+  New limits + exceptions:
 
-  | Input class | Stays inline if ≤ | Promoted attachment key |
+  | Limit | Value | Exception |
   |---|---|---|
-  | Function input | 200 KiB | `_input` |
-  | Steering input | 20 KiB | `_steering_input_<seq>` |
+  | Per-input maximum size (serialized JSON) | **2 MB** | `InputTooLarge` |
+  | Maximum queued steering inputs | **9** | `SteeringQueueFull` |
 
-  When promoted, the payload slot becomes a compact ref dict
-  (`{"__attachment_ref__": {"key": ..., "hash": "sha256:..."}}`) and
-  the actual value lives in `task.attachments[<key>]`. Handlers see
-  `ctx.input` as the deserialized value either way.
+  All limits are enforced client-side **before** any network call, so
+  failures surface as typed Python exceptions, not opaque HTTP errors.
 
-  Each promote / drain / suspend goes in a **single atomic PATCH**
-  (payload + attachments + lease all co-written). The steering queue
-  uses a monotonic seq counter that's never reused — drains do NOT
-  trigger re-uploads of remaining queue entries.
-
-  Other knobs:
-  - Steering queue hard cap: **9** (raises `SteeringQueueFull(9)`).
-  - Per-input hard ceiling: 2 MB (raises `InputTooLarge`).
-  - Per-task attachment hard ceiling: 20 (raises
-    `AttachmentLimitExceeded`); framework only ever uses 10 of those
-    slots (1 input + 9 steering), leaving 10 for future features.
-  - Defense-in-depth orphan cleanup at startup-scan.
-
-  See `sdk/agentserver/specs/task-attachments.md` for the
-  authoritative wire contract, list-bandwidth analysis, and the
-  full set of conformance items.
+  Public API surface unchanged — handlers see `ctx.input` as the
+  deserialized value regardless of input size.
 
 - **Unified streaming primitive** — new `azure.ai.agentserver.core.streaming`
   subpackage exposing a `streams` registry singleton + `EventStream`
