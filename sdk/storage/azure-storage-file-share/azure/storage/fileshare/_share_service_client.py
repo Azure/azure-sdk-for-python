@@ -325,10 +325,10 @@ class ShareServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop("timeout", None)
         props = StorageServiceProperties(
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            hour_metrics=hour_metrics._to_generated() if hour_metrics else None,  # pylint: disable=protected-access
+            minute_metrics=minute_metrics._to_generated() if minute_metrics else None,  # pylint: disable=protected-access
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
-            protocol=protocol,
+            protocol=protocol._to_generated() if protocol else None,  # pylint: disable=protected-access
         )
         try:
             self._client.service.set_properties(

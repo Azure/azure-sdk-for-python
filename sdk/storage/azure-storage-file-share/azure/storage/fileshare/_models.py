@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -7,8 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes, super-init-not-called, too-many-lines
 
 from enum import Enum
-import xml.etree.ElementTree as ET
-from typing import Any, Callable, Dict, List, Literal, Mapping, Optional, Union, overload, TYPE_CHECKING
+from typing import Any, Callable, Dict, List, Literal, Optional, Union, TYPE_CHECKING
 from urllib.parse import unquote
 from typing_extensions import Self
 
@@ -16,8 +14,8 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 
+from ._generated.models._patch import _attach_msrest_compat
 from ._generated._utils.serialization import Deserializer
-from ._generated.models._patch import _ModelBackCompatMixin, as_dict as _backcompat_as_dict
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import DirectoryItem
@@ -31,6 +29,7 @@ from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedS
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
 from ._shared.models import DictMixin, get_enum_value
+from ._shared.request_handlers import serialize_iso
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
 if TYPE_CHECKING:
@@ -43,8 +42,8 @@ def _wrap_item(item):
         return {"name": item.name, "is_directory": True}
     return {"name": item.name, "size": item.properties.content_length, "is_directory": False}
 
-
-class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
+@_attach_msrest_compat
+class RetentionPolicy():
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -63,62 +62,35 @@ class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted."""
 
-    @overload
-    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None: ...
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+    }
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        if args and isinstance(args[0], (ET.Element, dict)):
-            super().__init__(*args, **kwargs)
-            return
-        enabled = args[0] if args else kwargs.get("enabled", False)
-        days = args[1] if len(args) > 1 else kwargs.get("days", None)
-        if enabled and (days is None):
+    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
+        self.enabled = enabled
+        self.days = days
+        if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
-        super().__init__(enabled=enabled, days=days)
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
-        # Handle XML Element by converting to generated model first
-        if isinstance(generated, ET.Element):
-            generated = GeneratedRetentionPolicy(generated)  # type: ignore[assignment,call-overload]
         return cls(
             enabled=generated.enabled,
             days=generated.days,
         )
 
+    def _to_generated(self):
+        return GeneratedRetentionPolicy(
+            enabled=self.enabled,
+            days=self.days,
+        )
 
-class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
+
+@_attach_msrest_compat
+class Metrics():
     """A summary of request statistics grouped by API in hour or minute aggregates
     for files.
 
@@ -143,63 +115,23 @@ class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        version: str = "1.0",
-        enabled: bool = False,
-        include_apis: Optional[bool] = None,
-        retention_policy: Optional[RetentionPolicy] = None,
-    ) -> None: ...
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        if args and isinstance(args[0], (ET.Element, dict)):
-            super().__init__(*args, **kwargs)
-            return
-        super().__init__(
-            version=kwargs.get("version", "1.0"),
-            enabled=kwargs.get("enabled", False),
-            include_apis=kwargs.get("include_apis"),
-            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
-        )
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+    def __init__(self, **kwargs: Any) -> None:
+        self.version = kwargs.get("version", "1.0")
+        self.enabled = kwargs.get("enabled", False)
+        self.include_apis = kwargs.get("include_apis")  # type: ignore [assignment]
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
-        # Handle XML Element by converting to generated model first
-        if isinstance(generated, ET.Element):
-            generated = GeneratedMetrics(generated)  # type: ignore[assignment,call-overload]
         return cls(
             version=generated.version,
             enabled=generated.enabled,
@@ -209,8 +141,19 @@ class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
             ),
         )
 
+    def _to_generated(self):
+        return GeneratedMetrics(
+            version=self.version,
+            enabled=self.enabled,
+            include_apis=self.include_apis,
+            retention_policy=self.retention_policy._to_generated()  # pylint: disable=protected-access
+            if self.retention_policy
+            else None,
+        )
 
-class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
+
+@_attach_msrest_compat
+class CorsRule():
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -255,59 +198,20 @@ class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
-    @overload
-    def __init__(
-        self,
-        allowed_origins: List[str],
-        allowed_methods: List[str],
-        *,
-        allowed_headers: Optional[List[str]] = None,
-        exposed_headers: Optional[List[str]] = None,
-        max_age_in_seconds: int = 0,
-    ) -> None: ...
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        if args and isinstance(args[0], (ET.Element, dict)):
-            super().__init__(*args, **kwargs)
-            return
-        allowed_origins = args[0] if args else kwargs.pop("allowed_origins")
-        allowed_methods = args[1] if len(args) > 1 else kwargs.pop("allowed_methods")
-        super().__init__(
-            allowed_origins=",".join(allowed_origins),
-            allowed_methods=",".join(allowed_methods),
-            allowed_headers=",".join(kwargs.get("allowed_headers", [])),
-            exposed_headers=",".join(kwargs.get("exposed_headers", [])),
-            max_age_in_seconds=kwargs.get("max_age_in_seconds", 0),
-        )
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+        self.allowed_origins = ",".join(allowed_origins)
+        self.allowed_methods = ",".join(allowed_methods)
+        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
+        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -329,9 +233,6 @@ class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
 
     @classmethod
     def _from_generated(cls, generated):
-        # Handle XML Element by converting to generated model first
-        if isinstance(generated, ET.Element):
-            generated = GeneratedCorsRule(generated)  # type: ignore[assignment,call-overload]
         return cls(
             [generated.allowed_origins],
             [generated.allowed_methods],
@@ -340,8 +241,8 @@ class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
             max_age_in_seconds=generated.max_age_in_seconds,
         )
 
-
-class SmbMultichannel(GeneratedSmbMultichannel, _ModelBackCompatMixin):
+@_attach_msrest_compat
+class SmbMultichannel():
     """Settings for Multichannel.
 
     :keyword bool enabled: If SMB Multichannel is enabled.
@@ -350,43 +251,19 @@ class SmbMultichannel(GeneratedSmbMultichannel, _ModelBackCompatMixin):
     enabled: bool
     """If SMB Multichannel is enabled."""
 
-    @overload
-    def __init__(self, *, enabled: bool) -> None: ...
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+    }
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+        self.enabled = enabled
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+    def _to_generated(self):
+        return GeneratedSmbMultichannel(enabled=self.enabled)
 
 
-class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit, _ModelBackCompatMixin):
+@_attach_msrest_compat
+class SmbEncryptionInTransit():
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -395,43 +272,19 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit, _ModelBackCompatMi
     required: bool
     """If encryption in transit is enabled."""
 
-    @overload
-    def __init__(self, *, required: bool) -> None: ...
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+        self.required = required
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+    def _to_generated(self):
+        return GeneratedSmbEncryptionInTransit(required=self.required)
 
 
-class ShareSmbSettings(GeneratedShareSmbSettings, _ModelBackCompatMixin):
+@_attach_msrest_compat
+class ShareSmbSettings():
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
@@ -443,51 +296,34 @@ class ShareSmbSettings(GeneratedShareSmbSettings, _ModelBackCompatMixin):
     encryption_in_transit: Optional[SmbEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    @overload
+    _attribute_map = {
+        "multichannel": {"key": "Multichannel", "type": "SmbMultichannel"},
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "SmbEncryptionInTransit"},
+    }
+
     def __init__(
         self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
-    ) -> None: ...
+        **kwargs: Any
+    ) -> None:
+        self.multichannel = multichannel
+        self.encryption_in_transit = encryption_in_transit
+        if self.multichannel is None and self.encryption_in_transit is None:
+            raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        if not (args and isinstance(args[0], (ET.Element, dict))):
-            if self.multichannel is None and self.encryption_in_transit is None:
-                raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+    def _to_generated(self):
+        return GeneratedShareSmbSettings(
+            multichannel=self.multichannel._to_generated() if self.multichannel else None,  # pylint: disable=protected-access
+            encryption_in_transit=self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
+            if self.encryption_in_transit
+            else None,
+        )
 
 
-class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit, _ModelBackCompatMixin):
+@_attach_msrest_compat
+class NfsEncryptionInTransit():
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -496,43 +332,19 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit, _ModelBackCompatMi
     required: bool
     """If encryption in transit is enabled."""
 
-    @overload
-    def __init__(self, *, required: bool) -> None: ...
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+        self.required = required
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+    def _to_generated(self):
+        return GeneratedNfsEncryptionInTransit(required=self.required)
 
 
-class ShareNfsSettings(GeneratedShareNfsSettings, _ModelBackCompatMixin):
+@_attach_msrest_compat
+class ShareNfsSettings():
     """Settings for the NFS protocol.
 
     :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
@@ -541,43 +353,23 @@ class ShareNfsSettings(GeneratedShareNfsSettings, _ModelBackCompatMixin):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-    @overload
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit) -> None: ...
+    _attribute_map = {
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "NfsEncryptionInTransit"},
+    }
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
+    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+        self.encryption_in_transit = encryption_in_transit
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+    def _to_generated(self):
+        return GeneratedShareNfsSettings(
+            encryption_in_transit=self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
+            if self.encryption_in_transit
+            else None,
+        )
 
 
-class ShareProtocolSettings(GeneratedShareProtocolSettings, _ModelBackCompatMixin):
+@_attach_msrest_compat
+class ShareProtocolSettings():
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
     Contains protocol properties of the share service such as the SMB and NFS setting of the share service.
@@ -591,55 +383,28 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings, _ModelBackCompatMixi
     nfs: Optional[ShareNfsSettings]
     """Sets the NFS settings."""
 
-    @overload
+    _attribute_map = {
+        "smb": {"key": "SMB", "type": "ShareSmbSettings"},
+        "nfs": {"key": "NFS", "type": "ShareNfsSettings"},
+    }
+
     def __init__(
-        self,
-        *,
-        smb: Optional[ShareSmbSettings] = None,
-        nfs: Optional[ShareNfsSettings] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        if not (args and isinstance(args[0], (ET.Element, dict))):
-            if self.smb is None and self.nfs is None:
-                raise ValueError("The value 'smb' or 'nfs' must be specified.")
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
+    ) -> None:
+        self.smb = smb
+        self.nfs = nfs
+        if self.smb is None and self.nfs is None:
+            raise ValueError("The value 'smb' or 'nfs' must be specified.")
 
     @classmethod
     def _from_generated(cls, generated):
-        # Handle XML Element by converting to generated model first
-        if isinstance(generated, ET.Element):
-            generated = GeneratedShareProtocolSettings(generated)  # type: ignore[assignment,call-overload]
-        return cls(smb=generated.smb, nfs=generated.nfs)  # type: ignore[arg-type]
+        return cls(smb=generated.smb, nfs=generated.nfs)
+
+    def _to_generated(self):
+        return GeneratedShareProtocolSettings(
+            smb=self.smb._to_generated() if self.smb else None,  # pylint: disable=protected-access
+            nfs=self.nfs._to_generated() if self.nfs else None,  # pylint: disable=protected-access
+        )
 
 
 class ShareSasPermissions:
@@ -718,8 +483,8 @@ class ShareSasPermissions:
 
         return parsed
 
-
-class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
+@_attach_msrest_compat
+class AccessPolicy():
     """Access Policy class used by the set and get acl methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
@@ -771,54 +536,31 @@ class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
 
-    @overload
+    _attribute_map = {
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
+    }
+
     def __init__(
         self,
         permission: Optional[Union[ShareSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
-    ) -> None: ...
+    ) -> None:
+        self.start = start
+        self.expiry = expiry
+        self.permission = permission
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        if args and isinstance(args[0], (ET.Element, dict)):
-            super().__init__(*args, **kwargs)
-            return
-        permission = args[0] if args else kwargs.get("permission")
-        expiry = args[1] if len(args) > 1 else kwargs.get("expiry")
-        start = args[2] if len(args) > 2 else kwargs.get("start")
-        super().__init__()
-        self.start = start  # type: ignore [assignment]
-        self.expiry = expiry  # type: ignore [assignment]
-        self.permission = permission  # type: ignore [assignment]
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        **kwargs: Any,
-    ) -> Dict[str, Any]:
-        """Return a dict representation of the model.
-
-        :param bool keep_readonly: Whether to include readonly fields.
-        :param key_transformer: A callable to transform each key serialized
-         from the model.
-        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
-        :return: A dictionary representation of this model.
-        :rtype: Dict[str, Any]
-        """
-        return _backcompat_as_dict(
-            self,
-            keep_readonly=keep_readonly,
-            key_transformer=key_transformer,
-            **kwargs,
-        )  # type: ignore[return-value]
+    def _to_generated(self) -> GenAccessPolicy:
+        permission = self.permission
+        if isinstance(permission, ShareSasPermissions):
+            permission = str(permission)
+        return GenAccessPolicy(
+            start=serialize_iso(self.start),
+            expiry=serialize_iso(self.expiry),
+            permission=permission,
+        )
 
 
 class LeaseProperties(DictMixin):
@@ -892,7 +634,7 @@ class ContentSettings(DictMixin):
         content_disposition: Optional[str] = None,
         cache_control: Optional[str] = None,
         content_md5: Optional[bytearray] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> None:
         self.content_type = content_type or kwargs.get("Content-Type")
         self.content_encoding = content_encoding or kwargs.get("Content-Encoding")
@@ -1477,7 +1219,6 @@ class DirectoryPropertiesPaged(PageIterator):
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        # pylint: disable=protected-access
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.marker
@@ -1757,9 +1498,6 @@ class FileSasPermissions:
 
 
 def service_properties_deserialize(generated: GeneratedStorageServiceProperties) -> Dict[str, Any]:
-    # Handle XML Element by converting to generated model first
-    if isinstance(generated, ET.Element):
-        generated = GeneratedStorageServiceProperties(generated)  # type: ignore[assignment,call-overload]
     return {
         "hour_metrics": Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         "minute_metrics": Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access

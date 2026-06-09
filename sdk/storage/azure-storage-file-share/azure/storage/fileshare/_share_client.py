@@ -846,10 +846,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+            identifiers.append(SignedIdentifier(id=key, access_policy=value._to_generated() if value else None))
         try:
             return cast(
                 Dict[str, Any],

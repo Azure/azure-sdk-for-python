@@ -25,7 +25,7 @@ from .._share_client_helpers import _create_permission_for_share_options, _forma
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
-from .._shared.request_handlers import add_metadata_headers, serialize_iso
+from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
 from .._serialize import get_access_conditions, get_api_version
 from ..aio._lease_async import ShareLeaseClient
@@ -848,10 +848,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+            identifiers.append(SignedIdentifier(id=key, access_policy=value._to_generated() if value else None))
         try:
             return cast(
                 Dict[str, Any],
