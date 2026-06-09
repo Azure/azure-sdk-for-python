@@ -36,6 +36,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_cassandra_clusters_create_update_request,
     build_cassandra_clusters_deallocate_request,
@@ -270,6 +271,19 @@ from ...operations._operations import (
     build_service_delete_request,
     build_service_get_request,
     build_service_list_request,
+    build_soft_deleted_database_accounts_get_request,
+    build_soft_deleted_database_accounts_list_by_location_request,
+    build_soft_deleted_database_accounts_list_by_resource_group_and_location_request,
+    build_soft_deleted_database_accounts_purge_request,
+    build_soft_deleted_database_accounts_restore_request,
+    build_soft_deleted_sql_containers_get_request,
+    build_soft_deleted_sql_containers_list_request,
+    build_soft_deleted_sql_containers_purge_request,
+    build_soft_deleted_sql_containers_restore_request,
+    build_soft_deleted_sql_databases_get_request,
+    build_soft_deleted_sql_databases_list_request,
+    build_soft_deleted_sql_databases_purge_request,
+    build_soft_deleted_sql_databases_restore_request,
     build_sql_resources_create_update_client_encryption_key_request,
     build_sql_resources_create_update_sql_container_request,
     build_sql_resources_create_update_sql_database_request,
@@ -416,7 +430,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1210,7 +1227,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1301,7 +1321,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2630,7 +2653,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2734,7 +2760,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2833,7 +2862,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2949,6 +2981,20 @@ class CopyJobsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3114,6 +3160,21 @@ class CopyJobsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def create(
         self,
         resource_group_name: str,
@@ -3207,6 +3268,13 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_by_database_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.CopyJobGetResults"]:
@@ -3263,7 +3331,10 @@ class CopyJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3306,6 +3377,20 @@ class CopyJobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def pause(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3381,6 +3466,20 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def resume(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3456,6 +3555,20 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def cancel(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3531,6 +3644,20 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def complete(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3624,6 +3751,20 @@ class GraphResourcesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get_graph(
         self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
     ) -> _models.GraphResourceGetResults:
@@ -3699,6 +3840,21 @@ class GraphResourcesOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _create_update_graph_initial(
         self,
         resource_group_name: str,
@@ -3877,6 +4033,21 @@ class GraphResourcesOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_create_update_graph(
         self,
         resource_group_name: str,
@@ -3956,6 +4127,19 @@ class GraphResourcesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _delete_graph_resource_initial(
         self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -4021,6 +4205,19 @@ class GraphResourcesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_delete_graph_resource(
         self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -4083,6 +4280,13 @@ class GraphResourcesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_graphs(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.GraphResourceGetResults"]:
@@ -4140,7 +4344,10 @@ class GraphResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4718,7 +4925,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4760,6 +4970,21 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_database_partition_merge_initial(
         self,
         resource_group_name: str,
@@ -4937,6 +5162,21 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_database_partition_merge(
         self,
         resource_group_name: str,
@@ -5623,6 +5863,21 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_database_retrieve_throughput_distribution_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -5803,6 +6058,21 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_database_retrieve_throughput_distribution(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -5884,6 +6154,21 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_database_redistribute_throughput_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -6065,6 +6350,21 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_database_redistribute_throughput(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -6777,6 +7077,22 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_container_retrieve_throughput_distribution_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -6967,6 +7283,22 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_container_retrieve_throughput_distribution(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -7052,6 +7384,22 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_container_redistribute_throughput_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -7243,6 +7591,22 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_container_redistribute_throughput(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -7758,7 +8122,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8342,7 +8709,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8384,6 +8754,22 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _list_sql_container_partition_merge_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -8571,6 +8957,22 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_list_sql_container_partition_merge(
         self,
         resource_group_name: str,
@@ -8890,14 +9292,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.BackupInformation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -9517,7 +9915,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10153,7 +10554,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10780,7 +11184,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11343,7 +11750,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11906,7 +12316,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12573,6 +12986,21 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_database_retrieve_throughput_distribution_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -12753,6 +13181,21 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_database_retrieve_throughput_distribution(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -12834,6 +13277,21 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_database_redistribute_throughput_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -13015,6 +13473,21 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_database_redistribute_throughput(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -13453,6 +13926,22 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_container_retrieve_throughput_distribution_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -13644,6 +14133,22 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_container_retrieve_throughput_distribution(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -13729,6 +14234,22 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_container_redistribute_throughput_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -13921,6 +14442,22 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_container_redistribute_throughput(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -14809,7 +15346,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14851,6 +15391,21 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_database_partition_merge_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -15028,6 +15583,21 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_database_partition_merge(
         self,
         resource_group_name: str,
@@ -15658,7 +16228,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15700,6 +16273,22 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _list_mongo_db_collection_partition_merge_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -15888,6 +16477,22 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_list_mongo_db_collection_partition_merge(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
@@ -16207,14 +16812,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.BackupInformation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -16762,7 +17363,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17326,7 +17930,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18507,7 +19114,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18770,14 +19380,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.BackupInformation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -19325,7 +19931,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19890,7 +20499,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22350,7 +22962,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22939,7 +23554,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23524,7 +24142,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24093,7 +24714,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24662,7 +25286,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -26489,7 +27116,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27073,7 +27703,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27351,14 +27984,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.BackupInformation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -27907,7 +28536,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28472,7 +29104,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28533,6 +29168,20 @@ class DataTransferJobsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -28702,6 +29351,21 @@ class DataTransferJobsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def create(
         self,
         resource_group_name: str,
@@ -28796,6 +29460,13 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_by_database_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.DataTransferJobGetResults"]:
@@ -28853,7 +29524,10 @@ class DataTransferJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28896,6 +29570,20 @@ class DataTransferJobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def pause(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -28972,6 +29660,20 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def resume(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -29048,6 +29750,20 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def cancel(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -29124,6 +29840,20 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def complete(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -29218,6 +29948,13 @@ class GarnetClustersOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> _models.GarnetClusterResource:
         """Get the properties of a Garnet cache cluster.
 
@@ -29287,6 +30024,20 @@ class GarnetClustersOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _create_update_initial(
         self,
         resource_group_name: str,
@@ -29450,6 +30201,20 @@ class GarnetClustersOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_create_update(
         self,
         resource_group_name: str,
@@ -29525,6 +30290,20 @@ class GarnetClustersOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _update_initial(
         self,
         resource_group_name: str,
@@ -29688,6 +30467,20 @@ class GarnetClustersOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_update(
         self,
         resource_group_name: str,
@@ -29762,6 +30555,13 @@ class GarnetClustersOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _delete_initial(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -29825,6 +30625,13 @@ class GarnetClustersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_delete(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes a Garnet cluster.
 
@@ -29882,6 +30689,11 @@ class GarnetClustersOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={"2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.GarnetClusterResource"]:
@@ -29936,7 +30748,10 @@ class GarnetClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -29979,6 +30794,11 @@ class GarnetClustersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={"2026-04-01-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.GarnetClusterResource"]:
         """List all Garnet clusters in this subscription.
 
@@ -30027,7 +30847,10 @@ class GarnetClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -30088,6 +30911,20 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "network_security_perimeter_configuration_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get(
         self,
         resource_group_name: str,
@@ -30169,6 +31006,13 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.NetworkSecurityPerimeterConfiguration"]:
@@ -30226,7 +31070,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -30268,6 +31115,19 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "network_security_perimeter_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _reconcile_initial(
         self,
         resource_group_name: str,
@@ -30334,6 +31194,19 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "network_security_perimeter_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_reconcile(
         self,
         resource_group_name: str,
@@ -30948,7 +31821,10 @@ class NotebookWorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31866,7 +32742,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32059,7 +32938,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32100,6 +32982,1762 @@ class PrivateLinkResourcesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class SoftDeletedDatabaseAccountsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cosmosdb.aio.CosmosDBManagementClient`'s
+        :attr:`soft_deleted_database_accounts` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, location: str, account_name: str, **kwargs: Any
+    ) -> _models.SoftDeletedDatabaseAccountGetResult:
+        """Retrieves the properties of a soft-deleted Azure Cosmos DB database account by location and
+        accountName. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/read' permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :return: SoftDeletedDatabaseAccountGetResult. The SoftDeletedDatabaseAccountGetResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountGetResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedDatabaseAccountGetResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_get_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedDatabaseAccountGetResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={"2026-04-01-preview": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def list_by_location(self, location: str, **kwargs: Any) -> _models.SoftDeletedDatabaseAccountsListResult:
+        """Lists all the soft-deleted Azure Cosmos DB database accounts available under the subscription
+        and in a region. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/read' permission.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: SoftDeletedDatabaseAccountsListResult. The SoftDeletedDatabaseAccountsListResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountsListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedDatabaseAccountsListResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_list_by_location_request(
+            location=location,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedDatabaseAccountsListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["subscription_id", "resource_group_name", "location", "api_version", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def list_by_resource_group_and_location(
+        self, resource_group_name: str, location: str, **kwargs: Any
+    ) -> _models.SoftDeletedDatabaseAccountsListResult:
+        """Lists all the soft-deleted Azure Cosmos DB database accounts available under the given resource
+        group and in a region. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/read' permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: SoftDeletedDatabaseAccountsListResult. The SoftDeletedDatabaseAccountsListResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountsListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedDatabaseAccountsListResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_list_by_resource_group_and_location_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedDatabaseAccountsListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _restore_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_restore_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Restores a soft-deleted Azure Cosmos DB database account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _purge_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_purge_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_purge(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Permanently deletes (purges) a soft-deleted Azure Cosmos DB database account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._purge_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class SoftDeletedSqlDatabasesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cosmosdb.aio.CosmosDBManagementClient`'s
+        :attr:`soft_deleted_sql_databases` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, location: str, account_name: str, database_name: str, **kwargs: Any
+    ) -> _models.SoftDeletedSqlDatabaseGetResult:
+        """Retrieves the properties of a soft-deleted Azure Cosmos DB SQL database. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/softDeletedSqlDatabases/read'
+        permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :return: SoftDeletedSqlDatabaseGetResult. The SoftDeletedSqlDatabaseGetResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseGetResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedSqlDatabaseGetResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_databases_get_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedSqlDatabaseGetResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def list(
+        self, resource_group_name: str, location: str, account_name: str, **kwargs: Any
+    ) -> _models.SoftDeletedSqlDatabasesListResult:
+        """Lists all the soft-deleted Azure Cosmos DB SQL databases under a soft-deleted database account.
+        This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/softDeletedSqlDatabases/read'
+        permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :return: SoftDeletedSqlDatabasesListResult. The SoftDeletedSqlDatabasesListResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabasesListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedSqlDatabasesListResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_databases_list_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedSqlDatabasesListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _restore_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_databases_restore_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Restores a soft-deleted Azure Cosmos DB SQL database.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                database_name=database_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _purge_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_databases_purge_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_purge(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Permanently deletes a soft-deleted Azure Cosmos DB SQL database.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._purge_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                database_name=database_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class SoftDeletedSqlContainersOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cosmosdb.aio.CosmosDBManagementClient`'s
+        :attr:`soft_deleted_sql_containers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        **kwargs: Any
+    ) -> _models.SoftDeletedSqlContainerGetResult:
+        """Retrieves the properties of a soft-deleted Azure Cosmos DB SQL container. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/softDeletedSqlDatabases/softDeletedSqlContainers/read'
+        permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :param container_name: Cosmos DB SQL container name. Required.
+        :type container_name: str
+        :return: SoftDeletedSqlContainerGetResult. The SoftDeletedSqlContainerGetResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerGetResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedSqlContainerGetResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_containers_get_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedSqlContainerGetResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def list(
+        self, resource_group_name: str, location: str, account_name: str, database_name: str, **kwargs: Any
+    ) -> _models.SoftDeletedSqlContainersListResult:
+        """Lists all the soft-deleted Azure Cosmos DB SQL containers under a soft-deleted SQL database.
+        This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/softDeletedSqlDatabases/softDeletedSqlContainers/read'
+        permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :return: SoftDeletedSqlContainersListResult. The SoftDeletedSqlContainersListResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainersListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedSqlContainersListResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_containers_list_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedSqlContainersListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _restore_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_containers_restore_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Restores a soft-deleted Azure Cosmos DB SQL container to active state.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :param container_name: Cosmos DB SQL container name. Required.
+        :type container_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                database_name=database_name,
+                container_name=container_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _purge_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_containers_purge_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_purge(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Permanently deletes a soft-deleted Azure Cosmos DB SQL container.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :param container_name: Cosmos DB SQL container name. Required.
+        :type container_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._purge_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                database_name=database_name,
+                container_name=container_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class ChaosFaultOperations:
@@ -32500,7 +35138,10 @@ class ChaosFaultOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32626,7 +35267,10 @@ class DatabaseOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32739,7 +35383,10 @@ class DatabaseOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32841,7 +35488,10 @@ class DatabaseOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32977,7 +35627,10 @@ class CollectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33094,7 +35747,10 @@ class CollectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33199,7 +35855,10 @@ class CollectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33339,7 +35998,10 @@ class CollectionRegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33464,7 +36126,10 @@ class DatabaseAccountRegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33602,7 +36267,10 @@ class PercentileSourceTargetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33729,7 +36397,10 @@ class PercentileTargetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33852,7 +36523,10 @@ class PercentileOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33992,7 +36666,10 @@ class CollectionPartitionRegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34128,7 +36805,10 @@ class CollectionPartitionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34245,7 +36925,10 @@ class CollectionPartitionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34384,7 +37067,10 @@ class PartitionKeyRangeIdOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34528,7 +37214,10 @@ class PartitionKeyRangeIdRegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34703,7 +37392,10 @@ class LocationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -35478,7 +38170,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -35568,7 +38263,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -35847,6 +38545,20 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _invoke_command_async_initial(
         self,
         resource_group_name: str,
@@ -36010,6 +38722,20 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_invoke_command_async(
         self,
         resource_group_name: str,
@@ -36085,6 +38811,13 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_command(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.CommandPublicResource"]:
@@ -36142,7 +38875,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -36185,6 +38921,20 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "command_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get_command_async(
         self, resource_group_name: str, cluster_name: str, command_id: str, **kwargs: Any
     ) -> _models.CommandPublicResource:
@@ -36260,6 +39010,13 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_backups(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.BackupResource"]:
@@ -36316,7 +39073,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -36359,6 +39119,20 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "backup_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get_backup(
         self, resource_group_name: str, cluster_name: str, backup_id: str, **kwargs: Any
     ) -> _models.BackupResource:
@@ -37526,7 +40300,10 @@ class CassandraDataCentersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37717,7 +40494,10 @@ class RestorableDatabaseAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37809,7 +40589,10 @@ class RestorableDatabaseAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37930,7 +40713,10 @@ class RestorableSqlDatabasesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38067,7 +40853,10 @@ class RestorableSqlContainersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38202,7 +40991,10 @@ class RestorableSqlResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38323,7 +41115,10 @@ class RestorableMongodbDatabasesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38461,7 +41256,10 @@ class RestorableMongodbCollectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38596,7 +41394,10 @@ class RestorableMongodbResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38717,7 +41518,10 @@ class RestorableGremlinDatabasesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38854,7 +41658,10 @@ class RestorableGremlinGraphsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38989,7 +41796,10 @@ class RestorableGremlinResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39121,7 +41931,10 @@ class RestorableTablesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39255,7 +42068,10 @@ class RestorableTableResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39824,7 +42640,10 @@ class ServiceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40633,7 +43452,10 @@ class ThroughputPoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40724,7 +43546,10 @@ class ThroughputPoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -41327,7 +44152,10 @@ class ThroughputPoolAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -41914,7 +44742,10 @@ class MongoMIResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -42483,7 +45314,10 @@ class MongoMIResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43130,7 +45964,10 @@ class FleetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43220,7 +46057,10 @@ class FleetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43723,7 +46563,10 @@ class FleetAnalyticsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -44550,7 +47393,10 @@ class FleetspaceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -45166,7 +48012,10 @@ class FleetspaceAccountOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

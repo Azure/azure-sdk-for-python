@@ -44,12 +44,13 @@ class TestCosmosDBManagementGarnetClustersOperationsAsync(AzureMgmtRecordedTestC
                     "name": "str",
                     "properties": {
                         "allocationState": "str",
+                        "authenticationMethod": "str",
                         "availabilityZone": bool,
                         "clusterType": "str",
                         "endPoints": [{"ipAddress": "str", "port": 0}],
                         "extensions": ["str"],
-                        "nodeCount": 0,
                         "nodeSku": "str",
+                        "persistence": bool,
                         "provisionError": {
                             "additionalInfo": [{"info": {}, "type": "str"}],
                             "code": "str",
@@ -59,6 +60,7 @@ class TestCosmosDBManagementGarnetClustersOperationsAsync(AzureMgmtRecordedTestC
                         },
                         "provisioningState": "str",
                         "replicationFactor": 0,
+                        "shardCount": 0,
                         "subnetId": "str",
                     },
                     "systemData": {
@@ -85,7 +87,14 @@ class TestCosmosDBManagementGarnetClustersOperationsAsync(AzureMgmtRecordedTestC
             await self.client.garnet_clusters.begin_update(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                body={"properties": {"clusterType": "str", "extensions": ["str"]}},
+                body={
+                    "properties": {
+                        "authenticationMethod": "str",
+                        "clusterType": "str",
+                        "extensions": ["str"],
+                        "persistence": bool,
+                    }
+                },
             )
         ).result()  # call '.result()' to poll until service return final result
 

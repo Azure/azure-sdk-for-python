@@ -1,5 +1,50 @@
 # Release History
 
+## 10.0.0b7 (2026-06-09)
+
+### Features Added
+
+  - Client `CosmosDBManagementClient` added operation group `soft_deleted_database_accounts`
+  - Client `CosmosDBManagementClient` added operation group `soft_deleted_sql_databases`
+  - Client `CosmosDBManagementClient` added operation group `soft_deleted_sql_containers`
+  - Model `AccountKeyMetadata` added property `approximate_last_usage_time`
+  - Enum `ContinuousTier` added member `CONTINUOUS35_DAYS`
+  - Model `DatabaseAccountCreateUpdateProperties` added property `soft_delete_configuration`
+  - Model `DatabaseAccountCreateUpdateProperties` added property `enforce_hierarchical_partition_key_id_last_level`
+  - Model `DatabaseAccountGetProperties` added property `soft_delete_configuration`
+  - Model `DatabaseAccountGetProperties` added property `enforce_hierarchical_partition_key_id_last_level`
+  - Model `DatabaseAccountRegenerateKeyParameters` added property `skip_account_keys_last_usage_check`
+  - Model `DatabaseAccountUpdateProperties` added property `soft_delete_configuration`
+  - Model `DatabaseAccountUpdateProperties` added property `enforce_hierarchical_partition_key_id_last_level`
+  - Model `GarnetClusterResourcePatchProperties` added property `authentication_method`
+  - Model `GarnetClusterResourcePatchProperties` added property `persistence`
+  - Model `GarnetClusterResourceProperties` added property `shard_count`
+  - Model `GarnetClusterResourceProperties` added property `authentication_method`
+  - Model `GarnetClusterResourceProperties` added property `persistence`
+  - Added enum `GarnetAuthenticationType`
+  - Added enum `SoftDeleteActionKind`
+  - Added model `SoftDeleteConfiguration`
+  - Added model `SoftDeletedDatabaseAccountGetResult`
+  - Added model `SoftDeletedDatabaseAccountProperties`
+  - Added model `SoftDeletedDatabaseAccountResource`
+  - Added model `SoftDeletedDatabaseAccountsListResult`
+  - Added model `SoftDeletedSqlContainerGetResult`
+  - Added model `SoftDeletedSqlContainerProperties`
+  - Added model `SoftDeletedSqlContainerResource`
+  - Added model `SoftDeletedSqlContainersListResult`
+  - Added model `SoftDeletedSqlDatabaseGetResult`
+  - Added model `SoftDeletedSqlDatabaseProperties`
+  - Added model `SoftDeletedSqlDatabaseResource`
+  - Added model `SoftDeletedSqlDatabasesListResult`
+  - Added model `SoftDeletionMetadata`
+  - Added model `SoftDeletedDatabaseAccountsOperations`
+  - Added model `SoftDeletedSqlContainersOperations`
+  - Added model `SoftDeletedSqlDatabasesOperations`
+
+### Breaking Changes
+
+  - Model `GarnetClusterResourceProperties` deleted or renamed its instance variable `node_count`
+
 ## 10.0.0b6 (2026-05-06)
 
 ### Features Added

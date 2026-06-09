@@ -33,11 +33,11 @@ def main():
     response = client.garnet_clusters.begin_update(
         resource_group_name="garnet-prod-rg",
         cluster_name="garnet-prod",
-        body={"properties": {"clusterType": "Production"}},
+        body={"properties": {"authenticationMethod": "Entra", "clusterType": "Production", "persistence": True}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBGarnetClusterPatch.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBGarnetClusterPatch.json
 if __name__ == "__main__":
     main()

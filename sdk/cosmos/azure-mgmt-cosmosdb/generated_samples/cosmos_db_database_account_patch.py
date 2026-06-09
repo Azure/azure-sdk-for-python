@@ -68,6 +68,7 @@ def main():
                 "enablePartitionMerge": True,
                 "enablePerRegionPerPartitionAutoscale": True,
                 "enablePriorityBasedExecution": True,
+                "enforceHierarchicalPartitionKeyIdLastLevel": False,
                 "ipRules": [{"ipAddressOrRange": "23.43.230.120"}, {"ipAddressOrRange": "110.12.240.0/12"}],
                 "isVirtualNetworkFilterEnabled": True,
                 "minimalTlsVersion": "Tls",
@@ -88,6 +89,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBDatabaseAccountPatch.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBDatabaseAccountPatch.json
 if __name__ == "__main__":
     main()

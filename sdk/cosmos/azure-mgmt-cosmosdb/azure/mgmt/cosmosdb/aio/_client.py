@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -66,6 +66,9 @@ from .operations import (
     RestorableTableResourcesOperations,
     RestorableTablesOperations,
     ServiceOperations,
+    SoftDeletedDatabaseAccountsOperations,
+    SoftDeletedSqlContainersOperations,
+    SoftDeletedSqlDatabasesOperations,
     SqlResourcesOperations,
     TableResourcesOperations,
     ThroughputPoolAccountOperations,
@@ -73,6 +76,11 @@ from .operations import (
     ThroughputPoolOperations,
     ThroughputPoolsOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -116,6 +124,15 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.cosmosdb.aio.operations.PrivateLinkResourcesOperations
+    :ivar soft_deleted_database_accounts: SoftDeletedDatabaseAccountsOperations operations
+    :vartype soft_deleted_database_accounts:
+     azure.mgmt.cosmosdb.aio.operations.SoftDeletedDatabaseAccountsOperations
+    :ivar soft_deleted_sql_databases: SoftDeletedSqlDatabasesOperations operations
+    :vartype soft_deleted_sql_databases:
+     azure.mgmt.cosmosdb.aio.operations.SoftDeletedSqlDatabasesOperations
+    :ivar soft_deleted_sql_containers: SoftDeletedSqlContainersOperations operations
+    :vartype soft_deleted_sql_containers:
+     azure.mgmt.cosmosdb.aio.operations.SoftDeletedSqlContainersOperations
     :ivar chaos_fault: ChaosFaultOperations operations
     :vartype chaos_fault: azure.mgmt.cosmosdb.aio.operations.ChaosFaultOperations
     :ivar database: DatabaseOperations operations
@@ -219,8 +236,9 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview". Default value is "2025-11-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-04-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -306,6 +324,15 @@ class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.soft_deleted_database_accounts = SoftDeletedDatabaseAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.soft_deleted_sql_databases = SoftDeletedSqlDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.soft_deleted_sql_containers = SoftDeletedSqlContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.chaos_fault = ChaosFaultOperations(self._client, self._config, self._serialize, self._deserialize)

@@ -162,6 +162,10 @@ class AccountKeyMetadata(_Model):
      missing from the object, it means that the last key regeneration was triggered before
      2022-06-18.
     :vartype generation_time: ~datetime.datetime
+    :ivar approximate_last_usage_time: Approximate time in UTC of the most recent usage of the key
+     in ISO-8601 format. If the value is missing from the object, it means there is no recorded data
+     plane usage for this key.
+    :vartype approximate_last_usage_time: ~datetime.datetime
     """
 
     generation_time: Optional[datetime.datetime] = rest_field(
@@ -169,6 +173,11 @@ class AccountKeyMetadata(_Model):
     )
     """Generation time in UTC of the key in ISO-8601 format. If the value is missing from the object,
      it means that the last key regeneration was triggered before 2022-06-18."""
+    approximate_last_usage_time: Optional[datetime.datetime] = rest_field(
+        name="approximateLastUsageTime", visibility=["read"], format="rfc3339"
+    )
+    """Approximate time in UTC of the most recent usage of the key in ISO-8601 format. If the value is
+     missing from the object, it means there is no recorded data plane usage for this key."""
 
 
 class AnalyticalStorageConfiguration(_Model):
@@ -1761,7 +1770,24 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class CassandraKeyspaceGetResults(Resource):
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    """
+
+
+class CassandraKeyspaceGetResults(ProxyResource):
     """An Azure Cosmos DB Cassandra keyspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1777,10 +1803,15 @@ class CassandraKeyspaceGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Cassandra keyspace.
     :vartype properties: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -1789,10 +1820,15 @@ class CassandraKeyspaceGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Cassandra keyspace."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1805,8 +1841,8 @@ class CassandraKeyspaceGetResults(Resource):
         self,
         *,
         properties: Optional["_models.CassandraKeyspaceGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -1865,23 +1901,6 @@ class CassandraPartitionKey(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    """
 
 
 class CassandraRoleAssignmentResource(ProxyResource):
@@ -2608,7 +2627,7 @@ class CassandraTableGetPropertiesResource(CassandraTableResource):
         super().__init__(*args, **kwargs)
 
 
-class CassandraTableGetResults(Resource):
+class CassandraTableGetResults(ProxyResource):
     """An Azure Cosmos DB Cassandra table.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2624,10 +2643,15 @@ class CassandraTableGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Cassandra table.
     :vartype properties: ~azure.mgmt.cosmosdb.models.CassandraTableGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -2636,10 +2660,15 @@ class CassandraTableGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Cassandra table."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2652,8 +2681,8 @@ class CassandraTableGetResults(Resource):
         self,
         *,
         properties: Optional["_models.CassandraTableGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -2933,7 +2962,7 @@ class CassandraViewGetPropertiesResource(CassandraViewResource):
         super().__init__(*args, **kwargs)
 
 
-class CassandraViewGetResults(Resource):
+class CassandraViewGetResults(ProxyResource):
     """An Azure Cosmos DB Cassandra view.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2949,10 +2978,15 @@ class CassandraViewGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Cassandra view.
     :vartype properties: ~azure.mgmt.cosmosdb.models.CassandraViewGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -2961,10 +2995,15 @@ class CassandraViewGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Cassandra view."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2977,8 +3016,8 @@ class CassandraViewGetResults(Resource):
         self,
         *,
         properties: Optional["_models.CassandraViewGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -3585,7 +3624,7 @@ class ClusterKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterResource(Resource):
+class ClusterResource(ProxyResource):
     """Representation of a managed Cassandra cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3601,10 +3640,15 @@ class ClusterResource(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: Properties of a managed Cassandra cluster.
     :vartype properties: ~azure.mgmt.cosmosdb.models.ClusterResourceProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedCassandraManagedServiceIdentity
     """
@@ -3613,10 +3657,15 @@ class ClusterResource(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties of a managed Cassandra cluster."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedCassandraManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3627,8 +3676,8 @@ class ClusterResource(Resource):
         self,
         *,
         properties: Optional["_models.ClusterResourceProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedCassandraManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -4530,16 +4579,16 @@ class ContinuousModeBackupPolicy(BackupPolicy, discriminator="Continuous"):
 class ContinuousModeProperties(_Model):
     """Configuration values for periodic mode backup.
 
-    :ivar tier: Enum to indicate type of Continuos backup mode. Known values are: "Continuous7Days"
-     and "Continuous30Days".
+    :ivar tier: Enum to indicate type of Continuos backup mode. Known values are:
+     "Continuous7Days", "Continuous30Days", and "Continuous35Days".
     :vartype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
     """
 
     tier: Optional[Union[str, "_models.ContinuousTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Enum to indicate type of Continuos backup mode. Known values are: \"Continuous7Days\" and
-     \"Continuous30Days\"."""
+    """Enum to indicate type of Continuos backup mode. Known values are: \"Continuous7Days\",
+     \"Continuous30Days\", and \"Continuous35Days\"."""
 
     @overload
     def __init__(
@@ -5249,6 +5298,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
         "enable_all_versions_and_deletes_change_feed",
+        "soft_delete_configuration",
+        "enforce_hierarchical_partition_key_id_last_level",
     ]
 
     @overload
@@ -5404,6 +5455,11 @@ class DatabaseAccountCreateUpdateProperties(_Model):
     :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
      Change feed feature is enabled on the account.
     :vartype enable_all_versions_and_deletes_change_feed: bool
+    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
+    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
+    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
+     hierarchical partition key ID last level enforcement on the account.
+    :vartype enforce_hierarchical_partition_key_id_last_level: bool
     """
 
     consistency_policy: Optional["_models.ConsistencyPolicy"] = rest_field(
@@ -5571,6 +5627,15 @@ class DatabaseAccountCreateUpdateProperties(_Model):
         name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
+    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
+        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration for soft delete on the Cosmos DB account."""
+    enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
+        name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
+     the account."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -5613,6 +5678,8 @@ class DatabaseAccountCreateUpdateProperties(_Model):
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
         enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
+        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
+        enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5763,6 +5830,8 @@ class DatabaseAccountGetProperties(_Model):
     :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
      Change feed feature is enabled on the account.
     :vartype enable_all_versions_and_deletes_change_feed: bool
+    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
+    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
     :ivar throughput_pool_dedicated_r_us: Total dedicated throughput (RU/s) for database account.
      Represents the sum of all manual provisioned throughput and all autoscale max RU/s across all
      shared throughput databases and dedicated throughput containers in the account for 1 region.
@@ -5773,6 +5842,9 @@ class DatabaseAccountGetProperties(_Model):
      consumed from the pool, summed across all shared throughput databases and dedicated throughput
      containers in the account for 1 region.  READ ONLY.
     :vartype throughput_pool_max_consumable_r_us: int
+    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
+     hierarchical partition key ID last level enforcement on the account.
+    :vartype enforce_hierarchical_partition_key_id_last_level: bool
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -5963,6 +6035,10 @@ class DatabaseAccountGetProperties(_Model):
         name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
+    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
+        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration for soft delete on the Cosmos DB account."""
     throughput_pool_dedicated_r_us: Optional[int] = rest_field(
         name="throughputPoolDedicatedRUs", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5976,6 +6052,11 @@ class DatabaseAccountGetProperties(_Model):
      additional throughput (RU/s) that can be consumed from the pool, summed across all shared
      throughput databases and dedicated throughput containers in the account for 1 region.  READ
      ONLY."""
+    enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
+        name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
+     the account."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6018,8 +6099,10 @@ class DatabaseAccountGetProperties(_Model):
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
         enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
+        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
         throughput_pool_dedicated_r_us: Optional[int] = None,
         throughput_pool_max_consumable_r_us: Optional[int] = None,
+        enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6033,7 +6116,7 @@ class DatabaseAccountGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseAccountGetResults(Resource):
+class DatabaseAccountGetResults(ProxyResource):
     """An Azure Cosmos DB database account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6049,10 +6132,15 @@ class DatabaseAccountGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: Properties for the database account.
     :vartype properties: ~azure.mgmt.cosmosdb.models.DatabaseAccountGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     :ivar kind: Indicates the type of database account. This can only be set at database account
@@ -6064,10 +6152,15 @@ class DatabaseAccountGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties for the database account."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6127,8 +6220,10 @@ class DatabaseAccountGetResults(Resource):
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
         "enable_all_versions_and_deletes_change_feed",
+        "soft_delete_configuration",
         "throughput_pool_dedicated_r_us",
         "throughput_pool_max_consumable_r_us",
+        "enforce_hierarchical_partition_key_id_last_level",
     ]
 
     @overload
@@ -6136,8 +6231,8 @@ class DatabaseAccountGetResults(Resource):
         self,
         *,
         properties: Optional["_models.DatabaseAccountGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         kind: Optional[Union[str, "_models.DatabaseAccountKind"]] = None,
     ) -> None: ...
@@ -6277,6 +6372,9 @@ class DatabaseAccountRegenerateKeyParameters(_Model):
     :ivar key_kind: The access key to regenerate. Required. Known values are: "primary",
      "secondary", "primaryReadonly", and "secondaryReadonly".
     :vartype key_kind: str or ~azure.mgmt.cosmosdb.models.KeyKind
+    :ivar skip_account_keys_last_usage_check: Optional flag indicating whether to skip account keys
+     last usage check.
+    :vartype skip_account_keys_last_usage_check: bool
     """
 
     key_kind: Union[str, "_models.KeyKind"] = rest_field(
@@ -6284,12 +6382,17 @@ class DatabaseAccountRegenerateKeyParameters(_Model):
     )
     """The access key to regenerate. Required. Known values are: \"primary\", \"secondary\",
      \"primaryReadonly\", and \"secondaryReadonly\"."""
+    skip_account_keys_last_usage_check: Optional[bool] = rest_field(
+        name="skipAccountKeysLastUsageCheck", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional flag indicating whether to skip account keys last usage check."""
 
     @overload
     def __init__(
         self,
         *,
         key_kind: Union[str, "_models.KeyKind"],
+        skip_account_keys_last_usage_check: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6376,6 +6479,8 @@ class DatabaseAccountUpdateParameters(_Model):
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
         "enable_all_versions_and_deletes_change_feed",
+        "soft_delete_configuration",
+        "enforce_hierarchical_partition_key_id_last_level",
     ]
 
     @overload
@@ -6521,6 +6626,11 @@ class DatabaseAccountUpdateProperties(_Model):
     :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
      Change feed feature is enabled on the account.
     :vartype enable_all_versions_and_deletes_change_feed: bool
+    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
+    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
+    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
+     hierarchical partition key ID last level enforcement on the account.
+    :vartype enforce_hierarchical_partition_key_id_last_level: bool
     """
 
     consistency_policy: Optional["_models.ConsistencyPolicy"] = rest_field(
@@ -6677,6 +6787,15 @@ class DatabaseAccountUpdateProperties(_Model):
         name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
+    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
+        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration for soft delete on the Cosmos DB account."""
+    enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
+        name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
+     the account."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6717,6 +6836,8 @@ class DatabaseAccountUpdateProperties(_Model):
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
         enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
+        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
+        enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -8582,6 +8703,10 @@ class GarnetClusterResourcePatchProperties(_Model):
     :vartype cluster_type: str or ~azure.mgmt.cosmosdb.models.ClusterType
     :ivar extensions: Extensions to be added or updated on cluster.
     :vartype extensions: list[str]
+    :ivar authentication_method: The authentication method used for the Garnet cluster. "Entra"
+    :vartype authentication_method: str or ~azure.mgmt.cosmosdb.models.GarnetAuthenticationType
+    :ivar persistence: Flag to indicate if persistence is enabled for the Garnet cluster.
+    :vartype persistence: bool
     """
 
     cluster_type: Optional[Union[str, "_models.ClusterType"]] = rest_field(
@@ -8591,6 +8716,12 @@ class GarnetClusterResourcePatchProperties(_Model):
      Known values are: \"Production\" and \"NonProduction\"."""
     extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Extensions to be added or updated on cluster."""
+    authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = rest_field(
+        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication method used for the Garnet cluster. \"Entra\""""
+    persistence: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Flag to indicate if persistence is enabled for the Garnet cluster."""
 
     @overload
     def __init__(
@@ -8598,6 +8729,8 @@ class GarnetClusterResourcePatchProperties(_Model):
         *,
         cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
         extensions: Optional[list[str]] = None,
+        authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = None,
+        persistence: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -8628,13 +8761,17 @@ class GarnetClusterResourceProperties(_Model):
      list[~azure.mgmt.cosmosdb.models.GarnetClusterResourcePropertiesEndPointsItem]
     :ivar replication_factor: Number of copies of data maintained by the cluster.
     :vartype replication_factor: int
-    :ivar node_count: Number of nodes.
-    :vartype node_count: int
+    :ivar shard_count: Number of shards in the cluster.
+    :vartype shard_count: int
     :ivar node_sku: Virtual Machine SKU used for clusters. Default value is Standard_DS14_v2.
     :vartype node_sku: str
     :ivar availability_zone: If the data center has Availability Zone support, apply it to the
      Virtual Machine ScaleSet that host the garnet cluster virtual machines.
     :vartype availability_zone: bool
+    :ivar authentication_method: The authentication method used for the Garnet cluster. "Entra"
+    :vartype authentication_method: str or ~azure.mgmt.cosmosdb.models.GarnetAuthenticationType
+    :ivar persistence: Flag to indicate if persistence is enabled for the Garnet cluster.
+    :vartype persistence: bool
     :ivar allocation_state: Allocation state of the cluster and data center resources. Active
      implies the virtual machines of the cluster are allocated, deallocated implies virtual machines
      and resources are deallocated. Known values are: "Active" and "Deallocated".
@@ -8667,8 +8804,10 @@ class GarnetClusterResourceProperties(_Model):
         name="replicationFactor", visibility=["read", "create", "update", "delete", "query"]
     )
     """Number of copies of data maintained by the cluster."""
-    node_count: Optional[int] = rest_field(name="nodeCount", visibility=["read", "create", "update", "delete", "query"])
-    """Number of nodes."""
+    shard_count: Optional[int] = rest_field(
+        name="shardCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of shards in the cluster."""
     node_sku: Optional[str] = rest_field(name="nodeSku", visibility=["read", "create", "update", "delete", "query"])
     """Virtual Machine SKU used for clusters. Default value is Standard_DS14_v2."""
     availability_zone: Optional[bool] = rest_field(
@@ -8676,6 +8815,12 @@ class GarnetClusterResourceProperties(_Model):
     )
     """If the data center has Availability Zone support, apply it to the Virtual Machine ScaleSet that
      host the garnet cluster virtual machines."""
+    authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = rest_field(
+        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication method used for the Garnet cluster. \"Entra\""""
+    persistence: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Flag to indicate if persistence is enabled for the Garnet cluster."""
     allocation_state: Optional[Union[str, "_models.AllocationState"]] = rest_field(
         name="allocationState", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8700,9 +8845,11 @@ class GarnetClusterResourceProperties(_Model):
         *,
         subnet_id: Optional[str] = None,
         replication_factor: Optional[int] = None,
-        node_count: Optional[int] = None,
+        shard_count: Optional[int] = None,
         node_sku: Optional[str] = None,
         availability_zone: Optional[bool] = None,
+        authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = None,
+        persistence: Optional[bool] = None,
         allocation_state: Optional[Union[str, "_models.AllocationState"]] = None,
         cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
         provision_error: Optional["_models.ErrorDetail"] = None,
@@ -9083,7 +9230,7 @@ class GraphResourceGetPropertiesResource(GraphResource):
         super().__init__(*args, **kwargs)
 
 
-class GraphResourceGetResults(Resource):
+class GraphResourceGetResults(ProxyResource):
     """An Azure Cosmos DB Graph resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9099,10 +9246,15 @@ class GraphResourceGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Graph resource.
     :vartype properties: ~azure.mgmt.cosmosdb.models.GraphResourceGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -9111,10 +9263,15 @@ class GraphResourceGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Graph resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9127,8 +9284,8 @@ class GraphResourceGetResults(Resource):
         self,
         *,
         properties: Optional["_models.GraphResourceGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -9422,7 +9579,7 @@ class GremlinDatabaseGetPropertiesResource(GremlinDatabaseResource):
         super().__init__(*args, **kwargs)
 
 
-class GremlinDatabaseGetResults(Resource):
+class GremlinDatabaseGetResults(ProxyResource):
     """An Azure Cosmos DB Gremlin database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9438,10 +9595,15 @@ class GremlinDatabaseGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB SQL database.
     :vartype properties: ~azure.mgmt.cosmosdb.models.GremlinDatabaseGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -9450,10 +9612,15 @@ class GremlinDatabaseGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB SQL database."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9466,8 +9633,8 @@ class GremlinDatabaseGetResults(Resource):
         self,
         *,
         properties: Optional["_models.GremlinDatabaseGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -9867,7 +10034,7 @@ class GremlinGraphGetPropertiesResource(GremlinGraphResource):
         super().__init__(*args, **kwargs)
 
 
-class GremlinGraphGetResults(Resource):
+class GremlinGraphGetResults(ProxyResource):
     """An Azure Cosmos DB Gremlin graph.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9883,10 +10050,15 @@ class GremlinGraphGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Gremlin graph.
     :vartype properties: ~azure.mgmt.cosmosdb.models.GremlinGraphGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -9895,10 +10067,15 @@ class GremlinGraphGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Gremlin graph."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9911,8 +10088,8 @@ class GremlinGraphGetResults(Resource):
         self,
         *,
         properties: Optional["_models.GremlinGraphGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -11391,7 +11568,7 @@ class MongoDBCollectionGetPropertiesResource(MongoDBCollectionResource):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBCollectionGetResults(Resource):
+class MongoDBCollectionGetResults(ProxyResource):
     """An Azure Cosmos DB MongoDB collection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11407,10 +11584,15 @@ class MongoDBCollectionGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB MongoDB collection.
     :vartype properties: ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -11419,10 +11601,15 @@ class MongoDBCollectionGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB MongoDB collection."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11435,8 +11622,8 @@ class MongoDBCollectionGetResults(Resource):
         self,
         *,
         properties: Optional["_models.MongoDBCollectionGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -11730,7 +11917,7 @@ class MongoDBDatabaseGetPropertiesResource(MongoDBDatabaseResource):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBDatabaseGetResults(Resource):
+class MongoDBDatabaseGetResults(ProxyResource):
     """An Azure Cosmos DB MongoDB database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11746,10 +11933,15 @@ class MongoDBDatabaseGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB MongoDB database.
     :vartype properties: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -11758,10 +11950,15 @@ class MongoDBDatabaseGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB MongoDB database."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11774,8 +11971,8 @@ class MongoDBDatabaseGetResults(Resource):
         self,
         *,
         properties: Optional["_models.MongoDBDatabaseGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -11824,6 +12021,8 @@ class MongoIndex(_Model):
     )
     """Cosmos DB MongoDB collection index key options."""
 
+    __flattened_items = ["keys_property"]
+
     @overload
     def __init__(
         self,
@@ -11840,7 +12039,25 @@ class MongoIndex(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.key is None:
+                return None
+            return getattr(self.key, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.key is None:
+                self.key = self._attr_to_rest_field["key"]._class_type()
+            setattr(self.key, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class MongoIndexKeys(_Model):
@@ -16389,6 +16606,577 @@ class ServiceResourceCreateUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SoftDeleteConfiguration(_Model):
+    """Configuration for soft delete on the Cosmos DB account.
+
+    :ivar soft_deletion_enabled: Flag to indicate whether soft delete is enabled on the account.
+    :vartype soft_deletion_enabled: bool
+    :ivar min_minutes_before_permanent_deletion_allowed: Minimum number of minutes before a soft
+     deleted resource can be permanently deleted.
+    :vartype min_minutes_before_permanent_deletion_allowed: int
+    :ivar soft_delete_retention_period_in_minutes: Soft delete retention period in minutes for
+     resources.
+    :vartype soft_delete_retention_period_in_minutes: int
+    """
+
+    soft_deletion_enabled: Optional[bool] = rest_field(
+        name="softDeletionEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate whether soft delete is enabled on the account."""
+    min_minutes_before_permanent_deletion_allowed: Optional[int] = rest_field(
+        name="minMinutesBeforePermanentDeletionAllowed", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum number of minutes before a soft deleted resource can be permanently deleted."""
+    soft_delete_retention_period_in_minutes: Optional[int] = rest_field(
+        name="softDeleteRetentionPeriodInMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Soft delete retention period in minutes for resources."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        soft_deletion_enabled: Optional[bool] = None,
+        min_minutes_before_permanent_deletion_allowed: Optional[int] = None,
+        soft_delete_retention_period_in_minutes: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedDatabaseAccountGetResult(ProxyResource):
+    """A Azure Cosmos DB soft-deleted database account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountProperties
+    """
+
+    properties: Optional["_models.SoftDeletedDatabaseAccountProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SoftDeletedDatabaseAccountProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedDatabaseAccountProperties(_Model):
+    """The properties of a soft-deleted database account.
+
+    :ivar account_name: The name of the database account.
+    :vartype account_name: str
+    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the database account.
+    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
+    :ivar soft_delete_configuration: The soft delete configuration for the database account.
+    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
+    :ivar resource: A subset of properties of the underlying database account resource.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountResource
+    """
+
+    account_name: Optional[str] = rest_field(
+        name="accountName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the database account."""
+    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
+        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata related to the soft deletion of the database account."""
+    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
+        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The soft delete configuration for the database account."""
+    resource: Optional["_models.SoftDeletedDatabaseAccountResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A subset of properties of the underlying database account resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        account_name: Optional[str] = None,
+        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
+        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
+        resource: Optional["_models.SoftDeletedDatabaseAccountResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedDatabaseAccountResource(_Model):
+    """The database account resource information for a soft-deleted account.
+
+    :ivar locations: An array that contains all of the locations enabled for the Cosmos DB account.
+    :vartype locations: list[~azure.mgmt.cosmosdb.models.Location]
+    :ivar write_locations: An array that contains the write location(s) for the Cosmos DB account.
+    :vartype write_locations: list[~azure.mgmt.cosmosdb.models.Location]
+    :ivar read_locations: An array that contains the read locations enabled for the Cosmos DB
+     account.
+    :vartype read_locations: list[~azure.mgmt.cosmosdb.models.Location]
+    """
+
+    locations: Optional[list["_models.Location"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array that contains all of the locations enabled for the Cosmos DB account."""
+    write_locations: Optional[list["_models.Location"]] = rest_field(
+        name="writeLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array that contains the write location(s) for the Cosmos DB account."""
+    read_locations: Optional[list["_models.Location"]] = rest_field(
+        name="readLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array that contains the read locations enabled for the Cosmos DB account."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        locations: Optional[list["_models.Location"]] = None,
+        write_locations: Optional[list["_models.Location"]] = None,
+        read_locations: Optional[list["_models.Location"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedDatabaseAccountsListResult(_Model):
+    """The List operation response, that contains the soft-deleted database accounts and their
+    properties.
+
+    :ivar value: The SoftDeletedDatabaseAccountGetResult items on this page. Required.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountGetResult]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.SoftDeletedDatabaseAccountGetResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SoftDeletedDatabaseAccountGetResult items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.SoftDeletedDatabaseAccountGetResult"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlContainerGetResult(ProxyResource):
+    """An Azure Cosmos DB soft-deleted SQL container.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerProperties
+    """
+
+    properties: Optional["_models.SoftDeletedSqlContainerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SoftDeletedSqlContainerProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlContainerProperties(_Model):
+    """The properties of a soft-deleted SQL container.
+
+    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the SQL container.
+    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
+    :ivar resource: The resource information for the soft-deleted SQL container.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerResource
+    """
+
+    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
+        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata related to the soft deletion of the SQL container."""
+    resource: Optional["_models.SoftDeletedSqlContainerResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource information for the soft-deleted SQL container."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
+        resource: Optional["_models.SoftDeletedSqlContainerResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlContainerResource(_Model):
+    """Cosmos DB SQL container resource object.
+
+    :ivar id: Name of the Cosmos DB SQL container. Required.
+    :vartype id: str
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    :ivar partition_key: The configuration of the partition key to be used for partitioning data
+     into multiple partitions.
+    :vartype partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
+    :ivar default_ttl: Default time to live.
+    :vartype default_ttl: int
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Cosmos DB SQL container. Required."""
+    rid: Optional[str] = rest_field(name="_rid", visibility=["read"])
+    """A system generated property. A unique identifier."""
+    partition_key: Optional["_models.ContainerPartitionKey"] = rest_field(
+        name="partitionKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration of the partition key to be used for partitioning data into multiple
+     partitions."""
+    default_ttl: Optional[int] = rest_field(
+        name="defaultTtl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default time to live."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        partition_key: Optional["_models.ContainerPartitionKey"] = None,
+        default_ttl: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlContainersListResult(_Model):
+    """The List operation response, that contains the soft-deleted SQL containers and their
+    properties.
+
+    :ivar value: The SoftDeletedSqlContainerGetResult items on this page. Required.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerGetResult]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.SoftDeletedSqlContainerGetResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SoftDeletedSqlContainerGetResult items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.SoftDeletedSqlContainerGetResult"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlDatabaseGetResult(ProxyResource):
+    """An Azure Cosmos DB soft-deleted SQL database.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseProperties
+    """
+
+    properties: Optional["_models.SoftDeletedSqlDatabaseProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SoftDeletedSqlDatabaseProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlDatabaseProperties(_Model):
+    """The properties of a soft-deleted SQL database.
+
+    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the SQL database.
+    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
+    :ivar resource: The resource information for the soft-deleted SQL database.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseResource
+    """
+
+    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
+        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata related to the soft deletion of the SQL database."""
+    resource: Optional["_models.SoftDeletedSqlDatabaseResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource information for the soft-deleted SQL database."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
+        resource: Optional["_models.SoftDeletedSqlDatabaseResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlDatabaseResource(_Model):
+    """Cosmos DB SQL database resource object.
+
+    :ivar id: Name of the Cosmos DB SQL database. Required.
+    :vartype id: str
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Cosmos DB SQL database. Required."""
+    rid: Optional[str] = rest_field(name="_rid", visibility=["read"])
+    """A system generated property. A unique identifier."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlDatabasesListResult(_Model):
+    """The List operation response, that contains the soft-deleted SQL databases and their properties.
+
+    :ivar value: The SoftDeletedSqlDatabaseGetResult items on this page. Required.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseGetResult]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.SoftDeletedSqlDatabaseGetResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SoftDeletedSqlDatabaseGetResult items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.SoftDeletedSqlDatabaseGetResult"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletionMetadata(_Model):
+    """Metadata about the soft deletion of a resource.
+
+    :ivar is_soft_deleted: Indicates whether the resource is soft deleted.
+    :vartype is_soft_deleted: bool
+    :ivar soft_deletion_start_timestamp: The timestamp when the soft deletion started.
+    :vartype soft_deletion_start_timestamp: int
+    :ivar soft_deletion_resource_expiration_timestamp: The timestamp when the soft-deleted resource
+     will expire and be permanently deleted.
+    :vartype soft_deletion_resource_expiration_timestamp: int
+    """
+
+    is_soft_deleted: Optional[bool] = rest_field(
+        name="isSoftDeleted", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the resource is soft deleted."""
+    soft_deletion_start_timestamp: Optional[int] = rest_field(
+        name="softDeletionStartTimestamp", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The timestamp when the soft deletion started."""
+    soft_deletion_resource_expiration_timestamp: Optional[int] = rest_field(
+        name="softDeletionResourceExpirationTimestamp", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The timestamp when the soft-deleted resource will expire and be permanently deleted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_soft_deleted: Optional[bool] = None,
+        soft_deletion_start_timestamp: Optional[int] = None,
+        soft_deletion_resource_expiration_timestamp: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SpatialSpec(_Model):
     """SpatialSpec.
 
@@ -16691,7 +17479,7 @@ class SqlContainerGetPropertiesResource(SqlContainerResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlContainerGetResults(Resource):
+class SqlContainerGetResults(ProxyResource):
     """An Azure Cosmos DB container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16707,10 +17495,15 @@ class SqlContainerGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB container.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlContainerGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -16719,10 +17512,15 @@ class SqlContainerGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB container."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -16735,8 +17533,8 @@ class SqlContainerGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlContainerGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -16999,7 +17797,7 @@ class SqlDatabaseGetPropertiesResource(SqlDatabaseResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlDatabaseGetResults(Resource):
+class SqlDatabaseGetResults(ProxyResource):
     """An Azure Cosmos DB SQL database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17015,10 +17813,15 @@ class SqlDatabaseGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB SQL database.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlDatabaseGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -17027,10 +17830,15 @@ class SqlDatabaseGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB SQL database."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17043,8 +17851,8 @@ class SqlDatabaseGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlDatabaseGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -17747,7 +18555,7 @@ class SqlStoredProcedureGetPropertiesResource(SqlStoredProcedureResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlStoredProcedureGetResults(Resource):
+class SqlStoredProcedureGetResults(ProxyResource):
     """An Azure Cosmos DB storedProcedure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17763,10 +18571,15 @@ class SqlStoredProcedureGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB storedProcedure.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -17775,10 +18588,15 @@ class SqlStoredProcedureGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB storedProcedure."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17791,8 +18609,8 @@ class SqlStoredProcedureGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlStoredProcedureGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -18060,7 +18878,7 @@ class SqlTriggerGetPropertiesResource(SqlTriggerResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlTriggerGetResults(Resource):
+class SqlTriggerGetResults(ProxyResource):
     """An Azure Cosmos DB trigger.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18076,10 +18894,15 @@ class SqlTriggerGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB trigger.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlTriggerGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -18088,10 +18911,15 @@ class SqlTriggerGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB trigger."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18104,8 +18932,8 @@ class SqlTriggerGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlTriggerGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -18353,7 +19181,7 @@ class SqlUserDefinedFunctionGetPropertiesResource(SqlUserDefinedFunctionResource
         super().__init__(*args, **kwargs)
 
 
-class SqlUserDefinedFunctionGetResults(Resource):
+class SqlUserDefinedFunctionGetResults(ProxyResource):
     """An Azure Cosmos DB userDefinedFunction.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18369,10 +19197,15 @@ class SqlUserDefinedFunctionGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB userDefinedFunction.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -18381,10 +19214,15 @@ class SqlUserDefinedFunctionGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB userDefinedFunction."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18397,8 +19235,8 @@ class SqlUserDefinedFunctionGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlUserDefinedFunctionGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -18759,7 +19597,7 @@ class TableGetPropertiesResource(TableResource):
         super().__init__(*args, **kwargs)
 
 
-class TableGetResults(Resource):
+class TableGetResults(ProxyResource):
     """An Azure Cosmos DB Table.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18775,10 +19613,15 @@ class TableGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Table.
     :vartype properties: ~azure.mgmt.cosmosdb.models.TableGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -18787,10 +19630,15 @@ class TableGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Table."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18803,8 +19651,8 @@ class TableGetResults(Resource):
         self,
         *,
         properties: Optional["_models.TableGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -19586,7 +20434,7 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputSettingsGetResults(Resource):
+class ThroughputSettingsGetResults(ProxyResource):
     """An Azure Cosmos DB resource throughput.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19602,10 +20450,15 @@ class ThroughputSettingsGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB resource throughput.
     :vartype properties: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -19614,10 +20467,15 @@ class ThroughputSettingsGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB resource throughput."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -19630,8 +20488,8 @@ class ThroughputSettingsGetResults(Resource):
         self,
         *,
         properties: Optional["_models.ThroughputSettingsGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 

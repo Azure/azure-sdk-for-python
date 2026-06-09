@@ -235,6 +235,8 @@ class ContinuousTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CONTINUOUS7_DAYS."""
     CONTINUOUS30_DAYS = "Continuous30Days"
     """CONTINUOUS30_DAYS."""
+    CONTINUOUS35_DAYS = "Continuous35Days"
+    """Continuous 35 Days backup tier."""
 
 
 class CopyJobMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -440,6 +442,13 @@ class FleetspacePropertiesServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMe
     """GENERAL_PURPOSE."""
     BUSINESS_CRITICAL = "BusinessCritical"
     """BUSINESS_CRITICAL."""
+
+
+class GarnetAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication method used for the Garnet cluster."""
+
+    ENTRA = "Entra"
+    """Microsoft Entra authentication."""
 
 
 class GarnetCacheProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -802,6 +811,15 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WARNING."""
     ERROR = "Error"
     """ERROR."""
+
+
+class SoftDeleteActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of soft delete action to perform."""
+
+    RESTORE_SOFT_DELETED_RESOURCE = "RestoreSoftDeletedResource"
+    """Restores the soft-deleted resource to active/online state."""
+    PERMANENT_DELETE_RESOURCE = "PermanentDeleteResource"
+    """Permanently deletes the soft-deleted resource."""
 
 
 class SpatialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

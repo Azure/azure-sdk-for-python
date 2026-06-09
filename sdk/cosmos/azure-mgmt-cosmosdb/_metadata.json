@@ -1,10 +1,10 @@
 {
-  "apiVersion": "2025-11-01-preview",
+  "apiVersion": "2026-04-01-preview",
   "apiVersions": {
-    "Microsoft.DocumentDB": "2025-11-01-preview"
+    "Microsoft.DocumentDB": "2026-04-01-preview"
   },
-  "commit": "f127e37c800e7ba895f4de2cc4b3e9cb6b75ff94",
+  "commit": "d61c1a683029d09c187ced27dd99c03456fd5c2e",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB",
-  "emitterVersion": "0.61.3"
+  "emitterVersion": "0.63.0"
 }
