@@ -10,8 +10,16 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import xml.etree.ElementTree as ET
 from typing import Any, Callable, List, Optional
+from ._models import (
+    AccessPolicy as _GenAccessPolicy,
+    CorsRule as _GenCorsRule,
+    Logging as _GenLogging,
+    Metrics as _GenMetrics,
+    RetentionPolicy as _GenRetentionPolicy,
+    StaticWebsite as _GenStaticWebsite,
+)
 
-from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField, _deserialize
+from .._utils.model_base import Model as _Model, _RestField, _deserialize
 
 
 def _patched_getattr(self, name):
@@ -78,7 +86,9 @@ def _patched_new(cls, *args, **kwargs):
                     attr_to_rest_field[k] = v
                     v._module = mro_class.__module__
                     if not v._type:
-                        v._type = v._get_deserialize_callable_from_annotation(annotations.get(k, None))
+                        v._type = v._get_deserialize_callable_from_annotation(
+                            annotations.get(k, None)
+                        )
                     if not v._rest_name_input:
                         v._rest_name_input = k
 
@@ -89,29 +99,22 @@ def _patched_new(cls, *args, **kwargs):
         }
 
         # Reverse mapping: REST wire name → Python attribute name
-        cls._rest_name_to_attr = {rf._rest_name: attr for attr, rf in attr_to_rest_field.items()}
+        cls._rest_name_to_attr = {
+            rf._rest_name: attr for attr, rf in attr_to_rest_field.items()
+        }
 
         cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
     return object.__new__(cls)
 
 
-_MyMutableMapping.__getattr__ = _patched_getattr
-_MyMutableMapping.__setattr__ = _patched_setattr
-_MyMutableMapping.__getattribute__ = _patched_getattribute
-_Model.__new__ = _patched_new
-
-
-# ---------------------------------------------------------------------------
-# Backcompat shims for public methods that existed on the old autorest
-# ``msrest.serialization.Model`` base class. The TypeSpec-generated models
-# inherit from ``_Model`` (a ``MutableMapping`` subclass) which does not
-# expose ``serialize``/``deserialize``/``from_dict``/``validate``/
-# ``is_xml_model``/``enable_additional_properties_sending``. Re-adding them
-# here preserves backward compatibility for users (e.g. azure-storage-file-
-# datalake) that still call these methods on models re-exported from
-# azure-storage-blob.
-# ---------------------------------------------------------------------------
+# NOTE: these patches are applied PER-CLASS at the bottom of this module,
+# not globally on ``_Model`` / ``_MyMutableMapping``.  See ``_BACKCOMPAT_CLASSES``
+# below.  Limiting the blast radius keeps the rest of the generated TypeSpec
+# models pristine (so e.g. ``BlobProperties.as_dict()`` still returns REST
+# wire names, not snake_case) and only adjusts the handful of classes that
+# the still-on-PyPI ``azure-storage-file-datalake`` package directly
+# subclasses out of ``azure.storage.blob._generated.models``.
 
 
 _original_as_dict = _Model.as_dict
@@ -120,7 +123,10 @@ _original_as_dict = _Model.as_dict
 def _remap_keys(d, rest_name_to_attr):
     """Recursively remap REST wire-name keys to Python attribute names."""
     if isinstance(d, dict):
-        return {rest_name_to_attr.get(k, k): _remap_keys(v, rest_name_to_attr) for k, v in d.items()}
+        return {
+            rest_name_to_attr.get(k, k): _remap_keys(v, rest_name_to_attr)
+            for k, v in d.items()
+        }
     if isinstance(d, list):
         return [_remap_keys(item, rest_name_to_attr) for item in d]
     return d
@@ -129,7 +135,9 @@ def _remap_keys(d, rest_name_to_attr):
 def _patched_as_dict(
     self,
     keep_readonly: bool = True,
-    key_transformer: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
+    key_transformer: Optional[
+        Callable[[str, dict, Any], Any]
+    ] = None,  # pylint: disable=unused-argument
     *,
     exclude_readonly: bool = False,
     **kwargs: Any,
@@ -185,7 +193,9 @@ def _patched_deserialize(cls, data: Any, content_type: Optional[str] = None) -> 
 def _patched_from_dict(
     cls,
     data: Any,
-    key_extractors: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
+    key_extractors: Optional[
+        Callable[[str, dict, Any], Any]
+    ] = None,  # pylint: disable=unused-argument
     content_type: Optional[str] = None,
 ) -> Any:
     """Backcompat classmethod for the old autorest ``Model.from_dict``.
@@ -200,7 +210,9 @@ def _patched_from_dict(
     return _deserialize(cls, data)
 
 
-def _patched_enable_additional_properties_sending(cls) -> None:  # pylint: disable=unused-argument
+def _patched_enable_additional_properties_sending(
+    cls,
+) -> None:  # pylint: disable=unused-argument
     """Backcompat no-op for the old autorest ``Model.enable_additional_properties_sending``.
 
     TypeSpec models already round-trip unknown properties through ``_data``.
@@ -217,59 +229,99 @@ def _patched_is_xml_model(cls) -> bool:
     return bool(getattr(cls, "_xml", None))
 
 
-_Model.as_dict = _patched_as_dict
-_Model.serialize = _patched_serialize
-_Model.validate = _patched_validate
-_Model.deserialize = classmethod(_patched_deserialize)
-_Model.from_dict = classmethod(_patched_from_dict)
-_Model.enable_additional_properties_sending = classmethod(_patched_enable_additional_properties_sending)
-_Model.is_xml_model = classmethod(_patched_is_xml_model)
+# NOTE: these msrest-compat methods are applied PER-CLASS at the bottom of
+# this module, not globally on ``_Model``.  See ``_BACKCOMPAT_CLASSES``
+# below.
 
 
-# ---------------------------------------------------------------------------
-# Backcompat shim for legacy ``knack.util.todict`` consumers (e.g. Azure CLI).
-# knack checks ``hasattr(obj, '_asdict')`` (namedtuple convention) BEFORE
-# falling back to ``obj.__dict__``.  TypeSpec ``_Model`` instances stash all
-# fields in ``__dict__['_data']`` so a naive ``__dict__`` walk sees nothing.
-# Returning the model contents with REST wire-name keys at every level
-# matches what msrest models exposed when knack walked their ``__dict__``
-# and camelCased the snake_case attributes -- preserving the JSON shape the
-# Azure CLI's ``_transformers.py`` expects.
-# ---------------------------------------------------------------------------
+def _attach_msrest_compat(cls):
+    """Graft msrest-style ``Model`` API onto a TypeSpec ``_Model`` subclass.
+
+    Mirrors the runtime grafting approach used in
+    ``azure-storage-queue``'s public ``_models.py``: the back-compat methods
+    and descriptor / lifecycle fixes are attached to ``cls`` at module
+    import time rather than baked into the class body or applied to the
+    framework base.  This keeps the per-class blast radius explicit and
+    leaves the rest of the generated TypeSpec model surface pristine.
+    """
+    # Descriptor / lifecycle fixes -- needed because external subclasses
+    # (e.g. azure-storage-file-datalake) may skip ``super().__init__()`` and
+    # may overwrite the shared ``_RestField._module`` attribute.
+    cls.__new__ = _patched_new  # type: ignore[assignment]
+    cls.__getattr__ = _patched_getattr  # type: ignore[attr-defined]
+    cls.__setattr__ = _patched_setattr  # type: ignore[assignment]
+    cls.__getattribute__ = _patched_getattribute  # type: ignore[assignment]
+
+    # msrest ``Model`` API surface that datalake (and its callers) still
+    # expects on these classes.  Hand-rolled to bridge msrest signatures
+    # over TypeSpec ``_data`` storage -- raw msrest methods would not work
+    # because the underlying storage layout differs.
+    cls.as_dict = _patched_as_dict  # type: ignore[assignment]
+    cls.serialize = _patched_serialize  # type: ignore[attr-defined]
+    cls.validate = _patched_validate  # type: ignore[attr-defined]
+    cls.deserialize = classmethod(_patched_deserialize)  # type: ignore[attr-defined]
+    cls.from_dict = classmethod(_patched_from_dict)  # type: ignore[attr-defined]
+    cls.enable_additional_properties_sending = classmethod(  # type: ignore[attr-defined]
+        _patched_enable_additional_properties_sending
+    )
+    cls.is_xml_model = classmethod(_patched_is_xml_model)  # type: ignore[attr-defined]
+
+    return cls
 
 
-def _asdict_value(v: Any) -> Any:
-    if v is None:
-        return None
-    if isinstance(v, _MyMutableMapping):
-        return _patched_namedtuple_asdict(v)
-    if isinstance(v, dict):
-        return {k: _asdict_value(val) for k, val in v.items()}
-    if isinstance(v, (list, tuple, set)):
-        return type(v)(_asdict_value(x) for x in v)
-    return v
+for _cls in (
+    _GenAccessPolicy,
+    _GenRetentionPolicy,
+    _GenMetrics,
+    _GenLogging,
+    _GenCorsRule,
+    _GenStaticWebsite,
+):
+    _attach_msrest_compat(_cls)
 
 
-def _patched_namedtuple_asdict(self) -> dict:
-    """Mirror msrest behaviour: include every declared field (REST wire
-    name) even when the value was never set, so legacy CLI consumers
-    that subscript by key (e.g. ``result['start']``) don't raise
-    ``KeyError`` for omitted optional fields."""
-    result: dict = {}
-    rest_fields = getattr(type(self), "_attr_to_rest_field", None) or {}
-    data = getattr(self, "_data", {}) or {}
-    for rf in rest_fields.values():
-        result[rf._rest_name] = _asdict_value(data.get(rf._rest_name))
-    for k, v in data.items():
-        if k not in result:
-            result[k] = _asdict_value(v)
-    return result
+# Re-export wrapper subclasses via __all__ so that ``from ._patch import *``
+# in ``__init__.py`` shadows the raw generated classes.  Because
+# ``_attach_msrest_compat`` was applied to the *parent* classes above, all
+# lifecycle fixes (``__new__``, ``__getattr__``, ``__setattr__``,
+# ``__getattribute__``) and msrest API methods (``as_dict``, ``serialize``,
+# ``deserialize``, ``from_dict``, ``validate``, etc.) are inherited by
+# these subclasses and any *external* subclass (e.g. datalake) that
+# further extends them.
 
 
-_Model._asdict = _patched_namedtuple_asdict
+class AccessPolicy(_GenAccessPolicy):
+    """AccessPolicy with msrest back-compat."""
 
 
-__all__: List[str] = []
+class RetentionPolicy(_GenRetentionPolicy):
+    """RetentionPolicy with msrest back-compat."""
+
+
+class Metrics(_GenMetrics):
+    """Metrics with msrest back-compat."""
+
+
+class Logging(_GenLogging):
+    """Logging with msrest back-compat."""
+
+
+class CorsRule(_GenCorsRule):
+    """CorsRule with msrest back-compat."""
+
+
+class StaticWebsite(_GenStaticWebsite):
+    """StaticWebsite with msrest back-compat."""
+
+
+__all__: List[str] = [
+    "AccessPolicy",
+    "RetentionPolicy",
+    "Metrics",
+    "Logging",
+    "CorsRule",
+    "StaticWebsite",
+]
 
 
 def patch_sdk():
