@@ -248,7 +248,11 @@ _LAST_INPUT_ID_PAYLOAD_KEY = "_last_input_id"
 # future need arises to tune them per-task, re-introduce a Sec-Privileged
 # API rather than restoring the public surface.
 _DEFAULT_LEASE_SECONDS = 60
-_DEFAULT_MAX_PENDING_STEERING = 10
+# Spec 018 (task-attachments) §3.3 — the steering queue is hard-capped
+# at 9 entries. This reserves at most 10 of the 20 attachment slots for
+# framework use (9 steering + 1 function input); the other 10 remain
+# free for future features. Replaces the prior 10-cap.
+_DEFAULT_MAX_PENDING_STEERING = 9
 
 
 def _read_stored_last_input_id(task_info: Any) -> str | None:
@@ -783,7 +787,31 @@ class Task(Generic[Input, Output]):
             if len(pending) >= _DEFAULT_MAX_PENDING_STEERING:
                 raise SteeringQueueFull(task_id, _DEFAULT_MAX_PENDING_STEERING)
 
-            pending.append(serialized)
+            # Spec 018 — route through the promotion helper. Small steering
+            # inputs (≤ 20 KiB serialized) stay as raw values in
+            # ``pending_inputs``; larger ones are written to
+            # ``attachments["_steering_input_<seq>"]`` with a ref slot in
+            # the queue. The seq counter is monotonic (never reused) so
+            # other entries' attachment keys are stable across drains.
+            from ._attachments import (  # pylint: disable=import-outside-toplevel
+                _STEERING_INPUT_KEY_PREFIX,
+                _STEERING_THRESHOLD_BYTES,
+                _resolve_input_storage,
+            )
+            next_seq = int(steering.get("next_input_seq", 0))
+            steering_key = f"{_STEERING_INPUT_KEY_PREFIX}{next_seq}"
+            store_mode, queue_entry = _resolve_input_storage(
+                serialized,
+                threshold_bytes=_STEERING_THRESHOLD_BYTES,
+                key_for_attachment=steering_key,
+                task_id=task_id,
+            )
+            attachments_patch: dict[str, Any] | None = None
+            if store_mode == "attachment":
+                attachments_patch = {steering_key: serialized}
+                steering["next_input_seq"] = next_seq + 1
+
+            pending.append(queue_entry)
             steering["pending_inputs"] = pending
             steering["cancel_requested"] = True
             # Spec 016 FR-021 + gap-list §FR-021-internal (US6): the
@@ -814,7 +842,10 @@ class Task(Generic[Input, Output]):
                 await manager.provider.update(
                     task_id,
                     TaskPatchRequest(
-                        payload=payload, if_match=etag, **lease_kwargs
+                        payload=payload,
+                        attachments=attachments_patch,
+                        if_match=etag,
+                        **lease_kwargs,
                     ),
                 )
                 manager._note_lease_refreshed(  # pylint: disable=protected-access
@@ -1006,9 +1037,28 @@ class Task(Generic[Input, Output]):
             # opted in via `input_id`. The precondition check already ran
             # at the top of `_lifecycle_start` against the read existing.
             serialized = _serialize_input(input)
+            from ._attachments import (  # pylint: disable=import-outside-toplevel
+                _FUNCTION_INPUT_KEY,
+                _INPUT_THRESHOLD_BYTES,
+                _resolve_input_storage,
+            )
             from ._models import (  # pylint: disable=import-outside-toplevel
                 TaskPatchRequest,
             )
+
+            # Spec 018 — promotion: route the resume input through the
+            # same helper as the create path. Inline stays raw in payload;
+            # > 200 KiB spills into ``attachments["_input"]`` with a ref
+            # in payload. Single PATCH carries both.
+            input_mode, input_value = _resolve_input_storage(
+                serialized,
+                threshold_bytes=_INPUT_THRESHOLD_BYTES,
+                key_for_attachment=_FUNCTION_INPUT_KEY,
+                task_id=task_id,
+            )
+            attachments_patch: dict[str, Any] | None = None
+            if input_mode == "attachment":
+                attachments_patch = {_FUNCTION_INPUT_KEY: serialized}
 
             max_resume_retries = 5
             current_info = existing
@@ -1016,7 +1066,7 @@ class Task(Generic[Input, Output]):
                 etag = getattr(current_info, "etag", None) or None
                 # Build the resume patch: input + (optionally) advance the
                 # framework-managed last_input_id slot (Spec 015 flat layout).
-                resume_payload: dict[str, Any] = {"input": serialized}
+                resume_payload: dict[str, Any] = {"input": input_value}
                 if input_id is not None:
                     resume_payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
                 try:
@@ -1024,7 +1074,11 @@ class Task(Generic[Input, Output]):
                     # to skip the post-patch refetch below.
                     updated_info = await manager.provider.update(
                         task_id,
-                        TaskPatchRequest(payload=resume_payload, if_match=etag),
+                        TaskPatchRequest(
+                            payload=resume_payload,
+                            attachments=attachments_patch,
+                            if_match=etag,
+                        ),
                     )
                     break
                 except (ValueError, _TransportClassifiedError) as exc:

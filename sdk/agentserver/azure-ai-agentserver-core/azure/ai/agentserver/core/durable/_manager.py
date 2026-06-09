@@ -20,6 +20,14 @@ from typing import Any, Optional, TypeVar
 from .._config import AgentConfig
 from ._client import TransportClassifiedError
 from ._context import EntryMode, TaskContext
+from ._attachments import (
+    _FUNCTION_INPUT_KEY,
+    _INPUT_THRESHOLD_BYTES,
+    _is_ref,
+    _read_input_value,
+    _ref_key,
+    _resolve_input_storage,
+)
 from ._decorator import TaskOptions, _deserialize_input, _serialize_input
 from ._exceptions import TaskConflictError, TaskFailed, TaskNotFound
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
@@ -805,8 +813,22 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         agent_name = self._config.agent_name or "default"
 
         # Build payload — input is always persisted (Spec 015 Phase 3 FR-006:
-        # the per-task `store_input` knob is dropped).
-        payload: dict[str, Any] = {"input": _serialize_input(input_val)}
+        # the per-task `store_input` knob is dropped). Spec 018: route the
+        # input through the promotion helper so > 200 KiB inputs spill into
+        # ``attachments["_input"]`` and ``payload["input"]`` becomes a ref
+        # slot. The single create-PATCH carries payload + attachments
+        # together (atomic).
+        serialized_input = _serialize_input(input_val)
+        input_mode, input_value = _resolve_input_storage(
+            serialized_input,
+            threshold_bytes=_INPUT_THRESHOLD_BYTES,
+            key_for_attachment=_FUNCTION_INPUT_KEY,
+            task_id=task_id,
+        )
+        payload: dict[str, Any] = {"input": input_value}
+        attachments: dict[str, Any] | None = None
+        if input_mode == "attachment":
+            attachments = {_FUNCTION_INPUT_KEY: serialized_input}
         payload["metadata"] = {}
         # Spec 016 FR-023 (US7): persist a turn-start timestamp at every
         # turn-start boundary so the per-turn watchdog can compute
@@ -844,6 +866,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 payload=payload,
                 tags=tags or None,
                 source=source,
+                attachments=attachments,
                 lease_owner=self._lease_owner,
                 lease_instance_id=self._instance_id,
                 lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
@@ -1207,11 +1230,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 raise TaskNotFound(task_id)
         task_info = updated_info
 
-        # Resolve input: prefer caller-provided, fall back to persisted
+        # Resolve input: prefer caller-provided, fall back to persisted.
+        # Spec 018: ``payload["input"]`` may be a raw inline value OR a
+        # ref slot pointing into ``task_info.attachments``. Route the
+        # read through ``_read_input_value`` to handle both shapes
+        # uniformly.
         if input_val is not None:
             resolved_input = input_val
         elif task_info.payload and "input" in task_info.payload:
-            raw_input = task_info.payload["input"]
+            raw_input = _read_input_value(
+                task_info.payload["input"], task_info.attachments
+            )
             if input_type is not None:
                 resolved_input = _deserialize_input(raw_input, input_type)
             else:
@@ -1912,8 +1941,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         if not pending:
             return None
 
-        # Pop the next input from the queue
-        next_input_raw = pending.pop(0)
+        # Pop the next input from the queue. Spec 018: the entry may be
+        # either a raw inline value (≤ 20 KiB at append) or a ref slot
+        # pointing into ``task_info.attachments``. Resolve uniformly via
+        # ``_read_input_value``; if it was a ref, the same drain PATCH
+        # MUST also delete the attachment (C-9 / FR-003d).
+        next_entry = pending.pop(0)
+        attachments_patch: dict[str, Any] = {}
+        if _is_ref(next_entry):
+            attachments_patch[_ref_key(next_entry)] = None
+        next_input_raw = _read_input_value(next_entry, task_info.attachments)
 
         # Update steering state. (Spec 015 Phase 3 FR-006: previous_input is
         # no longer mirrored into _steering; only the active input + queue
@@ -1948,6 +1985,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 task_id,
                 TaskPatchRequest(
                     payload=payload,
+                    attachments=attachments_patch or None,
                     if_match=etag,
                     **self._lease_ext_kwargs(task_id),
                 ),
@@ -2290,11 +2328,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # preserving _steering mechanism state (Spec 013 US4 scenarios 1, 2).
         task_info = await self._provider.get(task_id)
         steering_patch: dict[str, Any] = {}
+        attachments_patch: dict[str, Any] = {}
         if task_info is not None and task_info.payload:
             existing_steering = task_info.payload.get("_steering") or {}
             if existing_steering:
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
+            # Spec 018: if payload["input"] is a ref, the attachment it
+            # points at must be deleted atomically with the ref clearing.
+            # This is the C-8 conformance item.
+            existing_input_slot = task_info.payload.get("input")
+            if _is_ref(existing_input_slot):
+                attachments_patch[_ref_key(existing_input_slot)] = None
 
         payload_patch: dict[str, Any] = {
             "metadata": metadata.to_dict(),
@@ -2312,6 +2357,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     status="suspended",
                     suspension_reason=reason,
                     payload=payload_patch,
+                    attachments=attachments_patch or None,
                 ),
             )
         except TransportClassifiedError as exc:
@@ -2329,6 +2375,63 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             logger.warning("Failed to suspend task %s", task_id, exc_info=True)
 
         logger.info("Task %s suspended: %s", task_id, reason)
+
+    async def _steering_cleanup_orphan_attachments(
+        self, task_info: TaskInfo
+    ) -> None:
+        """Spec 018 — delete orphaned ``_steering_input_*`` attachments.
+
+        On startup-scan / recovery, walk ``task_info.attachments`` for
+        ``_steering_input_*`` keys whose corresponding ref slot is no
+        longer present in ``pending_inputs``. Delete them via a single
+        PATCH.
+
+        This is defense-in-depth: the steering-append PATCH and the
+        steering-drain PATCH each carry payload + attachments in one
+        atomic write, so the happy path never produces orphans. But a
+        crash window between an attachment add and a queue append
+        (across separate PATCHes in some future code path) could
+        theoretically leave one — this cleanup costs ~one extra PATCH
+        per recovery and closes that window.
+
+        :param task_info: The recovered ``TaskInfo`` (pre-reclaim).
+        :type task_info: TaskInfo
+        """
+        if not task_info.attachments:
+            return
+        from ._attachments import (  # pylint: disable=import-outside-toplevel
+            _STEERING_INPUT_KEY_PREFIX,
+        )
+        steering_keys = {
+            k for k in task_info.attachments
+            if k.startswith(_STEERING_INPUT_KEY_PREFIX)
+        }
+        if not steering_keys:
+            return
+        pending: list[Any] = (
+            (task_info.payload or {}).get("_steering", {}).get("pending_inputs", [])
+        )
+        referenced = {
+            _ref_key(entry)
+            for entry in pending
+            if _is_ref(entry) and _ref_key(entry).startswith(_STEERING_INPUT_KEY_PREFIX)
+        }
+        orphans = steering_keys - referenced
+        if not orphans:
+            return
+        logger.info(
+            "Deleting %d orphan steering attachment(s) on task %s: %s",
+            len(orphans),
+            task_info.id,
+            sorted(orphans),
+        )
+        await self._provider.update(
+            task_info.id,
+            TaskPatchRequest(
+                attachments={k: None for k in orphans},
+                if_match=getattr(task_info, "etag", None) or None,
+            ),
+        )
 
     async def _recover_stale_tasks(self) -> None:
         """Recover stale in-progress tasks from previous instances."""
@@ -2350,6 +2453,22 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             # Skip if we're already tracking this task
             if task_info.id in self._active_tasks:
                 continue
+
+            # Spec 018 — opportunistic orphan attachment cleanup. If a prior
+            # lifetime crashed between a steering-append attachment PATCH
+            # and the queue update (cannot happen in the happy path
+            # because Phase 4 makes them a single atomic PATCH, but
+            # defense-in-depth is cheap), delete any
+            # ``_steering_input_*`` attachment that no live ref in
+            # ``pending_inputs`` references.
+            try:
+                await self._steering_cleanup_orphan_attachments(task_info)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning(
+                    "Orphan attachment cleanup failed for %s",
+                    task_info.id,
+                    exc_info=True,
+                )
 
             # Reclaim the lease with our new instance ID
             try:
