@@ -53,7 +53,7 @@ B. Examine tool result and definition for the tool being called to check whether
   1. A tool result is **failed** if **any** of the following ERROR-CASES applies to it:
     ERROR-CASES:
     ===========
-    - The tool call or tool result line is annotated with **`[STATUS] failed`**, **`[STATUS] error`**, **`[STATUS] incomplete`**, **`[STATUS] cancelled`**, or **`[STATUS] canceled`**. This annotation is emitted by the runtime when it caught a technical failure (e.g. timeout, exception, host cancellation). It is a strong, authoritative failure signal and overrides any contradictory appearance of the result payload. The annotation is case-insensitive.
+    - The tool call or tool result line is annotated with **`[STATUS] failed`** or **`[STATUS] incomplete`** (or, for non-Responses-API runtimes, with `[STATUS] error`, `[STATUS] cancelled`, or `[STATUS] canceled`). These annotations indicate the tool call did not produce a usable result -- either because the runtime caught a technical failure (e.g. an exception in the tool, the API surface explicitly marked the call `failed`) or because the call was interrupted before completion (e.g. host timeout, parent-response cancellation surfaced as `incomplete`). They are strong, authoritative failure signals and override any contradictory appearance of the result payload.
     - The tool call resulted in an error or exception
     - The tool call failed to run or failed to return
     - The tool call returned a result that indicates an error or failure
