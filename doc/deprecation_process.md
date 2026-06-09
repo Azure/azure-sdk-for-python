@@ -66,13 +66,23 @@ Replace ALL existing text with a disclaimer in the following format.
 
 ## CHANGELOG.md and _version.py
 
-- Update the version in the `azure/mypackage/_version.py` file to the next patch version if the package has had a stable release, or the next beta version if the package has only been in beta. This file may be called `version.py` if your package is very old. For example:
-  - If a stable version WAS NEVER RELEASED and the last released version was 1.0.0b1, the new version should be 1.0.0b2.
-  - If a stable version HAS BEEN RELEASED and the last released version was 1.2.3b1, the new version should be 1.2.4.
-  - If the last released version was 1.2.3, the new version should be 1.2.4.
-- In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`, along with a release date. No other changes/features added/breaking changes should be included for this version. For example:
+- Update the version in the `azure/mypackage/_version.py` file. The new version should be:
+  - A [post-release](https://peps.python.org/pep-0440/#post-releases) of the last released version **only if** this deprecation release contains no code changes (i.e. the only updates are to metadata files such as `README.md`, `CHANGELOG.md`, `setup.py` classifiers, `sdk_packaging.toml`, `ci.yml`, etc.). If the last released version is already a post-release, increment the existing post segment instead of appending another `.post1`. For example:
+    - If the last released version was 1.0.0b1, the new version should be 1.0.0b1.post1.
+    - If the last released version was 1.0.0b1.post1, the new version should be 1.0.0b1.post2.
+    - If the last released version was 1.2.3, the new version should be 1.2.3.post1.
+    - If the last released version was 1.2.3.post1, the new version should be 1.2.3.post2.
+  - A regular version bump (following normal semver conventions) if the deprecation release also includes code changes (e.g. bug fixes, security fixes). In that case, do not use a `.postN` suffix — bump the patch/minor/major segment as you would for any other release. For example:
+    - If the last released version was 1.0.0b1, the new version should be 1.0.0b2.
+    - If the last released version was 1.0.0b1.post1, the new version should be 1.0.0b2.
+    - If the last released version was 1.2.3, the new version should be 1.2.4.
+    - If the last released version was 1.2.3.post1, the new version should be 1.2.4.
+
+  > **Note on PyPI install behavior for post-releases:** PyPI orders pre-release and post-release versions as `3.0.0b6 < 3.0.0b6.post1 < 3.0.0b7 < 3.0.0`. This means a post-release of a beta version (e.g. `3.0.0b6.post1`) is still considered a pre-release by pip, so `pip install azure-mypackage` (without `--pre`) will **not** pick it up — the same behavior as the underlying beta. This is the intended behavior for a beta-only package. However, a post-release of a stable version (e.g. `1.2.3.post1`) **will** be picked up by `pip install azure-mypackage` without `--pre`, so do not expect post-releases on stable packages to behave the same way as post-releases on beta packages.
+
+- In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`, along with a release date. For a post-release, no other changes/features added/breaking changes should be included for this version. For example:
   ```md
-  ## 1.2.4 (2023-03-31)
+  ## 1.2.3.post1 (2023-03-31)
   
   ### Other Changes
 

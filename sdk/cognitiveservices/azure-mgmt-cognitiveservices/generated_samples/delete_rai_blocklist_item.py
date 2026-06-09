@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-01-15-preview/DeleteRaiBlocklistItem.json
+# x-ms-original-file: 2026-03-15-preview/DeleteRaiBlocklistItem.json
 if __name__ == "__main__":
     main()

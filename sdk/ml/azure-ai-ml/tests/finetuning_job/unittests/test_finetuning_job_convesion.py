@@ -1,7 +1,7 @@
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from typing import Optional, Dict
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     UriFileJobInput,
     MLFlowModelJobInput,
 )
@@ -52,7 +52,7 @@ class TestCustomModelFineTuningJob:
             name="llama-finetuning",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            properties={"my_property": True},
+            properties={"my_property": "True"},
             outputs={"registered_model": Output(type="mlflow_model", name="llama-finetune-registered")},
         )
         rest_obj = custom_model_finetuning_job._to_rest_object()
@@ -73,7 +73,7 @@ class TestCustomModelFineTuningJob:
         assert original_obj.name == "llama-finetuning", "Name not set correctly"
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
         assert original_obj.tags == {"foo_tag": "bar"}, "Tags not set correctly"
-        assert original_obj.properties == {"my_property": True}, "Properties not set correctly"
+        assert original_obj.properties == {"my_property": "True"}, "Properties not set correctly"
         # check if the original job inputs were restored
         assert isinstance(original_obj.training_data, Input), "Training data is not Input"
         assert original_obj.training_data.type == AssetTypes.URI_FILE, "Training data type not set correctly"

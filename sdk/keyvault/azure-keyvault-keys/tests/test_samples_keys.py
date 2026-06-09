@@ -10,11 +10,14 @@ from azure.keyvault.keys import KeyType
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from _test_case import KeysClientPreparer, get_decorator
 from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(only_vault=True)
+default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 only_hsm = get_decorator(only_hsm=True)
+only_hsm_default = get_decorator(only_hsm=True, api_versions=[DEFAULT_VERSION])
 
 
 def print(*args):
@@ -131,7 +134,7 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         deleted_key_poller.wait()
         # [END delete_key]
 
-    @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
+    @pytest.mark.parametrize("api_version,is_hsm", default_version)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_example_create_oct_key(self, key_client, **kwargs):
@@ -143,7 +146,32 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         print(key.id)
         print(key.name)
         print(key.key_type)
+        print(key.properties.key_size)
         # [END create_oct_key]
+
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_example_create_external_key(self, key_client, **kwargs):
+        external_id = kwargs.pop("ekm_external_id")
+        if not external_id:
+            pytest.skip(
+                "No external key ID provided. This test requires an EKM-connected HSM and an existing external key."
+            )
+        key_name = self.get_resource_name("ext-key")
+
+        # [START create_external_key]
+        from azure.keyvault.keys import ExternalKey
+
+        # the external_key.id refers to the key material managed by an external HSM
+        external_key = ExternalKey(id=external_id)
+        key = key_client.create_external_key(key_name, external_key=external_key)
+
+        print(key.id)
+        print(key.name)
+        print(key.properties.external_key.id)
+        print(key.key_type)
+        # [END create_external_key]
 
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()

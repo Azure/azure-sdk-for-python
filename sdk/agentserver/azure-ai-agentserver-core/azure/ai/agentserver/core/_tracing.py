@@ -49,7 +49,7 @@ _ATTR_SERVICE_NAME = "service.name"
 _ATTR_GEN_AI_SYSTEM = "gen_ai.system"
 _ATTR_GEN_AI_PROVIDER_NAME = "gen_ai.provider.name"
 _ATTR_GEN_AI_AGENT_ID = "gen_ai.agent.id"
-_ATTR_GEN_AI_AGENT_BLUEPRINT_ID = "gen_ai.agent.blueprint.id"
+_ATTR_GEN_AI_AGENT_BLUEPRINT_ID = "microsoft.a365.agent.blueprint.id"
 _ATTR_GEN_AI_AGENT_TENANT_ID = "microsoft.tenant.id"
 _ATTR_GEN_AI_AGENT_NAME = "gen_ai.agent.name"
 _ATTR_GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
@@ -84,6 +84,12 @@ logger = logging.getLogger("azure.ai.agentserver")
 # Sentinel attribute name set on the console handler to prevent adding
 # duplicates across multiple AgentServerHost instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
+
+# Logger names whose INFO messages are too noisy by default (set to WARNING unless the user requests DEBUG).
+_SUPPRESSED_LOGGERS = (
+    "azure.monitor.opentelemetry.exporter",
+    "azure.core.pipeline.policies.http_logging_policy",
+)
 
 
 def configure_observability(
@@ -131,8 +137,13 @@ def configure_observability(
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
-    # Suppress the noisy Azure Core HTTP logging policy logger.
-    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+    # Suppress noisy loggers by setting their level to WARNING.
+    # Must be done BEFORE _configure_tracing() — the distro respects
+    # pre-set levels, preventing repetitive "Transmission succeeded" INFO messages.
+    # Preserve visibility when user explicitly requests DEBUG.
+    if logging.getLevelName(resolved_level) > logging.DEBUG:
+        for _noisy in _SUPPRESSED_LOGGERS:
+            logging.getLogger(_noisy).setLevel(logging.WARNING)
 
     # Tracing and OTel export
     _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)

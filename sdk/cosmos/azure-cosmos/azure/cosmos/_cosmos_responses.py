@@ -1,7 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
-from typing import Any, AsyncIterator, Iterator, Iterable, List, Mapping, Optional
+from typing import Any, Iterable, Mapping, Optional
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.paging import ItemPaged
@@ -17,180 +17,78 @@ from ._diagnostics import (
 class CosmosItemPaged(_HedgingDetectionAccessorsMixin, ItemPaged[dict[str, Any]]):
     """A custom ItemPaged class that provides access to response headers from query operations.
 
-    This class wraps the standard ItemPaged and provides thread-safe access to response
-    headers captured during pagination via a shared list populated by __QueryFeed.
+    This class wraps the standard ItemPaged and provides access to the most recent
+    response headers captured during pagination via a shared dict populated by __QueryFeed.
 
     It also exposes three hedging-detection accessors inherited from
     :class:`~azure.cosmos._diagnostics._HedgingDetectionAccessorsMixin`:
     :meth:`is_hedging_started`, :meth:`get_requested_regions`, and
-    :meth:`get_responded_regions`. For paged operations the accessors reflect
+    :meth:`get_responded_regions`. The accessors reflect the hedging state of
     the **most recently fetched** page; pre-fetch they return safe defaults
     (``False`` / empty tuples).
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop('response_headers_list', None)
+        popped = kwargs.pop('response_headers', None)
+        self._response_headers: CaseInsensitiveDict = popped if popped is not None else CaseInsensitiveDict()
         super().__init__(*args, **kwargs)
-        self._query_iterable: Optional[Any] = None
-        # Hedging-detection state — refreshed as pages are fetched (see
-        # ``get_response_headers`` below); None until the first page lands.
-        self._hedging_state = None
+        # Latched hedging-detection state. The shared ``_response_headers`` dict
+        # is populated lazily as pages are fetched; the orchestrator stashes the
+        # per-operation state under a private sentinel key that we latch here so
+        # the accessors keep working after the headers dict is cleared/reused.
+        self._hedging_state_cached = None
 
-    def by_page(self, continuation_token: Optional[str] = None) -> Iterator[Iterator[dict[str, Any]]]:
-        """Get an iterator of pages of objects.
+    @property
+    def _hedging_state(self):
+        state = self._response_headers.get(HEDGING_STATE_HEADER_KEY) if self._response_headers else None
+        if state is not None:
+            self._hedging_state_cached = state
+        return self._hedging_state_cached
 
-        :param str continuation_token: An opaque continuation token.
-        :returns: An iterator of pages (themselves iterator of objects)
-        :rtype: iterator[iterator[dict[str, Any]]]
-        """
-        # Call the parent's by_page to get the QueryIterable and store reference for header access
-        self._query_iterable = super().by_page(continuation_token)
-        return self._query_iterable
-
-    def get_response_headers(self) -> List[CaseInsensitiveDict]:
-        """Returns a list of response headers captured from each page of results.
-
-        Each element in the list corresponds to the headers from one page fetch.
-        Headers are captured as pages are fetched during iteration.
-
-        :return: List of response headers from each page
-        :rtype: List[~azure.core.utils.CaseInsensitiveDict]
-        """
-        if self._response_headers_list is not None:
-            # Refresh latest hedging state from the most recent page (if attached),
-            # then return defensive copies with the sentinel key stripped so
-            # customers never see the private state on the headers dict.
-            self._refresh_hedging_state_from_pages()
-            return [self._copy_headers_stripped(h) for h in self._response_headers_list]
-        return []
-
-    def get_last_response_headers(self) -> CaseInsensitiveDict:
-        """Returns the response headers from the most recent page fetch.
+    def get_response_headers(self) -> CaseInsensitiveDict:
+        """Returns a copy of the response headers from the most recent page fetch.
 
         :return: Response headers from the last page, or empty dict if no pages have been fetched
         :rtype: ~azure.core.utils.CaseInsensitiveDict
         """
-        if self._response_headers_list and len(self._response_headers_list) > 0:
-            self._refresh_hedging_state_from_pages()
-            return self._copy_headers_stripped(self._response_headers_list[-1])
-        return CaseInsensitiveDict()
-
-    def _refresh_hedging_state_from_pages(self) -> None:
-        """Internal: scan pages from newest to oldest and update
-        ``self._hedging_state`` with the most recent attached state, if any.
-        Does not mutate the underlying headers dicts."""
-        if not self._response_headers_list:
-            return
-        for h in reversed(self._response_headers_list):
-            state = h.get(HEDGING_STATE_HEADER_KEY) if h is not None else None
-            if state is not None:
-                self._hedging_state = state
-                return
-
-    @staticmethod
-    def _copy_headers_stripped(headers: Optional[CaseInsensitiveDict]) -> CaseInsensitiveDict:
-        """Return a copy of ``headers`` with the private hedging-state sentinel
-        key removed so customer code never sees it.
-
-        :param headers: Original response-headers dict (or ``None``).
-        :type headers: Optional[~azure.core.CaseInsensitiveDict]
-        :returns: A new :class:`~azure.core.CaseInsensitiveDict` containing the
-            same entries as ``headers`` minus the private hedging-state
-            sentinel key. An empty dict is returned when ``headers`` is
-            ``None``.
-        :rtype: ~azure.core.CaseInsensitiveDict
-        """
-        if headers is None:
-            return CaseInsensitiveDict()
-        copied = headers.copy()
-        try:
-            copied.pop(HEDGING_STATE_HEADER_KEY, None)
-        except (TypeError, AttributeError):  # pragma: no cover
-            pass
+        copied = self._response_headers.copy()
+        copied.pop(HEDGING_STATE_HEADER_KEY, None)
         return copied
 
 
 class CosmosAsyncItemPaged(_HedgingDetectionAccessorsMixin, AsyncItemPaged[dict[str, Any]]):
     """A custom AsyncItemPaged class that provides access to response headers from async query operations.
 
-    This class wraps the standard AsyncItemPaged and provides thread-safe access to response
-    headers captured during pagination via a shared list populated by __QueryFeed.
+    This class wraps the standard AsyncItemPaged and provides access to the most recent
+    response headers captured during pagination via a shared dict populated by __QueryFeed.
 
     Also exposes the three hedging-detection accessors inherited from
-    :class:`~azure.cosmos._diagnostics._HedgingDetectionAccessorsMixin`.
+    :class:`~azure.cosmos._diagnostics._HedgingDetectionAccessorsMixin`. The
+    accessors reflect the hedging state of the **most recently fetched** page;
+    pre-fetch they return safe defaults (``False`` / empty tuples).
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop('response_headers_list', None)
+        popped = kwargs.pop('response_headers', None)
+        self._response_headers: CaseInsensitiveDict = popped if popped is not None else CaseInsensitiveDict()
         super().__init__(*args, **kwargs)
-        self._query_iterable: Optional[Any] = None
-        self._hedging_state = None
+        self._hedging_state_cached = None
 
-    def by_page(self, continuation_token: Optional[str] = None) -> AsyncIterator[AsyncIterator[dict[str, Any]]]:
-        """Get an async iterator of pages of objects.
+    @property
+    def _hedging_state(self):
+        state = self._response_headers.get(HEDGING_STATE_HEADER_KEY) if self._response_headers else None
+        if state is not None:
+            self._hedging_state_cached = state
+        return self._hedging_state_cached
 
-        :param str continuation_token: An opaque continuation token.
-        :returns: An async iterator of pages (themselves async iterator of objects)
-        :rtype: AsyncIterator[AsyncIterator[dict[str, Any]]]
-        """
-        # Call the parent's by_page to get the QueryIterable and store reference for header access
-        self._query_iterable = super().by_page(continuation_token)
-        return self._query_iterable
-
-    def get_response_headers(self) -> List[CaseInsensitiveDict]:
-        """Returns a list of response headers captured from each page of results.
-
-        Each element in the list corresponds to the headers from one page fetch.
-        Headers are captured as pages are fetched during iteration.
-
-        :return: List of response headers from each page
-        :rtype: List[~azure.core.utils.CaseInsensitiveDict]
-        """
-        if self._response_headers_list is not None:
-            self._refresh_hedging_state_from_pages()
-            return [self._copy_headers_stripped(h) for h in self._response_headers_list]
-        return []
-
-    def get_last_response_headers(self) -> CaseInsensitiveDict:
-        """Returns the response headers from the most recent page fetch.
+    def get_response_headers(self) -> CaseInsensitiveDict:
+        """Returns a copy of the response headers from the most recent page fetch.
 
         :return: Response headers from the last page, or empty dict if no pages have been fetched
         :rtype: ~azure.core.utils.CaseInsensitiveDict
         """
-        if self._response_headers_list and len(self._response_headers_list) > 0:
-            self._refresh_hedging_state_from_pages()
-            return self._copy_headers_stripped(self._response_headers_list[-1])
-        return CaseInsensitiveDict()
-
-    def _refresh_hedging_state_from_pages(self) -> None:
-        if not self._response_headers_list:
-            return
-        for h in reversed(self._response_headers_list):
-            state = h.get(HEDGING_STATE_HEADER_KEY) if h is not None else None
-            if state is not None:
-                self._hedging_state = state
-                return
-
-    @staticmethod
-    def _copy_headers_stripped(headers: Optional[CaseInsensitiveDict]) -> CaseInsensitiveDict:
-        """Return a copy of ``headers`` with the private hedging-state sentinel
-        key removed so customer code never sees it.
-
-        :param headers: Original response-headers dict (or ``None``).
-        :type headers: Optional[~azure.core.CaseInsensitiveDict]
-        :returns: A new :class:`~azure.core.CaseInsensitiveDict` containing the
-            same entries as ``headers`` minus the private hedging-state
-            sentinel key. An empty dict is returned when ``headers`` is
-            ``None``.
-        :rtype: ~azure.core.CaseInsensitiveDict
-        """
-        if headers is None:
-            return CaseInsensitiveDict()
-        copied = headers.copy()
-        try:
-            copied.pop(HEDGING_STATE_HEADER_KEY, None)
-        except (TypeError, AttributeError):  # pragma: no cover
-            pass
+        copied = self._response_headers.copy()
+        copied.pop(HEDGING_STATE_HEADER_KEY, None)
         return copied
 
 

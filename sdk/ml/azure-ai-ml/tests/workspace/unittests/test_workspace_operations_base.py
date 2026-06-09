@@ -6,11 +6,11 @@ from uuid import UUID, uuid4
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -594,7 +594,7 @@ class TestWorkspaceOperation:
             # settings is an empty JSON REST object at this point
             assert len(settings) == 0
         else:
-            RestServerlessComputeSettings.deserialize(settings) == serverless_compute_settings._to_rest_object()
+            RestServerlessComputeSettings._deserialize(settings, []) == serverless_compute_settings._to_rest_object()
 
     @pytest.mark.parametrize(
         "serverless_compute_settings",

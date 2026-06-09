@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import (
-    Any, Callable, List, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Callable, List, Optional, Union, TYPE_CHECKING
 from urllib.parse import parse_qs
 
 from ._shared import sign_string
@@ -18,12 +15,7 @@ from ._shared.shared_access_signature import QueryStringConstants, SharedAccessS
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.storage.fileshare import (
-        AccountSasPermissions,
-        FileSasPermissions,
-        ShareSasPermissions,
-        ResourceTypes
-    )
+    from azure.storage.fileshare import AccountSasPermissions, FileSasPermissions, ShareSasPermissions, ResourceTypes
 
 
 class FileSharedAccessSignature(SharedAccessSignature):
@@ -54,7 +46,8 @@ class FileSharedAccessSignature(SharedAccessSignature):
         self.user_delegation_key = user_delegation_key
 
     def generate_file(
-        self, share_name: str,
+        self,
+        share_name: str,
         directory_name: Optional[str] = None,
         file_name: Optional[str] = None,
         permission: Optional[Union["FileSasPermissions", str]] = None,
@@ -69,7 +62,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
         user_delegation_oid: Optional[str] = None,
-        sts_hook: Optional[Callable[[str], None]] = None
+        sts_hook: Optional[Callable[[str], None]] = None,
     ) -> str:
         """
         Generates a shared access signature for the file.
@@ -145,20 +138,21 @@ class FileSharedAccessSignature(SharedAccessSignature):
         """
         resource_path = share_name
         if directory_name is not None:
-            resource_path += '/' + str(directory_name)
+            resource_path += "/" + str(directory_name)
         if file_name is not None:
-            resource_path += '/' + str(file_name)
+            resource_path += "/" + str(file_name)
 
         sas = _FileSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
         sas.add_user_delegation_oid(user_delegation_oid)
-        sas.add_resource('f')
-        sas.add_override_response_headers(cache_control, content_disposition,
-                                          content_encoding, content_language,
-                                          content_type)
-        sas.add_resource_signature(self.account_name, self.account_key, resource_path,
-                                   user_delegation_key=self.user_delegation_key)
+        sas.add_resource("f")
+        sas.add_override_response_headers(
+            cache_control, content_disposition, content_encoding, content_language, content_type
+        )
+        sas.add_resource_signature(
+            self.account_name, self.account_key, resource_path, user_delegation_key=self.user_delegation_key
+        )
 
         if sts_hook is not None:
             sts_hook(sas.string_to_sign)
@@ -166,7 +160,8 @@ class FileSharedAccessSignature(SharedAccessSignature):
         return sas.get_token()
 
     def generate_share(
-        self, share_name: str,
+        self,
+        share_name: str,
         permission: Optional[Union["ShareSasPermissions", str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
@@ -181,7 +176,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
         user_delegation_oid: Optional[str] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
     ) -> str:
-        '''
+        """
         Generates a shared access signature for the share.
         Use the returned signature with the sas_token parameter of FileService.
 
@@ -247,17 +242,18 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :type sts_hook: Optional[Callable[[str], None]]
         :returns: The generated SAS token for the account.
         :rtype: str
-        '''
+        """
         sas = _FileSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
         sas.add_user_delegation_oid(user_delegation_oid)
-        sas.add_resource('s')
-        sas.add_override_response_headers(cache_control, content_disposition,
-                                          content_encoding, content_language,
-                                          content_type)
-        sas.add_resource_signature(self.account_name, self.account_key, share_name,
-                                   user_delegation_key=self.user_delegation_key)
+        sas.add_resource("s")
+        sas.add_override_response_headers(
+            cache_control, content_disposition, content_encoding, content_language, content_type
+        )
+        sas.add_resource_signature(
+            self.account_name, self.account_key, share_name, user_delegation_key=self.user_delegation_key
+        )
 
         if sts_hook is not None:
             sts_hook(sas.string_to_sign)
@@ -269,21 +265,22 @@ class _FileSharedAccessHelper(_SharedAccessHelper):
 
     def add_resource_signature(self, account_name, account_key, path, user_delegation_key=None):
         def get_value_to_append(query):
-            return_value = self.query_dict.get(query) or ''
-            return return_value + '\n'
+            return_value = self.query_dict.get(query) or ""
+            return return_value + "\n"
 
-        if path[0] != '/':
-            path = '/' + path
+        if path[0] != "/":
+            path = "/" + path
 
-        canonicalized_resource = '/file/' + account_name + path + '\n'
+        canonicalized_resource = "/file/" + account_name + path + "\n"
 
         # Form the string to sign from shared_access_policy and canonicalized
         # resource. The order of values is important.
-        string_to_sign = \
-            (get_value_to_append(QueryStringConstants.SIGNED_PERMISSION) +
-             get_value_to_append(QueryStringConstants.SIGNED_START) +
-             get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
-             canonicalized_resource)
+        string_to_sign = (
+            get_value_to_append(QueryStringConstants.SIGNED_PERMISSION)
+            + get_value_to_append(QueryStringConstants.SIGNED_START)
+            + get_value_to_append(QueryStringConstants.SIGNED_EXPIRY)
+            + canonicalized_resource
+        )
 
         if user_delegation_key is not None:
             self._add_query(QueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid)
@@ -293,39 +290,41 @@ class _FileSharedAccessHelper(_SharedAccessHelper):
             self._add_query(QueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
             self._add_query(QueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
             self._add_query(
-                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
-                user_delegation_key.signed_delegated_user_tid
+                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID, user_delegation_key.signed_delegated_user_tid
             )
 
-            string_to_sign += \
-                (get_value_to_append(QueryStringConstants.SIGNED_OID) +
-                 get_value_to_append(QueryStringConstants.SIGNED_TID) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_START) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION) +
-                 get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID) +
-                 get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID))
+            string_to_sign += (
+                get_value_to_append(QueryStringConstants.SIGNED_OID)
+                + get_value_to_append(QueryStringConstants.SIGNED_TID)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_START)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID)
+                + get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID)
+            )
         else:
             string_to_sign += get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
 
-        string_to_sign += \
-            (get_value_to_append(QueryStringConstants.SIGNED_IP) +
-             get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
-             get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL) +
-             get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +
-             get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING) +
-             get_value_to_append(QueryStringConstants.SIGNED_CONTENT_LANGUAGE) +
-             get_value_to_append(QueryStringConstants.SIGNED_CONTENT_TYPE))
+        string_to_sign += (
+            get_value_to_append(QueryStringConstants.SIGNED_IP)
+            + get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
+            + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
+            + get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL)
+            + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION)
+            + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING)
+            + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_LANGUAGE)
+            + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_TYPE)
+        )
 
         # remove the trailing newline
-        if string_to_sign[-1] == '\n':
+        if string_to_sign[-1] == "\n":
             string_to_sign = string_to_sign[:-1]
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
-                        sign_string(account_key if user_delegation_key is None else user_delegation_key.value,
-                                    string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key if user_delegation_key is None else user_delegation_key.value, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
 
@@ -624,7 +623,7 @@ def generate_file_sas(
         raise ValueError("Either user_delegation_key or account_key must be provided.")
     sas = FileSharedAccessSignature(account_name, account_key=account_key, user_delegation_key=user_delegation_key)
     if len(file_path) > 1:
-        dir_path = '/'.join(file_path[:-1])
+        dir_path = "/".join(file_path[:-1])
     else:
         dir_path = None
     return sas.generate_file(
