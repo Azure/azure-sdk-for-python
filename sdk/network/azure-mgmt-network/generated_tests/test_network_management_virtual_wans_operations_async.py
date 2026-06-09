@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualWansOperationsAsync(AzureMgmtRecordedTestCase)
         response = await self.client.virtual_wans.get(
             resource_group_name=resource_group.name,
             virtual_wan_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestNetworkManagementVirtualWansOperationsAsync(AzureMgmtRecordedTestCase)
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -70,7 +70,7 @@ class TestNetworkManagementVirtualWansOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             virtual_wan_name="str",
             wan_parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestNetworkManagementVirtualWansOperationsAsync(AzureMgmtRecordedTestCase)
             await self.client.virtual_wans.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_wan_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -95,7 +95,7 @@ class TestNetworkManagementVirtualWansOperationsAsync(AzureMgmtRecordedTestCase)
     async def test_virtual_wans_list_by_resource_group(self, resource_group):
         response = self.client.virtual_wans.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestNetworkManagementVirtualWansOperationsAsync(AzureMgmtRecordedTestCase)
     @recorded_by_proxy_async
     async def test_virtual_wans_list(self, resource_group):
         response = self.client.virtual_wans.list(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
