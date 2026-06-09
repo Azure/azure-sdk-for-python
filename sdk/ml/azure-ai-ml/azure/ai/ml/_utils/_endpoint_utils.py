@@ -291,9 +291,9 @@ def convert_v1_dataset_to_v2(output_data_set: DataVersion, file_name: str) -> Di
     if file_name:
         v2_dataset = UriFileJobOutput(
             uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
-        ).serialize()
+        ).serialize()  # pylint: disable=no-member
     else:
         v2_dataset = UriFileJobOutput(
             uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}"
-        ).serialize()
+        ).serialize()  # pylint: disable=no-member
     return {"output_name": v2_dataset}
