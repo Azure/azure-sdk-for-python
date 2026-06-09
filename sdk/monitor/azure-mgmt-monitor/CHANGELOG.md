@@ -134,8 +134,6 @@
   - Deleted or renamed client operation group `MonitorManagementClient.subscription_diagnostic_settings`
   - Deleted or renamed client operation group `MonitorManagementClient.azure_monitor_workspaces`
   - Deleted or renamed client operation group `MonitorManagementClient.monitor_operations`
-  - Method `PrivateEndpointConnectionsOperations.list_by_private_link_scope` changed from `synchronous` to `asynchronous`
-  - Method `PrivateLinkResourcesOperations.list_by_private_link_scope` changed from `synchronous` to `asynchronous`
   - Model `ActionGroup` deleted or renamed its instance variable `action_group_id`
   - Model `ActionGroup` deleted or renamed its instance variable `webhook_properties`
   - Model `ActionGroupPatchBody` moved instance variable `enabled` under property `properties` whose type is `ActionGroupPatch`
