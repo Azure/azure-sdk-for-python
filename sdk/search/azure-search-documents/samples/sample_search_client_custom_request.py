@@ -28,14 +28,16 @@ key = os.environ["AZURE_SEARCH_API_KEY"]
 def sample_send_request():
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest
-    from azure.search.documents import SearchClient
-    from sample_utils import AZURE_SEARCH_API_VERSION
+    from azure.search.documents import DEFAULT_VERSION, SearchClient
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
     # while adding convenience for endpoint construction.
-    request = HttpRequest(method="GET", url=f"/docs/$count?api-version={AZURE_SEARCH_API_VERSION}")
+    request = HttpRequest(
+        method="GET",
+        url=f"/indexes('{index_name}')/docs/$count?api-version={DEFAULT_VERSION.value}",
+    )
     response = search_client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
