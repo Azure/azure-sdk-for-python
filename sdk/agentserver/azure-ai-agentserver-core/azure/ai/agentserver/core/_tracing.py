@@ -302,14 +302,11 @@ class TraceContextMiddleware:
                 "x_request_id", x_request_id, context=ctx,
             )
 
-        token = _otel_context.attach(ctx)
-        try:
-            await self.app(scope, receive, send)
-        finally:
-            try:
-                _otel_context.detach(token)
-            except ValueError:
-                pass
+        # Attach request context and intentionally do not detach here.
+        # Hypercorn emits access logs after the ASGI app returns but within
+        # the same request task; detaching early causes zeroed operation_Id.
+        _otel_context.attach(ctx)
+        await self.app(scope, receive, send)
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
@@ -579,8 +576,12 @@ class _FoundryEnrichmentLogRecordProcessor:
 
             if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:
                 attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+            if self.agent_name and "agent_name" not in attrs:
+                attrs["agent_name"] = self.agent_name
             if self.agent_version and _ATTR_GEN_AI_AGENT_VERSION not in attrs:
                 attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+            if self.agent_version and "agent_version" not in attrs:
+                attrs["agent_version"] = self.agent_version
 
             # Prefer request-scoped baggage session ID; fallback to platform env.
             ctx = _otel_context.get_current()
@@ -588,6 +589,8 @@ class _FoundryEnrichmentLogRecordProcessor:
             resolved_session = bag_session or self.session_id
             if resolved_session and _ATTR_SESSION_ID not in attrs:
                 attrs[_ATTR_SESSION_ID] = resolved_session
+            if resolved_session and "agent_session_id" not in attrs:
+                attrs["agent_session_id"] = resolved_session
         except Exception:  # pylint: disable=broad-except
             pass
 
