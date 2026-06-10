@@ -81,7 +81,10 @@ class apistub(Check):
             dest="install_deps",
             default=False,
             action="store_true",
-            help="Install dev requirements and apiview dependencies before running. Skipped by default for faster local iteration.",
+            help=(
+                "Install dev requirements and apiview dependencies before running. "
+                "Skipped by default for faster local iteration, but always enabled when --isolate is used."
+            ),
         )
         p.set_defaults(func=self.run)
 

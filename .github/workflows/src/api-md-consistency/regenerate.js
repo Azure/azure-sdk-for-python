@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-const path = require("path");
+import path from "path";
 
-const { REPO_ROOT, envPath, getDefaultLogger, readLines } = require("./common");
-const { loadAdapter, loadWorkflowConfig } = require("./adapter_config");
+import { REPO_ROOT, envPath, getDefaultLogger, readLines } from "./common.js";
+import { loadAdapter, loadWorkflowConfig } from "./adapter_config.js";
 
 async function main() {
   const logger = await getDefaultLogger();
   const config = loadWorkflowConfig();
-  const adapter = loadAdapter(config.adapter);
+  const adapter = await loadAdapter(config.adapter);
   if (typeof adapter.generateApiForPackage !== "function") {
     throw new Error(
       `ERROR: adapter '${config.adapter}' does not implement generateApiForPackage({ repoRoot, packageName, runtimeExecutable }).`,

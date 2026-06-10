@@ -1,23 +1,21 @@
 #!/usr/bin/env node
 
-const {
+import {
   REPO_ROOT,
   appendGithubOutput,
   envPath,
   getDefaultLogger,
-  loadSharedModule,
   requireEnv,
   runAsync,
   writeLines,
-} = require("./common");
-const { loadAdapter, loadWorkflowConfig } = require("./adapter_config");
+} from "./common.js";
+import { loadAdapter, loadWorkflowConfig } from "./adapter_config.js";
+import { includesSegment } from "../../../shared/src/path.js";
 
 async function main() {
-  const { includesSegment } = await loadSharedModule("path.js");
-
   const config = loadWorkflowConfig();
   const adapterName = config.adapter;
-  const adapter = loadAdapter(adapterName);
+  const adapter = await loadAdapter(adapterName);
   if (typeof adapter.isPackageDir !== "function") {
     throw new Error(`ERROR: adapter '${adapterName}' does not implement isPackageDir(repoRoot, packageDirRelative).`);
   }

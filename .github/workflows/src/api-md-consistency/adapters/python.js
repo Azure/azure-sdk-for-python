@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
-const { spawnSync } = require("child_process");
+import fs from "fs";
+import path from "path";
+import { spawnSync } from "child_process";
 
 function run(cmd, args, options = {}) {
   const logger = options.logger || console;
@@ -152,9 +152,10 @@ function generateApiForPackage({
 // Fields in api.metadata.yml that must match between working tree and committed version.
 // pythonVersion is excluded because it varies across CI environments.
 const metadataFieldsToValidate = ["apiMdSha256", "parserVersion"];
+const name = "python";
 
-module.exports = {
-  name: "python",
+export {
+  name,
   isPackageDir,
   findPackageDir,
   readVersion,

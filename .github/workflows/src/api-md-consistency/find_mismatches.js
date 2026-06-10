@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
+import fs from "fs";
 
-const { appendGithubOutput, envPath, getDefaultLogger, readLines, runAsync, writeLines } = require("./common");
-const { loadAdapter, loadWorkflowConfig } = require("./adapter_config");
+import { appendGithubOutput, envPath, getDefaultLogger, readLines, runAsync, writeLines } from "./common.js";
+import { loadAdapter, loadWorkflowConfig } from "./adapter_config.js";
 
 /**
  * Parse a simple key: value YAML file into an object.
@@ -22,7 +22,7 @@ function parseSimpleYaml(text) {
 
 async function main() {
   const config = loadWorkflowConfig();
-  const adapter = loadAdapter(config.adapter);
+  const adapter = await loadAdapter(config.adapter);
 
   // Fields to compare in api.metadata.yml. If the adapter doesn't specify,
   // compare all fields (strict default for languages that don't opt out).

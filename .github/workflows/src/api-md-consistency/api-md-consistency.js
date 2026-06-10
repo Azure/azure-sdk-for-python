@@ -1,9 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const { pathToFileURL } = require("url");
+import fs from "fs";
+import path from "path";
+import { execFile } from "../../../shared/src/exec.js";
 
-const SHARED_SRC_ROOT = path.resolve(__dirname, "..", "..", "..", "shared", "src");
-const sharedModuleCache = new Map();
 const ANSI = {
   bold: "\u001b[1m",
   cyan: "\u001b[36m",
@@ -15,45 +13,12 @@ function styleLog(text, ...styles) {
   return `${styles.join("")}${text}${ANSI.reset}`;
 }
 
-async function loadSharedModule(fileName) {
-  if (sharedModuleCache.has(fileName)) {
-    return sharedModuleCache.get(fileName);
-  }
-
-  const filePath = path.join(SHARED_SRC_ROOT, fileName);
-  const modulePromise = import(pathToFileURL(filePath).href);
-  sharedModuleCache.set(fileName, modulePromise);
-  return modulePromise;
-}
-
 async function runNode(scriptRelativePath, workspace, core) {
-  const { execFile, isExecError } = await loadSharedModule("exec.js");
-
-  try {
-    const result = await execFile("node", [scriptRelativePath], {
-      cwd: workspace,
-      logger: core,
-    });
-
-    if (result.stdout) {
-      core.info(result.stdout.trimEnd());
-    }
-    if (result.stderr) {
-      core.info(result.stderr.trimEnd());
-    }
-  } catch (error) {
-    if (isExecError(error)) {
-      if (error.stdout) {
-        core.info(error.stdout.trimEnd());
-      }
-      if (error.stderr) {
-        core.info(error.stderr.trimEnd());
-      }
-    }
-
-    const status = isExecError(error) && Number.isInteger(error.code) ? error.code : 1;
-    throw new Error(`Command failed (${status}): node ${scriptRelativePath}`);
-  }
+  await execFile("node", [scriptRelativePath], {
+    cwd: workspace,
+    logger: core,
+    logOutput: true,
+  });
 }
 
 function readLines(fileRelativePath, workspace) {
@@ -90,7 +55,7 @@ function formatIssueSection(title, apiFiles) {
   return lines.join("\n");
 }
 
-module.exports = async function apiMdConsistency({ core }) {
+export default async function apiMdConsistency({ core }) {
   const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
 
   await runNode(".github/workflows/src/api-md-consistency/find_affected.js", workspace, core);

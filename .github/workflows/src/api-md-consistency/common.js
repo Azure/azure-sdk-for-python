@@ -1,31 +1,19 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
-const { pathToFileURL } = require("url");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { execFile, isExecError } from "../../../shared/src/exec.js";
+import { defaultLogger } from "../../../shared/src/logger.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..", "..", "..", "..");
-const SHARED_SRC_ROOT = path.join(REPO_ROOT, ".github", "shared", "src");
-const sharedModuleCache = new Map();
-
-async function loadSharedModule(fileName) {
-  if (sharedModuleCache.has(fileName)) {
-    return sharedModuleCache.get(fileName);
-  }
-
-  const filePath = path.join(SHARED_SRC_ROOT, fileName);
-  const modulePromise = import(pathToFileURL(filePath).href);
-  sharedModuleCache.set(fileName, modulePromise);
-  return modulePromise;
-}
 
 async function getDefaultLogger() {
-  const { defaultLogger } = await loadSharedModule("logger.js");
   return defaultLogger;
 }
 
 async function runAsync(cmd, args, options = {}) {
-  const { execFile, isExecError } = await loadSharedModule("exec.js");
   const check = options.check ?? true;
   const logger = options.logger ?? (await getDefaultLogger());
 
@@ -100,9 +88,8 @@ function requireEnv(name) {
   return value;
 }
 
-module.exports = {
+export {
   REPO_ROOT,
-  loadSharedModule,
   getDefaultLogger,
   runAsync,
   readLines,

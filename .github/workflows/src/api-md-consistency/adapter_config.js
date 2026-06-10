@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath, pathToFileURL } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const DEFAULT_CONFIG = {
   adapter: "python",
 };
 
-function loadWorkflowConfig() {
+export function loadWorkflowConfig() {
   const configPath = path.join(__dirname, "api_md_workflow.config.json");
   if (!fs.existsSync(configPath)) {
     return { ...DEFAULT_CONFIG };
@@ -33,17 +36,11 @@ function loadWorkflowConfig() {
   };
 }
 
-function loadAdapter(name) {
+export async function loadAdapter(name) {
   const adapterPath = path.join(__dirname, "adapters", `${name}.js`);
   if (!fs.existsSync(adapterPath)) {
     throw new Error(`ERROR: adapter '${name}' not found at ${adapterPath}`);
   }
 
-  // eslint-disable-next-line global-require, import/no-dynamic-require
-  return require(adapterPath);
+  return import(pathToFileURL(adapterPath).href);
 }
-
-module.exports = {
-  loadWorkflowConfig,
-  loadAdapter,
-};

@@ -7,6 +7,7 @@ const execFileImpl = promisify(child_process.execFile);
  * @typedef {Object} ExecOptions
  * @property {string} [cwd] Current working directory.  Default: process.cwd().
  * @property {import('./logger.js').ILogger} [logger]
+ * @property {boolean} [logOutput] Log captured stdout/stderr at info level. Default: false.
  * @property {number} [maxBuffer] Max bytes allowed on stdout or stderr.  Default: 16 * 1024 * 1024.
  */
 
@@ -54,6 +55,7 @@ export async function execFile(file, args, options = {}) {
   const {
     cwd,
     logger,
+    logOutput = false,
     // Node default is 1024 * 1024, which is too small for some git commands returning many entities or large file content.
     // To support "git show", should be larger than the largest swagger file in the repo (2.5 MB as of 2/28/2025).
     maxBuffer = 16 * 1024 * 1024,
@@ -70,11 +72,27 @@ export async function execFile(file, args, options = {}) {
 
     logger?.debug(`stdout: '${result.stdout}'`);
     logger?.debug(`stderr: '${result.stderr}'`);
+    if (logOutput) {
+      if (result.stdout) {
+        logger?.info(result.stdout.trimEnd());
+      }
+      if (result.stderr) {
+        logger?.info(result.stderr.trimEnd());
+      }
+    }
 
     return result;
   } catch (error) {
     /* v8 ignore next */
     logger?.debug(`error: '${JSON.stringify(error)}'`);
+    if (logOutput && isExecError(error)) {
+      if (error.stdout) {
+        logger?.info(error.stdout.trimEnd());
+      }
+      if (error.stderr) {
+        logger?.info(error.stderr.trimEnd());
+      }
+    }
 
     throw error;
   }
