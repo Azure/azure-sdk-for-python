@@ -17,15 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
         with:
-          node-version: "24"
-
-      - name: Install Node dependencies
-        run: npm ci
-        working-directory: scripts/api_md_workflow
+          python-version: "3.12"
 
       - name: Run API.md workflow unit tests
-        run: npm test
-        working-directory: scripts/api_md_workflow
+        run: python -m unittest discover scripts/api_md_workflow "*_test.py"

@@ -68,9 +68,13 @@ function formatIssueSection(title, apiFiles) {
   for (const apiFile of apiFiles) {
     const packageDir = apiFile.replace(/\/(api\.md|api\.metadata\.yml)$/, "");
     const packageName = path.basename(packageDir);
-    lines.push(`- ${packageDir}`);
-    lines.push(`  API file: ${apiFile}`);
-    lines.push(`  Regenerate: azpysdk apistub --md --extract-metadata ${packageName} --dest-dir .`);
+    lines.push("============================================================");
+    lines.push(`PACKAGE: ${packageName}`);
+    lines.push(`PATH:    ${packageDir}`);
+    lines.push(`API FILE: ${apiFile}`);
+    lines.push("RUN THIS COMMAND FROM THE REPOSITORY ROOT:");
+    lines.push(`  azpysdk apistub --md --extract-metadata ${packageName} --dest-dir .`);
+    lines.push("============================================================");
   }
   lines.push("");
   return lines.join("\n");
