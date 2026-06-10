@@ -6,6 +6,7 @@
 
 ### Bugs Fixed
 
+- Quote each argument in the local-endpoint `run_cli_command` helper before running it under `shell=True`, so a path containing spaces or shell metacharacters is passed through literally instead of being re-interpreted by the shell.
 - Fixed cross-tenant registry endpoint resolution for deployment template operations by using the registry discovery API instead of ARM calls.
 - Fixed deployment template update failing with immutable field errors by ensuring `allowedInstanceType` and `allowedEnvironmentVariableOverrides` are properly round-tripped during serialization.
 

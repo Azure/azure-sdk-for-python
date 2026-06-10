@@ -4,6 +4,7 @@
 
 import json
 import os
+import shlex
 import subprocess
 import sys
 import time
@@ -27,9 +28,14 @@ def run_cli_command(
     if not custom_environment:
         custom_environment = os.environ
 
-    # We do this join to construct a command because "shell=True" flag, used below, doesn't work with the vector
-    # argv form on a mac OS.
-    command_to_execute = " ".join(cmd_arguments)
+    # "shell=True" (used below) is needed so the platform "az"/"code" wrappers resolve, and it doesn't work with
+    # the vector argv form on macOS, so the arguments are collapsed into a single command string. Quote each
+    # argument while joining so a value containing spaces or shell metacharacters is passed through literally
+    # instead of being re-interpreted by the shell.
+    if os.name == "nt":
+        command_to_execute = subprocess.list2cmdline(cmd_arguments)
+    else:
+        command_to_execute = shlex.join(cmd_arguments)
 
     if not do_not_print:  # Avoid printing the az login service principal password, for example
         print("Preparing to run CLI command: \n{}\n".format(command_to_execute))
