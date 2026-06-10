@@ -637,6 +637,6 @@ def gen_typespec(
         }
         http_client_python_version = data.get("devDependencies", {}).get(http_client_python)
         if http_client_python_version:
-            npm_package_version[http_client_python] = http_client_python_version
+            npm_package_version["httpClientPythonVersion"] = http_client_python_version
 
     return npm_package_version
