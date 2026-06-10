@@ -6438,7 +6438,7 @@ class MetricDefinitionsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.CommonErrorResponse,
+                    _models.ErrorResponseCommon,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -7290,7 +7290,7 @@ class MetricsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.CommonErrorResponse,
+                _models.ErrorResponseCommon,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)

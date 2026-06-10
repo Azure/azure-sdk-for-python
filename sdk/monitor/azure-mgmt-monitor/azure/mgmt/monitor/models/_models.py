@@ -320,120 +320,38 @@ class ActionDetail(_Model):
 
 
 class ActionGroup(_Model):
-    """An Azure action group.
+    """A pointer to an Azure Action Group.
 
-    :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
+    :ivar action_group_id: The resource ID of the Action Group. This cannot be null or empty.
      Required.
-    :vartype group_short_name: str
-    :ivar enabled: Indicates whether this action group is enabled. If an action group is not
-     enabled, then none of its receivers will receive communications. Required.
-    :vartype enabled: bool
-    :ivar email_receivers: The list of email receivers that are part of this action group.
-    :vartype email_receivers: list[~azure.mgmt.monitor.models.EmailReceiver]
-    :ivar sms_receivers: The list of SMS receivers that are part of this action group.
-    :vartype sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiver]
-    :ivar webhook_receivers: The list of webhook receivers that are part of this action group.
-    :vartype webhook_receivers: list[~azure.mgmt.monitor.models.WebhookReceiver]
-    :ivar itsm_receivers: The list of ITSM receivers that are part of this action group.
-    :vartype itsm_receivers: list[~azure.mgmt.monitor.models.ItsmReceiver]
-    :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this action
+    :vartype action_group_id: str
+    :ivar webhook_properties: the dictionary of custom properties to include with the post
+     operation. These data are appended to the webhook payload.
+    :vartype webhook_properties: dict[str, str]
+    :ivar action_properties: Predefined list of properties and configuration items for the action
      group.
-    :vartype azure_app_push_receivers: list[~azure.mgmt.monitor.models.AzureAppPushReceiver]
-    :ivar automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
-     this action group.
-    :vartype automation_runbook_receivers:
-     list[~azure.mgmt.monitor.models.AutomationRunbookReceiver]
-    :ivar voice_receivers: The list of voice receivers that are part of this action group.
-    :vartype voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiver]
-    :ivar logic_app_receivers: The list of logic app receivers that are part of this action group.
-    :vartype logic_app_receivers: list[~azure.mgmt.monitor.models.LogicAppReceiver]
-    :ivar azure_function_receivers: The list of azure function receivers that are part of this
-     action group.
-    :vartype azure_function_receivers: list[~azure.mgmt.monitor.models.AzureFunctionReceiver]
-    :ivar arm_role_receivers: The list of ARM role receivers that are part of this action group.
-     Roles are Azure RBAC roles and only built-in roles are supported.
-    :vartype arm_role_receivers: list[~azure.mgmt.monitor.models.ArmRoleReceiver]
-    :ivar event_hub_receivers: The list of event hub receivers that are part of this action group.
-    :vartype event_hub_receivers: list[~azure.mgmt.monitor.models.EventHubReceiver]
-    :ivar incident_receivers: The list of incident receivers that are part of this action group.
-    :vartype incident_receivers: list[~azure.mgmt.monitor.models.IncidentReceiver]
+    :vartype action_properties: dict[str, str]
     """
 
-    group_short_name: str = rest_field(
-        name="groupShortName", visibility=["read", "create", "update", "delete", "query"]
+    action_group_id: str = rest_field(name="actionGroupId", visibility=["read", "create", "update", "delete", "query"])
+    """The resource ID of the Action Group. This cannot be null or empty. Required."""
+    webhook_properties: Optional[dict[str, str]] = rest_field(
+        name="webhookProperties", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The short name of the action group. This will be used in SMS messages. Required."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Indicates whether this action group is enabled. If an action group is not enabled, then none of
-     its receivers will receive communications. Required."""
-    email_receivers: Optional[list["_models.EmailReceiver"]] = rest_field(
-        name="emailReceivers", visibility=["read", "create", "update", "delete", "query"]
+    """the dictionary of custom properties to include with the post operation. These data are appended
+     to the webhook payload."""
+    action_properties: Optional[dict[str, str]] = rest_field(
+        name="actionProperties", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of email receivers that are part of this action group."""
-    sms_receivers: Optional[list["_models.SmsReceiver"]] = rest_field(
-        name="smsReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of SMS receivers that are part of this action group."""
-    webhook_receivers: Optional[list["_models.WebhookReceiver"]] = rest_field(
-        name="webhookReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of webhook receivers that are part of this action group."""
-    itsm_receivers: Optional[list["_models.ItsmReceiver"]] = rest_field(
-        name="itsmReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of ITSM receivers that are part of this action group."""
-    azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiver"]] = rest_field(
-        name="azureAppPushReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of AzureAppPush receivers that are part of this action group."""
-    automation_runbook_receivers: Optional[list["_models.AutomationRunbookReceiver"]] = rest_field(
-        name="automationRunbookReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of AutomationRunbook receivers that are part of this action group."""
-    voice_receivers: Optional[list["_models.VoiceReceiver"]] = rest_field(
-        name="voiceReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of voice receivers that are part of this action group."""
-    logic_app_receivers: Optional[list["_models.LogicAppReceiver"]] = rest_field(
-        name="logicAppReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of logic app receivers that are part of this action group."""
-    azure_function_receivers: Optional[list["_models.AzureFunctionReceiver"]] = rest_field(
-        name="azureFunctionReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of azure function receivers that are part of this action group."""
-    arm_role_receivers: Optional[list["_models.ArmRoleReceiver"]] = rest_field(
-        name="armRoleReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of ARM role receivers that are part of this action group. Roles are Azure RBAC roles
-     and only built-in roles are supported."""
-    event_hub_receivers: Optional[list["_models.EventHubReceiver"]] = rest_field(
-        name="eventHubReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of event hub receivers that are part of this action group."""
-    incident_receivers: Optional[list["_models.IncidentReceiver"]] = rest_field(
-        name="incidentReceivers", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of incident receivers that are part of this action group."""
+    """Predefined list of properties and configuration items for the action group."""
 
     @overload
     def __init__(
         self,
         *,
-        group_short_name: str,
-        enabled: bool,
-        email_receivers: Optional[list["_models.EmailReceiver"]] = None,
-        sms_receivers: Optional[list["_models.SmsReceiver"]] = None,
-        webhook_receivers: Optional[list["_models.WebhookReceiver"]] = None,
-        itsm_receivers: Optional[list["_models.ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[list["_models.AutomationRunbookReceiver"]] = None,
-        voice_receivers: Optional[list["_models.VoiceReceiver"]] = None,
-        logic_app_receivers: Optional[list["_models.LogicAppReceiver"]] = None,
-        azure_function_receivers: Optional[list["_models.AzureFunctionReceiver"]] = None,
-        arm_role_receivers: Optional[list["_models.ArmRoleReceiver"]] = None,
-        event_hub_receivers: Optional[list["_models.EventHubReceiver"]] = None,
-        incident_receivers: Optional[list["_models.IncidentReceiver"]] = None,
+        action_group_id: str,
+        webhook_properties: Optional[dict[str, str]] = None,
+        action_properties: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -630,12 +548,14 @@ class ActionGroupResource(TrackedResource):
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar properties: The action groups properties of the resource.
-    :vartype properties: ~azure.mgmt.monitor.models.ActionGroup
+    :vartype properties: ~azure.mgmt.monitor.models.ActionGroupResourceProperties
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.monitor.models.ManagedServiceIdentity
     """
 
-    properties: Optional["_models.ActionGroup"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional["_models.ActionGroupResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The action groups properties of the resource."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -665,7 +585,7 @@ class ActionGroupResource(TrackedResource):
         *,
         location: str,
         tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.ActionGroup"] = None,
+        properties: Optional["_models.ActionGroupResourceProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -698,14 +618,142 @@ class ActionGroupResource(TrackedResource):
             super().__setattr__(key, value)
 
 
+class ActionGroupResourceProperties(_Model):
+    """An Azure action group.
+
+    :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
+     Required.
+    :vartype group_short_name: str
+    :ivar enabled: Indicates whether this action group is enabled. If an action group is not
+     enabled, then none of its receivers will receive communications. Required.
+    :vartype enabled: bool
+    :ivar email_receivers: The list of email receivers that are part of this action group.
+    :vartype email_receivers: list[~azure.mgmt.monitor.models.EmailReceiver]
+    :ivar sms_receivers: The list of SMS receivers that are part of this action group.
+    :vartype sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiver]
+    :ivar webhook_receivers: The list of webhook receivers that are part of this action group.
+    :vartype webhook_receivers: list[~azure.mgmt.monitor.models.WebhookReceiver]
+    :ivar itsm_receivers: The list of ITSM receivers that are part of this action group.
+    :vartype itsm_receivers: list[~azure.mgmt.monitor.models.ItsmReceiver]
+    :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this action
+     group.
+    :vartype azure_app_push_receivers: list[~azure.mgmt.monitor.models.AzureAppPushReceiver]
+    :ivar automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
+     this action group.
+    :vartype automation_runbook_receivers:
+     list[~azure.mgmt.monitor.models.AutomationRunbookReceiver]
+    :ivar voice_receivers: The list of voice receivers that are part of this action group.
+    :vartype voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiver]
+    :ivar logic_app_receivers: The list of logic app receivers that are part of this action group.
+    :vartype logic_app_receivers: list[~azure.mgmt.monitor.models.LogicAppReceiver]
+    :ivar azure_function_receivers: The list of azure function receivers that are part of this
+     action group.
+    :vartype azure_function_receivers: list[~azure.mgmt.monitor.models.AzureFunctionReceiver]
+    :ivar arm_role_receivers: The list of ARM role receivers that are part of this action group.
+     Roles are Azure RBAC roles and only built-in roles are supported.
+    :vartype arm_role_receivers: list[~azure.mgmt.monitor.models.ArmRoleReceiver]
+    :ivar event_hub_receivers: The list of event hub receivers that are part of this action group.
+    :vartype event_hub_receivers: list[~azure.mgmt.monitor.models.EventHubReceiver]
+    :ivar incident_receivers: The list of incident receivers that are part of this action group.
+    :vartype incident_receivers: list[~azure.mgmt.monitor.models.IncidentReceiver]
+    """
+
+    group_short_name: str = rest_field(
+        name="groupShortName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The short name of the action group. This will be used in SMS messages. Required."""
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether this action group is enabled. If an action group is not enabled, then none of
+     its receivers will receive communications. Required."""
+    email_receivers: Optional[list["_models.EmailReceiver"]] = rest_field(
+        name="emailReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of email receivers that are part of this action group."""
+    sms_receivers: Optional[list["_models.SmsReceiver"]] = rest_field(
+        name="smsReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of SMS receivers that are part of this action group."""
+    webhook_receivers: Optional[list["_models.WebhookReceiver"]] = rest_field(
+        name="webhookReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of webhook receivers that are part of this action group."""
+    itsm_receivers: Optional[list["_models.ItsmReceiver"]] = rest_field(
+        name="itsmReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of ITSM receivers that are part of this action group."""
+    azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiver"]] = rest_field(
+        name="azureAppPushReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of AzureAppPush receivers that are part of this action group."""
+    automation_runbook_receivers: Optional[list["_models.AutomationRunbookReceiver"]] = rest_field(
+        name="automationRunbookReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of AutomationRunbook receivers that are part of this action group."""
+    voice_receivers: Optional[list["_models.VoiceReceiver"]] = rest_field(
+        name="voiceReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of voice receivers that are part of this action group."""
+    logic_app_receivers: Optional[list["_models.LogicAppReceiver"]] = rest_field(
+        name="logicAppReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of logic app receivers that are part of this action group."""
+    azure_function_receivers: Optional[list["_models.AzureFunctionReceiver"]] = rest_field(
+        name="azureFunctionReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of azure function receivers that are part of this action group."""
+    arm_role_receivers: Optional[list["_models.ArmRoleReceiver"]] = rest_field(
+        name="armRoleReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of ARM role receivers that are part of this action group. Roles are Azure RBAC roles
+     and only built-in roles are supported."""
+    event_hub_receivers: Optional[list["_models.EventHubReceiver"]] = rest_field(
+        name="eventHubReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of event hub receivers that are part of this action group."""
+    incident_receivers: Optional[list["_models.IncidentReceiver"]] = rest_field(
+        name="incidentReceivers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of incident receivers that are part of this action group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        group_short_name: str,
+        enabled: bool,
+        email_receivers: Optional[list["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[list["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[list["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[list["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[list["_models.AutomationRunbookReceiver"]] = None,
+        voice_receivers: Optional[list["_models.VoiceReceiver"]] = None,
+        logic_app_receivers: Optional[list["_models.LogicAppReceiver"]] = None,
+        azure_function_receivers: Optional[list["_models.AzureFunctionReceiver"]] = None,
+        arm_role_receivers: Optional[list["_models.ArmRoleReceiver"]] = None,
+        event_hub_receivers: Optional[list["_models.EventHubReceiver"]] = None,
+        incident_receivers: Optional[list["_models.IncidentReceiver"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ActionList(_Model):
     """A list of Activity Log Alert rule actions.
 
     :ivar action_groups: The list of the Action Groups.
-    :vartype action_groups: list[~azure.mgmt.monitor.models.ActivityLogAlertActionGroup]
+    :vartype action_groups: list[~azure.mgmt.monitor.models.ActionGroup]
     """
 
-    action_groups: Optional[list["_models.ActivityLogAlertActionGroup"]] = rest_field(
+    action_groups: Optional[list["_models.ActionGroup"]] = rest_field(
         name="actionGroups", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of the Action Groups."""
@@ -714,7 +762,7 @@ class ActionList(_Model):
     def __init__(
         self,
         *,
-        action_groups: Optional[list["_models.ActivityLogAlertActionGroup"]] = None,
+        action_groups: Optional[list["_models.ActionGroup"]] = None,
     ) -> None: ...
 
     @overload
@@ -758,52 +806,6 @@ class Actions(_Model):
         *,
         action_groups: Optional[list[str]] = None,
         custom_properties: Optional[dict[str, str]] = None,
-        action_properties: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ActivityLogAlertActionGroup(_Model):
-    """A pointer to an Azure Action Group.
-
-    :ivar action_group_id: The resource ID of the Action Group. This cannot be null or empty.
-     Required.
-    :vartype action_group_id: str
-    :ivar webhook_properties: the dictionary of custom properties to include with the post
-     operation. These data are appended to the webhook payload.
-    :vartype webhook_properties: dict[str, str]
-    :ivar action_properties: Predefined list of properties and configuration items for the action
-     group.
-    :vartype action_properties: dict[str, str]
-    """
-
-    action_group_id: str = rest_field(name="actionGroupId", visibility=["read", "create", "update", "delete", "query"])
-    """The resource ID of the Action Group. This cannot be null or empty. Required."""
-    webhook_properties: Optional[dict[str, str]] = rest_field(
-        name="webhookProperties", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """the dictionary of custom properties to include with the post operation. These data are appended
-     to the webhook payload."""
-    action_properties: Optional[dict[str, str]] = rest_field(
-        name="actionProperties", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Predefined list of properties and configuration items for the action group."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        action_group_id: str,
-        webhook_properties: Optional[dict[str, str]] = None,
         action_properties: Optional[dict[str, str]] = None,
     ) -> None: ...
 
@@ -2177,36 +2179,6 @@ class ColumnDefinition(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class CommonErrorResponse(_Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.monitor.models.CommonErrorResponse]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
-    """
-
-    code: Optional[str] = rest_field(visibility=["read"])
-    """Error code."""
-    message: Optional[str] = rest_field(visibility=["read"])
-    """Error message indicating why the operation failed."""
-    target: Optional[str] = rest_field(visibility=["read"])
-    """The error target."""
-    details: Optional[list["_models.CommonErrorResponse"]] = rest_field(visibility=["read"])
-    """The error details."""
-    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
-        name="additionalInfo", visibility=["read"]
-    )
-    """The error additional info."""
 
 
 class Condition(_Model):
@@ -5028,10 +5000,10 @@ class ErrorContract(_Model):
     operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~azure.mgmt.monitor.models.CommonErrorResponse
+    :vartype error: ~azure.mgmt.monitor.models.ErrorResponseCommon
     """
 
-    error: Optional["_models.CommonErrorResponse"] = rest_field(
+    error: Optional["_models.ErrorResponseCommon"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The error object."""
@@ -5040,7 +5012,7 @@ class ErrorContract(_Model):
     def __init__(
         self,
         *,
-        error: Optional["_models.CommonErrorResponse"] = None,
+        error: Optional["_models.ErrorResponseCommon"] = None,
     ) -> None: ...
 
     @overload
@@ -5225,6 +5197,36 @@ class ErrorResponseAutoGenerated(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ErrorResponseCommon(_Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.monitor.models.ErrorResponseCommon]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read"])
+    """Error code."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """Error message indicating why the operation failed."""
+    target: Optional[str] = rest_field(visibility=["read"])
+    """The error target."""
+    details: Optional[list["_models.ErrorResponseCommon"]] = rest_field(visibility=["read"])
+    """The error details."""
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
+        name="additionalInfo", visibility=["read"]
+    )
+    """The error additional info."""
 
 
 class ErrorResponseCommonV2(_Model):
