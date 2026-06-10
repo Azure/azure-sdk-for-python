@@ -302,11 +302,14 @@ class TraceContextMiddleware:
                 "x_request_id", x_request_id, context=ctx,
             )
 
-        # Attach request context and intentionally do not detach here.
-        # Hypercorn emits access logs after the ASGI app returns but within
-        # the same request task; detaching early causes zeroed operation_Id.
-        _otel_context.attach(ctx)
-        await self.app(scope, receive, send)
+        token = _otel_context.attach(ctx)
+        try:
+            await self.app(scope, receive, send)
+        finally:
+            try:
+                _otel_context.detach(token)
+            except ValueError:
+                pass
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:

@@ -386,12 +386,12 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         ctx = _otel_baggage.set_baggage(
             "azure.ai.agentserver.session_id", session_id, context=ctx,
         )
-        _otel_context.attach(ctx)
+        baggage_token = _otel_context.attach(ctx)
 
         # Set structured logging context (concurrency-safe via contextvars)
         _ensure_log_filter()
-        _invocation_id_var.set(invocation_id)
-        _session_id_var.set(session_id)
+        inv_token = _invocation_id_var.set(invocation_id)
+        session_token = _session_id_var.set(session_id)
         try:
             response = await self._dispatch_invoke(request)
             response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -426,6 +426,13 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                     error_detail,
                 ),
             )
+        finally:
+            _invocation_id_var.reset(inv_token)
+            _session_id_var.reset(session_token)
+            try:
+                _otel_context.detach(baggage_token)
+            except ValueError:
+                pass
         return response
 
     async def _traced_invocation_endpoint(
@@ -442,8 +449,8 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
 
         _ensure_log_filter()
-        _invocation_id_var.set(invocation_id)
-        _session_id_var.set(session_id)
+        inv_token = _invocation_id_var.set(invocation_id)
+        session_token = _session_id_var.set(session_id)
         try:
             response = await dispatch(request)
             response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -461,6 +468,10 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                     error_detail,
                 ),
             )
+        finally:
+            _invocation_id_var.reset(inv_token)
+            _session_id_var.reset(session_token)
+
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(
             request, "get_invocation", self._dispatch_get_invocation
