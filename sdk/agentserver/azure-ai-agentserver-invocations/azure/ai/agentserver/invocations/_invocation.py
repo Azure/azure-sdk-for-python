@@ -426,9 +426,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                     error_detail,
                 ),
             )
-        finally:
-            pass
-
         return response
 
     async def _traced_invocation_endpoint(
@@ -464,9 +461,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                     error_detail,
                 ),
             )
-        finally:
-            pass
-
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(
             request, "get_invocation", self._dispatch_get_invocation

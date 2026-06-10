@@ -16,7 +16,10 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_version,
     resolve_appinsights_connection_string,
 )
-from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
+from azure.ai.agentserver.core._tracing import (
+    _FoundryEnrichmentLogRecordProcessor,
+    _FoundryEnrichmentSpanProcessor,
+)
 
 
 class _CollectorExporter(SpanExporter):
@@ -430,5 +433,80 @@ class TestAgentIdentityResolution:
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
 
+
+class _FakeLogRecord:
+    def __init__(self, attributes):
+        self.attributes = attributes
+
+
+class _FakeLogData:
+    def __init__(self, attributes):
+        self.log_record = _FakeLogRecord(attributes)
+
+
+class TestFoundryEnrichmentLogRecordProcessor:
+    def test_adds_agent_and_fallback_session_attributes(self) -> None:
+        proc = _FoundryEnrichmentLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="sess-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        proc.on_emit(log_data)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["gen_ai.agent.name"] == "agent-a"
+        assert attrs["agent_name"] == "agent-a"
+        assert attrs["gen_ai.agent.version"] == "1.2.3"
+        assert attrs["agent_version"] == "1.2.3"
+        assert attrs["microsoft.session.id"] == "sess-fallback-1"
+        assert attrs["agent_session_id"] == "sess-fallback-1"
+
+    def test_prefers_baggage_session_id_over_fallback(self) -> None:
+        proc = _FoundryEnrichmentLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="sess-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", "sess-from-baggage",
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["microsoft.session.id"] == "sess-from-baggage"
+        assert attrs["agent_session_id"] == "sess-from-baggage"
+
+    def test_does_not_overwrite_existing_log_attributes(self) -> None:
+        proc = _FoundryEnrichmentLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="sess-fallback-1",
+        )
+        attrs = {
+            "gen_ai.agent.name": "existing-name",
+            "agent_name": "existing-name",
+            "gen_ai.agent.version": "0.0.1",
+            "agent_version": "0.0.1",
+            "microsoft.session.id": "existing-session",
+            "agent_session_id": "existing-session",
+        }
+        log_data = _FakeLogData(attrs)
+
+        proc.on_emit(log_data)
+
+        assert attrs["gen_ai.agent.name"] == "existing-name"
+        assert attrs["agent_name"] == "existing-name"
+        assert attrs["gen_ai.agent.version"] == "0.0.1"
+        assert attrs["agent_version"] == "0.0.1"
+        assert attrs["microsoft.session.id"] == "existing-session"
+        assert attrs["agent_session_id"] == "existing-session"
 
 
