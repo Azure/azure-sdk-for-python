@@ -19,11 +19,13 @@ from ..._helpers._item_dispatch import (
     build_create_item_request_options,
     build_delete_item_request_options,
     build_read_item_request_options,
+    build_upsert_item_request_options,
 )
 from ..._helpers._request_prep import (
     build_create_item_prepared,
     build_delete_item_prepared,
     build_read_item_prepared,
+    build_upsert_item_prepared,
 )
 from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
@@ -32,7 +34,8 @@ from .._backend.base import AsyncCosmosBackend
 
 class AsyncItemHelper:
     """Async per-call helper for ``Container.create_item``,
-    ``Container.read_item``, and ``Container.delete_item``.
+    ``Container.read_item``, ``Container.delete_item``, and
+    ``Container.upsert_item``.
 
     See the sync sibling ``azure.cosmos._helpers.item_helper.ItemHelper``
     for the design rationale and the per-parameter docs.
@@ -253,6 +256,69 @@ class AsyncItemHelper:
 
         return await self.client_connection.ReadItem(
             document_link=document_link,
+            options=request_options,
+            **kwargs,
+        )
+
+    async def upsert_item(
+        self,
+        *,
+        container_link: str,
+        body: Dict[str, Any],
+        **kwargs: Any,
+    ) -> Any:
+        """Async sibling of ``ItemHelper.upsert_item``. See sync docstring.
+
+        The async public ``upsert_item`` never exposed
+        ``populate_query_metrics``, so this helper passes ``None`` for it
+        (the sync sibling threads the deprecated sync-only flag through).
+        """
+        kwargs_for_rust_prep = dict(kwargs)
+
+        request_options = build_upsert_item_request_options(
+            kwargs,
+            populate_query_metrics=None,
+        )
+
+        container_rid: Optional[str] = None
+        try:
+            if self._ensure_container_cached is not None:
+                await self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    await self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                container_rid = rid_value
+                request_options[Constants.ContainerRID] = container_rid
+        except Exception:  # pylint: disable=broad-except
+            container_rid = None
+
+        if self._backend is not None:
+            partition_key_value = await self._extract_partition_key_value(
+                container_link, body, request_options
+            )
+            prepared = build_upsert_item_prepared(
+                container_link=container_link,
+                body=body,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                access_condition=request_options.get("accessCondition"),
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = await self._backend.execute(prepared)
+            if backend_response is not None:
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        return await self.client_connection.UpsertItem(
+            database_or_container_link=container_link,
+            document=body,
             options=request_options,
             **kwargs,
         )

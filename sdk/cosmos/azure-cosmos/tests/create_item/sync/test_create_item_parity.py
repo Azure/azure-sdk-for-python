@@ -31,7 +31,7 @@ both backends' response bodies, response headers, diffs, and a
 plain-English VERDICT line). The verdict distinguishes:
 
   * ``FULL PARITY`` — request and response bytes both equivalent.
-  * ``FUNCTIONAL PARITY, REPORTING GAP`` — both backends performed
+  * ``FUNCTIONAL PARITY, HEADER GAP`` — both backends performed
     the operation; only the *set of response headers exposed by the
     rust binding* differs (a known rust-binding limitation).
   * ``FUNCTIONAL DIVERGENCE`` — the operation behaved differently.

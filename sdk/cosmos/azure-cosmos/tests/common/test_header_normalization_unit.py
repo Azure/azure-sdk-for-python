@@ -5,31 +5,29 @@
 # -------------------------------------------------------------------------
 """Unit tests for ``_backend.base.normalize_response_headers``.
 
-The Rust binding emits a handful of LSN-family response headers under
-their ``cosmos-``-prefixed wire names (``x-ms-cosmos-llsn`` and friends);
-the legacy core-python path historically surfaced the same data under
-the un-prefixed legacy names (``x-ms-llsn`` etc.). At the Rust backend
-boundary, ``normalize_response_headers`` *aliases* each prefixed key
-into its legacy spelling — both keys end up in the resulting
-``CaseInsensitiveDict`` with the same value — so customer code reading
-``last_response_headers["x-ms-llsn"]`` works the same on both backends
-and the parity diff can presence-check a single canonical key. The
-prefixed form is preserved so anything that reads it directly keeps
-working.
+``normalize_response_headers`` is a pure type-normalisation step at the
+Rust backend boundary: the binding hands back a plain dict keyed by the
+gateway's wire header names, and this function wraps it in a
+``CaseInsensitiveDict`` so ``last_response_headers`` lookups are
+case-insensitive and identical to the legacy core-python path (which
+surfaces azure-core's ``CaseInsensitiveDict`` straight from
+``copy.copy(response.headers)`` -- the raw gateway headers, unchanged).
 
-These tests pin that contract so a future change to the alias map (or
-to its merge semantics — e.g. flipping back to a destructive rename, or
-letting the alias clobber an existing legacy value) shows up as a test
-failure rather than as a silent parity drift.
+It does **not** add, rename, or alias any header. In particular it does
+not synthesise the un-prefixed double-``l`` LSN names (``x-ms-llsn`` /
+``x-ms-item-llsn``): the gateway never emits those and the legacy SDK
+never produced them, so inventing them on the rust path would create a
+rust-only header surface. Both backends surface exactly the gateway's
+names (``x-ms-cosmos-llsn``, ``x-ms-item-lsn``, ``lsn``, …).
+
+These tests pin "pass everything through unchanged, invent nothing" so a
+future regression that re-introduces an alias step shows up as a failure.
 """
 from __future__ import annotations
 
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import (
-    _RUST_PREFIXED_TO_LEGACY_ALIASES,
-    normalize_response_headers,
-)
+from azure.cosmos._backend.base import normalize_response_headers
 
 
 # --- Empty / None inputs -------------------------------------------------
@@ -68,79 +66,35 @@ def test_result_is_case_insensitive():
     assert result["ETAG"] == '"abc"'
 
 
-# --- LSN-family alias ----------------------------------------------------
+# --- LSN family: gateway names pass through, NO aliases invented --------
 
-def test_lsn_family_prefixed_names_gain_legacy_aliases():
+def test_lsn_family_passes_through_without_inventing_aliases():
+    """The gateway's LSN header names flow through unchanged, and the
+    function must NOT invent the un-prefixed double-``l`` aliases.
+
+    The legacy core-python path surfaces only what the gateway emits
+    (``x-ms-cosmos-llsn`` etc.). Synthesising ``x-ms-llsn`` /
+    ``x-ms-item-llsn`` here would be a rust-only header surface the
+    legacy SDK never produced -- exactly the behaviour that was removed.
+    """
     headers = {
         "x-ms-cosmos-llsn": "42",
         "x-ms-cosmos-item-llsn": "41",
-        "x-ms-cosmos-quorum-acked-lsn": "40",
         "x-ms-cosmos-quorum-acked-llsn": "39",
+        "x-ms-item-lsn": "42",
+        "lsn": "42",
     }
     result = normalize_response_headers(headers)
-    # Prefixed spellings are preserved (the binding emits them; the
-    # parity harness and any forward-compatible reader may still want
-    # them)...
+    # Gateway names preserved exactly.
     assert result["x-ms-cosmos-llsn"] == "42"
     assert result["x-ms-cosmos-item-llsn"] == "41"
-    assert result["x-ms-cosmos-quorum-acked-lsn"] == "40"
     assert result["x-ms-cosmos-quorum-acked-llsn"] == "39"
-    # ...and the legacy un-prefixed names are added as aliases with the
-    # same values, so legacy customer code reading either spelling works.
-    assert result["x-ms-llsn"] == "42"
-    assert result["x-ms-item-llsn"] == "41"
-    assert result["x-ms-quorum-acked-lsn"] == "40"
-    assert result["x-ms-quorum-acked-llsn"] == "39"
-    # 4 prefixed + 4 alias entries.
-    assert len(result) == 8
-
-
-def test_alias_lookup_is_case_insensitive_on_input():
-    # ``CaseInsensitiveDict`` makes the prefixed-key lookup case-blind,
-    # so any casing the binding might hand us still produces the alias.
-    headers = {"X-MS-Cosmos-Llsn": "42"}
-    result = normalize_response_headers(headers)
-    assert result["x-ms-llsn"] == "42"
-    # Original key is preserved (case-insensitive lookup still hits).
-    assert result["X-MS-Cosmos-Llsn"] == "42"
-    assert result["x-ms-cosmos-llsn"] == "42"
-
-
-# --- Collision dedupe ----------------------------------------------------
-
-def test_existing_legacy_name_is_not_overwritten():
-    # If the driver ever started surfacing the un-prefixed form on its
-    # own (so we get *both* spellings on the way in), the value already
-    # under the legacy spelling wins — the alias step must not clobber
-    # it with the prefixed value.
-    headers = {
-        "x-ms-llsn": "100",            # canonical, already set
-        "x-ms-cosmos-llsn": "999",     # would otherwise be aliased in
-    }
-    result = normalize_response_headers(headers)
-    assert result["x-ms-llsn"] == "100"
-    # Prefixed form is still preserved with its own value; only the
-    # *alias add* is skipped because the legacy key already existed.
-    assert result["x-ms-cosmos-llsn"] == "999"
-    assert len(result) == 2
-
-
-# --- Alias map auditability ---------------------------------------------
-
-def test_alias_map_is_lowercase_only():
-    # The runtime lookup compares keys via ``CaseInsensitiveDict``, but
-    # keeping the map keys lowercase is the convention and matches the
-    # wire spelling. A mixed-case key here would still work but would be
-    # a maintenance smell.
-    for key in _RUST_PREFIXED_TO_LEGACY_ALIASES:
-        assert key == key.lower(), (
-            "alias map key {!r} must be all-lowercase".format(key)
-        )
-
-
-def test_alias_map_never_aliases_to_itself():
-    # A no-op entry would clutter the table and confuse future readers
-    # about whether an alias is intentional.
-    for src, dst in _RUST_PREFIXED_TO_LEGACY_ALIASES.items():
-        assert src != dst, "alias {!r} -> {!r} is a no-op".format(src, dst)
+    assert result["x-ms-item-lsn"] == "42"
+    assert result["lsn"] == "42"
+    # No invented un-prefixed double-l aliases.
+    assert "x-ms-llsn" not in result
+    assert "x-ms-item-llsn" not in result
+    assert "x-ms-quorum-acked-llsn" not in result
+    # Same key count as the input -- nothing added.
+    assert len(result) == 5
 

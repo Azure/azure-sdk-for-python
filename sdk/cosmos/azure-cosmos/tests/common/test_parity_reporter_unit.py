@@ -278,10 +278,10 @@ class ReporterVerdictTests(unittest.TestCase):
             f"got: {verdict!r}",
         )
 
-    def test_wire_nondeterministic_headers_do_not_fire_reporting_gap(self):
+    def test_wire_nondeterministic_headers_do_not_fire_header_gap(self):
         """``x-ms-cosmos-quorum-acked-llsn`` is gateway-emitted
         non-deterministically; presence-missing on one side must NOT
-        produce a REPORTING GAP. This is Bug 2 of the
+        produce a HEADER GAP. This is Bug 2 of the
         principal-engineer review."""
         # Build two captures with the SAME headers except the rust
         # side has the quorum-acked header and the core-python side
@@ -335,7 +335,7 @@ class ReporterRenderingTests(unittest.TestCase):
                 md = fh.read()
         for s in (
             "FULL PARITY",
-            "FUNCTIONAL PARITY, REPORTING GAP",
+            "FUNCTIONAL PARITY, HEADER GAP",
             "FUNCTIONAL DIVERGENCE",
             "EXCEPTION DIVERGENCE",
             "RUST REGRESSION",

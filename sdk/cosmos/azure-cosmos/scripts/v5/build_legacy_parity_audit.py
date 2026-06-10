@@ -581,7 +581,7 @@ def _build_comparison(
 # and then jumping to the per-test block sees the same vocabulary
 # top-to-bottom.
 _FULL_PARITY_LABEL = "FULL PARITY"
-_REPORTING_GAP_LABEL = "FUNCTIONAL PARITY, REPORTING GAP"
+_HEADER_GAP_LABEL = "FUNCTIONAL PARITY, HEADER GAP"
 _FUNCTIONAL_DIVERGENCE_LABEL = "FUNCTIONAL DIVERGENCE"
 _EXCEPTION_DIVERGENCE_LABEL = "EXCEPTION DIVERGENCE"
 
@@ -589,7 +589,7 @@ _EXCEPTION_DIVERGENCE_LABEL = "EXCEPTION DIVERGENCE"
 def _short_call_verdict(cmp_obj) -> str:
     """Collapse BackendComparison._verdict() to one of four labels.
 
-    The full verdict text is multi-line for REPORTING GAP rows (it
+    The full verdict text is multi-line for HEADER GAP rows (it
     enumerates every pushback bucket and the unrecorded gaps). The
     scoreboard only needs the headline, so we read the first line and
     snap to one of the four published categories.
@@ -598,8 +598,8 @@ def _short_call_verdict(cmp_obj) -> str:
     head = full.splitlines()[0] if full else ""
     if head.startswith(_FULL_PARITY_LABEL):
         return _FULL_PARITY_LABEL
-    if head.startswith(_REPORTING_GAP_LABEL):
-        return _REPORTING_GAP_LABEL
+    if head.startswith(_HEADER_GAP_LABEL):
+        return _HEADER_GAP_LABEL
     if head.startswith(_FUNCTIONAL_DIVERGENCE_LABEL):
         return _FUNCTIONAL_DIVERGENCE_LABEL
     if head.startswith(_EXCEPTION_DIVERGENCE_LABEL):
@@ -828,7 +828,7 @@ def emit_markdown(
             _EXCEPTION_DIVERGENCE_LABEL: 1,
             "RUST REGRESSION": 2,
             "SHARED FAILURE": 3,
-            _REPORTING_GAP_LABEL: 4,
+            _HEADER_GAP_LABEL: 4,
             "RUST SKIP ONLY": 5,
             "CORE-PYTHON SKIP ONLY": 6,
             "BOTH SKIPPED": 7,
@@ -880,7 +880,7 @@ def emit_markdown(
         "nothing for the customer to notice."
     )
     lines.append(
-        "* **FUNCTIONAL PARITY, REPORTING GAP** -- the operation behaved the "
+        "* **FUNCTIONAL PARITY, HEADER GAP** -- the operation behaved the "
         "same on both backends (same body returned, or same exception raised) "
         "but the response-header surface differs. These are header-only "
         "regressions; the per-test block lists them grouped by the entry in "

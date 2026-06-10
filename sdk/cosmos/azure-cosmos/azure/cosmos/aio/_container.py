@@ -47,6 +47,7 @@ from .._helpers._item_dispatch import (
     merge_create_item_explicit_kwargs,
     merge_delete_item_explicit_kwargs,
     merge_read_item_explicit_kwargs,
+    merge_upsert_item_explicit_kwargs,
     pick_backend,
 )
 from ._helpers.item_helper import AsyncItemHelper
@@ -1324,40 +1325,36 @@ class ContainerProxy:
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = await self.client_connection.UpsertItem(
-            database_or_container_link=self.container_link,
-            document=body,
-            options=request_options,
-            **kwargs
+        # upsert is write-with-body like create, so the helper extracts
+        # the partition key from the body. It honours etag /
+        # match_condition (insert-only or version-guarded replace) and
+        # writes the legacy disableAutomaticIdGeneration flag so the
+        # fall-through path matches. response_hook is not an explicit
+        # parameter on the async surface; it rides in **kwargs.
+        merge_upsert_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
         )
-        return result
+
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).upsert_item(
+            container_link=self.container_link,
+            body=body,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def semantic_rerank(

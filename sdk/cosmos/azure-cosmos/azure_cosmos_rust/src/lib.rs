@@ -24,6 +24,20 @@
 //!         `CosmosResponse` into a 4-tuple matching the Python
 //!         `BackendResponse` dataclass.
 //!
+//!   * `upsert_item(handle, prepared) -> (status, sub_status,
+//!                                         headers, body)`
+//!         Same input/output shape as `create_item` (write-with-body:
+//!         the document id rides inside `body_bytes`). The only
+//!         difference is the operation kind —
+//!         `CosmosOperation::upsert_item` — which makes the driver
+//!         pipeline stamp `x-ms-documentdb-is-upsert: true` and POST to
+//!         the collection feed, so an existing `(partition_key, id)` is
+//!         replaced (HTTP 200) rather than rejected with 409; a new id
+//!         inserts (HTTP 201). `If-Match` / `If-None-Match` (built by
+//!         the Python helper from `etag` + `match_condition`:
+//!         insert-only or version-guarded replace) flow through
+//!         `custom_headers`.
+//!
 //!   * `delete_item(handle, prepared) -> (status, sub_status,
 //!                                         headers, body)`
 //!         Same shape as `create_item` but builds a
@@ -103,6 +117,7 @@ fn drivers() -> &'static RwLock<HashMap<String, Arc<CosmosDriver>>> {
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(init_client, m)?)?;
     m.add_function(wrap_pyfunction!(create_item, m)?)?;
+    m.add_function(wrap_pyfunction!(upsert_item, m)?)?;
     m.add_function(wrap_pyfunction!(delete_item, m)?)?;
     m.add_function(wrap_pyfunction!(read_item, m)?)?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
@@ -266,6 +281,106 @@ fn create_item<'py>(
             // Synthetic errors (transport failures, client validation)
             // have no wire response and fall through to a generic
             // RuntimeError.
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                Err(PyRuntimeError::new_err(format!(
+                    "driver execute_singleton_operation failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// upsert_item
+// ---------------------------------------------------------------------------
+//
+// Same input/output shape as create_item (write-with-body: the document id
+// rides inside body_bytes, the partition key is parsed from the header). The
+// only difference is the operation kind: CosmosOperation::upsert_item instead
+// of create_item. The driver pipeline owns the upsert semantics from there --
+// it stamps `x-ms-documentdb-is-upsert: true` and POSTs to the collection
+// feed -- so an existing (partition_key, id) is replaced (HTTP 200) rather
+// than rejected with 409, and a new id inserts (HTTP 201). Like create,
+// upsert returns the saved document unless `no_response=True`, so
+// content_response_on_write is honoured. `If-Match` / `If-None-Match` (built
+// by the Python helper from etag + match_condition: insert-only or
+// version-guarded replace) flow through custom_headers like any other
+// per-request header.
+
+#[pyfunction]
+fn upsert_item<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let container_link: String = prepared.getattr("container_link")?.extract()?;
+    let body_bytes: Vec<u8> = prepared.getattr("body_bytes")?.extract()?;
+    let partition_key_header: String =
+        prepared.getattr("partition_key_header")?.extract()?;
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+
+    let modifiers = extract_op_modifiers(headers_dict)?;
+
+    let driver = drivers()
+        .read()
+        .unwrap()
+        .get(handle)
+        .cloned()
+        .ok_or_else(|| {
+            PyRuntimeError::new_err(format!(
+                "no driver registered for handle {handle:?}; call init_client first"
+            ))
+        })?;
+
+    let (database_name, container_name) = parse_container_link(&container_link)?;
+    let partition_key = parse_partition_key_header(&partition_key_header)?;
+    let item_id = extract_item_id(&body_bytes)?;
+
+    let tokio_rt = TOKIO_RUNTIME.get().ok_or_else(|| {
+        PyRuntimeError::new_err("init_client must be called before upsert_item")
+    })?;
+
+    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
+        tokio_rt.block_on(async {
+            let container = driver
+                .resolve_container(&database_name, &container_name)
+                .await?;
+            let item_ref =
+                ItemReference::from_name(&container, partition_key, item_id);
+            // The single difference from create_item: upsert_item makes
+            // the driver stamp is-upsert and POST to the collection feed.
+            let mut op = CosmosOperation::upsert_item(item_ref).with_body(body_bytes);
+
+            if let Some(activity) = modifiers.activity_header.as_ref() {
+                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
+                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
+                }
+            }
+            if let Some(session) = modifiers.session_header.as_ref() {
+                op = op.with_session_token(SessionToken::from(session.clone()));
+            }
+
+            // Upsert returns the saved document unless no_response=True,
+            // exactly like create, so honour content_response_on_write.
+            let options = build_operation_options(
+                Some(modifiers.content_response_on_write),
+                modifiers.excluded_regions_value,
+                modifiers.end_to_end_timeout,
+                modifiers.custom_headers,
+            );
+
+            driver.execute_singleton_operation(op, options).await
+        })
+    });
+
+    match response_result {
+        Ok(response) => backend_response_tuple_from_success(py, response),
+        Err(cosmos_error) => {
             if let Some(raw_http_error) =
                 backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
             {

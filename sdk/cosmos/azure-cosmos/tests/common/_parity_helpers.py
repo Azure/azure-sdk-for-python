@@ -208,7 +208,7 @@ class BackendComparison:
             lines.append("  - " + d)
         lines.append("--- VERDICT ---")
         # The verdict may be multi-line when it lists the pushback
-        # cross-references for a REPORTING GAP. Indent every line so
+        # cross-references for a HEADER GAP. Indent every line so
         # the VERDICT section stays visually aligned with DIFFS above.
         for vl in self._verdict().splitlines() or [""]:
             lines.append("  " + vl)
@@ -250,12 +250,6 @@ class BackendComparison:
         "container-identity headers parsed but pub(crate) in the driver "
         "— wont-fix (revisit only with a customer escalation)",
     )
-    _PUSHBACK_LSN_ALIAS_SYNTHESIS: ClassVar[Tuple[int, str]] = (
-        11,
-        "rust binding synthesises un-prefixed double-l LSN aliases "
-        "(``x-ms-llsn``, ``x-ms-item-llsn``) the legacy SDK never "
-        "emitted; new rust-only surface, not a back-compat shim",
-    )
     _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {
         # #6 — HTTP framing headers azure-core surfaces but the rust
         # binding's typed projection drops.
@@ -273,10 +267,6 @@ class BackendComparison:
         # #8 — container-identity headers explicitly declined.
         "x-ms-alt-content-path": _PUSHBACK_CONTAINER_IDENTITY,
         "x-ms-content-path": _PUSHBACK_CONTAINER_IDENTITY,
-        # #11 — synthetic LSN aliases the rust binding writes that the
-        # legacy core-python path never produced.
-        "x-ms-llsn": _PUSHBACK_LSN_ALIAS_SYNTHESIS,
-        "x-ms-item-llsn": _PUSHBACK_LSN_ALIAS_SYNTHESIS,
     }
 
     def _is_header_diff(self, line: str) -> bool:
@@ -323,7 +313,7 @@ class BackendComparison:
     def _verdict(self) -> str:
         """Plain-English summary of what the diff means.
 
-        For REPORTING-GAP verdicts the output is multi-line: the first
+        For HEADER-GAP verdicts the output is multi-line: the first
         line names the bucket, then a per-pushback breakdown lists
         every header gap in DIFFS grouped by the pushback that already
         tracks it (or under "not yet recorded" so the next reviewer
@@ -358,7 +348,7 @@ class BackendComparison:
                     else:
                         grouped.setdefault(pb, []).append(name)
             out: List[str] = [
-                "FUNCTIONAL PARITY, REPORTING GAP: both backends performed "
+                "FUNCTIONAL PARITY, HEADER GAP: both backends performed "
                 "the operation successfully and returned response bodies "
                 "that match on every customer-visible field (the harness "
                 "filters the six per-document server-stamped fields it "
@@ -435,22 +425,15 @@ _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     # LSN family — replica/replication-progress counters. Different
     # replicas legitimately answer different calls so the value
     # legitimately differs, but the presence is part of the diagnostics
-    # contract. Two related families coexist on the wire:
+    # contract. Two name families coexist on the wire, both gateway-
+    # emitted and faithfully surfaced by both backends:
     #   * the cosmos-prefixed double-l names (``x-ms-cosmos-llsn``,
-    #     ``x-ms-cosmos-item-llsn``) which the gateway emits on every
-    #     response and which both backends faithfully surface;
-    #   * the un-prefixed single-l names (``x-ms-item-lsn``, ``lsn``)
-    #     which the gateway also emits and which both backends surface;
-    #   * the un-prefixed *double*-l names (``x-ms-llsn``,
-    #     ``x-ms-item-llsn``) which the gateway never emits and which
-    #     only the rust binding produces, as synthetic aliases written
-    #     by ``azure/cosmos/_backend/base.py::normalize_response_headers``.
-    #     The synthesis is documented in pushback #11 (the legacy SDK
-    #     never produced these names, so the alias is not a
-    #     compatibility shim but a new rust-only surface).
-    # All five names are presence-checked here; value-skipped on all.
-    "x-ms-llsn",
-    "x-ms-item-llsn",
+    #     ``x-ms-cosmos-item-llsn``);
+    #   * the un-prefixed single-l names (``x-ms-item-lsn``, ``lsn``).
+    # The rust binding no longer synthesises the un-prefixed *double*-l
+    # aliases (``x-ms-llsn`` / ``x-ms-item-llsn``) -- the gateway never
+    # emitted them and the legacy SDK never produced them, so neither
+    # backend surfaces them and they are not presence-checked.
     "x-ms-cosmos-llsn",
     "x-ms-cosmos-item-llsn",
     "x-ms-item-lsn",

@@ -24,6 +24,7 @@ from .base import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_READ_ITEM,
+    OP_UPSERT_ITEM,
     BackendResponse,
     CosmosBackend,
     PreparedRequest,
@@ -90,6 +91,8 @@ class RustBackend(CosmosBackend):
         handle = self._ensure_handle()
         if prepared.op == OP_CREATE_ITEM:
             status_code, sub_status, headers, body = _rust_module.create_item(handle, prepared)
+        elif prepared.op == OP_UPSERT_ITEM:
+            status_code, sub_status, headers, body = _rust_module.upsert_item(handle, prepared)
         elif prepared.op == OP_DELETE_ITEM:
             status_code, sub_status, headers, body = _rust_module.delete_item(handle, prepared)
         elif prepared.op == OP_READ_ITEM:

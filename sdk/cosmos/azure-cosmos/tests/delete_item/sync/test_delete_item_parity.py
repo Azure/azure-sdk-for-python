@@ -7,7 +7,7 @@
 
 Mirrors the layout of ``tests/create_item/sync/test_create_item_parity.py``.
 The graduated structure (L0..L5) and the verdict grammar (FULL PARITY /
-FUNCTIONAL PARITY, REPORTING GAP / FUNCTIONAL DIVERGENCE / EXCEPTION
+FUNCTIONAL PARITY, HEADER GAP / FUNCTIONAL DIVERGENCE / EXCEPTION
 DIVERGENCE) match that file so a contributor reading one in-process
 parity test recognises the shape of every other one.
 

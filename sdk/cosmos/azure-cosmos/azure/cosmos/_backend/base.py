@@ -31,6 +31,7 @@ from azure.core.utils import CaseInsensitiveDict
 OP_CREATE_ITEM = "create_item"
 OP_DELETE_ITEM = "delete_item"
 OP_READ_ITEM = "read_item"
+OP_UPSERT_ITEM = "upsert_item"
 
 
 @dataclass(frozen=True)
@@ -118,41 +119,32 @@ class CosmosBackend(abc.ABC):
 
 
 # ---------------------------------------------------------------------------
-# Response-header name normalisation (Rust binding → legacy spelling)
+# Response-header normalisation (Rust binding dict → CaseInsensitiveDict)
 # ---------------------------------------------------------------------------
 #
-# Some replication-progress headers (``x-ms-llsn``, ``x-ms-quorum-acked-llsn``, …)
-# appear without a ``cosmos-`` prefix on the legacy core-python path. The Rust
-# driver emits the same fields under their ``cosmos-``-prefixed wire names. To
-# keep customer code reading either spelling working on both backends, we add the
-# un-prefixed legacy name as an alias when the prefixed name is present; the
-# prefixed key stays in place. Never clobber an existing entry.
-
-_RUST_PREFIXED_TO_LEGACY_ALIASES: Mapping[str, str] = {
-    "x-ms-cosmos-llsn": "x-ms-llsn",
-    "x-ms-cosmos-quorum-acked-llsn": "x-ms-quorum-acked-llsn",
-    "x-ms-cosmos-item-llsn": "x-ms-item-llsn",
-    "x-ms-cosmos-quorum-acked-lsn": "x-ms-quorum-acked-lsn",
-}
+# The Rust binding hands back a plain dict keyed by the gateway's wire
+# header names. The legacy core-python path surfaces azure-core's
+# ``CaseInsensitiveDict`` (it just does ``copy.copy(response.headers)`` --
+# the raw gateway headers, no renaming or aliasing). To keep
+# ``last_response_headers`` lookups case-insensitive and identical across
+# both backends, we wrap the binding's dict in the same type. No keys are
+# added or renamed: both backends surface exactly the header names the
+# gateway emitted (e.g. ``x-ms-cosmos-llsn``, ``x-ms-item-lsn``, ``lsn``).
 
 
 def normalize_response_headers(
     headers: Optional[Mapping[str, Any]],
 ) -> Optional[CaseInsensitiveDict]:
-    """Add legacy-name aliases for the Rust binding's ``cosmos-``-prefixed LSN headers.
+    """Wrap the Rust binding's response-header dict in a ``CaseInsensitiveDict``.
 
-    Returns a fresh ``CaseInsensitiveDict`` containing every key from
-    the input plus one alias entry for each known prefixed → legacy
-    mapping. Existing legacy entries are never overwritten. ``None`` or
-    empty input returns ``None``.
+    A pure type-normalisation step: every key from the input is copied
+    through unchanged so the rust path surfaces the same gateway header
+    names the legacy path does. ``None`` or empty input returns ``None``.
     """
     if not headers:
         return None
     result = CaseInsensitiveDict()
     for raw_key, value in headers.items():
         result[raw_key] = value
-    for prefixed, legacy in _RUST_PREFIXED_TO_LEGACY_ALIASES.items():
-        if prefixed in result and legacy not in result:
-            result[legacy] = result[prefixed]
     return result
 

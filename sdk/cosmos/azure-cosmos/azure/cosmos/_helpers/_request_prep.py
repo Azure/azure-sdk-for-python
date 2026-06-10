@@ -19,7 +19,7 @@ inputs (cache lookups, PK extraction from the body). Pure composition
 lets both backends consume the same ``PreparedRequest`` and produce
 identical wire bytes.
 
-Two public builders:
+The public builders:
 
 - ``build_create_item_prepared`` — full request with JSON body and
   id minting.
@@ -36,6 +36,12 @@ Two public builders:
   ``options["maxIntegratedCacheStaleness"]`` **only when truthy** —
   ``0`` is a silent no-op on the wire, matching the legacy
   behaviour.
+- ``build_upsert_item_prepared`` — full request with JSON body, like
+  create, but never mints an id (an upsert always disables id
+  generation) and emits the same ``If-Match`` / ``If-None-Match``
+  header as delete (an upsert honours ``etag`` / ``match_condition``
+  where create drops them). The insert-or-replace semantics ride on
+  the ``OP_UPSERT_ITEM`` discriminator, not on a header.
 """
 from __future__ import annotations
 
@@ -45,6 +51,7 @@ from .._backend.base import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_READ_ITEM,
+    OP_UPSERT_ITEM,
     PreparedRequest,
 )
 from .._constants import _Constants as Constants
@@ -352,6 +359,132 @@ def build_read_item_prepared(
         partition_key_header=partition_key_header,
         headers=headers,
         item_id=item_id,
+    )
+
+
+def build_upsert_item_prepared(
+    *,
+    container_link: str,
+    body: Dict[str, Any],
+    partition_key_value: Any,
+    container_rid: Optional[str],
+    access_condition: Optional[Dict[str, Any]] = None,
+    kwargs: Optional[Dict[str, Any]] = None,
+) -> PreparedRequest:
+    """Build a ``PreparedRequest`` for a single ``upsert_item`` call.
+
+    Pure: does not read caches, does not extract the partition-key from
+    the body. The caller has done those because they require a
+    ``CosmosClientConnection``.
+
+    Upsert is the write-with-body sibling of ``create_item``: it carries
+    the document id inside the body and serialises the body to JSON
+    bytes. It differs from create in two ways, both reflected here:
+
+    * It never mints an id. ``disableAutomaticIdGeneration`` is always
+      ``True`` and the body is serialised exactly as supplied; a body
+      without an id is rejected server-side, matching the legacy
+      ``UpsertItem`` contract.
+    * It honours ``etag`` / ``match_condition`` (create deprecates and
+      drops them). The caller computes the access-condition shape on the
+      legacy options build and passes it in as ``access_condition``;
+      this function emits the matching ``If-Match`` / ``If-None-Match``
+      header, the same translation ``build_delete_item_prepared`` does.
+
+    The insert-or-replace behaviour rides on the ``OP_UPSERT_ITEM``
+    discriminator, so no ``x-ms-documentdb-is-upsert`` header is stamped
+    here; the backend's upsert entry point owns that.
+
+    :param container_link: Container self-link, e.g.
+        ``"dbs/{db}/colls/{coll}"``.
+    :type container_link: str
+    :param body: The Cosmos document. Serialised as-is; **not mutated**
+        (upsert never mints an id).
+    :type body: Dict[str, Any]
+    :param partition_key_value: PK value already extracted from the body
+        (or supplied by the caller). Accepted shapes are documented on
+        ``serialize_partition_key_to_wire``.
+    :type partition_key_value: Any
+    :param container_rid: The container's resource id. ``None`` skips
+        rid stamping; the caller is responsible for ensuring a rid
+        reaches the wire when needed for recreate-detection.
+    :type container_rid: Optional[str]
+    :param access_condition: The ``{"type": ..., "condition": ...}``
+        shape the legacy options build produced from the
+        ``(etag, match_condition)`` pair, or ``None`` when the caller
+        passed neither. Emitted as ``If-Match`` / ``If-None-Match``.
+    :type access_condition: Optional[Dict[str, Any]]
+    :param kwargs: Remaining customer kwargs. **Mutated** — recognised
+        option-shortcut keys are popped via
+        ``compose_options_from_kwargs``.
+    :type kwargs: Optional[Dict[str, Any]]
+    :returns: The prepared request.
+    :rtype: PreparedRequest
+    """
+    # Translate kwarg shortcuts to internal option keys.
+    options = compose_options_from_kwargs(kwargs if kwargs is not None else {})
+
+    # Upsert always disables id generation (it targets a specific id),
+    # the same value the legacy ``upsert_item`` writes unconditionally.
+    options["disableAutomaticIdGeneration"] = True
+
+    # The caller computed the access-condition on the legacy options
+    # build (``etag`` / ``match_condition`` -> accessCondition); inject
+    # it so the shared header loop below emits the wire header. Upsert is
+    # write-with-body, so it cannot seed ``request_options`` the way the
+    # bodiless delete / read prep do without leaking the partition key
+    # into the headers map -- hence the explicit parameter.
+    if access_condition is not None:
+        options["accessCondition"] = access_condition
+
+    if container_rid is not None:
+        stamp_container_rid(
+            options,
+            container_link,
+            get_rid=lambda _link: container_rid,
+        )
+
+    partition_key_header = serialize_partition_key_to_wire(partition_key_value)
+    body_bytes = serialize_body_to_bytes(body)
+
+    # Headers map: every option-key except two special-cased ones:
+    #   * initialHeaders is flattened so each inner x-ms-... rides as its
+    #     own header (the binding's per-header pass-through).
+    #   * accessCondition becomes If-Match / If-None-Match (same block as
+    #     delete / read). Customer-set entries override helper-written
+    #     entries (matches legacy precedence).
+    headers: Dict[str, str] = {}
+    for option_key, option_value in options.items():
+        if option_key == "initialHeaders" and isinstance(option_value, dict):
+            for inner_name, inner_value in option_value.items():
+                headers[inner_name] = inner_value
+            continue
+        if option_key == "accessCondition" and isinstance(option_value, dict):
+            condition = option_value.get("condition")
+            cond_type = option_value.get("type")
+            if isinstance(condition, str) and cond_type == "IfMatch":
+                headers["If-Match"] = condition
+            elif isinstance(condition, str) and cond_type == "IfNoneMatch":
+                headers["If-None-Match"] = condition
+            continue
+        headers[option_key] = option_value
+    if container_rid is not None:
+        headers[Constants.ContainerRID] = container_rid
+
+    # timeout (seconds, float) rides under a dedicated header the binding
+    # reads into the driver's typed timeout policy. Same mechanism as
+    # create_item / delete_item / read_item.
+    if kwargs is not None and "timeout" in kwargs:
+        timeout_value = kwargs.get("timeout")
+        if timeout_value is not None:
+            headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout_value
+
+    return PreparedRequest(
+        op=OP_UPSERT_ITEM,
+        container_link=container_link,
+        body_bytes=body_bytes,
+        partition_key_header=partition_key_header,
+        headers=headers,
     )
 
 

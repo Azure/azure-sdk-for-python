@@ -4,13 +4,14 @@
 # license information.
 # -------------------------------------------------------------------------
 """Per-client helper that runs every ``Container.create_item`` /
-``Container.read_item`` / ``Container.delete_item`` call.
+``Container.read_item`` / ``Container.delete_item`` /
+``Container.upsert_item`` call.
 
 ``ItemHelper`` is where backend dispatch and the request-prep logic
 (previously inlined in the container methods) live. The container
 methods just stamp their explicit kwargs into ``kwargs`` and hand off
 to one ``ItemHelper.create_item`` / ``ItemHelper.read_item`` /
-``ItemHelper.delete_item`` call.
+``ItemHelper.delete_item`` / ``ItemHelper.upsert_item`` call.
 
 Flow (same shape for all three ops):
 
@@ -37,11 +38,13 @@ from ._item_dispatch import (
     build_create_item_request_options,
     build_delete_item_request_options,
     build_read_item_request_options,
+    build_upsert_item_request_options,
 )
 from ._request_prep import (
     build_create_item_prepared,
     build_delete_item_prepared,
     build_read_item_prepared,
+    build_upsert_item_prepared,
 )
 from ._response_parse import parse_backend_response
 
@@ -330,6 +333,87 @@ class ItemHelper:
         # Fall-through: legacy path.
         return self.client_connection.ReadItem(
             document_link=document_link,
+            options=request_options,
+            **kwargs,
+        )
+
+    def upsert_item(
+        self,
+        *,
+        container_link: str,
+        body: Dict[str, Any],
+        populate_query_metrics: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Run a single ``upsert_item`` call end to end.
+
+        Write-with-body like ``create_item`` -- the partition key is
+        extracted from the body and the body is serialised to JSON --
+        but with two upsert differences: it honours ``etag`` /
+        ``match_condition`` (passed through to the prep as an access
+        condition, the same wire headers ``delete_item`` emits) and it
+        never mints an id. The legacy build sets
+        ``disableAutomaticIdGeneration`` so the fall-through path matches.
+
+        The rust backend dispatches this op to the binding's
+        ``upsert_item`` entry point (an existing item is replaced rather
+        than rejected as a duplicate), so a wired backend returns a
+        ``BackendResponse`` that is parsed into a ``CosmosDict``. When no
+        backend is wired (the core-python client) ``execute`` returns
+        ``None`` and the call falls through to the legacy ``UpsertItem``
+        below.
+        """
+        # Snapshot kwargs before the legacy options build pops them. The
+        # rust prep still needs the originals to populate the
+        # PreparedRequest.headers map.
+        kwargs_for_rust_prep = dict(kwargs)
+
+        request_options = build_upsert_item_request_options(
+            kwargs,
+            populate_query_metrics=populate_query_metrics,
+        )
+
+        # Container-rid lookup; best-effort, same shape as create_item.
+        container_rid: Optional[str] = None
+        try:
+            if self._ensure_container_cached is not None:
+                self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                container_rid = rid_value
+                request_options[Constants.ContainerRID] = container_rid
+        except Exception:  # pylint: disable=broad-except
+            container_rid = None
+
+        if self._backend is not None:
+            partition_key_value = self._extract_partition_key_value(
+                container_link, body, request_options
+            )
+            prepared = build_upsert_item_prepared(
+                container_link=container_link,
+                body=body,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                access_condition=request_options.get("accessCondition"),
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = self._backend.execute(prepared)
+            if backend_response is not None:
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        # Fall-through: legacy path.
+        return self.client_connection.UpsertItem(
+            database_or_container_link=container_link,
+            document=body,
             options=request_options,
             **kwargs,
         )
