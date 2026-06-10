@@ -15,7 +15,7 @@ from ._shared.response_handlers import (
 )
 from ._shared.request_handlers import serialize_iso
 from ._shared.models import DictMixin
-from ._generated.models._patch import _attach_msrest_compat
+from ._generated.models._patch import _BackCompatMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -31,8 +31,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-@_attach_msrest_compat
-class RetentionPolicy:
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -79,8 +78,7 @@ class RetentionPolicy:
         return GeneratedRetentionPolicy(enabled=self.enabled, days=self.days)
 
 
-@_attach_msrest_compat
-class QueueAnalyticsLogging:
+class QueueAnalyticsLogging(_BackCompatMixin):
     """Azure Analytics Logging settings.
 
     All required parameters must be populated in order to send to Azure.
@@ -150,8 +148,7 @@ class QueueAnalyticsLogging:
         )
 
 
-@_attach_msrest_compat
-class Metrics:
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -211,8 +208,7 @@ class Metrics:
         )
 
 
-@_attach_msrest_compat
-class CorsRule:
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -379,8 +375,7 @@ class QueueSasPermissions(object):
         return parsed
 
 
-@_attach_msrest_compat
-class AccessPolicy:
+class AccessPolicy(_BackCompatMixin):
     """Access Policy class used by the set and get access policy methods.
 
     A stored access policy can specify the start time, expiry time, and
