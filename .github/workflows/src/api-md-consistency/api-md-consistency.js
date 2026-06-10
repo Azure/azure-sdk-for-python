@@ -4,6 +4,16 @@ const { pathToFileURL } = require("url");
 
 const SHARED_SRC_ROOT = path.resolve(__dirname, "..", "..", "..", "shared", "src");
 const sharedModuleCache = new Map();
+const ANSI = {
+  bold: "\u001b[1m",
+  cyan: "\u001b[36m",
+  yellow: "\u001b[33m",
+  reset: "\u001b[0m",
+};
+
+function styleLog(text, ...styles) {
+  return `${styles.join("")}${text}${ANSI.reset}`;
+}
 
 async function loadSharedModule(fileName) {
   if (sharedModuleCache.has(fileName)) {
@@ -69,11 +79,11 @@ function formatIssueSection(title, apiFiles) {
     const packageDir = apiFile.replace(/\/(api\.md|api\.metadata\.yml)$/, "");
     const packageName = path.basename(packageDir);
     lines.push("============================================================");
-    lines.push(`PACKAGE: ${packageName}`);
+    lines.push(styleLog(`PACKAGE: ${packageName}`, ANSI.bold, ANSI.cyan));
     lines.push(`PATH:    ${packageDir}`);
     lines.push(`API FILE: ${apiFile}`);
-    lines.push("RUN THIS COMMAND FROM THE REPOSITORY ROOT:");
-    lines.push(`  azpysdk apistub --md --extract-metadata ${packageName} --dest-dir .`);
+    lines.push(styleLog("Regenerate from the repository root:", ANSI.bold, ANSI.yellow));
+    lines.push(styleLog(`  azpysdk apistub --md --extract-metadata ${packageName} --dest-dir .`, ANSI.bold, ANSI.yellow));
     lines.push("============================================================");
   }
   lines.push("");

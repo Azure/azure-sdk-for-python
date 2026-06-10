@@ -305,7 +305,8 @@ def resolve_target_tag(target: str, package_name: str | None = None) -> str | No
 
 
 def try_remote_branch_ref(branch: str) -> str | None:
-    result = git(["fetch", REMOTE, branch], check=False)
+    remote_ref = f"refs/remotes/{REMOTE}/{branch}"
+    result = git(["fetch", REMOTE, f"{branch}:{remote_ref}"], check=False)
     return f"{REMOTE}/{branch}" if result.status == 0 else None
 
 
@@ -320,13 +321,13 @@ def try_fork_branch_ref(owner: str, branch: str) -> str | None:
 
 def resolve_target_ref(target: str, package_name: str | None = None) -> str:
     if ":" not in target:
-        branch_ref = try_remote_branch_ref(target)
-        if branch_ref:
-            return branch_ref
-
         target_tag = resolve_target_tag(target, package_name)
         if target_tag:
             return target_tag
+
+        branch_ref = try_remote_branch_ref(target)
+        if branch_ref:
+            return branch_ref
 
         raise RuntimeError(f"ERROR: --target '{target}' is neither a branch on {REMOTE} nor a tag in this repository.")
 
@@ -597,11 +598,11 @@ def target_branch_exists(head_selector: str) -> bool:
 def sync_working_branch_info(head_selector: str | None, package_name: str | None = None) -> dict[str, str] | None:
     if not head_selector:
         return None
+    if resolve_target_tag(head_selector, package_name):
+        return None
     if target_branch_exists(head_selector):
         parts = branch_reference_parts(head_selector)
         return {"owner": parts["owner"], "branch": parts["branch"]}
-    if resolve_target_tag(head_selector, package_name):
-        return None
     return None
 
 
@@ -757,15 +758,16 @@ def baseline_reference_markdown(base_tag: str | None) -> str:
 
 
 def target_reference_info(head_selector: str, package_name: str | None = None) -> dict[str, str]:
+    target_tag = resolve_target_tag(head_selector, package_name)
+    if target_tag:
+        return {"label": "Target tag", "markdown": baseline_reference_markdown(target_tag)}
+
     if target_branch_exists(head_selector):
         pr = find_open_pr_for_head(head_selector)
         if pr:
             return {"label": "Working PR", "markdown": f"[PR #{pr['number']}]({pr['url']})"}
         return {"label": "Working branch", "markdown": branch_reference_markdown(head_selector)}
 
-    target_tag = resolve_target_tag(head_selector, package_name)
-    if target_tag:
-        return {"label": "Target tag", "markdown": baseline_reference_markdown(target_tag)}
     return {"label": "Working branch", "markdown": branch_reference_markdown(head_selector)}
 
 

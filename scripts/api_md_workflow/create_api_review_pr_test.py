@@ -12,7 +12,7 @@ def stub_git_branches(branches):
     branch_set = set(branches)
 
     def runner(args, check):
-        if args[0] == "fetch" and len(args) > 2 and args[2] in branch_set:
+        if args[0] == "fetch" and len(args) > 2 and args[2].split(":", 1)[0] in branch_set:
             return command_result()
         return command_result(status=1)
 
@@ -116,6 +116,36 @@ class ApiReviewPrTests(unittest.TestCase):
 
         self.assertEqual(
             workflow.target_reference_info("azure-example_1.2.3"),
+            {
+                "label": "Target tag",
+                "markdown": "[tag `azure-example_1.2.3`](https://github.com/Azure/azure-sdk-for-python/commit/abc123def456)",
+            },
+        )
+        self.assertEqual(pr_lookup_count, 0)
+
+    def test_explicit_package_tag_target_wins_over_same_named_remote_branch(self):
+        pr_lookup_count = 0
+
+        def runner(args, check):
+            if args == ["rev-parse", "--verify", "--quiet", "refs/tags/azure-example_1.2.3"]:
+                return command_result()
+            if args == ["rev-list", "-n", "1", "azure-example_1.2.3"]:
+                return command_result("abc123def456\n")
+            if args == ["fetch", "origin", "azure-example_1.2.3:refs/remotes/origin/azure-example_1.2.3"]:
+                return command_result()
+            return command_result(status=1)
+
+        def on_lookup():
+            nonlocal pr_lookup_count
+            pr_lookup_count += 1
+
+        workflow.set_command_runner_for_test(runner)
+        workflow.set_github_api_for_test(StubGithubApi(on_lookup=on_lookup))
+
+        self.assertEqual(workflow.resolve_target_ref("azure-example_1.2.3", "azure-example"), "azure-example_1.2.3")
+        self.assertIsNone(workflow.sync_working_branch_info("azure-example_1.2.3", "azure-example"))
+        self.assertEqual(
+            workflow.target_reference_info("azure-example_1.2.3", "azure-example"),
             {
                 "label": "Target tag",
                 "markdown": "[tag `azure-example_1.2.3`](https://github.com/Azure/azure-sdk-for-python/commit/abc123def456)",
