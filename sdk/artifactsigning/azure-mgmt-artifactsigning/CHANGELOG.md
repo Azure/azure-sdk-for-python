@@ -6,7 +6,7 @@
 
   - Model `CertificateProfileProperties` added property `program_type`
   - Added model `RevokeCertificateList`
-  - Model `CertificateProfilesOperations` added method `revoke_certificates`
+  - Operation group `CertificateProfilesOperations` added method `revoke_certificates`
 
 ### Breaking Changes
 
