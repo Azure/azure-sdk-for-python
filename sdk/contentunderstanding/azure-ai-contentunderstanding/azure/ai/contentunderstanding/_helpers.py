@@ -98,8 +98,16 @@ def to_llm_input(
 
     For document content, the helper emits ``<!-- InputPageNumber: N -->``
     markers at page boundaries when the service result does not already
-    include them. Internal telemetry messages such as ``LLMStats: ...``
-    are filtered from the rendered ``rai_warnings`` front matter.
+    include them. ``N`` is the **original 1-based page number from the
+    source document** (i.e., the page index in the analyzed PDF), not a
+    counter that restarts at 1 for each call. This is important when the
+    analyze request specifies a ``content_range`` (e.g., ``"2-3, 5"``):
+    the markers in the output will read ``InputPageNumber: 2``, ``3``,
+    ``5`` \u2014 not ``1``, ``2``, ``3``. Downstream consumers (RAG indexers,
+    page-citation prompts) can rely on the marker value to cite the
+    correct source page even when only a subset of pages was analyzed.
+    Internal telemetry messages such as ``LLMStats: ...`` are filtered
+    from the rendered ``rai_warnings`` front matter.
 
     :param result: The ``AnalysisResult`` from a Content Understanding analyze operation.
     :type result: ~azure.ai.contentunderstanding.models.AnalysisResult
