@@ -16,6 +16,10 @@
 
 - `AioHttpTransport` now preserves a caller-provided per-request `ssl` value instead of replacing it
   with the transport's generated SSL configuration. #46365
+- `AsyncioRequestsTransport` and `TrioRequestsTransport` now honor the per-request `read_timeout`
+  keyword argument and use the same `(connection_timeout, read_timeout)` timeout semantics as
+  `RequestsTransport`. Previously, a per-request `read_timeout` leaked into `requests` and raised
+  `TypeError`, and a per-request `connection_timeout` was also applied as the read timeout. #46365
 
 ### Other Changes
 

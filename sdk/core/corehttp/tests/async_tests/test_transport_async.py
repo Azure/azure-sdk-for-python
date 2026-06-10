@@ -5,6 +5,8 @@
 # -------------------------------------------------------------------------
 from unittest import mock
 import asyncio
+import hashlib
+import ssl
 from packaging.version import Version
 
 import httpx
@@ -119,6 +121,37 @@ async def test_aiohttp_transport_forwards_aiohttp_ssl_kwargs():
     assert kwargs["server_hostname"] == "token.proxy.local"
     assert kwargs["ssl"] is ssl_context
     assert "connection_verify" not in kwargs
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "ssl_value",
+    [False, ssl.create_default_context(), aiohttp.Fingerprint(hashlib.sha256(b"certdigest").digest())],
+    ids=["false", "sslcontext", "fingerprint"],
+)
+async def test_aiohttp_transport_forwards_caller_ssl_values(ssl_value):
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request, ssl=ssl_value)
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["ssl"] is ssl_value
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_default_ssl_not_forwarded():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request)
+
+    kwargs = session.request.await_args.kwargs
+    assert "ssl" not in kwargs
 
 
 @pytest.mark.asyncio

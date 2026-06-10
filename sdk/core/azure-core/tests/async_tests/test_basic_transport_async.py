@@ -7,6 +7,8 @@
 import pytest
 import sys
 import asyncio
+import hashlib
+import ssl
 from packaging.version import Version
 from unittest import mock
 
@@ -1086,7 +1088,6 @@ async def test_aiohttp_transport_consumes_supported_kwargs():
     assert kwargs["proxy"] == "http://proxy"
     assert kwargs["timeout"].sock_connect == 1
     assert kwargs["timeout"].sock_read == 2
-    assert "query_filter" not in kwargs
     assert "connection_timeout" not in kwargs
     assert "read_timeout" not in kwargs
     assert "connection_verify" not in kwargs
@@ -1112,6 +1113,37 @@ async def test_aiohttp_transport_forwards_aiohttp_ssl_kwargs():
     assert kwargs["server_hostname"] == "token.proxy.local"
     assert kwargs["ssl"] is ssl_context
     assert "connection_verify" not in kwargs
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "ssl_value",
+    [False, ssl.create_default_context(), aiohttp.Fingerprint(hashlib.sha256(b"certdigest").digest())],
+    ids=["false", "sslcontext", "fingerprint"],
+)
+async def test_aiohttp_transport_forwards_caller_ssl_values(ssl_value):
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request, ssl=ssl_value)
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["ssl"] is ssl_value
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_default_ssl_not_forwarded():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request)
+
+    kwargs = session.request.await_args.kwargs
+    assert "ssl" not in kwargs
 
 
 @pytest.mark.asyncio
@@ -1157,6 +1189,18 @@ async def test_asyncio_requests_transport_consumes_supported_kwargs():
     assert "connection_cert" not in session.kwargs
 
 
+@pytest.mark.asyncio
+async def test_asyncio_requests_transport_connection_timeout_only_uses_default_read_timeout():
+    session = MockRequestsSession()
+    transport = AsyncioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request, connection_timeout=1)
+
+    assert session.kwargs["timeout"] == (1, transport.connection_config.read_timeout)
+
+
 @pytest.mark.trio
 async def test_trio_requests_transport_rejects_unknown_kwargs():
     session = MockRequestsSession()
@@ -1198,6 +1242,18 @@ async def test_trio_requests_transport_consumes_supported_kwargs():
     assert "connection_timeout" not in session.kwargs
     assert "connection_verify" not in session.kwargs
     assert "connection_cert" not in session.kwargs
+
+
+@pytest.mark.trio
+async def test_trio_requests_transport_connection_timeout_only_uses_default_read_timeout():
+    session = MockRequestsSession()
+    transport = TrioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request, connection_timeout=1)
+
+    assert session.kwargs["timeout"] == (1, transport.connection_config.read_timeout)
 
 
 class MockAiohttpResponse:

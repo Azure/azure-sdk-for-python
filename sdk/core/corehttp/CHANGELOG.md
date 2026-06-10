@@ -12,7 +12,8 @@
 - Built-in transports now reject unsupported per-request keyword arguments instead of forwarding them
   to the underlying HTTP library. #46365
 - `HttpXTransport` and `AsyncHttpXTransport` now reject the per-request `connection_verify` and
-  `connection_cert` keyword arguments instead of accepting them without applying them. #46365
+  `connection_cert` keyword arguments with a `TypeError`. Previously, a per-request `connection_verify`
+  was silently ignored and `connection_cert` leaked into `httpx` as an unexpected keyword argument. #46365
 
 ### Bugs Fixed
 
