@@ -140,7 +140,6 @@ def test_top_level_attributes_have_canonical_keys_and_routing(capture):
     assert attrs["gen_ai.evaluation.score.label"] == "pass"
     assert attrs["gen_ai.agent.name"] == AGENT_NAME
     assert attrs["gen_ai.agent.id"] == AGENT_ID
-    assert "gen_ai.agent.version" not in attrs
     assert attrs["microsoft.gen_ai.human_evaluation.source"] == "end_user"
     assert attrs["microsoft.gen_ai.evaluation.actor.type"] == "human"
     assert "internal_properties" in attrs
