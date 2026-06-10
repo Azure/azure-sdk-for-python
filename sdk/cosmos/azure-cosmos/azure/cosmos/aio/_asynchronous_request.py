@@ -59,6 +59,13 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     kwargs.pop(_Constants.OperationStartTime, None)
     # Pop internal flags that should not be passed to the HTTP layer
     kwargs.pop("_internal_pk_range_fetch", None)
+    # Sidecar mutable list (length 1) used by the /pkranges change-feed drain
+    # loop in ``routing_map_provider`` to observe the raw HTTP status without
+    # parsing headers. We populate ``status_capture[0]`` after the response is
+    # received, so callers can implement a literal ``status == 304`` drain
+    # termination check (matching peer SDKs) instead of relying on
+    # ``AsyncItemPaged`` materializing 304 as an empty page.
+    status_capture = kwargs.pop("_internal_response_status_capture", None)
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
@@ -138,6 +145,12 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         )
 
     response = response.http_response
+    if status_capture is not None:
+        # Length-1 list pattern: written-into by _Request, read by caller
+        # after _ReadPartitionKeyRanges returns. Set before any raise so a
+        # 304 (which never raises -- only >= 400 does) and a 4xx/5xx both
+        # surface the wire status to drain-loop observers.
+        status_capture[0] = response.status_code
     headers = copy.copy(response.headers)
 
     data = response.body()

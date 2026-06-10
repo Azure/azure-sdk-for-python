@@ -10,7 +10,7 @@
 
 # Core
 # PRLabel: %Core.Http
-/sdk/core/corehttp/                                                  @lmazuel @annatisch @johanste @iscai-msft @kashifkhan
+/sdk/core/corehttp/                                                  @lmazuel @johanste @iscai-msft @kashifkhan
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Core.Http
@@ -19,12 +19,12 @@
 # ServiceLabel: %Azure.Core
 
 # PRLabel: %Azure.Core
-/sdk/core/                                                           @lmazuel @annatisch @johanste
-/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @iscai-msft @kashifkhan
+/sdk/core/                                                           @lmazuel @johanste
+/sdk/core/azure-core/                                                @lmazuel @johanste @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
-/common/smoketest/                                                   @lmazuel @chlowell @annatisch @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @lmazuel @chlowell @mccoyp @shurd @southpolesteve
 
 ####################
 # Client Libraries
@@ -249,10 +249,10 @@
 /sdk/eventgrid/    @rajeshka @shankarsama
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/    @axisc @hmlam @sjkwak
+/sdk/eventhub/    @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners: @axisc @hmlam @sjkwak
+# ServiceOwners: @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
 
 # PRLabel: %Graph
 /sdk/graphrbac/    @lmazuel
@@ -753,7 +753,7 @@
 # ServiceOwners: @amber-yujueWang @rhurey @xitzhang @pankopon @emilyjiji
 
 # PRLabel: %Storage
-/sdk/storage/    @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
+/sdk/storage/    @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
 # ServiceLabel: %Storage
 # ServiceOwners: @jalauzon-msft @vincenttran-msft
@@ -849,7 +849,7 @@
 /sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
-/sdk/eventhub/azure-eventhub/* @j7nw4r
+/sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom @sagar0207
 
 # Add Johnathan Walker as code owner for Service Bus SDK
-/sdk/servicebus/azure-servicebus/* @j7nw4r
+/sdk/servicebus/azure-servicebus/* @j7nw4r @SwayGom @sagar0207

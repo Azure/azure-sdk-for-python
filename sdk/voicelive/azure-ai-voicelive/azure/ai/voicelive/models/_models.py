@@ -403,15 +403,15 @@ class AudioEchoCancellation(_Model):
        behavior).
      * `client`: EC uses the client-supplied reference channel (ch1 of stereo input). Internal
        TTS loopback is skipped. Known values are: "server" and "client".
-
     :vartype reference_source: str or ~azure.ai.voicelive.models.EchoCancellationReferenceSource
     :ivar channels: Number of input audio channels.
 
      * `1`: Mono input (default).
      * `2`: Interleaved stereo input where channel 0 is the microphone signal and channel 1 is
-             the echo reference signal. When set to 2, `reference_source` must be `client` and
-             `input_audio_format` must be `pcm16`.
+       the echo reference signal.
 
+     When set to 2, `reference_source` must be `client` and `input_audio_format` must be
+     `pcm16`.
     :vartype channels: int
     """
 
@@ -429,11 +429,13 @@ class AudioEchoCancellation(_Model):
         TTS loopback is skipped. Known values are: \"server\" and \"client\"."""
     channels: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of input audio channels.
- 
+
       * `1`: Mono input (default).
       * `2`: Interleaved stereo input where channel 0 is the microphone signal and channel 1 is
-                the echo reference signal. When set to 2, `reference_source` must be `client` and
-                `input_audio_format` must be `pcm16`."""
+        the echo reference signal.
+
+      When set to 2, `reference_source` must be `client` and `input_audio_format` must be
+      `pcm16`."""
 
     @overload
     def __init__(
@@ -4374,12 +4376,12 @@ class ResponseItem(_Model):
 class ResponseFileSearchCallItem(ResponseItem, discriminator="file_search_call"):
     """A response item that represents a file search call.
 
+    :ivar id:
+    :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
     :ivar type: The type of the item. Always 'file_search_call'. Required. File search call item.
     :vartype type: str or ~azure.ai.voicelive.models.FILE_SEARCH_CALL
-    :ivar id: The unique ID of the file search tool call.
-    :vartype id: str
     :ivar queries: The queries used for the file search.
     :vartype queries: list[str]
     :ivar status: The status of the file search tool call. Required. Is one of the following types:
@@ -4422,8 +4424,8 @@ class ResponseFileSearchCallItem(ResponseItem, discriminator="file_search_call")
             Literal["failed"],
             str,
         ],
-        object: Optional[Literal["realtime.item"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
         queries: Optional[list[str]] = None,
         results: Optional[list["_models.FileSearchResult"]] = None,
     ) -> None: ...
@@ -5083,12 +5085,12 @@ class ResponseTextContentPart(ContentPart, discriminator="text"):
 class ResponseWebSearchCallItem(ResponseItem, discriminator="web_search_call"):
     """A response item that represents a web search call.
 
+    :ivar id:
+    :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
     :ivar type: The type of the item. Always 'web_search_call'. Required. Web search call item.
     :vartype type: str or ~azure.ai.voicelive.models.WEB_SEARCH_CALL
-    :ivar id: The unique ID of the web search tool call.
-    :vartype id: str
     :ivar status: The status of the web search tool call. Required. Is one of the following types:
      Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"], str
     :vartype status: str or str or str or str or str
@@ -5108,8 +5110,8 @@ class ResponseWebSearchCallItem(ResponseItem, discriminator="web_search_call"):
         self,
         *,
         status: Union[Literal["in_progress"], Literal["searching"], Literal["completed"], Literal["failed"], str],
-        object: Optional[Literal["realtime.item"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
     ) -> None: ...
 
     @overload
@@ -5355,14 +5357,14 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    The server is generating a Response, which if successful will produce
-    either one or two Items, which will be of type `message`
-    (role `assistant`) or type `function_call`.
-    The input audio buffer has been committed, either by the client or the
-    server (in `server_vad` mode). The server will take the content of the
-    input audio buffer and add it to a new user message Item.
-    The client has sent a `conversation.item.create` event to add a new Item
-    to the Conversation.
+    * The server is generating a Response, which if successful will produce
+      either one or two Items, which will be of type `message`
+      (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the
+      server (in `server_vad` mode). The server will take the content of the
+      input audio buffer and add it to a new user message Item.
+    * The client has sent a `conversation.item.create` event to add a new Item
+      to the Conversation.
 
     :ivar event_id:
     :vartype event_id: str
