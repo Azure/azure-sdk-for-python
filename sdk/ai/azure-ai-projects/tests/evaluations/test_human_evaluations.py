@@ -7,6 +7,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -14,9 +15,21 @@ SAMPLES_EVALUATIONS_DIR = Path(__file__).resolve().parents[1] / ".." / "samples"
 sys.path.insert(0, str(SAMPLES_EVALUATIONS_DIR.resolve()))
 
 from sample_human_evaluations import (
-    emit_5_point_ordinal_evaluation,
-    emit_boolean_evaluation,
+    emit_5_point_ordinal_evaluation as _sample_emit_5_point_ordinal_evaluation,
+    emit_boolean_evaluation as _sample_emit_boolean_evaluation,
 )  # noqa: E402
+
+AGENT_NAME = "test-agent"
+AGENT_VERSION = 2
+AGENT_ID = f"{AGENT_NAME}:{AGENT_VERSION}"
+
+
+def emit_boolean_evaluation(**kwargs: Any) -> None:
+    _sample_emit_boolean_evaluation(agent_name=AGENT_NAME, agent_version=AGENT_VERSION, **kwargs)
+
+
+def emit_5_point_ordinal_evaluation(**kwargs: Any) -> None:
+    _sample_emit_5_point_ordinal_evaluation(agent_name=AGENT_NAME, agent_version=AGENT_VERSION, **kwargs)
 
 
 class _RecordCapture(logging.Handler):
@@ -50,6 +63,16 @@ def _internal_properties(attrs: dict) -> dict:
     raw = attrs["internal_properties"]
     assert isinstance(raw, str)
     return json.loads(raw)
+
+
+def test_boolean_evaluation_requires_agent_metadata():
+    with pytest.raises(TypeError):
+        _sample_emit_boolean_evaluation(evaluation_metric_name="task_completion", passed=True)
+
+
+def test_ordinal_evaluation_requires_agent_metadata():
+    with pytest.raises(TypeError):
+        _sample_emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=4.0)
 
 
 def test_boolean_failed_emits_score_0_with_fail_label(capture):
@@ -115,6 +138,8 @@ def test_top_level_attributes_have_canonical_keys_and_routing(capture):
     assert attrs["gen_ai.evaluation.name"] == "task_completion"
     assert attrs["gen_ai.evaluation.score.value"] == 1.0
     assert attrs["gen_ai.evaluation.score.label"] == "pass"
+    assert attrs["gen_ai.agent.name"] == AGENT_NAME
+    assert attrs["gen_ai.agent.id"] == AGENT_ID
     assert attrs["microsoft.gen_ai.human_evaluation.source"] == "end_user"
     assert attrs["microsoft.gen_ai.evaluation.actor.type"] == "human"
     assert "internal_properties" in attrs
