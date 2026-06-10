@@ -6,7 +6,7 @@ import posixpath
 import re
 import math
 import threading
-from typing import Any, List, Literal, Mapping, Optional, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
+from typing import Any, Dict, List, Literal, Mapping, Optional, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
 
 import nltk
 from azure.storage.blob import ContainerClient
@@ -1063,7 +1063,11 @@ def serialize_messages(messages):
             normalized = {**msg, "content": [{"type": "text", "text": msg["content"]}]}
 
         if role in (MessageRole.SYSTEM, MessageRole.DEVELOPER):
-            system_message = msg.get("content", "")
+            content = msg.get("content", "")
+            if isinstance(content, list):
+                system_message = "\n".join(_extract_text_from_content(content))
+            else:
+                system_message = content
 
         elif role == MessageRole.USER and "content" in msg:
             if cur_agent_response:
@@ -1091,7 +1095,7 @@ def serialize_messages(messages):
         formatted = _get_agent_response(cur_agent_response, include_tool_messages=True)
         all_agent_responses.append([formatted])
 
-    conversation_history = {
+    conversation_history: Dict = {
         "user_queries": all_user_queries,
         "agent_responses": all_agent_responses[: len(all_user_queries) - 1] if len(all_user_queries) > 0 else [],
     }

@@ -10,6 +10,10 @@ from azure.ai.evaluation._common.utils import (
     _split_messages_at_latest_user,
     _wrap_string_messages,
     _resolve_evaluation_level,
+    _is_intermediate_response,
+    _drop_mcp_approval_messages,
+    _normalize_function_call_types,
+    _preprocess_messages,
 )
 from azure.ai.evaluation._evaluators._common._validators import MessagesOrQueryResponseInputValidator
 from azure.ai.evaluation._evaluators._common._validators._validation_constants import MessageRole
@@ -84,6 +88,10 @@ class TestResolveEvaluationLevel:
         with pytest.raises(EvaluationException) as exc_info:
             _resolve_evaluation_level(123, ErrorTarget.EVALUATE)
         assert "Invalid evaluation_level" in str(exc_info.value)
+
+    def test_empty_string_returns_none(self):
+        result = _resolve_evaluation_level("", ErrorTarget.EVALUATE)
+        assert result is None
 
 
 # endregion
@@ -535,6 +543,263 @@ class TestMessagesOrQueryResponseInputValidator:
             "response": [{"role": "assistant", "content": [{"type": "text", "text": "Hi"}]}],
         }
         assert validator.validate_eval_input(eval_input) is True
+
+    def test_last_message_must_be_assistant(self):
+        """The last message in messages must have role 'assistant'."""
+        validator = self._make_validator()
+        with pytest.raises(EvaluationException, match="last message must have role 'assistant'"):
+            validator.validate_eval_input(
+                {
+                    "messages": [
+                        {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+                        {"role": "assistant", "content": [{"type": "text", "text": "Hi"}]},
+                        {"role": "user", "content": [{"type": "text", "text": "Bye"}]},
+                    ]
+                }
+            )
+
+    def test_last_message_tool_role_rejected(self):
+        """The last message with role 'tool' should be rejected."""
+        validator = self._make_validator()
+        with pytest.raises(EvaluationException, match="last message must have role 'assistant'"):
+            validator.validate_eval_input(
+                {
+                    "messages": [
+                        {"role": "user", "content": [{"type": "text", "text": "Search"}]},
+                        {
+                            "role": "assistant",
+                            "content": [
+                                {"type": "text", "text": "Searching..."},
+                                {"type": "tool_call", "name": "search", "arguments": {}, "tool_call_id": "c1"},
+                            ],
+                        },
+                        {
+                            "role": "tool",
+                            "tool_call_id": "c1",
+                            "content": [{"type": "tool_result", "tool_result": "Results"}],
+                        },
+                    ]
+                }
+            )
+
+    def test_last_assistant_must_have_text_content(self):
+        """The final assistant message must contain text, not only tool calls."""
+        validator = self._make_validator()
+        with pytest.raises(EvaluationException, match="must contain text content"):
+            validator.validate_eval_input(
+                {
+                    "messages": [
+                        {"role": "user", "content": [{"type": "text", "text": "Do something"}]},
+                        {
+                            "role": "assistant",
+                            "content": [
+                                {"type": "tool_call", "name": "do_thing", "arguments": {}, "tool_call_id": "c1"},
+                            ],
+                        },
+                    ]
+                }
+            )
+
+    def test_last_assistant_with_mixed_content_valid(self):
+        """Assistant message with both text and tool calls is valid if text is present."""
+        validator = self._make_validator()
+        eval_input = {
+            "messages": [
+                {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+                {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "tool_call", "name": "search", "arguments": {}, "tool_call_id": "c1"},
+                        {"type": "text", "text": "Here are the results."},
+                    ],
+                },
+            ]
+        }
+        assert validator.validate_eval_input(eval_input) is True
+
+    def test_last_assistant_string_content_valid(self):
+        """Assistant message with plain string content is valid."""
+        validator = self._make_validator()
+        eval_input = {
+            "messages": [
+                {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+                {"role": "assistant", "content": "Hi there!"},
+            ]
+        }
+        assert validator.validate_eval_input(eval_input) is True
+
+
+# endregion
+
+
+# region Preprocessing utility tests
+
+
+@pytest.mark.unittest
+class TestIsIntermediateResponse:
+    def test_function_call_is_intermediate(self):
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "function_call", "name": "search", "arguments": {}, "tool_call_id": "c1"}],
+            }
+        ]
+        assert _is_intermediate_response(response) is True
+
+    def test_mcp_approval_request_is_intermediate(self):
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "mcp_approval_request"}],
+            }
+        ]
+        assert _is_intermediate_response(response) is True
+
+    def test_text_response_not_intermediate(self):
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Done!"}],
+            }
+        ]
+        assert _is_intermediate_response(response) is False
+
+    def test_tool_call_not_intermediate(self):
+        """Native tool_call type is NOT considered intermediate by the current logic."""
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "name": "search", "arguments": {}, "tool_call_id": "c1"}],
+            }
+        ]
+        assert _is_intermediate_response(response) is False
+
+    def test_empty_response(self):
+        assert _is_intermediate_response([]) is False
+
+    def test_non_list_response(self):
+        assert _is_intermediate_response("not a list") is False
+
+    def test_non_assistant_last_message(self):
+        response = [{"role": "user", "content": [{"type": "text", "text": "Hi"}]}]
+        assert _is_intermediate_response(response) is False
+
+
+@pytest.mark.unittest
+class TestDropMcpApprovalMessages:
+    def test_drops_mcp_approval_request(self):
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+            {"role": "assistant", "content": [{"type": "mcp_approval_request"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "Done"}]},
+        ]
+        result = _drop_mcp_approval_messages(messages)
+        assert len(result) == 2
+        assert result[0]["role"] == "user"
+        assert result[1]["content"][0]["type"] == "text"
+
+    def test_drops_mcp_approval_response(self):
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+            {"role": "tool", "content": [{"type": "mcp_approval_response"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "Done"}]},
+        ]
+        result = _drop_mcp_approval_messages(messages)
+        assert len(result) == 2
+
+    def test_preserves_non_mcp_messages(self):
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "Hi"}]},
+        ]
+        result = _drop_mcp_approval_messages(messages)
+        assert len(result) == 2
+
+    def test_non_list_passthrough(self):
+        assert _drop_mcp_approval_messages("not a list") == "not a list"
+
+
+@pytest.mark.unittest
+class TestNormalizeFunctionCallTypes:
+    def test_function_call_to_tool_call(self):
+        messages = [
+            {
+                "role": "assistant",
+                "content": [{"type": "function_call", "name": "search", "arguments": {}, "tool_call_id": "c1"}],
+            }
+        ]
+        result = _normalize_function_call_types(messages)
+        assert result[0]["content"][0]["type"] == "tool_call"
+
+    def test_function_call_output_to_tool_result(self):
+        messages = [
+            {
+                "role": "tool",
+                "content": [{"type": "function_call_output", "function_call_output": "result data"}],
+            }
+        ]
+        result = _normalize_function_call_types(messages)
+        assert result[0]["content"][0]["type"] == "tool_result"
+        assert result[0]["content"][0]["tool_result"] == "result data"
+        assert "function_call_output" not in result[0]["content"][0]
+
+    def test_openapi_call_to_tool_call(self):
+        messages = [
+            {
+                "role": "assistant",
+                "content": [{"type": "openapi_call", "name": "api_call", "arguments": {}, "tool_call_id": "c2"}],
+            }
+        ]
+        result = _normalize_function_call_types(messages)
+        assert result[0]["content"][0]["type"] == "tool_call"
+
+    def test_openapi_call_output_to_tool_result(self):
+        messages = [
+            {
+                "role": "tool",
+                "content": [{"type": "openapi_call_output", "openapi_call_output": "api result"}],
+            }
+        ]
+        result = _normalize_function_call_types(messages)
+        assert result[0]["content"][0]["type"] == "tool_result"
+        assert result[0]["content"][0]["tool_result"] == "api result"
+        assert "openapi_call_output" not in result[0]["content"][0]
+
+    def test_preserves_other_types(self):
+        messages = [
+            {"role": "assistant", "content": [{"type": "text", "text": "Hello"}]},
+        ]
+        result = _normalize_function_call_types(messages)
+        assert result[0]["content"][0]["type"] == "text"
+
+    def test_non_list_passthrough(self):
+        assert _normalize_function_call_types("not a list") == "not a list"
+
+
+@pytest.mark.unittest
+class TestPreprocessMessages:
+    def test_drops_mcp_and_normalizes(self):
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+            {"role": "assistant", "content": [{"type": "mcp_approval_request"}]},
+            {"role": "tool", "content": [{"type": "mcp_approval_response"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "function_call", "name": "search", "arguments": {}, "tool_call_id": "c1"}],
+            },
+            {
+                "role": "tool",
+                "content": [{"type": "function_call_output", "function_call_output": "results"}],
+            },
+            {"role": "assistant", "content": [{"type": "text", "text": "Done"}]},
+        ]
+        result = _preprocess_messages(messages)
+        # MCP messages should be dropped
+        assert len(result) == 4
+        # function_call should be normalized to tool_call
+        assert result[1]["content"][0]["type"] == "tool_call"
+        # function_call_output should be normalized to tool_result
+        assert result[2]["content"][0]["type"] == "tool_result"
 
 
 # endregion
