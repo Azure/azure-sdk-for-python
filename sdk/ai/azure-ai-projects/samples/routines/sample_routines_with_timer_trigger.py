@@ -74,7 +74,7 @@ agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # Azure Monitor exporter: same spans also sent to the Application Insights
     # resource attached to the Foundry project, viewable in the "Tracing" tab
