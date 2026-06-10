@@ -102,7 +102,6 @@ class TestPipelineComponentBatchDeployment:
         payload = json.loads(json.dumps(rest_obj, cls=SdkJSONEncoder, exclude_readonly=True))
         assert payload["location"] == "eastus"
         assert (
-            payload["properties"]["deploymentConfiguration"]["componentId"]["assetId"]
-            == pipeline_component.component
+            payload["properties"]["deploymentConfiguration"]["componentId"]["assetId"] == pipeline_component.component
         )
         assert payload["properties"]["deploymentConfiguration"]["deploymentConfigurationType"] == "PipelineComponent"
