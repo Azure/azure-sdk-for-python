@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import QueryClientConfiguration
-from .operations import ConstantOperations
+from .operations import ConstantOperations, SpecialCharOperations
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -29,6 +29,8 @@ class QueryClient:  # pylint: disable=client-accepts-api-version-keyword
 
     :ivar constant: ConstantOperations operations
     :vartype constant: parameters.query.aio.operations.ConstantOperations
+    :ivar special_char: SpecialCharOperations operations
+    :vartype special_char: parameters.query.aio.operations.SpecialCharOperations
     :keyword endpoint: Service host. Default value is "http://localhost:3000".
     :paramtype endpoint: str
     """
@@ -62,6 +64,7 @@ class QueryClient:  # pylint: disable=client-accepts-api-version-keyword
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.constant = ConstantOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.special_char = SpecialCharOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

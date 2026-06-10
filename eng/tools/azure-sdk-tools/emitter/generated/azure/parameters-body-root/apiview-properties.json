@@ -1,0 +1,10 @@
+{
+    "CrossLanguagePackageId": "Parameters.BodyRoot",
+    "CrossLanguageDefinitionId": {
+        "parameters.bodyroot.models.BodyRootModel": "Parameters.BodyRoot.BodyRootModel",
+        "parameters.bodyroot.models.NestedParameterBody": "Parameters.BodyRoot.nested.Parameter.body.anonymous",
+        "parameters.bodyroot.BodyRootClient.nested": "Parameters.BodyRoot.nested",
+        "parameters.bodyroot.aio.BodyRootClient.nested": "Parameters.BodyRoot.nested"
+    },
+    "CrossLanguageVersion": "1b93bc1e60f7"
+}

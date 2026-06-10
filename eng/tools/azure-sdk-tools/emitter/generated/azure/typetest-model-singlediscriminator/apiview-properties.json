@@ -4,6 +4,7 @@
         "typetest.model.singlediscriminator.models.Bird": "Type.Model.Inheritance.SingleDiscriminator.Bird",
         "typetest.model.singlediscriminator.models.Dinosaur": "Type.Model.Inheritance.SingleDiscriminator.Dinosaur",
         "typetest.model.singlediscriminator.models.Eagle": "Type.Model.Inheritance.SingleDiscriminator.Eagle",
+        "typetest.model.singlediscriminator.models.Fish": "Type.Model.Inheritance.SingleDiscriminator.Fish",
         "typetest.model.singlediscriminator.models.Goose": "Type.Model.Inheritance.SingleDiscriminator.Goose",
         "typetest.model.singlediscriminator.models.SeaGull": "Type.Model.Inheritance.SingleDiscriminator.SeaGull",
         "typetest.model.singlediscriminator.models.Sparrow": "Type.Model.Inheritance.SingleDiscriminator.Sparrow",
@@ -21,7 +22,11 @@
         "typetest.model.singlediscriminator.SingleDiscriminatorClient.get_wrong_discriminator": "Type.Model.Inheritance.SingleDiscriminator.getWrongDiscriminator",
         "typetest.model.singlediscriminator.aio.SingleDiscriminatorClient.get_wrong_discriminator": "Type.Model.Inheritance.SingleDiscriminator.getWrongDiscriminator",
         "typetest.model.singlediscriminator.SingleDiscriminatorClient.get_legacy_model": "Type.Model.Inheritance.SingleDiscriminator.getLegacyModel",
-        "typetest.model.singlediscriminator.aio.SingleDiscriminatorClient.get_legacy_model": "Type.Model.Inheritance.SingleDiscriminator.getLegacyModel"
+        "typetest.model.singlediscriminator.aio.SingleDiscriminatorClient.get_legacy_model": "Type.Model.Inheritance.SingleDiscriminator.getLegacyModel",
+        "typetest.model.singlediscriminator.SingleDiscriminatorClient.get_no_subtypes_model": "Type.Model.Inheritance.SingleDiscriminator.getNoSubtypesModel",
+        "typetest.model.singlediscriminator.aio.SingleDiscriminatorClient.get_no_subtypes_model": "Type.Model.Inheritance.SingleDiscriminator.getNoSubtypesModel",
+        "typetest.model.singlediscriminator.SingleDiscriminatorClient.put_no_subtypes_model": "Type.Model.Inheritance.SingleDiscriminator.putNoSubtypesModel",
+        "typetest.model.singlediscriminator.aio.SingleDiscriminatorClient.put_no_subtypes_model": "Type.Model.Inheritance.SingleDiscriminator.putNoSubtypesModel"
     },
-    "CrossLanguageVersion": "301c4a3b5af0"
+    "CrossLanguageVersion": "d008d2bf96fe"
 }

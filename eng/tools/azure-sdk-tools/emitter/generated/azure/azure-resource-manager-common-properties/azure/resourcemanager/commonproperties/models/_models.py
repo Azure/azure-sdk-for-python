@@ -105,34 +105,6 @@ class ApiErrorBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
-    """An error response.
-
-    :ivar error: Api error.
-    :vartype error: ~azure.resourcemanager.commonproperties.models.ApiError
-    """
-
-    error: Optional["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Api error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ApiError"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Resource(_Model):
     """Resource.
 
@@ -192,6 +164,139 @@ class TrackedResource(Resource):
         *,
         location: str,
         tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArmResourceIdentifierResource(TrackedResource):
+    """Concrete tracked resource types can be created by aliasing this type using a specific property
+    type.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.resourcemanager.commonproperties.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.resourcemanager.commonproperties.models.ArmResourceIdentifierResourceProperties
+    """
+
+    properties: Optional["_models.ArmResourceIdentifierResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ArmResourceIdentifierResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArmResourceIdentifierResourceProperties(_Model):
+    """ArmResourceIdentifier Resource Properties.
+
+    :ivar provisioning_state: The status of the last operation. Required. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.resourcemanager.commonproperties.models.ResourceProvisioningState
+    :ivar simple_arm_id: A basic ARM resource identifier without type or scopes. Required.
+    :vartype simple_arm_id: str
+    :ivar arm_id_with_type: An ARM resource identifier with type only. Required.
+    :vartype arm_id_with_type: str
+    :ivar arm_id_with_type_and_scope: An ARM resource identifier with type and scopes. Required.
+    :vartype arm_id_with_type_and_scope: str
+    :ivar arm_id_with_all_scopes: An ARM resource identifier with all scopes. Required.
+    :vartype arm_id_with_all_scopes: str
+    """
+
+    provisioning_state: Union[str, "_models.ResourceProvisioningState"] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Required. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+    simple_arm_id: str = rest_field(name="simpleArmId", visibility=["read", "create", "update", "delete", "query"])
+    """A basic ARM resource identifier without type or scopes. Required."""
+    arm_id_with_type: str = rest_field(name="armIdWithType", visibility=["read", "create", "update", "delete", "query"])
+    """An ARM resource identifier with type only. Required."""
+    arm_id_with_type_and_scope: str = rest_field(
+        name="armIdWithTypeAndScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An ARM resource identifier with type and scopes. Required."""
+    arm_id_with_all_scopes: str = rest_field(
+        name="armIdWithAllScopes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An ARM resource identifier with all scopes. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        simple_arm_id: str,
+        arm_id_with_type: str,
+        arm_id_with_type_and_scope: str,
+        arm_id_with_all_scopes: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudError(_Model):
+    """An error response.
+
+    :ivar error: Api error.
+    :vartype error: ~azure.resourcemanager.commonproperties.models.ApiError
+    """
+
+    error: Optional["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Api error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.ApiError"] = None,
     ) -> None: ...
 
     @overload

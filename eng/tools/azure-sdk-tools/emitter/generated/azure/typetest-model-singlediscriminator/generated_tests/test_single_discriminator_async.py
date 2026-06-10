@@ -79,3 +79,23 @@ class TestSingleDiscriminatorAsync(SingleDiscriminatorClientTestBaseAsync):
 
         # please add some check logic here by yourself
         # ...
+
+    @SingleDiscriminatorPreparer()
+    @recorded_by_proxy_async
+    async def test_get_no_subtypes_model(self, singlediscriminator_endpoint):
+        client = self.create_async_client(endpoint=singlediscriminator_endpoint)
+        response = await client.get_no_subtypes_model()
+
+        # please add some check logic here by yourself
+        # ...
+
+    @SingleDiscriminatorPreparer()
+    @recorded_by_proxy_async
+    async def test_put_no_subtypes_model(self, singlediscriminator_endpoint):
+        client = self.create_async_client(endpoint=singlediscriminator_endpoint)
+        response = await client.put_no_subtypes_model(
+            input={"size": 0},
+        )
+
+        # please add some check logic here by yourself
+        # ...
