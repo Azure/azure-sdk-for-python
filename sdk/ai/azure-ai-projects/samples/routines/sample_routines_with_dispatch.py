@@ -62,7 +62,7 @@ agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
     routine_name = "sample-routine-dispatch"
