@@ -129,6 +129,39 @@ class Eagle(Bird, discriminator="eagle"):
         self.kind = "eagle"  # type: ignore
 
 
+class Fish(_Model):
+    """A discriminated model with no defined subtypes. The discriminator is declared but no models
+    extend it.
+
+    :ivar kind: Required.
+    :vartype kind: str
+    :ivar size: Required.
+    :vartype size: int
+    """
+
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Goose(Bird, discriminator="goose"):
     """The second level model in polymorphic single level inheritance.
 

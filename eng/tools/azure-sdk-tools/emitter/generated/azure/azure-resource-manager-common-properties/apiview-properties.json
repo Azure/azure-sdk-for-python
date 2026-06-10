@@ -3,9 +3,11 @@
     "CrossLanguageDefinitionId": {
         "azure.resourcemanager.commonproperties.models.ApiError": "Azure.ResourceManager.CommonProperties.ApiError",
         "azure.resourcemanager.commonproperties.models.ApiErrorBase": "Azure.ResourceManager.CommonProperties.ApiErrorBase",
-        "azure.resourcemanager.commonproperties.models.CloudError": "Azure.ResourceManager.CommonProperties.CloudError",
         "azure.resourcemanager.commonproperties.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.resourcemanager.commonproperties.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
+        "azure.resourcemanager.commonproperties.models.ArmResourceIdentifierResource": "Azure.ResourceManager.CommonProperties.ArmResourceIdentifierResource",
+        "azure.resourcemanager.commonproperties.models.ArmResourceIdentifierResourceProperties": "Azure.ResourceManager.CommonProperties.ArmResourceIdentifierResourceProperties",
+        "azure.resourcemanager.commonproperties.models.CloudError": "Azure.ResourceManager.CommonProperties.CloudError",
         "azure.resourcemanager.commonproperties.models.ConfidentialResource": "Azure.ResourceManager.CommonProperties.ConfidentialResource",
         "azure.resourcemanager.commonproperties.models.ConfidentialResourceProperties": "Azure.ResourceManager.CommonProperties.ConfidentialResourceProperties",
         "azure.resourcemanager.commonproperties.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
@@ -19,6 +21,7 @@
         "azure.resourcemanager.commonproperties.models.UserAssignedIdentity": "Azure.ResourceManager.CommonTypes.UserAssignedIdentity",
         "azure.resourcemanager.commonproperties.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.resourcemanager.commonproperties.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
+        "azure.resourcemanager.commonproperties.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
         "azure.resourcemanager.commonproperties.operations.ManagedIdentityOperations.get": "Azure.ResourceManager.CommonProperties.ManagedIdentity.get",
         "azure.resourcemanager.commonproperties.aio.operations.ManagedIdentityOperations.get": "Azure.ResourceManager.CommonProperties.ManagedIdentity.get",
         "azure.resourcemanager.commonproperties.operations.ManagedIdentityOperations.create_with_system_assigned": "Azure.ResourceManager.CommonProperties.ManagedIdentity.createWithSystemAssigned",
@@ -28,7 +31,11 @@
         "azure.resourcemanager.commonproperties.operations.ErrorOperations.get_for_predefined_error": "Azure.ResourceManager.CommonProperties.Error.getForPredefinedError",
         "azure.resourcemanager.commonproperties.aio.operations.ErrorOperations.get_for_predefined_error": "Azure.ResourceManager.CommonProperties.Error.getForPredefinedError",
         "azure.resourcemanager.commonproperties.operations.ErrorOperations.create_for_user_defined_error": "Azure.ResourceManager.CommonProperties.Error.createForUserDefinedError",
-        "azure.resourcemanager.commonproperties.aio.operations.ErrorOperations.create_for_user_defined_error": "Azure.ResourceManager.CommonProperties.Error.createForUserDefinedError"
+        "azure.resourcemanager.commonproperties.aio.operations.ErrorOperations.create_for_user_defined_error": "Azure.ResourceManager.CommonProperties.Error.createForUserDefinedError",
+        "azure.resourcemanager.commonproperties.operations.ArmResourceIdentifiersOperations.get": "Azure.ResourceManager.CommonProperties.ArmResourceIdentifiers.get",
+        "azure.resourcemanager.commonproperties.aio.operations.ArmResourceIdentifiersOperations.get": "Azure.ResourceManager.CommonProperties.ArmResourceIdentifiers.get",
+        "azure.resourcemanager.commonproperties.operations.ArmResourceIdentifiersOperations.create_or_replace": "Azure.ResourceManager.CommonProperties.ArmResourceIdentifiers.createOrReplace",
+        "azure.resourcemanager.commonproperties.aio.operations.ArmResourceIdentifiersOperations.create_or_replace": "Azure.ResourceManager.CommonProperties.ArmResourceIdentifiers.createOrReplace"
     },
-    "CrossLanguageVersion": "ad207ac2ccc3"
+    "CrossLanguageVersion": "f9b539c8f6ce"
 }
