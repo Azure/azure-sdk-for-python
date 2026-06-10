@@ -1,0 +1,26 @@
+{
+    "CrossLanguagePackageId": "Azure.ResourceManager.ManagementGroup",
+    "CrossLanguageDefinitionId": {
+        "azure.resourcemanager.managementgroup.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.resourcemanager.managementgroup.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.resourcemanager.managementgroup.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.resourcemanager.managementgroup.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.resourcemanager.managementgroup.models.ExtensionResource": "Azure.ResourceManager.CommonTypes.ExtensionResource",
+        "azure.resourcemanager.managementgroup.models.ManagementGroupChildResource": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResource",
+        "azure.resourcemanager.managementgroup.models.ManagementGroupChildResourceProperties": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResourceProperties",
+        "azure.resourcemanager.managementgroup.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.resourcemanager.managementgroup.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.resourcemanager.managementgroup.models.ProvisioningState": "Azure.ResourceManager.ManagementGroup.ProvisioningState",
+        "azure.resourcemanager.managementgroup.operations.ManagementGroupChildResourcesOperations.get": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.get",
+        "azure.resourcemanager.managementgroup.aio.operations.ManagementGroupChildResourcesOperations.get": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.get",
+        "azure.resourcemanager.managementgroup.operations.ManagementGroupChildResourcesOperations.begin_create_or_update": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.createOrUpdate",
+        "azure.resourcemanager.managementgroup.aio.operations.ManagementGroupChildResourcesOperations.begin_create_or_update": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.createOrUpdate",
+        "azure.resourcemanager.managementgroup.operations.ManagementGroupChildResourcesOperations.update": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.update",
+        "azure.resourcemanager.managementgroup.aio.operations.ManagementGroupChildResourcesOperations.update": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.update",
+        "azure.resourcemanager.managementgroup.operations.ManagementGroupChildResourcesOperations.delete": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.delete",
+        "azure.resourcemanager.managementgroup.aio.operations.ManagementGroupChildResourcesOperations.delete": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.delete",
+        "azure.resourcemanager.managementgroup.operations.ManagementGroupChildResourcesOperations.list_by_management_group": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.listByManagementGroup",
+        "azure.resourcemanager.managementgroup.aio.operations.ManagementGroupChildResourcesOperations.list_by_management_group": "Azure.ResourceManager.ManagementGroup.ManagementGroupChildResources.listByManagementGroup"
+    },
+    "CrossLanguageVersion": "f15d0d496982"
+}

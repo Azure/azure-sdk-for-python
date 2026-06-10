@@ -1,0 +1,10 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.ResponseAsBool",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.responseasbool.operations.HeadAsBooleanOperations.exists": "_Specs_.Azure.ClientGenerator.Core.ResponseAsBool.HeadAsBoolean.exists",
+        "specs.azure.clientgenerator.core.responseasbool.aio.operations.HeadAsBooleanOperations.exists": "_Specs_.Azure.ClientGenerator.Core.ResponseAsBool.HeadAsBoolean.exists",
+        "specs.azure.clientgenerator.core.responseasbool.operations.HeadAsBooleanOperations.not_exists": "_Specs_.Azure.ClientGenerator.Core.ResponseAsBool.HeadAsBoolean.notExists",
+        "specs.azure.clientgenerator.core.responseasbool.aio.operations.HeadAsBooleanOperations.not_exists": "_Specs_.Azure.ClientGenerator.Core.ResponseAsBool.HeadAsBoolean.notExists"
+    },
+    "CrossLanguageVersion": "57f7b0b65ebf"
+}

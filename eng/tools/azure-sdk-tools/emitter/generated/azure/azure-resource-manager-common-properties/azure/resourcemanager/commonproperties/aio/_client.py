@@ -19,7 +19,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import CommonPropertiesClientConfiguration
-from .operations import ErrorOperations, ManagedIdentityOperations
+from .operations import ArmResourceIdentifiersOperations, ErrorOperations, ManagedIdentityOperations
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -39,6 +39,9 @@ class CommonPropertiesClient:
      azure.resourcemanager.commonproperties.aio.operations.ManagedIdentityOperations
     :ivar error: ErrorOperations operations
     :vartype error: azure.resourcemanager.commonproperties.aio.operations.ErrorOperations
+    :ivar arm_resource_identifiers: ArmResourceIdentifiersOperations operations
+    :vartype arm_resource_identifiers:
+     azure.resourcemanager.commonproperties.aio.operations.ArmResourceIdentifiersOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -108,6 +111,9 @@ class CommonPropertiesClient:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.error = ErrorOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.arm_resource_identifiers = ArmResourceIdentifiersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
