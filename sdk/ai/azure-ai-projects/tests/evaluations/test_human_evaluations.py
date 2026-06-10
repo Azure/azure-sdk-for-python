@@ -20,7 +20,7 @@ from sample_human_evaluations import (
 )  # noqa: E402
 
 AGENT_NAME = "test-agent"
-AGENT_VERSION = "2"
+AGENT_VERSION = 2
 AGENT_ID = f"{AGENT_NAME}:{AGENT_VERSION}"
 
 

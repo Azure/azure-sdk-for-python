@@ -161,7 +161,7 @@ def _emit_human_evaluation(
     threshold: float,
     desirable_direction: DesirableDirection,
     agent_name: str,
-    agent_version: str,
+    agent_version: int,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
     conversation_id: Optional[str] = None,
@@ -230,7 +230,7 @@ def emit_boolean_evaluation(
     evaluation_metric_name: str,
     passed: bool,
     agent_name: str,
-    agent_version: str,
+    agent_version: int,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
     conversation_id: Optional[str] = None,
@@ -253,7 +253,7 @@ def emit_boolean_evaluation(
             `"task_completion"` or `"helpfulness"`.
         passed: Whether the human evaluation passed.
         agent_name: Name of the evaluated agent.
-        agent_version: Version of the evaluated agent.
+        agent_version: Integer version of the evaluated agent.
         explanation: Optional free-form explanation from the end user.
         response_id: Optional OpenAI Responses API response ID being evaluated.
         conversation_id: Optional conversation ID associated with the evaluation.
@@ -293,7 +293,7 @@ def emit_5_point_ordinal_evaluation(
     evaluation_metric_name: str,
     score_value: float,
     agent_name: str,
-    agent_version: str,
+    agent_version: int,
     threshold: float = 3.0,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
@@ -316,7 +316,7 @@ def emit_5_point_ordinal_evaluation(
             `"relevance"` or `"helpfulness"`.
         score_value: Integer score from `1.0` through `5.0`.
         agent_name: Name of the evaluated agent.
-        agent_version: Version of the evaluated agent.
+        agent_version: Integer version of the evaluated agent.
         threshold: Score at or above this value is passing.
         explanation: Optional free-form explanation from the end user.
         response_id: Optional OpenAI Responses API response ID being evaluated.
@@ -389,7 +389,7 @@ if __name__ == "__main__":
         trace_id = "4bf92f3577b34da6a3ce929d0e0e4736"
         span_id = "00f067aa0ba902b7"
         agent_name = "test-agent"
-        agent_version = "2"
+        agent_version = 2
 
         # Example 1: an anonymous end user gives a thumbs up on task completion.
         emit_boolean_evaluation(
