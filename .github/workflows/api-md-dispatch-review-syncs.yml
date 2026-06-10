@@ -1,0 +1,61 @@
+name: API.md Dispatch Review Syncs
+
+on:
+  workflow_run:
+    workflows: ["API.md Consistency"]
+    types: [completed]
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: api-md-dispatch-review-syncs-${{ github.event.workflow_run.head_repository.owner.login }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      !startsWith(github.event.workflow_run.head_branch, 'apireview/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout trusted workflow scripts
+        uses: actions/checkout@v6
+
+      - name: Checkout working SHA for package metadata
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.event.workflow_run.head_repository.full_name }}
+          ref: ${{ github.event.workflow_run.head_sha }}
+          path: working
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      - name: Download API.md consistency artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "${{ github.event.workflow_run.id }}" --name api-md-affected-packages --dir .artifacts || true
+
+      - name: Dispatch matching review branch syncs
+        if: ${{ hashFiles('.artifacts/affected_package_dirs.txt') != '' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          node .github/workflows/src/api-md-review-sync/dispatch_review_branch_syncs.js
+          --packages-file .artifacts/affected_package_dirs.txt
+          --working-owner "${{ github.event.workflow_run.head_repository.owner.login }}"
+          --working-branch "${{ github.event.workflow_run.head_branch }}"
+          --working-sha "${{ github.event.workflow_run.head_sha }}"
+          --repo-root working
+
+      - name: No affected packages
+        if: ${{ hashFiles('.artifacts/affected_package_dirs.txt') == '' }}
+        run: echo "No affected API.md packages were published by the consistency run."

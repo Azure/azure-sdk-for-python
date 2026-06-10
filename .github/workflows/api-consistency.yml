@@ -59,3 +59,10 @@ jobs:
             const { default: apiMdConsistency } =
               await import('${{ github.workspace }}/.github/workflows/src/api-md-consistency/api-md-consistency.js');
             return await apiMdConsistency({ github, context, core });
+
+      - name: Upload affected package list
+        if: ${{ success() && steps.consistency.outputs.changed_count != '0' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: api-md-affected-packages
+          path: .artifacts/affected_package_dirs.txt

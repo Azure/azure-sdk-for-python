@@ -1,0 +1,72 @@
+name: API.md Sync Review Branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      packageDir:
+        description: Package directory containing api.md and api.metadata.yml.
+        required: true
+      reviewBranch:
+        description: API review branch to update.
+        required: true
+      workingOwner:
+        description: Owner of the working branch repository.
+        required: true
+      workingBranch:
+        description: Working branch name.
+        required: true
+      workingSha:
+        description: Consistency-verified working branch SHA.
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: api-md-sync-review-branch-${{ inputs.reviewBranch }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: ${{ startsWith(inputs.reviewBranch, 'apireview/review_') && !startsWith(inputs.workingBranch, 'apireview/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout trusted workflow scripts
+        uses: actions/checkout@v6
+        with:
+          path: trusted
+
+      - name: Checkout working SHA
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ inputs.workingOwner }}/azure-sdk-for-python
+          ref: ${{ inputs.workingSha }}
+          path: working
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Checkout review branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.reviewBranch }}
+          path: review
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      - name: Sync API.md artifacts
+        working-directory: review
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          node ../trusted/.github/workflows/src/api-md-review-sync/sync_review_branch.js
+          --working-root ../working
+          --review-root .
+          --package-dir "${{ inputs.packageDir }}"
+          --review-branch "${{ inputs.reviewBranch }}"
+          --working-owner "${{ inputs.workingOwner }}"
+          --working-branch "${{ inputs.workingBranch }}"
+          --working-sha "${{ inputs.workingSha }}"

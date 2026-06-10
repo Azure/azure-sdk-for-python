@@ -22,5 +22,13 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
       - name: Run API.md workflow unit tests
         run: python -m unittest discover scripts/api_md_workflow "*_test.py"
+
+      - name: Run API.md workflow JavaScript unit tests
+        run: node --test .github/workflows/src/api-md-review-sync/*.test.js
