@@ -263,6 +263,7 @@ class SmbMultichannel:
         self.enabled = enabled
 
     def _to_generated(self):
+        return GeneratedSmbMultichannel(enabled=self.enabled)
 
     @classmethod
     def _from_generated(cls, generated):
