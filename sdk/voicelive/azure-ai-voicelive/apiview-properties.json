@@ -43,6 +43,8 @@
         "azure.ai.voicelive.models.ClientEventInputAudioTurnCancel": "VoiceLive.ClientEventInputAudioTurnCancel",
         "azure.ai.voicelive.models.ClientEventInputAudioTurnEnd": "VoiceLive.ClientEventInputAudioTurnEnd",
         "azure.ai.voicelive.models.ClientEventInputAudioTurnStart": "VoiceLive.ClientEventInputAudioTurnStart",
+        "azure.ai.voicelive.models.ClientEventInputTextDelta": "VoiceLive.ClientEventInputTextDelta",
+        "azure.ai.voicelive.models.ClientEventInputTextDone": "VoiceLive.ClientEventInputTextDone",
         "azure.ai.voicelive.models.ClientEventOutputAudioBufferClear": "VoiceLive.ClientEventOutputAudioBufferClear",
         "azure.ai.voicelive.models.ClientEventResponseCancel": "VoiceLive.ClientEventResponseCancel",
         "azure.ai.voicelive.models.ClientEventResponseCreate": "VoiceLive.ClientEventResponseCreate",
@@ -161,6 +163,7 @@
         "azure.ai.voicelive.models.ServerEventWarningDetails": "VoiceLive.ServerEventWarningDetails",
         "azure.ai.voicelive.models.ServerVad": "VoiceLive.ServerVad",
         "azure.ai.voicelive.models.SessionBase": "VoiceLive.SessionBase",
+        "azure.ai.voicelive.models.SmartEndOfTurnDetection": "VoiceLive.SmartEndOfTurnDetection",
         "azure.ai.voicelive.models.StaticInterimResponseConfig": "VoiceLive.StaticInterimResponseConfig",
         "azure.ai.voicelive.models.SystemMessageItem": "VoiceLive.SystemMessageItem",
         "azure.ai.voicelive.models.TokenUsage": "VoiceLive.TokenUsage",
@@ -205,5 +208,5 @@
         "azure.ai.voicelive.models.ResponseItemStatus": "VoiceLive.ResponseItemStatus",
         "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType"
     },
-    "CrossLanguageVersion": "d4391398f022"
+    "CrossLanguageVersion": "9b238185e57a"
 }
