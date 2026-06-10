@@ -114,8 +114,8 @@ class Tool(_Model):
 class A2APreviewTool(Tool, discriminator="a2a_preview"):
     """An agent implementing the A2A protocol.
 
-    :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2A_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.A2A_PREVIEW
+    :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2_A_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.A2_A_PREVIEW
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -135,8 +135,8 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
     :vartype project_connection_id: str
     """
 
-    type: Literal[ToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``\"a2a_preview``. Required. A2A_PREVIEW."""
+    type: Literal[ToolType.A2_A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``\"a2a_preview``. Required. A2_A_PREVIEW."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -177,7 +177,7 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.A2A_PREVIEW  # type: ignore
+        self.type = ToolType.A2_A_PREVIEW  # type: ignore
 
 
 class AgentBlueprintReference(_Model):
@@ -6858,6 +6858,12 @@ class EvaluatorVersion(_Model):
     :vartype evaluator_type: str or ~azure.ai.projects.models.EvaluatorType
     :ivar categories: The categories of the evaluator. Required.
     :vartype categories: list[str or ~azure.ai.projects.models.EvaluatorCategory]
+    :ivar supported_evaluation_levels: Evaluation levels this evaluator supports (e.g., ``turn``,
+     ``conversation``). When omitted on create, the service defaults to ``["turn"]``. On update,
+     omitting this field leaves it unchanged; an empty list is rejected. Custom code-based
+     evaluators support only ``turn``; custom prompt-based evaluators support exactly one level
+     (``turn`` or ``conversation``).
+    :vartype supported_evaluation_levels: list[str or ~azure.ai.projects.models.EvaluationLevel]
     :ivar definition: Definition of the evaluator. Required.
     :vartype definition: ~azure.ai.projects.models.EvaluatorDefinition
     :ivar generation_artifacts: Provenance artifacts from the generation pipeline. Read-only;
@@ -6893,6 +6899,13 @@ class EvaluatorVersion(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The categories of the evaluator. Required."""
+    supported_evaluation_levels: Optional[list[Union[str, "_models.EvaluationLevel"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluation levels this evaluator supports (e.g., ``turn``, ``conversation``). When omitted on
+     create, the service defaults to ``[\"turn\"]``. On update, omitting this field leaves it
+     unchanged; an empty list is rejected. Custom code-based evaluators support only ``turn``;
+     custom prompt-based evaluators support exactly one level (``turn`` or ``conversation``)."""
     definition: "_models.EvaluatorDefinition" = rest_field(visibility=["read", "create"])
     """Definition of the evaluator. Required."""
     generation_artifacts: Optional["_models.EvaluatorGenerationArtifacts"] = rest_field(visibility=["read"])
@@ -6925,6 +6938,7 @@ class EvaluatorVersion(_Model):
         definition: "_models.EvaluatorDefinition",
         display_name: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
+        supported_evaluation_levels: Optional[list[Union[str, "_models.EvaluationLevel"]]] = None,
         description: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
     ) -> None: ...
@@ -12013,7 +12027,7 @@ class ProtocolVersionRecord(_Model):
     """A record mapping for a single protocol and its version.
 
     :ivar protocol: The protocol type. Required. Known values are: "activity_protocol",
-     "responses", "mcp", "invocations", and "invocations_ws".
+     "responses", "a2a", "mcp", "invocations", and "invocations_ws".
     :vartype protocol: str or ~azure.ai.projects.models.AgentProtocol
     :ivar version: The version string for the protocol, e.g. 'v0.1.1'. Required.
     :vartype version: str
@@ -12022,8 +12036,8 @@ class ProtocolVersionRecord(_Model):
     protocol: Union[str, "_models.AgentProtocol"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The protocol type. Required. Known values are: \"activity_protocol\", \"responses\", \"mcp\",
-     \"invocations\", and \"invocations_ws\"."""
+    """The protocol type. Required. Known values are: \"activity_protocol\", \"responses\", \"a2a\",
+     \"mcp\", \"invocations\", and \"invocations_ws\"."""
     version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version string for the protocol, e.g. 'v0.1.1'. Required."""
 
@@ -12444,7 +12458,7 @@ class RoutineRun(_Model):
 
     :ivar id: The unique run identifier for the routine attempt. Required.
     :vartype id: str
-    :ivar status: The run status.
+    :ivar status: The run status. Is one of the following types: str
     :vartype status: str
     :ivar phase: The AgentExtensions lifecycle phase for the routine attempt. Known values are:
      "queued", "dispatching", "completed", and "failed".
@@ -12497,8 +12511,8 @@ class RoutineRun(_Model):
 
     id: str = rest_field(visibility=["read"])
     """The unique run identifier for the routine attempt. Required."""
-    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The run status."""
+    status: Optional["_types.RoutineRunStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The run status. Is one of the following types: str"""
     phase: Optional[Union[str, "_models.RoutineRunPhase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12564,7 +12578,7 @@ class RoutineRun(_Model):
     def __init__(
         self,
         *,
-        status: Optional[str] = None,
+        status: Optional["_types.RoutineRunStatus"] = None,
         phase: Optional[Union[str, "_models.RoutineRunPhase"]] = None,
         trigger_type: Optional[Union[str, "_models.RoutineTriggerType"]] = None,
         trigger_name: Optional[str] = None,
@@ -12961,10 +12975,12 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}.
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -14191,7 +14207,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      or a Literal["required"] type.
     :vartype mode: str or str
     :ivar tools: A list of tool definitions that the model should be allowed to call. For the
-     Responses API, the list of tool definitions might look like the following. Required.
+     Responses API, the list of tool definitions might look like:
 
      .. code-block:: json
 
@@ -14199,7 +14215,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
           { "type": "function", "name": "get_weather" },
           { "type": "mcp", "server_label": "deepwiki" },
           { "type": "image_generation" }
-        ]
+        ]. Required.
     :vartype tools: list[dict[str, any]]
     """
 
@@ -14212,7 +14228,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      Literal[\"required\"] type."""
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool definitions that the model should be allowed to call. For the Responses API, the
-     list of tool definitions might look like the following. Required.
+     list of tool definitions might look like:
      
      .. code-block:: json
      
@@ -14220,7 +14236,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
           { \"type\": \"function\", \"name\": \"get_weather\" },
           { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
           { \"type\": \"image_generation\" }
-        ]"""
+        ]. Required."""
 
     @overload
     def __init__(
@@ -14545,12 +14561,12 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
-    :ivar type: Required. WEB_SEARCH_PREVIEW_2025_03_11.
-    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW_2025_03_11
+    :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW2025_03_11
     """
 
-    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. WEB_SEARCH_PREVIEW_2025_03_11."""
+    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WEB_SEARCH_PREVIEW2025_03_11."""
 
     @overload
     def __init__(
@@ -14566,7 +14582,7 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11  # type: ignore
+        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11  # type: ignore
 
 
 class ToolConfig(_Model):

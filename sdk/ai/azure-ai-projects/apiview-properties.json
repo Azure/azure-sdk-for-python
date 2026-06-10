@@ -483,5 +483,5 @@
         "azure.ai.projects.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
         "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion"
     },
-    "CrossLanguageVersion": "ca205130211f"
+    "CrossLanguageVersion": "f05b4f821f68"
 }
