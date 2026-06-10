@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b2 (Unreleased)
+## 1.2.0b2 (2026-06-10)
 
 ### Bugs Fixed
 - Filtered service-emitted `LLMStats:` telemetry entries from the rendered `rai_warnings` front matter.
