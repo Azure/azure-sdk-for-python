@@ -3,12 +3,14 @@ namespace azure.keyvault.keys
 
     class azure.keyvault.keys.ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         V2016_10_01 = "2016-10-01"
+        V2025_07_01 = "2025-07-01"
         V7_0 = "7.0"
         V7_1 = "7.1"
         V7_2 = "7.2"
         V7_3 = "7.3"
         V7_4 = "7.4"
         V7_5 = "7.5"
+        V7_6 = "7.6"
 
 
     class azure.keyvault.keys.DeletedKey(KeyVaultKey):
@@ -57,6 +59,24 @@ namespace azure.keyvault.keys
                 y: Optional[bytes] = ..., 
                 **kwargs: Any
             ) -> None: ...
+
+
+    class azure.keyvault.keys.KeyAttestation:
+        certificate_pem_file: Union[bytes, None]
+        private_key_attestation: Union[bytes, None]
+        public_key_attestation: Union[bytes, None]
+        version: Union[str, None]
+
+        def __init__(
+                self, 
+                *, 
+                certificate_pem_file: Optional[bytes] = ..., 
+                private_key_attestation: Optional[bytes] = ..., 
+                public_key_attestation: Optional[bytes] = ..., 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
 
 
     class azure.keyvault.keys.KeyClient(KeyVaultClientBase): implements ContextManager 
@@ -183,6 +203,14 @@ namespace azure.keyvault.keys
 
         @distributed_trace
         def get_key(
+                self, 
+                name: str, 
+                version: Optional[str] = None, 
+                **kwargs: Any
+            ) -> KeyVaultKey: ...
+
+        @distributed_trace
+        def get_key_attestation(
                 self, 
                 name: str, 
                 version: Optional[str] = None, 
@@ -326,6 +354,7 @@ namespace azure.keyvault.keys
 
 
     class azure.keyvault.keys.KeyProperties:
+        property attestation: Optional[KeyAttestation]    # Read-only
         property created_on: Optional[datetime]    # Read-only
         property enabled: Optional[bool]    # Read-only
         property expires_on: Optional[datetime]    # Read-only
@@ -338,7 +367,7 @@ namespace azure.keyvault.keys
         property recoverable_days: Optional[int]    # Read-only
         property recovery_level: Optional[str]    # Read-only
         property release_policy: Optional[KeyReleasePolicy]    # Read-only
-        property tags: Dict[str, str]    # Read-only
+        property tags: Optional[Dict[str, str]]    # Read-only
         property updated_on: Optional[datetime]    # Read-only
         property vault_url: str    # Read-only
         property version: Optional[str]    # Read-only
@@ -557,6 +586,14 @@ namespace azure.keyvault.keys.aio
 
         @distributed_trace_async
         async def get_key(
+                self, 
+                name: str, 
+                version: Optional[str] = None, 
+                **kwargs: Any
+            ) -> KeyVaultKey: ...
+
+        @distributed_trace_async
+        async def get_key_attestation(
                 self, 
                 name: str, 
                 version: Optional[str] = None, 
@@ -818,6 +855,10 @@ namespace azure.keyvault.keys.crypto
     class azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey(RSAPrivateKey):
         property key_size: int    # Read-only
 
+        def __copy__(self) -> KeyVaultRSAPrivateKey: ...
+
+        def __deepcopy__(self, memo: dict) -> KeyVaultRSAPrivateKey: ...
+
         def __init__(
                 self, 
                 client: CryptographyClient, 
@@ -857,6 +898,10 @@ namespace azure.keyvault.keys.crypto
 
     class azure.keyvault.keys.crypto.KeyVaultRSAPublicKey(RSAPublicKey):
         property key_size: int    # Read-only
+
+        def __copy__(self) -> KeyVaultRSAPublicKey: ...
+
+        def __deepcopy__(self, memo: dict) -> KeyVaultRSAPublicKey: ...
 
         def __eq__(self, other: object) -> bool: ...
 
@@ -907,6 +952,8 @@ namespace azure.keyvault.keys.crypto
         aes_128 = "A128KW"
         aes_192 = "A192KW"
         aes_256 = "A256KW"
+        ckm_aes_key_wrap = "CKM_AES_KEY_WRAP"
+        ckm_aes_key_wrap_pad = "CKM_AES_KEY_WRAP_PAD"
         rsa1_5 = "RSA1_5"
         rsa_oaep = "RSA-OAEP"
         rsa_oaep_256 = "RSA-OAEP-256"
@@ -927,6 +974,9 @@ namespace azure.keyvault.keys.crypto
         es256_k = "ES256K"
         es384 = "ES384"
         es512 = "ES512"
+        hs256 = "HS256"
+        hs384 = "HS384"
+        hs512 = "HS512"
         ps256 = "PS256"
         ps384 = "PS384"
         ps512 = "PS512"
