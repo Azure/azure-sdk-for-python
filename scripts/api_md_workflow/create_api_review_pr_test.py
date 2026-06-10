@@ -219,8 +219,12 @@ class ApiReviewPrTests(unittest.TestCase):
             sync_metadata_block=None,
         )
 
-        self.assertIn("Static tag-to-tag review", body)
-        self.assertIn("cannot be automatically updated from a working branch", body)
+        self.assertIn(
+            "> [!WARNING]\n"
+            "> Static tag-to-tag review; this PR cannot be automatically updated from a working branch.",
+            body,
+        )
+        self.assertNotIn("Update behavior", body)
         self.assertNotIn("api-md-review-sync", body)
 
     def test_build_review_pr_body_includes_sync_metadata_for_working_branch_reviews(self):
