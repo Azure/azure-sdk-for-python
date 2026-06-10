@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
 
-const REPO_ROOT = path.resolve(__dirname, "..", "..");
+const REPO_ROOT = path.resolve(__dirname, "..", "..", "..", "..");
 const SHARED_SRC_ROOT = path.join(REPO_ROOT, ".github", "shared", "src");
 const sharedModuleCache = new Map();
 

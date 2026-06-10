@@ -79,7 +79,7 @@ function formatIssueSection(title, apiFiles) {
 module.exports = async function apiMdConsistency({ core }) {
   const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
 
-  await runNode("scripts/api_md_workflow/find_affected.js", workspace, core);
+  await runNode(".github/workflows/src/api-md-consistency/find_affected.js", workspace, core);
 
   const affected = readLines(process.env.API_MD_PACKAGES_FILE, workspace);
   const changedCount = affected.length;
@@ -97,8 +97,8 @@ module.exports = async function apiMdConsistency({ core }) {
     };
   }
 
-  await runNode("scripts/api_md_workflow/regenerate.js", workspace, core);
-  await runNode("scripts/api_md_workflow/find_mismatches.js", workspace, core);
+  await runNode(".github/workflows/src/api-md-consistency/regenerate.js", workspace, core);
+  await runNode(".github/workflows/src/api-md-consistency/find_mismatches.js", workspace, core);
 
   const mismatches = readLines(process.env.API_MD_MISMATCHES_FILE, workspace);
   const missing = readLines(process.env.API_MD_MISSING_FILE, workspace);

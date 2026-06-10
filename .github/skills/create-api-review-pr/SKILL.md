@@ -5,20 +5,19 @@ description: Create a GitHub PR for API review by comparing a baseline API surfa
 
 # Create API Review PR
 
-Creates a dedicated API review PR that shows the diff between a baseline release and a target tag or branch's API surface using `scripts/api_md_workflow/create_api_review_pr.js`.
+Creates a dedicated API review PR that shows the diff between a baseline release and a target tag or branch's API surface using `scripts/api_md_workflow/create_api_review_pr.py`.
 
 ## Unsupported Requests
 
-If the user asks to create an API review PR for a new package, explain that new packages do not use API review PRs and stop. Do not gather script inputs or run `create_api_review_pr.js` for new packages.
+If the user asks to create an API review PR for a new package, explain that new packages do not use API review PRs and stop. Do not gather script inputs or run `create_api_review_pr.py` for new packages.
 
 ## Prerequisites
 
 1. The user must have `gh` CLI installed and authenticated (`gh auth login`), or `GITHUB_TOKEN`/`GH_TOKEN` set with permission to create and update pull requests in this repository.
 2. The working tree must be clean (no uncommitted changes).
-3. The latest Node.js LTS must be installed.
-4. API.md workflow Node dependencies must be installed (`npm ci` from `scripts/api_md_workflow`).
-5. `azpysdk` must be installed (`pip install -e ./eng/tools/azure-sdk-tools`).
-6. ApiView stub generator dependencies must be installed (`pip install -r ./eng/apiview_reqs.txt`).
+3. Python 3.10 or later must be available.
+4. `azpysdk` must be installed (`pip install -e ./eng/tools/azure-sdk-tools`).
+5. ApiView stub generator dependencies must be installed (`pip install -r ./eng/apiview_reqs.txt`).
 
 ## Information to Gather
 
@@ -52,31 +51,31 @@ Before running the script:
 
 This is a long-running operation. The script may take several minutes because it generates API surfaces for both the baseline and target, creates or reuses review branches, pushes branches, and then opens the draft PR. Do not treat quiet terminal periods during `apistub` generation as failure unless the command exits, prints an error, or waits for input.
 
-If `create_api_review_pr.js` fails while running this skill, do not patch the script, modify package files, retry with workaround edits, or try to manually complete branch/PR creation. Stop the workflow, report the failure clearly, include the relevant error details, and suggest practical next steps.
+If `create_api_review_pr.py` fails while running this skill, do not patch the script, modify package files, retry with workaround edits, or try to manually complete branch/PR creation. Stop the workflow, report the failure clearly, include the relevant error details, and suggest practical next steps.
 
 If the script reports that there are no API differences, relay that message to the user and stop. Do not create branches or a PR manually.
 
 Run the following command from the repository root:
 
 ```bash
-node scripts/api_md_workflow/create_api_review_pr.js --package-name <package-name> --base <tag> [--target <target>]
+python scripts/api_md_workflow/create_api_review_pr.py --package-name <package-name> --base <tag> [--target <target>]
 ```
 
 ### Examples
 
 **Standard review (comparing a release tag to a PR branch):**
 ```bash
-node scripts/api_md_workflow/create_api_review_pr.js --package-name azure-storage-blob --base azure-storage-blob_12.29.0 --target someone:feature-branch
+python scripts/api_md_workflow/create_api_review_pr.py --package-name azure-storage-blob --base azure-storage-blob_12.29.0 --target someone:feature-branch
 ```
 
 **Release-to-release review (comparing two package tags):**
 ```bash
-node scripts/api_md_workflow/create_api_review_pr.js --package-name azure-ai-projects --base azure-ai-projects_2.1.0 --target azure-ai-projects_2.2.0
+python scripts/api_md_workflow/create_api_review_pr.py --package-name azure-ai-projects --base azure-ai-projects_2.1.0 --target azure-ai-projects_2.2.0
 ```
 
 **Review against main (no target specified):**
 ```bash
-node scripts/api_md_workflow/create_api_review_pr.js --package-name azure-cosmos --base azure-cosmos_4.14.0
+python scripts/api_md_workflow/create_api_review_pr.py --package-name azure-cosmos --base azure-cosmos_4.14.0
 ```
 
 ## Post-Execution
