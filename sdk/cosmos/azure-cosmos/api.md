@@ -42,6 +42,7 @@ namespace azure.cosmos
                 post_trigger_include: Optional[str] = None, 
                 indexing_directive: Optional[int] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 enable_automatic_id_generation: bool = False, 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -87,6 +88,7 @@ namespace azure.cosmos
                 pre_trigger_include: Optional[str] = None, 
                 post_trigger_include: Optional[str] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -105,11 +107,13 @@ namespace azure.cosmos
                 batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ]], Tuple[str, Tuple[Any, ], dict[str, Any]]]], 
                 partition_key: PartitionKeyType, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 post_trigger_include: Optional[str] = ..., 
                 pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], list[dict[str, Any]]], None]] = ..., 
+                retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -163,6 +167,7 @@ namespace azure.cosmos
                 partition_key: PartitionKeyType, 
                 patch_operations: list[dict[str, Any]], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 filter_predicate: Optional[str] = ..., 
@@ -202,43 +207,50 @@ namespace azure.cosmos
                 enable_scan_in_query: Optional[bool] = None, 
                 populate_query_metrics: Optional[bool] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation_token_limit: Optional[int] = ..., 
+                full_text_score_scope: Optional[Literal[Local, Global]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 populate_index_metrics: Optional[bool] = ..., 
+                populate_query_advice: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
+            ) -> CosmosItemPaged: ...
 
         @overload
         def query_items(
                 self, 
                 query: str, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation_token_limit: Optional[int] = ..., 
                 enable_cross_partition_query: Optional[bool] = ..., 
                 enable_scan_in_query: Optional[bool] = ..., 
                 feed_range: dict[str, Any], 
+                full_text_score_scope: Optional[Literal[Local, Global]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 max_item_count: Optional[int] = ..., 
                 parameters: Optional[list[dict[str, object]]] = ..., 
                 populate_index_metrics: Optional[bool] = ..., 
+                populate_query_advice: Optional[bool] = ..., 
                 populate_query_metrics: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
+            ) -> CosmosItemPaged: ...
 
         @overload
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
                 partition_key: PartitionKeyType, 
@@ -252,6 +264,7 @@ namespace azure.cosmos
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 feed_range: dict[str, Any], 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
@@ -265,6 +278,7 @@ namespace azure.cosmos
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation: str, 
                 max_item_count: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
@@ -276,6 +290,7 @@ namespace azure.cosmos
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
@@ -303,6 +318,7 @@ namespace azure.cosmos
                 max_item_count: Optional[int] = None, 
                 populate_query_metrics: Optional[bool] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
@@ -329,6 +345,7 @@ namespace azure.cosmos
                 populate_query_metrics: Optional[bool] = None, 
                 post_trigger_include: Optional[str] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
@@ -344,6 +361,7 @@ namespace azure.cosmos
                 self, 
                 items: Sequence[Tuple[str, PartitionKeyType]], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 consistency_level: Optional[str] = ..., 
                 excluded_locations: Optional[list[str]] = ..., 
                 executor: Optional[ThreadPoolExecutor] = ..., 
@@ -372,6 +390,7 @@ namespace azure.cosmos
                 pre_trigger_include: Optional[str] = None, 
                 post_trigger_include: Optional[str] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -411,6 +430,7 @@ namespace azure.cosmos
                 pre_trigger_include: Optional[str] = None, 
                 post_trigger_include: Optional[str] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -445,6 +465,8 @@ namespace azure.cosmos
                 consistency_level: Optional[str] = None, 
                 **kwargs
             ) -> CosmosClient: ...
+
+        def close(self) -> None: ...
 
         @overload
         def create_database(
@@ -1254,6 +1276,7 @@ namespace azure.cosmos.aio
                 self, 
                 body: dict[str, Any], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 enable_automatic_id_generation: bool = False, 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 indexing_directive: Optional[int] = ..., 
@@ -1299,6 +1322,7 @@ namespace azure.cosmos.aio
                 item: Union[str, Mapping[str, Any]], 
                 partition_key: PartitionKeyType, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -1319,11 +1343,13 @@ namespace azure.cosmos.aio
                 batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ]], Tuple[str, Tuple[Any, ], dict[str, Any]]]], 
                 partition_key: PartitionKeyType, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 post_trigger_include: Optional[str] = ..., 
                 pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable] = ..., 
+                retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -1377,6 +1403,7 @@ namespace azure.cosmos.aio
                 partition_key: PartitionKeyType, 
                 patch_operations: list[dict[str, Any]], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 filter_predicate: Optional[str] = ..., 
@@ -1409,67 +1436,77 @@ namespace azure.cosmos.aio
                 self, 
                 query: str, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation_token_limit: Optional[int] = ..., 
                 enable_scan_in_query: Optional[bool] = ..., 
+                full_text_score_scope: Optional[Literal[Local, Global]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 max_item_count: Optional[int] = ..., 
                 parameters: Optional[list[dict[str, object]]] = ..., 
                 partition_key: PartitionKeyType, 
                 populate_index_metrics: Optional[bool] = ..., 
+                populate_query_advice: Optional[bool] = ..., 
                 populate_query_metrics: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> AsyncItemPaged[dict[str, Any]]: ...
+            ) -> CosmosAsyncItemPaged: ...
 
         @overload
         def query_items(
                 self, 
                 query: str, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation_token_limit: Optional[int] = ..., 
                 enable_scan_in_query: Optional[bool] = ..., 
                 feed_range: dict[str, Any], 
+                full_text_score_scope: Optional[Literal[Local, Global]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 max_item_count: Optional[int] = ..., 
                 parameters: Optional[list[dict[str, object]]] = ..., 
                 populate_index_metrics: Optional[bool] = ..., 
+                populate_query_advice: Optional[bool] = ..., 
                 populate_query_metrics: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> AsyncItemPaged[dict[str, Any]]: ...
+            ) -> CosmosAsyncItemPaged: ...
 
         @overload
         def query_items(
                 self, 
                 query: str, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation_token_limit: Optional[int] = ..., 
                 enable_scan_in_query: Optional[bool] = ..., 
+                full_text_score_scope: Optional[Literal[Local, Global]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 max_item_count: Optional[int] = ..., 
                 parameters: Optional[list[dict[str, object]]] = ..., 
                 populate_index_metrics: Optional[bool] = ..., 
+                populate_query_advice: Optional[bool] = ..., 
                 populate_query_metrics: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> AsyncItemPaged[dict[str, Any]]: ...
+            ) -> CosmosAsyncItemPaged: ...
 
         @overload
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
                 partition_key: PartitionKeyType, 
@@ -1483,6 +1520,7 @@ namespace azure.cosmos.aio
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 feed_range: dict[str, Any], 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
@@ -1496,6 +1534,7 @@ namespace azure.cosmos.aio
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation: str, 
                 max_item_count: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
@@ -1507,6 +1546,7 @@ namespace azure.cosmos.aio
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
@@ -1531,6 +1571,7 @@ namespace azure.cosmos.aio
         def read_all_items(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
@@ -1556,6 +1597,7 @@ namespace azure.cosmos.aio
                 item: Union[str, Mapping[str, Any]], 
                 partition_key: PartitionKeyType, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
@@ -1572,6 +1614,7 @@ namespace azure.cosmos.aio
                 self, 
                 items: Sequence[Tuple[str, PartitionKeyType]], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 consistency_level: Optional[str] = ..., 
                 excluded_locations: Optional[list[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -1588,6 +1631,7 @@ namespace azure.cosmos.aio
                 item: Union[str, Mapping[str, Any]], 
                 body: dict[str, Any], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -1626,6 +1670,7 @@ namespace azure.cosmos.aio
                 self, 
                 body: dict[str, Any], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -1649,6 +1694,8 @@ namespace azure.cosmos.aio
                 url: str, 
                 credential: Union[str, dict[str, str], AsyncTokenCredential], 
                 *, 
+                availability_strategy: Union[bool, dict[str, Any]] = False, 
+                availability_strategy_max_concurrency: Optional[int] = ..., 
                 consistency_level: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
@@ -2302,6 +2349,7 @@ namespace azure.cosmos.container
                 post_trigger_include: Optional[str] = None, 
                 indexing_directive: Optional[int] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 enable_automatic_id_generation: bool = False, 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -2347,6 +2395,7 @@ namespace azure.cosmos.container
                 pre_trigger_include: Optional[str] = None, 
                 post_trigger_include: Optional[str] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -2365,11 +2414,13 @@ namespace azure.cosmos.container
                 batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ]], Tuple[str, Tuple[Any, ], dict[str, Any]]]], 
                 partition_key: PartitionKeyType, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 post_trigger_include: Optional[str] = ..., 
                 pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], list[dict[str, Any]]], None]] = ..., 
+                retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -2423,6 +2474,7 @@ namespace azure.cosmos.container
                 partition_key: PartitionKeyType, 
                 patch_operations: list[dict[str, Any]], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 filter_predicate: Optional[str] = ..., 
@@ -2462,43 +2514,50 @@ namespace azure.cosmos.container
                 enable_scan_in_query: Optional[bool] = None, 
                 populate_query_metrics: Optional[bool] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation_token_limit: Optional[int] = ..., 
+                full_text_score_scope: Optional[Literal[Local, Global]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 populate_index_metrics: Optional[bool] = ..., 
+                populate_query_advice: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
+            ) -> CosmosItemPaged: ...
 
         @overload
         def query_items(
                 self, 
                 query: str, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation_token_limit: Optional[int] = ..., 
                 enable_cross_partition_query: Optional[bool] = ..., 
                 enable_scan_in_query: Optional[bool] = ..., 
                 feed_range: dict[str, Any], 
+                full_text_score_scope: Optional[Literal[Local, Global]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 max_item_count: Optional[int] = ..., 
                 parameters: Optional[list[dict[str, object]]] = ..., 
                 populate_index_metrics: Optional[bool] = ..., 
+                populate_query_advice: Optional[bool] = ..., 
                 populate_query_metrics: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
+            ) -> CosmosItemPaged: ...
 
         @overload
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
                 partition_key: PartitionKeyType, 
@@ -2512,6 +2571,7 @@ namespace azure.cosmos.container
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 feed_range: dict[str, Any], 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
@@ -2525,6 +2585,7 @@ namespace azure.cosmos.container
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 continuation: str, 
                 max_item_count: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
@@ -2536,6 +2597,7 @@ namespace azure.cosmos.container
         def query_items_change_feed(
                 self, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 mode: Optional[Literal[LatestVersion, AllVersionsAndDeletes]] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
@@ -2563,6 +2625,7 @@ namespace azure.cosmos.container
                 max_item_count: Optional[int] = None, 
                 populate_query_metrics: Optional[bool] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
@@ -2589,6 +2652,7 @@ namespace azure.cosmos.container
                 populate_query_metrics: Optional[bool] = None, 
                 post_trigger_include: Optional[str] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
@@ -2604,6 +2668,7 @@ namespace azure.cosmos.container
                 self, 
                 items: Sequence[Tuple[str, PartitionKeyType]], 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 consistency_level: Optional[str] = ..., 
                 excluded_locations: Optional[list[str]] = ..., 
                 executor: Optional[ThreadPoolExecutor] = ..., 
@@ -2632,6 +2697,7 @@ namespace azure.cosmos.container
                 pre_trigger_include: Optional[str] = None, 
                 post_trigger_include: Optional[str] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -2671,6 +2737,7 @@ namespace azure.cosmos.container
                 pre_trigger_include: Optional[str] = None, 
                 post_trigger_include: Optional[str] = None, 
                 *, 
+                availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
@@ -2707,6 +2774,8 @@ namespace azure.cosmos.cosmos_client
                 consistency_level: Optional[str] = None, 
                 **kwargs
             ) -> CosmosClient: ...
+
+        def close(self) -> None: ...
 
         @overload
         def create_database(
@@ -3231,6 +3300,8 @@ namespace azure.cosmos.errors
                 **kwargs
             ): ...
 
+        def __str__(self): ...
+
 
     class azure.cosmos.errors.CosmosBatchOperationError(HttpResponseError):
         error_index: int
@@ -3252,7 +3323,11 @@ namespace azure.cosmos.errors
 
     class azure.cosmos.errors.CosmosClientTimeoutError(AzureError):
 
-        def __init__(self, **kwargs): ...
+        def __init__(
+                self, 
+                message = None, 
+                **kwargs
+            ): ...
 
 
     class azure.cosmos.errors.CosmosHttpResponseError(HttpResponseError):
@@ -3265,6 +3340,8 @@ namespace azure.cosmos.errors
                 **kwargs
             ): ...
 
+        def __str__(self): ...
+
 
     class azure.cosmos.errors.CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
 
@@ -3276,6 +3353,8 @@ namespace azure.cosmos.errors
                 **kwargs
             ): ...
 
+        def __str__(self): ...
+
 
     class azure.cosmos.errors.CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
 
@@ -3286,6 +3365,8 @@ namespace azure.cosmos.errors
                 response = None, 
                 **kwargs
             ): ...
+
+        def __str__(self): ...
 
 
 namespace azure.cosmos.exceptions
@@ -3299,6 +3380,8 @@ namespace azure.cosmos.exceptions
                 response = None, 
                 **kwargs
             ): ...
+
+        def __str__(self): ...
 
 
     class azure.cosmos.exceptions.CosmosBatchOperationError(HttpResponseError):
@@ -3321,7 +3404,11 @@ namespace azure.cosmos.exceptions
 
     class azure.cosmos.exceptions.CosmosClientTimeoutError(AzureError):
 
-        def __init__(self, **kwargs): ...
+        def __init__(
+                self, 
+                message = None, 
+                **kwargs
+            ): ...
 
 
     class azure.cosmos.exceptions.CosmosHttpResponseError(HttpResponseError):
@@ -3334,6 +3421,8 @@ namespace azure.cosmos.exceptions
                 **kwargs
             ): ...
 
+        def __str__(self): ...
+
 
     class azure.cosmos.exceptions.CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
 
@@ -3345,6 +3434,8 @@ namespace azure.cosmos.exceptions
                 **kwargs
             ): ...
 
+        def __str__(self): ...
+
 
     class azure.cosmos.exceptions.CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
 
@@ -3355,6 +3446,8 @@ namespace azure.cosmos.exceptions
                 response = None, 
                 **kwargs
             ): ...
+
+        def __str__(self): ...
 
 
 namespace azure.cosmos.http_constants
@@ -3481,6 +3574,7 @@ namespace azure.cosmos.http_constants
         PhysicalPartitionId = x-ms-cosmos-physical-partition-id
         PopulateIndexMetrics = x-ms-cosmos-populateindexmetrics
         PopulatePartitionKeyRangeStatistics = x-ms-documentdb-populatepartitionstatistics
+        PopulateQueryAdvice = x-ms-cosmos-populatequeryadvice
         PopulateQueryMetrics = x-ms-documentdb-populatequerymetrics
         PopulateQuotaInfo = x-ms-documentdb-populatequotainfo
         PostTriggerExclude = x-ms-documentdb-post-trigger-exclude
@@ -3493,6 +3587,7 @@ namespace azure.cosmos.http_constants
         ProxyAuthenticate = Proxy-Authenticate
         ProxyAuthorization = Proxy-Authorization
         Query = x-ms-documentdb-query
+        QueryAdvice = x-ms-cosmos-query-advice
         QueryExecutionInfo = x-ms-cosmos-query-execution-info
         QueryMetrics = x-ms-documentdb-query-metrics
         QueryVersion = x-ms-cosmos-query-version
@@ -3617,6 +3712,11 @@ namespace azure.cosmos.http_constants
 
         @staticmethod
         def IsCollectionChild(resourceType: str) -> bool: ...
+
+
+    class azure.cosmos.http_constants.SDKSupportedCapabilities:
+        NONE = 0
+        PARTITION_MERGE = 1
 
 
     class azure.cosmos.http_constants.StatusCodes:
@@ -3780,6 +3880,8 @@ namespace azure.cosmos.scripts
                 auth: CredentialDict, 
                 connection_policy: Optional[ConnectionPolicy] = None, 
                 consistency_level: Optional[str] = None, 
+                availability_strategy: Union[bool, dict[str, Any]] = False, 
+                availability_strategy_executor: Optional[ThreadPoolExecutor] = None, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -4010,7 +4112,7 @@ namespace azure.cosmos.scripts
                 partition_key: Optional[PartitionKeyType] = None, 
                 response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None, 
                 **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
+            ) -> CosmosItemPaged: ...
 
         def QueryItemsChangeFeed(
                 self, 
@@ -4354,6 +4456,12 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosDict: ...
 
+        def health_check(
+                self, 
+                url_connection: Optional[str] = None, 
+                **kwargs: Any
+            ): ...
+
         def read_items(
                 self, 
                 collection_link: str, 
@@ -4364,7 +4472,12 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosList: ...
 
-        def refresh_routing_map_provider(self) -> None: ...
+        def refresh_routing_map_provider(
+                self, 
+                collection_link: Optional[str] = None, 
+                previous_routing_map: Optional[Any] = None, 
+                feed_options: Optional[dict[str, Any]] = None
+            ) -> None: ...
 
 
     class azure.cosmos.scripts.CosmosDict(dict[str, Any]):
@@ -4561,6 +4674,8 @@ namespace azure.cosmos.user
                 auth: CredentialDict, 
                 connection_policy: Optional[ConnectionPolicy] = None, 
                 consistency_level: Optional[str] = None, 
+                availability_strategy: Union[bool, dict[str, Any]] = False, 
+                availability_strategy_executor: Optional[ThreadPoolExecutor] = None, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -4791,7 +4906,7 @@ namespace azure.cosmos.user
                 partition_key: Optional[PartitionKeyType] = None, 
                 response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None, 
                 **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
+            ) -> CosmosItemPaged: ...
 
         def QueryItemsChangeFeed(
                 self, 
@@ -5135,6 +5250,12 @@ namespace azure.cosmos.user
                 **kwargs: Any
             ) -> CosmosDict: ...
 
+        def health_check(
+                self, 
+                url_connection: Optional[str] = None, 
+                **kwargs: Any
+            ): ...
+
         def read_items(
                 self, 
                 collection_link: str, 
@@ -5145,7 +5266,12 @@ namespace azure.cosmos.user
                 **kwargs: Any
             ) -> CosmosList: ...
 
-        def refresh_routing_map_provider(self) -> None: ...
+        def refresh_routing_map_provider(
+                self, 
+                collection_link: Optional[str] = None, 
+                previous_routing_map: Optional[Any] = None, 
+                feed_options: Optional[dict[str, Any]] = None
+            ) -> None: ...
 
 
     class azure.cosmos.user.CosmosDict(dict[str, Any]):
