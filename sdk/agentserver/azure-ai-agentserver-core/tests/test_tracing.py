@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
+import asyncio
 import os
 from unittest import mock
 
+import pytest
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
@@ -16,7 +18,7 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_version,
     resolve_appinsights_connection_string,
 )
-from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
+from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor, TraceContextMiddleware
 
 
 class _CollectorExporter(SpanExporter):
@@ -430,5 +432,51 @@ class TestAgentIdentityResolution:
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
 
+
+class TestTraceContextMiddleware:
+    @pytest.mark.asyncio
+    async def test_preserves_context_for_post_response_work(self) -> None:
+        """Context remains attached after app returns so post-response logs keep trace correlation."""
+        incoming_trace_id = "0af7651916cd43dd8448eb211c80319c"
+        traceparent = f"00-{incoming_trace_id}-b7ad6b7169203331-01"
+
+        collector = _CollectorExporter()
+        provider = TracerProvider(resource=Resource.create({}))
+        provider.add_span_processor(SimpleSpanProcessor(collector))
+        tracer = provider.get_tracer("middleware-test")
+
+        async def app(scope, receive, send):
+            await send({"type": "http.response.start", "status": 200, "headers": []})
+            await send({"type": "http.response.body", "body": b"", "more_body": False})
+
+        middleware = TraceContextMiddleware(app)
+        scope = {
+            "type": "http",
+            "headers": [
+                (b"traceparent", traceparent.encode("ascii")),
+                (b"x-request-id", b"req-123"),
+            ],
+        }
+
+        async def receive():
+            return {"type": "http.request", "body": b"", "more_body": False}
+
+        async def send(_message):
+            return None
+
+        async def run_request_and_post_response_span():
+            await middleware(scope, receive, send)
+            with tracer.start_as_current_span("post-response"):
+                pass
+            ctx = _otel_context.get_current()
+            return _otel_baggage.get_baggage("x_request_id", context=ctx)
+
+        x_request_id = await asyncio.create_task(run_request_and_post_response_span())
+
+        assert len(collector.spans) == 1
+        span = collector.spans[0]
+        assert span.name == "post-response"
+        assert format(span.context.trace_id, "032x") == incoming_trace_id
+        assert x_request_id == "req-123"
 
 
