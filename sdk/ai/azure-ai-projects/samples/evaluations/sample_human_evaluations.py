@@ -20,8 +20,9 @@ DESCRIPTION:
     Both public helpers call the shared `_emit_human_evaluation(...)` helper so
     the OpenTelemetry and Microsoft-specific attribute mapping stays consistent.
     This sample covers human evaluations submitted by end users of your
-    application and correlates evaluation events to OpenAI Responses API response
-    IDs when a response ID is provided.
+    application, identifies the evaluated agent by name and version, and
+    correlates evaluation events to OpenAI Responses API response IDs when a
+    response ID is provided.
 
     NOTE: Human evaluations are in preview and carry the risk of breaking
     changes.
@@ -159,6 +160,8 @@ def _emit_human_evaluation(
     max_value: float,
     threshold: float,
     desirable_direction: DesirableDirection,
+    agent_name: str,
+    agent_version: str,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
     conversation_id: Optional[str] = None,
@@ -197,6 +200,8 @@ def _emit_human_evaluation(
         "gen_ai.evaluation.name": evaluation_metric_name,
         "gen_ai.evaluation.score.value": score_value,
         "gen_ai.evaluation.score.label": score_label,
+        "gen_ai.agent.name": agent_name,
+        "gen_ai.agent.id": f"{agent_name}:{agent_version}",
         "microsoft.gen_ai.human_evaluation.source": "end_user",
         "microsoft.gen_ai.evaluation.actor.type": "human",
         "internal_properties": json.dumps(internal_properties),
@@ -224,6 +229,8 @@ def emit_boolean_evaluation(
     *,
     evaluation_metric_name: str,
     passed: bool,
+    agent_name: str,
+    agent_version: str,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
     conversation_id: Optional[str] = None,
@@ -245,6 +252,8 @@ def emit_boolean_evaluation(
         evaluation_metric_name: Name of the evaluated metric, such as
             `"task_completion"` or `"helpfulness"`.
         passed: Whether the human evaluation passed.
+        agent_name: Name of the evaluated agent.
+        agent_version: Version of the evaluated agent.
         explanation: Optional free-form explanation from the end user.
         response_id: Optional OpenAI Responses API response ID being evaluated.
         conversation_id: Optional conversation ID associated with the evaluation.
@@ -264,6 +273,8 @@ def emit_boolean_evaluation(
         max_value=1.0,
         threshold=1.0,
         desirable_direction="increase",
+        agent_name=agent_name,
+        agent_version=agent_version,
         explanation=explanation,
         response_id=response_id,
         conversation_id=conversation_id,
@@ -281,6 +292,8 @@ def emit_5_point_ordinal_evaluation(
     *,
     evaluation_metric_name: str,
     score_value: float,
+    agent_name: str,
+    agent_version: str,
     threshold: float = 3.0,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
@@ -302,6 +315,8 @@ def emit_5_point_ordinal_evaluation(
         evaluation_metric_name: Name of the evaluated metric, such as
             `"relevance"` or `"helpfulness"`.
         score_value: Integer score from `1.0` through `5.0`.
+        agent_name: Name of the evaluated agent.
+        agent_version: Version of the evaluated agent.
         threshold: Score at or above this value is passing.
         explanation: Optional free-form explanation from the end user.
         response_id: Optional OpenAI Responses API response ID being evaluated.
@@ -326,6 +341,8 @@ def emit_5_point_ordinal_evaluation(
         max_value=5.0,
         threshold=threshold,
         desirable_direction="increase",
+        agent_name=agent_name,
+        agent_version=agent_version,
         explanation=explanation,
         response_id=response_id,
         conversation_id=conversation_id,
@@ -371,11 +388,15 @@ if __name__ == "__main__":
         # Sample trace and span IDs for demonstration purposes.
         trace_id = "4bf92f3577b34da6a3ce929d0e0e4736"
         span_id = "00f067aa0ba902b7"
+        agent_name = "test-agent"
+        agent_version = "2"
 
         # Example 1: an anonymous end user gives a thumbs up on task completion.
         emit_boolean_evaluation(
             evaluation_metric_name="task_completion",
             passed=True,
+            agent_name=agent_name,
+            agent_version=agent_version,
             explanation="The agent provided accurate weather information as requested.",
             response_id="resp_64904952b20872620069f8d600779c81908f58b0a3be090ef0",
             conversation_id="conv_5j66UpCpwteGg4YSxUnt7lPY",
@@ -392,6 +413,8 @@ if __name__ == "__main__":
         emit_5_point_ordinal_evaluation(
             evaluation_metric_name="relevance",
             score_value=4.0,
+            agent_name=agent_name,
+            agent_version=agent_version,
             explanation=(
                 "The agent's response is relevant to the query, providing useful "
                 "information that addresses the user's intent."
