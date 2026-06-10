@@ -2,6 +2,11 @@
 
 ## 2.3.0 (Unreleased)
 
+### Features Added
+
+* Added value `A2A` to enum class `AgentProtocol`.
+* Added property `supported_evaluation_levels` to class `EvaluatorVersion`.
+
 ### Breaking Changes
 
 Breaking changes in beta methods:
