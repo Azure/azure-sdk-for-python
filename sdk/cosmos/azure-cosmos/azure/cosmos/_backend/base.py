@@ -32,6 +32,7 @@ OP_CREATE_ITEM = "create_item"
 OP_DELETE_ITEM = "delete_item"
 OP_READ_ITEM = "read_item"
 OP_UPSERT_ITEM = "upsert_item"
+OP_REPLACE_ITEM = "replace_item"
 
 
 @dataclass(frozen=True)

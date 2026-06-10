@@ -25,6 +25,7 @@ from ..._helpers._request_prep import (
     build_create_item_prepared,
     build_delete_item_prepared,
     build_read_item_prepared,
+    build_replace_item_prepared,
     build_upsert_item_prepared,
 )
 from ..._helpers._response_parse import parse_backend_response
@@ -67,6 +68,35 @@ class AsyncItemHelper:
         self.client_connection = client_connection
         self._ensure_container_cached = ensure_container_cached
 
+    async def _resolve_container_rid(
+        self,
+        container_link: str,
+        request_options: Dict[str, Any],
+    ) -> Optional[str]:
+        """Async sibling of ``ItemHelper._resolve_container_rid``.
+
+        Shared by all five ops. Best-effort: on any failure returns
+        ``None`` and lets the backend run without the
+        intended-collection-rid header. On success writes the rid to
+        ``request_options`` (under ``Constants.ContainerRID``) and returns
+        it.
+        """
+        try:
+            if self._ensure_container_cached is not None:
+                await self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    await self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                request_options[Constants.ContainerRID] = rid_value
+                return rid_value
+        except Exception:  # pylint: disable=broad-except
+            pass
+        return None
+
     async def create_item(
         self,
         *,
@@ -91,23 +121,7 @@ class AsyncItemHelper:
             populate_query_metrics=None,
         )
 
-        # Container-rid lookup (best-effort; tolerates bare-mock
-        # connections in unit tests). See sync sibling for rationale.
-        container_rid: Optional[str] = None
-        try:
-            if self._ensure_container_cached is not None:
-                await self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    await self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-            if isinstance(rid_value, str):
-                container_rid = rid_value
-                request_options[Constants.ContainerRID] = container_rid
-        except Exception:  # pylint: disable=broad-except
-            container_rid = None
+        container_rid = await self._resolve_container_rid(container_link, request_options)
 
         if self._backend is not None:
             partition_key_value = await self._extract_partition_key_value(
@@ -170,21 +184,7 @@ class AsyncItemHelper:
         request_options = build_delete_item_request_options(kwargs)
         partition_key_value = request_options.get("partitionKey", _Empty())
 
-        container_rid: Optional[str] = None
-        try:
-            if self._ensure_container_cached is not None:
-                await self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    await self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-            if isinstance(rid_value, str):
-                container_rid = rid_value
-                request_options[Constants.ContainerRID] = container_rid
-        except Exception:  # pylint: disable=broad-except
-            container_rid = None
+        container_rid = await self._resolve_container_rid(container_link, request_options)
 
         if self._backend is not None:
             prepared = build_delete_item_prepared(
@@ -222,21 +222,7 @@ class AsyncItemHelper:
         request_options = build_read_item_request_options(kwargs)
         partition_key_value = request_options.get("partitionKey", _Empty())
 
-        container_rid: Optional[str] = None
-        try:
-            if self._ensure_container_cached is not None:
-                await self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    await self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-            if isinstance(rid_value, str):
-                container_rid = rid_value
-                request_options[Constants.ContainerRID] = container_rid
-        except Exception:  # pylint: disable=broad-except
-            container_rid = None
+        container_rid = await self._resolve_container_rid(container_link, request_options)
 
         if self._backend is not None:
             prepared = build_read_item_prepared(
@@ -280,21 +266,7 @@ class AsyncItemHelper:
             populate_query_metrics=None,
         )
 
-        container_rid: Optional[str] = None
-        try:
-            if self._ensure_container_cached is not None:
-                await self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    await self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-            if isinstance(rid_value, str):
-                container_rid = rid_value
-                request_options[Constants.ContainerRID] = container_rid
-        except Exception:  # pylint: disable=broad-except
-            container_rid = None
+        container_rid = await self._resolve_container_rid(container_link, request_options)
 
         if self._backend is not None:
             partition_key_value = await self._extract_partition_key_value(
@@ -319,6 +291,60 @@ class AsyncItemHelper:
         return await self.client_connection.UpsertItem(
             database_or_container_link=container_link,
             document=body,
+            options=request_options,
+            **kwargs,
+        )
+
+    async def replace_item(
+        self,
+        *,
+        container_link: str,
+        document_link: str,
+        item_id: str,
+        body: Dict[str, Any],
+        **kwargs: Any,
+    ) -> Any:
+        """Async sibling of ``ItemHelper.replace_item``. See sync docstring.
+
+        The async public ``replace_item`` never exposed
+        ``populate_query_metrics``, so this helper passes ``None`` for it
+        (the sync sibling threads the deprecated sync-only flag through).
+        ``item_id`` (resolved from ``item``) is what the binding puts in the
+        wire URL, not the body's own id.
+        """
+        kwargs_for_rust_prep = dict(kwargs)
+
+        request_options = build_upsert_item_request_options(
+            kwargs,
+            populate_query_metrics=None,
+        )
+
+        container_rid = await self._resolve_container_rid(container_link, request_options)
+
+        if self._backend is not None:
+            partition_key_value = await self._extract_partition_key_value(
+                container_link, body, request_options
+            )
+            prepared = build_replace_item_prepared(
+                container_link=container_link,
+                body=body,
+                item_id=item_id,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                access_condition=request_options.get("accessCondition"),
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = await self._backend.execute(prepared)
+            if backend_response is not None:
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        return await self.client_connection.ReplaceItem(
+            document_link=document_link,
+            new_document=body,
             options=request_options,
             **kwargs,
         )

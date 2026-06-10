@@ -24,6 +24,7 @@ from azure.cosmos._backend.base import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_READ_ITEM,
+    OP_REPLACE_ITEM,
     OP_UPSERT_ITEM,
     normalize_response_headers,
 )
@@ -100,6 +101,10 @@ class AsyncRustBackend(AsyncCosmosBackend):
         elif prepared.op == OP_UPSERT_ITEM:
             status_code, sub_status, headers, body = await loop.run_in_executor(
                 None, _rust_module.upsert_item, handle, prepared
+            )
+        elif prepared.op == OP_REPLACE_ITEM:
+            status_code, sub_status, headers, body = await loop.run_in_executor(
+                None, _rust_module.replace_item, handle, prepared
             )
         elif prepared.op == OP_DELETE_ITEM:
             status_code, sub_status, headers, body = await loop.run_in_executor(

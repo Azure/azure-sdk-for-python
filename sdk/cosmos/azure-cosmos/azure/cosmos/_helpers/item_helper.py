@@ -44,6 +44,7 @@ from ._request_prep import (
     build_create_item_prepared,
     build_delete_item_prepared,
     build_read_item_prepared,
+    build_replace_item_prepared,
     build_upsert_item_prepared,
 )
 from ._response_parse import parse_backend_response
@@ -81,6 +82,36 @@ class ItemHelper:
         self.client_connection = client_connection
         self._ensure_container_cached = ensure_container_cached
 
+    def _resolve_container_rid(
+        self,
+        container_link: str,
+        request_options: Dict[str, Any],
+    ) -> Optional[str]:
+        """Look up the container ``_rid`` and stamp it into request_options.
+
+        Shared by all five ops. Best-effort: bare-mock connections in unit
+        tests may not produce a real rid, so on any failure we return
+        ``None`` and let the backend run without the
+        intended-collection-rid header. On success the rid is written to
+        ``request_options`` (under ``Constants.ContainerRID``) and returned
+        for the prepared-request build.
+        """
+        try:
+            if self._ensure_container_cached is not None:
+                self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                request_options[Constants.ContainerRID] = rid_value
+                return rid_value
+        except Exception:  # pylint: disable=broad-except
+            pass
+        return None
+
     def create_item(
         self,
         *,
@@ -105,24 +136,7 @@ class ItemHelper:
             populate_query_metrics=populate_query_metrics,
         )
 
-        # Container-rid lookup. Best-effort: bare-mock connections in
-        # unit tests may not produce a real rid. We continue with
-        # container_rid=None so the backend still gets called.
-        container_rid: Optional[str] = None
-        try:
-            if self._ensure_container_cached is not None:
-                self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-            if isinstance(rid_value, str):
-                container_rid = rid_value
-                request_options[Constants.ContainerRID] = container_rid
-        except Exception:  # pylint: disable=broad-except
-            container_rid = None
+        container_rid = self._resolve_container_rid(container_link, request_options)
 
         if self._backend is not None:
             partition_key_value = self._extract_partition_key_value(
@@ -210,22 +224,7 @@ class ItemHelper:
         # getting here, so the rust prep can use it directly.
         partition_key_value = request_options.get("partitionKey", _Empty())
 
-        # Container-rid lookup; best-effort, same shape as create_item.
-        container_rid: Optional[str] = None
-        try:
-            if self._ensure_container_cached is not None:
-                self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-            if isinstance(rid_value, str):
-                container_rid = rid_value
-                request_options[Constants.ContainerRID] = container_rid
-        except Exception:  # pylint: disable=broad-except
-            container_rid = None
+        container_rid = self._resolve_container_rid(container_link, request_options)
 
         if self._backend is not None:
             prepared = build_delete_item_prepared(
@@ -294,22 +293,7 @@ class ItemHelper:
         # getting here.
         partition_key_value = request_options.get("partitionKey", _Empty())
 
-        # Container-rid lookup; best-effort, same shape as delete_item.
-        container_rid: Optional[str] = None
-        try:
-            if self._ensure_container_cached is not None:
-                self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-            if isinstance(rid_value, str):
-                container_rid = rid_value
-                request_options[Constants.ContainerRID] = container_rid
-        except Exception:  # pylint: disable=broad-except
-            container_rid = None
+        container_rid = self._resolve_container_rid(container_link, request_options)
 
         if self._backend is not None:
             prepared = build_read_item_prepared(
@@ -373,22 +357,7 @@ class ItemHelper:
             populate_query_metrics=populate_query_metrics,
         )
 
-        # Container-rid lookup; best-effort, same shape as create_item.
-        container_rid: Optional[str] = None
-        try:
-            if self._ensure_container_cached is not None:
-                self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-            if isinstance(rid_value, str):
-                container_rid = rid_value
-                request_options[Constants.ContainerRID] = container_rid
-        except Exception:  # pylint: disable=broad-except
-            container_rid = None
+        container_rid = self._resolve_container_rid(container_link, request_options)
 
         if self._backend is not None:
             partition_key_value = self._extract_partition_key_value(
@@ -414,6 +383,89 @@ class ItemHelper:
         return self.client_connection.UpsertItem(
             database_or_container_link=container_link,
             document=body,
+            options=request_options,
+            **kwargs,
+        )
+
+    def replace_item(
+        self,
+        *,
+        container_link: str,
+        document_link: str,
+        item_id: str,
+        body: Dict[str, Any],
+        populate_query_metrics: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Run a single ``replace_item`` call end to end.
+
+        Overwrite-only write-with-body. Like ``upsert_item`` the partition
+        key is extracted from the body, the body is serialised to JSON, no
+        id is minted, and ``etag`` / ``match_condition`` become an
+        ``If-Match`` / ``If-None-Match`` precondition (the version-guarded
+        replace is the dominant case). The options build is byte-identical
+        to upsert's, so ``build_upsert_item_request_options`` is reused
+        rather than duplicated -- it sets ``disableAutomaticIdGeneration``
+        and threads the deprecated ``populate_query_metrics`` flag, so the
+        fall-through path matches the legacy ``replace_item`` exactly.
+
+        Unlike upsert, replace names an existing document. ``item_id`` (the
+        id resolved from the ``item`` argument) is what the binding puts in
+        the wire URL -- not the body's own id -- matching the legacy
+        ``ReplaceItem``. The rust backend dispatches this op to the binding's
+        ``replace_item`` entry point (driver ``OperationType::Replace``, an
+        overwrite-only PUT). When no backend is wired (the core-python
+        client) ``execute`` returns ``None`` and the call falls through to
+        the legacy ``ReplaceItem`` below.
+
+        :param container_link: Container self-link.
+        :param document_link: The ``dbs/.../docs/<id-or-rid>`` link the
+            legacy ``ReplaceItem`` consumes. Built by the caller from the
+            ``item`` argument (an id string or a document dict).
+        :param item_id: The id of the document to overwrite, resolved from
+            ``item``. Carried on the prepared request for the binding's URL.
+        :param body: The replacement document.
+        :param populate_query_metrics: Deprecated sync-only flag; the
+            reused options build warns and writes it. The async sibling
+            passes ``None``.
+        """
+        # Snapshot kwargs before the legacy options build pops them. The
+        # rust prep still needs the originals to populate the
+        # PreparedRequest.headers map.
+        kwargs_for_rust_prep = dict(kwargs)
+
+        request_options = build_upsert_item_request_options(
+            kwargs,
+            populate_query_metrics=populate_query_metrics,
+        )
+
+        container_rid = self._resolve_container_rid(container_link, request_options)
+
+        if self._backend is not None:
+            partition_key_value = self._extract_partition_key_value(
+                container_link, body, request_options
+            )
+            prepared = build_replace_item_prepared(
+                container_link=container_link,
+                body=body,
+                item_id=item_id,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                access_condition=request_options.get("accessCondition"),
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = self._backend.execute(prepared)
+            if backend_response is not None:
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        # Fall-through: legacy path.
+        return self.client_connection.ReplaceItem(
+            document_link=document_link,
+            new_document=body,
             options=request_options,
             **kwargs,
         )

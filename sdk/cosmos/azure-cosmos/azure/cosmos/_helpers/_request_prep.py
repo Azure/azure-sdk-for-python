@@ -42,6 +42,11 @@ The public builders:
   header as delete (an upsert honours ``etag`` / ``match_condition``
   where create drops them). The insert-or-replace semantics ride on
   the ``OP_UPSERT_ITEM`` discriminator, not on a header.
+- ``build_replace_item_prepared`` — the overwrite-only sibling of
+  ``build_upsert_item_prepared``. Byte-identical on the wire except the
+  ``OP_REPLACE_ITEM`` discriminator (the backend maps it to the binding's
+  ``replace_item`` entry point, driver ``OperationType::Replace``). Both
+  share ``_build_write_with_body_prepared``.
 """
 from __future__ import annotations
 
@@ -51,6 +56,7 @@ from .._backend.base import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_READ_ITEM,
+    OP_REPLACE_ITEM,
     OP_UPSERT_ITEM,
     PreparedRequest,
 )
@@ -362,59 +368,71 @@ def build_read_item_prepared(
     )
 
 
-def build_upsert_item_prepared(
+def _build_write_with_body_prepared(
     *,
+    op: str,
     container_link: str,
     body: Dict[str, Any],
     partition_key_value: Any,
     container_rid: Optional[str],
     access_condition: Optional[Dict[str, Any]] = None,
+    item_id: Optional[str] = None,
     kwargs: Optional[Dict[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build a ``PreparedRequest`` for a single ``upsert_item`` call.
+    """Build a ``PreparedRequest`` for a write-with-body op that never mints an id.
 
-    Pure: does not read caches, does not extract the partition-key from
-    the body. The caller has done those because they require a
+    Shared by ``build_upsert_item_prepared`` and
+    ``build_replace_item_prepared`` -- the two are byte-identical on the
+    wire except for the ``op`` discriminator (which the backend maps to
+    the binding's ``upsert_item`` vs ``replace_item`` entry point, i.e. an
+    insert-or-replace POST vs an overwrite-only PUT) and the ``item_id``
+    slot. Both:
+
+    * carry the document body and serialise it to JSON bytes;
+    * never mint an id (``disableAutomaticIdGeneration`` is always
+      ``True``); a body without an id is rejected server-side, matching the
+      legacy ``UpsertItem`` / ``ReplaceItem`` contract;
+    * honour ``etag`` / ``match_condition`` by emitting the matching
+      ``If-Match`` / ``If-None-Match`` header from ``access_condition``
+      (the same translation ``build_delete_item_prepared`` does).
+
+    The difference is *which* id the wire URL uses. Upsert has no separate
+    ``item`` argument, so it leaves ``item_id`` unset and the binding reads
+    the id out of the body. Replace names an existing ``item``, so the
+    caller passes that resolved id as ``item_id`` and the binding uses it
+    for the URL (matching the legacy ``ReplaceItem``, whose URL id is the
+    resolved document link); the body still carries its own id for the
+    payload.
+
+    Pure: does not read caches, does not extract the partition key from the
+    body. The caller has done those because they require a
     ``CosmosClientConnection``.
 
-    Upsert is the write-with-body sibling of ``create_item``: it carries
-    the document id inside the body and serialises the body to JSON
-    bytes. It differs from create in two ways, both reflected here:
-
-    * It never mints an id. ``disableAutomaticIdGeneration`` is always
-      ``True`` and the body is serialised exactly as supplied; a body
-      without an id is rejected server-side, matching the legacy
-      ``UpsertItem`` contract.
-    * It honours ``etag`` / ``match_condition`` (create deprecates and
-      drops them). The caller computes the access-condition shape on the
-      legacy options build and passes it in as ``access_condition``;
-      this function emits the matching ``If-Match`` / ``If-None-Match``
-      header, the same translation ``build_delete_item_prepared`` does.
-
-    The insert-or-replace behaviour rides on the ``OP_UPSERT_ITEM``
-    discriminator, so no ``x-ms-documentdb-is-upsert`` header is stamped
-    here; the backend's upsert entry point owns that.
-
+    :param op: The ``OP_*`` discriminator (``OP_UPSERT_ITEM`` or
+        ``OP_REPLACE_ITEM``).
+    :type op: str
     :param container_link: Container self-link, e.g.
         ``"dbs/{db}/colls/{coll}"``.
     :type container_link: str
-    :param body: The Cosmos document. Serialised as-is; **not mutated**
-        (upsert never mints an id).
+    :param body: The Cosmos document. Serialised as-is; **not mutated**.
     :type body: Dict[str, Any]
     :param partition_key_value: PK value already extracted from the body
         (or supplied by the caller). Accepted shapes are documented on
         ``serialize_partition_key_to_wire``.
     :type partition_key_value: Any
-    :param container_rid: The container's resource id. ``None`` skips
-        rid stamping; the caller is responsible for ensuring a rid
-        reaches the wire when needed for recreate-detection.
+    :param container_rid: The container's resource id, or ``None`` to skip
+        rid stamping.
     :type container_rid: Optional[str]
-    :param access_condition: The ``{"type": ..., "condition": ...}``
-        shape the legacy options build produced from the
-        ``(etag, match_condition)`` pair, or ``None`` when the caller
-        passed neither. Emitted as ``If-Match`` / ``If-None-Match``.
+    :param access_condition: The ``{"type": ..., "condition": ...}`` shape
+        the legacy options build produced from the
+        ``(etag, match_condition)`` pair, or ``None``. Emitted as
+        ``If-Match`` / ``If-None-Match``.
     :type access_condition: Optional[Dict[str, Any]]
-    :param kwargs: Remaining customer kwargs. **Mutated** — recognised
+    :param item_id: The id of the document the wire URL targets, when the
+        op names one explicitly (``replace_item``). ``None`` for ops that
+        derive the id from the body (``upsert_item``).
+    :type item_id: Optional[str]
+    :param kwargs: Remaining customer kwargs. **Mutated** -- recognised
         option-shortcut keys are popped via
         ``compose_options_from_kwargs``.
     :type kwargs: Optional[Dict[str, Any]]
@@ -424,16 +442,16 @@ def build_upsert_item_prepared(
     # Translate kwarg shortcuts to internal option keys.
     options = compose_options_from_kwargs(kwargs if kwargs is not None else {})
 
-    # Upsert always disables id generation (it targets a specific id),
-    # the same value the legacy ``upsert_item`` writes unconditionally.
+    # Both ops target a specific id (the one inside the body), so neither
+    # mints one -- the same value the legacy paths write unconditionally.
     options["disableAutomaticIdGeneration"] = True
 
-    # The caller computed the access-condition on the legacy options
-    # build (``etag`` / ``match_condition`` -> accessCondition); inject
-    # it so the shared header loop below emits the wire header. Upsert is
-    # write-with-body, so it cannot seed ``request_options`` the way the
-    # bodiless delete / read prep do without leaking the partition key
-    # into the headers map -- hence the explicit parameter.
+    # The caller computed the access-condition on the legacy options build
+    # (``etag`` / ``match_condition`` -> accessCondition); inject it so the
+    # shared header loop below emits the wire header. A write-with-body op
+    # cannot seed ``request_options`` the way the bodiless delete / read
+    # prep do without leaking the partition key into the headers map --
+    # hence the explicit parameter.
     if access_condition is not None:
         options["accessCondition"] = access_condition
 
@@ -480,11 +498,93 @@ def build_upsert_item_prepared(
             headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout_value
 
     return PreparedRequest(
-        op=OP_UPSERT_ITEM,
+        op=op,
         container_link=container_link,
         body_bytes=body_bytes,
         partition_key_header=partition_key_header,
         headers=headers,
+        item_id=item_id,
+    )
+
+
+def build_upsert_item_prepared(
+    *,
+    container_link: str,
+    body: Dict[str, Any],
+    partition_key_value: Any,
+    container_rid: Optional[str],
+    access_condition: Optional[Dict[str, Any]] = None,
+    kwargs: Optional[Dict[str, Any]] = None,
+) -> PreparedRequest:
+    """Build a ``PreparedRequest`` for a single ``upsert_item`` call.
+
+    Thin wrapper over ``_build_write_with_body_prepared`` with the
+    ``OP_UPSERT_ITEM`` discriminator. Upsert is the write-with-body
+    sibling of ``create_item`` that never mints an id and honours
+    ``etag`` / ``match_condition`` (insert-only or version-guarded
+    replace); the insert-or-replace behaviour rides on the discriminator,
+    so no ``x-ms-documentdb-is-upsert`` header is stamped here -- the
+    backend's upsert entry point owns that.
+
+    See ``_build_write_with_body_prepared`` for the per-parameter docs.
+
+    :rtype: PreparedRequest
+    """
+    return _build_write_with_body_prepared(
+        op=OP_UPSERT_ITEM,
+        container_link=container_link,
+        body=body,
+        partition_key_value=partition_key_value,
+        container_rid=container_rid,
+        access_condition=access_condition,
+        kwargs=kwargs,
+    )
+
+
+def build_replace_item_prepared(
+    *,
+    container_link: str,
+    body: Dict[str, Any],
+    item_id: str,
+    partition_key_value: Any,
+    container_rid: Optional[str],
+    access_condition: Optional[Dict[str, Any]] = None,
+    kwargs: Optional[Dict[str, Any]] = None,
+) -> PreparedRequest:
+    """Build a ``PreparedRequest`` for a single ``replace_item`` call.
+
+    Thin wrapper over ``_build_write_with_body_prepared`` with the
+    ``OP_REPLACE_ITEM`` discriminator. Replace is the overwrite-only
+    write-with-body op: the ``body`` is the new content (serialised as-is,
+    no id minting -- matching the legacy ``ReplaceItem`` which always set
+    ``disableAutomaticIdGeneration``), and ``etag`` / ``match_condition``
+    become the version guard (``If-Match: <etag>`` -> 412 on a stale etag).
+
+    Unlike upsert, replace names an existing document: ``item_id`` is the
+    id of the document to overwrite (resolved from the ``item`` argument by
+    the container method), and it -- **not** the body's own id -- is what
+    the binding puts in the wire URL. That matches the legacy ``ReplaceItem``
+    and prevents a body whose id disagreed with ``item`` from silently
+    overwriting the wrong document. The overwrite-vs-insert behaviour rides
+    on the discriminator, which the backend maps to the binding's
+    ``replace_item`` entry point (driver ``OperationType::Replace``).
+
+    See ``_build_write_with_body_prepared`` for the per-parameter docs.
+
+    :param item_id: The id of the document to overwrite (the resolved
+        ``item`` argument). Carried on ``PreparedRequest.item_id``.
+    :type item_id: str
+    :rtype: PreparedRequest
+    """
+    return _build_write_with_body_prepared(
+        op=OP_REPLACE_ITEM,
+        container_link=container_link,
+        body=body,
+        partition_key_value=partition_key_value,
+        container_rid=container_rid,
+        access_condition=access_condition,
+        item_id=item_id,
+        kwargs=kwargs,
     )
 
 

@@ -262,6 +262,21 @@ def _aio_upsert_item_target() -> Tuple[Any, str, str]:
 _register_op("upsert_item", sync=_sync_upsert_item_target, aio=_aio_upsert_item_target)
 
 
+# replace_item ---------------------------------------------------------------
+
+def _sync_replace_item_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "replace_item"
+
+
+def _aio_replace_item_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "replace_item"
+
+
+_register_op("replace_item", sync=_sync_replace_item_target, aio=_aio_replace_item_target)
+
+
 # ---------------------------------------------------------------------------
 # Capture state (per pytest session)
 # ---------------------------------------------------------------------------

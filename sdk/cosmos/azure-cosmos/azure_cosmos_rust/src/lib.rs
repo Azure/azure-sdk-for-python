@@ -38,6 +38,16 @@
 //!         insert-only or version-guarded replace) flow through
 //!         `custom_headers`.
 //!
+//!   * `replace_item(handle, prepared) -> (status, sub_status,
+//!                                          headers, body)`
+//!         Carries a body like `create_item` / `upsert_item`, but the id
+//!         of the document to overwrite comes from `PreparedRequest.item_id`
+//!         (not the body). Maps to `OperationType::Replace`: an existing
+//!         item is overwritten (HTTP 200), a missing one is a 404 (replace
+//!         never inserts). Returns the saved document unless
+//!         `no_response=True`. `If-Match` / `If-None-Match` flow through
+//!         `custom_headers`.
+//!
 //!   * `delete_item(handle, prepared) -> (status, sub_status,
 //!                                         headers, body)`
 //!         Same shape as `create_item` but builds a
@@ -118,6 +128,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(init_client, m)?)?;
     m.add_function(wrap_pyfunction!(create_item, m)?)?;
     m.add_function(wrap_pyfunction!(upsert_item, m)?)?;
+    m.add_function(wrap_pyfunction!(replace_item, m)?)?;
     m.add_function(wrap_pyfunction!(delete_item, m)?)?;
     m.add_function(wrap_pyfunction!(read_item, m)?)?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
@@ -190,20 +201,112 @@ fn init_client(py: Python<'_>, endpoint: &str, master_key: &str) -> PyResult<Str
 }
 
 // ---------------------------------------------------------------------------
-// create_item
+// Shared singleton-operation runner
 // ---------------------------------------------------------------------------
 //
-// Inputs:
-//   handle    : the string returned by init_client.
-//   prepared  : a Python PreparedRequest dataclass instance with fields
-//               container_link        : str, e.g. "dbs/<db>/colls/<coll>"
-//               body_bytes            : bytes (already JSON-serialised)
-//               partition_key_header  : str, e.g. '["customerA"]'
-//               headers               : dict[str, str]
-//
-// Output: 4-tuple (status_code, sub_status, headers_dict, body_bytes)
-// matching the Python BackendResponse dataclass.
+// All five per-item ops (create / upsert / replace / delete / read) run the
+// same steps: look up the driver, parse the container link and partition key,
+// then on the Tokio runtime with the GIL released resolve the container, build
+// the operation, apply the activity-id / session-token headers, run it, and
+// turn the CosmosResponse (or a CosmosError that carries a wire response) into
+// the BackendResponse 4-tuple. Only three things vary per op, so each entry
+// point passes them in: the item id, whether no_response applies (writes only),
+// and a closure that builds the operation from the resolved ItemReference.
 
+fn run_item_operation<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    partition_key_header: &str,
+    modifiers: OpModifiers,
+    item_id: String,
+    op_name: &str,
+    honor_content_response: bool,
+    build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let driver = drivers()
+        .read()
+        .unwrap()
+        .get(handle)
+        .cloned()
+        .ok_or_else(|| {
+            PyRuntimeError::new_err(format!(
+                "no driver registered for handle {handle:?}; call init_client first"
+            ))
+        })?;
+
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let partition_key = parse_partition_key_header(partition_key_header)?;
+
+    let tokio_rt = TOKIO_RUNTIME.get().ok_or_else(|| {
+        PyRuntimeError::new_err(format!("init_client must be called before {op_name}"))
+    })?;
+
+    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
+        tokio_rt.block_on(async {
+            let container = driver
+                .resolve_container(&database_name, &container_name)
+                .await?;
+            let item_ref = ItemReference::from_name(&container, partition_key, item_id);
+            let mut op = build_op(item_ref);
+
+            if let Some(activity) = modifiers.activity_header.as_ref() {
+                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
+                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
+                }
+            }
+            if let Some(session) = modifiers.session_header.as_ref() {
+                op = op.with_session_token(SessionToken::from(session.clone()));
+            }
+
+            // no_response=True only applies to writes; delete / read pass
+            // honor_content_response=false and keep the driver default.
+            let content_response = if honor_content_response {
+                Some(modifiers.content_response_on_write)
+            } else {
+                None
+            };
+            let options = build_operation_options(
+                content_response,
+                modifiers.excluded_regions_value,
+                modifiers.end_to_end_timeout,
+                modifiers.custom_headers,
+            );
+
+            driver.execute_singleton_operation(op, options).await
+        })
+    });
+
+    // A CosmosError carrying a wire response (404 / 409 / 412 / ...) becomes the
+    // same 4-tuple as success so the Python parser can raise the right typed
+    // exception; only a response-less error (transport failure, client-side
+    // validation) becomes a RuntimeError.
+    match response_result {
+        Ok(response) => backend_response_tuple_from_success(py, response),
+        Err(cosmos_error) => {
+            if let Some(raw_http_error) =
+                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
+            {
+                Ok(raw_http_error)
+            } else {
+                Err(PyRuntimeError::new_err(format!(
+                    "driver execute_singleton_operation failed: {cosmos_error}"
+                )))
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Per-item entry points
+// ---------------------------------------------------------------------------
+//
+// Each #[pyfunction] only does the op-specific work: pull its inputs off the
+// PreparedRequest, resolve the item id, and hand a CosmosOperation builder to
+// run_item_operation. Per-op wire semantics are documented on the module header
+// at the top of this file.
+
+// create_item: write-with-body; the id is read from the body.
 #[pyfunction]
 fn create_item<'py>(
     py: Python<'py>,
@@ -216,101 +319,24 @@ fn create_item<'py>(
         prepared.getattr("partition_key_header")?.extract()?;
     let headers_obj = prepared.getattr("headers")?;
     let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
-
     let modifiers = extract_op_modifiers(headers_dict)?;
-
-    let driver = drivers()
-        .read()
-        .unwrap()
-        .get(handle)
-        .cloned()
-        .ok_or_else(|| {
-            PyRuntimeError::new_err(format!(
-                "no driver registered for handle {handle:?}; call init_client first"
-            ))
-        })?;
-
-    let (database_name, container_name) = parse_container_link(&container_link)?;
-    let partition_key = parse_partition_key_header(&partition_key_header)?;
     let item_id = extract_item_id(&body_bytes)?;
 
-    let tokio_rt = TOKIO_RUNTIME.get().ok_or_else(|| {
-        PyRuntimeError::new_err("init_client must be called before create_item")
-    })?;
-
-    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
-        tokio_rt.block_on(async {
-            let container = driver
-                .resolve_container(&database_name, &container_name)
-                .await?;
-            let item_ref =
-                ItemReference::from_name(&container, partition_key, item_id);
-            let mut op = CosmosOperation::create_item(item_ref).with_body(body_bytes);
-
-            if let Some(activity) = modifiers.activity_header.as_ref() {
-                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
-                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
-                }
-            }
-            if let Some(session) = modifiers.session_header.as_ref() {
-                op = op.with_session_token(SessionToken::from(session.clone()));
-            }
-
-            // Build OperationOptions from the typed fields the
-            // binding lifted off the headers dict. Anything left as
-            // ``None`` falls back to the driver's default.
-            let options = build_operation_options(
-                Some(modifiers.content_response_on_write),
-                modifiers.excluded_regions_value,
-                modifiers.end_to_end_timeout,
-                modifiers.custom_headers,
-            );
-
-            driver.execute_singleton_operation(op, options).await
-        })
-    });
-
-    match response_result {
-        // Body may legitimately be empty when ``no_response=True``;
-        // response_body_to_vec maps NoPayload to an empty Vec for the
-        // Python parser.
-        Ok(response) => backend_response_tuple_from_success(py, response),
-        Err(cosmos_error) => {
-            // The driver carries the wire response on its typed
-            // CosmosError; extract status, headers, and body directly.
-            // Synthetic errors (transport failures, client validation)
-            // have no wire response and fall through to a generic
-            // RuntimeError.
-            if let Some(raw_http_error) =
-                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
-            {
-                Ok(raw_http_error)
-            } else {
-                Err(PyRuntimeError::new_err(format!(
-                    "driver execute_singleton_operation failed: {cosmos_error}"
-                )))
-            }
-        }
-    }
+    run_item_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "create_item",
+        true,
+        move |item_ref| CosmosOperation::create_item(item_ref).with_body(body_bytes),
+    )
 }
 
-// ---------------------------------------------------------------------------
-// upsert_item
-// ---------------------------------------------------------------------------
-//
-// Same input/output shape as create_item (write-with-body: the document id
-// rides inside body_bytes, the partition key is parsed from the header). The
-// only difference is the operation kind: CosmosOperation::upsert_item instead
-// of create_item. The driver pipeline owns the upsert semantics from there --
-// it stamps `x-ms-documentdb-is-upsert: true` and POSTs to the collection
-// feed -- so an existing (partition_key, id) is replaced (HTTP 200) rather
-// than rejected with 409, and a new id inserts (HTTP 201). Like create,
-// upsert returns the saved document unless `no_response=True`, so
-// content_response_on_write is honoured. `If-Match` / `If-None-Match` (built
-// by the Python helper from etag + match_condition: insert-only or
-// version-guarded replace) flow through custom_headers like any other
-// per-request header.
-
+// upsert_item: like create, but maps to upsert so an existing (partition_key,
+// id) is replaced instead of rejected with 409.
 #[pyfunction]
 fn upsert_item<'py>(
     py: Python<'py>,
@@ -323,90 +349,66 @@ fn upsert_item<'py>(
         prepared.getattr("partition_key_header")?.extract()?;
     let headers_obj = prepared.getattr("headers")?;
     let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
-
     let modifiers = extract_op_modifiers(headers_dict)?;
-
-    let driver = drivers()
-        .read()
-        .unwrap()
-        .get(handle)
-        .cloned()
-        .ok_or_else(|| {
-            PyRuntimeError::new_err(format!(
-                "no driver registered for handle {handle:?}; call init_client first"
-            ))
-        })?;
-
-    let (database_name, container_name) = parse_container_link(&container_link)?;
-    let partition_key = parse_partition_key_header(&partition_key_header)?;
     let item_id = extract_item_id(&body_bytes)?;
 
-    let tokio_rt = TOKIO_RUNTIME.get().ok_or_else(|| {
-        PyRuntimeError::new_err("init_client must be called before upsert_item")
-    })?;
-
-    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
-        tokio_rt.block_on(async {
-            let container = driver
-                .resolve_container(&database_name, &container_name)
-                .await?;
-            let item_ref =
-                ItemReference::from_name(&container, partition_key, item_id);
-            // The single difference from create_item: upsert_item makes
-            // the driver stamp is-upsert and POST to the collection feed.
-            let mut op = CosmosOperation::upsert_item(item_ref).with_body(body_bytes);
-
-            if let Some(activity) = modifiers.activity_header.as_ref() {
-                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
-                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
-                }
-            }
-            if let Some(session) = modifiers.session_header.as_ref() {
-                op = op.with_session_token(SessionToken::from(session.clone()));
-            }
-
-            // Upsert returns the saved document unless no_response=True,
-            // exactly like create, so honour content_response_on_write.
-            let options = build_operation_options(
-                Some(modifiers.content_response_on_write),
-                modifiers.excluded_regions_value,
-                modifiers.end_to_end_timeout,
-                modifiers.custom_headers,
-            );
-
-            driver.execute_singleton_operation(op, options).await
-        })
-    });
-
-    match response_result {
-        Ok(response) => backend_response_tuple_from_success(py, response),
-        Err(cosmos_error) => {
-            if let Some(raw_http_error) =
-                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
-            {
-                Ok(raw_http_error)
-            } else {
-                Err(PyRuntimeError::new_err(format!(
-                    "driver execute_singleton_operation failed: {cosmos_error}"
-                )))
-            }
-        }
-    }
+    run_item_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "upsert_item",
+        true,
+        move |item_ref| CosmosOperation::upsert_item(item_ref).with_body(body_bytes),
+    )
 }
 
-// ---------------------------------------------------------------------------
-// delete_item
-// ---------------------------------------------------------------------------
-//
-// Same input/output shape as create_item, but:
-//   * no request body (the wire DELETE is bodiless);
-//   * the document id comes from PreparedRequest.item_id, not the body;
-//   * content_response_on_write is left at the driver default — DELETE
-//     has no body to suppress, and the driver auto-injects
-//     `Prefer: return=minimal` for non-read ops anyway;
-//   * If-Match / If-None-Match conditional headers (built by the Python
-//     helper from etag + match_condition) flow through custom_headers.
+// replace_item: write-with-body, but the URL id comes from
+// PreparedRequest.item_id (not the body). Maps to OperationType::Replace
+// (overwrite-only PUT): a missing target is a 404, never an insert.
+#[pyfunction]
+fn replace_item<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let container_link: String = prepared.getattr("container_link")?.extract()?;
+    let body_bytes: Vec<u8> = prepared.getattr("body_bytes")?.extract()?;
+    let partition_key_header: String =
+        prepared.getattr("partition_key_header")?.extract()?;
+    // The URL id (which document to overwrite) comes from item_id, not the
+    // body -- deriving it from the body could overwrite the wrong document if
+    // the body's id disagreed with `item`.
+    let item_id: String = prepared
+        .getattr("item_id")?
+        .extract::<Option<String>>()?
+        .ok_or_else(|| {
+            PyValueError::new_err(
+                "replace_item: PreparedRequest.item_id is required (the id of the \
+                 document to overwrite, resolved from the `item` argument)",
+            )
+        })?;
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+    let modifiers = extract_op_modifiers(headers_dict)?;
 
+    run_item_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "replace_item",
+        true,
+        move |item_ref| CosmosOperation::replace_item(item_ref).with_body(body_bytes),
+    )
+}
+
+// delete_item: bodiless; id from PreparedRequest.item_id; no content-response
+// toggle (nothing to suppress on a DELETE).
 #[pyfunction]
 fn delete_item<'py>(
     py: Python<'py>,
@@ -426,97 +428,23 @@ fn delete_item<'py>(
         })?;
     let headers_obj = prepared.getattr("headers")?;
     let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
-
     let modifiers = extract_op_modifiers(headers_dict)?;
 
-    let driver = drivers()
-        .read()
-        .unwrap()
-        .get(handle)
-        .cloned()
-        .ok_or_else(|| {
-            PyRuntimeError::new_err(format!(
-                "no driver registered for handle {handle:?}; call init_client first"
-            ))
-        })?;
-
-    let (database_name, container_name) = parse_container_link(&container_link)?;
-    let partition_key = parse_partition_key_header(&partition_key_header)?;
-
-    let tokio_rt = TOKIO_RUNTIME.get().ok_or_else(|| {
-        PyRuntimeError::new_err("init_client must be called before delete_item")
-    })?;
-
-    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
-        tokio_rt.block_on(async {
-            let container = driver
-                .resolve_container(&database_name, &container_name)
-                .await?;
-            let item_ref =
-                ItemReference::from_name(&container, partition_key, item_id);
-            let mut op = CosmosOperation::delete_item(item_ref);
-
-            if let Some(activity) = modifiers.activity_header.as_ref() {
-                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
-                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
-                }
-            }
-            if let Some(session) = modifiers.session_header.as_ref() {
-                op = op.with_session_token(SessionToken::from(session.clone()));
-            }
-
-            // No content_response_on_write override for delete: pass
-            // None and let the driver default stand. custom_headers
-            // carries If-Match / If-None-Match plus any caller-supplied
-            // x-ms-* entries.
-            let options = build_operation_options(
-                None,
-                modifiers.excluded_regions_value,
-                modifiers.end_to_end_timeout,
-                modifiers.custom_headers,
-            );
-
-            driver.execute_singleton_operation(op, options).await
-        })
-    });
-
-    match response_result {
-        Ok(response) => backend_response_tuple_from_success(py, response),
-        Err(cosmos_error) => {
-            if let Some(raw_http_error) =
-                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
-            {
-                Ok(raw_http_error)
-            } else {
-                Err(PyRuntimeError::new_err(format!(
-                    "driver execute_singleton_operation failed: {cosmos_error}"
-                )))
-            }
-        }
-    }
+    run_item_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "delete_item",
+        false,
+        CosmosOperation::delete_item,
+    )
 }
 
-// ---------------------------------------------------------------------------
-// read_item
-// ---------------------------------------------------------------------------
-//
-// Same input/output shape as delete_item:
-//   * no request body (GET is bodiless);
-//   * the document id comes from PreparedRequest.item_id;
-//   * content_response_on_write is left at the driver default — reads
-//     have no write-body to suppress (the kwarg is not even on
-//     ``Container.read_item``);
-//   * If-Match / If-None-Match conditional headers (built by the
-//     Python helper from etag + match_condition) flow through
-//     custom_headers; the dominant case on read is `If-None-Match`
-//     (cache validation), which surfaces as HTTP 304 with an empty
-//     body when the customer's cached etag still matches. The Python
-//     parser treats 304 as a non-error and returns an empty
-//     `CosmosDict`. ``x-ms-dedicatedgateway-max-age`` (driven by
-//     Python's ``max_integrated_cache_staleness_in_ms`` kwarg) also
-//     rides through custom_headers — see the wire-name match in
-//     extract_op_modifiers.
-
+// read_item: bodiless; id from PreparedRequest.item_id; conditional reads
+// surface as HTTP 304, which the Python parser treats as success.
 #[pyfunction]
 fn read_item<'py>(
     py: Python<'py>,
@@ -536,93 +464,36 @@ fn read_item<'py>(
         })?;
     let headers_obj = prepared.getattr("headers")?;
     let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
-
     let modifiers = extract_op_modifiers(headers_dict)?;
 
-    let driver = drivers()
-        .read()
-        .unwrap()
-        .get(handle)
-        .cloned()
-        .ok_or_else(|| {
-            PyRuntimeError::new_err(format!(
-                "no driver registered for handle {handle:?}; call init_client first"
-            ))
-        })?;
-
-    let (database_name, container_name) = parse_container_link(&container_link)?;
-    let partition_key = parse_partition_key_header(&partition_key_header)?;
-
-    let tokio_rt = TOKIO_RUNTIME.get().ok_or_else(|| {
-        PyRuntimeError::new_err("init_client must be called before read_item")
-    })?;
-
-    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
-        tokio_rt.block_on(async {
-            let container = driver
-                .resolve_container(&database_name, &container_name)
-                .await?;
-            let item_ref =
-                ItemReference::from_name(&container, partition_key, item_id);
-            let mut op = CosmosOperation::read_item(item_ref);
-
-            if let Some(activity) = modifiers.activity_header.as_ref() {
-                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
-                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
-                }
-            }
-            if let Some(session) = modifiers.session_header.as_ref() {
-                op = op.with_session_token(SessionToken::from(session.clone()));
-            }
-
-            // No content_response_on_write override for read: the
-            // driver default is correct (reads always return a body
-            // when one exists, and 304 returns no body whether the
-            // option is set or not). custom_headers carries
-            // If-Match / If-None-Match plus the
-            // x-ms-dedicatedgateway-max-age header.
-            let options = build_operation_options(
-                None,
-                modifiers.excluded_regions_value,
-                modifiers.end_to_end_timeout,
-                modifiers.custom_headers,
-            );
-
-            driver.execute_singleton_operation(op, options).await
-        })
-    });
-
-    match response_result {
-        Ok(response) => backend_response_tuple_from_success(py, response),
-        Err(cosmos_error) => {
-            if let Some(raw_http_error) =
-                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
-            {
-                Ok(raw_http_error)
-            } else {
-                Err(PyRuntimeError::new_err(format!(
-                    "driver execute_singleton_operation failed: {cosmos_error}"
-                )))
-            }
-        }
-    }
+    run_item_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "read_item",
+        false,
+        CosmosOperation::read_item,
+    )
 }
 
 // ---------------------------------------------------------------------------
 // Shared header → modifier translation
 // ---------------------------------------------------------------------------
 //
-// Both create_item and delete_item walk PreparedRequest.headers and pick
-// out the entries the driver models as typed fields (activity-id,
+// run_item_operation calls this for every op to walk PreparedRequest.headers
+// and pick out the entries the driver models as typed fields (activity-id,
 // session token, no_response, excluded_regions, end-to-end timeout).
 // Everything else goes through the driver's custom_headers escape hatch.
 
 struct OpModifiers {
     activity_header: Option<String>,
     session_header: Option<String>,
-    // ``no_response=True`` -> Disabled, otherwise Enabled. Only
-    // create_item consumes this; delete_item leaves the driver default
-    // in place because it has no body to suppress.
+    // ``no_response=True`` -> Disabled, otherwise Enabled. The runner
+    // applies this on writes (create / upsert / replace) and ignores it on
+    // reads / deletes, which have no body to suppress.
     content_response_on_write: ContentResponseOnWrite,
     excluded_regions_value: Option<ExcludedRegions>,
     end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
@@ -634,7 +505,7 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
     let mut session_header: Option<String> = None;
     // ``no_response=True`` -> Disabled, otherwise Enabled. The driver
     // default is Disabled, so we must set this explicitly to return a
-    // body on create when the caller did not opt out.
+    // body on writes when the caller did not opt out.
     let mut content_response_on_write: ContentResponseOnWrite =
         ContentResponseOnWrite::Enabled;
     // ``excluded_locations`` kwarg -> typed ExcludedRegions on the
@@ -756,9 +627,9 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
 }
 
 /// Build an OperationOptions from the typed-field values the binding
-/// lifted out of the headers dict. ``content_response`` is ``Some(_)``
-/// only for write ops where the kwarg is meaningful (today: create_item);
-/// ``None`` leaves the driver default in place (used by delete_item).
+/// lifted out of the headers dict. ``content_response`` is ``Some(_)`` for
+/// the write ops (create / upsert / replace) and ``None`` for reads /
+/// deletes, which leave the driver default in place.
 fn build_operation_options(
     content_response: Option<ContentResponseOnWrite>,
     excluded_regions: Option<ExcludedRegions>,
@@ -952,20 +823,13 @@ fn write_response_headers(
     if let Some(v) = h.offer_replace_pending {
         out.set_item("x-ms-offer-replace-pending", v)?;
     }
-    // Additional modeled fields the driver populates that the legacy
-    // core-Python path also surfaces in ``last_response_headers``.
-    // Customer-visible categories:
-    //   * routing diagnostics: partition-key-range id, internal
-    //     partition id;
-    //   * capacity dashboards: resource-quota, resource-usage;
-    //   * service-version reporting: gatewayversion, serviceversion;
-    //   * script + write semantics: log-results,
-    //     allow-tentative-writes;
-    //   * indexing progress: collection-index-transformation-progress,
-    //     collection-lazy-indexing-progress.
-    // Two more fields (``x-ms-alt-content-path``, ``x-ms-content-path``)
-    // are still ``pub(crate)`` on the driver's ``CosmosResponseHeaders``
-    // (``owner_full_name``, ``owner_id``) and surface here once the
+    // Additional modeled fields the driver populates that the legacy path also put in
+    // last_response_headers: partition-key-range id, internal partition id,
+    // resource quota and usage, gateway and service version, script log
+    // results, the tentative-writes flag, and index-transformation /
+    // lazy-indexing progress.
+    // x-ms-alt-content-path / x-ms-content-path are still pub(crate) on the
+    // driver (owner_full_name / owner_id) and will surface here once the
     // driver makes them public.
     if let Some(v) = h.gateway_version.as_ref() {
         out.set_item("x-ms-gatewayversion", v.as_str())?;
@@ -1105,4 +969,3 @@ fn extract_item_id(body: &[u8]) -> PyResult<String> {
         .map(|s| s.to_string())
         .ok_or_else(|| PyValueError::new_err("body has no string `id` field"))
 }
-
