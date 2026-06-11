@@ -15,6 +15,7 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
     resolve_appinsights_connection_string,
+    resolve_session_id,
 )
 from azure.ai.agentserver.core._tracing import (
     _BaggageLogRecordProcessor,
@@ -78,7 +79,6 @@ class TestTracingToggle:
             connection_string="InstrumentationKey=ctor",
             log_level=None,
             enable_sensitive_data=True,
-            session_id=None,
         )
 
     def test_observability_disabled_when_none(self) -> None:
@@ -166,7 +166,6 @@ class TestConstructorConnectionString:
             connection_string="InstrumentationKey=ctor",
             log_level=None,
             enable_sensitive_data=True,
-            session_id=None,
         )
 
 
@@ -413,7 +412,7 @@ class TestFoundryEnrichmentSpanProcessor:
 
 
 class TestAgentIdentityResolution:
-    """Tests for resolve_agent_name() and resolve_agent_version()."""
+    """Tests for agent identity/session resolution helpers."""
 
     def test_agent_name_from_env(self) -> None:
         with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_NAME": "my-agent"}):
@@ -434,6 +433,16 @@ class TestAgentIdentityResolution:
         env.pop("FOUNDRY_AGENT_VERSION", None)
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
+
+    def test_session_id_from_env(self) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "session-1"}):
+            assert resolve_session_id() == "session-1"
+
+    def test_session_id_default_empty(self) -> None:
+        env = os.environ.copy()
+        env.pop("FOUNDRY_AGENT_SESSION_ID", None)
+        with mock.patch.dict(os.environ, env, clear=True):
+            assert resolve_session_id() == ""
 
 
 class _FakeLogRecord:

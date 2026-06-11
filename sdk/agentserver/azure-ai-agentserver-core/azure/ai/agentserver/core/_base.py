@@ -196,7 +196,6 @@ class AgentServerHost(Starlette):
                     connection_string=_conn_str,
                     log_level=log_level,
                     enable_sensitive_data=_sensitive_data,
-                    session_id=self.config.session_id or None,
                 )
             except ValueError:
                 raise  # invalid log_level etc. — user should fix their config

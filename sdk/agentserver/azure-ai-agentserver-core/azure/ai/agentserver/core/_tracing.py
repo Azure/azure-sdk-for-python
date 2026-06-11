@@ -97,7 +97,6 @@ def configure_observability(
     connection_string: Optional[str] = None,
     log_level: Optional[str] = None,
     enable_sensitive_data: bool = False,
-    session_id: Optional[str] = None,
 ) -> None:
     """Default observability setup: console logging + tracing/OTel export.
 
@@ -118,8 +117,6 @@ def configure_observability(
         (prompts, tool arguments, results) for Agent Framework SDK
         instrumentation. Defaults to False.
     :paramtype enable_sensitive_data: bool
-    :keyword session_id: Optional session identifier sourced from AgentConfig.
-    :paramtype session_id: str or None
     """
     # Console logging on the root logger so user logs are also visible.
     resolved_level = _config.resolve_log_level(log_level)
@@ -152,14 +149,12 @@ def configure_observability(
     _configure_tracing(
         connection_string=connection_string,
         enable_sensitive_data=enable_sensitive_data,
-        session_id=session_id,
     )
 
 
 def _configure_tracing(
     connection_string: Optional[str] = None,
     enable_sensitive_data: bool = False,
-    session_id: Optional[str] = None,
 ) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
@@ -171,8 +166,6 @@ def _configure_tracing(
     :param enable_sensitive_data: Enable sensitive data recording for
         Agent Framework SDK instrumentation.
     :type enable_sensitive_data: bool
-    :param session_id: Session identifier to enrich log records.
-    :type session_id: str or None
     """
     resource = _create_resource()
     if resource is None:
@@ -195,12 +188,11 @@ def _configure_tracing(
             agent_tenant_id=agent_tenant_id,
         ),
     ]
-    resolved_session_id = session_id or None
     log_record_processors = [  # type: ignore[list-item]
         _BaggageLogRecordProcessor(
             agent_name=agent_name,
             agent_version=agent_version,
-            session_id=resolved_session_id,
+            session_id=_config.resolve_session_id() or None,
         ),
     ]
 
