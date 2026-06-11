@@ -23,8 +23,13 @@ _EXPECTED_PUBLIC_EXPORTS = {
     "EventStream",
     "EventStreamError",
     "EventStreamClosedError",
-    "EventStreamGoneError",
     "EventStreamNotFoundError",
+}
+
+# Spec 019 FR-E-001: EventStreamGoneError removed from public surface.
+# Every former-Gone raise site now raises EventStreamNotFoundError.
+_RETIRED_EXPORTS = {
+    "EventStreamGoneError",
 }
 
 _SDK_PRIVATE_CONCRETE_CLASSES = {
@@ -35,20 +40,43 @@ _SDK_PRIVATE_CONCRETE_CLASSES = {
 
 
 class TestPublicSurface:
-    """SC-006 — public ``__all__`` is exactly six entries."""
+    """SC-006 — public ``__all__`` is exactly five entries (spec 019 FR-E-001
+    removed ``EventStreamGoneError``)."""
 
     def test_all_shape(self) -> None:
         from azure.ai.agentserver.core import streaming
 
         assert set(streaming.__all__) == _EXPECTED_PUBLIC_EXPORTS, (
-            f"streaming.__all__ should be exactly the 6 entries per FR-001 + "
-            f"SC-006; got {set(streaming.__all__)}"
+            f"streaming.__all__ should be exactly the entries per FR-001 + "
+            f"SC-006 (spec 019 dropped EventStreamGoneError); "
+            f"got {set(streaming.__all__)}"
         )
         # __all__ should be a list (Python convention)
         assert isinstance(streaming.__all__, list)
         # And every name in __all__ must be a real attribute
         for name in streaming.__all__:
             assert hasattr(streaming, name), f"{name} listed in __all__ but absent"
+
+    def test_retired_exports_absent(self) -> None:
+        """Spec 019 FR-E-001 — EventStreamGoneError MUST NOT be in __all__."""
+        from azure.ai.agentserver.core import streaming
+
+        leaked = _RETIRED_EXPORTS & set(streaming.__all__)
+        assert not leaked, (
+            f"streaming.__all__ still exports retired symbols (spec 019 "
+            f"FR-E-001): {sorted(leaked)}"
+        )
+
+    def test_retired_exports_unimportable(self) -> None:
+        """Spec 019 FR-E-001 — ``from ... import EventStreamGoneError`` raises ImportError."""
+        import importlib
+
+        mod = importlib.import_module("azure.ai.agentserver.core.streaming")
+        for name in _RETIRED_EXPORTS:
+            assert not hasattr(mod, name), (
+                f"{name} should not be importable from "
+                f"azure.ai.agentserver.core.streaming (spec 019 FR-E-001)"
+            )
 
     def test_streams_singleton_is_async_lifecycle(self) -> None:
         from azure.ai.agentserver.core.streaming import streams
@@ -117,13 +145,11 @@ class TestExceptionHierarchy:
         from azure.ai.agentserver.core.streaming import (
             EventStreamClosedError,
             EventStreamError,
-            EventStreamGoneError,
             EventStreamNotFoundError,
         )
 
         for sub in (
             EventStreamClosedError,
-            EventStreamGoneError,
             EventStreamNotFoundError,
         ):
             assert issubclass(sub, EventStreamError), (

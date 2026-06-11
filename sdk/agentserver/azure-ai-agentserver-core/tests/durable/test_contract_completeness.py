@@ -82,6 +82,9 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskRun",
         "TaskStatus",
         "Suspended",
+        # Spec 019 FR-C-002: read-only snapshot of any non-deleted task,
+        # returned by Task.get(task_id).
+        "TaskSnapshot",
         # Retry
         "RetryPolicy",
         # Spec 017 FR-014/FR-015: Streaming moved to peer
@@ -97,6 +100,11 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
         "TaskPreconditionFailed",
+        # Spec 018 — input size violation (developer-facing).
+        "InputTooLarge",
+        # Spec 019 FR-D-001: developer-facing output size violation
+        # (parallels InputTooLarge for the output channel).
+        "OutputTooLarge",
     }
 )
 
@@ -113,6 +121,13 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         # framework retries internally on optimistic-concurrency conflicts.
         # Importable, but no longer advertised via ``__all__``.
         "EtagConflict",
+        # Spec 019 FR-D-002 + FR-D-003: attachment-vocabulary errors are
+        # internal implementation details (attachments are a framework
+        # concept developers never name). Renamed to leading-underscore
+        # equivalents and absent from public __all__. Framework re-raises
+        # InputTooLarge / OutputTooLarge based on attachment-key prefix.
+        "AttachmentTooLarge",
+        "AttachmentLimitExceeded",
     }
 )
 
@@ -185,6 +200,113 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     # FR-005 — primitive does NOT enforce underscore convention
     "task_metadata_underscore_not_enforced_by_primitive": (
         "test_metadata.py::test_underscore_namespace_not_enforced_by_primitive"
+    ),
+    # --- Spec 019 — Task & Streams Reconciliation ---------------------- #
+    # FR-A-001..009 (etag CAS, write queue, dynamic lease, per-op 412 policy)
+    "spec019_etag_cas_every_patch": (
+        "test_etag_cas.py::test_every_patch_after_first_carries_if_match"
+    ),
+    "spec019_delete_carries_no_if_match": (
+        "test_etag_cas.py::test_delete_does_not_carry_if_match"
+    ),
+    "spec019_write_queue_serializes_intra_process": (
+        "test_write_queue.py::test_concurrent_metadata_flushes_serialize"
+    ),
+    "spec019_write_queue_no_lock_for_reads": (
+        "test_write_queue.py::test_reads_do_not_acquire_lock"
+    ),
+    "spec019_write_queue_lock_torn_down_with_task": (
+        "test_write_queue.py::test_lock_removed_when_active_entry_torn_down"
+    ),
+    "spec019_lease_renewal_dynamic_cadence_full_shadow": (
+        "test_lease_renewal.py::test_dynamic_cadence_shadows_heartbeats"
+    ),
+    "spec019_terminal_412_reread_lease_lost_abandons": (
+        "test_etag_cas.py::test_terminal_412_lease_lost_abandons"
+    ),
+    "spec019_terminal_412_reread_already_terminal_abandons": (
+        "test_etag_cas.py::test_terminal_412_already_terminal_abandons"
+    ),
+    "spec019_terminal_412_reread_lease_ours_retries": (
+        "test_etag_cas.py::test_terminal_412_lease_ours_retries"
+    ),
+    "spec019_reclaim_both_sites_carry_if_match": (
+        "test_etag_cas.py::test_both_reclaim_sites_carry_if_match"
+    ),
+    # FR-B-001 (source_type filter on recovery scan)
+    "spec019_recovery_scan_filters_source_type": (
+        "test_recovery_filter.py::test_recovery_scan_passes_source_type"
+    ),
+    "spec019_recovery_scan_skips_foreign_typed_tasks": (
+        "test_recovery_filter.py::test_recovery_does_not_pick_up_foreign_typed_task"
+    ),
+    # FR-C-001..007 (Task.get + TaskSnapshot + output lifecycle)
+    "spec019_task_get_returns_snapshot": (
+        "test_task_get_api.py::test_task_get_returns_snapshot_for_each_status"
+    ),
+    "spec019_task_get_returns_none_for_missing": (
+        "test_task_get_api.py::test_task_get_returns_none_for_missing"
+    ),
+    "spec019_task_get_raises_without_manager": (
+        "test_task_get_api.py::test_task_get_raises_runtime_error_without_manager"
+    ),
+    "spec019_task_snapshot_field_exclusions": (
+        "test_task_get_api.py::test_task_snapshot_exposes_only_documented_fields"
+    ),
+    "spec019_task_snapshot_resolves_output_ref": (
+        "test_task_get_api.py::test_task_snapshot_resolves_output_ref"
+    ),
+    "spec019_output_cleared_on_resume": (
+        "test_output_lifecycle.py::test_resume_clears_payload_output_and_attachment"
+    ),
+    "spec019_output_cleared_on_drain_phase1": (
+        "test_output_lifecycle.py::test_drain_phase1_clears_payload_output_and_attachment"
+    ),
+    "spec019_output_cleared_on_failure": (
+        "test_output_lifecycle.py::test_handle_failure_clears_output"
+    ),
+    "spec019_output_always_attachment_when_non_null": (
+        "test_output_promotion.py::test_suspend_output_always_uses_attachment"
+    ),
+    "spec019_output_complete_always_attachment_when_non_null": (
+        "test_output_promotion.py::test_complete_output_always_uses_attachment"
+    ),
+    "spec019_output_null_writes_explicit_null": (
+        "test_output_promotion.py::test_suspend_output_none_writes_explicit_null"
+    ),
+    "spec019_output_too_large_raises_pre_patch": (
+        "test_output_promotion.py::test_output_over_cap_raises_output_too_large_pre_patch"
+    ),
+    # FR-D-001..006 (error rename + flush_all + local expiry)
+    "spec019_output_too_large_public_exception": (
+        "test_errors_public_surface.py::test_output_too_large_is_public"
+    ),
+    "spec019_attachment_too_large_internal": (
+        "test_errors_public_surface.py::test_attachment_too_large_not_public"
+    ),
+    "spec019_attachment_limit_exceeded_internal": (
+        "test_errors_public_surface.py::test_attachment_limit_exceeded_not_public"
+    ),
+    "spec019_input_attachment_error_remapped_to_input_too_large": (
+        "test_errors_public_surface.py::test_input_too_large_remap_from_internal_input_key"
+    ),
+    "spec019_steering_attachment_error_remapped_to_input_too_large": (
+        "test_errors_public_surface.py::test_input_too_large_remap_from_steering_key"
+    ),
+    "spec019_output_attachment_error_remapped_to_output_too_large": (
+        "test_errors_public_surface.py::test_output_too_large_remap_from_internal_output_key"
+    ),
+    "spec019_flush_all_renamed_private": (
+        "test_metadata_flush.py::test_flush_all_renamed_to_underscore_flush_all"
+    ),
+    "spec019_local_provider_bumps_expiry_count": (
+        "test_local_provider.py::test_local_provider_bumps_expiry_count_on_real_handoff"
+    ),
+    "spec019_local_provider_no_bump_on_renewal": (
+        "test_local_provider.py::test_local_provider_no_bump_on_same_instance_renewal"
+    ),
+    "spec019_local_provider_no_bump_on_unexpired_handoff": (
+        "test_local_provider.py::test_local_provider_no_bump_on_unexpired_handoff"
     ),
 }
 
