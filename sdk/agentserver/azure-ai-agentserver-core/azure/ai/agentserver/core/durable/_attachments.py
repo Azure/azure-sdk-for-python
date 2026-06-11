@@ -82,12 +82,13 @@ _INPUT_THRESHOLD_BYTES = 200 * 1024
 _STEERING_THRESHOLD_BYTES = 20 * 1024
 
 #: Per-attachment value cap (2 MB). Server-side hard cap; enforced
-#: client-side via :class:`InputTooLarge` / :class:`AttachmentTooLarge`
-#: before any HTTP call.
+#: client-side via :class:`InputTooLarge` (developer-facing) /
+#: :class:`_AttachmentTooLarge` (provider-internal; see
+#: :func:`_remap_attachment_error`) before any HTTP call.
 _MAX_ATTACHMENT_SIZE_BYTES = 2 * 1024 * 1024
 
 #: Per-task attachment-entry cap. Server-side hard cap; enforced
-#: client-side via :class:`AttachmentLimitExceeded`.
+#: client-side via :class:`_AttachmentLimitExceeded` (provider-internal).
 _MAX_ATTACHMENTS = 20
 
 #: Framework's steering queue hard cap. At most this many entries can be
