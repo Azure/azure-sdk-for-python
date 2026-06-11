@@ -46,7 +46,7 @@ client = ProgramEnrollmentClient(credential=DefaultAzureCredential(), subscripti
 ## Examples
 
 Code samples for this package can be found at:
-- [Search Programenrollment Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
+- [Search Program Enrollment Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
 - [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
 
