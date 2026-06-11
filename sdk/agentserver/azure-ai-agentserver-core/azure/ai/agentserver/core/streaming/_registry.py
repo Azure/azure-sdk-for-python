@@ -19,7 +19,7 @@ this registry — they ship their own peer registry.
 The registry retains tombstones for destroyed ids so that
 :meth:`get` distinguishes "id never registered" (raises
 :class:`EventStreamNotFoundError` → 404) from "id was registered,
-now destroyed" (raises :class:`EventStreamGoneError` → 410). The
+now destroyed" (raises :class:`EventStreamNotFoundError` → 410). The
 tombstone is cleared when the id is explicitly re-created via
 :meth:`get_or_create`.
 """
@@ -38,7 +38,7 @@ from ._concrete import (
 )
 from ._protocol import (
     EventStream,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     EventStreamNotFoundError,
 )
 
@@ -133,16 +133,60 @@ class _StreamsRegistry:
     async def get(self, id: str) -> EventStream:
         """Look up the existing instance for ``id``.
 
-        - Unregistered id → :class:`EventStreamNotFoundError`.
-        - Destroyed id (tombstoned) → :class:`EventStreamGoneError`.
-        - Otherwise: returns the cached :class:`EventStream` instance.
+        Spec 019 FR-E-001/-002 — every "id is not currently a live
+        stream" condition raises :class:`EventStreamNotFoundError`:
+
+        - Unregistered id (never seen).
+        - Explicitly :meth:`delete`d id (tombstoned).
+        - Closed stream whose close-clock TTL deadline has elapsed
+          (auto-tombstoned per FR-E-005).
         """
         slot = self._slots.get(id, None)
         if slot is None:
             raise EventStreamNotFoundError(id)
         if slot is _TOMBSTONE:
-            raise EventStreamGoneError(id)
+            raise EventStreamNotFoundError(id)
+        # Spec 019 FR-E-005 — opportunistic close-clock check.
+        # If the stream's internal _maybe_auto_transition_to_gone
+        # would fire, install the registry tombstone now and raise
+        # NotFound. This makes the registry-level auto-tombstone
+        # observable even without an explicit emit/subscribe on the
+        # instance.
+        if await self._tombstone_if_close_clock_elapsed(id, slot):
+            raise EventStreamNotFoundError(id)
         return slot  # type: ignore[return-value]
+
+    async def _tombstone_if_close_clock_elapsed(
+        self, id: str, slot: Any
+    ) -> bool:
+        """If the stream's close-clock TTL elapsed, run its
+        ``_on_delete`` cleanup hook and install the registry
+        tombstone. Returns True iff the tombstone was installed.
+
+        Spec 019 FR-E-005 / FR-E-009 — file-backed cleanup happens
+        BEFORE the registry tombstone install per C-STR-FBR-4.
+        """
+        maybe_check = getattr(slot, "_maybe_auto_transition_to_gone", None)
+        if maybe_check is None:
+            return False
+        # Trigger the check; the instance may flip its state to GONE.
+        try:
+            async with getattr(slot, "_lock", asyncio.Lock()):
+                maybe_check()
+        except Exception:  # pylint: disable=broad-except
+            return False
+        # Read the state attribute non-strictly.
+        if getattr(slot, "_state", None) != "GONE":
+            return False
+        # State has transitioned — perform cleanup + install tombstone.
+        on_delete = getattr(slot, "_on_delete", None)
+        if on_delete is not None:
+            try:
+                await on_delete()
+            except Exception:  # pylint: disable=broad-except
+                pass
+        self._slots[id] = _TOMBSTONE
+        return True
 
     async def get_or_create(self, id: str) -> EventStream:
         """Return cached instance for ``id``, or create a new one.

@@ -62,6 +62,28 @@
 
 ### Breaking Changes
 
+- **`EventStreamGoneError` removed** from
+  `azure.ai.agentserver.core.streaming`. Spec 019 FR-E-001/-002
+  collapsed the previously-distinct `Gone` (registered then
+  destroyed) and `NotFound` (never registered) error types into a
+  single `EventStreamNotFoundError`. Every "this id is not
+  currently a live stream" condition — never-registered,
+  explicitly-deleted, or close-clock-TTL elapsed — now raises
+  `EventStreamNotFoundError` and wire-maps to HTTP 404. The
+  previous distinction's actionable value at the consumer's layer
+  was zero (right behavior is the same either way) and it leaked
+  the registry's internal tombstone bookkeeping.
+
+- **Replay-backing tombstone is now time-deterministic, not
+  buffer-state-driven.** Spec 019 FR-E-005 replaces the previous
+  "Closed + buffer empty + had emit" auto-transition with a
+  close-clock model: when a replay backing (`ReplayEventStream`
+  or `FileBackedReplayEventStream` configured with `ttl_seconds`)
+  is closed, the registry tombstones the id at the wall-clock
+  moment `close_time + ttl_seconds`, regardless of who is
+  observing. Per-event TTL eviction continues to run during ACTIVE
+  to bound long-running stream memory.
+
 - `AttachmentTooLarge` and `AttachmentLimitExceeded` are no longer
   exported from `azure.ai.agentserver.core.durable`. Attachments are
   a framework storage-layer concept that developers never name;

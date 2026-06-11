@@ -322,34 +322,39 @@ class TestSpec019CloseClockTombstone:
         """SC-16 / FR-E-006 — an Active stream whose buffer has been
         fully evicted by per-event TTL MUST remain Active; new emits
         succeed and new subscribers see them.
+
+        Strategy: emit n=1; wait TTL+epsilon so buffer is empty;
+        subscribe (late subscriber — no history available); emit
+        n=2 with close=True; consumer sees only n=2 — proving the
+        stream stayed Active after buffer eviction.
         """
         streams.use_in_memory_replay(
             cursor_fn=lambda e: e["n"], ttl_seconds=0.1
         )
         stream = await streams.get_or_create("t-spec019-active-empty")
         await stream.emit({"n": 1})
-        await asyncio.sleep(0.2)
-        # Buffer should now be empty (TTL evicted) — but stream is
-        # still Active because we never closed it.
-        await stream.emit({"n": 2})
+        await asyncio.sleep(0.2)  # n=1 per-event TTL elapses
+        # Buffer is now empty but stream is still Active (no close).
+        # Late subscriber attaches; should see only future events.
         seen: list[int] = []
 
         async def consume():
             async for ev in stream.subscribe():
                 seen.append(ev["n"])
-                if len(seen) >= 1:
-                    break
 
-        # Emit the trigger event and wait for the subscriber.
         consumer_task = asyncio.create_task(consume())
+        # Give the subscriber a tick to register.
         await asyncio.sleep(0.05)
-        await stream.emit({"n": 3}, close=True)
+        # Emit a new event after the subscriber attached, with close
+        # so the iterator terminates cleanly.
+        await stream.emit({"n": 2}, close=True)
         await asyncio.wait_for(consumer_task, timeout=1.0)
-        # The new subscriber should have seen at least n=3 — proving
-        # the stream stayed Active (FR-E-006).
-        assert 3 in seen, (
+        # The new subscriber should have seen exactly n=2 — proving
+        # the stream stayed Active after the per-event TTL eviction
+        # of the pre-attach n=1 emit.
+        assert seen == [2], (
             f"FR-E-006 — Active stream w/ empty buffer should accept "
-            f"new subscribers. seen={seen}"
+            f"new subscribers and deliver future events. seen={seen}"
         )
 
     async def test_no_ttl_means_no_auto_tombstone(self) -> None:

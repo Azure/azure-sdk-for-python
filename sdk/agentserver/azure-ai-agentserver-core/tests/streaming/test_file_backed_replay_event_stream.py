@@ -186,8 +186,12 @@ class TestCorruptionHandling:
             f.write(b"this-is-a-partial-line-no-newline")  # NO trailing \n
         # Construction must SUCCEED (rule 29a)
         s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)
-        # The 1 good record was rehydrated
-        assert s._total_emit_count == 1
+        # The 1 good record was rehydrated. Its emit_time is 1.0
+        # (Jan 1 1970) so with ttl_seconds=600 it has already been
+        # evicted from the live buffer; assert via _highest_cursor
+        # (set BEFORE eviction in the rehydration loop) that the
+        # one good record was indeed parsed.
+        assert s._highest_cursor == 1
         await s._on_delete()
 
     async def test_mid_file_malformed_raises_at_construction(
@@ -221,9 +225,9 @@ class TestTTLPurgesDisk:
         )
         await s.emit({"n": 1})
         await asyncio.sleep(0.3)
-        # Trigger eviction via next op
+        # Trigger eviction via next op — _evict_expired runs as part
+        # of emit(); after this call the buffer should hold only n=2.
         await s.emit({"n": 2})
-        assert s._total_emit_count == 2
         # event 1 should have been evicted from buffer
         assert len(s._buffer) == 1, (
             f"event 1 should be evicted; buffer has {len(s._buffer)} entries"

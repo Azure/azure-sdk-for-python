@@ -25,7 +25,7 @@ from typing import Any, Optional
 from ._protocol import (
     EventStream,
     EventStreamClosedError,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
 )
 
 # Try POSIX fcntl; fall back to a lock-file scheme on platforms
@@ -63,28 +63,40 @@ class _BaseEventStream:
     Concrete subclasses override ``emit`` / ``close`` / ``subscribe``
     / ``last_cursor`` and the private ``_on_delete`` cleanup hook.
 
-    State transitions (streaming.md rules 1-3):
+    Spec 019 state model (post FR-E-001 / FR-E-003): per-instance
+    states are exactly ``ACTIVE`` and ``CLOSED``. The ``GONE`` value
+    is retained as an internal flag the registry sets when it
+    tombstones the id — operations on a stale instance reference
+    after registry tombstone raise :class:`EventStreamNotFoundError`
+    (FR-E-002). Per-instance: ``construction → ACTIVE``,
+    ``close() from ACTIVE → CLOSED``, ``close()`` from ``CLOSED`` /
+    tombstoned → no-op (idempotent).
 
-    - construction → ``ACTIVE``
-    - ``close()`` from ``ACTIVE`` → ``CLOSED``; from ``CLOSED`` /
-      ``GONE`` → no-op
-    - registry ``delete(id)`` → invokes ``_on_delete()`` →
-      ``GONE`` (immediate cutoff)
-    - ``CLOSED`` → ``GONE`` auto-transition: when impl's per-event
-      TTL evicts the last replayable event AND ``total_emit_count >
-      0`` AND ``last_cursor()`` is NOT the operation that observed
-      the eviction (rule 25 + rule 8 exemption).
+    Spec 019 close-clock TTL tombstone (FR-E-005): replay backings
+    with ``ttl_seconds`` configured record ``_close_time`` when
+    transitioning to ``CLOSED``. From that moment the SEMANTIC
+    tombstone deadline is ``close_time + ttl_seconds`` — operations
+    after the deadline raise :class:`EventStreamNotFoundError`.
+    Replaces the legacy "buffer empty + had emit" rule, which was
+    observer-driven and required a ``total_emit_count > 0`` carve-
+    out for never-emitted closed streams.
     """
 
     _STATE_ACTIVE = "ACTIVE"
     _STATE_CLOSED = "CLOSED"
+    # Internal-only — set by the registry when it tombstones the id.
+    # External callers MUST NOT depend on this; the documented
+    # contract is "operation raises EventStreamNotFoundError".
     _STATE_GONE = "GONE"
 
     def __init__(self) -> None:
         self._state: str = self._STATE_ACTIVE
-        self._total_emit_count: int = 0
         self._subscriber_queues: list[asyncio.Queue[Any]] = []
         self._lock = asyncio.Lock()
+        # Spec 019 FR-E-005 — wall-clock time the stream transitioned
+        # to CLOSED; used by replay backings to compute the close-clock
+        # tombstone deadline (close_time + ttl_seconds).
+        self._close_time: Optional[float] = None
 
     async def _register_subscriber(self) -> asyncio.Queue[Any]:
         q: asyncio.Queue[Any] = asyncio.Queue()
@@ -130,13 +142,13 @@ class BroadcastEventStream(_BaseEventStream):
     async def emit(self, payload: Any, *, close: bool = False) -> None:
         async with self._lock:
             if self._state == self._STATE_GONE:
-                raise EventStreamGoneError("stream is GONE")
+                raise EventStreamNotFoundError("stream id is tombstoned")
             if self._state == self._STATE_CLOSED:
                 raise EventStreamClosedError("stream is CLOSED")
-            self._total_emit_count += 1
             await self._fanout_emit(payload)
             if close:
                 self._state = self._STATE_CLOSED
+                self._close_time = time.time()
                 await self._fanout_terminate()
 
     async def close(self) -> None:
@@ -144,17 +156,18 @@ class BroadcastEventStream(_BaseEventStream):
             if self._state != self._STATE_ACTIVE:
                 return  # idempotent no-op
             self._state = self._STATE_CLOSED
+            self._close_time = time.time()
             await self._fanout_terminate()
 
     def subscribe(self, *, after: Optional[int] = None) -> AsyncIterator[Any]:
         del after  # silently ignored per rule 17 — no buffer to seek
         if self._state == self._STATE_GONE:
-            raise EventStreamGoneError("stream is GONE")
+            raise EventStreamNotFoundError("stream id is tombstoned")
         return _BroadcastIterator(self, terminated=self._state == self._STATE_CLOSED)
 
     async def last_cursor(self) -> Optional[int]:
         if self._state == self._STATE_GONE:
-            raise EventStreamGoneError("stream is GONE")
+            raise EventStreamNotFoundError("stream id is tombstoned")
         return None  # no cursor tracking
 
     async def _on_delete(self) -> None:
@@ -268,16 +281,23 @@ class ReplayEventStream(_BaseEventStream):
             del self._buffer[:i]
 
     def _maybe_auto_transition_to_gone(self) -> None:
-        """Rule 25: CLOSED + last event evicted + had ≥1 emit → GONE.
+        """Spec 019 FR-E-005 / C-STR-TTL-2 — close-clock auto-tombstone.
+
+        When the stream is ``CLOSED`` AND ``ttl_seconds`` is configured
+        AND ``now >= close_time + ttl_seconds``, transition to GONE.
+        Replaces the legacy "CLOSED + buffer empty + had emit" rule.
+        Deterministic and time-driven; NOT observer-driven or
+        buffer-state-driven.
 
         Called from operations that observe the transition
-        (``subscribe`` / ``emit``). Per rule 8 + rule 25 exemption,
+        (``subscribe`` / ``emit``). Per spec §46 / C-STR-TTL-2,
         ``last_cursor`` MUST NOT call this — see ``last_cursor``.
         """
         if (
             self._state == self._STATE_CLOSED
-            and not self._buffer
-            and self._total_emit_count > 0
+            and self._ttl_seconds is not None
+            and self._close_time is not None
+            and time.time() >= self._close_time + self._ttl_seconds
         ):
             self._state = self._STATE_GONE
 
@@ -286,12 +306,11 @@ class ReplayEventStream(_BaseEventStream):
             self._evict_expired()
             self._maybe_auto_transition_to_gone()
             if self._state == self._STATE_GONE:
-                raise EventStreamGoneError("stream is GONE")
+                raise EventStreamNotFoundError("stream id is tombstoned")
             if self._state == self._STATE_CLOSED:
                 raise EventStreamClosedError("stream is CLOSED")
             emit_time = time.time()
             self._buffer.append(_BufferedEvent(payload, emit_time))
-            self._total_emit_count += 1
             if self._cursor_fn is not None:
                 cursor = self._cursor_fn(payload)
                 if self._highest_cursor is None or cursor > self._highest_cursor:
@@ -299,6 +318,7 @@ class ReplayEventStream(_BaseEventStream):
             await self._fanout_emit(payload)
             if close:
                 self._state = self._STATE_CLOSED
+                self._close_time = time.time()
                 await self._fanout_terminate()
 
     async def close(self) -> None:
@@ -306,6 +326,7 @@ class ReplayEventStream(_BaseEventStream):
             if self._state != self._STATE_ACTIVE:
                 return  # idempotent
             self._state = self._STATE_CLOSED
+            self._close_time = time.time()
             await self._fanout_terminate()
 
     def subscribe(self, *, after: Optional[int] = None) -> AsyncIterator[Any]:
@@ -316,14 +337,14 @@ class ReplayEventStream(_BaseEventStream):
         self._evict_expired()
         self._maybe_auto_transition_to_gone()
         if self._state == self._STATE_GONE:
-            raise EventStreamGoneError("stream is GONE")
+            raise EventStreamNotFoundError("stream id is tombstoned")
         return _ReplayIterator(self, after=after)
 
     async def last_cursor(self) -> Optional[int]:
         # rule 8: do NOT trigger auto-transition; only evict-and-check
         # whether the state has been changed by some prior call.
         if self._state == self._STATE_GONE:
-            raise EventStreamGoneError("stream is GONE")
+            raise EventStreamNotFoundError("stream id is tombstoned")
         return self._highest_cursor
 
     async def _on_delete(self) -> None:
@@ -573,7 +594,6 @@ class FileBackedReplayEventStream(_BaseEventStream):
         for rec in records:
             entry = _BufferedEvent(rec["payload"], rec["emit_time"])
             self._buffer.append(entry)
-            self._total_emit_count += 1
             if self._cursor_fn is not None:
                 cursor = self._cursor_fn(entry.payload)
                 if self._highest_cursor is None or cursor > self._highest_cursor:
@@ -582,10 +602,16 @@ class FileBackedReplayEventStream(_BaseEventStream):
         self._evict_expired()
         if had_terminal:
             self._state = self._STATE_CLOSED
-            # GONE-on-construction (rule 28): if terminal + buffer empty after
-            # eviction + had ≥1 emit, the rehydrated stream is in GONE.
-            if not self._buffer and self._total_emit_count > 0:
-                self._state = self._STATE_GONE
+            # Spec 019 FR-E-005 — close-clock is anchored at the
+            # terminal record's emit_time (the moment the prior
+            # process actually closed the stream). On rehydration we
+            # honor that wall-clock anchor so a process restart
+            # cannot extend the effective tombstone deadline.
+            if records:
+                self._close_time = records[-1]["emit_time"]
+            else:
+                self._close_time = time.time()
+            self._maybe_auto_transition_to_gone()
         # Position file at end for subsequent appends.
         self._file.seek(0, os.SEEK_END)
 
@@ -640,10 +666,17 @@ class FileBackedReplayEventStream(_BaseEventStream):
                 pass
 
     def _maybe_auto_transition_to_gone(self) -> None:
+        """Spec 019 FR-E-005 — close-clock auto-tombstone.
+
+        Same rule as ReplayEventStream: CLOSED + ttl_seconds
+        configured + ``now >= close_time + ttl_seconds`` → GONE.
+        Replaces the legacy "CLOSED + buffer empty + had emit" rule.
+        """
         if (
             self._state == self._STATE_CLOSED
-            and not self._buffer
-            and self._total_emit_count > 0
+            and self._ttl_seconds is not None
+            and self._close_time is not None
+            and time.time() >= self._close_time + self._ttl_seconds
         ):
             self._state = self._STATE_GONE
 
@@ -652,7 +685,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
             self._evict_expired()
             self._maybe_auto_transition_to_gone()
             if self._state == self._STATE_GONE:
-                raise EventStreamGoneError("stream is GONE")
+                raise EventStreamNotFoundError("stream id is tombstoned")
             if self._state == self._STATE_CLOSED:
                 raise EventStreamClosedError("stream is CLOSED")
             emit_time = time.time()
@@ -666,7 +699,6 @@ class FileBackedReplayEventStream(_BaseEventStream):
             os.fsync(self._file.fileno())
             # Now update in-memory state + fan out
             self._buffer.append(_BufferedEvent(payload, emit_time))
-            self._total_emit_count += 1
             if self._cursor_fn is not None:
                 cursor = self._cursor_fn(payload)
                 if self._highest_cursor is None or cursor > self._highest_cursor:
@@ -674,6 +706,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
             await self._fanout_emit(payload)
             if close:
                 self._state = self._STATE_CLOSED
+                self._close_time = time.time()
                 await self._fanout_terminate()
 
     async def close(self) -> None:
@@ -684,6 +717,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
             self._file.flush()
             os.fsync(self._file.fileno())
             self._state = self._STATE_CLOSED
+            self._close_time = time.time()
             await self._fanout_terminate()
 
     def subscribe(self, *, after: Optional[int] = None) -> AsyncIterator[Any]:
@@ -692,12 +726,12 @@ class FileBackedReplayEventStream(_BaseEventStream):
         self._evict_expired()
         self._maybe_auto_transition_to_gone()
         if self._state == self._STATE_GONE:
-            raise EventStreamGoneError("stream is GONE")
+            raise EventStreamNotFoundError("stream id is tombstoned")
         return _ReplayIterator(self, after=after)  # same iterator shape works
 
     async def last_cursor(self) -> Optional[int]:
         if self._state == self._STATE_GONE:
-            raise EventStreamGoneError("stream is GONE")
+            raise EventStreamNotFoundError("stream id is tombstoned")
         return self._highest_cursor
 
     async def _on_delete(self) -> None:

@@ -15,7 +15,7 @@ import inspect
 
 import pytest
 
-from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
+from azure.ai.agentserver.core.streaming import EventStreamNotFoundError, streams
 from azure.ai.agentserver.core.streaming._concrete import BroadcastEventStream
 
 

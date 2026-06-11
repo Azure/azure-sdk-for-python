@@ -20,7 +20,6 @@ from ._protocol import (
     EventStream,
     EventStreamClosedError,
     EventStreamError,
-    EventStreamGoneError,
     EventStreamNotFoundError,
 )
 from ._registry import streams
@@ -31,6 +30,5 @@ __all__ = [
     "EventStream",
     "EventStreamError",
     "EventStreamClosedError",
-    "EventStreamGoneError",
     "EventStreamNotFoundError",
 ]

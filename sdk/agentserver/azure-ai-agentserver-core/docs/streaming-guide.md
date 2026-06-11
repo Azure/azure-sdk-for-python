@@ -52,7 +52,7 @@ from azure.ai.agentserver.core.streaming import (
     EventStream,                # @runtime_checkable Protocol
     EventStreamError,           # base exception (catch-all)
     EventStreamClosedError,     # emit on a closed stream
-    EventStreamGoneError,       # any op on a destroyed stream
+    EventStreamNotFoundError,       # any op on a destroyed stream
     EventStreamNotFoundError,   # streams.get(id) for an unknown id
 )
 ```
@@ -174,7 +174,7 @@ Publishes one event to every currently-attached subscriber.
 - Raises `EventStreamClosedError` if you call `emit` after `close`.
   This means a producer bug (you should not be emitting any more);
   HTTP layers should treat this as `5xx`, not a client error.
-- Raises `EventStreamGoneError` if the stream has been destroyed.
+- Raises `EventStreamNotFoundError` if the stream has been destroyed.
 
 ### `close()`
 
@@ -202,7 +202,7 @@ The iterator terminates cleanly with `StopAsyncIteration` when the
 stream is closed (after draining any in-flight events) **or** when
 the stream is destroyed while you are iterating (whether by
 `streams.delete(id)` or by the auto-transition described in
-§Lifecycle). `subscribe()` itself raises `EventStreamGoneError`
+§Lifecycle). `subscribe()` itself raises `EventStreamNotFoundError`
 synchronously only if the stream is already destroyed at the time
 you call it.
 
@@ -220,7 +220,7 @@ Returns the highest cursor value seen so far, or `None` if no
 events were emitted, or `None` if the active backing has no
 `cursor_fn`. After the stream is closed, this is the last cursor
 the backing saw — even if that event has since expired from
-replay. Raises `EventStreamGoneError` if the stream is destroyed.
+replay. Raises `EventStreamNotFoundError` if the stream is destroyed.
 
 `last_cursor()` is the producer's recovery primitive: a recovering
 handler reads it to learn "what cursor should I assign to my next
@@ -228,69 +228,74 @@ emit?".
 
 ---
 
-## Lifecycle: ACTIVE → CLOSED → GONE
+## Lifecycle: ACTIVE → CLOSED → (tombstoned)
 
-Each stream is in one of three states:
+Each stream has TWO per-instance states; destruction is a
+registry-level concept exposed as a single error type
+(`EventStreamNotFoundError`) on the next operation against the id.
 
 | State | What it means | How you reach it |
 |---|---|---|
 | **ACTIVE** | Open to `emit`. Subscribable. | Construction (first `get_or_create(id)`). |
-| **CLOSED** | No new emits. Existing subscribers drain. New subscribers can still attach (replay backings) but no new events arrive. | `close()` from ACTIVE. |
-| **GONE** (destroyed) | `emit`, `subscribe`, and `last_cursor` all raise `EventStreamGoneError`. `close()` remains idempotent (no-op). The id is preserved in the registry so `streams.get(id)` raises `Gone`, not `NotFound`. | `streams.delete(id)`, OR (replay backings with `ttl_seconds`) automatic eviction: when the stream is CLOSED, its last retained event has expired, and at least one event was ever emitted. |
+| **CLOSED** | No new emits (`emit` raises `EventStreamClosedError`). Existing subscribers drain. New subscribers can still attach (replay backings) but no new events arrive. | `close()` from ACTIVE. |
+
+After CLOSED, the registry MAY tombstone the id. Once tombstoned,
+`emit`, `subscribe`, `last_cursor`, and `streams.get(id)` all raise
+`EventStreamNotFoundError`. `close()` remains idempotent (no-op).
+
+Three independent paths into tombstoned (FR-E-001/-002 collapsed
+the prior `EventStreamNotFoundError` and `EventStreamNotFoundError`
+into one):
+
+- the id was **never registered** (no `get_or_create(id)` for it ever ran);
+- the id was **explicitly `streams.delete(id)`**d;
+- the id's stream was **Closed** and its close-clock TTL
+  (`close_time + ttl_seconds`) **elapsed** — only applies to replay
+  backings constructed with `ttl_seconds`.
 
 A few practical implications:
 
-- The live backing (`use_in_memory_live`) never auto-transitions to
-  GONE — it has nothing to evict. Call `streams.delete(id)`
-  explicitly if you need to release the id.
-- The auto-transition for replay backings fires on the **next**
-  `subscribe()` or `emit()` after the eviction window has passed.
-  `last_cursor()` does not itself fire the transition — it remains
-  readable across the eviction window so a recovering handler can
-  still learn "what was my last cursor?".
+- The live backing (`use_in_memory_live`) never auto-tombstones — it
+  has no TTL machinery. Call `streams.delete(id)` explicitly if you
+  need to release the id.
+- The close-clock tombstone for replay backings is **deterministic
+  and time-driven** (not buffer-state-driven). At `close_time +
+  ttl_seconds` the id is conceptually tombstoned, regardless of who
+  is observing.
+- `last_cursor()` is side-effect-free — it does NOT trigger the
+  tombstone check and remains readable across the close window so
+  a recovering handler can still learn "what was my last cursor?".
 
 ---
 
 ## The registry
 
 ```python
-streams.get(id)            -> EventStream      # raises NotFound, never returns a destroyed instance
+streams.get(id)            -> EventStream      # raises NotFound for any id that is not currently live
 streams.get_or_create(id)  -> EventStream      # idempotent, atomic
 streams.delete(id)         -> None             # idempotent
 ```
 
-- `get(id)` returns the registered stream, or raises:
-  - `EventStreamNotFoundError` — the id was never registered AND
-    `delete(id)` was never called for it.
-  - `EventStreamGoneError` — `delete(id)` has been called for this
-    id (whether or not it was ever registered). The registry
-    remembers deleted ids specifically so this distinction holds.
-  - **Note** — `get(id)` does NOT raise `Gone` for a stream that
-    auto-evicted itself (replay backing reached the CLOSED + last
-    event expired condition). It returns the instance; the caller
-    sees `Gone` only when they next call `emit` / `subscribe` /
-    `last_cursor` on it. If you need an HTTP 410 response for an
-    auto-evicted stream, attempt one operation (e.g.
-    `await stream.last_cursor()`) and map the exception.
+- `get(id)` returns the registered stream, or raises
+  `EventStreamNotFoundError`. There is only ONE error type — the
+  three causes documented above (never registered, deleted,
+  close-clock elapsed) all surface as the same exception. Treat any
+  `NotFound` as "this id is not a live stream; subscribe to a new id
+  or treat as missing".
 - `get_or_create(id)` is the **only** way to mint a stream. It is
   atomic across concurrent callers — two coroutines racing on the
   same id both get the same instance back. It clears any prior
-  `delete`-installed marker and creates a fresh stream. It does NOT
-  replace a stream that auto-evicted in place: that instance is
-  still in the slot and is returned as-is. To recover an id whose
-  stream auto-evicted, call `delete(id)` explicitly first (see
-  §Recovery & resumption for the file-backed pattern).
+  `delete`-installed tombstone and creates a fresh stream.
 - `delete(id)` destroys the stream, cleans up its backing resources
   (e.g. closes file handles for file-backed replay and removes the
-  on-disk log), and records the id so future `get(id)` calls see
-  `Gone`. Idempotent — calling it on an unknown id or an
-  already-deleted id is a no-op (but still ensures the id is
-  recorded as deleted).
+  on-disk log), and installs a registry tombstone. Idempotent —
+  calling it on an unknown or already-deleted id is a no-op.
 
-You typically do not need to call `delete(id)` — the auto-transition
-in the replay backings cleans up for you once the TTL has elapsed.
-Call `delete(id)` explicitly when you want immediate cleanup
-(end-of-request hook, test teardown).
+You typically do not need to call `delete(id)` for replay backings
+with `ttl_seconds` configured — the close-clock auto-tombstone
+cleans up for you. Call `delete(id)` explicitly when you want
+immediate cleanup (end-of-request hook, test teardown) or for
+backings without `ttl_seconds`.
 
 ---
 
@@ -299,15 +304,16 @@ Call `delete(id)` explicitly when you want immediate cleanup
 ```text
 EventStreamError                  (base — catch-all)
 ├── EventStreamClosedError        producer bug — wire-map to HTTP 5xx
-├── EventStreamGoneError          stream existed, now destroyed — HTTP 410
-└── EventStreamNotFoundError      stream never existed — HTTP 404
+└── EventStreamNotFoundError      id is not currently a live stream — HTTP 404
 ```
 
-The 404 vs 410 distinction matters for clients: 410 tells a client
-"this id was valid but is past its lifetime — don't retry"; 404
-tells a client "this id was never valid — check your routing". The
-registry preserves the distinction across the destroy boundary by
-remembering ids that have been deleted or auto-evicted.
+Per FR-E-001/-002 there is no longer a separate `Gone` / 410 vs.
+`NotFound` / 404 distinction. Every "this id is not currently a
+live stream" condition raises `EventStreamNotFoundError` and
+wire-maps to 404. The previous distinction's actionable value at
+the consumer's layer is zero (the right behavior is the same:
+subscribe to a new id), and it leaked the registry's internal
+tombstone bookkeeping.
 
 ---
 
@@ -397,7 +403,7 @@ turn rehydrates the stream automatically:
 
 ```python
 from azure.ai.agentserver.core.streaming import (
-    streams, EventStreamGoneError,
+    streams, EventStreamNotFoundError,
 )
 
 streams.use_file_backed_replay(
@@ -413,7 +419,7 @@ async def producer(ctx):
     try:
         # On crash recovery this is the highest n that made it to disk.
         last = await stream.last_cursor()
-    except EventStreamGoneError:
+    except EventStreamNotFoundError:
         # The previous run closed the stream AND every persisted event
         # has since expired. The on-disk log is stale; drop it and start
         # fresh. delete() removes the file and records the deletion;
@@ -434,7 +440,7 @@ rehydration loads the persisted events, `last_cursor()` returns the
 highest cursor, and the handler resumes emitting from the next
 cursor.
 
-The `EventStreamGoneError` branch handles the edge case where the
+The `EventStreamNotFoundError` branch handles the edge case where the
 previous run completed cleanly (wrote a close marker to disk) AND
 every persisted event has since expired AND your application policy
 is "start over with a fresh stream". Without the explicit
@@ -466,7 +472,7 @@ Typical helper for serving a stream over Server-Sent-Events:
 ```python
 import json
 
-from azure.ai.agentserver.core.streaming import EventStreamGoneError
+from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
 
 async def _serve_sse(stream):
     """Bridge an EventStream to an SSE wire format."""
@@ -476,7 +482,7 @@ async def _serve_sse(stream):
             cursor = event.get("n")
             yield f"id: {cursor}\ndata: {json.dumps(event)}\n\n".encode()
             last_seen = cursor
-    except EventStreamGoneError:
+    except EventStreamNotFoundError:
         # Server-side cleanup ran while we were attached; tell the
         # client we're done.
         yield b"event: gone\ndata: {}\n\n"
