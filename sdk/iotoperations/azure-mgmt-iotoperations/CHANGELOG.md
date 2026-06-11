@@ -1,5 +1,166 @@
 # Release History
 
+## 1.1.0 (2026-04-10)
+
+### Features Added
+
+  - Client `IoTOperationsMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `IoTOperationsMgmtClient` added operation group `dataflow_graph`
+  - Client `IoTOperationsMgmtClient` added operation group `registry_endpoint`
+  - Client `IoTOperationsMgmtClient` added operation group `akri_connector_template`
+  - Client `IoTOperationsMgmtClient` added operation group `akri_connector`
+  - Client `IoTOperationsMgmtClient` added operation group `akri_service`
+  - Model `BrokerAuthenticationProperties` added property `health_state`
+  - Model `BrokerAuthenticatorMethodX509` added property `additional_validation`
+  - Model `BrokerAuthorizationProperties` added property `health_state`
+  - Model `BrokerListenerProperties` added property `health_state`
+  - Model `BrokerProperties` added property `persistence`
+  - Model `BrokerProperties` added property `status`
+  - Model `BrokerProperties` added property `health_state`
+  - Model `DataflowDestinationOperationSettings` added property `headers`
+  - Model `DataflowEndpointProperties` added property `host_type`
+  - Model `DataflowEndpointProperties` added property `open_telemetry_settings`
+  - Model `DataflowEndpointProperties` added property `health_state`
+  - Model `DataflowProfileProperties` added property `status`
+  - Model `DataflowProfileProperties` added property `health_state`
+  - Model `DataflowProperties` added property `request_disk_persistence`
+  - Model `DataflowProperties` added property `status`
+  - Model `DataflowProperties` added property `health_state`
+  - Enum `EndpointType` added member `OPEN_TELEMETRY`
+  - Model `InstanceProperties` added property `default_secret_provider_class_ref`
+  - Model `InstanceProperties` added property `features`
+  - Model `InstanceProperties` added property `adr_namespace_ref`
+  - Model `InstanceProperties` added property `health_state`
+  - Model `VolumeClaimResourceRequirements` added property `claims`
+  - Added model `AkriConnectorAllocatedDevice`
+  - Added model `AkriConnectorProperties`
+  - Added model `AkriConnectorResource`
+  - Added model `AkriConnectorStatus`
+  - Added model `AkriConnectorTemplateAioMetadata`
+  - Added model `AkriConnectorTemplateAllocation`
+  - Added enum `AkriConnectorTemplateAllocationPolicy`
+  - Added model `AkriConnectorTemplateBucketizedAllocation`
+  - Added model `AkriConnectorTemplateDeviceInboundEndpointType`
+  - Added model `AkriConnectorTemplateDiagnostics`
+  - Added model `AkriConnectorTemplateManagedConfiguration`
+  - Added model `AkriConnectorTemplateManagedConfigurationSettings`
+  - Added enum `AkriConnectorTemplateManagedConfigurationType`
+  - Added model `AkriConnectorTemplatePersistentVolumeClaim`
+  - Added model `AkriConnectorTemplateProperties`
+  - Added model `AkriConnectorTemplateResource`
+  - Added model `AkriConnectorTemplateRuntimeConfiguration`
+  - Added enum `AkriConnectorTemplateRuntimeConfigurationType`
+  - Added model `AkriConnectorTemplateRuntimeImageConfiguration`
+  - Added model `AkriConnectorTemplateRuntimeImageConfigurationSettings`
+  - Added model `AkriConnectorTemplateRuntimeStatefulSetConfiguration`
+  - Added model `AkriConnectorTemplateTrustList`
+  - Added model `AkriConnectorsContainerRegistry`
+  - Added model `AkriConnectorsContainerRegistrySettings`
+  - Added model `AkriConnectorsDiagnosticsLogs`
+  - Added model `AkriConnectorsDigest`
+  - Added enum `AkriConnectorsImagePullPolicy`
+  - Added model `AkriConnectorsImagePullSecret`
+  - Added model `AkriConnectorsMqttAuthentication`
+  - Added enum `AkriConnectorsMqttAuthenticationMethod`
+  - Added model `AkriConnectorsMqttConnectionConfiguration`
+  - Added enum `AkriConnectorsMqttProtocolType`
+  - Added model `AkriConnectorsRegistryEndpointRef`
+  - Added model `AkriConnectorsRegistrySettings`
+  - Added enum `AkriConnectorsRegistrySettingsType`
+  - Added model `AkriConnectorsSecret`
+  - Added model `AkriConnectorsServiceAccountAuthentication`
+  - Added model `AkriConnectorsServiceAccountTokenSettings`
+  - Added model `AkriConnectorsTag`
+  - Added model `AkriConnectorsTagDigestSettings`
+  - Added enum `AkriConnectorsTagDigestType`
+  - Added model `AkriServiceProperties`
+  - Added model `AkriServiceResource`
+  - Added model `AkriServiceStatus`
+  - Added model `AzureDeviceRegistryNamespaceRef`
+  - Added enum `BrokerAuthenticatorValidationMethods`
+  - Added model `BrokerPersistence`
+  - Added model `BrokerPersistenceEncryption`
+  - Added enum `BrokerPersistencePolicyMode`
+  - Added model `BrokerRetainMessagesCustomPolicy`
+  - Added model `BrokerRetainMessagesDynamic`
+  - Added model `BrokerRetainMessagesPolicy`
+  - Added model `BrokerRetainMessagesSettings`
+  - Added model `BrokerStateStoreCustomPolicy`
+  - Added model `BrokerStateStoreDynamic`
+  - Added enum `BrokerStateStoreKeyType`
+  - Added model `BrokerStateStorePolicy`
+  - Added model `BrokerStateStorePolicyResources`
+  - Added model `BrokerStateStorePolicySettings`
+  - Added model `BrokerStatus`
+  - Added model `BrokerSubscriberQueueCustomPolicy`
+  - Added model `BrokerSubscriberQueueCustomPolicySettings`
+  - Added model `BrokerSubscriberQueueDynamic`
+  - Added model `BrokerSubscriberQueuePolicy`
+  - Added model `DataflowDestinationAddIfNotPresentHeaderAction`
+  - Added model `DataflowDestinationAddOrReplaceHeaderAction`
+  - Added model `DataflowDestinationHeaderAction`
+  - Added model `DataflowDestinationRemoveHeaderAction`
+  - Added model `DataflowEndpointAuthenticationAnonymous`
+  - Added enum `DataflowEndpointHostType`
+  - Added model `DataflowEndpointOpenTelemetry`
+  - Added model `DataflowGraphConnectionInput`
+  - Added model `DataflowGraphConnectionOutput`
+  - Added enum `DataflowGraphConnectionSchemaSerializationFormat`
+  - Added model `DataflowGraphConnectionSchemaSettings`
+  - Added model `DataflowGraphDestinationAddIfNotPresentHeaderAction`
+  - Added model `DataflowGraphDestinationAddOrReplaceHeaderAction`
+  - Added model `DataflowGraphDestinationHeaderAction`
+  - Added enum `DataflowGraphDestinationHeaderActionType`
+  - Added model `DataflowGraphDestinationNode`
+  - Added model `DataflowGraphDestinationNodeSettings`
+  - Added model `DataflowGraphDestinationRemoveHeaderAction`
+  - Added model `DataflowGraphGraphNode`
+  - Added model `DataflowGraphGraphNodeConfiguration`
+  - Added model `DataflowGraphNode`
+  - Added model `DataflowGraphNodeConnection`
+  - Added model `DataflowGraphNodeGraphSettings`
+  - Added enum `DataflowGraphNodeType`
+  - Added model `DataflowGraphProperties`
+  - Added model `DataflowGraphResource`
+  - Added model `DataflowGraphSourceNode`
+  - Added model `DataflowGraphSourceSettings`
+  - Added model `DataflowGraphStatus`
+  - Added enum `DataflowHeaderActionType`
+  - Added model `DataflowOpenTelemetryAnonymousAuthentication`
+  - Added model `DataflowOpenTelemetryAuthentication`
+  - Added enum `DataflowOpenTelemetryAuthenticationMethod`
+  - Added model `DataflowOpenTelemetryServiceAccountAuthentication`
+  - Added model `DataflowOpenTelemetryX509CertificateAuthentication`
+  - Added model `DataflowProfileStatus`
+  - Added model `DataflowStatus`
+  - Added model `InstanceFeature`
+  - Added enum `InstanceFeatureMode`
+  - Added model `RegistryEndpointAnonymousAuthentication`
+  - Added model `RegistryEndpointAnonymousSettings`
+  - Added model `RegistryEndpointArtifactPullSecretAuthentication`
+  - Added model `RegistryEndpointArtifactPullSecretSettings`
+  - Added model `RegistryEndpointAuthentication`
+  - Added enum `RegistryEndpointAuthenticationMethod`
+  - Added model `RegistryEndpointProperties`
+  - Added model `RegistryEndpointResource`
+  - Added model `RegistryEndpointSystemAssignedIdentityAuthentication`
+  - Added model `RegistryEndpointSystemAssignedManagedIdentitySettings`
+  - Added model `RegistryEndpointTrustedSigningKey`
+  - Added model `RegistryEndpointTrustedSigningKeyConfigMap`
+  - Added model `RegistryEndpointTrustedSigningKeySecret`
+  - Added enum `RegistryEndpointTrustedSigningKeyType`
+  - Added model `RegistryEndpointUserAssignedIdentityAuthentication`
+  - Added model `RegistryEndpointUserAssignedManagedIdentitySettings`
+  - Added enum `ResourceHealthState`
+  - Added model `ResourceHealthStatus`
+  - Added model `SecretProviderClassRef`
+  - Added model `VolumeClaimResourceRequirementsClaims`
+  - Added operation group `AkriConnectorOperations`
+  - Added operation group `AkriConnectorTemplateOperations`
+  - Added operation group `AkriServiceOperations`
+  - Added operation group `DataflowGraphOperations`
+  - Added operation group `RegistryEndpointOperations`
+
 ## 1.0.0 (2024-12-16)
 
 ### Other Changes

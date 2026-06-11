@@ -404,7 +404,11 @@ class ListQueuesSegmentResponse(_serialization.Model):
     }
 
     _attribute_map = {
-        "service_endpoint": {"key": "ServiceEndpoint", "type": "str", "xml": {"attr": True}},
+        "service_endpoint": {
+            "key": "ServiceEndpoint",
+            "type": "str",
+            "xml": {"attr": True},
+        },
         "prefix": {"key": "Prefix", "type": "str"},
         "marker": {"key": "Marker", "type": "str"},
         "max_results": {"key": "MaxResults", "type": "int"},

@@ -16,7 +16,7 @@ from azure.ai.contentunderstanding.models._patch import (
     AnalyzeLROPoller,
     _parse_operation_id,
 )
-from azure.ai.contentunderstanding.models import AnalysisInput
+from azure.ai.contentunderstanding.models import AnalysisInput, UsageDetails
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 
 
@@ -164,3 +164,115 @@ class TestPollerIntegration:
         assert hasattr(result, "operation_id")
         operation_id = result.operation_id
         assert operation_id == "test-op-id-123"
+
+
+class TestAnalyzeLROPollerUsage:
+    """Test the usage property on AnalyzeLROPoller (GitHub issue #46249)."""
+
+    def _make_poller_with_usage(self, usage_json):
+        """Helper to create an AnalyzeLROPoller with a mocked final response containing usage data."""
+        mock_polling_method = Mock()
+        mock_initial_response = Mock()
+        mock_http_response = Mock()
+        mock_http_response.headers = {
+            "Operation-Location": "https://endpoint/contentunderstanding/analyzerResults/test-op-id?api-version=2025-11-01"
+        }
+        mock_initial_response.http_response = mock_http_response
+        mock_polling_method.return_value = mock_polling_method
+        mock_polling_method._initial_response = mock_initial_response
+
+        # Mock the final pipeline response (used by .usage property)
+        mock_final_response = Mock()
+        mock_final_http_response = Mock()
+        response_json = {
+            "id": "test-op-id",
+            "status": "Succeeded",
+            "result": {"contents": []},
+        }
+        if usage_json is not None:
+            response_json["usage"] = usage_json
+        mock_final_http_response.json.return_value = response_json
+        mock_final_response.http_response = mock_final_http_response
+        mock_polling_method._pipeline_response = mock_final_response
+
+        return AnalyzeLROPoller(
+            client=Mock(),
+            initial_response=Mock(),
+            deserialization_callback=Mock(),
+            polling_method=mock_polling_method,
+        )
+
+    def test_usage_with_full_data(self):
+        """Test usage property returns UsageDetails with all fields populated."""
+        usage_json = {
+            "documentPagesMinimal": 0,
+            "documentPagesBasic": 0,
+            "documentPagesStandard": 2,
+            "audioHours": 0.0,
+            "videoHours": 0.0,
+            "contextualizationTokens": 1500,
+            "tokens": {
+                "gpt-4.1-input": 500,
+                "gpt-4.1-output": 200,
+                "text-embedding-3-large-input": 300,
+            },
+        }
+
+        poller = self._make_poller_with_usage(usage_json)
+        usage = poller.usage
+
+        assert usage is not None
+        assert isinstance(usage, UsageDetails)
+        assert usage.document_pages_standard == 2
+        assert usage.document_pages_minimal == 0
+        assert usage.document_pages_basic == 0
+        assert usage.contextualization_tokens == 1500
+        assert usage.tokens == {
+            "gpt-4.1-input": 500,
+            "gpt-4.1-output": 200,
+            "text-embedding-3-large-input": 300,
+        }
+
+    def test_usage_with_partial_data(self):
+        """Test usage property with only some fields populated."""
+        usage_json = {
+            "documentPagesStandard": 1,
+            "contextualizationTokens": 100,
+        }
+
+        poller = self._make_poller_with_usage(usage_json)
+        usage = poller.usage
+
+        assert usage is not None
+        assert usage.document_pages_standard == 1
+        assert usage.contextualization_tokens == 100
+        assert usage.document_pages_minimal is None
+        assert usage.tokens is None
+
+    def test_usage_returns_none_when_not_present(self):
+        """Test usage property returns None when usage is not in the response."""
+        poller = self._make_poller_with_usage(None)
+        usage = poller.usage
+
+        assert usage is None
+
+    def test_usage_returns_none_before_completion(self):
+        """Test usage property returns None when the polling has not yet completed."""
+        mock_polling_method = Mock()
+
+        poller = AnalyzeLROPoller(
+            client=Mock(),
+            initial_response=Mock(),
+            deserialization_callback=Mock(),
+            polling_method=mock_polling_method,
+        )
+
+        # Simulate an in-progress operation: LROPoller.done() returns True when
+        # _thread is None, so set _thread to a mock with is_alive() returning True.
+        mock_thread = Mock()
+        mock_thread.is_alive.return_value = True
+        poller._thread = mock_thread
+
+        assert not poller.done()
+        usage = poller.usage
+        assert usage is None

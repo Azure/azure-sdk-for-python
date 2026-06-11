@@ -27,6 +27,8 @@ from .operations import (
     BackupsUnderAccountOperations,
     BackupsUnderBackupVaultOperations,
     BackupsUnderVolumeOperations,
+    BucketsOperations,
+    CachesOperations,
     NetAppResourceOperations,
     NetAppResourceQuotaLimitsAccountOperations,
     NetAppResourceQuotaLimitsOperations,
@@ -75,6 +77,10 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype ransomware_reports: azure.mgmt.netapp.operations.RansomwareReportsOperations
     :ivar backup_vaults: BackupVaultsOperations operations
     :vartype backup_vaults: azure.mgmt.netapp.operations.BackupVaultsOperations
+    :ivar buckets: BucketsOperations operations
+    :vartype buckets: azure.mgmt.netapp.operations.BucketsOperations
+    :ivar caches: CachesOperations operations
+    :vartype caches: azure.mgmt.netapp.operations.CachesOperations
     :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
     :vartype net_app_resource_quota_limits:
      azure.mgmt.netapp.operations.NetAppResourceQuotaLimitsOperations
@@ -107,8 +113,8 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-12-01"
-     and None. Default value is "2025-12-01". Note that overriding this default value may result in
+    :keyword api_version: The API version to use for this operation. Known values are "2026-01-01".
+     Default value is "2026-01-01". Note that overriding this default value may result in
      unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -181,6 +187,8 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.buckets = BucketsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.caches = CachesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, TYPE_CHECKING
-from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -16,15 +16,20 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
-from .operations import KeyVaultClientOperationsMixin, RoleAssignmentsOperations, RoleDefinitionsOperations
+from .operations import RoleAssignmentsOperations, RoleDefinitionsOperations, _KeyVaultClientOperationsMixin
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class KeyVaultClient(KeyVaultClientOperationsMixin):
-    """The key vault client performs cryptographic key operations and vault operations against the Key
-    Vault service.
+class KeyVaultClient(_KeyVaultClientOperationsMixin):
+    """The Azure Key Vault Administration service client performs administrative operations including
+    RBAC, BackupRestore, and settings management against the Azure Key Vault service.
 
     :ivar role_definitions: RoleDefinitionsOperations operations
     :vartype role_definitions:
@@ -32,12 +37,15 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     :ivar role_assignments: RoleAssignmentsOperations operations
     :vartype role_assignments:
      azure.keyvault.administration._generated.aio.operations.RoleAssignmentsOperations
-    :param vault_base_url: Required.
+    :param vault_base_url: The base URL of the Key Vault instance (e.g.
+     `https://myvault.vault.azure.net/ <https://myvault.vault.azure.net/>`_). Required.
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "7.6". Note
-     that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-01-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

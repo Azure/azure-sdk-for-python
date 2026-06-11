@@ -95,6 +95,22 @@ class TestUserAgent(unittest.TestCase):
         _run_case(False)  # prefix scenario
         _run_case(True)   # suffix scenario
 
+    def test_user_agent_overwrite_does_not_leak_sync(self):
+        """Regression test: user_agent_overwrite must not leak into the HTTP transport kwargs.
+        """
+        # user_agent + user_agent_overwrite=True at client level
+        self._check({'user_agent': 'MyApp/1.0', 'user_agent_overwrite': True})
+        # user_agent + user_agent_overwrite=False at client level
+        self._check({'user_agent': 'MyApp/1.0', 'user_agent_overwrite': False})
+        # user_agent_suffix + user_agent_overwrite=True at client level
+        self._check({'user_agent_suffix': 'MyApp/1.0', 'user_agent_overwrite': True})
+        # user_agent_suffix + user_agent_overwrite=False at client level
+        self._check({'user_agent_suffix': 'MyApp/1.0', 'user_agent_overwrite': False})
+        # user_agent_overwrite=True alone (no custom user_agent string)
+        self._check({'user_agent_overwrite': True})
+        # user_agent_overwrite=False alone
+        self._check({'user_agent_overwrite': False})
+
 
 if __name__ == '__main__':
     unittest.main()

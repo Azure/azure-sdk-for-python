@@ -3,7 +3,7 @@ import os
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, run
 
 from .Check import Check
 from ci_tools.functions import install_into_venv, find_whl
@@ -13,7 +13,7 @@ from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
-MAX_PYTHON_VERSION = (3, 11)
+PYTHON_VERSION_LIMIT = (3, 11)  # apistub doesn't support Python 3.11+
 
 
 def get_package_wheel_path(pkg_root: str) -> str:
@@ -63,15 +63,22 @@ class apistub(Check):
             default=None,
             help="Destination directory for generated API stub token files.",
         )
+        p.add_argument(
+            "--md",
+            dest="generate_md",
+            default=False,
+            action="store_true",
+            help="Generate api.md from the JSON token file using Export-APIViewMarkdown.ps1. Output directory for api.md is the same as the generated token file.",
+        )
         p.set_defaults(func=self.run)
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the apistub check command."""
         logger.info("Running apistub check...")
 
-        if sys.version_info > MAX_PYTHON_VERSION:
+        if sys.version_info >= PYTHON_VERSION_LIMIT:
             logger.error(
-                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Maximum supported version is {MAX_PYTHON_VERSION[0]}.{MAX_PYTHON_VERSION[1]}."
+                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Version must be less than {PYTHON_VERSION_LIMIT[0]}.{PYTHON_VERSION_LIMIT[1]}."
             )
             return 1
 
@@ -85,7 +92,13 @@ class apistub(Check):
                 os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for apistub check")
 
             # install dependencies
@@ -125,7 +138,7 @@ class apistub(Check):
 
             dest_dir = getattr(args, "dest_dir", None)
             if dest_dir:
-                out_token_path = os.path.join(dest_dir, package_name)
+                out_token_path = os.path.join(os.path.abspath(dest_dir), package_name)
                 os.makedirs(out_token_path, exist_ok=True)
             else:
                 out_token_path = os.path.abspath(staging_directory)
@@ -141,13 +154,39 @@ class apistub(Check):
                 cmds.extend(["--out-path", out_token_path])
             if cross_language_mapping_path:
                 cmds.extend(["--mapping-path", cross_language_mapping_path])
+            if getattr(args, "generate_md", False):
+                cmds.append("--skip-pylint")
 
             logger.info("Running apistub {}.".format(cmds))
 
             try:
                 self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
+                if getattr(args, "generate_md", False):
+                    token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
+                    md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
+                    logger.info(f"Generating api.md for {package_name}")
+                    try:
+                        result = run(
+                            ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", out_token_path],
+                            check=True,
+                            capture_output=True,
+                            text=True,
+                        )
+                        # pwsh script logs the api.md location
+                        if result.stdout:
+                            logger.info(result.stdout)
+                    except FileNotFoundError:
+                        logger.error("Failed to generate api.md: pwsh (PowerShell) is not installed or not on PATH.")
+                        results.append(1)
+                    except CalledProcessError as e:
+                        logger.error(f"Failed to generate api.md (exit code {e.returncode}):")
+                        if e.stderr:
+                            logger.error(e.stderr)
+                        if e.stdout:
+                            logger.error(e.stdout)
+                        results.append(1)
             except CalledProcessError as e:
-                logger.error(f"{package_name} exited with error {e.returncode}")
+                logger.error(f"{package_name} exited with error {e.returncode}: {e}")
                 results.append(e.returncode)
 
         return max(results) if results else 0

@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.signal_definitions.create_or_update(
+    response = client.signal_definitions.begin_create_or_update(
         resource_group_name="rgopenapi",
         health_model_name="myHealthModel",
         signal_definition_name="sig1",
@@ -42,21 +42,21 @@ def main():
                 "dimensionFilter": "node1",
                 "displayName": "cpu usage",
                 "evaluationRules": {
-                    "degradedRule": {"operator": "LowerThan", "threshold": "65"},
-                    "unhealthyRule": {"operator": "LowerThan", "threshold": "60"},
+                    "degradedRule": {"operator": "LowerThan", "threshold": 65},
+                    "unhealthyRule": {"operator": "LowerThan", "threshold": 60},
                 },
-                "labels": {"key4788": "ixfvzsfnpvkkbrce"},
                 "metricName": "cpuusage",
                 "metricNamespace": "microsoft.compute/virtualMachines",
                 "refreshInterval": "PT1M",
                 "signalKind": "AzureResourceMetric",
+                "tags": {"key4788": "ixfvzsfnpvkkbrce"},
                 "timeGrain": "PT1M",
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/SignalDefinitions_CreateOrUpdate.json
+# x-ms-original-file: 2026-01-01-preview/SignalDefinitions_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

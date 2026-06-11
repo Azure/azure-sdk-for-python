@@ -28,9 +28,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
+    2) FOUNDRY_MODEL_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
        used by the Agent for understanding and responding to prompts. This is NOT the image generation model.
     3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
        used by the ImageGenTool.
@@ -53,7 +53,7 @@ from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -62,18 +62,16 @@ with (
 ):
     image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
 
-    # [START tool_declaration]
     tool = ImageGenTool(
         model=image_generation_model,  # Model such as "gpt-image-1"
         quality="low",
         size="1024x1024",
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="Generate images based on user prompts",
             tools=[tool],
         ),
@@ -94,7 +92,6 @@ with (
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
 
-    # [START download_image]
     image_data = [output.result for output in response.output if output.type == "image_generation_call"]
     if image_data and image_data[0]:
         print("Downloading generated image...")
@@ -104,5 +101,4 @@ with (
         with open(file_path, "wb") as f:
             f.write(base64.b64decode(image_data[0]))
 
-        # [END download_image]
         print(f"Image saved to: {file_path}")

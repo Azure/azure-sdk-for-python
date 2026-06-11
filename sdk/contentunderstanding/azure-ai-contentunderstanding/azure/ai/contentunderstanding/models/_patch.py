@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,function-redefined
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,9 +11,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import re
 from enum import Enum
-from typing import Any, Dict, List, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling import LROPoller, PollingMethod
+from . import _models
+from .._utils.model_base import _deserialize
 from ._models import (
     StringField,
     IntegerField,
@@ -24,11 +26,54 @@ from ._models import (
     ArrayField,
     ObjectField,
     JsonField,
-    ContentField,
+    ContentField,  # pyright: ignore[reportAssignmentType]
 )
 
-# Note: The .value property is added to ContentField classes at runtime in patch_sdk()
-# Type annotations are set on the classes' __annotations__ for type checker support
+# Type-only redeclarations so type checkers (pyright / mypy) see the .value
+# property that patch_sdk() adds at runtime.  Each class inherits from the
+# generated version, preserving all original attributes.
+if TYPE_CHECKING:
+
+    class ContentField(ContentField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Any: ...
+
+    class StringField(StringField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class IntegerField(IntegerField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[int]: ...
+
+    class NumberField(NumberField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[float]: ...
+
+    class BooleanField(BooleanField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[bool]: ...
+
+    class DateField(DateField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class TimeField(TimeField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class ArrayField(ArrayField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[List[Any]]: ...
+
+    class ObjectField(ObjectField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[Dict[str, Any]]: ...
+
+    class JsonField(JsonField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[Any]: ...
+
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
@@ -36,6 +81,7 @@ __all__ = [
     "RecordMergePatchUpdate",
     "AnalyzeLROPoller",
     "ProcessingLocation",
+    "ContentField",
     "StringField",
     "IntegerField",
     "NumberField",
@@ -111,10 +157,28 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
         except (KeyError, ValueError) as e:
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
+    @property
+    def usage(self) -> Optional["_models.UsageDetails"]:
+        """Returns the usage details from the completed analyze operation.
+
+        This property is available after the operation has completed successfully.
+        It provides information about the resources consumed during analysis,
+        including document pages, contextualization tokens, and LLM token breakdown.
+
+        :return: The usage details, or None if the operation is not yet complete
+            or usage information is not available.
+        :rtype: ~azure.ai.contentunderstanding.models.UsageDetails or None
+        """
+        if not self.done():
+            return None
+        response = self.polling_method()._pipeline_response.http_response  # type: ignore # pylint: disable=protected-access
+        usage_data = response.json().get("usage")
+        if usage_data is None:
+            return None
+        return _deserialize(_models.UsageDetails, usage_data)
+
     @classmethod
-    def from_poller(
-        cls, poller: LROPoller[PollingReturnType_co]
-    ) -> "AnalyzeLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
+    def from_poller(cls, poller: LROPoller[PollingReturnType_co]) -> "AnalyzeLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Wrap an existing LROPoller without re-initializing the polling method.
 
         This avoids duplicate HTTP requests that would occur if we created a new

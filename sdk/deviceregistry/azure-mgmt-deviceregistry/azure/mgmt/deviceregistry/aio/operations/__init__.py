@@ -18,6 +18,8 @@ from ._operations import AssetsOperations  # type: ignore
 from ._operations import AssetEndpointProfilesOperations  # type: ignore
 from ._operations import BillingContainersOperations  # type: ignore
 from ._operations import NamespacesOperations  # type: ignore
+from ._operations import CredentialsOperations  # type: ignore
+from ._operations import PoliciesOperations  # type: ignore
 from ._operations import NamespaceAssetsOperations  # type: ignore
 from ._operations import NamespaceDevicesOperations  # type: ignore
 from ._operations import NamespaceDiscoveredAssetsOperations  # type: ignore
@@ -37,6 +39,8 @@ __all__ = [
     "AssetEndpointProfilesOperations",
     "BillingContainersOperations",
     "NamespacesOperations",
+    "CredentialsOperations",
+    "PoliciesOperations",
     "NamespaceAssetsOperations",
     "NamespaceDevicesOperations",
     "NamespaceDiscoveredAssetsOperations",

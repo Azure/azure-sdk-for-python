@@ -83,6 +83,10 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                             }
                                         ],
                                         "endpointType": "str",
+                                        "externalReplicationSetupInfo": "str",
+                                        "externalReplicationSetupStatus": "str",
+                                        "mirrorState": "str",
+                                        "relationshipStatus": "str",
                                         "remotePath": {
                                             "externalHostName": "str",
                                             "serverName": "str",

@@ -44,7 +44,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START list_analyzers]
         print("Listing all available analyzers...")
 
@@ -54,7 +56,11 @@ async def main() -> None:
         print(f"Found {len(analyzers)} analyzer(s)")
 
         # Display summary
-        prebuilt_count = sum(1 for a in analyzers if a.analyzer_id and a.analyzer_id.startswith("prebuilt-"))
+        prebuilt_count = sum(
+            1
+            for a in analyzers
+            if a.analyzer_id and a.analyzer_id.startswith("prebuilt-")
+        )
         custom_count = len(analyzers) - prebuilt_count
         print(f"  Prebuilt analyzers: {prebuilt_count}")
         print(f"  Custom analyzers: {custom_count}")
