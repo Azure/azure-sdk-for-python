@@ -564,19 +564,13 @@ class _BaggageLogRecordProcessor:
 
             if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:
                 attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
-            if self.agent_name and "agent_name" not in attrs:
-                attrs["agent_name"] = self.agent_name
             if self.agent_version and _ATTR_GEN_AI_AGENT_VERSION not in attrs:
                 attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
-            if self.agent_version and "agent_version" not in attrs:
-                attrs["agent_version"] = self.agent_version
 
             bag_session = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
             resolved_session = bag_session or self.session_id
             if resolved_session and _ATTR_SESSION_ID not in attrs:
                 attrs[_ATTR_SESSION_ID] = resolved_session
-            if resolved_session and "agent_session_id" not in attrs:
-                attrs["agent_session_id"] = resolved_session
         except Exception:  # pylint: disable=broad-except
             pass
 

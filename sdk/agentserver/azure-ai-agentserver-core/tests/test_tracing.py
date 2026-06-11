@@ -468,11 +468,8 @@ class TestBaggageLogRecordProcessor:
 
         attrs = log_data.log_record.attributes
         assert attrs["gen_ai.agent.name"] == "agent-a"
-        assert attrs["agent_name"] == "agent-a"
         assert attrs["gen_ai.agent.version"] == "1.2.3"
-        assert attrs["agent_version"] == "1.2.3"
         assert attrs["microsoft.session.id"] == "session-fallback-1"
-        assert attrs["agent_session_id"] == "session-fallback-1"
 
     def test_prefers_baggage_session_id_over_fallback(self) -> None:
         proc = _BaggageLogRecordProcessor(
@@ -493,7 +490,6 @@ class TestBaggageLogRecordProcessor:
 
         attrs = log_data.log_record.attributes
         assert attrs["microsoft.session.id"] == "session-from-baggage"
-        assert attrs["agent_session_id"] == "session-from-baggage"
 
     def test_does_not_overwrite_existing_log_attributes(self) -> None:
         proc = _BaggageLogRecordProcessor(
@@ -503,19 +499,13 @@ class TestBaggageLogRecordProcessor:
         )
         attrs = {
             "gen_ai.agent.name": "existing-name",
-            "agent_name": "existing-name",
             "gen_ai.agent.version": "0.0.1",
-            "agent_version": "0.0.1",
             "microsoft.session.id": "existing-session",
-            "agent_session_id": "existing-session",
         }
         log_data = _FakeLogData(attrs)
 
         proc.on_emit(log_data)
 
         assert attrs["gen_ai.agent.name"] == "existing-name"
-        assert attrs["agent_name"] == "existing-name"
         assert attrs["gen_ai.agent.version"] == "0.0.1"
-        assert attrs["agent_version"] == "0.0.1"
         assert attrs["microsoft.session.id"] == "existing-session"
-        assert attrs["agent_session_id"] == "existing-session"
