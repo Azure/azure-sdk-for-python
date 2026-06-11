@@ -2438,11 +2438,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         session_id = self._config.session_id or "local"
 
         try:
+            # Spec 019 FR-B-001 / C-FLT-1 — scope the recovery scan to
+            # framework-owned tasks via source_type. Tasks created by
+            # other systems sharing the same (agent, session,
+            # lease_owner) triple MUST NOT be enumerated by the
+            # framework's reclaim path.
             stale_tasks = await self._provider.list(
                 agent_name=agent_name,
                 session_id=session_id,
                 status="in_progress",
                 lease_owner=self._lease_owner,
+                source_type=_SOURCE_TYPE,
             )
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning("Failed to query stale tasks for recovery", exc_info=True)
