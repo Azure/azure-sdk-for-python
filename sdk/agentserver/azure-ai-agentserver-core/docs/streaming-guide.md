@@ -52,8 +52,7 @@ from azure.ai.agentserver.core.streaming import (
     EventStream,                # @runtime_checkable Protocol
     EventStreamError,           # base exception (catch-all)
     EventStreamClosedError,     # emit on a closed stream
-    EventStreamNotFoundError,       # any op on a destroyed stream
-    EventStreamNotFoundError,   # streams.get(id) for an unknown id
+    EventStreamNotFoundError,   # any op on an id that isn't currently a live stream
 )
 ```
 
@@ -244,7 +243,7 @@ After CLOSED, the registry MAY tombstone the id. Once tombstoned,
 `EventStreamNotFoundError`. `close()` remains idempotent (no-op).
 
 Three independent paths into tombstoned (FR-E-001/-002 collapsed
-the prior `EventStreamNotFoundError` and `EventStreamNotFoundError`
+the prior `EventStreamGoneError` and `EventStreamNotFoundError`
 into one):
 
 - the id was **never registered** (no `get_or_create(id)` for it ever ran);

@@ -139,15 +139,18 @@ pattern when the HTTP layer owns both sides.
 from azure.ai.agentserver.core.streaming import (
     streams,
     EventStreamNotFoundError,
-    EventStreamNotFoundError,
 )
 
 async def sse_endpoint(request):
     invocation_id = request.path_params["id"]
+    # streams.get(id) raises NotFound for any id that isn't currently
+    # a live stream (never registered, deleted, or close-clock elapsed).
+    # streams.get_or_create cannot raise NotFound — it clears any
+    # tombstone and synthesises a fresh stream.
     try:
-        stream = await streams.get_or_create(invocation_id)
+        stream = await streams.get(invocation_id)
     except EventStreamNotFoundError:
-        return Response(410, "stream gone")
+        return Response(404, "stream not found")
 
     last_event_id = request.headers.get("last-event-id")
     after = int(last_event_id) if last_event_id else None
@@ -157,9 +160,14 @@ async def sse_endpoint(request):
             async for ev in stream.subscribe(after=after):
                 yield f"id: {ev['n']}\ndata: {json.dumps(ev)}\n\n"
         except EventStreamNotFoundError:
-            return  # peer cleanly went away
+            return  # stream was tombstoned mid-iteration; cleanly close
     return StreamingResponse(body(), media_type="text/event-stream")
 ```
+
+Spec 019 FR-E-001/-002 collapsed the prior `EventStreamGoneError`
+(`410 Gone`) and `EventStreamNotFoundError` (`404 Not Found`) into
+a single error type wire-mapped to `404`. Every "this id is not
+currently a live stream" condition raises `EventStreamNotFoundError`.
 
 The replay backings honor `after=<cursor>` for catch-up. The cursor
 itself comes from `cursor_fn(event)` you pass to the configurator —

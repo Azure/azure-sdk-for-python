@@ -118,10 +118,12 @@
   for the full developer guide, including tombstone retention,
   per-turn id convention, and exception/wire mapping.
 
-  Public surface = 6 exports: `streams`, `EventStream`,
-  `EventStreamError`, `EventStreamClosedError`, `EventStreamGoneError`,
-  `EventStreamNotFoundError`. The three SDK-bundled backings are
-  selected at app startup via the registry's `use_in_memory_live()` /
+  Public surface = 5 exports: `streams`, `EventStream`,
+  `EventStreamError`, `EventStreamClosedError`,
+  `EventStreamNotFoundError`. (Spec 019 FR-E-001 removed
+  `EventStreamGoneError`; see Breaking Changes above.) The three
+  SDK-bundled backings are selected at app startup via the
+  registry's `use_in_memory_live()` /
   `use_in_memory_replay(...)` / `use_file_backed_replay(...)` config-
   urators; external callers obtain stream instances exclusively via
   `await streams.get_or_create(id)` and program against the Protocol.

@@ -217,16 +217,17 @@ class _StreamsRegistry:
 
         Idempotent — calling on an unregistered or already-destroyed
         id is a no-op (but still ensures the tombstone is in place so
-        subsequent ``get(id)`` raises Gone, not NotFound).
+        subsequent ``get(id)`` raises ``EventStreamNotFoundError``).
 
         Cleans up backing resources (e.g. file handles for the
-        file-backed replay backing) before installing the tombstone.
+        file-backed replay backing) before installing the tombstone
+        per FR-E-009 / C-STR-FBR-4.
         """
         slot = self._slots.get(id, None)
         if slot is None:
             # Never registered — install tombstone for symmetry
-            # (the next get(id) raises Gone, not NotFound). This
-            # matches rule 36a's "delete is symmetric with rm -f
+            # (the next get(id) raises ``EventStreamNotFoundError``).
+            # This matches rule 36a's "delete is symmetric with rm -f
             # but still leaves a marker" semantics.
             self._slots[id] = _TOMBSTONE
             return

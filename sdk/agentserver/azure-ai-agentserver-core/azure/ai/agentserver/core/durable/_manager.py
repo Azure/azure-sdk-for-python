@@ -1066,7 +1066,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         self._active_tasks[task_id] = active
 
         # Spec 015 Phase 5 (FR-003): metadata is flushed explicitly at
-        # lifecycle boundaries via ``flush_all()``. There is no auto-
+        # lifecycle boundaries via ``_flush_all()``. There is no auto-
         # flush loop.
 
         return TaskRun(
@@ -1361,7 +1361,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # ``from_payload`` decodes ``payload["metadata"]`` into the default
         # namespace and every ``payload["metadata:<name>"]`` into its named
         # sibling, all sharing the same flush_callback so the framework can
-        # flush_all() at lifecycle boundaries.
+        # _flush_all() at lifecycle boundaries.
         metadata = TaskMetadata.from_payload(
             task_info.payload,
             flush_callback=self._make_metadata_flush(task_id),
