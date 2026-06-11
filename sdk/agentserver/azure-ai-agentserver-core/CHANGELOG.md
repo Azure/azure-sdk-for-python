@@ -4,6 +4,44 @@
 
 ### Features Added
 
+- **Public read API: `Task.get(task_id) -> TaskSnapshot | None`** —
+  read-only introspection for any non-deleted task in any status
+  (pending, in_progress, suspended, completed). Returns ``None``
+  for missing tasks (does NOT raise ``TaskNotFound``). Never
+  reclaims, never extends the lease, never PATCHes. Mirrors the
+  instance-method shape of ``Task.get_active_run`` as its
+  read-only sibling.
+
+  New public type ``TaskSnapshot`` exposes only developer-facing
+  fields (``task_id``, ``status``, ``created_at``, ``updated_at``,
+  ``started_at``, ``completed_at``, ``output``, ``error``,
+  ``suspension_reason``, ``metadata``, ``lease_expiry_count``).
+  Framework-internal storage details (lease, etag, raw payload,
+  raw attachments, source, tags) are deliberately excluded.
+
+  ```python
+  snap = await my_task.get("task-123")
+  if snap is None:
+      ...  # never existed or was deleted
+  else:
+      print(snap.status, snap.output, snap.error)
+  ```
+
+- **Per-output payloads up to 2 MB** for both `return` values from
+  durable-task handlers and `ctx.suspend(output=...)` values. Outputs
+  are stored entirely in a framework-managed attachment slot, so they
+  never compete with the shared 1 MB task-payload budget. New
+  developer-facing exception:
+
+  | Limit | Value | Exception |
+  |---|---|---|
+  | Per-output maximum size (serialized JSON) | **2 MB** | `OutputTooLarge` |
+
+  Like `InputTooLarge`, the check runs client-side **before** any
+  network call. If you have a use case that genuinely needs > 2 MB
+  per output, externalize it (write to blob storage, return a
+  reference).
+
 - **Per-input payloads up to 2 MB** for both the initial function
   input and each queued steering input. Pass arbitrarily large input
   values to `Task.start(...)` (up to the 2 MB ceiling) and the
@@ -21,6 +59,42 @@
 
   Public API surface unchanged — handlers see `ctx.input` as the
   deserialized value regardless of input size.
+
+### Breaking Changes
+
+- **`EventStreamGoneError` removed** from
+  `azure.ai.agentserver.core.streaming`. Spec 019 FR-E-001/-002
+  collapsed the previously-distinct `Gone` (registered then
+  destroyed) and `NotFound` (never registered) error types into a
+  single `EventStreamNotFoundError`. Every "this id is not
+  currently a live stream" condition — never-registered,
+  explicitly-deleted, or close-clock-TTL elapsed — now raises
+  `EventStreamNotFoundError` and wire-maps to HTTP 404. The
+  previous distinction's actionable value at the consumer's layer
+  was zero (right behavior is the same either way) and it leaked
+  the registry's internal tombstone bookkeeping.
+
+- **Replay-backing tombstone is now time-deterministic, not
+  buffer-state-driven.** Spec 019 FR-E-005 replaces the previous
+  "Closed + buffer empty + had emit" auto-transition with a
+  close-clock model: when a replay backing (`ReplayEventStream`
+  or `FileBackedReplayEventStream` configured with `ttl_seconds`)
+  is closed, the registry tombstones the id at the wall-clock
+  moment `close_time + ttl_seconds`, regardless of who is
+  observing. Per-event TTL eviction continues to run during ACTIVE
+  to bound long-running stream memory.
+
+- `AttachmentTooLarge` and `AttachmentLimitExceeded` are no longer
+  exported from `azure.ai.agentserver.core.durable`. Attachments are
+  a framework storage-layer concept that developers never name;
+  surfacing the attachment-vocabulary errors on the developer API
+  leaked the internal split between `payload` and `attachments`. The
+  framework now catches the internal `_AttachmentTooLarge` raised by
+  a provider and re-raises a developer-facing exception based on
+  which channel the violation occurred on:
+
+  - `payload["input"]` (or steering inputs) → `InputTooLarge`
+  - handler return / `ctx.suspend(output=...)` → `OutputTooLarge`
 
 - **Unified streaming primitive** — new `azure.ai.agentserver.core.streaming`
   subpackage exposing a `streams` registry singleton + `EventStream`
@@ -44,10 +118,12 @@
   for the full developer guide, including tombstone retention,
   per-turn id convention, and exception/wire mapping.
 
-  Public surface = 6 exports: `streams`, `EventStream`,
-  `EventStreamError`, `EventStreamClosedError`, `EventStreamGoneError`,
-  `EventStreamNotFoundError`. The three SDK-bundled backings are
-  selected at app startup via the registry's `use_in_memory_live()` /
+  Public surface = 5 exports: `streams`, `EventStream`,
+  `EventStreamError`, `EventStreamClosedError`,
+  `EventStreamNotFoundError`. (Spec 019 FR-E-001 removed
+  `EventStreamGoneError`; see Breaking Changes above.) The three
+  SDK-bundled backings are selected at app startup via the
+  registry's `use_in_memory_live()` /
   `use_in_memory_replay(...)` / `use_file_backed_replay(...)` config-
   urators; external callers obtain stream instances exclusively via
   `await streams.get_or_create(id)` and program against the Protocol.
@@ -66,20 +142,6 @@
   related kwarg. See the
   [developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
   for the full API and patterns reference.
-
-### Breaking Changes
-
-- **Spec 017** — the legacy `StreamHandler` / `QueueStreamHandler` /
-  `StreamHandlerFactory` types are REMOVED from
-  `azure.ai.agentserver.core.durable`. The `stream_handler_factory=`
-  kwarg on `@task` is REMOVED. `TaskContext.stream(item)` is REMOVED.
-  `async for chunk in run` (where `run` is a `TaskRun`) is REMOVED.
-  All streaming functionality moves to the new
-  `azure.ai.agentserver.core.streaming` subpackage with a registry-
-  based lifecycle decoupled from `@task`. The agentserver family is
-  pre-release; no backward-compat shims are owed. Migration crosswalk:
-  see the "Migrating from the legacy `StreamHandler`" section of
-  [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md).
 
 ### Other Changes
 

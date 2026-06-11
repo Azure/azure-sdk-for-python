@@ -35,9 +35,10 @@ import json
 from typing import Any
 
 from ._exceptions import (
-    AttachmentLimitExceeded,
-    AttachmentTooLarge,
     InputTooLarge,
+    OutputTooLarge,
+    _AttachmentLimitExceeded,
+    _AttachmentTooLarge,
 )
 
 # --------------------------------------------------------------------------- #
@@ -56,6 +57,11 @@ _FUNCTION_INPUT_KEY = "_input"
 #: The full key is ``f"{prefix}{seq}"`` where ``seq`` is the monotonic
 #: counter from ``payload["_steering"]["next_input_seq"]``.
 _STEERING_INPUT_KEY_PREFIX = "_steering_input_"
+
+#: Spec 019 FR-C-005 — framework-reserved attachment key for the
+#: per-turn output value. Output is ALWAYS stored via this attachment
+#: (no inline threshold) so it never consumes payload budget.
+_OUTPUT_KEY = "_output"
 
 #: Hash algorithm prefix (RFC-6920-style namespacing). The value after the
 #: ``:`` is the lowercase-hex digest. Prefix lets us migrate to a different
@@ -76,12 +82,13 @@ _INPUT_THRESHOLD_BYTES = 200 * 1024
 _STEERING_THRESHOLD_BYTES = 20 * 1024
 
 #: Per-attachment value cap (2 MB). Server-side hard cap; enforced
-#: client-side via :class:`InputTooLarge` / :class:`AttachmentTooLarge`
-#: before any HTTP call.
+#: client-side via :class:`InputTooLarge` (developer-facing) /
+#: :class:`_AttachmentTooLarge` (provider-internal; see
+#: :func:`_remap_attachment_error`) before any HTTP call.
 _MAX_ATTACHMENT_SIZE_BYTES = 2 * 1024 * 1024
 
 #: Per-task attachment-entry cap. Server-side hard cap; enforced
-#: client-side via :class:`AttachmentLimitExceeded`.
+#: client-side via :class:`_AttachmentLimitExceeded` (provider-internal).
 _MAX_ATTACHMENTS = 20
 
 #: Framework's steering queue hard cap. At most this many entries can be
@@ -322,9 +329,16 @@ def _validate_attachment_size(
     attachment_key: str,
     value: Any,
 ) -> None:
-    """Raise :class:`AttachmentTooLarge` if *value* exceeds the per-attachment cap.
+    """Raise :class:`_AttachmentTooLarge` if *value* exceeds the per-attachment cap.
 
     Skip if value is ``None`` (representing a delete in a PATCH).
+
+    Spec 019 FR-D-002/-004: this raises the framework-internal
+    ``_AttachmentTooLarge``. Callers above the provider layer
+    (framework write paths) catch it and re-raise via
+    :func:`_remap_attachment_error` as the developer-facing
+    ``InputTooLarge`` / ``OutputTooLarge`` based on the
+    attachment-key prefix.
 
     :param task_id: Task identifier for error context.
     :type task_id: str
@@ -332,13 +346,13 @@ def _validate_attachment_size(
     :type attachment_key: str
     :param value: The JSON-compatible attachment value.
     :type value: Any
-    :raises AttachmentTooLarge: If the serialized form exceeds the cap.
+    :raises _AttachmentTooLarge: If the serialized form exceeds the cap.
     """
     if value is None:
         return  # null = delete; no size to enforce
     size = _serialized_size_bytes(value)
     if size > _MAX_ATTACHMENT_SIZE_BYTES:
-        raise AttachmentTooLarge(
+        raise _AttachmentTooLarge(
             task_id=task_id,
             attachment_key=attachment_key,
             size_bytes=size,
@@ -351,11 +365,11 @@ def _validate_attachment_count(
     current_count: int,
     additions: int = 1,
 ) -> None:
-    """Raise :class:`AttachmentLimitExceeded` if adding *additions* exceeds the per-task cap.
+    """Raise :class:`_AttachmentLimitExceeded` if adding *additions* exceeds the per-task cap.
 
-    Caller passes the number of attachments already on the task
-    (``current_count``) and the number of NEW (non-delete) attachment
-    entries the upcoming PATCH would add (``additions``).
+    Spec 019 FR-D-003 — internal-only exception; framework treats
+    propagation as a bug (the framework's own reserved usage is at
+    most 11 of 20 slots) and converts to ``RuntimeError`` at the boundary.
 
     :param task_id: Task identifier for error context.
     :type task_id: str
@@ -364,14 +378,50 @@ def _validate_attachment_count(
     :type current_count: int
     :param additions: Number of new attachment entries this PATCH adds.
     :type additions: int
-    :raises AttachmentLimitExceeded: If ``current_count + additions > _MAX_ATTACHMENTS``.
+    :raises _AttachmentLimitExceeded: If ``current_count + additions > _MAX_ATTACHMENTS``.
     """
     if current_count + additions > _MAX_ATTACHMENTS:
-        raise AttachmentLimitExceeded(
+        raise _AttachmentLimitExceeded(
             task_id=task_id,
             current_count=current_count,
             max_count=_MAX_ATTACHMENTS,
         )
+
+
+def _remap_attachment_error(exc: "_AttachmentTooLarge") -> ValueError:
+    """Spec 019 FR-D-004 — translate the internal ``_AttachmentTooLarge``
+    raised against a framework-reserved attachment key into the
+    developer-facing exception.
+
+    Dispatch by attachment-key prefix:
+
+    - ``_input`` → :class:`InputTooLarge`
+    - ``_steering_input_<seq>`` → :class:`InputTooLarge`
+    - ``_output`` → :class:`OutputTooLarge`
+    - anything else → :class:`RuntimeError` (framework bug — the
+      framework's own attachment writes only use the reserved keys).
+
+    Callers do ``raise _remap_attachment_error(internal)`` so the
+    traceback reflects the framework's re-raise site, not the
+    provider's raise site.
+    """
+    key = getattr(exc, "attachment_key", "")
+    task_id = getattr(exc, "task_id", "")
+    size_bytes = getattr(exc, "size_bytes", 0)
+    max_bytes = getattr(exc, "max_bytes", _MAX_ATTACHMENT_SIZE_BYTES)
+    if key == _FUNCTION_INPUT_KEY or key.startswith(_STEERING_INPUT_KEY_PREFIX):
+        return InputTooLarge(
+            task_id=task_id, size_bytes=size_bytes, max_bytes=max_bytes
+        )
+    if key == _OUTPUT_KEY:
+        return OutputTooLarge(
+            task_id=task_id, size_bytes=size_bytes, max_bytes=max_bytes
+        )
+    return RuntimeError(
+        f"Framework bug: _AttachmentTooLarge raised for unknown "
+        f"framework-reserved attachment key {key!r} on task {task_id!r}: "
+        f"{size_bytes} bytes > {max_bytes} byte cap."
+    )
 
 
 __all__ = [
@@ -381,6 +431,7 @@ __all__ = [
     "_INPUT_THRESHOLD_BYTES",
     "_MAX_ATTACHMENTS",
     "_MAX_ATTACHMENT_SIZE_BYTES",
+    "_OUTPUT_KEY",
     "_STEERING_INPUT_KEY_PREFIX",
     "_STEERING_QUEUE_CAP",
     "_STEERING_THRESHOLD_BYTES",
@@ -390,6 +441,7 @@ __all__ = [
     "_read_input_value",
     "_ref_hash",
     "_ref_key",
+    "_remap_attachment_error",
     "_resolve_input_storage",
     "_serialized_size_bytes",
     "_validate_attachment_count",

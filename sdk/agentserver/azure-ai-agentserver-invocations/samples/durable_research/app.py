@@ -70,7 +70,7 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core.streaming import (
     EventStream,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     EventStreamNotFoundError,
     streams,
 )
@@ -113,7 +113,7 @@ async def _sse_from_stream(
     Each event's ``sequence_number`` becomes the SSE ``id:`` field so
     a reconnecting client can pass it back as ``Last-Event-ID`` (or
     ``?last_event_id=N``) and pick up from there. The terminator
-    payload is emitted on clean stream close; ``EventStreamGoneError``
+    payload is emitted on clean stream close; ``EventStreamNotFoundError``
     (the stream was destroyed under us) flushes a ``superseded``
     event so the consumer can tell stream-end from "you got cut off".
     """
@@ -123,7 +123,7 @@ async def _sse_from_stream(
             yield f"id: {seq}\ndata: {json.dumps(chunk)}\n\n".encode()
         done = {"type": "done", "invocation_id": invocation_id}
         yield f"event: done\ndata: {json.dumps(done)}\n\n".encode()
-    except EventStreamGoneError:
+    except EventStreamNotFoundError:
         superseded = {"type": "superseded", "invocation_id": invocation_id}
         yield f"event: superseded\ndata: {json.dumps(superseded)}\n\n".encode()
 
@@ -217,7 +217,7 @@ async def handle_get(request: Request) -> Response:
       - 404 if the invocation id was never seen
         (``EventStreamNotFoundError``).
       - 410 if the stream was destroyed via TTL eviction or explicit
-        ``streams.delete`` (``EventStreamGoneError``).
+        ``streams.delete`` (``EventStreamNotFoundError``).
     """
     invocation_id: str = request.state.invocation_id
 
@@ -236,7 +236,7 @@ async def handle_get(request: Request) -> Response:
                  "message": "No stream for this invocation id."},
                 status_code=404,
             )
-        except EventStreamGoneError:
+        except EventStreamNotFoundError:
             return JSONResponse(
                 {"status": "gone",
                  "message": "Stream for this invocation id has been destroyed."},

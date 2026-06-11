@@ -110,14 +110,22 @@ except TaskConflictError:
 **Streaming** progress back to a (re)connecting client:
 
 ```python
-run = await my_agent.get_active_run(session_id)
-if run is None:
-    # No live run for this session — fall back to your file replay or 404
-    ...
-else:
-    async for chunk in run:
-        yield f"data: {chunk}\n\n"
-    result = await run.result()  # TaskRun is awaitable; awaits result()
+from azure.ai.agentserver.core.streaming import streams
+
+# Producer (inside the handler) emits to a process-level stream id
+# (typically the per-turn invocation id from the handler's input):
+#     stream = await streams.get_or_create(invocation_id)
+#     await stream.emit({"event": "progress", "step": "fetch"})
+#     ...
+#     await stream.close()
+
+# Consumer (HTTP layer) attaches BEFORE starting the task:
+stream = await streams.get_or_create(invocation_id)
+run = await my_agent.start(task_id=session_id,
+                            input={"invocation_id": invocation_id, ...})
+async for ev in stream.subscribe(after=0):
+    yield f"data: {ev}\n\n"
+result = await run.result()  # TaskRun is awaitable; awaits result()
 ```
 
 ## Pick the right metadata

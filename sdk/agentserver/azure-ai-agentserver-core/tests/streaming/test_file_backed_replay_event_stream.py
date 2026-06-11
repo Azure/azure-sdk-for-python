@@ -23,7 +23,7 @@ import pytest
 
 from azure.ai.agentserver.core.streaming import (
     EventStreamClosedError,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
 )
 from azure.ai.agentserver.core.streaming._concrete import (
     FileBackedReplayEventStream,
@@ -164,7 +164,7 @@ class TestDeterministicRecovery:
         # Rehydrate with ttl 60s → events expired
         s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=60)
         assert s._state == s._STATE_GONE
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await s.emit({"n": 2})
         await s._on_delete()
 
@@ -186,8 +186,12 @@ class TestCorruptionHandling:
             f.write(b"this-is-a-partial-line-no-newline")  # NO trailing \n
         # Construction must SUCCEED (rule 29a)
         s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)
-        # The 1 good record was rehydrated
-        assert s._total_emit_count == 1
+        # The 1 good record was rehydrated. Its emit_time is 1.0
+        # (Jan 1 1970) so with ttl_seconds=600 it has already been
+        # evicted from the live buffer; assert via _highest_cursor
+        # (set BEFORE eviction in the rehydration loop) that the
+        # one good record was indeed parsed.
+        assert s._highest_cursor == 1
         await s._on_delete()
 
     async def test_mid_file_malformed_raises_at_construction(
@@ -221,9 +225,9 @@ class TestTTLPurgesDisk:
         )
         await s.emit({"n": 1})
         await asyncio.sleep(0.3)
-        # Trigger eviction via next op
+        # Trigger eviction via next op — _evict_expired runs as part
+        # of emit(); after this call the buffer should hold only n=2.
         await s.emit({"n": 2})
-        assert s._total_emit_count == 2
         # event 1 should have been evicted from buffer
         assert len(s._buffer) == 1, (
             f"event 1 should be evicted; buffer has {len(s._buffer)} entries"
@@ -292,3 +296,48 @@ class TestAtomicEmitCloseFileBacked:
         terminal = json.loads(lines[-1])
         assert terminal.get("__terminal__") is True
         await s._on_delete()
+
+
+# ----------------------------------------------------------------
+# Spec 019 — Close-clock tombstone deletes file (FR-E-009 / SC-19)
+# ----------------------------------------------------------------
+
+
+class TestSpec019FileBackedCloseClock:
+    """FR-E-009 / SC-19 — File-backed replay stream: TTL-driven
+    tombstone deletes the on-disk JSONL file BEFORE installing the
+    registry tombstone.
+
+    Reference: docs/task-and-streaming-spec.md §44, §46, §59
+    C-STR-FBR-4.
+    """
+
+    @pytest.mark.asyncio
+    async def test_file_deleted_when_close_clock_elapses(self, tmp_path: Path) -> None:
+        """SC-19 / FR-E-009 — emit + close + advance time past
+        ``close_time + ttl_seconds`` → JSONL file removed from disk
+        AND ``streams.get(id)`` raises ``EventStreamNotFoundError``.
+        """
+        from azure.ai.agentserver.core.streaming import streams
+
+        streams.use_file_backed_replay(storage_dir=str(tmp_path), ttl_seconds=0.1)
+        stream = await streams.get_or_create("t-spec019-fbr-tombstone")
+        await stream.emit({"n": 1})
+        await stream.close()
+        file_path = Path(tmp_path) / "t-spec019-fbr-tombstone.jsonl"
+        # File still exists pre-tombstone.
+        assert file_path.exists(), (
+            f"file-backed stream's file should exist before close-clock "
+            f"elapses; expected {file_path}"
+        )
+        # Wait past the close-clock deadline.
+        await asyncio.sleep(0.2)
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("t-spec019-fbr-tombstone")
+        # And the file is removed (FR-E-009: file cleanup BEFORE
+        # registry tombstone).
+        assert not file_path.exists(), (
+            f"FR-E-009 / SC-19 — file-backed stream's JSONL file "
+            f"MUST be deleted when the close-clock tombstone fires; "
+            f"{file_path} still exists."
+        )

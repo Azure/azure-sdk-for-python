@@ -16,6 +16,7 @@ import os
 import time
 import uuid
 from collections.abc import Awaitable, Callable
+from typing import Any
 
 from ._models import TaskPatchRequest
 from ._provider import TaskProvider
@@ -86,6 +87,7 @@ async def lease_renewal_loop(
     on_cancel_callback: asyncio.Event | None = None,
     steering_poll_callback: Callable[[], Awaitable[None]] | None = None,
     last_refresh_provider: Callable[[], float] | None = None,
+    update_via_queue: Callable[[str, "TaskPatchRequest"], Awaitable[Any]] | None = None,
 ) -> None:
     """Run a background lease renewal loop at half the lease duration.
 
@@ -125,6 +127,13 @@ async def lease_renewal_loop(
         network round-trip. ``None`` preserves the legacy fixed-tick
         behaviour for tests.
     :paramtype last_refresh_provider: Callable[[], float] | None
+    :keyword update_via_queue: Spec 019 FR-A-006 — optional callable
+        through which the heartbeat PATCH MUST be issued so that it
+        acquires the per-task write lock (and is etag-aware). When
+        supplied, the loop uses this instead of ``provider.update``.
+        When ``None``, falls back to the raw provider call (used by
+        tests that don't construct a TaskManager).
+    :paramtype update_via_queue: Callable[[str, TaskPatchRequest], Awaitable[Any]] | None
     """
     interval = max(1, lease_duration_seconds // 2)
     consecutive_failures = 0
@@ -164,14 +173,15 @@ async def lease_renewal_loop(
                         continue  # re-check on the next iteration
 
         try:
-            await provider.update(
-                task_id,
-                TaskPatchRequest(
-                    lease_owner=lease_owner,
-                    lease_instance_id=lease_instance_id,
-                    lease_duration_seconds=lease_duration_seconds,
-                ),
+            patch = TaskPatchRequest(
+                lease_owner=lease_owner,
+                lease_instance_id=lease_instance_id,
+                lease_duration_seconds=lease_duration_seconds,
             )
+            if update_via_queue is not None:
+                await update_via_queue(task_id, patch)
+            else:
+                await provider.update(task_id, patch)
             consecutive_failures = 0
             logger.debug("Lease renewed for task %s", task_id)
 

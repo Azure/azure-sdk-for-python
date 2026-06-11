@@ -50,6 +50,11 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "SteeringQueueFull",
         "TaskPreconditionFailed",
         "EntryMode",
+        # Spec 018 / Spec 019 FR-D-001 — developer-facing size errors.
+        "InputTooLarge",
+        "OutputTooLarge",
+        # Spec 019 FR-C-002 — read-only snapshot for Task.get(task_id).
+        "TaskSnapshot",
     }
 )
 
@@ -61,6 +66,10 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskInfo",
         # Spec 016 FR-022: dropped from __all__ as preparatory Phase 9 work.
         "TaskTerminated",
+        # Spec 019 FR-D-002 / FR-D-003 — attachment-vocabulary errors are
+        # internal implementation details (developers never name attachments).
+        "AttachmentTooLarge",
+        "AttachmentLimitExceeded",
     }
 )
 
@@ -115,24 +124,34 @@ def test_retired_symbols_absent_from_all() -> None:
 
 
 def test_task_get_list_renamed_to_private() -> None:
-    """FR-006: ``Task.get`` / ``Task.list`` are renamed to ``Task._get`` / ``Task._list``.
+    """Spec 015 FR-006 + Spec 019 FR-C-001 — ``Task.get`` semantics.
 
-    The public ``.get()`` / ``.list()`` methods on the ``Task`` decorator
-    are demoted to internal. The canonical inspection paths are
-    ``manager.provider.get()`` and ``manager.list_tasks()``.
+    Spec 015 demoted the previous ``Task.get`` (which returned a
+    raw ``TaskInfo``) to ``Task._get`` because the public-surface
+    contract was about leaking the storage-layer record type.
+
+    Spec 019 FR-C-001 RE-INTRODUCES ``Task.get`` as a public method,
+    but with a different return type — :class:`TaskSnapshot` — that
+    deliberately excludes the framework-internal fields the legacy
+    ``Task.get`` exposed. The internal ``Task._get`` is retained for
+    callers that still want the raw record.
+
+    This test asserts both coexist: public ``Task.get`` returns
+    ``TaskSnapshot`` (spec 019); internal ``Task._get`` returns
+    ``TaskInfo`` (spec 015 rename).
     """
     from azure.ai.agentserver.core.durable import Task
 
-    assert not hasattr(Task, "get") or not callable(getattr(Task, "get", None)), (
-        "Task.get must be renamed to Task._get in Spec 015 Phase 3 (FR-006). "
-        "Public-surface inspection should go through manager.provider.get()."
+    assert hasattr(Task, "get") and callable(Task.get), (
+        "Spec 019 FR-C-001 — Task.get is a public method returning "
+        "TaskSnapshot. It must exist and be callable."
+    )
+    assert hasattr(Task, "_get") and callable(Task._get), (
+        "Task._get (internal Spec 015 rename) must remain callable."
     )
     assert not hasattr(Task, "list") or not callable(getattr(Task, "list", None)), (
         "Task.list must be renamed to Task._list in Spec 015 Phase 3 (FR-006). "
         "Public-surface listing should go through manager.list_tasks()."
-    )
-    assert hasattr(Task, "_get") and callable(Task._get), (
-        "Task._get (internal rename) must remain callable."
     )
     assert hasattr(Task, "_list") and callable(Task._list), (
         "Task._list (internal rename) must remain callable."

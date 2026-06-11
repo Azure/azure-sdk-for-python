@@ -274,13 +274,19 @@ class LocalFileTaskProvider:
                 + datetime.timedelta(seconds=duration)
             ).isoformat()
             if task.lease and patch.lease_instance_id != task.lease.instance_id:
-                # Reclaim with new instance
+                # Spec 019 FR-D-006 / SC-13 / C-LSE-3 — reclaim with a
+                # new instance_id. The bump rule mirrors hosted: bump
+                # expiry_count IFF the prior lease's expires_at was
+                # already in the past (real expiry-driven handoff).
+                # Same-owner-different-instance handoff BEFORE expiry
+                # (restart) does NOT bump.
+                prior_expired = _is_lease_expired(task.lease)
                 task.lease = LeaseInfo(
                     owner=patch.lease_owner,
                     instance_id=patch.lease_instance_id,
                     generation=task.lease.generation + 1,
                     expires_at=expires_at,
-                    expiry_count=task.lease.expiry_count,
+                    expiry_count=task.lease.expiry_count + (1 if prior_expired else 0),
                 )
             elif task.lease:
                 # Simple renewal

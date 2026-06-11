@@ -275,3 +275,127 @@ class TestLeaseOwnerAgentAndSession:
             f"session_id substring MUST appear in the owner string "
             f"(spec 016 SC-005a (d)). Got {owner!r}."
         )
+
+
+# --------------------------------------------------------------------- #
+# Spec 019 FR-D-006 / SC-13 — local provider expiry_count parity
+# --------------------------------------------------------------------- #
+
+
+class TestSpec019LocalProviderExpiryCountParity:
+    """FR-D-006 / SC-13 — the local provider MUST bump ``lease.expiry_count``
+    on a reclaim PATCH that completes a real expiry-driven ownership
+    handoff (different ``lease_instance_id`` AND prior ``expires_at``
+    has passed).
+
+    Without this parity, ``TaskRun.lease_expiry_count`` is permanently
+    stuck at 0 in local mode and tests asserting recovery behaviour
+    cannot use the local provider.
+
+    Reference: docs/task-and-streaming-spec.md §22 / §29 / §59 C-LSE-3.
+    """
+
+    @pytest.mark.asyncio
+    async def test_local_provider_bumps_expiry_count_on_real_handoff(
+        self,
+        provider: LocalFileTaskProvider,
+        sample_create_request: TaskCreateRequest,
+    ) -> None:
+        """FR-D-006 / SC-13 — expired lease + different instance_id =>
+        expiry_count += 1."""
+        import datetime as _dt
+
+        created = await provider.create(sample_create_request)
+        assert created.lease is not None
+        assert created.lease.expiry_count == 0
+
+        # Force the lease to be in the past so the next reclaim PATCH
+        # counts as an expiry-driven handoff.
+        past = (
+            _dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(minutes=10)
+        ).isoformat()
+        created.lease.expires_at = past
+        provider._write_task(created)  # noqa: SLF001
+
+        # Reclaim with a DIFFERENT instance_id (same owner is fine —
+        # both hosted and local treat instance_id change as handoff).
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                lease_owner=created.lease.owner,
+                lease_instance_id="reclaimer-instance",
+                lease_duration_seconds=60,
+            ),
+        )
+
+        after = await provider.get(created.id)
+        assert after is not None
+        assert after.lease is not None
+        assert after.lease.expiry_count == 1, (
+            f"after expired-lease reclaim with a different "
+            f"instance_id, expiry_count MUST bump from 0 to 1 "
+            f"(FR-D-006 / SC-13). Got {after.lease.expiry_count}."
+        )
+
+    @pytest.mark.asyncio
+    async def test_local_provider_no_bump_on_same_instance_renewal(
+        self,
+        provider: LocalFileTaskProvider,
+        sample_create_request: TaskCreateRequest,
+    ) -> None:
+        """FR-D-006 — same-instance lease renewal MUST NOT bump
+        expiry_count.
+        """
+        created = await provider.create(sample_create_request)
+        assert created.lease is not None
+        prior_count = created.lease.expiry_count
+
+        # Renew the lease with the same instance_id.
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                lease_owner=created.lease.owner,
+                lease_instance_id=created.lease.instance_id,
+                lease_duration_seconds=60,
+            ),
+        )
+
+        after = await provider.get(created.id)
+        assert after is not None and after.lease is not None
+        assert after.lease.expiry_count == prior_count, (
+            "same-instance renewal must not bump expiry_count "
+            "(FR-D-006)."
+        )
+
+    @pytest.mark.asyncio
+    async def test_local_provider_no_bump_on_unexpired_handoff(
+        self,
+        provider: LocalFileTaskProvider,
+        sample_create_request: TaskCreateRequest,
+    ) -> None:
+        """FR-D-006 — handoff to a new instance BEFORE the prior
+        lease has expired (same-owner-different-instance restart;
+        the prior lease was still valid) MUST NOT bump expiry_count.
+        """
+        created = await provider.create(sample_create_request)
+        assert created.lease is not None
+        prior_count = created.lease.expiry_count
+
+        # Reclaim with new instance_id BEFORE the existing lease
+        # has expired. Both hosted and local treat this as the
+        # restart-handoff case, not an expiry event.
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                lease_owner=created.lease.owner,
+                lease_instance_id="reclaimer-fresh",
+                lease_duration_seconds=60,
+            ),
+        )
+
+        after = await provider.get(created.id)
+        assert after is not None and after.lease is not None
+        assert after.lease.expiry_count == prior_count, (
+            "handoff before lease expiry must not bump expiry_count "
+            "(FR-D-006 — only real expiry-driven handoffs count)."
+        )

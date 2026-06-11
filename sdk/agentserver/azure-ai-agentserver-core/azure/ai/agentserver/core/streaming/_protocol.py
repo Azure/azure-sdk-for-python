@@ -33,29 +33,26 @@ class EventStreamClosedError(EventStreamError):
     """
 
 
-class EventStreamGoneError(EventStreamError):
-    """Raised when any operation is attempted on a destroyed stream.
-
-    A stream becomes "gone" when it is destroyed via
-    ``streams.delete(id)``, or — for the replay backings configured
-    with a TTL — when the stream is closed and its replayable history
-    has been fully evicted.
-
-    Wire-mapped to HTTP 410 Gone (the resource existed but is now
-    destroyed). Distinct from :class:`EventStreamNotFoundError`.
-    """
-
-
 class EventStreamNotFoundError(EventStreamError):
-    """Raised when ``streams.get(id)`` is called for an id that was
-    never registered (i.e. no ``get_or_create(id)`` for this id has
-    ever been called).
+    """Raised when any operation references a stream id that is not
+    currently a live stream.
 
-    Distinct from :class:`EventStreamGoneError`: NotFound means the
-    id was never registered; Gone means it was registered and the
-    stream is now destroyed. The registry retains tombstones for
-    destroyed ids so this distinction holds across the destroy
-    boundary.
+    Spec 019 FR-E-001/-002 unified the previously-distinct
+    ``EventStreamNotFoundError`` (never registered) and
+    ``EventStreamGoneError`` (registered then destroyed) into this
+    single error type. Three independent reasons fire this:
+
+    - the id was never registered (no ``get_or_create(id)`` ever ran)
+    - the id was explicitly ``streams.delete(id)``d
+    - the id's stream was Closed and its close-clock TTL
+      (``close_time + ttl_seconds``) elapsed, causing the registry
+      to auto-tombstone
+
+    Collapsing the two error types simplifies the developer-facing
+    surface: either way, the right behavior is the same (subscribe to
+    a new id, or treat this id as missing). It also stops leaking the
+    registry's internal tombstone bookkeeping (whether an id was
+    "previously alive" or "never seen") into the public API.
 
     Wire-mapped to HTTP 404 Not Found.
     """
@@ -86,7 +83,7 @@ class EventStream(Protocol):
 
         :raises EventStreamClosedError: If the stream has already
             been closed.
-        :raises EventStreamGoneError: If the stream has been
+        :raises EventStreamNotFoundError: If the stream has been
             destroyed.
         """
         ...
@@ -112,7 +109,7 @@ class EventStream(Protocol):
             is strictly greater than ``after``. Backings without
             cursor support silently ignore non-``None`` values.
 
-        :raises EventStreamGoneError: Raised synchronously at the
+        :raises EventStreamNotFoundError: Raised synchronously at the
             call site (before the iterator is returned) if the
             stream has been destroyed.
         """
@@ -134,7 +131,7 @@ class EventStream(Protocol):
           replay rehydration path (handler reads ``last_cursor()``
           on entry to pick the next cursor).
         - After the stream is destroyed (auto-transition has fired):
-          raises :class:`EventStreamGoneError`.
+          raises :class:`EventStreamNotFoundError`.
 
         ``last_cursor()`` is the **emitter's** recovery primitive.
         It is NOT a workflow-recovery primitive — workflow
@@ -150,6 +147,5 @@ __all__ = [
     "EventStream",
     "EventStreamError",
     "EventStreamClosedError",
-    "EventStreamGoneError",
     "EventStreamNotFoundError",
 ]

@@ -648,8 +648,15 @@ class TestLangGraphSampleE2E:
                 if task_record and task_record.status == "suspended":
                     break
             assert task_record.status == "suspended"
-            assert task_record.payload["output"]["turn"] == 2
-            assert "Tell me more" in task_record.payload["output"]["reply"]
+            # Spec 019 FR-C-005 — output is always stored in
+            # attachments['_output']; payload['output'] is a ref.
+            # Resolve via the framework helper.
+            from azure.ai.agentserver.core.durable._attachments import _read_input_value
+            resolved_output = _read_input_value(
+                task_record.payload.get("output"), task_record.attachments
+            )
+            assert resolved_output["turn"] == 2
+            assert "Tell me more" in resolved_output["reply"]
 
             # --- Turn 3: end session ---
             await manager._provider.update(
@@ -666,8 +673,11 @@ class TestLangGraphSampleE2E:
                 if task_record and task_record.status == "completed":
                     break
             assert task_record.status == "completed"
-            assert task_record.payload["output"]["finished"] is True
-            assert task_record.payload["output"]["turn_count"] == 2
+            resolved_output = _read_input_value(
+                task_record.payload.get("output"), task_record.attachments
+            )
+            assert resolved_output["finished"] is True
+            assert resolved_output["turn_count"] == 2
 
         finally:
             conn.close()

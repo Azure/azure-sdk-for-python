@@ -273,7 +273,7 @@ async def test_recovery_surfaces_promoted_input_as_ctx_input(
             payload={"input": ref, "metadata": {}},
             attachments={_FUNCTION_INPUT_KEY: big},
             tags={"task_name": "t-recovery-capture"},
-            source={"name": "t-recovery-capture"},
+            source={"name": "t-recovery-capture", "type": "agentserver.task"},
         )
     )
 
