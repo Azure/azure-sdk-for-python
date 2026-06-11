@@ -294,14 +294,17 @@ class TraceContextMiddleware:
                 "x_request_id", x_request_id, context=ctx,
             )
 
+        # Keep context through post-response access logging in this loop tick,
+        # then detach to avoid cross-request context leakage.
         token = _otel_context.attach(ctx)
         try:
             await self.app(scope, receive, send)
         finally:
             try:
-                _otel_context.detach(token)
-            except ValueError:
-                pass
+                from asyncio import get_running_loop  # pylint: disable=import-outside-toplevel,do-not-import-asyncio
+                get_running_loop().call_soon(detach_context, token)
+            except RuntimeError:
+                detach_context(token)
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
