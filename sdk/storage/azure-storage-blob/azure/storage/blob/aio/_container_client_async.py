@@ -55,7 +55,7 @@ from .._serialize import get_modify_conditions, get_container_cpk_scope_info, ge
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
-from .._shared.request_handlers import add_metadata_headers, serialize_iso
+from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
 
 if TYPE_CHECKING:
@@ -776,10 +776,8 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))  # type: ignore
+            access_policy = value._to_generated() if value else None  # pylint: disable=protected-access
+            identifiers.append(SignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
         signed_identifiers = identifiers or None  # type: ignore
 
         mod_conditions = get_modify_conditions(kwargs)

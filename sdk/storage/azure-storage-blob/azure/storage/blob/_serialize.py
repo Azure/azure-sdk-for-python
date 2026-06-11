@@ -274,7 +274,9 @@ def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Option
         )
         qq_format = QueryFormat(type=QueryFormatType.DELIMITED, delimited_text_configuration=csv_serialization_settings)
     elif isinstance(formater, list):
-        arrow_serialization_settings = ArrowConfiguration(schema=formater)
+        arrow_serialization_settings = ArrowConfiguration(
+            schema=[f._to_generated() for f in formater]  # pylint: disable=protected-access
+        )
         qq_format = QueryFormat(type=QueryFormatType.arrow, arrow_configuration=arrow_serialization_settings)
     elif not formater:
         return None

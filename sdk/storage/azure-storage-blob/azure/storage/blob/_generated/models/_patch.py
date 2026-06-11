@@ -1,29 +1,138 @@
-# pylint: disable=line-too-long,useless-suppression
-# coding=utf-8
-# --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import xml.etree.ElementTree as ET
-from typing import Any, Callable, List, Optional
+import sys
+from typing import Any, Callable, Dict, List, Optional
+
+from .._utils.serialization import JSON, Model, attribute_transformer
+from .._utils.model_base import Model as _Model, _RestField
 from ._models import (
-    AccessPolicy as _GenAccessPolicy,
-    CorsRule as _GenCorsRule,
-    Logging as _GenLogging,
-    Metrics as _GenMetrics,
-    RetentionPolicy as _GenRetentionPolicy,
-    StaticWebsite as _GenStaticWebsite,
+    CorsRule as _GeneratedCorsRule,
+    Logging as _GeneratedLogging,
+    Metrics as _GeneratedMetrics,
+    RetentionPolicy as _GeneratedRetentionPolicy,
+    StaticWebsite as _GeneratedStaticWebsite,
 )
 
-from .._utils.model_base import Model as _Model, _RestField, _deserialize
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 
+# These public models inherited (transitively) from the autorest msrest model,
+# which exposed ``serialize``, ``deserialize``, ``from_dict``, ``as_dict``,
+# ``is_xml_model``, and ``enable_additional_properties_sending``. After the
+# migration the generated models use a different base class. The public classes mix this in to expose
+# exactly the historical methods, each delegating to ``Model``.
+class _BackCompatMixin:
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> JSON:
+        """Serialize this model to a dictionary.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes.
+        :returns: A dict JSON compatible object.
+        :rtype: JSON
+        """
+        return Model.serialize(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore[arg-type]
+
+    def as_dict(self, keep_readonly: bool = True, key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer, **kwargs: Any) -> JSON:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes.
+        :param key_transformer: A function that takes an attribute name, the attribute map, and the value, and returns the key to use in the output dict.
+        :returns: A dict JSON compatible object.
+        :rtype: JSON
+        """
+        return Model.as_dict(self, keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore[arg-type]
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+        """Deserialize this model from a dictionary.
+
+        :param data: A str using RestAPI structure. JSON by default.
+        :type data: str
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: An instance of this model.
+        :rtype: Self
+        """
+        # ``Model.deserialize`` is a classmethod already bound to ``Model``; reach
+        # through ``__func__`` so it runs with this subclass as ``cls``.
+        return Model.deserialize.__func__(cls, data, content_type=content_type)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        key_extractors: Optional[Callable[[str, dict[str, Any], Any], Any]] = None,
+        content_type: Optional[str] = None,
+    ) -> Self:
+        """Parse a dict using a given key extractor and return a model.
+
+        :param dict data: A dict using RestAPI structure.
+        :param key_extractors: A key extractor function.
+        :type key_extractors: callable or None
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: An instance of this model.
+        :rtype: Self
+        """
+        return Model.from_dict.__func__(cls, data, key_extractors=key_extractors, content_type=content_type)
+
+    @classmethod
+    def enable_additional_properties_sending(cls) -> None:
+        """Add ``additional_properties`` to the attribute map so they are sent to the service.
+
+        :returns: None
+        :rtype: None
+        """
+        return Model.enable_additional_properties_sending.__func__(cls)
+
+    @classmethod
+    def is_xml_model(cls) -> bool:
+        """Whether this model is serialized as XML.
+
+        :returns: True if this model is serialized as XML, otherwise False.
+        :rtype: bool
+        """
+        return Model.is_xml_model.__func__(cls)
+
+    @classmethod
+    def _infer_class_models(cls) -> Dict[str, type]:
+        # Internal helper used by serialize/as_dict/deserialize/from_dict.
+        return Model._infer_class_models.__func__(cls)
+
+    @classmethod
+    def _create_xml_node(cls) -> Any:
+        # Internal helper used during XML (de)serialization.
+        return Model._create_xml_node.__func__(cls)
+
+    def __eq__(self, other: Any) -> bool:
+        return Model.__eq__(self, other)  # type: ignore[arg-type]
+
+    def __ne__(self, other: Any) -> bool:
+        return Model.__ne__(self, other)  # type: ignore[arg-type]
+
+    def __str__(self) -> str:
+        return Model.__str__(self)  # type: ignore[arg-type]
+
+
+# For backwards compatibility with older releases of `azure-storage-file-datalake` 
+# that have models that inherit from the _generated.models of `azure-storage-blob` directly
 def _patched_getattr(self, name):
-    """Lazily initialize _data for subclasses that skip super().__init__()."""
+    """Lazily initialize ``_data`` for subclasses that skip ``super().__init__()``.
+
+    Older releases of ``azure-storage-file-datalake`` (and any user code that follows
+    the same pattern) subclass these blob generated XML models and set rest_field
+    attributes directly inside their own ``__init__`` without ever calling
+    ``super().__init__()`` - so typespec's ``_Model.__init__`` (the one that creates
+    ``_data``) is never invoked. The first attribute write would otherwise raise
+    ``AttributeError`` deep inside ``_RestField.__set__``.
+    """
     if name == "_data":
         object.__setattr__(self, "_data", {})
         return self._data
@@ -31,54 +140,56 @@ def _patched_getattr(self, name):
 
 
 def _patched_setattr(self, name, value):
-    """Route attribute writes through _RestField descriptors even when shadowed."""
+    """Route attribute writes through the inherited ``_RestField`` descriptors.
+
+    Datalake subclasses redeclare class attributes (``version: str = "1.0"``) which
+    shadow the parent class's ``_RestField`` descriptors. Without this patch,
+    ``self.version = "1.0"`` would write to ``instance.__dict__`` and never populate
+    ``self._data`` - leaving the wire payload empty.
+    """
     if not name.startswith("_"):
         try:
             rf = type(self)._attr_to_rest_field.get(name)
         except AttributeError:
-            pass
-        else:
-            if rf is not None:
-                rf.__set__(self, value)
-                return
+            rf = None
+        if rf is not None:
+            rf.__set__(self, value)
+            return
     object.__setattr__(self, name, value)
 
 
 def _patched_getattribute(self, name):
-    """Route attribute reads through _RestField descriptors even when shadowed."""
+    """Route attribute reads through the inherited ``_RestField`` descriptors.
+
+    Counterpart to ``_patched_setattr``: reads also need to hit ``_data`` (where
+    ``__set__`` writes), not the shadowed class attribute on the subclass.
+    """
     if not name.startswith("_"):
         try:
             rest_fields = type(self)._attr_to_rest_field
         except AttributeError:
-            pass
-        else:
+            rest_fields = None
+        if rest_fields is not None:
             rf = rest_fields.get(name)
             if rf is not None:
                 return rf.__get__(self, type(self))
     return object.__getattribute__(self, name)
 
 
-# The original ``Model.__new__`` does ``rf._module = cls.__module__`` which
-# lets an external subclass (e.g. from azure-storage-file-datalake) overwrite
-# ``_module`` on the *shared* descriptor, corrupting type resolution for
-# every class that shares it.  This replacement resolves forward references
-# against the module that *defined* the rest_field and uses that class's own
-# annotations (not merged subclass annotations) to avoid resolving to a type
-# whose ``__init__`` can't handle XML elements.
-
-
-def _patched_new(cls, *args, **kwargs):
+# The original ``_Model.__new__`` does ``rf._module = cls.__module__``, which lets an
+# external subclass (e.g. from ``azure-storage-file-datalake``) overwrite ``_module``
+# on the *shared* descriptor instance, corrupting type resolution for every class
+# that shares it. This replacement resolves forward references against the module
+# that *defined* the rest_field instead.
+def _patched_new(cls, *args, **kwargs):  # pylint: disable=unused-argument
     if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
-        # Walk only user-defined classes (base-first), stopping before the
-        # framework base.  Each _RestField is configured with the module of
-        # the class that defined it so forward references resolve correctly.
         user_classes = []
         for c in cls.__mro__:
             if c is _Model:
                 break
             user_classes.append(c)
 
-        attr_to_rest_field: dict[str, _RestField] = {}
+        attr_to_rest_field: Dict[str, _RestField] = {}
         for mro_class in reversed(user_classes):
             annotations = getattr(mro_class, "__annotations__", {})
             for k, v in mro_class.__dict__.items():
@@ -97,228 +208,159 @@ def _patched_new(cls, *args, **kwargs):
             _Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
             for attr, rf in cls._attr_to_rest_field.items()
         }
-
-        # Reverse mapping: REST wire name → Python attribute name
         cls._rest_name_to_attr = {
             rf._rest_name: attr for attr, rf in attr_to_rest_field.items()
         }
-
         cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
-    return object.__new__(cls)
+    instance = object.__new__(cls)
+    object.__setattr__(instance, "_data", {})
+    return instance
 
 
-# NOTE: these patches are applied PER-CLASS at the bottom of this module,
-# not globally on ``_Model`` / ``_MyMutableMapping``.  See ``_BACKCOMPAT_CLASSES``
-# below.  Limiting the blast radius keeps the rest of the generated TypeSpec
-# models pristine (so e.g. ``BlobProperties.as_dict()`` still returns REST
-# wire names, not snake_case) and only adjusts the handful of classes that
-# the still-on-PyPI ``azure-storage-file-datalake`` package directly
-# subclasses out of ``azure.storage.blob._generated.models``.
+def _apply_back_compat_to_generated(
+    cls: type,
+    attribute_map: Dict[str, Dict[str, str]],
+    validation: Dict[str, Dict[str, Any]],
+    xml_name: str,
+) -> None:
+    """Retrofit the msrest ``Model`` surface onto a trivial subclass of a typespec
+    generated class.
 
-
-_original_as_dict = _Model.as_dict
-
-
-def _remap_keys(d, rest_name_to_attr):
-    """Recursively remap REST wire-name keys to Python attribute names."""
-    if isinstance(d, dict):
-        return {
-            rest_name_to_attr.get(k, k): _remap_keys(v, rest_name_to_attr)
-            for k, v in d.items()
-        }
-    if isinstance(d, list):
-        return [_remap_keys(item, rest_name_to_attr) for item in d]
-    return d
-
-
-def _patched_as_dict(
-    self,
-    keep_readonly: bool = True,
-    key_transformer: Optional[
-        Callable[[str, dict, Any], Any]
-    ] = None,  # pylint: disable=unused-argument
-    *,
-    exclude_readonly: bool = False,
-    **kwargs: Any,
-) -> dict:
-    """Backcompat wrapper that returns Python attribute names (snake_case).
-
-    Accepts both the old autorest signature (``keep_readonly``,
-    ``key_transformer``) and the new TypeSpec keyword-only
-    ``exclude_readonly`` parameter.  ``key_transformer`` is accepted for
-    signature compatibility but ignored; keys are always remapped to
-    Python attribute names.
+    :param cls: the trivial back-compat subclass defined in this module.
+    :param attribute_map: the historical msrest ``_attribute_map``.
+    :param validation: the historical msrest ``_validation`` map.
+    :param xml_name: the historical XML node name.
     """
-    kwargs.pop("is_xml", None)
-    effective_exclude = exclude_readonly or not keep_readonly
-    result = _original_as_dict(self, exclude_readonly=effective_exclude)
-    rest_name_to_attr = getattr(type(self), "_rest_name_to_attr", {})
-    return _remap_keys(result, rest_name_to_attr)
+    cls._attribute_map = attribute_map  # type: ignore[attr-defined]
+    cls._validation = validation  # type: ignore[attr-defined]
+    cls._xml_map = {"name": xml_name}  # type: ignore[attr-defined]
+    cls.serialize = _BackCompatMixin.serialize  # type: ignore[attr-defined]
+    cls.as_dict = _BackCompatMixin.as_dict  # type: ignore[attr-defined]
+    cls.deserialize = classmethod(Model.deserialize.__func__)  # type: ignore[attr-defined]
+    cls.from_dict = classmethod(Model.from_dict.__func__)  # type: ignore[attr-defined]
+    cls.enable_additional_properties_sending = classmethod(  # type: ignore[attr-defined]
+        Model.enable_additional_properties_sending.__func__
+    )
+    cls.is_xml_model = classmethod(Model.is_xml_model.__func__)  # type: ignore[attr-defined]
+    cls._infer_class_models = classmethod(Model._infer_class_models.__func__)  # type: ignore[attr-defined]
+    cls._create_xml_node = classmethod(Model._create_xml_node.__func__)  # type: ignore[attr-defined]
+    cls._to_generated = lambda self: self  # type: ignore[attr-defined]
 
-
-def _patched_serialize(self, keep_readonly: bool = False, **kwargs: Any) -> dict:
-    """Backcompat alias for the old autorest ``Model.serialize``.
-
-    Equivalent to ``as_dict(keep_readonly=keep_readonly)`` with REST wire
-    names (camelCase) as keys — matching what the old autorest serializer
-    sent to the server.
-    """
-    kwargs.pop("is_xml", None)
-    return _original_as_dict(self, exclude_readonly=not keep_readonly)
-
-
-def _patched_validate(self) -> list:  # pylint: disable=unused-argument
-    """Backcompat no-op for the old autorest ``Model.validate``.
-
-    TypeSpec models do not perform client-side validation; return an empty
-    list to match the old "no errors" return value.
-    """
-    return []
-
-
-def _patched_deserialize(cls, data: Any, content_type: Optional[str] = None) -> Any:
-    """Backcompat classmethod for the old autorest ``Model.deserialize``.
-
-    Accepts either a JSON-compatible dict/str or (when ``content_type`` is
-    XML) an XML string or ``ElementTree.Element``.
-    """
-    if content_type and "xml" in content_type.lower():
-        if isinstance(data, (bytes, str)):
-            data = ET.fromstring(data)  # nosec
-        return cls(data)
-    return _deserialize(cls, data)
-
-
-def _patched_from_dict(
-    cls,
-    data: Any,
-    key_extractors: Optional[
-        Callable[[str, dict, Any], Any]
-    ] = None,  # pylint: disable=unused-argument
-    content_type: Optional[str] = None,
-) -> Any:
-    """Backcompat classmethod for the old autorest ``Model.from_dict``.
-
-    ``key_extractors`` is accepted for signature compatibility but ignored;
-    the TypeSpec deserializer always uses REST-key mapping.
-    """
-    if content_type and "xml" in content_type.lower():
-        if isinstance(data, (bytes, str)):
-            data = ET.fromstring(data)  # nosec
-        return cls(data)
-    return _deserialize(cls, data)
-
-
-def _patched_enable_additional_properties_sending(
-    cls,
-) -> None:  # pylint: disable=unused-argument
-    """Backcompat no-op for the old autorest ``Model.enable_additional_properties_sending``.
-
-    TypeSpec models already round-trip unknown properties through ``_data``.
-    """
-    return None
-
-
-def _patched_is_xml_model(cls) -> bool:
-    """Backcompat classmethod for the old autorest ``Model.is_xml_model``.
-
-    Returns True when the model has an ``_xml`` class attribute (set by the
-    generator for models that serialize to/from XML).
-    """
-    return bool(getattr(cls, "_xml", None))
-
-
-# NOTE: these msrest-compat methods are applied PER-CLASS at the bottom of
-# this module, not globally on ``_Model``.  See ``_BACKCOMPAT_CLASSES``
-# below.
-
-
-def _attach_msrest_compat(cls):
-    """Graft msrest-style ``Model`` API onto a TypeSpec ``_Model`` subclass.
-
-    Mirrors the runtime grafting approach used in
-    ``azure-storage-queue``'s public ``_models.py``: the back-compat methods
-    and descriptor / lifecycle fixes are attached to ``cls`` at module
-    import time rather than baked into the class body or applied to the
-    framework base.  This keeps the per-class blast radius explicit and
-    leaves the rest of the generated TypeSpec model surface pristine.
-    """
-    # Descriptor / lifecycle fixes -- needed because external subclasses
-    # (e.g. azure-storage-file-datalake) may skip ``super().__init__()`` and
-    # may overwrite the shared ``_RestField._module`` attribute.
     cls.__new__ = _patched_new  # type: ignore[assignment]
     cls.__getattr__ = _patched_getattr  # type: ignore[attr-defined]
     cls.__setattr__ = _patched_setattr  # type: ignore[assignment]
     cls.__getattribute__ = _patched_getattribute  # type: ignore[assignment]
 
-    # msrest ``Model`` API surface that datalake (and its callers) still
-    # expects on these classes.  Hand-rolled to bridge msrest signatures
-    # over TypeSpec ``_data`` storage -- raw msrest methods would not work
-    # because the underlying storage layout differs.
-    cls.as_dict = _patched_as_dict  # type: ignore[assignment]
-    cls.serialize = _patched_serialize  # type: ignore[attr-defined]
-    cls.validate = _patched_validate  # type: ignore[attr-defined]
-    cls.deserialize = classmethod(_patched_deserialize)  # type: ignore[attr-defined]
-    cls.from_dict = classmethod(_patched_from_dict)  # type: ignore[attr-defined]
-    cls.enable_additional_properties_sending = classmethod(  # type: ignore[attr-defined]
-        _patched_enable_additional_properties_sending
-    )
-    cls.is_xml_model = classmethod(_patched_is_xml_model)  # type: ignore[attr-defined]
-
-    return cls
+class Logging(_GeneratedLogging):
+    """Back-compat subclass of the generated ``Logging`` that retains the msrest
+    ``Model`` API surface (``serialize``/``as_dict``/``deserialize``/etc.) and routes
+    attribute writes through the rest_field descriptors. Required for the still-on-PyPI
+    ``azure-storage-file-datalake`` whose ``AnalyticsLogging.__init__`` does direct
+    ``self.attr = value`` writes without calling ``super().__init__()``."""
 
 
-for _cls in (
-    _GenAccessPolicy,
-    _GenRetentionPolicy,
-    _GenMetrics,
-    _GenLogging,
-    _GenCorsRule,
-    _GenStaticWebsite,
-):
-    _attach_msrest_compat(_cls)
+class Metrics(_GeneratedMetrics):
+    """Back-compat subclass of the generated ``Metrics``. See :class:`Logging`."""
 
 
-# Re-export wrapper subclasses via __all__ so that ``from ._patch import *``
-# in ``__init__.py`` shadows the raw generated classes.  Because
-# ``_attach_msrest_compat`` was applied to the *parent* classes above, all
-# lifecycle fixes (``__new__``, ``__getattr__``, ``__setattr__``,
-# ``__getattribute__``) and msrest API methods (``as_dict``, ``serialize``,
-# ``deserialize``, ``from_dict``, ``validate``, etc.) are inherited by
-# these subclasses and any *external* subclass (e.g. datalake) that
-# further extends them.
+class RetentionPolicy(_GeneratedRetentionPolicy):
+    """Back-compat subclass of the generated ``RetentionPolicy``. See :class:`Logging`."""
 
 
-class AccessPolicy(_GenAccessPolicy):
-    """AccessPolicy with msrest back-compat."""
+class CorsRule(_GeneratedCorsRule):
+    """Back-compat subclass of the generated ``CorsRule``. See :class:`Logging`."""
 
 
-class RetentionPolicy(_GenRetentionPolicy):
-    """RetentionPolicy with msrest back-compat."""
+class StaticWebsite(_GeneratedStaticWebsite):
+    """Back-compat subclass of the generated ``StaticWebsite``. See :class:`Logging`."""
 
 
-class Metrics(_GenMetrics):
-    """Metrics with msrest back-compat."""
+_apply_back_compat_to_generated(
+    Logging,
+    attribute_map={
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    },
+    validation={
+        "version": {"required": True},
+        "delete": {"required": True},
+        "read": {"required": True},
+        "write": {"required": True},
+        "retention_policy": {"required": True},
+    },
+    xml_name="Logging",
+)
 
+_apply_back_compat_to_generated(
+    Metrics,
+    attribute_map={
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    },
+    validation={
+        "enabled": {"required": True},
+    },
+    xml_name="Metrics",
+)
 
-class Logging(_GenLogging):
-    """Logging with msrest back-compat."""
+_apply_back_compat_to_generated(
+    RetentionPolicy,
+    attribute_map={
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+        "allow_permanent_delete": {"key": "AllowPermanentDelete", "type": "bool"},
+    },
+    validation={
+        "enabled": {"required": True},
+        "days": {"minimum": 1},
+    },
+    xml_name="RetentionPolicy",
+)
 
+_apply_back_compat_to_generated(
+    CorsRule,
+    attribute_map={
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    },
+    validation={
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
+    },
+    xml_name="CorsRule",
+)
 
-class CorsRule(_GenCorsRule):
-    """CorsRule with msrest back-compat."""
-
-
-class StaticWebsite(_GenStaticWebsite):
-    """StaticWebsite with msrest back-compat."""
+_apply_back_compat_to_generated(
+    StaticWebsite,
+    attribute_map={
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "index_document": {"key": "IndexDocument", "type": "str"},
+        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
+        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
+    },
+    validation={
+        "enabled": {"required": True},
+    },
+    xml_name="StaticWebsite",
+)
 
 
 __all__: List[str] = [
-    "AccessPolicy",
-    "RetentionPolicy",
-    "Metrics",
     "Logging",
+    "Metrics",
+    "RetentionPolicy",
     "CorsRule",
     "StaticWebsite",
 ]
