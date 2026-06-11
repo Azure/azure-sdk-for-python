@@ -1,6 +1,6 @@
 // Only used for type-checking of JavaScript sources.  Folder should contain no TypeScript sources.
 {
-  "extends": "@tsconfig/node20/tsconfig.json",
+  "extends": "@tsconfig/node24/tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,

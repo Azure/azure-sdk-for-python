@@ -1,9 +1,41 @@
 {
+  "name": "@azure-tools/specs-shared",
   "private": true,
   "type": "module",
+  "exports": {
+    "./array": "./shared/src/array.js",
+    "./breaking-change": "./shared/src/breaking-change.js",
+    "./changed-files": "./shared/src/changed-files.js",
+    "./console": "./shared/src/console.js",
+    "./eslint-base-config": "./shared/eslint.base.config.js",
+    "./exec": "./shared/src/exec.js",
+    "./git": "./shared/src/git.js",
+    "./github": "./shared/src/github.js",
+    "./logger": "./shared/src/logger.js",
+    "./math": "./shared/src/math.js",
+    "./path": "./shared/src/path.js",
+    "./readme": "./shared/src/readme.js",
+    "./sdk-types": "./shared/src/sdk-types.js",
+    "./set": "./shared/src/set.js",
+    "./simple-git": "./shared/src/simple-git.js",
+    "./sleep": "./shared/src/sleep.js",
+    "./sort": "./shared/src/sort.js",
+    "./spec-model-error": "./shared/src/spec-model-error.js",
+    "./spec-model": "./shared/src/spec-model.js",
+    "./swagger": "./shared/src/swagger.js",
+    "./tag": "./shared/src/tag.js",
+    "./time": "./shared/src/time.js",
+    "./test/examples": "./shared/test/examples.js"
+  },
+  "bin": {
+    "spec-model": "./shared/cmd/spec-model.js"
+  },
+  "engines": {
+    "node": ">=24"
+  },
   "_comments": {
     "dependencies": "Runtime dependencies must be kept to an absolute minimum for performance, ideally with no transitive dependencies",
-    "dependencies2": "All runtime and dev dependencies in this file, must be a superset of shared/package.json"
+    "dependencies2": "This file owns all runtime and dev dependencies needed by .github subfolders/tools"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^15.1.3",
@@ -17,15 +49,17 @@
   },
   "devDependencies": {
     "@actions/github-script": "github:actions/github-script",
+    "@chronus/chronus": "1.3.1",
+    "@chronus/github": "1.0.6",
     "@eslint/js": "^10.0.0",
     "@octokit/endpoint": "^11.0.0",
     "@octokit/rest": "^22.0.0",
     "@octokit/types": "^16.0.0",
     "@octokit/webhooks-types": "^7.5.1",
-    "@tsconfig/node20": "^20.1.4",
+    "@tsconfig/node24": "^24.0.4",
     "@types/debug": "^4.1.12",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^20.0.0",
+    "@types/node": "^24.13.2",
     "@types/semver": "^7.7.1",
     "@vitest/coverage-v8": "^4.1.0",
     "cross-env": "^10.1.0",
