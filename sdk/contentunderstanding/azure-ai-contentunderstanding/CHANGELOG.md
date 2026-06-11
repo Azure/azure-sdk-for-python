@@ -1,5 +1,13 @@
 # Release History
 
+## 1.2.0b2 (2026-06-10)
+
+### Bugs Fixed
+- Filtered service-emitted `LLMStats:` telemetry entries from the rendered `rai_warnings` front matter.
+
+### Other Changes
+- Updated `to_llm_input` page markers from `<!-- page N -->` to `<!-- InputPageNumber: N -->` and avoided duplicate marker injection when the service markdown already includes `InputPageNumber` markers.
+
 ## 1.2.0b1 (2026-04-28)
 
 ### Features Added
