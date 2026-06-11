@@ -128,7 +128,7 @@ def _derive_resource_url_from_project_endpoint(project_endpoint: str) -> str:
         (".services.ai.azure.cn", ".cognitiveservices.azure.cn"),
         (".services.ai.azure.us", ".cognitiveservices.azure.us"),
     ]:
-        if hostname.endswith(project_pat):
+        if len(hostname) > len(project_pat) and hostname.endswith(project_pat):
             resource_host = hostname[: -len(project_pat)] + resource_pat
             return f"https://{resource_host}"
 

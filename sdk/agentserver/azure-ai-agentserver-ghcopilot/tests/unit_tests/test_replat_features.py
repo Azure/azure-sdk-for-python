@@ -275,6 +275,13 @@ class TestUrlDerivation:
                 "https://victim.services.ai.azure.com.attacker.example/api/projects/myproject"
             )
 
+    def test_derive_resource_url_rejects_bare_suffix_host(self):
+        """A host that is exactly the suffix (no resource label) is rejected."""
+        with pytest.raises(ValueError, match="Cannot derive"):
+            _derive_resource_url_from_project_endpoint(
+                "https://.services.ai.azure.com/api/projects/myproject"
+            )
+
     def test_get_project_endpoint_new_var(self):
         """Prefers FOUNDRY_PROJECT_ENDPOINT over legacy name."""
         with patch.dict(os.environ, {
