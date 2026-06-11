@@ -564,11 +564,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             "version": self.version,
         }
 
-        # Always include type field
-        if hasattr(self, "type") and self.type:
-            result["type"] = self.type
-        else:
-            result["type"] = "deploymenttemplates"  # Default type if not specified
+        # Always use "deploymenttemplates" as the type value for the API wire format.
+        # YAML schema uses "deployment_template" as the entity type identifier, but the
+        # service validates that the type in the body matches the route ("deploymenttemplates").
+        result["type"] = "deploymenttemplates"
 
         # Add optional basic fields
         if self.display_name:

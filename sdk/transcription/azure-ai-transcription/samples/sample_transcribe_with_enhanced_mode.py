@@ -30,8 +30,10 @@ DESCRIPTION:
       supported for the `translate` task
     - Diarization is not supported for the `translate` task (only speaker1
       label is returned)
-    - `locales` and `phrase_lists` options are not required or applicable
-      with Enhanced Mode
+    - `locales` is optional in Enhanced Mode. The service operates in
+      multilingual mode by default; if specified, the first locale is used as
+      a hint to guide recognition.
+    - `phrase_list` is not required or applicable with Enhanced Mode
 
 USAGE:
     python sample_transcribe_with_enhanced_mode.py
@@ -101,6 +103,61 @@ def sample_transcribe_with_enhanced_mode():
         # Print the transcription result
         print(result.combined_phrases[0].text)
     # [END transcribe_with_enhanced_mode]
+
+
+def sample_enhanced_mode_with_locale():
+    """Guide Enhanced Mode recognition toward a specific language using a locale.
+
+    Enhanced Mode runs in multilingual mode by default, so you don't need to
+    specify the input language. Optionally, to guide recognition toward a
+    specific language, set `locales` using a supported locale code (for example,
+    `en-US`). The service uses the first locale as a hint to bias recognition.
+    """
+    # [START enhanced_mode_with_locale]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.transcription import TranscriptionClient
+    from azure.ai.transcription.models import (
+        TranscriptionContent,
+        TranscriptionOptions,
+        EnhancedModeProperties,
+    )
+
+    # Get configuration from environment variables
+    endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
+
+    # We recommend using role-based access control (RBAC) for production scenarios
+    api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
+
+    # Create the transcription client
+    client = TranscriptionClient(endpoint=endpoint, credential=credential)
+
+    # Path to your audio file
+    audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
+
+    # Open and read the audio file
+    with open(audio_file_path, "rb") as audio_file:
+        # Enhanced mode is automatically enabled when task is specified
+        enhanced_mode = EnhancedModeProperties(task="transcribe")
+
+        # Guide recognition toward a specific language by setting locales.
+        # The service uses the first locale as a hint.
+        options = TranscriptionOptions(enhanced_mode=enhanced_mode, locales=["en-US"])
+
+        # Create the request content
+        request_content = TranscriptionContent(definition=options, audio=audio_file)
+
+        # Transcribe the audio with enhanced mode
+        result = client.transcribe(request_content)
+
+        # Print the transcription result
+        print(result.combined_phrases[0].text)
+    # [END enhanced_mode_with_locale]
 
 
 def sample_translate_with_enhanced_mode():
@@ -292,16 +349,21 @@ if __name__ == "__main__":
     sample_transcribe_with_enhanced_mode()
 
     print("\n" + "=" * 60)
-    print("Sample 2: Translate with Enhanced Mode")
+    print("Sample 2: Guide Enhanced Mode with a Locale")
+    print("=" * 60)
+    sample_enhanced_mode_with_locale()
+
+    print("\n" + "=" * 60)
+    print("Sample 3: Translate with Enhanced Mode")
     print("=" * 60)
     sample_translate_with_enhanced_mode()
 
     print("\n" + "=" * 60)
-    print("Sample 3: Enhanced Mode with Prompt Tuning")
+    print("Sample 4: Enhanced Mode with Prompt Tuning")
     print("=" * 60)
     sample_enhanced_mode_with_prompts()
 
     print("\n" + "=" * 60)
-    print("Sample 4: Combine Enhanced Mode with Other Options")
+    print("Sample 5: Combine Enhanced Mode with Other Options")
     print("=" * 60)
     sample_enhanced_mode_with_diarization()

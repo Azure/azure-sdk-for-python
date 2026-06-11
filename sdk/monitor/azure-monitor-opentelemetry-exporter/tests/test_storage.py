@@ -284,9 +284,12 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_check_storage_size_full(self):
         test_input = (1, 2, 3)
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "asd2"), 1) as stor:
-            stor.put(test_input)
-            self.assertFalse(stor._check_storage_size())
+        test_path = os.path.join(TEST_FOLDER, "asd2")
+        os.makedirs(test_path, exist_ok=True)
+        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
+            with LocalFileStorage(test_path, 1) as stor:
+                stor.put(test_input)
+                self.assertFalse(stor._check_storage_size())
 
     def test_check_storage_size_not_full(self):
         test_input = (1, 2, 3)
@@ -414,12 +417,13 @@ class TestLocalFileStorage(unittest.TestCase):
 
         for error_name, error_exception in error_scenarios:
             with self.subTest(error=error_name):
-                with LocalFileStorage(os.path.join(TEST_FOLDER, f"error_test_{error_name}")) as stor:
-                    # Mock os.rename to fail with specific error
-                    with mock.patch("os.rename", side_effect=error_exception):
-                        result = stor.put(test_input)
-                        self.assertIsInstance(result, str)
-                        self.assertTrue(len(result) > 0)
+                with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
+                    with LocalFileStorage(os.path.join(TEST_FOLDER, f"error_test_{error_name}")) as stor:
+                        # Mock os.rename to fail with specific error
+                        with mock.patch("os.rename", side_effect=error_exception):
+                            result = stor.put(test_input)
+                            self.assertIsInstance(result, str)
+                            self.assertTrue(len(result) > 0)
 
     def test_put_with_lease_period(self):
         test_input = (1, 2, 3)

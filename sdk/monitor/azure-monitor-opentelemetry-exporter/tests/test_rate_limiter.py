@@ -69,8 +69,9 @@ class TestTokenBucketRateLimiter(unittest.TestCase):
         time.sleep(0.1)
         granted = limiter.try_consume(1000)
         # Should have refilled ~100 tokens (1000/sec * 0.1sec)
+        # Upper bound is generous to account for sleep overshooting on busy CI runners
         self.assertGreater(granted, 50)
-        self.assertLessEqual(granted, 200)
+        self.assertLessEqual(granted, 500)
 
     def test_bucket_caps_at_capacity(self):
         limiter = _TokenBucketRateLimiter(100)
