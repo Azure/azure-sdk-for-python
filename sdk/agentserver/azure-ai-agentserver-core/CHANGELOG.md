@@ -4,6 +4,29 @@
 
 ### Features Added
 
+- **Public read API: `Task.get(task_id) -> TaskSnapshot | None`** —
+  read-only introspection for any non-deleted task in any status
+  (pending, in_progress, suspended, completed). Returns ``None``
+  for missing tasks (does NOT raise ``TaskNotFound``). Never
+  reclaims, never extends the lease, never PATCHes. Mirrors the
+  instance-method shape of ``Task.get_active_run`` as its
+  read-only sibling.
+
+  New public type ``TaskSnapshot`` exposes only developer-facing
+  fields (``task_id``, ``status``, ``created_at``, ``updated_at``,
+  ``started_at``, ``completed_at``, ``output``, ``error``,
+  ``suspension_reason``, ``metadata``, ``lease_expiry_count``).
+  Framework-internal storage details (lease, etag, raw payload,
+  raw attachments, source, tags) are deliberately excluded.
+
+  ```python
+  snap = await my_task.get("task-123")
+  if snap is None:
+      ...  # never existed or was deleted
+  else:
+      print(snap.status, snap.output, snap.error)
+  ```
+
 - **Per-output payloads up to 2 MB** for both `return` values from
   durable-task handlers and `ctx.suspend(output=...)` values. Outputs
   are stored entirely in a framework-managed attachment slot, so they

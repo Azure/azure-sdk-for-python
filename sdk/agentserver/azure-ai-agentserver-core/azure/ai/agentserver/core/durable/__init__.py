@@ -56,6 +56,7 @@ from ._models import TaskStatus
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
+from ._snapshot import TaskSnapshot
 
 # Spec 016 FR-022 + SC-014 (US6): TaskTerminated is fully removed from
 # the public surface — importing it from this package now raises
@@ -87,6 +88,7 @@ __all__ = [
     "TaskMetadata",
     "TaskResult",
     "TaskRun",
+    "TaskSnapshot",
     "Suspended",
     "TaskStatus",
     "TaskFailed",

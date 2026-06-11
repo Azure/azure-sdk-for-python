@@ -758,6 +758,38 @@ work with — a per-call override would silently disappear at the crash
 boundary. Session identity is platform-derived from the
 `FOUNDRY_AGENT_SESSION_ID` environment variable.
 
+#### Read-only introspection: `Task.get(task_id) -> TaskSnapshot | None`
+
+Use `Task.get(task_id)` to read the current state of any non-deleted
+task (pending, in_progress, suspended, or completed) without any
+side effects. Returns a read-only `TaskSnapshot` with the documented
+developer-facing fields; returns `None` if no task with that id
+exists (does NOT raise `TaskNotFound`).
+
+```python
+snap = await my_task.get("task-123")
+if snap is None:
+    print("never existed (or was deleted)")
+else:
+    print(snap.status, snap.output, snap.error)
+```
+
+Unlike `Task.get_active_run`, `Task.get`:
+
+- NEVER reclaims a dead lease, NEVER spawns a recovery execution.
+- NEVER takes a write lock; reads stay fast under write contention.
+- Works for tasks in EVERY status — including completed and
+  suspended — so you can render a task's outcome in a UI without
+  guessing whether it's still running.
+
+`TaskSnapshot` deliberately exposes ONLY developer-facing fields:
+`task_id`, `status`, `created_at`, `updated_at`, `started_at`,
+`completed_at`, `output` (resolved value, never a ref), `error`
+(structured failure info), `suspension_reason`, `metadata` (default
+namespace), `lease_expiry_count`. Framework-internal fields (raw
+payload, raw attachments, lease, etag, source, tags) are NOT on the
+snapshot. Re-call `Task.get` to refresh.
+
 ### `TaskContext`
 
 The single argument your handler receives. Properties:
