@@ -55,14 +55,31 @@ async def test_concurrent_metadata_flushes_serialize(local) -> None:
     """FR-A-006 / SC-2 — 50 concurrent metadata flushes against the
     same task complete with **0** etag-conflict retries observed.
 
-    Without the per-task write queue, all 50 flushes would race
-    against the same etag and most would 412 → retry. With the
-    queue serializing them, each flush proceeds in sequence and
-    none sees a stale etag.
+    With the per-task write queue, all 50 flushes serialize through
+    one lock and each carries the latest etag — so the local
+    provider's etag-mismatch ValueError NEVER fires.
+
+    Strategy: count etag-mismatch ValueErrors raised by the local
+    provider during the flush burst. The framework's write queue
+    must drive this count to 0.
     """
     barrier = asyncio.Event()
     started = []
     flush_count = 50
+    etag_conflicts: list[Exception] = []
+
+    # Wrap the provider's update to capture every etag mismatch.
+    original_update = local.update
+
+    async def _capturing_update(task_id, patch):
+        try:
+            return await original_update(task_id, patch)
+        except ValueError as exc:
+            if "etag" in str(exc).lower():
+                etag_conflicts.append(exc)
+            raise
+
+    local.update = _capturing_update  # type: ignore[method-assign]
 
     @task(name="parallel_flushes", ephemeral=False)
     async def my_task(ctx: TaskContext[str]) -> str:
@@ -81,26 +98,27 @@ async def test_concurrent_metadata_flushes_serialize(local) -> None:
     mgr_mod._manager = manager
     await manager.startup()
     try:
-        async def trigger() -> str:
-            run_task = asyncio.create_task(
-                my_task.run(task_id="t-parallel", input="x").__await__().__next__()
-                if False  # placeholder branch
-                else my_task.run(task_id="t-parallel", input="x")
-            )
-            # Wait until inside the handler, then release the barrier.
-            await asyncio.sleep(0.01)
-            barrier.set()
-            r = await run_task
-            return r.output
-
-        result = await trigger()
-        assert result == "done"
+        run_task = asyncio.create_task(
+            my_task.run(task_id="t-parallel", input="x")
+        )
+        # Wait until the handler is inside, then release the barrier.
+        await asyncio.sleep(0.01)
+        barrier.set()
+        result = await run_task
+        assert result.output == "done"
     finally:
         await manager.shutdown()
         mgr_mod._manager = None
 
     # Every flush observed by the handler must have landed.
     assert len(started) == flush_count
+    # FR-A-006 / SC-2 — under in-process contention the write queue
+    # eliminates etag conflicts entirely.
+    assert etag_conflicts == [], (
+        f"FR-A-006 / SC-2 — 50 concurrent metadata flushes produced "
+        f"{len(etag_conflicts)} etag conflicts; the per-task write "
+        f"queue should serialize them so the count is 0."
+    )
 
 
 @pytest.mark.asyncio

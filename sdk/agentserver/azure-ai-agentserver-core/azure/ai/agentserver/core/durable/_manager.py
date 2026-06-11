@@ -934,7 +934,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 active = self._active_tasks.get(task_id)
                 if active is None or active.context.cancel.is_set():
                     return
-                info = await self._provider.get(task_id)
+                info = await self._provider_get_tracked(task_id)
                 if info is None or not info.payload:
                     return
                 st = info.payload.get("_steering", {})
@@ -958,6 +958,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     if tid in self._active_tasks
                     else 0.0
                 ),
+                # Spec 019 FR-A-006 — heartbeat PATCH MUST be routed
+                # through the per-task write queue so it serializes
+                # with metadata flushes / steering / suspend / fail.
+                update_via_queue=self._provider_update_locked,
             )
         )
 
@@ -1018,7 +1022,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         :raises TaskNotFound: If the task doesn't exist.
         :raises ValueError: If the task is not suspended or no callback.
         """
-        task_info = await self._provider.get(task_id)
+        task_info = await self._provider_get_tracked(task_id)
         if task_info is None:
             raise TaskNotFound(task_id)
 
@@ -1077,7 +1081,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # this process. Reads are not rejected for orphan sandboxes
         # per the spec's assumptions.
         try:
-            task_info = await self._provider.get(task_id)
+            task_info = await self._provider_get_tracked(task_id)
         except TransportClassifiedError as exc:
             if _is_evicted(exc):
                 # Even reads classified as evicted (unexpected per
@@ -1148,7 +1152,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             transient / conflict / permanent outcomes.
         """
         etag = getattr(task_info, "etag", None) or None
-        await self._provider.update(
+        await self._provider_update_locked(
             task_info.id,
             TaskPatchRequest(
                 lease_owner=self._lease_owner,
@@ -1237,7 +1241,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         else:
             # PATCH returns the full updated TaskInfo -- no follow-up
             # GET needed. (Saves one network round-trip per call.)
-            updated_info = await self._provider.update(
+            updated_info = await self._provider_update_locked(
                 task_id,
                 TaskPatchRequest(
                     status="in_progress" if needs_status_flip else None,
@@ -1349,7 +1353,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 active = self._active_tasks.get(task_id)
                 if active is None or active.context.cancel.is_set():
                     return
-                info = await self._provider.get(task_id)
+                info = await self._provider_get_tracked(task_id)
                 if info is None or not info.payload:
                     return
                 st = info.payload.get("_steering", {})
@@ -1373,6 +1377,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     if tid in self._active_tasks
                     else 0.0
                 ),
+                # Spec 019 FR-A-006 — route through the per-task write queue.
+                update_via_queue=self._provider_update_locked,
             )
         )
 
@@ -1587,7 +1593,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         :rtype: float
         """
         try:
-            task_info = await self._provider.get(task_id)
+            task_info = await self._provider_get_tracked(task_id)
         except Exception:  # pylint: disable=broad-exception-caught
             return timeout_seconds
         if task_info is None or not task_info.payload:
@@ -1679,7 +1685,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     #     case the local cleanup sequence already
                     #     handled it; just log and proceed.
                     try:
-                        await self._provider.update(
+                        await self._provider_update_locked(
                             task_id,
                             TaskPatchRequest(
                                 lease_owner="",
@@ -1859,7 +1865,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     # counter via ``_start_existing_task`` so the durable
                     # max_attempts budget is honored across lifetimes.
                     try:
-                        await self._provider.update(
+                        await self._provider_update_locked(
                             task_id,
                             TaskPatchRequest(
                                 error={
@@ -1951,7 +1957,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             forever.
         :return: New context for the drained generation, or None.
         """
-        task_info = await self._provider.get(task_id)
+        task_info = await self._provider_get_tracked(task_id)
         if task_info is None:
             return None
 
@@ -2002,7 +2008,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         try:
             etag = getattr(task_info, "etag", None) or None
-            await self._provider.update(
+            await self._provider_update_locked(
                 task_id,
                 TaskPatchRequest(
                     payload=payload,
@@ -2011,7 +2017,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     **self._lease_ext_kwargs(task_id),
                 ),
             )
-            self._note_lease_refreshed(task_id)
         except (ValueError, TransportClassifiedError) as exc:
             if isinstance(exc, TransportClassifiedError) and getattr(
                 exc, "classification", None
@@ -2106,14 +2111,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # ``payload["_retry_attempt"]``.
         payload["_retry_attempt"] = 0
         try:
-            await self._provider.update(
+            await self._provider_update_locked(
                 task_id,
                 TaskPatchRequest(
                     payload=payload,
                     **self._lease_ext_kwargs(task_id),
                 ),
             )
-            self._note_lease_refreshed(task_id)
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to clear drain_in_progress for %s", task_id)
 
@@ -2160,84 +2164,37 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 "output": _serialize_input(result),
             }
 
-            # For steerable tasks, use etag to detect concurrent steering
-            if opts.steerable:
-                try:
-                    task_info = await self._provider.get(task_id)
-                    etag = getattr(task_info, "etag", None) if task_info else None
-                    await self._provider.update(
+            # Spec 019 FR-A-008 — terminal write follows RE-READ-AND-DECIDE
+            # uniformly for both steerable and non-steerable tasks. The
+            # pre-019 steerable path returned False on 412 so the outer
+            # drain loop would re-check for steers; with the spec-019
+            # rule, queued steerers learn via TaskConflictError(completed)
+            # per the C-STR-6 cross-process steering-after-terminate
+            # contract, and the terminal write proceeds uniformly.
+            try:
+                await self._terminal_write_locked(
+                    task_id,
+                    TaskPatchRequest(
+                        status="completed",
+                        payload=payload_patch,
+                    ),
+                )
+            except TaskConflictError:
+                # 412 RE-READ decided ABANDON.
+                raise
+            except TransportClassifiedError as exc:
+                if _is_evicted(exc):
+                    logger.warning(
+                        "Eviction (binding_mismatch) on terminal write for "
+                        "task %s (session=%s) — suppressing terminal write, "
+                        "signalling awaiters with TaskConflictError",
                         task_id,
-                        TaskPatchRequest(
-                            status="completed",
-                            payload=payload_patch,
-                            if_match=etag,
-                        ),
+                        self._config.session_id or "local",
                     )
-                except ValueError:
-                    # Etag conflict — another process may have steered
-                    logger.info(
-                        "Etag conflict completing task %s — re-checking for steers",
-                        task_id,
-                    )
-                    return False
-                except TransportClassifiedError as exc:
-                    classification = getattr(exc, "classification", None)
-                    if _is_evicted(exc):
-                        # Spec 016 FR-007: orphan-sandbox eviction at the
-                        # terminal-write site. Suppress this terminal write
-                        # (already done — the call raised) and signal awaiters
-                        # via TaskConflictError. Caller-observable shape is
-                        # identical to the live-elsewhere case per Invariant 1.
-                        logger.warning(
-                            "Eviction (binding_mismatch) on terminal write for "
-                            "task %s (session=%s) — suppressing terminal write, "
-                            "signalling awaiters with TaskConflictError",
-                            task_id,
-                            self._config.session_id or "local",
-                        )
-                        raise TaskConflictError(task_id, "in_progress") from exc
-                    if classification == "conflict":
-                        # Hosted task store etag conflict (412 / 409). Same
-                        # logical outcome as the local-provider ValueError
-                        # above — return False so the outer loop re-checks
-                        # for newly-queued steers before retrying.
-                        logger.info(
-                            "Etag conflict (hosted store) completing task %s "
-                            "— re-checking for steers",
-                            task_id,
-                        )
-                        return False
-                    raise
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Failed to complete task %s", task_id, exc_info=True)
-            else:
-                try:
-                    await self._terminal_write_locked(
-                        task_id,
-                        TaskPatchRequest(
-                            status="completed",
-                            payload=payload_patch,
-                        ),
-                    )
-                except TaskConflictError:
-                    # Spec 019 FR-A-008 — terminal-write 412 RE-READ
-                    # decided ABANDON (lease-lost or already-terminal).
-                    # Propagate as the eviction-shape exception so
-                    # awaiters surface TaskConflictError.
-                    raise
-                except TransportClassifiedError as exc:
-                    if _is_evicted(exc):
-                        logger.warning(
-                            "Eviction (binding_mismatch) on terminal write for "
-                            "task %s (session=%s) — suppressing terminal write, "
-                            "signalling awaiters with TaskConflictError",
-                            task_id,
-                            self._config.session_id or "local",
-                        )
-                        raise TaskConflictError(task_id, "in_progress") from exc
-                    raise
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Failed to complete task %s", task_id, exc_info=True)
+                    raise TaskConflictError(task_id, "in_progress") from exc
+                raise
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to complete task %s", task_id, exc_info=True)
 
         logger.info("Task %s completed successfully", task_id)
         return True
@@ -2289,7 +2246,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 )
         else:
             try:
-                await self._provider.update(
+                # Spec 019 FR-A-008 — failure terminal write follows
+                # RE-READ-AND-DECIDE policy on 412.
+                await self._terminal_write_locked(
                     task_id,
                     TaskPatchRequest(
                         status="completed",
@@ -2297,6 +2256,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                         payload={"metadata": metadata.to_dict()},
                     ),
                 )
+            except TaskConflictError:
+                # 412 RE-READ decided ABANDON; propagate as the
+                # eviction-shape exception for awaiters.
+                raise
             except TransportClassifiedError as transport_exc:
                 if _is_evicted(transport_exc):
                     logger.warning(
@@ -2353,7 +2316,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         """
         # Read current payload so we can clear input-bearing slots while
         # preserving _steering mechanism state (Spec 013 US4 scenarios 1, 2).
-        task_info = await self._provider.get(task_id)
+        task_info = await self._provider_get_tracked(task_id)
+        # Spec 019 FR-A-003 — refresh tracked etag from the GET so the
+        # subsequent PATCH's if_match (filled in by _terminal_write_locked)
+        # matches the just-read state.
+        if task_info is not None:
+            self._track_etag(task_id, getattr(task_info, "etag", None))
         steering_patch: dict[str, Any] = {}
         attachments_patch: dict[str, Any] = {}
         if task_info is not None and task_info.payload:
@@ -2378,7 +2346,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             payload_patch["output"] = _serialize_input(output)
 
         try:
-            await self._provider.update(
+            # Spec 019 FR-A-008 — suspend terminal write follows
+            # RE-READ-AND-DECIDE policy on 412.
+            await self._terminal_write_locked(
                 task_id,
                 TaskPatchRequest(
                     status="suspended",
@@ -2387,6 +2357,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     attachments=attachments_patch or None,
                 ),
             )
+        except TaskConflictError:
+            raise
         except TransportClassifiedError as exc:
             if _is_evicted(exc):
                 logger.warning(
@@ -2452,7 +2424,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             task_info.id,
             sorted(orphans),
         )
-        await self._provider.update(
+        await self._provider_update_locked(
             task_info.id,
             TaskPatchRequest(
                 attachments={k: None for k in orphans},
@@ -2643,6 +2615,19 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         self._task_write_locks.pop(task_id, None)
         self._task_etag_cache.pop(task_id, None)
 
+    async def _provider_get_tracked(self, task_id: str) -> Any:
+        """Spec 019 FR-A-003 — read a task AND refresh the tracked etag.
+
+        Thin wrapper around ``self._provider.get(task_id)`` that calls
+        ``_track_etag`` on the response's etag. Use at every read site
+        where a subsequent PATCH may rely on the latest etag (the
+        normal read-then-PATCH pattern across the framework).
+        """
+        info = await self._provider.get(task_id)
+        if info is not None:
+            self._track_etag(task_id, getattr(info, "etag", None))
+        return info
+
     async def _provider_update_locked(
         self,
         task_id: str,
@@ -2793,15 +2778,26 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         Returns one of:
 
         - ``"abandon_lease_lost"`` — RE-READ shows lease no longer ours
-          (owner/instance_id differ OR ``expiry_count`` bumped past
-          cached). New owner is authoritative; do not retry.
+          (owner or instance_id differ). New owner is authoritative;
+          do not retry.
         - ``"abandon_already_terminal"`` — RE-READ shows status already
           terminal (``completed``).
         - ``"retry"`` — Lease still ours, status still ``in_progress``;
           safe to retry against the new etag.
+
+        Note: per C-LSE-3, every real expiry-driven handoff bumps the
+        ``lease_instance_id``, so instance-id comparison alone is
+        sufficient to detect lease loss. An additional ``expiry_count``
+        leg would require populating a snapshot cache at every write
+        site (otherwise the default ``cached_expiry_count=0`` causes
+        any reclaimed task with `expiry_count >= 1` to spuriously
+        abandon on legitimate retry-able 412s). We rely on instance-id
+        comparison and intentionally do NOT consult ``expiry_count``
+        in this decision.
         """
+        _ = cached_expiry_count  # retained for binary-compat / future use
         try:
-            fresh = await self._provider.get(task_id)
+            fresh = await self._provider_get_tracked(task_id)
         except Exception:  # pylint: disable=broad-exception-caught
             # Can't re-read — be conservative; treat as lost.
             return "abandon_lease_lost"
@@ -2815,12 +2811,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # Branch (b): already terminal.
         if getattr(fresh, "status", None) == "completed":
             return "abandon_already_terminal"
-        # Branch (a): lease no longer ours.
+        # Branch (a): lease no longer ours (owner or instance_id differ).
         if (
             fresh.lease is None
             or fresh.lease.owner != (prior_lease_owner or self._lease_owner)
             or fresh.lease.instance_id != (prior_lease_instance or self._instance_id)
-            or fresh.lease.expiry_count > cached_expiry_count
         ):
             return "abandon_lease_lost"
         # Branch (c): retry.
@@ -2899,14 +2894,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         async def _flush(namespace: Optional[str], data: dict[str, Any]) -> None:
             slot = "metadata" if namespace is None else f"metadata:{namespace}"
-            await self._provider.update(
+            # Spec 019 FR-A-001 / FR-A-006 — route through the per-task
+            # write queue and use the tracked etag as if_match. The
+            # helper refreshes the etag from the response and bumps
+            # lease-last-refresh (FR-A-005 cadence shadow).
+            await self._provider_update_locked(
                 task_id,
                 TaskPatchRequest(
                     payload={slot: data},
                     **self._lease_ext_kwargs(task_id),
                 ),
             )
-            self._note_lease_refreshed(task_id)
 
         return _flush
 
