@@ -1,5 +1,13 @@
 # Release History
 
+## 1.17.1 (Unreleased)
+
+### Features Added
+
+- Enabled `ToolCallAccuracyEvaluator` and `_ToolInputAccuracyEvaluator` to run on conversations that include built-in restricted tools (`bing_grounding`, `bing_custom_search`, `azure_ai_search`, `azure_fabric`, `sharepoint_grounding`). Both evaluators grade the agent's tool selection and input arguments — neither requires the (often redacted) tool output body — so the previous unconditional rejection of conversations containing restricted tools is now lifted. Achieved by setting `check_for_unsupported_tools=False` on each evaluator's input validator. `_ToolCallSuccessEvaluator`, `GroundednessEvaluator`, and `ToolOutputUtilizationEvaluator` continue to reject restricted tools because their rubrics consume the tool output body.
+- Exported `_ToolInputAccuracyEvaluator` from the top-level `azure.ai.evaluation` namespace so consumers no longer need to reach into the private `_evaluators._tool_input_accuracy` submodule. The other tool evaluators were already exposed there; this brings the four siblings in line.
+- `_ToolCallSuccessEvaluator` now forwards the per-call runtime `status` (e.g. `failed`, `error`, `incomplete`, `cancelled`, `canceled`, `completed`) to the LLM rubric as a `[STATUS] <value>` annotation appended to each emitted `[TOOL_CALL]` / `[TOOL_RESULT]` line. The prompty rubric is updated to treat the failure annotations as a strong, authoritative failure signal that overrides a bland or otherwise-passing-looking payload, while still falling back to payload-only judgment when `status` is absent. Output is byte-identical to the previous wire format when no `status` field is populated, so existing recorded test fixtures and customers whose converters do not emit `status` are unaffected.
+
 ## 1.17.0 (2026-06-03)
 
 ### Breaking Changes

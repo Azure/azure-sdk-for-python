@@ -271,8 +271,35 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
         return tool_definitions
 
 
+def _format_status_suffix(status):
+    """Build the trailing ``[STATUS] <value>`` annotation for a content block.
+
+    Returns the empty string when ``status`` is absent or not a non-empty
+    string, so callers can unconditionally concatenate the return value
+    without affecting back-compat output.
+
+    :param status: The raw ``status`` field from a ``tool_call`` or
+        ``tool_result`` content block.
+    :type status: Any
+    :return: ``" [STATUS] <value>"`` when ``status`` is a non-empty string,
+        otherwise ``""``.
+    :rtype: str
+    """
+    if isinstance(status, str) and status:
+        return f" [STATUS] {status}"
+    return ""
+
+
 def _get_tool_calls_results(agent_response_msgs):
-    """Extract formatted agent tool calls and results from response."""
+    """Extract formatted agent tool calls and results from response.
+
+    Each emitted ``[TOOL_CALL]`` / ``[TOOL_RESULT]`` line is suffixed with
+    ``[STATUS] <value>`` when the source content block carries a ``status``
+    field. The prompty rubric uses this annotation as a strong failure signal
+    (see ``tool_call_success.prompty``). When ``status`` is absent the suffix
+    is omitted and the rubric falls back to payload-only judgment, so the
+    formatted output is byte-identical to the pre-pass-through wire format.
+    """
     agent_response_text = []
     tool_results = {}
 
@@ -283,7 +310,8 @@ def _get_tool_calls_results(agent_response_msgs):
             for content in msg.get("content", []):
                 if content.get("type") == "tool_result":
                     result = content.get("tool_result")
-                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}"
+                    status_suffix = _format_status_suffix(content.get("status"))
+                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}{status_suffix}"
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
@@ -302,7 +330,8 @@ def _get_tool_calls_results(agent_response_msgs):
                         func_name = content.get("name", "")
                         args = content.get("arguments", {})
                     args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
-                    call_line = f"[TOOL_CALL] {func_name}({args_str})"
+                    status_suffix = _format_status_suffix(content.get("status"))
+                    call_line = f"[TOOL_CALL] {func_name}({args_str}){status_suffix}"
                     agent_response_text.append(call_line)
                     if tool_call_id in tool_results:
                         agent_response_text.append(tool_results[tool_call_id])
