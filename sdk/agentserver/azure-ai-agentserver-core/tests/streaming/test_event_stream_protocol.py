@@ -23,7 +23,7 @@ import pytest
 from azure.ai.agentserver.core.streaming import (
     EventStream,
     EventStreamClosedError,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     streams,
 )
 from azure.ai.agentserver.core.streaming._concrete import (
@@ -113,10 +113,10 @@ class TestStateModel:
             await s.emit({"x": 1})
 
     async def test_emit_on_gone_raises_gone_error(self) -> None:
-        """Rule 5: emit on GONE → EventStreamGoneError."""
+        """Rule 5: emit on GONE → EventStreamNotFoundError."""
         s = BroadcastEventStream()
         await s._on_delete()  # registry would normally call this
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await s.emit({"x": 1})
 
     async def test_subscribe_on_gone_raises_gone_error_at_call_site(self) -> None:
@@ -124,16 +124,16 @@ class TestStateModel:
         subscribe() call site, NOT inside the iterator."""
         s = BroadcastEventStream()
         await s._on_delete()
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             # Must raise synchronously — before iterator returned
             s.subscribe()
 
     async def test_last_cursor_on_gone_raises_gone_error(self) -> None:
-        """Rule 7: last_cursor on GONE → EventStreamGoneError."""
+        """Rule 7: last_cursor on GONE → EventStreamNotFoundError."""
         s = ReplayEventStream(cursor_fn=lambda e: e["n"])
         await s.emit({"n": 1})
         await s._on_delete()
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await s.last_cursor()
 
     async def test_close_is_idempotent(self) -> None:

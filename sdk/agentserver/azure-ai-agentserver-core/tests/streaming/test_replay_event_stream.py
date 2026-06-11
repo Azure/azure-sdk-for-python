@@ -19,7 +19,7 @@ import time
 import pytest
 
 from azure.ai.agentserver.core.streaming import (
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     streams,
 )
 from azure.ai.agentserver.core.streaming._concrete import ReplayEventStream
@@ -196,7 +196,7 @@ class TestClosedToGoneAutoTransition:
         await s.close()
         await asyncio.sleep(0.2)  # event 1 expired
         # subscribe → triggers auto-transition CLOSED → GONE
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             s.subscribe()
 
 
@@ -247,10 +247,10 @@ class TestLastCursorRule25Exemption:
             "last_cursor MUST survive CLOSED+TTL-eviction per rule 8 + rule 25 exemption"
         )
         # NOW some other op fires GONE transition
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             s.subscribe()
         # NOW last_cursor raises Gone
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await s.last_cursor()
 
 
@@ -290,3 +290,134 @@ class TestRegistryDeleteImmediateCutoff:
             f"registry-delete MUST cut off mid-drain per FR-012a; "
             f"consumer saw all {len(seen)} events"
         )
+
+
+# ----------------------------------------------------------------
+# Spec 019 — Close-clock TTL tombstone (FR-E-005..007 / SC-15..17, SC-20)
+# ----------------------------------------------------------------
+
+
+class TestSpec019CloseClockTombstone:
+    """FR-E-005 / SC-15..17, SC-20 — TTL-since-close is the deterministic
+    tombstone trigger (not buffer-state-driven, not observer-driven).
+
+    Reference: docs/task-and-streaming-spec.md §46, §59 C-STR-TTL-1..4.
+    """
+
+    async def test_closed_stream_tombstones_after_ttl_since_close(self) -> None:
+        """SC-15 / FR-E-005 — emit + close + advance time past TTL →
+        next ``streams.get(id)`` raises ``EventStreamNotFoundError``.
+        """
+        streams.use_in_memory_replay(ttl_seconds=0.1)
+        stream = await streams.get_or_create("t-spec019-close-clock")
+        await stream.emit({"n": 1})
+        await stream.close()
+        # Wait past the close-clock deadline.
+        await asyncio.sleep(0.2)
+        # Trigger any opportunistic tombstone check.
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("t-spec019-close-clock")
+
+    async def test_active_stream_with_expired_buffer_stays_active(self) -> None:
+        """SC-16 / FR-E-006 — an Active stream whose buffer has been
+        fully evicted by per-event TTL MUST remain Active; new emits
+        succeed and new subscribers see them.
+        """
+        streams.use_in_memory_replay(
+            cursor_fn=lambda e: e["n"], ttl_seconds=0.1
+        )
+        stream = await streams.get_or_create("t-spec019-active-empty")
+        await stream.emit({"n": 1})
+        await asyncio.sleep(0.2)
+        # Buffer should now be empty (TTL evicted) — but stream is
+        # still Active because we never closed it.
+        await stream.emit({"n": 2})
+        seen: list[int] = []
+
+        async def consume():
+            async for ev in stream.subscribe():
+                seen.append(ev["n"])
+                if len(seen) >= 1:
+                    break
+
+        # Emit the trigger event and wait for the subscriber.
+        consumer_task = asyncio.create_task(consume())
+        await asyncio.sleep(0.05)
+        await stream.emit({"n": 3}, close=True)
+        await asyncio.wait_for(consumer_task, timeout=1.0)
+        # The new subscriber should have seen at least n=3 — proving
+        # the stream stayed Active (FR-E-006).
+        assert 3 in seen, (
+            f"FR-E-006 — Active stream w/ empty buffer should accept "
+            f"new subscribers. seen={seen}"
+        )
+
+    async def test_no_ttl_means_no_auto_tombstone(self) -> None:
+        """SC-17 / FR-E-007 — replay stream without TTL: emit + close
+        → buffer retained indefinitely; stream stays Closed; only
+        ``delete(id)`` tombstones.
+        """
+        streams.use_in_memory_replay(cursor_fn=lambda e: e["n"])
+        stream = await streams.get_or_create("t-spec019-no-ttl")
+        await stream.emit({"n": 1})
+        await stream.close()
+        # Even after sleeping, the registry must not tombstone.
+        await asyncio.sleep(0.2)
+        # get() still returns the same stream instance.
+        same = await streams.get("t-spec019-no-ttl")
+        assert same is stream, (
+            "FR-E-007 — no-TTL replay stream MUST NOT auto-tombstone"
+        )
+        # Late subscriber drains the buffered history.
+        history: list[int] = []
+        async for ev in stream.subscribe():
+            history.append(ev["n"])
+        assert history == [1]
+        # delete() tombstones immediately.
+        await streams.delete("t-spec019-no-ttl")
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("t-spec019-no-ttl")
+
+    async def test_last_cursor_works_until_tombstone(self) -> None:
+        """SC-20 / FR-E-010 — ``last_cursor()`` works on:
+        - Active stream with empty buffer (TTL-evicted) → highest cursor.
+        - Closed-but-pre-tombstone stream → highest cursor.
+        - After tombstone → raises ``EventStreamNotFoundError``.
+        """
+        streams.use_in_memory_replay(
+            cursor_fn=lambda e: e["n"], ttl_seconds=0.1
+        )
+        stream = await streams.get_or_create("t-spec019-last-cursor")
+        await stream.emit({"n": 5})
+        await stream.emit({"n": 7})
+
+        # Active state, before TTL evicts: last_cursor = 7.
+        c = await stream.last_cursor()
+        assert c == 7
+
+        # Wait for per-event TTL to evict the buffer (stream still Active).
+        await asyncio.sleep(0.2)
+        # Active + empty buffer: last_cursor still returns the watermark.
+        c = await stream.last_cursor()
+        assert c == 7, (
+            f"FR-E-010 / SC-20 — Active stream w/ empty buffer must "
+            f"still return the high-water cursor. Got {c}."
+        )
+
+        # Close the stream. Pre-tombstone (within close-clock window),
+        # last_cursor still works.
+        await stream.close()
+        c = await stream.last_cursor()
+        assert c == 7, (
+            f"FR-E-010 / SC-20 — Closed-but-pre-tombstone stream must "
+            f"still return the high-water cursor. Got {c}."
+        )
+
+        # Wait past close + TTL deadline → tombstone fires.
+        await asyncio.sleep(0.2)
+        # Touch the registry once so opportunistic tombstone happens.
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("t-spec019-last-cursor")
+        # And last_cursor on the now-tombstoned instance raises NotFound.
+        with pytest.raises(EventStreamNotFoundError):
+            await stream.last_cursor()

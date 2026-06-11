@@ -15,7 +15,7 @@ import inspect
 
 import pytest
 
-from azure.ai.agentserver.core.streaming import EventStreamGoneError
+from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
 from azure.ai.agentserver.core.streaming._concrete import BroadcastEventStream
 
 
@@ -106,7 +106,7 @@ class TestNoCursorNoTTL:
         """FR-007b — Broadcast.last_cursor() on GONE raises."""
         s = BroadcastEventStream()
         await s._on_delete()
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await s.last_cursor()
 
 
@@ -164,3 +164,48 @@ class TestSubscriberCleanup:
         await task
         await asyncio.sleep(0)
         assert len(s._subscriber_queues) == 0
+
+
+# ----------------------------------------------------------------
+# Spec 019 — Broadcast NEVER auto-tombstones (FR-E-008 / SC-18)
+# ----------------------------------------------------------------
+
+
+class TestSpec019BroadcastNoAutoTombstone:
+    """FR-E-008 / SC-18 — Broadcast streams have no TTL machinery; only
+    explicit ``delete(id)`` tombstones. Closed broadcast: ``subscribe()``
+    yields an empty iterator that terminates immediately.
+
+    Reference: docs/task-and-streaming-spec.md §43, §44, §59
+    C-STR-TTL-3.
+    """
+
+    async def test_closed_broadcast_does_not_auto_tombstone(self) -> None:
+        """SC-18 — emit + close on a broadcast stream → no auto-tombstone.
+        ``subscribe(id)`` returns an empty iterator (no error); only
+        explicit ``delete(id)`` tombstones.
+        """
+        streams.use_in_memory_live()
+        stream = await streams.get_or_create("t-spec019-broadcast-no-auto")
+        await stream.emit({"n": 1})
+        await stream.close()
+        # Sleep — broadcast must NOT auto-tombstone.
+        await asyncio.sleep(0.2)
+        # Still resolvable from the registry.
+        same = await streams.get("t-spec019-broadcast-no-auto")
+        assert same is stream
+
+        # subscribe() on closed broadcast yields an empty iterator that
+        # terminates immediately.
+        items: list = []
+        async for ev in stream.subscribe():
+            items.append(ev)
+        assert items == [], (
+            f"closed broadcast subscribe must yield empty iterator; "
+            f"got {items}"
+        )
+
+        # Explicit delete tombstones.
+        await streams.delete("t-spec019-broadcast-no-auto")
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("t-spec019-broadcast-no-auto")
