@@ -432,8 +432,8 @@ class Cluster(TrackedResource):
     :vartype sku: ~azure.mgmt.redisenterprise.models.Sku
     :ivar zones: The availability zones.
     :vartype zones: list[str]
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentity
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityV4
     """
 
     properties: Optional["_models.ClusterCreateProperties"] = rest_field(
@@ -446,10 +446,10 @@ class Cluster(TrackedResource):
     """The SKU to create, which affects price, performance, and features. Required."""
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The availability zones."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+    identity: Optional["_models.ManagedServiceIdentityV4"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The identity of the resource."""
+    """The managed service identities assigned to this resource."""
 
     __flattened_items = [
         "high_availability",
@@ -475,7 +475,7 @@ class Cluster(TrackedResource):
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ClusterCreateProperties"] = None,
         zones: Optional[list[str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        identity: Optional["_models.ManagedServiceIdentityV4"] = None,
     ) -> None: ...
 
     @overload
@@ -828,8 +828,8 @@ class ClusterUpdate(_Model):
     :vartype sku: ~azure.mgmt.redisenterprise.models.Sku
     :ivar properties: Other properties of the cluster.
     :vartype properties: ~azure.mgmt.redisenterprise.models.ClusterUpdateProperties
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentity
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityV4
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
@@ -840,10 +840,10 @@ class ClusterUpdate(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Other properties of the cluster."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+    identity: Optional["_models.ManagedServiceIdentityV4"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The identity of the resource."""
+    """The managed service identities assigned to this resource."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update"])
     """Resource tags."""
 
@@ -868,7 +868,7 @@ class ClusterUpdate(_Model):
         *,
         sku: Optional["_models.Sku"] = None,
         properties: Optional["_models.ClusterUpdateProperties"] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        identity: Optional["_models.ManagedServiceIdentityV4"] = None,
         tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
@@ -1011,6 +1011,7 @@ class Database(ProxyResource):
         "geo_replication",
         "redis_version",
         "defer_upgrade",
+        "notify_keyspace_events",
         "access_keys_authentication",
     ]
 
@@ -1097,6 +1098,13 @@ class DatabaseProperties(_Model):
      "Disabled" and "Enabled".
     :vartype access_keys_authentication: str or
      ~azure.mgmt.redisenterprise.models.AccessKeysAuthentication
+    :ivar notify_keyspace_events: Specifies which keyspace events should trigger notifications.
+     Default is an empty string, meaning this feature is disabled. When enabled, at least 'K'
+     (keyspace events) or 'E' (keyevent events) must be present. For example, 'AKE' enables all
+     standard events. See `https://redis.io/docs/latest/develop/use/keyspace-notifications/
+     <https://redis.io/docs/latest/develop/use/keyspace-notifications/>`_ for the complete list of
+     event types.
+    :vartype notify_keyspace_events: str
     """
 
     client_protocol: Optional[Union[str, "_models.Protocol"]] = rest_field(
@@ -1155,6 +1163,15 @@ class DatabaseProperties(_Model):
     )
     """This property can be Enabled/Disabled to allow or deny access with the current access keys. Can
      be updated even after database is created. Known values are: \"Disabled\" and \"Enabled\"."""
+    notify_keyspace_events: Optional[str] = rest_field(
+        name="notifyKeyspaceEvents", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies which keyspace events should trigger notifications. Default is an empty string,
+     meaning this feature is disabled. When enabled, at least 'K' (keyspace events) or 'E' (keyevent
+     events) must be present. For example, 'AKE' enables all standard events. See
+     `https://redis.io/docs/latest/develop/use/keyspace-notifications/
+     <https://redis.io/docs/latest/develop/use/keyspace-notifications/>`_ for the complete list of
+     event types."""
 
     @overload
     def __init__(
@@ -1169,6 +1186,7 @@ class DatabaseProperties(_Model):
         geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
         defer_upgrade: Optional[Union[str, "_models.DeferUpgradeSetting"]] = None,
         access_keys_authentication: Optional[Union[str, "_models.AccessKeysAuthentication"]] = None,
+        notify_keyspace_events: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1223,6 +1241,13 @@ class DatabaseCreateProperties(DatabaseProperties):
      NotDeferred. Learn more: `https://aka.ms/redisversionupgrade
      <https://aka.ms/redisversionupgrade>`_. Known values are: "Deferred" and "NotDeferred".
     :vartype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
+    :ivar notify_keyspace_events: Specifies which keyspace events should trigger notifications.
+     Default is an empty string, meaning this feature is disabled. When enabled, at least 'K'
+     (keyspace events) or 'E' (keyevent events) must be present. For example, 'AKE' enables all
+     standard events. See `https://redis.io/docs/latest/develop/use/keyspace-notifications/
+     <https://redis.io/docs/latest/develop/use/keyspace-notifications/>`_ for the complete list of
+     event types.
+    :vartype notify_keyspace_events: str
     :ivar access_keys_authentication: This property can be Enabled/Disabled to allow or deny access
      with the current access keys. Can be updated even after database is created. Default is
      Disabled. Known values are: "Disabled" and "Enabled".
@@ -1242,6 +1267,7 @@ class DatabaseCreateProperties(DatabaseProperties):
         modules: Optional[list["_models.Module"]] = None,
         geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
         defer_upgrade: Optional[Union[str, "_models.DeferUpgradeSetting"]] = None,
+        notify_keyspace_events: Optional[str] = None,
         access_keys_authentication: Optional[Union[str, "_models.AccessKeysAuthentication"]] = None,
     ) -> None: ...
 
@@ -1315,6 +1341,7 @@ class DatabaseUpdate(_Model):
         "geo_replication",
         "redis_version",
         "defer_upgrade",
+        "notify_keyspace_events",
         "access_keys_authentication",
     ]
 
@@ -1395,6 +1422,13 @@ class DatabaseUpdateProperties(DatabaseProperties):
      NotDeferred. Learn more: `https://aka.ms/redisversionupgrade
      <https://aka.ms/redisversionupgrade>`_. Known values are: "Deferred" and "NotDeferred".
     :vartype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
+    :ivar notify_keyspace_events: Specifies which keyspace events should trigger notifications.
+     Default is an empty string, meaning this feature is disabled. When enabled, at least 'K'
+     (keyspace events) or 'E' (keyevent events) must be present. For example, 'AKE' enables all
+     standard events. See `https://redis.io/docs/latest/develop/use/keyspace-notifications/
+     <https://redis.io/docs/latest/develop/use/keyspace-notifications/>`_ for the complete list of
+     event types.
+    :vartype notify_keyspace_events: str
     :ivar access_keys_authentication: This property can be Enabled/Disabled to allow or deny access
      with the current access keys. Can be updated even after database is created. Default is
      Disabled. Known values are: "Disabled" and "Enabled".
@@ -1414,6 +1448,7 @@ class DatabaseUpdateProperties(DatabaseProperties):
         modules: Optional[list["_models.Module"]] = None,
         geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
         defer_upgrade: Optional[Union[str, "_models.DeferUpgradeSetting"]] = None,
+        notify_keyspace_events: Optional[str] = None,
         access_keys_authentication: Optional[Union[str, "_models.AccessKeysAuthentication"]] = None,
     ) -> None: ...
 
@@ -1828,7 +1863,7 @@ class MaintenanceWindowSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentityV4(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1838,7 +1873,7 @@ class ManagedServiceIdentity(_Model):
      provided for a system assigned identity.
     :vartype tenant_id: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned, UserAssigned".
     :vartype type: str or ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The identities assigned to this resource by the user.
     :vartype user_assigned_identities: dict[str,
@@ -1855,7 +1890,7 @@ class ManagedServiceIdentity(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
-     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned, UserAssigned\"."""
     user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
