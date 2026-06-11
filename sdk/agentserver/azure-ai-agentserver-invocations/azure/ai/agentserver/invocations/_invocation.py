@@ -433,6 +433,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 _otel_context.detach(baggage_token)
             except ValueError:
                 pass
+
         return response
 
     async def _traced_invocation_endpoint(
