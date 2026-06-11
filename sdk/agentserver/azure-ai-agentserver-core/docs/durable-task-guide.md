@@ -210,7 +210,7 @@ elif ctx.entry_mode == "resumed":
 - **Crash recovery does NOT consume the budget.** A lifetime that dies
   before the handler raises does not advance `retry_attempt`.
 - Resets to 0 on successful completion and on steering drain.
-- Persisted in the task's payload, re-hydrated on every entry, so a
+- Persisted across lifetimes and re-hydrated on every entry, so a
   handler in lifetime *N* sees the same counter the previous lifetime
   saw.
 
@@ -646,15 +646,15 @@ The `input_id` and `if_last_input_id` kwargs on `.start()` / `.run()`
 are **orthogonal**:
 
 - `input_id` (alone) — **idempotency / chain-head tracking**. Records
-  the input as the chain head on the task's persisted state
-  (`payload["_last_input_id"]`). Always succeeds; no precondition is
+  the input as the chain head on the task's persisted state.
+  Always succeeds; no precondition is
   checked. Use this when chain ordering is enforced by another
   mechanism (e.g. `task_id` collapse + `TaskConflictError` /
   steering-queue sequencing for conversation-grouped multi-turn).
-- `if_last_input_id` (paired with `input_id`) — **HTTP-`If-Match`-style
-  chain-extension precondition**. The framework requires the stored
-  `last_input_id` to equal `if_last_input_id` (the predecessor the
-  caller claims to be extending). Mismatch raises
+- `if_last_input_id` (paired with `input_id`) — **chain-extension
+  precondition**. The framework only accepts the new input if the
+  previously-recorded `input_id` equals `if_last_input_id` (the
+  predecessor the caller claims to be extending). Mismatch raises
   `LastInputIdPreconditionFailed` (a subclass of
   `TaskPreconditionFailed`). Use this when callers explicitly thread
   predecessor identity through every turn (e.g. OpenAI Responses
@@ -679,8 +679,7 @@ exceptions so the caller can branch on **why** it ended:
   a structured `error` dict (`type`, `message`, optional `cause`).
 - `TaskCancelled` — the handler ended via the cooperative-cancel path
   (typically by raising `asyncio.CancelledError` after observing
-  `ctx.cancel.is_set()`, or by returning the framework's
-  `ExitForRecovery` sentinel via `ctx.exit_for_recovery()` — see §4
+  `ctx.cancel.is_set()`, or via `ctx.exit_for_recovery()` — see §4
   Shutdown).
 
 In addition, `TaskNotFound` is raised by `handle.result()` (and by
@@ -691,7 +690,7 @@ deleted out from under the caller, and `TaskConflictError` is the
 | Scenario | What raises `TaskConflictError` | `current_status` carried |
 |---|---|---|
 | `.run()` / `.start()` against an in-progress non-steerable task that is running elsewhere | scheduling primitive | `"in_progress"` |
-| `.run()` / `.start()` against an in-progress task that has been taken over by another process (split-brain protection) | scheduling primitive — observably identical to the running-elsewhere case from the caller's perspective | `"in_progress"` |
+| `.run()` / `.start()` against an in-progress task that has been taken over by another process | scheduling primitive — observably identical to the running-elsewhere case from the caller's perspective | `"in_progress"` |
 | Steerer's `.result()` after the handler returns or raises (terminal-with-queued-steerer) | resolved future | `"completed"` / `"failed"` / `"cancelled"` depending on terminal kind |
 | `.run()` / `.start()` against an already-terminal task | scheduling primitive | the terminal status |
 
@@ -755,8 +754,7 @@ There is no per-call override. This is deliberate so the settings
 survive crash recovery: after the container crashes and the framework
 re-enters the task, it has only the registered decorator's view to
 work with — a per-call override would silently disappear at the crash
-boundary. Session identity is platform-derived from the
-`FOUNDRY_AGENT_SESSION_ID` environment variable.
+boundary.
 
 #### Read-only introspection: `Task.get(task_id) -> TaskSnapshot | None`
 
@@ -776,19 +774,19 @@ else:
 
 Unlike `Task.get_active_run`, `Task.get`:
 
-- NEVER reclaims a dead lease, NEVER spawns a recovery execution.
-- NEVER takes a write lock; reads stay fast under write contention.
+- Side-effect-free: never mutates state, never triggers recovery,
+  never blocks on concurrent writes.
 - Works for tasks in EVERY status — including completed and
   suspended — so you can render a task's outcome in a UI without
   guessing whether it's still running.
 
 `TaskSnapshot` deliberately exposes ONLY developer-facing fields:
 `task_id`, `status`, `created_at`, `updated_at`, `started_at`,
-`completed_at`, `output` (resolved value, never a ref), `error`
-(structured failure info), `suspension_reason`, `metadata` (default
-namespace), `lease_expiry_count`. Framework-internal fields (raw
-payload, raw attachments, lease, etag, source, tags) are NOT on the
-snapshot. Re-call `Task.get` to refresh.
+`completed_at`, `output` (the resolved value), `error` (structured
+failure info), `suspension_reason`, `metadata` (default namespace),
+and `lease_expiry_count` (an ownership-churn counter useful for
+dashboards — see `TaskRun.lease_expiry_count`). Re-call `Task.get`
+to refresh.
 
 ### `TaskContext`
 
@@ -932,7 +930,7 @@ by the package are either internal-only or wrap one of these.
 | `TaskFailed` | `.run()` / `.result()` | Handler raised an unhandled exception. `.error` carries the structured cause. |
 | `TaskCancelled` | `.run()` / `.result()` | Handler ended via the cooperative-cancel path (e.g., re-raised `asyncio.CancelledError` after observing `ctx.cancel.is_set()`) OR via `ctx.exit_for_recovery()`. |
 | `TaskNotFound` | `handle.result()` / `.start()` | Referenced `task_id` has been deleted between calls. |
-| `TaskConflictError` | `.run()` / `.start()` / `handle.result()` (steerer) | The **single** error type for any "task is busy / not available" state — live-elsewhere non-steerable, dead-evicted (split-brain protection), or terminal-with-queued-steerer. `.current_status` carries the observed terminal/in-progress label. |
+| `TaskConflictError` | `.run()` / `.start()` / `handle.result()` (steerer) | The **single** error type for any "task is busy / not available" state — running elsewhere, taken over by another process, or terminal-with-queued-steerer. `.current_status` carries the observed terminal/in-progress label. |
 | `LastInputIdPreconditionFailed` | `.start(if_last_input_id=...)` | Sequential-input precondition not satisfied (subclass of `TaskPreconditionFailed`). |
 | `TaskPreconditionFailed` | `.start(...)` | Base for input-acceptance precondition failures. |
 | `SteeringQueueFull` | `.start(...)` on steerable task | Steerable task's input queue is full. |
@@ -1203,8 +1201,8 @@ async def resumable(ctx: TaskContext[int]) -> int:
 # Lifetime 1: writes watermark, then dies.
 with pytest.raises(SystemExit):
     await resumable.run(task_id="t-1", input=42)
-# Lifetime 2: framework's inline reclaim catches the dead lease →
-#             recovered entry mode.
+# Lifetime 2: framework detects the abandoned task on next entry →
+#             "recovered" entry mode.
 result = await resumable.run(task_id="t-1", input=42)
 assert result.output == 42
 ```

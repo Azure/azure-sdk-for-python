@@ -227,9 +227,9 @@ emit?".
 
 ---
 
-## Lifecycle: ACTIVE → CLOSED → (tombstoned)
+## Lifecycle: ACTIVE → CLOSED → (destroyed)
 
-Each stream has TWO per-instance states; destruction is a
+Each stream has two per-instance states; destruction is a
 registry-level concept exposed as a single error type
 (`EventStreamNotFoundError`) on the next operation against the id.
 
@@ -238,13 +238,11 @@ registry-level concept exposed as a single error type
 | **ACTIVE** | Open to `emit`. Subscribable. | Construction (first `get_or_create(id)`). |
 | **CLOSED** | No new emits (`emit` raises `EventStreamClosedError`). Existing subscribers drain. New subscribers can still attach (replay backings) but no new events arrive. | `close()` from ACTIVE. |
 
-After CLOSED, the registry MAY tombstone the id. Once tombstoned,
+After CLOSED, the registry MAY destroy the id. Once destroyed,
 `emit`, `subscribe`, `last_cursor`, and `streams.get(id)` all raise
 `EventStreamNotFoundError`. `close()` remains idempotent (no-op).
 
-Three independent paths into tombstoned (FR-E-001/-002 collapsed
-the prior `EventStreamGoneError` and `EventStreamNotFoundError`
-into one):
+Three independent paths into destroyed:
 
 - the id was **never registered** (no `get_or_create(id)` for it ever ran);
 - the id was **explicitly `streams.delete(id)`**d;
@@ -254,16 +252,16 @@ into one):
 
 A few practical implications:
 
-- The live backing (`use_in_memory_live`) never auto-tombstones — it
+- The live backing (`use_in_memory_live`) never auto-destroys — it
   has no TTL machinery. Call `streams.delete(id)` explicitly if you
   need to release the id.
-- The close-clock tombstone for replay backings is **deterministic
+- The close-clock destroy for replay backings is **deterministic
   and time-driven** (not buffer-state-driven). At `close_time +
-  ttl_seconds` the id is conceptually tombstoned, regardless of who
+  ttl_seconds` the id is conceptually destroyed, regardless of who
   is observing.
 - `last_cursor()` is side-effect-free — it does NOT trigger the
-  tombstone check and remains readable across the close window so
-  a recovering handler can still learn "what was my last cursor?".
+  destroy check and remains readable across the close window so a
+  recovering handler can still learn "what was my last cursor?".
 
 ---
 
@@ -283,15 +281,15 @@ streams.delete(id)         -> None             # idempotent
   or treat as missing".
 - `get_or_create(id)` is the **only** way to mint a stream. It is
   atomic across concurrent callers — two coroutines racing on the
-  same id both get the same instance back. It clears any prior
-  `delete`-installed tombstone and creates a fresh stream.
+  same id both get the same instance back. If the id was previously
+  destroyed, the call constructs a fresh stream.
 - `delete(id)` destroys the stream, cleans up its backing resources
   (e.g. closes file handles for file-backed replay and removes the
-  on-disk log), and installs a registry tombstone. Idempotent —
+  on-disk log), and marks the id as destroyed. Idempotent —
   calling it on an unknown or already-deleted id is a no-op.
 
 You typically do not need to call `delete(id)` for replay backings
-with `ttl_seconds` configured — the close-clock auto-tombstone
+with `ttl_seconds` configured — the close-clock auto-destroy
 cleans up for you. Call `delete(id)` explicitly when you want
 immediate cleanup (end-of-request hook, test teardown) or for
 backings without `ttl_seconds`.
@@ -306,13 +304,9 @@ EventStreamError                  (base — catch-all)
 └── EventStreamNotFoundError      id is not currently a live stream — HTTP 404
 ```
 
-Per FR-E-001/-002 there is no longer a separate `Gone` / 410 vs.
-`NotFound` / 404 distinction. Every "this id is not currently a
-live stream" condition raises `EventStreamNotFoundError` and
-wire-maps to 404. The previous distinction's actionable value at
-the consumer's layer is zero (the right behavior is the same:
-subscribe to a new id), and it leaked the registry's internal
-tombstone bookkeeping.
+Every "this id is not currently a live stream" condition raises
+`EventStreamNotFoundError` (HTTP 404). Treat it uniformly:
+subscribe to a new id, or render the id as missing.
 
 ---
 
