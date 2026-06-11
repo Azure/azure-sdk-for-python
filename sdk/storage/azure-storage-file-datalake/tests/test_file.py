@@ -1734,6 +1734,7 @@ class TestFile(StorageRecordedTestCase):
         resp = file_client.delete_file()
         assert resp is not None
 
+    @pytest.mark.skip(reason="We drop support for legacy transports")
     @DataLakePreparer()
     def test_mock_transport_with_content_validation(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")

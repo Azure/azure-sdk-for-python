@@ -6,6 +6,7 @@
 
 ### Other Changes
 - Content-Type for append_data has changed from application/json to octet-stream
+- Dropped support for legacy transports
 
 ## 12.24.0 (2026-05-14)
 
