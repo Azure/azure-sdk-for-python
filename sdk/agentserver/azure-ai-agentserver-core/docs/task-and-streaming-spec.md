@@ -80,6 +80,7 @@ it layers on top.
 - §33. `Task` handle (`run`, `start`, `options`)
 - §34. `TaskContext`
 - §35. `TaskRun`
+- §35a. `TaskSnapshot`
 - §36. `TaskResult` and `Suspended`
 - §37. `TaskMetadata`
 - §38. `RetryPolicy`
@@ -89,10 +90,10 @@ it layers on top.
 - §40. Why streaming is decoupled from `@task`
 - §41. `EventStream` protocol
 - §42. The `streams` registry
-- §43. Stream lifecycle states (Active → Closed → Gone)
+- §43. Stream lifecycle states (Active ↔ Closed; registry tombstones)
 - §44. Concrete backings (live, replay, file-backed)
 - §45. Cursor and `subscribe(after=...)`
-- §46. TTL eviction (replay backings)
+- §46. TTL eviction and the close-clock (replay backings)
 - §47. Streaming error taxonomy
 - §48. Third-party stream-impl pattern
 
@@ -545,7 +546,9 @@ park me; wake me when the caller has more input" boundary. It:
 
 1. Transitions the stored status from `in_progress` to `suspended`.
 2. Persists a snapshot of every touched metadata namespace.
-3. Persists the optional `output` envelope.
+3. Persists the `output` envelope **as an attachment** (always —
+   even when `output=None`; see §20 output field lifecycle and §23.8
+   atomic co-write rules). Suspend NEVER writes inline output.
 4. Clears `payload["input"]` (and the corresponding attachment if
    the input was promoted) — the consumed input is no longer needed
    and would only inflate the next payload write.
@@ -556,8 +559,11 @@ park me; wake me when the caller has more input" boundary. It:
 
 The next `.run(task_id=same, input=new)` or
 `.start(task_id=same, input=new)` transitions the status back to
-`in_progress` and re-invokes the handler with
-`ctx.entry_mode="resumed"`, `ctx.input=new`, and `ctx.metadata`
+`in_progress`, **clears the persisted output** (both
+`payload["output"]` and the `_output` attachment, in a single
+co-PATCH per §23.8 item 8) so the suspended-turn output never
+contaminates the resumed turn's record, and re-invokes the handler
+with `ctx.entry_mode="resumed"`, `ctx.input=new`, and `ctx.metadata`
 re-hydrated.
 
 This same machinery is what multi-turn conversations and
@@ -1016,7 +1022,7 @@ the following top-level keys, all starting with `_` or named
 | `input` | any JSON value, or a ref dict (§23) | Set on every `in_progress` transition; cleared at suspend; cleared by drain after consumption. | The current input value (or a ref to its attachment). |
 | `metadata` | object | Persisted at boundaries; auto-flushed. | The DEFAULT user metadata namespace. |
 | `metadata:<ns>` | object | Same as above. | NAMED user metadata namespace `<ns>`. |
-| `output` | any JSON value | Set in two scenarios: (1) handler returns normally on `ephemeral=False` tasks — `payload["output"]` is the serialized return value; (2) handler `ctx.suspend(output=X, ...)` with `X != None`. NEVER set on failure (use `error` field). NEVER cleared on resume — see "Output field lifecycle" note below. | Caller-observable terminal/suspend snapshot. |
+| `output` | ref dict (§23.3) \| null | The slot ALWAYS holds either a ref to `attachments["_output"]` or `null` — NEVER an inline value (regardless of size). Written in two cases: (1) normal completion on `ephemeral=False` tasks — `payload["output"]` is a ref to `attachments["_output"]` holding the serialized return value; (2) handler `ctx.suspend(output=X, ...)` — same shape if X != None, or `null` (with attachment deleted) if X is None. NEVER set on failure (use `error` field). CLEARED to `null` (with attachment deleted) on every suspended → in_progress transition. See "Output field lifecycle" note below. | Caller-observable terminal/suspend snapshot. |
 | `_last_input_id` | string \| null | Set when caller supplies `input_id`. | Chain-head tracking (§11). |
 | `_turn_started_at` | ISO-8601 UTC string | Set at every turn-start boundary; NEVER re-stamped on recovery. | Source of truth for the per-turn watchdog (§14). |
 | `_retry_attempt` | integer | Incremented on handler raise; reset to 0 on steering drain. (Not also reset on success in the canonical Python implementation.) | Durable retry counter (§15). |
@@ -1039,63 +1045,58 @@ by language Y.
 Keys NOT in this table are caller-controlled (e.g. user metadata
 namespaces); the framework leaves them alone.
 
-#### Output field lifecycle (`payload["output"]`)
+#### Output field lifecycle (`payload["output"]` + `attachments["_output"]`)
 
-The `output` field has asymmetric write/read semantics — important
-for re-implementers to get right and for callers to understand:
+The framework treats output as a fully-attachment-backed value to
+avoid consuming any payload budget. The persisted shape is
+ALWAYS one of:
 
-**Write sites (only two):**
+- `payload["output"] = null` AND `attachments["_output"]` absent — no current output.
+- `payload["output"] = {"__attachment_ref__": {"key": "_output", "hash": "sha256:..."}}` AND `attachments["_output"] = <serialized value>` — output present.
+
+There is NO inline-output shape. Even a 1-byte output uses the
+attachment slot. See §23 for the attachment shape and §23.7 for
+the 2 MB per-output cap (raises `OutputTooLarge`).
+
+**Write sites (only two, both atomic single PATCHes):**
 
 1. **Normal completion on `ephemeral=False`** — `_handle_success`
-   PATCHes `status="completed"` with `payload["output"] = <serialized
-   return value>`. For `ephemeral=True` (the default), the whole
-   record is DELETED on terminal success; no output is persisted
-   anywhere.
-2. **Suspend with non-null output** — `_handle_suspend` PATCHes
-   `status="suspended"` with `payload["output"] = <serialized X>`
-   when the handler called `ctx.suspend(output=X, ...)` with
-   `X != None`. Suspending with `output=None` (or omitting `output=`)
-   does NOT write the field, so any prior value remains.
+   PATCHes `status="completed"` with
+   `payload["output"] = <ref>` + `attachments["_output"] = <value>`
+   if the handler returned non-null, OR `payload["output"] = null`
+   + `attachments["_output"] = null` (delete) if the handler
+   returned `None`. For `ephemeral=True` (the default), the whole
+   record is DELETED on terminal success; no output persisted.
+2. **Suspend** — `_handle_suspend` PATCHes `status="suspended"`
+   with the same two-shape rule. **ALWAYS writes the field
+   explicitly** even when handler-supplied `output=None`: the
+   record carries `payload["output"] = null` (not "field absent")
+   and `attachments["_output"] = null` (delete any prior value).
 
-**No clear sites.** The resume PATCH (`_start_existing_task`) does
-NOT clear `payload["output"]`. A suspend → resume → suspend cycle
-where the second suspend passes `output=None` leaves the persisted
-record carrying the FIRST suspend's output value. This is stale
-data, not a current snapshot, after the first resume.
+**Clear on suspended → in_progress.** Every resume transition
+(`_start_existing_task` and steering drain Phase 1) PATCHes
+`payload["output"] = null` AND deletes any existing `_output`
+attachment in the SAME PATCH. The next read of the record between
+resume and the next terminal write returns `output = null`. No
+stale value across a resume.
 
-**No framework read sites.** The framework itself never reads
-`payload["output"]` back from the store. The value delivered to
-the caller's `TaskResult.output` is the IN-PROCESS result-future
-value at terminal time, not a re-read of the persisted record.
+**`_handle_failure` also clears.** For `ephemeral=False` failure,
+the terminal PATCH writes `error = <dict>` AND `payload["output"]
+= null` AND deletes any `_output` attachment, so the terminal
+record carries the failure cause, not a stale prior-success
+output.
 
-**No developer-accessible read path.** `TaskRun.refresh()` mirrors
-`status`, `lease.expiry_count`, and `payload["metadata"]` onto the
-handle but does NOT expose `payload["output"]`. The `TaskProvider`
-interface and its concrete implementations (`HostedTaskProvider`,
-`LocalFileTaskProvider`) are **internal** — they live in `_`-
-prefixed modules and are NOT re-exported from
-`durable/__init__.py`'s `__all__`. The only ways to read the
-persisted `output` slot today are: (a) the test suite's pattern
-of importing private modules (e.g. `from durable._local_provider
-import LocalFileTaskProvider`), which framework consumers MUST
-NOT do in production; (b) writing a parallel client against the
-hosted task store's HTTP API. There is no supported developer
-read path.
+**Cancellation path** (cooperative cancel via
+`asyncio.CancelledError`) does NOT write a terminal status PATCH
+today; output-clearing on cancel is deferred to a future cycle.
 
-**Implications:**
-
-- Two processes never coordinate via `payload["output"]`. The
-  first caller's in-process future is the only delivery channel.
-- A handler that suspends multiple times SHOULD always pass an
-  explicit `output=` (or `output=None` if the caller expects
-  cleared) so the persisted state matches the handler's current
-  intent. The framework does not actively reconcile.
-- A new release that adds a developer-facing read API (e.g.
-  `Task.get_last_output(task_id)`) MUST also add a clear-on-resume
-  PATCH and define the multi-turn ownership semantics, or the new
-  API will return stale values across resume boundaries.
-- The error field is NOT subject to this issue — `_handle_failure`
-  writes `error` and never `output`, so the two never share a slot.
+**Public read path.** `Task.get(task_id)` (§33) returns a
+`TaskSnapshot` whose `output` field is the resolved value (not the
+ref). The framework dispatches uniformly through
+`TaskProvider.get(task_id)` and resolves the ref → attachment
+transparently. `TaskRun.refresh()` does NOT pull output onto the
+handle — `Task.get` is the canonical read API for persisted
+state.
 
 ### §21. Framework-reserved tag keys and `source` shape
 
@@ -1139,7 +1140,7 @@ for future namespacing.
 | `instance_id` | string | `worker-<pid>-<rand8hex>-<unix_seconds>`. Fresh per process. |
 | `generation` | integer | Increments each time the lease is re-acquired with a different `instance_id`. Mirrored to `ctx.recovery_count`. The local provider AND the hosted task store both bump this. |
 | `expires_at` | ISO-8601 UTC string | When the lease expires (and another process may reclaim). |
-| `expiry_count` | integer | Number of times ownership has changed via **actual expiry** (i.e. lease was reclaimed because the prior lease's `expires_at` passed, NOT because the same owner restarted). **Server-only counter** — the framework never writes this field (it is not on `TaskPatchRequest`). The hosted task store bumps it. The local file provider does NOT bump it (known divergence — `expiry_count` stays 0 forever in local mode). Mirrored to `TaskRun.lease_expiry_count`. |
+| `expiry_count` | integer | Number of times ownership has changed via **actual expiry** (i.e. lease was reclaimed because the prior lease's `expires_at` passed, NOT because the same owner restarted). **Server- / provider-only counter** — the framework never writes this field (it is not on `TaskPatchRequest`). The hosted task store bumps it; the local file provider also bumps it on actual-expiry reclaim for parity (so local-mode tests can assert expiry-counter behavior). Mirrored to `TaskRun.lease_expiry_count`. |
 
 The framework's interaction with the lease:
 
@@ -1147,13 +1148,19 @@ The framework's interaction with the lease:
   `lease_instance_id = self.instance_id`, and
   `lease_duration_seconds = 60` (the framework default).
 - The lease renewal loop (§56) renews at half the lease duration
-  (every 30s by default).
-- Any payload PATCH the framework issues piggybacks
-  (`lease_owner`, `lease_instance_id`, `lease_duration_seconds`)
-  to refresh the lease as a side effect. The renewal loop skips
-  redundant heartbeats when a recent piggyback already refreshed it.
+  (every 30s by default), but its next tick is computed
+  DYNAMICALLY from the per-task last-refresh time, NOT a fixed
+  cadence. So a PATCH within the last `interval` seconds fully
+  shadows the next heartbeat.
+- **Every PATCH the framework issues** (renewal, metadata,
+  steering, suspend, drain, complete, fail, reclaim) MUST
+  piggyback (`lease_owner`, `lease_instance_id`,
+  `lease_duration_seconds`) to refresh the lease as a side effect.
+  See §25.4.
 - On reclaim (§54), the framework PATCHes the lease to itself with
-  `if_match: <last-seen etag>` for CAS.
+  `if_match: <last-seen etag>` for CAS. BOTH the inline reclaim
+  AND the cold-start/periodic scan reclaim use `if_match` (closes
+  the prior known gap).
 - On `ctx.exit_for_recovery()` (§16), the framework force-expires
   the lease so the next process can reclaim immediately.
 
@@ -1166,18 +1173,15 @@ or expired record:
    NOT bumped (the server only bumps on actual-expiry handoff, and
    this isn't one).
 3. **Expired (any owner)** — RECLAIM. `expiry_count` IS bumped
-   (server-side, in the hosted store; NOT in the local provider —
-   see the table above).
+   (server-side, in the hosted store; AND in the local provider
+   for parity — see the table above).
 
 **Important: the framework never writes `expiry_count`.** It is not
 a field on `TaskPatchRequest` (only `lease_owner`,
 `lease_instance_id`, `lease_duration_seconds` are writable). The
-hosted task store is solely responsible for incrementing it on
-expiry-triggered ownership change; the local file provider
-preserves whatever value is already there (so local-mode tests
-that need to assert expiry-counter behavior have to use the
-hosted provider or assert against `lease.generation` /
-`ctx.recovery_count` instead).
+hosted task store and the local file provider both increment it
+server-side / provider-side on actual-expiry ownership change; the
+framework only reads it.
 
 ### §23. Attachments and input promotion
 
@@ -1208,26 +1212,39 @@ across both stores. This is load-bearing: every promote, drain,
 suspend, and orphan-cleanup write co-PATCHes payload + attachments
 in a single round trip.
 
-#### 23.2 Thresholds (framework-owned)
+#### 23.2 Thresholds + always-attachment for output (framework-owned)
 
-The framework promotes a value to an attachment ONLY when its
-serialized form exceeds a channel-specific threshold:
+The framework treats different channels differently. Inputs use a
+size threshold; output ALWAYS uses an attachment (no threshold,
+no inline shape).
 
-| Channel | Threshold | Attachment key |
+| Channel | Promotion rule | Attachment key |
 |---|---|---|
-| Function input (`payload["input"]`) | > 200 KiB | `_input` |
-| Each steering input | > 20 KiB | `_steering_input_<seq>` |
+| Function input (`payload["input"]`) | > 200 KiB serialized → ref; otherwise inline. | `_input` |
+| Each steering input (entry in `_steering["pending_inputs"]`) | > 20 KiB serialized → ref; otherwise inline. | `_steering_input_<seq>` |
+| Output (`payload["output"]`) | **ALWAYS ref** when non-null (no threshold; even a 1-byte output uses the attachment slot). When null, the slot is `null` and the attachment is deleted. | `_output` |
 
-Different thresholds because:
+Different rules because:
 
 - The function input is set once per turn-start. A 200 KiB inline
   budget keeps small inputs cheap and only spills clearly-large ones.
 - Steering inputs may accumulate (up to 9 queued). A 20 KiB
   threshold caps the worst-case inline payload contribution from
   steering at ~180 KiB even when the queue is full.
+- **Output never consumes payload budget.** The 1 MB payload cap
+  must accommodate metadata, steering state, framework slots, etc.;
+  an output that competes with these would be evicting their budget
+  on every terminal write. The always-attachment rule eliminates
+  this entirely: output is bounded by the per-attachment 2 MB cap
+  (§23.7) and uses none of the payload budget.
 
 Sizes are measured in bytes of canonical JSON
 (`sort_keys=True`, separators `(",", ":")`).
+
+Worst-case framework attachment usage:
+`_input` (1) + `_steering_input_*` (up to 9) + `_output` (1) =
+**11 of 20** per-task attachment slots. Leaves 9 slots free for
+future use.
 
 #### 23.3 Wire shapes — two only
 
@@ -1315,23 +1332,27 @@ Caps:
 - Per-attachment value: **2 MB** serialized.
 - Per-task attachment count: **20**.
 
-The framework enforces:
+The framework enforces (pre-network) and surfaces developer-facing
+exceptions based on which channel the violation occurs on:
 
-- **Per-value (2 MB) cap** on EVERY write site (create AND patch)
-  in BOTH providers (hosted and local) — pre-network — raising
-  `InputTooLarge` / `AttachmentTooLarge`.
-- **Per-task count (20) cap** on `create` and on `patch` paths
-  that can read the current count first. The hosted provider's
-  `update()` site **does NOT** enforce the count today (no
-  current-state read; relies on the server) — `AttachmentLimitExceeded`
-  is raised by the framework only at create-time and by the local
-  provider's patch (which can cheaply count). The hosted PATCH
-  relies on the server rejecting at the cap.
+| Cap | Where enforced | Developer-facing exception |
+|---|---|---|
+| Per-value (2 MB) on `_input` | Create + PATCH, both providers | `InputTooLarge` (the framework remaps an internal `_AttachmentTooLarge` based on attachment-key prefix) |
+| Per-value (2 MB) on `_steering_input_<seq>` | Steering append site (always reads state first to count) | `InputTooLarge` |
+| Per-value (2 MB) on `_output` | `_handle_success` / `_handle_suspend` (always writes the output attachment) | `OutputTooLarge` |
+| Per-task count (20) on `create` | Create path | `_AttachmentLimitExceeded` (internal) — reachable only via direct provider use, which is unsupported |
+| Per-task count (20) on `patch` | Local provider (cheap count); hosted PATCH relies on server-side check | `_AttachmentLimitExceeded` (internal) |
 
-Promoted-input PATCHes count toward the per-task attachment count.
-On steering append (which goes through framework code that DOES
-fetch current state), the framework counts current attachments +
-"about to be added" against the cap before issuing the PATCH.
+Internal exceptions `_AttachmentTooLarge` and
+`_AttachmentLimitExceeded` are **provider-internal** — they are
+NOT exported from `durable/__init__.py`. The framework catches
+`_AttachmentTooLarge` and re-raises the appropriate developer-
+facing exception based on the attachment key prefix (`_input` /
+`_steering_input_*` → `InputTooLarge`; `_output` → `OutputTooLarge`).
+`_AttachmentLimitExceeded` is unreachable in normal framework
+operation (worst case is 11 of 20 slots; see §23.2) and if it ever
+propagates indicates a framework bug — caught at the boundary and
+converted to `RuntimeError`.
 
 #### 23.8 Atomic co-writes
 
@@ -1341,16 +1362,35 @@ These transitions MUST be single PATCHes carrying BOTH `payload` and
 1. **Promote on `.start()` (fresh)**: `attachments["_input"] = <value>`
    + `payload["input"] = {ref}` (CREATE on the hosted store).
 2. **Promote on resume**: same fields, but PATCH.
-3. **Suspend with promoted input**: `payload["input"] = null`,
-   `payload["_steering"]["active_input"] = null`,
-   `attachments["_input"] = null` (delete) — IF the input was a ref.
+3. **Suspend** (always, regardless of whether input was promoted):
+   - `payload["input"] = null`
+   - `payload["_steering"]["active_input"] = null`
+   - `payload["output"] = {ref to _output}` OR `null` (always
+     explicit per US-C4 — never absent)
+   - `attachments["_input"] = null` (delete) IF the input was a ref
+   - `attachments["_output"] = <value>` OR `null` (delete) — always
+     synchronized with the payload slot above
 4. **Steering append (promoted)**: `payload["_steering"]["pending_inputs"]
    += [{ref}]`, `attachments["_steering_input_<seq>"] = <value>`,
    `payload["_steering"]["next_input_seq"] += 1`,
    `payload["_steering"]["cancel_requested"] = true`.
-5. **Steering drain (promoted entry)**: `payload["_steering"]["pending_inputs"]`
-   without the popped head, `attachments["_steering_input_<seq>"] = null`,
-   plus the new turn's input/metadata/etc.
+5. **Steering drain (promoted entry, Phase 1)**:
+   `payload["_steering"]["pending_inputs"]` without the popped
+   head, `attachments["_steering_input_<seq>"] = null`,
+   `payload["output"] = null` (resume-clear),
+   `attachments["_output"] = null` (delete prior output),
+   plus the new turn's `_turn_started_at`.
+6. **Normal completion on `ephemeral=False`**: status="completed",
+   `payload["output"] = {ref}` OR `null`, `attachments["_output"]
+   = <value>` OR `null`.
+7. **Failure on `ephemeral=False`**: status="completed",
+   `error = <dict>`, `payload["output"] = null`,
+   `attachments["_output"] = null` (clear stale output from a
+   prior successful attempt).
+8. **Resume (suspended → in_progress, `_start_existing_task`)**:
+   status="in_progress", `_turn_started_at` re-stamped,
+   `payload["output"] = null`, `attachments["_output"] = null`
+   (clear prior output from the suspended turn).
 
 Splitting any of these into multiple PATCHes opens a crash window
 where the attachment exists without its ref (or vice versa). The
@@ -1395,21 +1435,83 @@ Notes:
   the lease — it is the only way to release ownership without moving
   to a different status (§16).
 
-### §25. ETag (optimistic concurrency)
+### §25. ETag (optimistic concurrency) + in-process write serialization
 
 The framework uses the hosted store's ETag/CAS protocol per the
-Foundry Task Storage Protocol spec. Two implementation notes
-relevant to *this* framework:
+Foundry Task Storage Protocol spec.
 
-- The service-returned `etag` value is passed verbatim as
-  `If-Match` on the next PATCH. The framework does NOT strip
-  surrounding quotes, normalize whitespace, or otherwise rewrite
-  it.
-- 412 (precondition failed) on a `If-Match` PATCH is a CAS
-  conflict. The framework handles it depending on call site:
-  retry-with-fresh-read for renewal / reclaim writes; raise
-  `LastInputIdPreconditionFailed` for `if_last_input_id`
-  preconditions; raise `EtagConflict` for low-level callers.
+#### 25.1 Etag tracking — always-on after the first read/create
+
+After the first successful read/create on a `task_id`, **every
+subsequent PATCH MUST carry `If-Match` with the latest known etag**
+for that task. The framework tracks the latest etag in the
+in-memory active-task entry, updating it from every PATCH/GET
+response. `delete()` is the only operation that MUST NOT carry
+`if_match` — deletion is intentionally unconditional and tolerates
+a concurrent winner.
+
+The service-returned `etag` value is passed verbatim as `If-Match`
+on the next PATCH. The framework does NOT strip surrounding quotes,
+normalize whitespace, or otherwise rewrite it.
+
+#### 25.2 Per-task in-process write queue
+
+Without coordination, the framework has multiple concurrent
+PATCH-issuing code paths against the same task: lease renewal
+heartbeats, metadata flushes (handler-issued AND auto-flush at
+turn boundaries), steering append, steering drain Phase-1/3,
+suspend, complete, fail, output writes, and reclaim. All of these
+race in-process for the same etag and can produce avoidable 412
+conflicts in steady state.
+
+The framework MUST serialize these writes through a **per-task
+asyncio lock** held for the read-state + compute-PATCH + apply
+cycle. Reads (e.g., `Task.get(task_id)`) do NOT take this lock —
+they're snapshot operations that don't move the etag.
+
+Lock lifecycle:
+
+- Per-`task_id` `asyncio.Lock` allocated lazily on first write.
+- Released after the PATCH response is recorded (etag updated).
+- Removed from the in-memory lock table when the local active-task
+  entry is torn down (no leaked locks).
+
+In-process contention now serializes; cross-process contention
+(another worker reclaimed the lease) still surfaces as 412 because
+the queue is in-process only.
+
+#### 25.3 412 (etag conflict) resolution — per-operation policy
+
+When a PATCH inside the queue gets a 412, the appropriate response
+depends on the operation's INTENT. There is no single retry rule:
+
+| Operation | On 412, do what |
+|---|---|
+| Metadata flush | re-read state, overwrite the addressed namespace with local value (last-write-wins), retry (up to 5 attempts). |
+| Steering append | re-read `_steering`, append to the NEW state's `pending_inputs`, bump `next_input_seq` from the NEW state, retry (up to 5 attempts). Idempotent when `input_id` is supplied. |
+| Steering drain (Phase 1) | re-read `_steering`, drain the NEW head, retry (up to 5 attempts). |
+| Steering drain (Phase 3) | re-read, retry (up to 5 attempts). |
+| Lease renewal heartbeat | re-read lease; if still ours, retry; otherwise signal eviction. |
+| Suspend / complete / fail terminal writes | **RE-READ + decide.** A 412 here means our etag is stale — that's all we know on its own. Re-read the record, then choose: (a) if the lease is **no longer ours** (`lease.owner` differs OR `lease.instance_id` differs OR `lease.expiry_count` bumped past our cached value) → ABANDON and signal awaiters via the eviction path (C-LSE-4 / C-ERR-2); the new owner is authoritative and our terminal would clobber their in-flight recovery. (b) If `status` is already terminal (`completed`) → ABANDON; another actor already wrote the terminal. (c) Otherwise (lease still ours, status still `in_progress`) → retry the terminal PATCH against the new etag, up to 5 attempts. Steering inputs that another process appended between our read and our retry are silently superseded by the terminal write — that is correct behavior because the steerer's `.result()` MUST then raise `TaskConflictError(current_status="completed")` per C-STR-6, which is how cross-process steering-after-terminate is supposed to surface. |
+| Output write (part of suspend/complete) | inherits the parent operation's policy. |
+| Resume-clear-output (part of resume) | re-read, retry (up to 5 attempts). |
+| Recovery reclaim (inline) | ABANDON. The 412 IS the race-detection — another process beat us to the reclaim. Let the next caller / scan re-evaluate. |
+| Recovery reclaim (cold-start / periodic) | ABANDON. Same reasoning. |
+
+Default retry budget is 5 attempts unless noted. Each retry
+re-acquires the per-task lock before the re-read + re-merge + re-write
+cycle. `LastInputIdPreconditionFailed` (for `if_last_input_id`) and
+`EtagConflict` (for low-level callers) propagate as today.
+
+#### 25.4 Auto-extension piggyback on every PATCH
+
+Every PATCH the framework issues — renewal, metadata, steering,
+suspend, etc. — MUST include the lease-extension trio
+(`lease_owner`, `lease_instance_id`, `lease_duration_seconds`) so
+the lease is refreshed as a side effect. The renewal loop's next
+tick is computed dynamically from the per-task last-refresh time
+(NOT a fixed cadence), so a PATCH within the last `interval`
+seconds fully shadows the next heartbeat. See §56.
 
 ### §26. Recovery `POST /tasks/resume` endpoint
 
@@ -1547,6 +1649,20 @@ has already evicted this sandbox in favor of another.
   `TransportClassifiedError` carrying a `body_prefix` truncated to
   256 characters (`_BODY_PREFIX_LIMIT`) for operator triage. The
   prefix never contains bearer tokens or full response bodies.
+- **ETag tracking on every write.** The provider remembers the
+  most recent ETag returned by the server (from any GET, POST, or
+  PATCH response) per task and includes it as `if_match` on every
+  subsequent PATCH. This is what makes per-op 412 policy (§25.3)
+  enforceable from the framework: the framework never has to ask
+  the provider to "go fetch and then PATCH"; the provider already
+  knows the current ETag. The hosted provider's local ETag cache
+  is in-memory and per-process; cross-process correctness is
+  provided by the server-side check itself (412 on mismatch).
+- **Lease-extension piggyback.** Every PATCH carries an updated
+  `lease.expires_at` (computed by the framework as `now +
+  lease_duration`). The framework computes the renewal cadence
+  dynamically by tracking when the last successful PATCH ran
+  (§22 / §31).
 - **Logging policy:** A custom `TaskApiLoggingPolicy` logs
   request/response method + URL + status + the same 256-char body
   prefix, with secrets redacted.
@@ -1566,16 +1682,32 @@ Implementation MUST:
 
 - Generate fresh ETags on every write (e.g. SHA of the JSON bytes).
 - Reject `update()` calls whose `if_match` does not match the
-  current ETag.
+  current ETag (and raise the SAME exception type the hosted
+  provider raises on 412 — `TransportClassifiedError(classification="conflict")`
+  → `EtagConflict` at the framework boundary).
 - Apply `payload` shallow merge, `tags` null-as-delete merge,
   `attachments` null-as-delete merge — identical to the hosted
   provider's semantics. This is what makes "local feels like
   hosted" work: same merge rules, same recovery paths, same lease
   semantics.
-- Validate attachment size + count BEFORE writing.
+- Validate attachment size + count BEFORE writing (raise the
+  internal `_AttachmentTooLarge` / `_AttachmentLimitExceeded` so
+  the framework can re-raise as the developer-facing
+  `InputTooLarge` / `OutputTooLarge` per §39).
 - Treat missing/corrupt files as `get() -> None`.
 - Detect lease expiry against `expires_at` (UTC) and refuse renewal
   when an `if_match` mismatch indicates a competing process.
+- **Bump `lease_expiry_count` on every real lease handoff.** When
+  the local provider detects (during list/get/update/renewal) that
+  `now > lease.expires_at` AND the next successful write is the
+  framework reclaiming ownership, the provider MUST persist
+  `lease_expiry_count += 1` as part of that reclaim write — parity
+  with the hosted server's behavior (§22). Without this, the
+  developer-observable `TaskRun.lease_expiry_count` is permanently
+  stuck at 0 in local mode and tests asserting recovery behavior
+  cannot use the local provider. The bump is part of the reclaim
+  PATCH (it does NOT happen on a passive `get()` — `get()` is
+  read-only).
 
 The local provider does NOT spawn HTTP; it does NOT need an event
 loop beyond the framework's; it has no network failure modes.
@@ -1602,23 +1734,32 @@ manager is up:
 
 | Loop | Cadence | Scope | Purpose |
 |---|---|---|---|
-| `_periodic_recovery_loop` | Every 300s (framework constant `_PERIODIC_RECOVERY_INTERVAL_SECONDS`). | Process-wide (one per manager). | Reclaim tasks that became reclaimable after cold-start. |
-| `lease_renewal_loop` | Half the lease duration (default 30s). | One per active task. | Renew the lease before expiry. |
+| `_periodic_recovery_loop` | Every 300s (framework constant `_PERIODIC_RECOVERY_INTERVAL_SECONDS`). | Process-wide (one per manager). | Reclaim tasks that became reclaimable after cold-start. The `provider.list(...)` call passes `source_type=_SOURCE_TYPE` to scope to framework-owned tasks only. |
+| `lease_renewal_loop` | Dynamic — half the lease duration (default 30s) computed against the per-task last-refresh time so a recent PATCH within the interval fully shadows the next tick. NOT a fixed cadence. | One per active task. | Renew the lease before expiry. |
 | `_timeout_watchdog` | One-shot sleep for `min(remaining, timeout)` seconds. | One per active task that declares a timeout. | Set `ctx.timeout_exceeded` then `ctx.cancel` when budget expires. |
 
 All loops are interruptible via cancel events and MUST exit cleanly
 on `TaskManager.shutdown()`. The lease renewal loop additionally:
 
-- Skips its tick when a recent payload PATCH already refreshed the
-  lease as a side effect (avoids redundant heartbeats).
-- After successful renewal, invokes an optional steering-poll
-  callback that reads the steering queue and short-circuits the
-  current turn if a new input has arrived since last drain.
+- **Computes its next tick dynamically** from the per-task
+  last-refresh time recorded after every PATCH (renewal, metadata,
+  steering, suspend, etc.). If a PATCH refreshed the lease 2s ago
+  and the interval is 30s, the next tick is at +28s, not +30s
+  from loop start. This makes the renewal loop's heartbeat
+  PATCH-count drop to 0 in steady state when the task has any
+  write traffic.
+- After successful renewal (or when the heartbeat is shadowed),
+  invokes an optional steering-poll callback that reads the
+  steering queue and short-circuits the current turn if a new
+  input has arrived since last drain.
 - Signals an external cancel-event on 3 consecutive failures OR
   immediately on `evicted` classification.
 
 The periodic recovery loop additionally:
 
+- Passes `source_type=_SOURCE_TYPE` to `provider.list(...)` so the
+  scan returns only framework-owned tasks. Foreign-typed records
+  in the same `(agent_name, session_id)` scope are not picked up.
 - Walks `task_info.attachments` for `_steering_input_*` keys whose
   ref slot is no longer present in `pending_inputs` and PATCHes
   them away (orphan cleanup — defense in depth against a partial
@@ -1732,6 +1873,20 @@ Both accept the same `input_id` / `if_last_input_id` chain primitives
   Implementers SHOULD make this method idempotent against a
   recently-completed reclaim — calling twice in quick succession
   should not start two recovery executions.
+- `Task.get(task_id) -> TaskSnapshot | None` — read-only
+  introspection for any non-deleted task. Returns a
+  `TaskSnapshot` (§35a) hydrated from `provider.get(task_id)`,
+  resolving any promoted `_output` attachment per §20. Returns
+  `None` if the record does not exist. **Never reclaims, never
+  spawns a recovery execution, never extends the lease, never
+  takes a write lock.** Works for any status (pending,
+  in_progress, suspended, completed). Mirrors the instance-method
+  shape of `get_active_run` (this is the read-only sibling). MUST
+  raise `RuntimeError` if no task manager has been initialized in
+  the calling process. Same `Task` instance routing as
+  `get_active_run` — calling on the wrong `Task` instance is a
+  programmer error and the framework MAY check the stored
+  function-name tag matches.
 
 There is no per-call override for `title` / `retry` / `steerable` /
 `ephemeral` / `timeout` — all of those are decorator-configured for
@@ -1812,7 +1967,47 @@ removed. If a developer wants a single `await run` plus an
 incremental stream, they explicitly attach to the streaming
 registry (Part VI).
 
-### §36. `TaskResult` and `Suspended`
+### §35a. `TaskSnapshot`
+
+The return type of `Task.get(task_id)`. A read-only point-in-time
+view of any non-deleted task — pending, in_progress, suspended, or
+completed. Same shape regardless of status.
+
+| Field | Type | Description |
+|---|---|---|
+| `task_id` | `str` | The persisted task id. |
+| `status` | `TaskStatus` literal (`pending\|in_progress\|suspended\|completed`) | The four-value stored status (§24). |
+| `created_at` | `datetime` | Server-stamped record-creation time. |
+| `updated_at` | `datetime` | Server-stamped last-PATCH time. |
+| `started_at` | `datetime \| None` | Time the first turn entered `in_progress`. `None` while still `pending`. |
+| `completed_at` | `datetime \| None` | Time the record transitioned to terminal `completed`. `None` for non-terminal statuses. |
+| `output` | `O \| None` | The resolved output value. The framework reads `payload["output"]`, follows the `_output` attachment if it is a ref (§20, §23), and surfaces the typed value (`O` on success; the suspend envelope value `X` for suspended; `None` if the handler returned None or the task has not produced output). |
+| `error` | `dict \| None` | Structured error info (`{"type": ..., "message": ..., "details": ...}`) for failed terminations. `None` for non-failure status. |
+| `suspension_reason` | `str \| None` | The `reason=` argument passed to the last `ctx.suspend()` call. `None` unless status is `suspended`. |
+| `metadata` | `dict[str, Any]` | The default-namespace metadata only (parity with what the runtime exposes via `ctx.metadata`). Non-default namespaces are NOT surfaced on the snapshot. |
+| `lease_expiry_count` | `int` | Current expiry counter (§22); `0` unless the lease has expired at least once. |
+
+Fields deliberately excluded from `TaskSnapshot`:
+
+- `payload` — internal envelope (carries refs, framework slots).
+- `attachments` — internal storage; output is materialized into
+  `output` already.
+- `lease` / `lease_owner` / `lease_etag` — server-driven control
+  plane; not relevant to a read-only viewer.
+- `_steering` payload subtree — opaque framework state.
+- The `etag` — `TaskSnapshot` is read-only; CAS is for write paths.
+
+`TaskSnapshot` is a frozen value object. Implementations SHOULD NOT
+expose any mutator. The instance the caller receives reflects the
+record at the moment `Task.get` ran; re-call `Task.get` to refresh.
+
+`Task.get` returns `None` when the record does not exist (deleted
+or never created). It MUST raise `RuntimeError` if no task manager
+is initialized in the calling process (mirrors `get_active_run`).
+It MUST NOT raise on a non-existent task — `None` is the documented
+shape.
+
+
 
 `TaskResult[O]` is the caller-observable outcome of a single
 `.run()` / `.result()` call. Two values for its status:
@@ -1858,24 +2053,24 @@ await metadata.increment(key)  # atomic numeric increment
 await metadata.append(key, v)  # append to a list-valued key
 ```
 
-**Note: `flush_all()` is framework-internal.** A `flush_all()`
-method exists on the canonical Python `TaskMetadata` class
-(non-underscored, so technically callable from user code) but
-its docstring explicitly frames it as the framework's lifecycle
-helper — called by the manager at suspend / complete / fail /
-drain / `exit_for_recovery` boundaries to persist every dirty
-namespace in one pass. It is NOT documented in the user-facing
-developer guide, has no public-API samples, and there is no
-developer use case where it should be needed: the framework
-already calls `flush_all()` automatically at every terminal-of-
-turn boundary, so any namespace the handler touched is durable
-without explicit action. Per-namespace `flush()` is the only
-fence pattern developers should reach for (to commit a specific
-namespace before a side-effect operation). Other-language
-implementers SHOULD make the equivalent of `flush_all()` either
-package-private or otherwise not exposed on the language's
-developer-facing surface; the canonical Python implementation's
-non-underscored naming is an oversight, not a design decision.
+**Note: `_flush_all()` is framework-internal.** The framework's
+internal "persist every dirty namespace in one pass" helper is
+named with a leading underscore (`_flush_all`) on every public
+surface — both as a method on `TaskMetadata` and anywhere the
+framework calls it. The manager invokes `_flush_all` at suspend
+/ complete / fail / drain / `exit_for_recovery` boundaries to
+make every namespace the handler touched durable in one PATCH.
+
+The underscore prefix is the Python-canonical signal for
+"package-private; not part of the documented developer surface."
+It is NOT exported from `durable/__init__.py`, has no developer
+guide entry, and has no documented use case at the developer
+layer: per-namespace `metadata.flush()` is the only fence pattern
+developers should reach for (to commit a specific namespace before
+a side-effect operation). Other-language implementers MUST surface
+the equivalent helper at package-private visibility (or omit it
+from the public API entirely) — never as a documented developer
+API.
 
 #### Namespace facade behavior
 
@@ -1908,7 +2103,7 @@ non-underscored naming is an oversight, not a design decision.
   against the lease (the framework piggybacks lease ownership on
   the PATCH so a flush also acts as a heartbeat).
 - **Framework-only auto-flush** at every terminal-of-turn boundary
-  walks every dirty namespace (the internal `flush_all` helper
+  walks every dirty namespace (the internal `_flush_all` helper
   described in §37). Handlers do not need explicit flushes for
   durability across a graceful boundary; explicit `flush()` is
   for mid-handler fence semantics across a CRASH.
@@ -1962,16 +2157,42 @@ runtime conditions are surfaced via one of these.
 | `LastInputIdPreconditionFailed(task_id, expected, actual)` | `.start(if_last_input_id=...)` | Chain precondition not satisfied. Subclass of `TaskPreconditionFailed`. |
 | `TaskPreconditionFailed(task_id, message)` | `.start(...)` | Base for input-acceptance preconditions. |
 | `SteeringQueueFull(task_id, max_pending)` | `.start(...)` against steerable | Queue is at its cap (9). |
-| `InputTooLarge(task_id, size_bytes, max_bytes)` | `.start()` / `.run()` | Input serialized > 2 MB. Subclass of `ValueError`. |
-| `AttachmentTooLarge(task_id, attachment_key, size_bytes, max_bytes)` | Provider | A single attachment value > 2 MB. Subclass of `ValueError`. |
-| `AttachmentLimitExceeded(task_id, current_count, max_count)` | Provider | Per-task attachment count cap (20) would be exceeded. Subclass of `ValueError`. |
+| `InputTooLarge(task_id, size_bytes, max_bytes)` | `.start()` / `.run()` (any input write site: `_input` or `_steering_input_<seq>`) | Input serialized > 2 MB. Subclass of `ValueError`. |
+| `OutputTooLarge(task_id, size_bytes, max_bytes)` | `.run()` / handler completion / `ctx.suspend(output=...)` | Output value serialized > 2 MB at the framework's output-write sites (`_handle_success`, `_handle_suspend`). Subclass of `ValueError`. |
+
+`AttachmentTooLarge` and `AttachmentLimitExceeded` are **NOT
+developer-facing.** Attachments are a framework implementation
+detail (§23) — developers never name them, never set them, never
+need to know they exist. Surfacing those exception names on the
+developer API would leak the internal split between `payload` and
+`attachments` and would force developers to learn vocabulary
+that has no meaning at their layer.
+
+Internally these conditions still exist; they are caught by the
+framework and converted to the right developer-facing exception
+based on which attachment key the framework was writing:
+
+- writes to `_input` or `_steering_input_<seq>` → `InputTooLarge`
+- writes to `_output` → `OutputTooLarge`
+- any other attachment key → `RuntimeError` (a framework bug; the
+  framework owns the only attachment keys in use, so reaching
+  this branch means the framework wrote a key it shouldn't have)
 
 #### Internal (advanced / framework-internal)
 
 | Exception | Notes |
 |---|---|
+| `_AttachmentTooLarge(task_id, attachment_key, size_bytes, max_bytes)` | Provider-level cap-violation signal. NOT exported from `durable/__init__.py`. Framework catches and re-raises as `InputTooLarge` / `OutputTooLarge` per the dispatch above. |
+| `_AttachmentLimitExceeded(task_id, current_count, max_count)` | Provider-level per-task attachment-count cap signal. NOT exported. Unreachable in normal framework operation (worst case is 11 of 20 slots — §23.2) — if it propagates, the framework converts it to `RuntimeError` at the boundary. |
 | `EtagConflict(task_id, message?)` | Optimistic concurrency conflict at the provider boundary. Framework retries internally; only escapes for low-level callers manipulating etags directly. |
 | `TransportClassifiedError(classification: "transient" \| "evicted" \| "conflict" \| "permanent")` | Hosted provider's classification wrapper around HTTP failures. Internal to hosted provider; framework dispatches based on `classification`. |
+
+The underscore prefix on `_AttachmentTooLarge` /
+`_AttachmentLimitExceeded` is the Python-canonical signal for
+"package-private; never imported by developer code." Other-
+language implementations MUST place the equivalent exceptions at
+package-private visibility — never as documented developer-facing
+types.
 
 `TaskCancelled` does NOT inherit `asyncio.CancelledError` by
 design. Wrapping it under `CancelledError` causes generic asyncio
@@ -2047,7 +2268,7 @@ Method contracts:
     eviction (§46).
 
   Raises `EventStreamClosedError` if already closed,
-  `EventStreamGoneError` if destroyed.
+  `EventStreamNotFoundError` if destroyed.
 
 - **`close()`** — transition active -> closed. **Idempotent**:
   calling on already-closed or destroyed stream is a no-op (never
@@ -2060,20 +2281,19 @@ Method contracts:
   supplied AND the active backing supports cursored replay,
   yield only payloads whose cursor value is strictly greater than
   `N`; backings without cursor support silently ignore non-`None`
-  values. Raises `EventStreamGoneError` synchronously at the call
-  site if the stream is destroyed.
+  values. Raises `EventStreamNotFoundError` synchronously at the
+  call site if the stream is destroyed.
 
 - **`last_cursor()`** — return the highest cursor seen so far, or
   `None`. While active: highest persisted cursor (`None` if zero
   emits or backing has no cursor support). After close: the last
   cursor seen even if those events have since been TTL-evicted —
   this is load-bearing for the file-backed replay's rehydration
-  path. After destroy: raises `EventStreamGoneError`.
+  path. After destroy: raises `EventStreamNotFoundError`.
 
   `last_cursor()` is a **read-only watermark query**. It does NOT
-  trigger the `Closed -> Gone` auto-transition (which is driven by
-  TTL eviction alone, not by any read). Implementations MUST keep
-  it side-effect-free.
+  trigger the destroy transition (which is driven by the TTL-since-
+  close clock, §46). Implementations MUST keep it side-effect-free.
 
   `last_cursor()` is the EMITTER's recovery primitive. It is NOT
   the workflow-recovery primitive — workflow watermarks (what work
@@ -2107,18 +2327,40 @@ same id. The lock is acquired only on the slow path (first
 access for an id); subsequent `get_or_create` calls return the
 cached instance without taking the lock.
 
-Tombstones: `delete(id)` installs a tombstone unconditionally —
-including for ids that were never registered (the "delete is
-symmetric with `rm -f` but still leaves a marker" rule). The next
-`get(id)` against a tombstoned id raises `EventStreamGoneError`
-(the id is destroyed). A bare `get(id)` against an id that was
-never registered AND never `delete`d raises
-`EventStreamNotFoundError`. The tombstone is cleared on the next
-`get_or_create(id)` for the same id, which constructs a fresh
-stream.
+Tombstones: `delete(id)` causes the next `get(id)` against that
+id to raise `EventStreamNotFoundError`. The registry uses an
+internal "destroyed" marker to remember the deletion (the
+"delete is symmetric with `rm -f` but still leaves a marker"
+rule), but the **error surface is unified**: every "the id is
+not currently a live stream" condition raises
+`EventStreamNotFoundError`. This covers all three paths
+into the missing-stream state:
+
+- the id was never registered;
+- the id was registered and then explicitly `delete(id)`d;
+- the id was registered, then transitioned to Closed, then the
+  TTL-since-close clock elapsed (§46) and the registry
+  auto-tombstoned the id.
+
+The next `get_or_create(id)` against a tombstoned id clears the
+tombstone and constructs a fresh stream.
 
 Note: `get(id)` does NOT itself install a tombstone — only
-`delete(id)` does.
+`delete(id)` and the TTL-since-close auto-transition do.
+
+Why this is one error type:
+
+The previous design distinguished `EventStreamGoneError` (the
+resource once existed and is destroyed) from
+`EventStreamNotFoundError` (the resource was never registered).
+That distinction has no actionable value at the consumer:
+either way, the right behavior is the same (subscribe to a new
+id, or treat this id as missing). It also leaked the registry's
+internal bookkeeping (tombstone vs no-tombstone) into the
+developer-facing API. Collapsing into a single
+`EventStreamNotFoundError` makes the rule one-line: "any
+attempt to use an id that is not currently a live stream raises
+`EventStreamNotFoundError`."
 
 #### Process-wide factory selection
 
@@ -2136,41 +2378,60 @@ per-stream factory override on `get_or_create`.
 
 ### §43. Stream lifecycle states
 
-Every concrete `EventStream` instance MUST traverse:
+Every concrete `EventStream` instance has exactly **two** states:
 
 ```
-              emit*                     close            (replay only)
-            ┌──────────┐                                  TTL eviction
-            │          │                                  of last event
-            ▼          │                                  after close
-┌──────────────────┐   │   ┌─────────────────┐         ┌──────────────┐
-│      Active      │ ──┴── │      Closed     │ ──────▶ │     Gone     │
-└──────────────────┘       └─────────────────┘         └──────────────┘
-        │                          │                          ▲
-        │                          │                          │
-        │       delete()           │      delete()            │
-        └──────────────────────────┴──────────────────────────┘
+              emit*
+            ┌──────────┐
+            │          │
+            ▼          │
+┌──────────────────┐   │   ┌─────────────────┐
+│      Active      │ ──┴── │      Closed     │
+└──────────────────┘       └─────────────────┘
+        │                          │
+        │                          │
+        │                          │  (then: registry tombstones
+        │                          │   the id on delete() or
+        │                          │   TTL-since-close elapse —
+        │                          │   see §42, §46. The next
+        │                          │   get(id) raises
+        │                          │   EventStreamNotFoundError.)
+        └─── delete() ─────────────┘
 ```
 
 State semantics:
 
 - **Active.** Accepts `emit` and `subscribe`. Always-the-initial
   state on construction. `close()` -> Closed (idempotent on
-  already-closed). `delete()` -> Gone.
+  already-closed). `delete()` removes the instance from the
+  registry and tombstones the id; subsequent `get(id)` raises
+  `EventStreamNotFoundError`.
 - **Closed.** `emit` raises `EventStreamClosedError`.
   `subscribe()` still works for replay backings (yields drained
-  history). `last_cursor()` still works. `close()` is a no-op.
-  `delete()` -> Gone.
-- **Gone.** All operations raise `EventStreamGoneError`. Terminal.
+  history, then terminates cleanly when buffer is exhausted or
+  TTL-since-close elapses). `last_cursor()` still works.
+  `close()` is a no-op. `delete()` removes the instance from
+  the registry and tombstones the id.
 
-The Closed -> Gone auto-transition exists for `ReplayEventStream`
-(and `FileBackedReplayEventStream`) constructed with `ttl_seconds`:
-once the stream is closed AND its last replayable event has been
-evicted by per-event TTL (and there was at least one emit), the
-backing self-destructs and the registry tombstones the id.
+There is **no per-instance "destroyed" state** — destruction
+happens at the registry level. The framework tracks an instance
+as Active or Closed; once the registry tombstones the id, the
+instance reference is dropped and any cached reference held by
+a caller is stale (further operations on it raise
+`EventStreamNotFoundError` because the registry routes the call
+to a tombstoned id).
 
-`BroadcastEventStream` (live-only) does NOT auto-transition; it
-only goes Gone via explicit `delete(id)`.
+The TTL-since-close auto-transition (§46) governs when the
+registry decides to tombstone a Closed stream's id. For replay
+backings constructed with `ttl_seconds`: once the stream is
+closed, the framework starts a `close_time + ttl_seconds`
+clock; when it elapses, the registry tombstones the id. This is
+deterministic (time-based, not buffer-state-based) and works
+whether or not anyone is currently subscribed.
+
+`BroadcastEventStream` (live-only) and any other backing
+constructed without `ttl_seconds` do NOT auto-tombstone; they
+only tombstone via explicit `delete(id)`.
 
 ### §44. Concrete backings
 
@@ -2178,9 +2439,19 @@ Three SDK-bundled implementations:
 
 | Backing | Use case | Behavior |
 |---|---|---|
-| `BroadcastEventStream` | Live consumers attach before the producer starts. | No buffer. `subscribe(after=...)` is accepted but the `after` argument is silently ignored. Late subscribers miss earlier events. `subscribe()` returns an iterator over events emitted AFTER attach. Multi-subscriber (each gets a private cursor/queue). Goes `Gone` ONLY via explicit `delete(id)` — no TTL auto-transition. |
-| `ReplayEventStream` | Late subscribers need history. | Per-stream buffer retains all events. `subscribe(after=N)` is honored iff `cursor_fn` was supplied to the configurator; otherwise `after` is ignored. `ttl_seconds`, if supplied, evicts events per-event AFTER the stream is `Closed`. Auto-transition `Closed -> Gone` when the last event is evicted AND there was at least one emit. |
-| `FileBackedReplayEventStream` | Crash-recoverable history (multi-turn UIs, durable response streaming). | Persists each emit to `storage_dir/<id>.jsonl`. **Constructor rehydrates** from an existing file if present — restart-safe. Same replay + TTL + cursor semantics as `ReplayEventStream`. Optional `serializer: Callable[[Any], bytes]` and `deserializer: Callable[[bytes], Any]` for non-JSON payloads (default JSON). `delete()` cleans up the file BEFORE installing the registry tombstone. |
+| `BroadcastEventStream` | Live consumers attach before the producer starts. | No buffer. `subscribe(after=...)` is accepted but the `after` argument is silently ignored. Late subscribers miss earlier events. `subscribe()` returns an iterator over events emitted AFTER attach. Multi-subscriber (each gets a private cursor/queue). Goes away ONLY via explicit `delete(id)` — no TTL auto-tombstone. |
+| `ReplayEventStream` | Late subscribers need history. | Per-stream buffer retains all events. `subscribe(after=N)` is honored iff `cursor_fn` was supplied to the configurator; otherwise `after` is ignored. `ttl_seconds`, if supplied, drives per-event eviction (regardless of Active/Closed — events older than `now - ttl_seconds` are evicted from the buffer; see §46). When Closed AND `close_time + ttl_seconds` elapses, the registry auto-tombstones the id. |
+| `FileBackedReplayEventStream` | Crash-recoverable history (multi-turn UIs, durable response streaming). | Persists each emit to `storage_dir/<id>.jsonl`. **Constructor rehydrates** from an existing file if present — restart-safe. Same per-event TTL + close-clock semantics as `ReplayEventStream`. Optional `serializer: Callable[[Any], bytes]` and `deserializer: Callable[[bytes], Any]` for non-JSON payloads (default JSON). `delete()` (and TTL-since-close auto-tombstone) clean up the file BEFORE the registry tombstones the id. |
+
+Per-backing TTL + tombstone matrix:
+
+| Backing | Per-event TTL eviction | Close-clock tombstone |
+|---|---|---|
+| `BroadcastEventStream` | N/A (no buffer) | Never (no `ttl_seconds`) |
+| `ReplayEventStream` (no `ttl_seconds`) | Never (events live forever in buffer) | Never (no clock) |
+| `ReplayEventStream` (with `ttl_seconds=T`) | Active OR Closed: events older than `now - T` evicted from buffer | Closed AND `now > close_time + T` -> registry tombstones id |
+| `FileBackedReplayEventStream` (no `ttl_seconds`) | Never | Never |
+| `FileBackedReplayEventStream` (with `ttl_seconds=T`) | Same as above; file truncated when events evicted | Same as above; file removed BEFORE tombstone |
 
 Constructor selection happens through the registry's
 configurators (`use_in_memory_live()`, etc.) — application code at
@@ -2214,41 +2485,80 @@ Replay backings without a `cursor_fn` accept `subscribe(after=N)`
 calls but silently ignore the `after` argument and yield the full
 retained history.
 
-### §46. TTL eviction (replay backings)
+### §46. TTL eviction and the close-clock (replay backings)
 
-When constructed with `ttl_seconds`, replay backings:
+When constructed with `ttl_seconds=T`, replay backings:
 
-- Stamp each emitted event with an arrival time.
-- Evict events whose age >= `ttl_seconds`, on `emit()` and
-  `subscribe()`. Eviction runs **regardless of stream state**
-  (active OR closed); the buffer never holds events older than
-  `ttl_seconds` once an operation triggers an eviction sweep.
-- Auto-transition Closed -> Gone when the stream is `Closed` AND
-  the buffer is empty AND there was at least one emit. The
-  auto-transition is checked on `emit()` and `subscribe()` only;
-  `last_cursor()` deliberately does NOT trigger it (so emitter
-  watermark reads remain side-effect-free for the rehydration
-  path).
+**Per-event eviction** (runs regardless of Active/Closed):
 
-Implementation note: TTL eviction running on an active stream is
-intentional — it bounds the buffer's memory footprint even for
-long-lived streams. The Closed -> Gone transition is what makes
-the *id* go away; eviction on an active stream just trims old
-events the late-subscriber would have seen.
+- Stamp each emitted event with an `emit_time`.
+- Evict events whose age >= `T`, on `emit()` and `subscribe()`.
+  The buffer never holds events older than `T` once an operation
+  triggers an eviction sweep.
+
+This rule is what bounds long-running active streams that emit
+continuously for hours or days — the buffer's memory footprint is
+proportional to the emit-rate × `T`, not to the total duration.
+Without per-event TTL on active streams, a multi-day producer
+would buffer indefinitely.
+
+**Close-clock auto-tombstone** (Closed only):
+
+- When the stream transitions to Closed, the framework records
+  `close_time` and starts a wall-clock countdown for `T`.
+- When `now >= close_time + T`, the registry tombstones the id
+  (file-backed: removes the file FIRST). The next `get(id)` raises
+  `EventStreamNotFoundError`.
+
+Why a close-clock, not "buffer empty + at least one emit":
+
+- The previous design ("Closed AND buffer empty AND
+  `total_emit_count > 0`") was observer-driven (the check fired
+  on `emit()` or `subscribe()`), required `total_emit_count > 0`
+  to avoid a fast-path on never-emitted streams, and explicitly
+  excluded `last_cursor()` from the check. All of that complexity
+  came from trying to derive a destroy moment from buffer state.
+- The close-clock is **time-deterministic**: from
+  `close_time + T` onward, the id is tombstoned regardless of
+  who is observing. There is no "buffer briefly not empty when
+  the destroy fires" corner case to reason about, because for
+  every event in the buffer, `emit_time <= close_time`, so
+  `emit_time + T <= close_time + T`. By the time the close-clock
+  fires, every per-event TTL has already elapsed and every event
+  has been evicted on the next eviction sweep. The two rules are
+  consistent by construction.
+- It eliminates the `total_emit_count > 0` carve-out: a stream
+  that was created, closed, and never emitted to behaves like
+  any other Closed stream — it tombstones at `close_time + T`.
+  No special-case for empty-emit streams.
+- Subscribers attached just before close drain naturally (their
+  iterators terminate when the buffer is exhausted), and any
+  late subscriber arriving between `close_time` and
+  `close_time + T` can still replay the (possibly TTL-thinned)
+  history. After `close_time + T`, the id is gone.
+
+Implementation note: implementations MAY drive the close-clock
+either via a wall-clock timer (best for hosted/long-lived
+processes) or via an opportunistic check on `get(id)` / `emit()`
+/ `subscribe()` (best for tests). Either approach yields the same
+observable behavior: subscribers always raise
+`EventStreamNotFoundError` at or after `close_time + T`.
 
 `last_cursor()` continues to work in the Closed state even after
 all events have been evicted — it returns the last cursor the
 backing ever saw, NOT the current buffered max. This is required
 for the rehydration path (a process restarting picks up the
-high-water mark for resuming a not-yet-fully-evicted stream).
+high-water mark for resuming a not-yet-tombstoned stream).
 
 ### §47. Streaming error taxonomy
 
 ```
 EventStreamError                     # base
   ├── EventStreamClosedError         # emit on closed stream
-  ├── EventStreamGoneError           # any op on destroyed stream
-  └── EventStreamNotFoundError       # streams.get(id) on never-registered id
+  └── EventStreamNotFoundError       # any "id is not currently a
+                                     #   live stream" condition —
+                                     #   never registered, deleted,
+                                     #   or close-clock elapsed
 ```
 
 Wire mapping (informative — HTTP plumbing is in callers, not the
@@ -2257,40 +2567,40 @@ framework):
 | Exception | Suggested HTTP status |
 |---|---|
 | `EventStreamClosedError` | 5xx (this is a server-side bug — the producer kept emitting after closing). |
-| `EventStreamGoneError` | 410 Gone (resource existed and is destroyed). |
-| `EventStreamNotFoundError` | 404 Not Found (never registered). |
+| `EventStreamNotFoundError` | 404 Not Found. |
 
-#### Consolidated: when is `EventStreamGoneError` raised?
+#### Consolidated: when is `EventStreamNotFoundError` raised?
 
-A common misconception is that `EventStreamGoneError` only fires
-for closed streams whose TTL has elapsed. It actually fires in
-**three independent scenarios**, only one of which is TTL-driven.
-Implementers reading this section instead of triangulating across
-§42 / §43 / §46 — here is the complete picture:
+`EventStreamNotFoundError` is the single error type for every
+"the id is not currently a live stream" condition. It fires for
+**three independent reasons**, all surfaced as the same
+exception:
 
-| Path to `GONE` | Broadcast (live) | Replay (in-memory) | Replay (file-backed) |
+| Path to NotFound | Broadcast (live) | Replay (in-memory) | Replay (file-backed) |
 |---|---|---|---|
-| 1. Explicit `streams.delete(id)` → backing's `_on_delete` flips state to GONE → registry tombstones the id. Works in ANY state (Active or Closed); does not require any emit or TTL elapse. | ✓ | ✓ | ✓ (deletes file before tombstone) |
-| 2. TTL auto-transition: `state == CLOSED` AND buffer empty (every event evicted) AND `total_emit_count > 0`. Checked on `emit()` and `subscribe()` only — NOT on `last_cursor()`. Requires the backing to have been constructed with `ttl_seconds`. | ✗ (no TTL machinery) | ✓ | ✓ |
-| 3. Registry-level tombstone for `delete(id)` on a never-registered id: subsequent `get(id)` raises `Gone` even though no stream ever existed. | ✓ (registry-level) | ✓ (registry-level) | ✓ (registry-level) |
+| 1. `get(id)` for an id that was never registered. | ✓ | ✓ | ✓ |
+| 2. Explicit `streams.delete(id)` → instance removed + registry tombstones the id. Works in ANY state (Active or Closed). | ✓ | ✓ | ✓ (file removed before tombstone) |
+| 3. Closed stream's close-clock elapses (`now >= close_time + ttl_seconds`) → registry tombstones the id. Requires the backing to have been constructed with `ttl_seconds`. | ✗ (no TTL) | ✓ | ✓ (file removed before tombstone) |
 
 Key invariants to take away:
 
-- `BroadcastEventStream` NEVER auto-transitions to `Gone` on TTL —
-  it has no buffer and no TTL machinery. The ONLY path is explicit
-  `delete()`.
-- For replay backings, the TTL auto-transition specifically requires
-  `total_emit_count > 0`. A stream that was created, never emitted
-  to, and then closed STAYS `Closed` forever (until explicit
-  `delete()`); it does not silently auto-destruct.
-- `last_cursor()` deliberately does NOT trigger the TTL
-  auto-transition check — it's a read-only watermark query needed
-  for the file-backed rehydration path.
-- A `delete(id)` on a never-registered id installs a tombstone
-  anyway, so the next `get(id)` correctly distinguishes "Gone (was
-  destroyed)" from "NotFound (never existed)" — the symmetry is
-  with `rm -f`, which is a no-op but still leaves the directory
-  entry conceptually missing.
+- `BroadcastEventStream` NEVER auto-tombstones — it has no TTL
+  machinery. The ONLY path is explicit `delete()`.
+- For replay backings, the close-clock fires deterministically at
+  `close_time + ttl_seconds`. There is no `total_emit_count > 0`
+  carve-out and no buffer-state condition; a stream created,
+  closed, and never emitted to behaves like any other Closed
+  stream — tombstoned at `close_time + ttl_seconds`.
+- Per-event TTL runs regardless of Active/Closed, on `emit()` and
+  `subscribe()`. This is what bounds buffer memory for long-lived
+  active streams.
+- `last_cursor()` is side-effect-free — it does not trigger the
+  close-clock check, does not evict events, and does not
+  tombstone. It returns the high-water mark seen so far.
+- Once the registry tombstones an id, any stale instance
+  reference held by a caller raises `EventStreamNotFoundError`
+  on the next operation (the operation is routed through the
+  registry, which sees the tombstone).
 
 ### §48. Third-party stream-impl pattern
 
@@ -2325,10 +2635,17 @@ On `TaskManager.startup()`:
 1. Register every decorator-discovered function into the resume-callback
    table, keyed by source.name. [_REGISTERED_DESCRIPTORS]
 2. Resolve self.owner and self.instance_id from env (§7).
-3. Call self._recover_stale_tasks() — list tasks in our (agent_name,
-   session_id) scope with status=in_progress; for each:
+3. Call self._recover_stale_tasks() — list tasks via:
+       provider.list(agent_name = self.agent_name,
+                     session_id  = self.session_id,
+                     status      = "in_progress",
+                     lease_owner = self.owner,
+                     source_type = _SOURCE_TYPE)   # framework-only scope
+   For each result:
      a. Look at lease.owner and lease.instance_id.
-     b. If lease.owner != self.owner: skip (not ours).
+     b. If lease.owner != self.owner: skip (not ours). [Practically
+        unreachable because the filter already restricts to our
+        owner; defensive.]
      c. If lease.owner == self.owner AND lease.instance_id == self.instance_id:
         skip (would be impossible in a fresh process; defensive).
      d. Otherwise (same-owner different-instance OR expired):
@@ -2338,7 +2655,7 @@ On `TaskManager.startup()`:
         — Call self._reclaim_one(task_info) — PATCH lease to self
           with if_match=etag, then invoke the registered resume
           callback with entry_mode='recovered', re-hydrated input,
-          and metadata.
+          and metadata. On 412: ABANDON (the next scan re-evaluates).
 4. Spawn _periodic_recovery_loop() as a background task.
 5. Return.
 ```
@@ -2362,7 +2679,8 @@ The framework's most-complex decision tree. On `Task.start(task_id, input, ...)`
      - If status == 'pending':
          -> ADOPT (rare; transition to in_progress)
      - If status == 'suspended':
-         -> RESUME (transition to in_progress with new input)
+         -> RESUME (transition to in_progress with new input;
+                    clears prior output — see §11, §23.8 item 8)
      - If status == 'completed':
          -> RAISE TaskConflictError(current_status='completed')
      - If status == 'in_progress':
@@ -2374,6 +2692,13 @@ The framework's most-complex decision tree. On `Task.start(task_id, input, ...)`
              -> RAISE TaskConflictError(current_status='in_progress')
 
 4. Execute the chosen action via the appropriate transition PATCH.
+   For RESUME, the PATCH MUST be a single co-PATCH carrying:
+     - status: 'in_progress'
+     - payload['input']: new serialized input (inline or ref)
+     - payload['output']: null   (clear prior suspend output)
+     - payload['_turn_started_at']: utc_now_iso()
+     - attachments['_input']: new value (or absent if inline)
+     - attachments['_output']: null  (delete prior output attachment)
 5. If action ∈ {CREATE, ADOPT, RESUME, RECLAIM-AND-INVOKE}:
      Spawn lease_renewal_loop, watchdog (if timeout configured), execute_task_loop.
      Return a TaskRun bound to this execution.
@@ -2384,6 +2709,12 @@ The framework's most-complex decision tree. On `Task.start(task_id, input, ...)`
 
 The reclaim sub-case includes input precondition validation
 (`if_last_input_id`) before the transition PATCH.
+
+The RESUME co-clear of output is what guarantees that a
+`Task.get(task_id)` taken during the resumed turn never returns
+a stale output from the suspended turn — the developer-observable
+`TaskSnapshot.output` is `None` until the resumed turn produces
+a new one.
 
 ### §51. Steering append (atomic)
 
@@ -2450,14 +2781,22 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
  11. steering['cancel_requested']  = len(pending) > 0     # more pending => keep advisory
  12. payload['_steering']          = steering
  13. payload['_turn_started_at']   = utc_now_iso()        # FR-023: fresh turn-start boundary
- 14. PATCH(task_id, payload=payload, attachments=attachments_patch or None,
+ 14. payload['output']             = null                 # clear prior turn's output
+ 15. attachments_patch['_output']  = null                 # delete prior output attachment
+ 16. PATCH(task_id, payload=payload, attachments=attachments_patch,
         lease piggyback, if_match=etag)
 
      [NB: Phase 1 does NOT set payload['input'] or write a ref/attachment
       for active_input. Only the in-memory ctx receives the value (Phase 2).
       Recovery from a crash BETWEEN Phase 1 and Phase 3 reads
       _steering['active_input'] as the source of truth for the input,
-      via the race-recovery contract.]
+      via the race-recovery contract.
+      The output co-clear at steps 14-15 mirrors the suspended->in_progress
+      RESUME co-clear (§50): the next turn's snapshot must not surface
+      the previous turn's output. Always include attachments['_output'] = null
+      even when there was no prior _output attachment — the local provider
+      treats deletion of a non-existent key as a no-op, and the hosted
+      store does the same.]
 
 Phase 2 — Handler re-entry (in-memory only):
  15. Construct a fresh TaskContext with:
@@ -2529,27 +2868,51 @@ On `ctx.suspend(output=X, reason=R)`:
        steering = dict(task.payload['_steering'])
        steering['active_input'] = null
        payload_patch['_steering'] = steering
-4. If output is not None:
-       payload_patch['output'] = canonical_json(output)
-   # NB: output=None (or omitted) does NOT clear the field. Any prior
-   #     payload['output'] from an earlier suspend or completion remains.
-   #     This is asymmetric on purpose to match current source; see §20
-   #     "Output field lifecycle" for the implication for multi-turn use.
-5. attachments_patch = {}
+4. # Output is ALWAYS written via the _output attachment (§20, §23.2).
+   # Never inline; never omitted.
+   attachments_patch = {}
+5. If X is not None:
+       serialized_output = canonical_json(X)
+       if size(serialized_output) > 2 MB:
+           raise OutputTooLarge(task_id, size, 2*1024*1024)   # pre-network
+       payload_patch['output']       = {'__attachment_ref__': {
+                                            'key': '_output',
+                                            'hash': sha256(serialized_output)}}
+       attachments_patch['_output']  = X
+   else:
+       payload_patch['output']       = null
+       attachments_patch['_output']  = null     # delete prior _output (if any)
 6. If task.payload['input'] was a ref (§23.3):
        attachments_patch[ref_key(task.payload['input'])] = null
 7. PATCH(task_id, status='suspended', suspension_reason=R,
-        payload=payload_patch, attachments=attachments_patch or null,
+        payload=payload_patch, attachments=attachments_patch,
         lease piggyback, if_match=etag)
 ```
 
-The suspend PATCH MUST carry payload + attachments in one round
-trip — if the input was promoted, deleting the ref and the
-attachment is atomic.
+Properties this guarantees (vs. the prior inline-and-only-if-non-None design):
+
+- **Output is always explicit on suspend.** Whether the handler
+  passes `output=X` or `output=None`, the persisted record
+  unambiguously reflects what the handler decided. A `null`
+  output on the record means "the handler suspended with no
+  output", not "we never wrote because output was None and the
+  field still holds last turn's value." This is what makes
+  `Task.get(task_id).output` correct after suspend regardless of
+  prior turn history.
+- **No payload-budget pressure.** The output never lives in
+  `payload`; it lives only in `attachments["_output"]`. Even a
+  multi-MB suspend output doesn't compete with the 1 MB payload
+  cap that metadata namespaces and framework slots need.
+- **Atomic with the payload.** Single PATCH carries both. There
+  is no "ref written but attachment missing" window, and no
+  "attachment written but ref still points at the old hash"
+  window.
 
 ### §54. Recovery + reclaim
 
-Two reclaim sites exist with different ETag-CAS posture:
+Both reclaim sites (inline and cold-start/periodic) MUST use
+`if_match` for CAS. There is no longer a difference between them
+in this respect.
 
 **Inline reclaim — `_reclaim_one(task_info)` (lifecycle resolver):**
 
@@ -2560,7 +2923,9 @@ Two reclaim sites exist with different ETag-CAS posture:
       lease_duration_seconds = 60
       if_match               = task_info.etag   # CAS-guarded
 2. PATCH(task_info.id, ...)
-3. Re-read task_info (now with self as lease owner).
+   On 412: ABANDON per §25.3 — the conflict IS the race-detection;
+   the next caller / scan re-evaluates.
+3. Re-read task_info (now with self as lease owner). Record the new etag.
 4. Look up the resume callback by source.name.
 5. If no callback found: log and skip (decorator not registered in
    this process — the framework cannot recover what it does not know).
@@ -2579,22 +2944,19 @@ Two reclaim sites exist with different ETag-CAS posture:
 **Cold-start / periodic reclaim — `_recover_stale_tasks()`:**
 
 ```
-1. Build a PATCH that re-takes the lease (same fields as above)
-   EXCEPT without if_match.
-2. PATCH(task_info.id, ...)
-3-9. Same as inline reclaim.
+1. provider.list(agent_name, session_id, status="in_progress",
+                 lease_owner=self.owner,
+                 source_type=_SOURCE_TYPE)
+   The source_type filter scopes to framework-owned tasks ONLY;
+   foreign-typed records in the same scope are never picked up.
+2. For each task_info:
+   a. Build the same reclaim PATCH as inline reclaim, INCLUDING
+      if_match = task_info.etag.
+   b. PATCH(task_info.id, ...). On 412: ABANDON (the conflict IS
+      the race-detection — let the next scan or the next caller
+      re-evaluate).
+   c. Same handler dispatch as steps 3-9 of inline reclaim.
 ```
-
-**Known gap.** The startup scan and the periodic scan today do
-NOT pass `if_match` on the reclaim PATCH. The lifecycle inline
-reclaim (which races against caller `.start()` calls) DOES use
-CAS. Other-language implementers SHOULD use `if_match` at both
-sites for symmetric race protection; in practice, the startup
-scan only races against other cold-starts (which the lease
-owner-id distinction already protects against in the framework's
-`_lease_is_dead` predicate, §22) and the periodic scan races
-against rare cross-process expiry events that the framework
-treats as benign.
 
 **Liveness predicate (`_lease_is_dead`).** The framework's
 "is this lease dead" check is:
@@ -2615,7 +2977,11 @@ hosted store enforces expiry server-side at PATCH time by
 rejecting an attempted reclaim against a still-live foreign
 lease; the framework relies on the server response (which the
 classifier turns into `evicted` / `conflict` labels) to handle
-the lost-race case.
+the lost-race case. The local provider mirrors this behavior:
+attempting to reclaim a not-yet-expired foreign lease yields a
+classified conflict, and the local provider bumps `expiry_count`
+when the prior lease's `expires_at` (UTC) has actually passed
+(parity with the hosted store).
 
 ### §55. Periodic recovery loop
 
@@ -2782,19 +3148,23 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 - **C-LSE-1.** Lease renewal MUST run at half the lease duration.
   Default lease duration is 60 seconds; default renewal interval
   is 30 seconds.
-- **C-LSE-2.** Inline reclaim PATCH (via `_reclaim_one`) MUST be
-  guarded by `if_match=etag`. Cold-start and periodic recovery
-  reclaim PATCHes today do NOT use `if_match` in the canonical
-  Python implementation — see §54 known gap.
+- **C-LSE-2.** All reclaim PATCHes — inline (via `_reclaim_one`)
+  AND cold-start / periodic-scan reclaims — MUST be guarded by
+  `if_match=etag`. On `412`, the framework MUST treat the reclaim
+  as ABANDONED for this scan (another process beat us to it; do
+  not retry). This is the unified rule that closes the prior
+  known gap where periodic-scan reclaims wrote without
+  `if_match`.
 - **C-LSE-3.** `expiry_count` MUST be a server-side counter ONLY.
   Implementations MUST NOT add it to the patch-request shape; the
   framework MUST NOT write the field. The hosted store bumps it
   on actual-expiry ownership change (not on same-owner
-  different-instance handoff). The local file provider in the
-  canonical Python implementation does NOT bump it (known
-  divergence; it stays 0 in local mode). Implementations of new
-  providers MUST decide whether to mirror the hosted behavior or
-  document the divergence explicitly.
+  different-instance handoff). The local file provider MUST also
+  bump `expiry_count` on the reclaim write that completes a real
+  lease handoff (parity with the hosted store, so
+  `TaskRun.lease_expiry_count` works in local mode and so tests
+  asserting recovery behavior can run against the local
+  provider).
 - **C-LSE-4.** Eviction (HTTP 409 + `error.code=binding_mismatch`)
   classified as `evicted` MUST trigger the local cleanup sequence:
   cancel local execution, suppress pending terminal write, signal
@@ -2823,16 +3193,19 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 - **C-SUS-3.** `output` passed to `ctx.suspend()` MUST be delivered
   unconditionally to the suspending turn's caller, even if
   steering inputs are queued.
-- **C-SUS-4.** `payload["output"]` is set by `_handle_suspend` only
-  when the suspend output is non-null AND by `_handle_success` only
-  for non-ephemeral tasks. It is NEVER cleared by the resume PATCH.
-  The framework never reads it back; the value is delivered to the
-  caller via the in-process result-future, not via a re-read of the
-  persisted record. There is currently NO public developer-facing
-  read API for `payload["output"]` (see §20 "Output field
-  lifecycle"). Implementations adding such an API MUST also add
-  clear-on-resume semantics or define the multi-turn ownership
-  rules to avoid returning stale values.
+- **C-SUS-4.** `payload["output"]` is ALWAYS written via the
+  `_output` attachment (§20, §23.2, §53). The suspend write
+  (§53) MUST always set the slot explicitly — `null` when the
+  handler passed `output=None`, a ref when non-None — never
+  omit the field. The resume PATCH (§50) MUST clear
+  `payload["output"] = null` AND `attachments["_output"] = null`
+  in a single co-PATCH so the resumed turn never inherits the
+  suspended turn's output. The drain Phase 1 PATCH (§52) MUST do
+  the same so a drained turn never inherits the previous turn's
+  output. Failures via `_handle_failure` MUST also clear the
+  output (§20). All of this together guarantees that
+  `Task.get(task_id).output` reflects the OUTCOME of the most
+  recent terminal-of-turn boundary — never a stale value.
 
 ### C-STR (steering)
 
@@ -2942,19 +3315,27 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   with exactly one key `__attachment_ref__` whose value is a dict
   with both `key` and `hash`.
 - **C-ATT-3.** Promotion thresholds: function input > 200 KiB;
-  steering input > 20 KiB. Measured in canonical-JSON bytes.
+  steering input > 20 KiB. Output uses NO threshold — every
+  non-null output is always written via the `_output` attachment
+  (§23.2). Measured in canonical-JSON bytes. Framework-reserved
+  attachment keys: `_input`, `_steering_input_<seq>`, `_output`.
+  Worst-case framework attachment usage: 1 + 9 + 1 = 11 of 20
+  slots; 9 slots remain free.
 - **C-ATT-4.** Per-attachment cap: 2 MB serialized. Per-task
   attachment count cap: 20. Per-value cap MUST be enforced
   client-side on every write site (create + patch) in both
-  providers via `InputTooLarge` / `AttachmentTooLarge`. Per-task
-  count cap MUST be enforced on `create` and SHOULD be enforced
-  on `patch` when current state is cheaply available; the
-  canonical Python implementation enforces count on local-provider
-  patches and on framework-orchestrated steering-append patches
-  (which fetch state anyway) but NOT on the bare hosted PATCH
-  (which would require an extra round-trip). The server enforces
-  in the gap. `AttachmentLimitExceeded` carries the typed cap
-  violation when client-detected.
+  providers. Provider-level violations MUST surface as the
+  internal `_AttachmentTooLarge` / `_AttachmentLimitExceeded`
+  (underscore-prefixed; NOT exported). The framework MUST
+  re-raise as the developer-facing `InputTooLarge` (for `_input`
+  / `_steering_input_*` keys) or `OutputTooLarge` (for `_output`).
+  Per-task count cap MUST be enforced on `create` and SHOULD be
+  enforced on `patch` when current state is cheaply available;
+  the canonical Python implementation enforces count on
+  local-provider patches and on framework-orchestrated
+  steering-append patches (which fetch state anyway) but NOT on
+  the bare hosted PATCH (which would require an extra round-trip).
+  The server enforces in the gap.
 - **C-ATT-5.** Promotion / drain / suspend / orphan-cleanup
   PATCHes MUST carry BOTH `payload` and `attachments` in a single
   round-trip.
@@ -2974,7 +3355,8 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   (default `_PERIODIC_RECOVERY_INTERVAL_SECONDS`). It MUST share
   the same `_recover_stale_tasks` implementation as the cold-start
   scan (no divergence between cold-start filters and periodic-scan
-  filters).
+  filters). The shared filter MUST include
+  `source_type=<framework constant>` (C-FLT-1).
 - **C-REC-3.** Inline reclaim MUST be invoked on `.start()` against
   an `in_progress` task whose lease is dead. The lifecycle resolver
   MUST NOT block on the periodic loop.
@@ -3006,7 +3388,11 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 - **C-STM-1.** `EventStream` MUST be a 4-method protocol: `emit`,
   `close`, `subscribe`, `last_cursor`. No destructive method on
   the Protocol itself.
-- **C-STM-2.** Stream states are exactly `Active`, `Closed`, `Gone`.
+- **C-STM-2.** Stream states are exactly `Active` and `Closed`.
+  There is no per-instance `Gone` state; destruction is a
+  registry-level concept (tombstone) surfaced as
+  `EventStreamNotFoundError` on the next operation against the
+  id.
 - **C-STM-3.** `emit(close=True)` MUST be observably atomic — every
   subscriber attached BEFORE this call sees both the payload AND
   the end-of-stream signal.
@@ -3038,32 +3424,49 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   (live, no buffer).
 - **C-STR-REG-3.** `get_or_create(id)` MUST be atomic under
   concurrent callers (per-id lock).
-- **C-STR-REG-4.** `delete(id)` MUST be idempotent and MUST install
-  a tombstone (even for ids that were never registered) so a
-  subsequent `get(id)` raises `EventStreamGoneError`
-  (NOT `EventStreamNotFoundError`).
+- **C-STR-REG-4.** `delete(id)` MUST be idempotent and MUST
+  install a tombstone (even for ids that were never registered)
+  so a subsequent `get(id)` raises `EventStreamNotFoundError`.
 - **C-STR-REG-5.** Tombstone MUST be cleared on the next
   `get_or_create(id)` for the same id.
-- **C-STR-REG-6.** `get(id)` for an id that was never registered
-  AND never `delete()`d MUST raise `EventStreamNotFoundError`.
-  `get(id)` MUST NOT itself install a tombstone (only `delete(id)`
-  does). After `delete(id)`, subsequent `get(id)` raises
-  `EventStreamGoneError`.
+- **C-STR-REG-6.** `get(id)` MUST raise `EventStreamNotFoundError`
+  for ANY id that is not currently a live stream — whether it
+  was never registered, was explicitly `delete(id)`d, or had its
+  close-clock elapse (§46). `get(id)` MUST NOT itself install a
+  tombstone (only `delete(id)` and the close-clock auto-tombstone
+  do). There is no `EventStreamGoneError` — that error type has
+  been removed; every "id is not live" condition surfaces
+  uniformly as `EventStreamNotFoundError`.
 
 ### C-STR-TTL (replay TTL)
 
-- **C-STR-TTL-1.** TTL eviction MUST run on every `emit()` and
-  `subscribe()` call, regardless of whether the stream is `Active`
-  or `Closed`. (Active streams use TTL to bound buffer memory;
-  Closed streams use TTL to drive the `Closed -> Gone` transition.)
-- **C-STR-TTL-2.** `Closed -> Gone` auto-transition MUST happen
-  when the stream is `Closed` AND the buffer is empty AND there
-  was at least one emit. The check MUST run on `emit()` and
-  `subscribe()` but MUST NOT run on `last_cursor()` (so the
-  watermark read stays side-effect-free).
+- **C-STR-TTL-1.** Per-event TTL eviction MUST run on every
+  `emit()` and `subscribe()` call, regardless of whether the
+  stream is `Active` or `Closed`. (Active streams use TTL to
+  bound buffer memory for long-running producers; Closed streams
+  use TTL to keep the per-event lifetime consistent until the
+  close-clock fires.)
+- **C-STR-TTL-2.** Auto-tombstone MUST happen when the stream is
+  `Closed` AND `now >= close_time + ttl_seconds` (the
+  "close-clock"). This is deterministic and time-driven, NOT
+  observer- or buffer-state-driven. There is no
+  `total_emit_count > 0` carve-out; a stream created, closed,
+  and never emitted to tombstones at `close_time + ttl_seconds`
+  like any other Closed stream. Implementations MAY drive the
+  clock via a wall-clock timer (preferred for production) or via
+  an opportunistic check on `get()` / `emit()` / `subscribe()`
+  (acceptable for tests). `last_cursor()` MUST remain
+  side-effect-free and MUST NOT trigger the tombstone check.
 - **C-STR-TTL-3.** `BroadcastEventStream` (live-only) MUST NOT
-  auto-transition `Closed -> Gone`; it goes `Gone` only via
-  explicit `delete()`.
+  auto-tombstone; it tombstones only via explicit `delete()`.
+- **C-STR-TTL-4.** The close-clock and per-event TTL are
+  consistent by construction: for every event still in the
+  buffer at `close_time`, `emit_time <= close_time`, so
+  `emit_time + ttl_seconds <= close_time + ttl_seconds`. By the
+  time the close-clock fires, every per-event TTL has elapsed
+  and the next eviction sweep removes the events. Implementations
+  do NOT need to special-case "buffer not yet empty when the
+  close-clock fires."
 
 ### C-STR-FBR (file-backed replay)
 
@@ -3073,8 +3476,8 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   file (crash-recovery friendly).
 - **C-STR-FBR-3.** Optional `serializer` / `deserializer` callbacks
   MUST be honored for non-JSON payloads. Default uses JSON.
-- **C-STR-FBR-4.** `delete()` MUST clean up the file before
-  installing the registry tombstone.
+- **C-STR-FBR-4.** `delete()` and the close-clock auto-tombstone
+  MUST clean up the file before the registry tombstones the id.
 - **C-STR-FBR-5.** **File format.** Each emitted event is a single
   JSONL line wrapping the payload + arrival time:
 
@@ -3103,6 +3506,91 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   implementations SHOULD rewrite the file to compact away evicted
   lines (avoids unbounded file growth on long-lived streams with
   short TTLs).
+
+### C-OUT (output persistence)
+
+- **C-OUT-1.** Output is ALWAYS stored as the `_output`
+  attachment when non-null (no inline threshold). Setting
+  output never consumes payload budget.
+- **C-OUT-2.** Per-output cap: 2 MB serialized (the per-
+  attachment cap). Violation MUST raise `OutputTooLarge`
+  pre-network from the framework's output-write sites
+  (`_handle_success`, `_handle_suspend`).
+- **C-OUT-3.** Suspend MUST always write `payload["output"]`
+  explicitly (`null` or ref), atomically co-PATCHed with
+  `attachments["_output"]`. Never omit.
+- **C-OUT-4.** Resume (`_start_existing_task` for status
+  `suspended` → `in_progress`) MUST clear
+  `payload["output"] = null` AND
+  `attachments["_output"] = null` in the single transition
+  co-PATCH. The resumed turn never inherits the suspended
+  turn's output.
+- **C-OUT-5.** Steering drain Phase 1 MUST clear
+  `payload["output"] = null` AND
+  `attachments["_output"] = null` in its co-PATCH. A drained
+  turn never inherits the previous turn's output.
+- **C-OUT-6.** `_handle_failure` for `ephemeral=False` MUST clear
+  `payload["output"]` and the `_output` attachment in its
+  terminal co-PATCH so the persisted record reflects the
+  failure cause, not a stale prior-success output.
+
+### C-INTROSPECT (introspection)
+
+- **C-INTROSPECT-1.** `Task.get(task_id) -> TaskSnapshot | None`
+  is an INSTANCE method on `Task` (mirrors
+  `Task.get_active_run`'s shape — not a classmethod or a
+  singleton free function).
+- **C-INTROSPECT-2.** `Task.get` is read-only: MUST NOT reclaim,
+  spawn a recovery execution, extend the lease, take any write
+  lock, or PATCH the record.
+- **C-INTROSPECT-3.** `Task.get` MUST work for any non-deleted
+  task — pending, in_progress, suspended, completed. Returns
+  `None` (NOT raises) for a non-existent task.
+- **C-INTROSPECT-4.** `Task.get` MUST raise `RuntimeError` if no
+  task manager has been initialized in the calling process
+  (mirrors `get_active_run`).
+- **C-INTROSPECT-5.** `TaskSnapshot` MUST resolve the `_output`
+  attachment when one exists and surface the deserialized
+  `output` value (not a ref) on the snapshot.
+- **C-INTROSPECT-6.** `TaskSnapshot` MUST surface ONLY the
+  default-namespace metadata in its `metadata` field. Named
+  namespaces (`payload["metadata:<ns>"]`) are NOT exposed.
+- **C-INTROSPECT-7.** `TaskSnapshot` MUST NOT expose `payload`,
+  `attachments`, the lease, `_steering` state, or etag. These
+  are framework-internal; surfacing them on the snapshot would
+  leak the storage shape into the developer API.
+- **C-INTROSPECT-8.** `TaskSnapshot` instances MUST be
+  effectively read-only (no mutators).
+
+### C-WQ (per-task write serialization)
+
+- **C-WQ-1.** All in-process writes to a single `task_id` MUST
+  be serialized through a per-task FIFO write queue (§25.2).
+  Concurrent metadata flushes, lease renewals, steering
+  appends, and drain writes within the same process MUST NOT
+  race against each other.
+- **C-WQ-2.** The write queue is in-process only. Cross-process
+  serialization is provided by the server's ETag/CAS check
+  (412 on mismatch), not by the queue.
+- **C-WQ-3.** Per-op 412 policy MUST follow the table in §25.3:
+  retries with re-read for metadata-flush / steering-append /
+  drain Phase 1 / drain Phase 3 / lease-renewal (with
+  ownership re-check); RE-READ-AND-DECIDE for terminal writes
+  (retry if lease still ours and status still in_progress,
+  ABANDON if lease lost or status already terminal); ABANDON
+  for reclaims; default budget 5 attempts.
+
+### C-FLT (recovery scan filter)
+
+- **C-FLT-1.** The cold-start AND periodic recovery scans MUST
+  include `source_type=<framework constant>` in the `list()`
+  filter so the framework only inspects tasks created by its
+  own decorator. Tasks created by other systems (sharing the
+  same agent_name + session_id scope) MUST NOT be enumerated
+  by the framework's reclaim path. This closes a gap where a
+  multi-tenant session could surface unrelated records and the
+  framework would attempt to dispatch them to nonexistent
+  callbacks.
 
 ### C-PRV (provider abstraction)
 
@@ -3187,8 +3675,9 @@ A single JSON document showing how every concept in this spec
 composes. This is a deep-research task mid-life: function input
 was promoted, three steering inputs are queued (one inline, two
 promoted), one drain has already happened so `next_input_seq` is
-ahead of the live keys, both default and named metadata
-namespaces are populated, framework state slots are set.
+ahead of the live keys, the suspended-turn output from earlier
+is persisted as the `_output` attachment, both default and named
+metadata namespaces are populated, framework state slots are set.
 
 ```json
 {
@@ -3219,6 +3708,13 @@ namespaces are populated, framework state slots are set.
       "__attachment_ref__": {
         "key":  "_input",
         "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+
+    "output": {
+      "__attachment_ref__": {
+        "key":  "_output",
+        "hash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
       }
     },
 
@@ -3268,6 +3764,11 @@ namespaces are populated, framework state slots are set.
       "depth":   "comprehensive",
       "context": "<~800 KB of caller-supplied reference material>"
     },
+    "_output": {
+      "phase":     "phase_3_summary",
+      "summary":   "Initial scan complete...",
+      "artifacts": "<~600 KB of intermediate summary>"
+    },
     "_steering_input_3": {
       "instruction": "refocus on transformer architectures",
       "context":     "<~600 KB of caller-supplied reference material>"
@@ -3296,6 +3797,7 @@ What this single document demonstrates:
 | Lease (§22) | `lease.owner`, `lease.instance_id`, `lease.generation` |
 | Framework-stamped routing (§21) | `tags._task_name`, `source.name` |
 | Input promoted to attachment (§23) | `payload.input` is a ref; `attachments._input` holds the value |
+| Output always-attachment (§20, §23.2) | `payload.output` is a ref; `attachments._output` holds the value |
 | Multiple metadata namespaces (§17) | `payload.metadata` + `payload["metadata:session"]` |
 | Steering queue with mixed shapes (§12, §23) | `_steering.pending_inputs[0]` inline; `[1]`, `[2]` refs |
 | Monotonic seq invariant (§23.5) | `next_input_seq: 5` with live keys `_3` + `_4` — one drain consumed `_0`/`_1`/`_2`, no renumbering |
@@ -3304,15 +3806,20 @@ What this single document demonstrates:
 | Durable retry counter (§15) | `_retry_attempt` |
 | Last-input-id chain (§11) | `_last_input_id` |
 | ETag CAS (§25) | `etag` |
+| Worst-case attachment count (§23.2) | 4 of 20 slots used here; framework reserves at most 11 (1 + 9 + 1) |
 
 Simpler scenarios drop fields:
 
 - **Small inputs only**: `payload.input` is the raw JSON value;
-  `pending_inputs` is all raw values; `attachments` is `null` or
-  absent.
-- **After suspend**: `payload.input` is `null`,
-  `_steering.active_input` is `null`, any promoted `_input`
-  attachment is deleted in the same suspend PATCH.
+  `pending_inputs` is all raw values; only `_output` may appear
+  in `attachments` (output is always-attachment).
+- **Handler returned `None` from a turn that completed normally**:
+  `payload.output` is `null`; `attachments._output` is absent
+  (single co-PATCH clears the slot and deletes the attachment).
+- **Just-after-resume**: `payload.input` holds the new input
+  (inline or ref); `payload.output` is `null`;
+  `attachments._output` is absent (cleared by the resume PATCH —
+  §50, §23.8 item 8).
 - **Cold start, no steering**: `_steering` absent; `next_input_seq`
   doesn't appear.
 
@@ -3377,12 +3884,13 @@ Process starts:
          _resume_callbacks  by source.name
    2. await manager.startup():
        a. Provider.list(agent, sess, status="in_progress",
-                        lease_owner=self.owner)
+                        lease_owner=self.owner,
+                        source_type=_SOURCE_TYPE)   # framework-only scope
        b. For each task in the list:
            - if active_locally: skip
            - _steering_cleanup_orphan_attachments(task) (§58)
-           - reclaim (PATCH lease to self, NO if_match today —
-             see §54 known gap)
+           - reclaim (PATCH lease to self, with if_match=etag —
+             on 412, ABANDON; next scan re-evaluates)
            - look up resume callback by source.name
            - if no callback: log and skip (we cannot recover
              what we did not register)
@@ -3400,30 +3908,12 @@ recovered are visible before any HTTP traffic could land that
 might call into them.
 
 **Note on the recovery-scan list filter.** The list call passes
-ONLY `agent_name + session_id + status="in_progress" + lease_owner`.
-It deliberately does NOT include `source_type` or any `tag` filter
-(unlike `TaskManager.list_tasks()` which DOES pass both
-`source_type=_SOURCE_TYPE` and `tag={_task_name: ...}` because it
-needs them for function-scoped queries). For recovery, the
-`(agent_name, session_id, lease_owner)` triple is unique enough
-in practice — only this framework constructs lease owners in the
-`<agent>|session:<sess>` format for this (agent, session) pair —
-so source_type filtering is redundant.
-
-A foreign record with the same lease_owner but a different
-`source.type` (or no `source` at all) would be matched by the
-list and reclaimed (its lease patched to self), then dropped at
-the `_find_resume_callback(task_info)` step — that lookup keys on
-`source.name` against `_resume_callbacks`, so an unregistered
-source.name logs+skips. The reclaim wastes one round-trip but no
-foreign callback fires.
-
-Other-language implementers MAY narrow defensively by adding
-`source_type=_SOURCE_TYPE` to the list filter — this would
-eliminate the "wasted reclaim of foreign records" case at the
-cost of one extra server-side index lookup. The canonical Python
-implementation accepts the wasted-reclaim cost because the
-lease_owner narrowing is already tight in production topologies.
+`source_type=_SOURCE_TYPE` so the scan returns ONLY tasks created
+by this framework. Foreign-typed records in the same
+`(agent_name, session_id, lease_owner)` scope are never picked
+up. This avoids the wasted-reclaim case where a foreign record
+matching the lease owner triple would otherwise be PATCH-touched
+before being dropped by the resume-callback lookup.
 
 ---
 
