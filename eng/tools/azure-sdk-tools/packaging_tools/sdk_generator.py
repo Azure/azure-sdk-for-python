@@ -67,11 +67,10 @@ def run_post_emitter_script(sdk_code_path: str) -> None:
     pipeline output. Failures are logged but never fail the overall generation.
     """
     package_folder = Path(sdk_code_path).resolve()
-    script_path = (package_folder / POST_EMITTER_SCRIPT_NAME).resolve()
+    script_path = package_folder / POST_EMITTER_SCRIPT_NAME
 
-    # Only run a script that lives directly inside the package folder. This guards
-    # against path traversal / symlinks that point outside the package folder.
-    if script_path.parent != package_folder or not script_path.is_file():
+    # Run the script only when it exists; otherwise this is a no-op.
+    if not script_path.is_file():
         return
 
     pwsh = shutil.which("pwsh") or shutil.which("powershell")
