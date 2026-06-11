@@ -54,13 +54,13 @@ def execute_func_with_timeout(func, timeout: int = 900) -> Any:
 # Hard-coded name of the optional post-emitter script. If a service team places a
 # script with this name in the generated package folder (sdk/<service>/azure-*),
 # it will be executed after code generation.
-POST_EMITTER_SCRIPT_NAME = "post-emitter.ps1"
+POST_EMITTER_SCRIPT_NAME = "_post_emitter.ps1"
 
 
 def run_post_emitter_script(sdk_code_path: str) -> None:
     """Run the optional post-emitter PowerShell script for a package, if present.
 
-    When a script named ``post-emitter.ps1`` exists directly inside the generated
+    When a script named ``_post_emitter.ps1`` exists directly inside the generated
     package folder (``sdk/<service>/azure-*``), it is executed after code
     generation so service teams can run custom post-processing on the generated
     SDK. The script's stdout/stderr are captured and logged so they appear in the
