@@ -1,33 +1,81 @@
 version: "0.2"
-import:
-  - ../cspell.yaml
 ignorePaths:
   - CODEOWNERS*
   - arm-leases/**
   - policies/**
+  - shared/test/fixtures/**
   - workflows/*.lock.yml
   - workflows/**/*.md
 words:
+  - afec
   - azmanager
   - azsdk
   - brch
   - buildid
   - byval
+  - chatmode
+  - chatmodes
+  - classsvc
+  - cleansvc
+  - cnatestsvc
   - contosowidget
   - contosowidgetmanager
   - dapr
+  - delsvc
+  - descrsvc
+  - efer
+  - enumsvc
+  - esbuild
+  - evals
+  - exsvc
   - fflate
+  - fmtsvc
+  - foos
+  - gadgetsvc
+  - handwrittensvc
+  - incompleted
+  - inlinesvc
+  - iscai
+  - itemsvc
+  - legacysvc
+  - Liftr
+  - liftr
+  - lrosvc
+  - msyyc
+  - namingsvc
+  - nosupprsvc
+  - npmjs
   - oapi
+  - oavrunnertests
+  - Pillalamarri
   - plcy
+  - pipefail
+  - promisified
+  - proxysvc
   - pwsh
+  - reposting
+  - reqpropsvc
   - retarget
   - rhysd
   - rpaa
   - rpaas
+  - rpass
+  - rphelp
+  - secsupprsvc
+  - secretsvc
+  - Swathi
   - tsgs
+  - tspgenservice
+  - typespec
+  - typechgsvc
+  - tseslint
+  - unlabels
+  - unshift
   - unstub
+  - vally
   - vitest
   - whatif
+  - widgetsvc
 
 overrides:
   - filename: "**/.github/chatmodes/api-review-feedback.chatmode.md"
