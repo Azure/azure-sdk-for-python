@@ -77,7 +77,7 @@ def run_post_emitter_script(sdk_code_path: str) -> None:
     pwsh = shutil.which("pwsh") or shutil.which("powershell")
     if not pwsh:
         _LOGGER.warning(
-            f"[POST-EMITTER] Found {script_path} but no PowerShell executable (pwsh) is available; skip running it."
+            f"[POST-EMITTER] Found {script_path} but no PowerShell executable (pwsh/powershell) is available; skipping."
         )
         return
 
