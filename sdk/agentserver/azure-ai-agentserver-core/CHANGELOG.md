@@ -150,6 +150,14 @@
   neither `httpx` nor `aiohttp` is a production dependency of this
   package anymore.
 
+- **Removed the `samples/` directory.** The standalone in-process
+  samples (`durable_retry`, `durable_streaming`, `selfhosted_invocation`)
+  have been deleted. End-to-end usage of the `@task` and streaming
+  primitives is demonstrated in the runnable HTTP-host samples shipped
+  with `azure-ai-agentserver-invocations` and
+  `azure-ai-agentserver-responses`, which match how the primitives
+  are actually consumed in production.
+
 ## 2.0.0b5 (2026-05-25)
 
 ### Bugs Fixed
