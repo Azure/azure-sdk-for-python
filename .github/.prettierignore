@@ -1,3 +1,11 @@
+# python customizations
+actions
+agents
+hooks
+skills
+workflows
+PULL_REQUEST_TEMPLATE.md
+
 # this file
 .prettierignore
 
