@@ -2,6 +2,11 @@
     "ignoreWords": [
         "hdrh",
         "hdrhistogram",
+        "dedup",
+        "deduped",
+        "deduping",
+        "dedupe",
+        "dedups",
         "perfdb",
         "perfresults",
         "pkrange",

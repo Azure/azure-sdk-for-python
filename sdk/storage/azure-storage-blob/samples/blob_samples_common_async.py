@@ -22,7 +22,7 @@ import asyncio
 from azure.core.exceptions import ResourceExistsError
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class CommonBlobSamplesAsync(object):
@@ -33,11 +33,15 @@ class CommonBlobSamplesAsync(object):
 
     async def blob_snapshots_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: blob_snapshots_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: blob_snapshots_async"
+            )
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
@@ -62,7 +66,7 @@ class CommonBlobSamplesAsync(object):
             snapshot_blob = await blob_client.create_snapshot()
 
             # Get the snapshot ID
-            print(snapshot_blob.get('snapshot'))
+            print(snapshot_blob.get("snapshot"))
 
             # Delete only the snapshot (blob itself is retained)
             await blob_client.delete_blob(delete_snapshots="only")
@@ -73,16 +77,21 @@ class CommonBlobSamplesAsync(object):
 
     async def soft_delete_and_undelete_blob_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: soft_delete_and_undelete_blob_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: soft_delete_and_undelete_blob_async"
+            )
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
             # Create a retention policy to retain deleted blobs
             from azure.storage.blob import RetentionPolicy
+
             delete_retention_policy = RetentionPolicy(enabled=True, days=1)
 
             # Set the retention policy on the service
@@ -119,11 +128,15 @@ class CommonBlobSamplesAsync(object):
 
     async def delete_multiple_blobs_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: delete_multiple_blobs_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: delete_multiple_blobs_async"
+            )
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -158,11 +171,15 @@ class CommonBlobSamplesAsync(object):
 
     async def acquire_lease_on_blob_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: acquire_lease_on_blob_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: acquire_lease_on_blob_async"
+            )
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -195,11 +212,15 @@ class CommonBlobSamplesAsync(object):
 
     async def start_copy_from_url_abort_copy_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: start_copy_blob_from_url_and_abort_copy_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: start_copy_blob_from_url_and_abort_copy_async"
+            )
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -216,7 +237,7 @@ class CommonBlobSamplesAsync(object):
                 # [START copy_blob_from_url]
                 # Get the blob client with the source blob
                 source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
-                copied_blob = blob_service_client.get_blob_client("copyblobcontainerasync", '59466-0.txt')
+                copied_blob = blob_service_client.get_blob_client("copyblobcontainerasync", "59466-0.txt")
 
                 # start copy and check copy status
                 copy = await copied_blob.start_copy_from_url(source_blob)
@@ -250,5 +271,6 @@ async def main():
     await sample.acquire_lease_on_blob_async()
     await sample.start_copy_from_url_abort_copy_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

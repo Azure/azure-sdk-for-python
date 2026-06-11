@@ -24,6 +24,7 @@ for path in (SCRIPTS_DIR, PACKAGE_DIR):
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker, BreakingChangeType
 from breaking_changes_checker.detect_breaking_changes import main
 from breaking_changes_checker.checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
+from breaking_changes_checker.checkers.changed_function_return_type_checker import ChangedFunctionReturnTypeChecker
 
 def format_breaking_changes(breaking_changes):
     formatted = "\n"
@@ -744,6 +745,318 @@ def test_parameter_annotation_type_missing_vs_explicit_none():
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
     assert changes == expected_msg
+
+
+def test_changed_lro_return_type_issue_46489():
+    """Regression test for https://github.com/Azure/azure-sdk-for-python/issues/46489.
+
+    The tool must detect that an LRO method's response type changed from
+    `LROPoller[Fleet]` to `LROPoller[None]` as a breaking change.
+    """
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "FleetsOperations": {
+                    "methods": {
+                        "begin_create_or_update": {
+                            "parameters": {
+                                "resource_group_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "fleet_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "resource": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword",
+                                },
+                            },
+                            "is_async": False,
+                            "return_type": "LROPoller[Fleet]",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "FleetsOperations": {
+                    "methods": {
+                        "begin_create_or_update": {
+                            "parameters": {
+                                "resource_group_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "fleet_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "resource": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword",
+                                },
+                            },
+                            "is_async": False,
+                            "return_type": "LROPoller[None]",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedFunctionReturnType): Method `FleetsOperations.begin_create_or_update` "
+        "changed return type from `LROPoller[Fleet]` to `LROPoller[None]`",
+    ]
+
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_changed_module_function_return_type():
+    """A module-level function return type change should also be flagged."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "build_url": {
+                    "parameters": {
+                        "base": {"default": None, "param_type": "positional_or_keyword"},
+                    },
+                    "is_async": False,
+                    "return_type": "str",
+                }
+            },
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "build_url": {
+                    "parameters": {
+                        "base": {"default": None, "param_type": "positional_or_keyword"},
+                    },
+                    "is_async": False,
+                    "return_type": "bytes",
+                }
+            },
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedFunctionReturnType): Function `build_url` changed return type from `str` to `bytes`",
+    ]
+
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_return_type_missing_in_stable_is_not_breaking():
+    """Legacy stable reports without `return_type` must not produce false positives."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Foo": {
+                    "methods": {
+                        "bar": {
+                            "parameters": {},
+                            "is_async": False,
+                            # no return_type captured by older versions of the tool
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Foo": {
+                    "methods": {
+                        "bar": {
+                            "parameters": {},
+                            "is_async": False,
+                            "return_type": "str",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
+    bc.run_checks()
+
+    assert bc.breaking_changes == []
+
+
+def test_return_type_paged_iterable_equivalence_is_not_breaking():
+    """`Iterable[X]` <-> `ItemPaged[X]` and the async equivalents are
+    semantically identical for callers and must not be reported as breaking.
+    Module-qualified spellings are normalized too.
+    """
+    def _make(stable_rt, current_rt, is_async=False):
+        stable = {
+            "azure.contoso": {
+                "class_nodes": {
+                    "PeeringLocationsOperations": {
+                        "methods": {
+                            "list": {
+                                "parameters": {},
+                                "is_async": is_async,
+                                "return_type": stable_rt,
+                            }
+                        }
+                    }
+                },
+                "function_nodes": {},
+            }
+        }
+        current = {
+            "azure.contoso": {
+                "class_nodes": {
+                    "PeeringLocationsOperations": {
+                        "methods": {
+                            "list": {
+                                "parameters": {},
+                                "is_async": is_async,
+                                "return_type": current_rt,
+                            }
+                        }
+                    }
+                },
+                "function_nodes": {},
+            }
+        }
+        return stable, current
+
+    cases = [
+        ("AsyncIterable[_models.PeeringLocation]", "AsyncItemPaged[_models.PeeringLocation]"),
+        ("Iterable[_models.PeeringLocation]", "ItemPaged[_models.PeeringLocation]"),
+        ("ItemPaged[_models.PeeringLocation]", "Iterable[_models.PeeringLocation]"),
+        # Module-qualified spellings should normalize too.
+        ("typing.AsyncIterable[X]", "azure.core.async_paging.AsyncItemPaged[X]"),
+        # `typing` aliases vs PEP 585 builtin generics are equivalent.
+        ("Dict[str, Any]", "dict[str, Any]"),
+        ("List[str]", "list[str]"),
+        ("typing.Tuple[int, str]", "tuple[int, str]"),
+    ]
+    for stable_rt, current_rt in cases:
+        stable, current = _make(stable_rt, current_rt, is_async="Async" in stable_rt)
+        bc = BreakingChangesTracker(
+            stable, current, "azure-contoso",
+            checkers=[ChangedFunctionReturnTypeChecker()],
+        )
+        bc.run_checks()
+        assert bc.breaking_changes == [], (
+            f"Unexpected breaking change reported for {stable_rt!r} -> {current_rt!r}: "
+            f"{bc.breaking_changes}"
+        )
+
+
+def test_create_function_report_scopes_return_type_to_owner_class():
+    """End-to-end check that `create_function_report` captures the right return
+    annotation when multiple functions/methods in the same module share a name.
+
+    Regression for the original implementation, which used `ast.walk` and
+    matched the first same-named `FunctionDef` in the module regardless of
+    class scope. With proper scoping:
+
+      - `FooOperations.list` -> ``str``
+      - `BarOperations.list` -> ``bytes``
+      - module-level `list`  -> ``int``
+      - `FooOperations.fetch` (impl, after two `@typing.overload` stubs)
+        -> ``typing.Union[int, str]``
+    """
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "examples", "return_type_capture"))
+    try:
+        # Import lazily so we always get a fresh handle on the fixture module.
+        import importlib
+        sample = importlib.import_module("sample")
+        importlib.reload(sample)
+
+        from breaking_changes_checker.detect_breaking_changes import (
+            create_class_report, create_function_report,
+        )
+
+        foo_report = create_class_report(sample.FooOperations)
+        bar_report = create_class_report(sample.BarOperations)
+        free_report = create_function_report(sample.list)
+
+        assert foo_report["methods"]["list"]["return_type"] == "str"
+        assert bar_report["methods"]["list"]["return_type"] == "bytes"
+        assert free_report["return_type"] == "int"
+        # `fetch` has two `@typing.overload` stubs and one real implementation;
+        # the captured return_type must come from the implementation, not a stub.
+        assert foo_report["methods"]["fetch"]["return_type"] == "typing.Union[int, str]"
+    finally:
+        sys.path.remove(os.path.join(os.path.dirname(__file__), "examples", "return_type_capture"))
+
+
+def test_get_parameter_type_handles_pep604_union_is_json_serializable():
+    """Regression: PEP 604 unions (``T | None``) parse as ``ast.BinOp`` and
+    previously fell through to ``return annotation``, leaving a raw AST node in
+    the report. ``json.dump`` on the public API report would then raise
+    ``TypeError``. Ensure the captured ``return_type`` is a JSON-serializable
+    string for both standalone and nested PEP 604 unions.
+    """
+    import ast as _ast
+    from breaking_changes_checker.detect_breaking_changes import get_parameter_type
+
+    # Standalone PEP 604 union as a return annotation.
+    fn = _ast.parse("def f() -> int | None: ...").body[0]
+    result = get_parameter_type(fn.returns)
+    assert result == "Union[int, None]"
+    json.dumps({"return_type": result})  # must not raise
+
+    # Nested in a generic, e.g. LROPoller[int | None].
+    fn2 = _ast.parse("def f() -> LROPoller[int | None]: ...").body[0]
+    result2 = get_parameter_type(fn2.returns)
+    assert result2 == "LROPoller[Union[int, None]]"
+    json.dumps({"return_type": result2})
+
+    # Three-way union flattens left-to-right.
+    fn3 = _ast.parse("def f() -> int | str | None: ...").body[0]
+    assert get_parameter_type(fn3.returns) == "Union[int, str, None]"
 
 
 def test_report_mode_without_setup_py():

@@ -12,17 +12,23 @@ FILE: async_mcp_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to use the Azure AI Voice Live SDK asynchronously
-    with MCP capabilities. It shows how to define mcp servers, handle mcp call events.
+    with MCP capabilities. It shows how to define mcp servers, handle mcp call events,
+    and connects with API version 2026-04-10 because MCP support requires that service version.
 
 USAGE:
     python async_mcp_sample.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
-    2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
+    1) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
+
+    Optional environment variables:
+    - AZURE_VOICELIVE_MODEL - The VoiceLive model to use (default: gpt-realtime)
+    - AZURE_VOICELIVE_USE_API_KEY - Set to "true" to use AZURE_VOICELIVE_API_KEY instead of Entra ID
+    - AZURE_VOICELIVE_API_KEY - VoiceLive API key used when AZURE_VOICELIVE_USE_API_KEY is enabled
 
 REQUIREMENTS:
     - azure-ai-voicelive
+    - azure-identity
     - python-dotenv
     - pyaudio (for audio capture and playback)
 """
@@ -58,6 +64,7 @@ except ImportError:
 # Azure VoiceLive SDK imports
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.voicelive.aio import connect
 from azure.ai.voicelive.models import (
     RequestSession,
@@ -371,12 +378,12 @@ class AsyncMCPCallClient:
             logger.info(f"Connecting to VoiceLive API with model {self.model}")
 
             # Connect to VoiceLive WebSocket API asynchronously
-            # Using 2026-01-01-preview API version for MCP support
+            # Using 2026-04-10 API version for MCP support
             async with connect(
                 endpoint=self.endpoint,
                 credential=self.credential,
                 model=self.model,
-                api_version="2026-01-01-preview",
+                api_version="2026-04-10",
             ) as connection:
                 # Initialize audio processor
                 self.audio_processor = AudioProcessor(connection)
@@ -646,40 +653,42 @@ class AsyncMCPCallClient:
 
 async def main():
     """Main async function."""
-    # Get credentials from environment variables
+    # Note: Use api_version="2026-04-10" to enable MCP features
+    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
+    model = os.environ.get("AZURE_VOICELIVE_MODEL", "gpt-realtime")
+    use_api_key = os.environ.get("AZURE_VOICELIVE_USE_API_KEY", "").strip().lower() in {"1", "true", "yes"}
     api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
-    # Note: Use api_version="2026-01-01-preview" to enable MCP features
-    endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "https://test.voicelive.com/")
 
-    if not api_key:
-        print("❌ Error: No API key provided")
-        print("Please set the AZURE_VOICELIVE_API_KEY environment variable.")
-        sys.exit(1)
-
-    # Option 1: API key authentication (simple, recommended for quick start)
-    credential: Union[AzureKeyCredential, AsyncTokenCredential] = AzureKeyCredential(api_key)
-
-    # Option 2: Async AAD authentication (requires azure-identity)
-    # Uncomment the lines below to use AAD authentication instead:
-    # from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
-    # credential = AzureCliCredential()
-
-    # Create and run the client
-    client = AsyncMCPCallClient(
-        endpoint=endpoint,
-        credential=credential,
-        model="gpt-realtime",
-        voice="en-US-AvaNeural",
-        instructions="You are a helpful AI assistant with access to some mcp server. ",
-    )
+    credential: Union[AzureKeyCredential, AsyncTokenCredential]
+    if use_api_key:
+        if not api_key:
+            print("❌ Error: No API key provided")
+            print("Please set the AZURE_VOICELIVE_API_KEY environment variable.")
+            sys.exit(1)
+        credential = AzureKeyCredential(api_key)
+        logger.info("Using API key credential")
+    else:
+        credential = DefaultAzureCredential()
+        logger.info("Using DefaultAzureCredential")
 
     try:
+        client = AsyncMCPCallClient(
+            endpoint=endpoint,
+            credential=credential,
+            model=model,
+            voice="en-US-AvaNeural",
+            instructions="You are a helpful AI assistant with access to some mcp server. ",
+        )
+
         await client.run()
     except KeyboardInterrupt:
         print("\n👋 Voice Live MCP shut down.")
     except Exception as e:
         logger.error(f"Error: {e}")
         sys.exit(1)
+    finally:
+        if isinstance(credential, AsyncTokenCredential):
+            await credential.close()
 
 
 if __name__ == "__main__":

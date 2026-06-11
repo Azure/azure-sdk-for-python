@@ -1,5 +1,24 @@
 # Release History
 
+## 5.0.0b1 (2026-05-27)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added method `send_request`
+  - Model `JobExecution` added property `system_data`
+  - Model `Usage` added property `unit`
+  - Added enum `SessionPoolIdentityLifeCycle`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `ContainerAppsOperations.list_custom_host_name_analysis` changed its parameter `custom_hostname` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AuthConfigCollection`/`AvailableOperations`/`AvailableWorkloadProfilesCollection`/`CertificateCollection`/`ConnectedEnvironmentCollection`/`ContainerAppCollection`/`DaprComponentsCollection`/`HttpRouteConfigCollection`/`JavaComponentsCollection`/`JobExecutionNamesCollection`/`JobsCollection`/`ListUsagesResult`/`MaintenanceConfigurationCollection`/`ManagedCertificateCollection`/`ManagedEnvironmentsCollection`/`RevisionCollection`/`SessionPoolCollection`/`SourceControlCollection`/`WorkflowEnvelopeCollection`/`WorkloadProfileStatesCollection` which actually were not used by SDK users
+
 ## 4.0.0 (2025-10-24)
 
 ### Features Added

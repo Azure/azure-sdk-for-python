@@ -15,6 +15,23 @@ and always go through the load-balancer.
 The cache is invalidated on 5xx responses or transport errors so that a
 failover is respected on the next write.
 
+Redirect destination policy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A redirect is only followed when **all** of the following hold for the target:
+
+* the scheme is ``https`` (an ``https`` -> ``http`` downgrade is rejected so the
+  bearer token can never travel over cleartext);
+* the effective port matches the original request's effective port (the scheme
+  default — 443 for ``https`` — is used when no port is given); and
+* the host is the original request host or one of its subdomains (e.g. an
+  individual ledger node).
+
+Redirects to sibling ledgers, parent domains, unrelated hosts, look-alike suffix
+domains, downgraded (``http``) schemes, or different ports are rejected and never
+followed or cached. This prevents a misconfigured or malicious load-balancer from
+redirecting requests (and their sensitive headers, including the ``Authorization``
+bearer token which is *not* stripped on redirect) to an unintended destination.
+
 Thread-safety
 ~~~~~~~~~~~~~
 * Reads of the cached value are lock-free (CPython GIL guarantees atomic
@@ -27,7 +44,7 @@ Thread-safety
 import logging
 import threading
 from typing import FrozenSet, Optional
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import ParseResult, urlparse, urlunparse
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy
@@ -94,6 +111,75 @@ def _is_redirect(status_code: int) -> bool:
     return status_code in _REDIRECT_STATUS_CODES
 
 
+def _effective_port(parsed: ParseResult) -> Optional[int]:
+    """Return the effective port for a parsed URL, applying the scheme default.
+
+    :param parsed: A :func:`urllib.parse.urlparse` result.
+    :type parsed: ~urllib.parse.ParseResult
+    :return: The explicit port, or the scheme default (443 for ``https``,
+        80 for ``http``), or ``None`` if it cannot be determined.
+    :rtype: Optional[int]
+    """
+    try:
+        explicit = parsed.port
+    except ValueError:
+        # An invalid (out-of-range) port in the URL.
+        return None
+    if explicit is not None:
+        return explicit
+    scheme = (parsed.scheme or "").lower()
+    if scheme == "https":
+        return 443
+    if scheme == "http":
+        return 80
+    return None
+
+
+def _is_allowed_redirect_target(original_url: str, target_url: str) -> bool:
+    """Return whether *target_url* is an allowed redirect destination.
+
+    A redirect is permitted only when **all** of these hold:
+
+    * the target scheme is ``https`` (no downgrade — the bearer token must never
+      travel over cleartext);
+    * the target's effective port equals the original request's effective port
+      (the scheme default is used when no port is present); and
+    * the target host is identical to the original request host or is a subdomain
+      of it.
+
+    All other targets — sibling hosts, parent domains, unrelated hosts, look-alike
+    suffix domains, downgraded schemes, and different ports — are rejected. Host
+    comparison is case-insensitive.
+
+    :param str original_url: The URL of the original request.
+    :param str target_url: The redirect target URL (e.g. from a ``Location`` header).
+    :return: True if the redirect target is permitted, otherwise False.
+    :rtype: bool
+    """
+    original = urlparse(original_url)
+    target = urlparse(target_url)
+
+    original_host = (original.hostname or "").lower()
+    target_host = (target.hostname or "").lower()
+
+    # Fail safe: if either host cannot be determined, do not follow the redirect.
+    if not original_host or not target_host:
+        return False
+
+    # Require HTTPS on the target so the bearer token is never sent over cleartext.
+    if (target.scheme or "").lower() != "https":
+        return False
+
+    # Require the same effective port (scheme default applied when absent).
+    original_port = _effective_port(original)
+    target_port = _effective_port(target)
+    if original_port is None or target_port is None or original_port != target_port:
+        return False
+
+    # Require the same host or a subdomain of the original host.
+    return target_host == original_host or target_host.endswith("." + original_host)
+
+
 class RedirectCachingPolicy(HTTPPolicy):
     """Synchronous redirect policy with write-URL caching.
 
@@ -121,6 +207,10 @@ class RedirectCachingPolicy(HTTPPolicy):
     def send(self, request: PipelineRequest) -> PipelineResponse:
         method = request.http_request.method.upper()
         is_write = method in _WRITE_METHODS
+
+        # Capture the pristine request host (before any cache rewrite) so that
+        # redirect targets are validated against the original ledger endpoint.
+        original_url = request.http_request.url
 
         # For writes, rewrite the URL to the cached primary (if warm).
         if is_write:
@@ -155,6 +245,15 @@ class RedirectCachingPolicy(HTTPPolicy):
         ):
             redirect_url = response.http_response.headers.get("Location")
             if not redirect_url:
+                break
+
+            # Enforce the redirect destination policy: only the original host or
+            # one of its subdomains may be followed.
+            if not _is_allowed_redirect_target(original_url, redirect_url):
+                _LOGGER.warning(
+                    "Refusing to follow redirect to disallowed target: %s",
+                    redirect_url,
+                )
                 break
 
             # Only cache for write methods.
@@ -205,6 +304,10 @@ class AsyncRedirectCachingPolicy(AsyncHTTPPolicy):
         method = request.http_request.method.upper()
         is_write = method in _WRITE_METHODS
 
+        # Capture the pristine request host (before any cache rewrite) so that
+        # redirect targets are validated against the original ledger endpoint.
+        original_url = request.http_request.url
+
         if is_write:
             cached = self._cache.get()
             if cached:
@@ -235,6 +338,15 @@ class AsyncRedirectCachingPolicy(AsyncHTTPPolicy):
         ):
             redirect_url = response.http_response.headers.get("Location")
             if not redirect_url:
+                break
+
+            # Enforce the redirect destination policy: only the original host or
+            # one of its subdomains may be followed.
+            if not _is_allowed_redirect_target(original_url, redirect_url):
+                _LOGGER.warning(
+                    "Refusing to follow redirect to disallowed target: %s",
+                    redirect_url,
+                )
                 break
 
             if is_write:
