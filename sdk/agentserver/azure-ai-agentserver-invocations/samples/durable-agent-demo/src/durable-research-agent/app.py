@@ -36,7 +36,6 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core.streaming import (
-    EventStreamGoneError,
     EventStreamNotFoundError,
     streams,
 )
@@ -174,7 +173,7 @@ async def handle_get(request: Request) -> Response:
       - 404 if the invocation id was never seen
         (``EventStreamNotFoundError``).
       - 410 if the stream was destroyed (TTL eviction or explicit
-        ``streams.delete``) (``EventStreamGoneError``).
+        ``streams.delete``) (``EventStreamNotFoundError``).
     """
     invocation_id = request.state.invocation_id
 
@@ -190,7 +189,7 @@ async def handle_get(request: Request) -> Response:
              "message": "No stream for this invocation id."},
             status_code=404,
         )
-    except EventStreamGoneError:
+    except EventStreamNotFoundError:
         return JSONResponse(
             {"status": "gone",
              "message": "Stream for this invocation id has been destroyed."},
@@ -202,7 +201,7 @@ async def handle_get(request: Request) -> Response:
             async for event in stream.subscribe(after=skip_count or None):
                 seq = event.get("sequence_number")
                 yield f"id: {seq}\ndata: {json.dumps(event)}\n\n"
-        except EventStreamGoneError:
+        except EventStreamNotFoundError:
             # Stream destroyed while we were attached (TTL eviction or
             # explicit delete). Tell the client we're done.
             yield (
