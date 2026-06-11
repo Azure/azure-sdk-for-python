@@ -17,7 +17,7 @@ from azure.ai.agentserver.core._config import (
     resolve_appinsights_connection_string,
 )
 from azure.ai.agentserver.core._tracing import (
-    _FoundryEnrichmentLogRecordProcessor,
+    _BaggageLogRecordProcessor,
     _FoundryEnrichmentSpanProcessor,
 )
 
@@ -78,6 +78,7 @@ class TestTracingToggle:
             connection_string="InstrumentationKey=ctor",
             log_level=None,
             enable_sensitive_data=True,
+            session_id=None,
         )
 
     def test_observability_disabled_when_none(self) -> None:
@@ -165,6 +166,7 @@ class TestConstructorConnectionString:
             connection_string="InstrumentationKey=ctor",
             log_level=None,
             enable_sensitive_data=True,
+            session_id=None,
         )
 
 
@@ -444,9 +446,9 @@ class _FakeLogData:
         self.log_record = _FakeLogRecord(attributes)
 
 
-class TestFoundryEnrichmentLogRecordProcessor:
+class TestBaggageLogRecordProcessor:
     def test_adds_agent_and_fallback_session_attributes(self) -> None:
-        proc = _FoundryEnrichmentLogRecordProcessor(
+        proc = _BaggageLogRecordProcessor(
             agent_name="agent-a",
             agent_version="1.2.3",
             session_id="session-fallback-1",
@@ -464,7 +466,7 @@ class TestFoundryEnrichmentLogRecordProcessor:
         assert attrs["agent_session_id"] == "session-fallback-1"
 
     def test_prefers_baggage_session_id_over_fallback(self) -> None:
-        proc = _FoundryEnrichmentLogRecordProcessor(
+        proc = _BaggageLogRecordProcessor(
             agent_name="agent-a",
             agent_version="1.2.3",
             session_id="session-fallback-1",
@@ -485,7 +487,7 @@ class TestFoundryEnrichmentLogRecordProcessor:
         assert attrs["agent_session_id"] == "session-from-baggage"
 
     def test_does_not_overwrite_existing_log_attributes(self) -> None:
-        proc = _FoundryEnrichmentLogRecordProcessor(
+        proc = _BaggageLogRecordProcessor(
             agent_name="agent-a",
             agent_version="1.2.3",
             session_id="session-fallback-1",
@@ -508,4 +510,3 @@ class TestFoundryEnrichmentLogRecordProcessor:
         assert attrs["agent_version"] == "0.0.1"
         assert attrs["microsoft.session.id"] == "existing-session"
         assert attrs["agent_session_id"] == "existing-session"
-
