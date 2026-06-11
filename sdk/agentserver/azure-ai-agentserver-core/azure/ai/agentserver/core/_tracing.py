@@ -118,8 +118,7 @@ def configure_observability(
         (prompts, tool arguments, results) for Agent Framework SDK
         instrumentation. Defaults to False.
     :paramtype enable_sensitive_data: bool
-    :keyword session_id: Optional session identifier sourced from
-        :class:`~azure.ai.agentserver.core._config.AgentConfig`.
+    :keyword session_id: Optional session identifier sourced from AgentConfig.
     :paramtype session_id: str or None
     """
     # Console logging on the root logger so user logs are also visible.
