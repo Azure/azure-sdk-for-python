@@ -104,11 +104,11 @@ def run_post_emitter_script(sdk_code_path: str) -> None:
         if process.stderr:
             _LOGGER.warning(f"[POST-EMITTER] stderr:\n{process.stderr}")
         if process.returncode != 0:
-            _LOGGER.error(f"[POST-EMITTER] Script {script_path} exited with non-zero code {process.returncode}.")
+            _LOGGER.warning(f"[POST-EMITTER] Script {script_path} exited with non-zero code {process.returncode}.")
         else:
             _LOGGER.info(f"[POST-EMITTER] Script {script_path} completed successfully.")
     except subprocess.TimeoutExpired:
-        _LOGGER.error(f"[POST-EMITTER] Script {script_path} timed out after 600 seconds.")
+        _LOGGER.warning(f"[POST-EMITTER] Script {script_path} timed out after 600 seconds.")
     except Exception as e:
         _LOGGER.warning(f"[POST-EMITTER] Fail to run script {script_path}: {str(e)}")
     finally:
