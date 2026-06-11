@@ -19,7 +19,7 @@ from typing import Any, Iterator
 import pytest
 
 from azure.ai.agentserver.core.streaming import (
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     streams,
 )
 
@@ -148,7 +148,7 @@ class TestDelete:
         assert not (tmp_path / "resp_del.jsonl").exists()
 
         # Subsequent get() raises Gone (tombstone retained).
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await streams.get("resp_del")
 
     @pytest.mark.asyncio

@@ -29,7 +29,7 @@ from azure.ai.agentserver.core.durable import (
 from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-error,no-name-in-module
     EventStream,
     EventStreamClosedError,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     streams,
 )
 
@@ -904,7 +904,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         The legacy publish-to-subject API was silent on a completed
         subject; the registry's ``emit`` raises ``EventStreamClosedError``
-        / ``EventStreamGoneError`` instead. Some callsites (cleanup
+        / ``EventStreamNotFoundError`` instead. Some callsites (cleanup
         finally blocks, race-prone short-circuits) intentionally rely on
         the silent semantics — wrap them via this helper rather than
         sprinkling try/except.
@@ -913,7 +913,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             return
         try:
             await stream.emit(event)
-        except (EventStreamClosedError, EventStreamGoneError):
+        except (EventStreamClosedError, EventStreamNotFoundError):
             return
         except Exception:  # pylint: disable=broad-exception-caught
             # Best-effort fan-out — never let a stream backing failure
@@ -2789,7 +2789,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         try:
             _last = await wire_stream.last_cursor()
             state.next_seq = (_last + 1) if _last is not None else 0
-        except EventStreamGoneError:
+        except EventStreamNotFoundError:
             # The previous run completed AND every persisted event has
             # since expired. Start fresh.
             await streams.delete(response_id)

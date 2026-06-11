@@ -42,7 +42,6 @@ from azure.ai.agentserver.responses.models._generated import (
 )
 
 from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-error,no-name-in-module
-    EventStreamGoneError,
     EventStreamNotFoundError,
     streams,
 )
@@ -1197,13 +1196,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             stream = await streams.get(response_id)
         except EventStreamNotFoundError:
             return None
-        except EventStreamGoneError:
-            return None
-        # Peek at a method that raises Gone for already-destroyed
+        # Peek at a method that raises NotFound for already-destroyed
         # streams; last_cursor() is the cheapest such method.
         try:
             _ = await stream.last_cursor()
-        except EventStreamGoneError:
+        except EventStreamNotFoundError:
             return None
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning(
@@ -1225,7 +1222,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             try:
                 async for event in stream.subscribe(after=_cursor):
                     yield encode_sse_any_event(event)
-            except EventStreamGoneError:
+            except EventStreamNotFoundError:
                 return
 
         return StreamingResponse(

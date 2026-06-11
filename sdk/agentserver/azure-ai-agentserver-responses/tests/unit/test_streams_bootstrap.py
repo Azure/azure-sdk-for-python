@@ -24,7 +24,7 @@ import pytest
 
 from azure.ai.agentserver.core.streaming import (
     EventStream,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     streams,
 )
 from azure.ai.agentserver.responses import (
@@ -99,7 +99,7 @@ async def test_delete_removes_registry_entry_and_on_disk_file(tmp_path: Path) ->
 
         await streams.delete("resp-abc")
         assert not (tmp_path / "resp-abc.jsonl").exists()
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await streams.get("resp-abc")
     finally:
         os.environ.pop("AGENTSERVER_STREAM_STORE_PATH", None)
