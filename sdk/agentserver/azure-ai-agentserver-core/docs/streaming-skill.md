@@ -138,7 +138,7 @@ pattern when the HTTP layer owns both sides.
 ```python
 from azure.ai.agentserver.core.streaming import (
     streams,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     EventStreamNotFoundError,
 )
 
@@ -146,7 +146,7 @@ async def sse_endpoint(request):
     invocation_id = request.path_params["id"]
     try:
         stream = await streams.get_or_create(invocation_id)
-    except EventStreamGoneError:
+    except EventStreamNotFoundError:
         return Response(410, "stream gone")
 
     last_event_id = request.headers.get("last-event-id")
@@ -156,7 +156,7 @@ async def sse_endpoint(request):
         try:
             async for ev in stream.subscribe(after=after):
                 yield f"id: {ev['n']}\ndata: {json.dumps(ev)}\n\n"
-        except EventStreamGoneError:
+        except EventStreamNotFoundError:
             return  # peer cleanly went away
     return StreamingResponse(body(), media_type="text/event-stream")
 ```

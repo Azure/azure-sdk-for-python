@@ -39,7 +39,7 @@ class EventStreamNotFoundError(EventStreamError):
 
     Spec 019 FR-E-001/-002 unified the previously-distinct
     ``EventStreamNotFoundError`` (never registered) and
-    ``EventStreamNotFoundError`` (registered then destroyed) into this
+    ``EventStreamGoneError`` (registered then destroyed) into this
     single error type. Three independent reasons fire this:
 
     - the id was never registered (no ``get_or_create(id)`` ever ran)

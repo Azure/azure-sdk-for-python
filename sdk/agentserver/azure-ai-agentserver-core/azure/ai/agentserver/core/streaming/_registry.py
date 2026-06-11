@@ -16,12 +16,15 @@ The registry is the lifecycle owner for the three SDK-bundled
 backings. Third-party :class:`EventStream` impls do NOT plug into
 this registry — they ship their own peer registry.
 
-The registry retains tombstones for destroyed ids so that
-:meth:`get` distinguishes "id never registered" (raises
-:class:`EventStreamNotFoundError` → 404) from "id was registered,
-now destroyed" (raises :class:`EventStreamNotFoundError` → 410). The
-tombstone is cleared when the id is explicitly re-created via
-:meth:`get_or_create`.
+Spec 019 FR-E-001/-002: ``get(id)`` raises
+:class:`EventStreamNotFoundError` for ANY id that is not currently
+a live stream — never registered, explicitly :meth:`delete`d, or
+close-clock TTL elapsed. The registry retains tombstones for
+deleted / auto-tombstoned ids primarily to support re-create-after-
+delete semantics (a subsequent :meth:`get_or_create` clears the
+tombstone and constructs a fresh stream), NOT to differentiate
+the error type — there is only ONE error type for "id is missing".
+All paths wire-map to HTTP 404.
 """
 
 from __future__ import annotations
@@ -38,7 +41,6 @@ from ._concrete import (
 )
 from ._protocol import (
     EventStream,
-    EventStreamNotFoundError,
     EventStreamNotFoundError,
 )
 
