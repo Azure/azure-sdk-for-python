@@ -1679,7 +1679,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     )
                     renewal_cancel.set()
                     # (a) Flush metadata (FR-015 auto-flush).
-                    await ctx.metadata.flush_all()
+                    await ctx.metadata._flush_all()
                     # (b) Release the lease: clear ownership claim. The
                     #     CAS write may fail with eviction — in that
                     #     case the local cleanup sequence already
@@ -1730,7 +1730,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     # output is delivered unchanged. The framework auto-flushes
                     # metadata at this terminal-of-turn boundary (FR-015).
                     renewal_cancel.set()
-                    await ctx.metadata.flush_all()
+                    await ctx.metadata._flush_all()
                     await self._handle_suspend(
                         task_id=task_id,
                         reason=result.reason,
@@ -1792,7 +1792,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
                     # Success flow
                     renewal_cancel.set()
-                    await ctx.metadata.flush_all()
+                    await ctx.metadata._flush_all()
                     completed = await self._handle_success(
                         task_id=task_id,
                         result=result,
@@ -1833,7 +1833,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
             except asyncio.CancelledError:
                 renewal_cancel.set()
-                await ctx.metadata.flush_all()
+                await ctx.metadata._flush_all()
                 # Spec 016 FR-022 (US6): the terminate/TaskTerminated
                 # pathway is removed. asyncio.CancelledError is now
                 # exclusively the cooperative-cancel path — the handler
@@ -1886,7 +1886,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
                 # Exhausted or non-retryable — terminal failure
                 renewal_cancel.set()
-                await ctx.metadata.flush_all()
+                await ctx.metadata._flush_all()
 
                 if retry and attempt > 0:
                     # Retries were attempted but exhausted

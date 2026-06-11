@@ -363,7 +363,7 @@ class TestTaskMetadataNamedNamespaces:
         # c is auto-vivified but never written -> not dirty -> should NOT flush
         _ = meta("c")
 
-        await meta.flush_all()
+        await meta._flush_all()
 
         seen = {ns for ns, _ in captured}
         assert None in seen, "default namespace must be flushed"
@@ -486,7 +486,7 @@ class TestTaskMetadataRecoveryDurability:
         live("a")["counter"] = 42
         live("b")["nested"] = {"k": "v"}
 
-        await live.flush_all()
+        await live._flush_all()
 
         # Mimic the payload that the manager would write — default goes
         # into payload["metadata"], named goes into payload["metadata:<name>"].

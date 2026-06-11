@@ -225,13 +225,55 @@ class InputTooLarge(ValueError):
         )
 
 
-class AttachmentTooLarge(ValueError):
-    """Raised when a single attachment value exceeds the per-attachment cap.
+# Spec 019 FR-D-001 — public output-size violation (developer-facing).
+class OutputTooLarge(ValueError):
+    """Raised when an output's serialized size exceeds the per-output cap.
 
-    Same constraint as :class:`InputTooLarge` but raised from the
-    transport-layer client when arbitrary attachments (not necessarily
-    framework-managed inputs) violate the cap. Both are
-    :class:`ValueError` subclasses.
+    The framework supports per-output values up to 2 MB (after JSON
+    serialization). Outputs are stored entirely in
+    ``attachments["_output"]`` (the always-attachment rule) — they
+    never consume the shared payload budget — but they share the
+    per-attachment 2 MB cap. An output whose serialized form
+    exceeds the cap is rejected client-side before any network call,
+    with this exception.
+
+    If you need to return more than 2 MB per call, externalize the
+    value (write to blob storage) and return a reference instead.
+
+    :param task_id: The task identifier this output was bound for.
+    :type task_id: str
+    :param size_bytes: The observed serialized size of the output.
+    :type size_bytes: int
+    :param max_bytes: The per-output cap (2 MB).
+    :type max_bytes: int
+    """
+
+    __slots__ = ("task_id", "size_bytes", "max_bytes")
+
+    def __init__(self, task_id: str, size_bytes: int, max_bytes: int) -> None:
+        self.task_id = task_id
+        self.size_bytes = size_bytes
+        self.max_bytes = max_bytes
+        super().__init__(
+            f"Output for task {task_id!r} exceeds the per-output cap: "
+            f"{size_bytes} bytes > {max_bytes} byte cap. Externalize the "
+            f"value (e.g., to blob storage) and return a reference instead."
+        )
+
+
+class _AttachmentTooLarge(ValueError):
+    """Spec 019 FR-D-002 — provider-internal cap-violation signal.
+
+    Renamed from the previously-public ``AttachmentTooLarge``. The
+    framework catches this at attachment-write sites and re-raises a
+    developer-facing exception (``InputTooLarge`` for ``_input`` /
+    ``_steering_input_<seq>`` keys; ``OutputTooLarge`` for ``_output``)
+    based on the attachment-key prefix dispatcher in ``_attachments.py``.
+
+    Developers MUST NOT import this directly — it is leading-
+    underscored, absent from ``durable/__init__.py``'s ``__all__``,
+    and represents a framework implementation concept (the storage-
+    layer attachment) developers never name.
 
     :param task_id: The task identifier this attachment was bound for.
     :type task_id: str
@@ -262,12 +304,18 @@ class AttachmentTooLarge(ValueError):
         )
 
 
-class AttachmentLimitExceeded(ValueError):
-    """Raised when a write would exceed the per-task attachment count cap.
+class _AttachmentLimitExceeded(ValueError):
+    """Spec 019 FR-D-003 — provider-internal per-task attachment-count
+    cap violation.
 
-    The hosted task store caps a task at 20 attachments. The framework
-    detects this client-side (counting current + about-to-be-added
-    attachments) and rejects before the HTTP call.
+    Renamed from the previously-public ``AttachmentLimitExceeded``.
+    Unreachable in normal framework operation (worst-case framework
+    attachment usage is 1 ``_input`` + 9 ``_steering_input_*`` + 1
+    ``_output`` = 11 of 20 slots; see design spec §23.2). If it
+    propagates from a provider, the framework converts it to
+    ``RuntimeError`` at the boundary.
+
+    Developers MUST NOT import this directly.
 
     :param task_id: The task identifier.
     :type task_id: str
@@ -287,3 +335,12 @@ class AttachmentLimitExceeded(ValueError):
             f"Task {task_id!r} already has {current_count} attachments; "
             f"per-task cap is {max_count}. Cannot add another."
         )
+
+
+# Backward-compatible aliases for any in-tree caller that still
+# imports the pre-019 names. These are intentionally NOT exported
+# from ``durable/__init__.py``; the rename is the public-surface
+# change, and all framework call sites are migrated. Removing the
+# aliases is safe once any out-of-tree dependents have updated.
+AttachmentTooLarge = _AttachmentTooLarge
+AttachmentLimitExceeded = _AttachmentLimitExceeded

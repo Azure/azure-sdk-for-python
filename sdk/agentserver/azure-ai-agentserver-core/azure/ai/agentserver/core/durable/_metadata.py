@@ -18,7 +18,7 @@ Each namespace persists to a distinct payload slot:
 There is **no auto-flush loop**. Flushes are explicit:
 
 * :meth:`TaskMetadata.flush` — flush THIS namespace only.
-* :meth:`TaskMetadata.flush_all` — flush every dirty namespace
+* :meth:`TaskMetadata._flush_all` — flush every dirty namespace
   (called by the framework at lifecycle boundaries: suspend,
   complete, fail, steering drain).
 
@@ -291,12 +291,18 @@ class TaskMetadata(collections.abc.MutableMapping):
         """
         await self._do_flush_one()
 
-    async def flush_all(self) -> None:
-        """Flush every dirty namespace (default + all named).
+    async def _flush_all(self) -> None:
+        """Spec 019 FR-D-005 — framework-internal: flush every dirty
+        namespace (default + all named).
 
         Called by the framework at lifecycle boundaries (suspend,
         complete, fail, steering drain) to guarantee all in-memory
         mutations land in the task payload before the task transitions.
+
+        The leading underscore is the canonical signal for
+        "package-private; not part of the documented developer
+        surface." Developers MUST NOT call this — per-namespace
+        :meth:`flush` is the only fence pattern they need.
         """
         for ns in list(self._registry.values()):
             await ns._do_flush_one()  # pylint: disable=protected-access

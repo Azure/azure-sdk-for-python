@@ -41,7 +41,9 @@ Public API::
 from ._context import EntryMode, TaskContext
 from ._decorator import Task, task
 from ._exceptions import (
+    InputTooLarge,
     LastInputIdPreconditionFailed,
+    OutputTooLarge,
     SteeringQueueFull,
     TaskCancelled,
     TaskConflictError,
@@ -69,6 +71,14 @@ from ._run import Suspended, TaskRun
 # attribute. Handlers explicitly do
 # ``stream = await streams.get_or_create(invocation_id)`` (per-turn id
 # from ``ctx.input``).
+#
+# Spec 019 FR-D-002 / FR-D-003: AttachmentTooLarge and
+# AttachmentLimitExceeded are NOT exported. They were renamed to
+# leading-underscore internal exceptions (_AttachmentTooLarge,
+# _AttachmentLimitExceeded). The framework catches the internal form
+# at write sites and re-raises the developer-facing equivalent
+# (InputTooLarge / OutputTooLarge) based on the attachment-key prefix
+# (_attachments._remap_attachment_error).
 __all__ = [
     "task",
     "Task",
@@ -87,4 +97,6 @@ __all__ = [
     "SteeringQueueFull",
     "TaskPreconditionFailed",
     "EntryMode",
+    "InputTooLarge",
+    "OutputTooLarge",
 ]

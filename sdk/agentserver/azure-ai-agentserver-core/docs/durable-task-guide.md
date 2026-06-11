@@ -124,21 +124,23 @@ your handler and branch on it.
   does not impose a checkpoint schema. `ctx.metadata` is a
   small-watermark store, not a bulk-data store.
 
-### Input size limits
+### Input and output size limits
 
 | Limit | Value | Raised as |
 |---|---|---|
 | Per-input maximum size | **2 MB** (after JSON serialization) — applies to both the function input and each steering input | `InputTooLarge` from `Task.start(...)`, pre-network |
+| Per-output maximum size | **2 MB** (after JSON serialization) — applies to both `return` values and `ctx.suspend(output=...)` | `OutputTooLarge` from `Task.run(...)` / handler completion / `ctx.suspend(...)`, pre-network |
 | Maximum queued steering inputs | **9** concurrent | `SteeringQueueFull` from `Task.start(...)` |
 
 These limits apply to any value you pass as the `input` argument to
-`Task.start(...)`. The framework handles persistence transparently —
-you don't need to do anything special to use the full 2 MB ceiling,
-whether the input is small or large.
+`Task.start(...)` and to any value your handler returns or passes as
+`ctx.suspend(output=...)`. The framework handles persistence transparently —
+you don't need to do anything special to use the full 2 MB ceiling for
+inputs or outputs, whether the value is small or large.
 
-If you have a use case that genuinely needs > 2 MB per input,
-externalize it (write to blob storage, pass a reference) and treat
-the reference as your input.
+If you have a use case that genuinely needs > 2 MB per input or per
+output, externalize it (write to blob storage, pass a reference) and
+treat the reference as your value.
 
 ---
 

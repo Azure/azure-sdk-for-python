@@ -4,6 +4,21 @@
 
 ### Features Added
 
+- **Per-output payloads up to 2 MB** for both `return` values from
+  durable-task handlers and `ctx.suspend(output=...)` values. Outputs
+  are stored entirely in a framework-managed attachment slot, so they
+  never compete with the shared 1 MB task-payload budget. New
+  developer-facing exception:
+
+  | Limit | Value | Exception |
+  |---|---|---|
+  | Per-output maximum size (serialized JSON) | **2 MB** | `OutputTooLarge` |
+
+  Like `InputTooLarge`, the check runs client-side **before** any
+  network call. If you have a use case that genuinely needs > 2 MB
+  per output, externalize it (write to blob storage, return a
+  reference).
+
 - **Per-input payloads up to 2 MB** for both the initial function
   input and each queued steering input. Pass arbitrarily large input
   values to `Task.start(...)` (up to the 2 MB ceiling) and the
@@ -21,6 +36,20 @@
 
   Public API surface unchanged — handlers see `ctx.input` as the
   deserialized value regardless of input size.
+
+### Breaking Changes
+
+- `AttachmentTooLarge` and `AttachmentLimitExceeded` are no longer
+  exported from `azure.ai.agentserver.core.durable`. Attachments are
+  a framework storage-layer concept that developers never name;
+  surfacing the attachment-vocabulary errors on the developer API
+  leaked the internal split between `payload` and `attachments`. The
+  framework now catches the internal `_AttachmentTooLarge` raised by
+  a provider and re-raises a developer-facing exception based on
+  which channel the violation occurred on:
+
+  - `payload["input"]` (or steering inputs) → `InputTooLarge`
+  - handler return / `ctx.suspend(output=...)` → `OutputTooLarge`
 
 - **Unified streaming primitive** — new `azure.ai.agentserver.core.streaming`
   subpackage exposing a `streams` registry singleton + `EventStream`

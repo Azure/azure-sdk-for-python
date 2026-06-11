@@ -50,6 +50,9 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "SteeringQueueFull",
         "TaskPreconditionFailed",
         "EntryMode",
+        # Spec 018 / Spec 019 FR-D-001 — developer-facing size errors.
+        "InputTooLarge",
+        "OutputTooLarge",
     }
 )
 
@@ -61,6 +64,10 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskInfo",
         # Spec 016 FR-022: dropped from __all__ as preparatory Phase 9 work.
         "TaskTerminated",
+        # Spec 019 FR-D-002 / FR-D-003 — attachment-vocabulary errors are
+        # internal implementation details (developers never name attachments).
+        "AttachmentTooLarge",
+        "AttachmentLimitExceeded",
     }
 )
 
