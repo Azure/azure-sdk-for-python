@@ -33,7 +33,12 @@ class _BackCompatMixin:
         """
         return Model.serialize(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore[arg-type]
 
-    def as_dict(self, keep_readonly: bool = True, key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer, **kwargs: Any) -> JSON:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer,
+        **kwargs: Any
+    ) -> JSON:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes.
