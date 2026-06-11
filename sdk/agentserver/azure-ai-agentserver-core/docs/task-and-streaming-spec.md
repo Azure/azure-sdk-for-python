@@ -62,18 +62,20 @@ it layers on top.
 - §19. The framework's view of the task record
 - §20. Framework-reserved payload keys
 - §21. Framework-reserved tag and source values
-- §22. Lease structure and ownership semantics
-- §23. Attachments and input promotion
-- §24. Status state machine
+- §22. Lease structure and ownership semantics (+ §22.1 lease write rules)
+- §23. Attachments and input promotion (+ §23.9 key validation, §23.10 clear-all)
+- §24. Status state machine (+ §24.1 transition matrix, §24.2 terminal immutability, §24.3 delete force semantics)
 - §25. ETag (optimistic concurrency) usage
 - §26. Recovery `POST /tasks/resume` endpoint
 
 ### Part IV — Provider abstraction (storage backends)
 - §27. `TaskProvider` interface
 - §28. Hosted provider (HTTP)
+- §28a. Field validation (shared between providers)
 - §29. Local provider (file-backed)
 - §30. Provider auto-selection
 - §31. Background loops
+- §31a. List filter parity (internal `list()`)
 
 ### Part V — Public API surface (language-agnostic)
 - §32. `task` decorator and `TaskOptions`
@@ -1141,6 +1143,7 @@ for future namespacing.
 | `generation` | integer | Increments each time the lease is re-acquired with a different `instance_id`. Mirrored to `ctx.recovery_count`. The local provider AND the hosted task store both bump this. |
 | `expires_at` | ISO-8601 UTC string | When the lease expires (and another process may reclaim). |
 | `expiry_count` | integer | Number of times ownership has changed via **actual expiry** (i.e. lease was reclaimed because the prior lease's `expires_at` passed, NOT because the same owner restarted). **Server- / provider-only counter** — the framework never writes this field (it is not on `TaskPatchRequest`). The hosted task store bumps it; the local file provider also bumps it on actual-expiry reclaim for parity (so local-mode tests can assert expiry-counter behavior). Mirrored to `TaskRun.lease_expiry_count`. |
+| `heartbeat_at` | ISO-8601 UTC string | Wall time of the most recent lease write (acquisition, renewal, or force-expire). Stamped by the provider on every lease-touching PATCH. **Provider-only field** — the framework never writes this; consumers and observability tooling read it to distinguish "fresh lease" from "lease that hasn't expired yet". NOT projected onto `TaskSnapshot` (§35a) — it's a framework / operator concern, not a developer one. |
 
 The framework's interaction with the lease:
 
@@ -1182,6 +1185,28 @@ a field on `TaskPatchRequest` (only `lease_owner`,
 hosted task store and the local file provider both increment it
 server-side / provider-side on actual-expiry ownership change; the
 framework only reads it.
+
+#### 22.1 Lease write rules (provider-enforced, identical for hosted and local)
+
+These rules MUST be enforced by **both** providers identically.
+Violations raise the internal `_HostedConflict` (§39) which the
+framework translates to public exceptions per the translation table
+(also §39). Local file provider raises the same logical conditions
+directly, with the same internal classification, so the framework
+behaves identically against either backing.
+
+| # | Rule | When violated |
+|---|---|---|
+| LSE-W-1 | `lease_duration_seconds` MUST be `0` (force-expire) OR in the range `10..3600` (renewal). | Reject as `invalid_request` (400). |
+| LSE-W-2 | The triplet `(lease_owner, lease_instance_id, lease_duration_seconds)` is all-or-nothing. Supplying any one without all three is rejected. | Reject as `invalid_request` (400). |
+| LSE-W-3 | Lease acquisition / renewal against a record whose lease is currently held by a **different** owner AND not yet expired is rejected. | Raise `_HostedConflict(_code="lease_held_by_another")` → `TaskConflictError(current_status="in_progress")`. |
+| LSE-W-4 | When transitioning a task from `in_progress` → `pending`, the supplied `(lease_owner, lease_instance_id)` MUST match the record's current lease. | Raise `_HostedConflict(_code="lease_held_by_another")`. |
+| LSE-W-5 | Lease renewal (no status change, `lease_duration_seconds > 0`) is only valid when the current status is `in_progress`. Renewing on `pending` / `suspended` / `completed` is rejected. | Reject as `invalid_request` (400). |
+| LSE-W-6 | `lease_duration_seconds = 0` (force-expire) cannot be combined with a status transition in the same PATCH. | Reject as `invalid_request` (400). |
+| LSE-W-7 | Force-expire (`lease_duration_seconds = 0`) requires the caller's `(lease_owner, lease_instance_id)` to match the current lease UNLESS the lease is already expired (in which case any caller may force-expire). | Raise `_HostedConflict(_code="lease_held_by_another")` if mismatched and lease is still live. |
+| LSE-W-8 | On lease re-acquisition where the prior lease was **expired**, the provider MUST reset `started_at` to "now" (the new lifetime starts a fresh wall clock). | (Behavioral — observable through `TaskSnapshot.started_at` and `TaskRun.started_at`.) |
+| LSE-W-9 | On lease handoff to a different owner where the prior lease was **expired**, `expiry_count` MUST be incremented. Same-owner different-instance handoff before expiry does NOT bump. | (Behavioral — observable through `TaskRun.lease_expiry_count`.) |
+| LSE-W-10 | On every successful lease write (acquisition, renewal, force-expire), the provider MUST stamp the lease's `heartbeat_at` field to "now". This field exists on `LeaseInfo` so consumers and observability tooling can distinguish a fresh lease from one that simply hasn't expired yet. | (Behavioral — observable through `LeaseInfo.heartbeat_at` in `TaskInfo`. Not exposed on `TaskSnapshot` — see §35a.) |
 
 ### §23. Attachments and input promotion
 
@@ -1396,6 +1421,41 @@ Splitting any of these into multiple PATCHes opens a crash window
 where the attachment exists without its ref (or vice versa). The
 framework treats this as a single-PATCH invariant.
 
+#### 23.9 Attachment key validation
+
+Attachment keys MUST match the regex `^[a-zA-Z0-9_.\-]{1,64}$` and
+MUST NOT be empty after trimming whitespace. Both providers enforce
+this on every CREATE / PATCH write. The framework's reserved keys
+(`_input`, `_steering_input_<seq>`, `_output`) all conform.
+Developer-supplied attachment keys (none exist today — attachments
+are framework-owned per §23.7) would also be validated against this
+regex if the surface is ever expanded.
+
+#### 23.10 Clear-all gesture
+
+In addition to per-key null-as-delete (§23.1), the provider accepts a
+top-level "clear all attachments" gesture:
+
+- Wire form: `PATCH ... { "attachments": null }`.
+- Effect: deletes every attachment on the task, regardless of which
+  keys currently exist. Per-key entries supplied in the same PATCH
+  are NOT applied (the clear takes precedence).
+- Typed-API form: `TaskPatchRequest.clear_attachments = true`. When
+  set, the hosted provider serializes `attachments: null`; the local
+  provider clears the attachments dict directly. Mutually exclusive
+  with `attachments={...}` (per-key patch) in the same request — the
+  combination is rejected as `invalid_request`.
+- The framework today never emits this gesture; per-key delete
+  covers all current needs. It is documented for parity with the
+  service and for future internal callers (e.g. orphan-attachment
+  cleanup post-recovery).
+
+DELETE on a task removes all attachments along with the task. The
+local provider achieves this trivially (attachments live in the
+same JSON file as the task record; unlinking the file removes
+both). The hosted provider relies on the service's blob-cleanup
+hook.
+
 ### §24. Status state machine
 
 The framework drives the following transitions:
@@ -1434,6 +1494,51 @@ Notes:
 - `ctx.exit_for_recovery()` preserves `in_progress` and force-expires
   the lease — it is the only way to release ownership without moving
   to a different status (§16).
+
+#### 24.1 Allowed transition matrix (provider-enforced)
+
+The provider rejects PATCHes whose declared `status` transition is
+not in this table. Internal classification `_HostedConflict(_code="invalid_state_transition")`,
+translated to a generic framework error at the boundary (this
+condition should never escape to developer code — the framework
+chooses transitions, not the developer; if it ever does escape it's
+a framework bug per Workstream C).
+
+| From → To | `pending` | `in_progress` | `suspended` | `completed` |
+|---|---|---|---|---|
+| `pending` | n/a | ✅ | ❌ | ✅ |
+| `in_progress` | ✅ (with matching lease) | ✅ (lease renewal) | ✅ | ✅ |
+| `suspended` | ✅ | ✅ | ✅ | ✅ |
+| `completed` | ❌ (terminal) | ❌ | ❌ | ✅ (no-op only — see §24.2) |
+
+#### 24.2 Terminal immutability
+
+A PATCH against a task whose current status is `completed` is
+rejected UNLESS the PATCH is a no-op `completed → completed` AND
+carries no other field changes (no `payload`, no `tags`, no
+`error`, no `suspension_reason`, no lease). The no-op pass-through
+returns the existing record without modification — this lets
+idempotent retry-loops behave predictably.
+
+Any other PATCH against a completed task raises
+`_HostedConflict(_code="task_immutable")` → translated to
+`TaskConflictError(current_status="completed")`.
+
+#### 24.3 Delete force semantics
+
+DELETE on a task in any **non-terminal** status (`pending`,
+`in_progress`, `suspended`) requires `force=true`. Without it the
+provider rejects the delete as `invalid_request` (400) — note this
+is **NOT** a conflict (409); the service's PR 2135250 explicitly
+moved this from 409 → 400 with code `invalid_request`.
+
+DELETE on a **terminal** (`completed`) task always succeeds (no
+force required).
+
+DELETE additionally honors `If-Match`: when supplied, the
+provider rejects the delete with `_HostedConflict(_code="etag_mismatch")`
+→ `EtagConflict` if the supplied etag does not match the current
+record.
 
 ### §25. ETag (optimistic concurrency) + in-process write serialization
 
@@ -1671,6 +1776,90 @@ has already evicted this sandbox in favor of another.
   The hosted provider does not function without a credential
   source.
 
+### §28a. Field validation (shared between providers)
+
+Every PATCH and CREATE write touches the same input-validation
+surface, enforced identically by **both** providers. These rules are
+the wire contract — the service rejects on the wire, the local
+provider rejects pre-write so a developer running locally observes
+the same failures they would observe deployed.
+
+Violations raise an `invalid_request`-coded error (the framework
+classifies these as `_HostedConflict` or a structured
+`TaskPreconditionFailed` — see §39).
+
+#### 28a.1 Field length and format
+
+| Field | Constraint | Required on CREATE? |
+|---|---|---|
+| `id` | regex `^[a-zA-Z0-9_-]{1,128}$` | optional (provider generates if absent) |
+| `agent_name` | length 1..128 after trim | yes |
+| `session_id` | length 1..128 after trim | yes |
+| `title` | length 1..256 after trim | yes |
+| `description` | length 1..1024 after trim | optional |
+| `suspension_reason` | length 1..256 after trim | only when status=suspended |
+| Tag key | regex `^[a-zA-Z0-9_.\-]{1,64}$` | n/a |
+| Tag value | length ≤ 256 chars | n/a |
+| Tag entry count | ≤ 16 total entries | n/a |
+| Attachment key | regex `^[a-zA-Z0-9_.\-]{1,64}$`, non-empty after trim | n/a (see §23.9) |
+
+#### 28a.2 JSON-byte budgets
+
+Sizes measured as UTF-8 byte length of canonical JSON
+(`sort_keys=True`, separators `(",", ":")`).
+
+| Bucket | Max bytes |
+|---|---|
+| `payload` (inline JSON) | 1 MB (1024 × 1024) |
+| `error` (JSON dict) | 64 KB (64 × 1024) |
+| `source` (JSON dict) | 4 KB (4 × 1024) |
+| `attachments` per-value | 2 MB (2 × 1024 × 1024) — see §23.7 |
+| `attachments` total entries | 20 — see §23.7 |
+
+Note: `payload` at 1 MB is intentionally narrower than the per-
+input ceiling. The framework offloads large inputs / outputs into
+`attachments` (§23) to lift each developer-observable input or
+output to the 2 MB per-attachment cap without consuming the
+payload budget. The developer never sees this offload; they
+observe an effective 2 MB limit on `ctx.input` /
+`ctx.suspend(output=...)` / handler return value.
+
+#### 28a.3 Source field validation
+
+When `source` is supplied on CREATE, it MUST be a JSON object AND
+contain a non-empty `type` field. Optional structured fields
+(`routine_name`, `routine_run_id`, `dispatch_id`,
+`action_correlation_id`, `created_at`, `updated_at`) are passed
+through verbatim. Unknown fields are preserved (extension data).
+
+`source` is immutable after CREATE (§24, immutable-fields list).
+
+#### 28a.4 Error field validation
+
+When `error` is supplied (PATCH), it MUST be a JSON object. The
+provider requires `message` and `type` as non-empty strings; both
+are part of the developer-observable structured-error envelope
+(§39 — `TaskFailed.error`). The `code` field defaults to `"error"`
+if not supplied.
+
+#### 28a.5 Reserved-on-input status values
+
+- Status `"failed"` is rejected on input. Failures are represented
+  as `status="completed"` with a non-null `error` per §24 / §39.
+- Status `"done"` is a legacy alias for `"completed"` — accepted on
+  read and in list filters; the provider normalizes it to
+  `"completed"` everywhere else. New code uses `"completed"`.
+
+#### 28a.6 Immutable fields on PATCH
+
+These fields are set at CREATE and reject any PATCH that includes
+them:
+
+`id`, `agent_name`, `session_id`, `title`, `description`, `source`.
+
+PATCHes that include any of the above raise `invalid_request`. The
+framework never patches them (they're set at create-time).
+
 ### §29. Local provider (file-backed)
 
 Selected when `FOUNDRY_HOSTING_ENVIRONMENT` is NOT set (i.e. local
@@ -1680,16 +1869,49 @@ default; override with `AGENTSERVER_DURABLE_TASKS_PATH`.
 
 Implementation MUST:
 
+- **Enforce every field-validation rule in §28a.** Local rejects on
+  write the same way the service rejects on the wire — same
+  regexes, length caps, byte budgets. A developer running locally
+  must observe the same accept / reject decisions they would
+  observe deployed.
+- **Enforce the state-transition matrix (§24.1), terminal
+  immutability (§24.2), and delete force semantics (§24.3).**
+- **Enforce all lease write rules (§22.1)** — duration bounds,
+  all-or-nothing triplet, conflict on different-owner takeover,
+  EnsureLeaseMatches on `in_progress → pending`, lease renewal only
+  on `in_progress`, force-expire mutual-exclusion with status
+  transition, force-expire ownership check, expiry_count bump on
+  expired-takeover, started_at reset on expired-lease re-acquisition,
+  `heartbeat_at` stamp on every lease write.
+- **Enforce attachment validation (§23.9) and support the clear-all
+  gesture (§23.10).**
+- **Support list-filter parity (§31a)** — `has_error`, `lease_expired`,
+  pagination via `after` cursor (plain `task_id` for local; opaque
+  service token for hosted), `limit` (default 20, max 100), `order`
+  asc/desc by `created_at`, reject `before`, normalize "done" →
+  "completed" in the status filter, `agent_name` + `session_id`
+  optional.
 - Generate fresh ETags on every write (e.g. SHA of the JSON bytes).
 - Reject `update()` calls whose `if_match` does not match the
-  current ETag (and raise the SAME exception type the hosted
-  provider raises on 412 — `TransportClassifiedError(classification="conflict")`
-  → `EtagConflict` at the framework boundary).
-- Apply `payload` shallow merge, `tags` null-as-delete merge,
-  `attachments` null-as-delete merge — identical to the hosted
-  provider's semantics. This is what makes "local feels like
-  hosted" work: same merge rules, same recovery paths, same lease
-  semantics.
+  current ETag and raise `_HostedConflict(_code="etag_mismatch")` —
+  the SAME internal classification the hosted provider produces on
+  412.
+- Apply `payload` PATCH semantics per §F1: when the patch value is
+  a JSON object, shallow-merge into the current payload; for any
+  other JSON type (array, string, number), full-replace; explicit
+  `null` is a no-op (matches the service's `JsonValueKind.Null`
+  branch).
+- Apply `tags` null-as-delete merge, `attachments` null-as-delete
+  merge (per-key) plus top-level clear-all per §23.10 — identical
+  to the hosted provider's semantics.
+- Apply status-transition side effects (§24.x); specifically:
+  - `→ pending` clears the lease AND clears `suspension_reason`.
+  - `→ in_progress` sets `started_at` if null AND clears
+    `suspension_reason` AND clears `completed_at`.
+  - `→ completed` clears the lease AND clears `suspension_reason`
+    AND sets `completed_at` if null.
+  - `→ suspended` clears the lease AND sets `suspension_reason`
+    AND clears `completed_at`.
 - Validate attachment size + count BEFORE writing (raise the
   internal `_AttachmentTooLarge` / `_AttachmentLimitExceeded` so
   the framework can re-raise as the developer-facing
@@ -1697,11 +1919,8 @@ Implementation MUST:
 - Treat missing/corrupt files as `get() -> None`.
 - Detect lease expiry against `expires_at` (UTC) and refuse renewal
   when an `if_match` mismatch indicates a competing process.
-- **Bump `lease_expiry_count` on every real lease handoff.** When
-  the local provider detects (during list/get/update/renewal) that
-  `now > lease.expires_at` AND the next successful write is the
-  framework reclaiming ownership, the provider MUST persist
-  `lease_expiry_count += 1` as part of that reclaim write — parity
+- **Bump `lease_expiry_count` on every real lease handoff** (any
+  reclaim where the prior lease's `expires_at` was past) — parity
   with the hosted server's behavior (§22). Without this, the
   developer-observable `TaskRun.lease_expiry_count` is permanently
   stuck at 0 in local mode and tests asserting recovery behavior
@@ -1710,7 +1929,11 @@ Implementation MUST:
   read-only).
 
 The local provider does NOT spawn HTTP; it does NOT need an event
-loop beyond the framework's; it has no network failure modes.
+loop beyond the framework's; it has no network failure modes. It
+has no concurrency: single-process operation means writes are
+naturally serialized; `_HostedConflict(_code="lease_ownership_changed")`
+(the service's Cosmos-race recovery code) is not reachable in
+local and need not be raised by it.
 
 ### §30. Provider auto-selection
 
@@ -1764,6 +1987,49 @@ The periodic recovery loop additionally:
   ref slot is no longer present in `pending_inputs` and PATCHes
   them away (orphan cleanup — defense in depth against a partial
   crash between an attachment add and the queue append).
+
+### §31a. List filter parity (internal `list()`)
+
+`Task._list()` is internal — not exported, no developer-facing
+surface. Framework-internal callers (recovery scans, observability
+shims) use `manager.list_tasks(...)` directly. The list operation's
+filter and pagination surface MUST be identical between hosted and
+local so internal call sites compose correctly across the two
+backings.
+
+**Filters** (every implementation MUST support these):
+
+| Filter | Type | Semantics |
+|---|---|---|
+| `agent_name` | string \| None | Match exact. Optional — when null, no agent-scope filter applied. |
+| `session_id` | string \| None | Match exact. Optional — when null, no session-scope filter applied. |
+| `status` | string \| None | Match exact (after legacy `"done"` → `"completed"` normalization per §28a.5). |
+| `source_type` | string \| None | Match `source.type` exact. |
+| `tag` | list[(key, value)] \| None | Match all pairs (AND semantics). Each pair tested as exact equality. |
+| `has_error` | bool \| None | When set, filter to (`true`) tasks with non-null `error` or (`false`) tasks with null `error`. |
+| `lease_expired` | bool \| None | When set, filter to (`true`) tasks whose `lease.expires_at <= now` or (`false`) the opposite. |
+| `lease_owner` | string \| None | Match `lease.owner` exact. |
+| `omit_attachment_values` | bool | When true, returned tasks carry attachment keys with `None` values (skip per-row blob reads for paging through many tasks). Default false. |
+
+**Pagination**:
+
+- `limit` defaults to 20, max 100 (provider clamps over-cap to 100).
+- `after` is an opaque cursor string. The local provider uses
+  plain `task_id` (no Cosmos continuation-token concept). The
+  hosted provider round-trips whatever opaque token the service
+  returns (up to 4096 chars). Internal callers treat it as opaque
+  regardless of which provider is underneath.
+- `before` is **rejected** (forward-only cursor pagination — matches
+  the service's explicit rejection per PR 2122040).
+- `order` accepts `"asc"` or `"desc"`. Default `"desc"`. Sorts by
+  `created_at`.
+
+**Response**:
+
+- `Data` — the page of tasks (or DTOs).
+- `LastId` — the opaque continuation cursor to pass back as `after`
+  on the next call; `None` when no more pages.
+- `HasMore` — `true` when more pages remain.
 
 ---
 
@@ -2185,11 +2451,12 @@ based on which attachment key the framework was writing:
 | `_AttachmentTooLarge(task_id, attachment_key, size_bytes, max_bytes)` | Provider-level cap-violation signal. NOT exported from `durable/__init__.py`. Framework catches and re-raises as `InputTooLarge` / `OutputTooLarge` per the dispatch above. |
 | `_AttachmentLimitExceeded(task_id, current_count, max_count)` | Provider-level per-task attachment-count cap signal. NOT exported. Unreachable in normal framework operation (worst case is 11 of 20 slots — §23.2) — if it propagates, the framework converts it to `RuntimeError` at the boundary. |
 | `EtagConflict(task_id, message?)` | Optimistic concurrency conflict at the provider boundary. Framework retries internally; only escapes for low-level callers manipulating etags directly. |
-| `TransportClassifiedError(classification: "transient" \| "evicted" \| "conflict" \| "permanent")` | Hosted provider's classification wrapper around HTTP failures. Internal to hosted provider; framework dispatches based on `classification`. |
+| `_HostedConflict(_code: str, status_code: int, message?, task_id?)` | Single internal type the hosted provider's response classifier raises for service responses carrying a structured error code. The framework matches on `_code` to dispatch (see §39.1). The local provider raises the same type with the same `_code` directly, so internal call-site code is provider-agnostic. NOT exported; never reaches developer code. |
+| `TransportClassifiedError(classification: "transient" \| "evicted" \| "conflict" \| "permanent")` | Hosted provider's classification wrapper around lower-level HTTP failures (timeouts, 5xx, eviction). Internal to hosted provider; framework dispatches based on `classification`. |
 
 The underscore prefix on `_AttachmentTooLarge` /
-`_AttachmentLimitExceeded` is the Python-canonical signal for
-"package-private; never imported by developer code." Other-
+`_AttachmentLimitExceeded` / `_HostedConflict` is the Python-canonical
+signal for "package-private; never imported by developer code." Other-
 language implementations MUST place the equivalent exceptions at
 package-private visibility — never as documented developer-facing
 types.
@@ -2205,6 +2472,32 @@ The earlier `TaskTerminated` exception (and corresponding
 longer supports forced termination. Callers use `TaskRun.cancel()`
 and the handler picks the terminal shape via its reaction to
 `ctx.cancel`.
+
+#### 39.1 Service error codes → internal `_HostedConflict` → developer-facing
+
+The hosted task service emits distinct error codes per condition.
+The hosted provider's response classifier wraps each in
+`_HostedConflict(_code=...)`. The framework's lifecycle code then
+matches on `_code` and either retries silently or translates into
+a developer-facing exception. The local provider raises the same
+`_HostedConflict(_code=...)` directly so the framework's dispatch
+table works against either backing.
+
+| Service `code` | HTTP | When emitted | Framework action |
+|---|---|---|---|
+| `task_immutable` | 409 | PATCH on a `completed` task (except no-op completed → completed) | Translate → `TaskConflictError(current_status="completed")`. |
+| `invalid_state_transition` | 409 | PATCH whose declared status transition is not in §24.1 matrix | **Framework bug** — the framework drives transitions, not the developer. Log + raise `RuntimeError` (developer's call should never have produced this; the framework's lifecycle code constructed a bad PATCH). |
+| `lease_held_by_another` | 409 | Lease acquisition / renewal against a record whose lease is held by a different owner (and not expired); or in_progress→pending with mismatched lease; or force-expire with mismatched lease and lease still live | Translate → `TaskConflictError(current_status="in_progress")`. |
+| `task_already_exists` | 409 | CREATE on an existing `task_id` | Framework's lifecycle resolution branches on existing task; this only escapes if the framework's `.start()` race-resolution path is broken. Translate → `TaskConflictError(current_status=<observed status>)`. |
+| `lease_ownership_changed` | 409 | Service Cosmos race: between our read and our write, another owner stole the lease | Hosted-only. Treat as `lease_held_by_another` — same developer-observable behavior (lease is held by someone else). Local never raises this (no concurrent writers in a single-process file backend). |
+| `etag_mismatch` | 412 | If-Match precondition failure | **Retry** with re-read (transparent to developer); after bounded retries exhausted, escape as `EtagConflict` (internal — only escapes to low-level callers). |
+| `invalid_request` | 400 | Any field-validation violation (§28a) or lease-rule violation (§22.1) or delete-without-force on non-terminal (§24.3) | Translate → `TaskPreconditionFailed(task_id, message)`. The message describes WHICH field / rule was violated. |
+
+**Zero new developer-visible exception types from this table.**
+All translation targets above already exist in the public
+exception hierarchy. The internal `_HostedConflict._code` strings
+never appear in developer code, error messages, docstrings, or
+exported names — they are pure dispatch keys.
 
 ---
 
@@ -3124,6 +3417,22 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   at a time across the cluster of processes that share the
   `(agent_name, session_id)` scope. The lease + ETag CAS
   combination enforces this.
+- **C-LCM-5.** Status transitions MUST be enforced against the §24.1
+  matrix. Invalid transitions raise `_HostedConflict(_code="invalid_state_transition")`
+  — this is a framework bug (framework drives transitions, not the
+  developer) and at the boundary maps to `RuntimeError`.
+- **C-LCM-6.** Terminal-status tasks are immutable per §24.2. PATCH
+  on a `completed` task is rejected EXCEPT for the no-op
+  `completed → completed` with no other field changes. Violations
+  raise `_HostedConflict(_code="task_immutable")` →
+  `TaskConflictError(current_status="completed")`.
+- **C-LCM-7.** DELETE on a non-terminal task without `force=true`
+  MUST be rejected as `invalid_request` (400). DELETE on a terminal
+  task always succeeds without `force`. DELETE honors `If-Match`
+  when supplied (412 / `etag_mismatch` on mismatch). Per §24.3.
+- **C-LCM-8.** PATCHes that include any of `id`, `agent_name`,
+  `session_id`, `title`, `description`, `source` MUST be rejected
+  as `invalid_request` (§28a.6 / §24).
 
 ### C-ID (identity)
 
@@ -3171,6 +3480,34 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   awaiters with `TaskConflictError`.
 - **C-LSE-5.** `ctx.exit_for_recovery()` MUST force-expire the lease
   and leave status as `in_progress` (NOT `suspended`).
+- **C-LSE-6.** `lease_duration_seconds` MUST be `0` (force-expire) OR
+  in range `10..3600`. Other values MUST be rejected as
+  `invalid_request` by both providers (§22.1 LSE-W-1).
+- **C-LSE-7.** Lease params are an all-or-nothing triplet: supplying
+  any subset of `(lease_owner, lease_instance_id, lease_duration_seconds)`
+  without all three MUST be rejected as `invalid_request` (§22.1 LSE-W-2).
+- **C-LSE-8.** Lease acquisition / renewal against a record whose
+  lease is held by a different owner and not yet expired MUST be
+  rejected as `_HostedConflict(_code="lease_held_by_another")` →
+  developer-observable `TaskConflictError(current_status="in_progress")`
+  (§22.1 LSE-W-3).
+- **C-LSE-9.** `in_progress → pending` transition MUST verify the
+  supplied `(lease_owner, lease_instance_id)` matches the record's
+  current lease (`EnsureLeaseMatches` per §22.1 LSE-W-4).
+- **C-LSE-10.** Lease renewal (no status change, `duration > 0`) MUST
+  be rejected when the current status is anything other than
+  `in_progress` (§22.1 LSE-W-5).
+- **C-LSE-11.** Force-expire (`lease_duration_seconds=0`) MUST NOT be
+  combined with a status transition in the same PATCH (§22.1
+  LSE-W-6).
+- **C-LSE-12.** Force-expire MUST verify lease ownership unless the
+  lease is already expired (§22.1 LSE-W-7).
+- **C-LSE-13.** On lease re-acquisition where the prior lease was
+  expired, the provider MUST reset `started_at = now` (§22.1
+  LSE-W-8).
+- **C-LSE-14.** On every successful lease write, the provider MUST
+  stamp `lease.heartbeat_at = now` (§22.1 LSE-W-10). The field is
+  on `LeaseInfo`; it is NOT projected onto `TaskSnapshot`.
 
 ### C-INP (input + chain)
 
@@ -3345,6 +3682,49 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 - **C-ATT-7.** Orphan attachment cleanup (§58) MUST run on
   recovery for tasks with `_steering_input_*` keys not referenced
   in `pending_inputs`.
+- **C-ATT-8.** Attachment keys MUST match `^[a-zA-Z0-9_.\-]{1,64}$`
+  and MUST be non-empty after trim. Validated on every CREATE and
+  PATCH write (§23.9).
+- **C-ATT-9.** Clear-all gesture: PATCH with `attachments: null`
+  (typed-API `TaskPatchRequest.clear_attachments = true`) MUST
+  delete every attachment on the task. Mutually exclusive with
+  per-key `attachments={...}` in the same request — combination
+  MUST be rejected as `invalid_request` (§23.10).
+- **C-ATT-10.** DELETE on a task MUST remove all attachments along
+  with the task. Local achieves this trivially via unlinking the
+  JSON file; hosted relies on the service's blob-cleanup hook
+  (§23.10).
+
+### C-VAL (field validation — shared between providers)
+
+- **C-VAL-1.** Task `id` MUST match `^[a-zA-Z0-9_-]{1,128}$`. Empty
+  or non-matching ids rejected as `invalid_request` (§28a.1).
+- **C-VAL-2.** `agent_name`, `session_id`, `title` MUST be required
+  on CREATE (length 1..128 / 1..128 / 1..256 after trim respectively).
+- **C-VAL-3.** `description` MUST be ≤ 1024 chars after trim.
+- **C-VAL-4.** `suspension_reason` MUST be ≤ 256 chars after trim,
+  AND only allowed when target status is `suspended` (§28a.1, §S5).
+- **C-VAL-5.** Tag keys MUST match `^[a-zA-Z0-9_.\-]{1,64}$`. Tag
+  values MUST be ≤ 256 chars. Total tag entries MUST be ≤ 16.
+- **C-VAL-6.** Byte budgets MUST be enforced per §28a.2: `payload`
+  ≤ 1 MB, `error` ≤ 64 KB, `source` ≤ 4 KB (canonical-JSON byte
+  measurement: `sort_keys=True`, separators `(",", ":")`).
+- **C-VAL-7.** `source` when supplied MUST be a JSON object with a
+  non-empty `type` field (§28a.3). Optional structured fields
+  pass through; unknown fields are preserved.
+- **C-VAL-8.** `error` when supplied MUST be a JSON object with
+  non-empty `message` and `type` strings (§28a.4). `code` defaults
+  to `"error"` when missing.
+- **C-VAL-9.** Status `"failed"` MUST be rejected on input. Status
+  `"done"` MUST be normalized to `"completed"` on read and in list
+  filters (§28a.5).
+- **C-VAL-10.** PATCHes including any of `id`, `agent_name`,
+  `session_id`, `title`, `description`, `source` MUST be rejected
+  as `invalid_request` (§28a.6).
+- **C-VAL-11.** Payload PATCH semantics per §F1: when the patch
+  value is a JSON object, shallow-merge into current payload; for
+  any other JSON type (array, string, number), full-replace; null
+  is no-op.
 
 ### C-REC (recovery)
 
@@ -3375,6 +3755,29 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   `current_status` carries the observed status.
 - **C-ERR-3.** `TaskFailed.error` MUST be a structured dict with
   at minimum `type` and `message`; `cause` is optional.
+- **C-ERR-4.** `_HostedConflict(_code, status_code)` is an internal
+  discriminator type. It is NOT exported and MUST NOT appear in
+  any public exception hierarchy, docstring, or error message.
+  The hosted provider's response classifier raises it for service
+  responses carrying a structured error code; the local provider
+  raises it directly for equivalent conditions. The framework
+  matches on `_code` per the §39.1 translation table.
+- **C-ERR-5.** Service error codes (`task_immutable`,
+  `invalid_state_transition`, `lease_held_by_another`,
+  `task_already_exists`, `lease_ownership_changed`, `etag_mismatch`,
+  `invalid_request`) MUST translate to the developer-facing
+  exceptions per §39.1. The translation table is the contract;
+  no service-code string appears in developer-visible types.
+- **C-ERR-6.** `etag_mismatch` MUST be retried transparently by the
+  framework (bounded retries with re-read). It escapes to
+  low-level callers as `EtagConflict` only when retries are
+  exhausted (the developer never sees it through `Task.run` /
+  `Task.start` / `ctx.suspend`).
+- **C-ERR-7.** `invalid_state_transition` is a framework bug
+  (framework drives transitions, not the developer). The
+  framework MUST log this condition and convert it to a
+  `RuntimeError` rather than propagating to developer code as a
+  task-API concept.
 
 ### C-RTE (resume route)
 
@@ -3611,6 +4014,30 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   already-deleted). Implementers MAY make `provider.delete()`
   itself idempotent if their store cleanly distinguishes.
 - **C-PRV-7.** `provider.list(...)` MUST filter server-side.
+- **C-PRV-8.** `provider.list(...)` MUST support `agent_name` and
+  `session_id` as **optional** filters (workspace-wide listing when
+  both are null), matching the service. The local provider MUST
+  also accept both as optional (search across all
+  `<agent_name>/<session_id>/` directories under the storage root).
+- **C-PRV-9.** `provider.list(...)` MUST support these additional
+  filters, all optional, all enforced server-side: `has_error`,
+  `lease_expired`, `lease_owner`, `tag` (list of key:value pairs,
+  AND semantics), `source_type`, `status` (with legacy `"done"` →
+  `"completed"` normalization).
+- **C-PRV-10.** `provider.list(...)` MUST support pagination via
+  opaque `after` cursor + `limit` (default 20, max 100, provider
+  clamps over-cap). `before` MUST be rejected as `invalid_request`
+  (cursor pagination forward-only). `order` accepts `"asc"` or
+  `"desc"` by `created_at` (default `"desc"`). Per §31a.
+- **C-PRV-11.** `provider.list(...)` MUST support
+  `omit_attachment_values` boolean. When true, returned tasks
+  carry attachment keys with `None` values (skip per-row blob
+  reads). Default false. Per §31a.
+- **C-PRV-12.** The opaque pagination cursor in the response
+  (`LastId` / `next_page_token`) MUST be treated as opaque by the
+  framework. The local provider mints its own cursor (plain
+  `task_id`); the hosted provider round-trips whatever opaque
+  token the service returns (up to 4096 chars).
 
 ### C-OBS (observability — minimal)
 
