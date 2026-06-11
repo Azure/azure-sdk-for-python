@@ -1,0 +1,74 @@
+name: GitHub Actions - Test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/**
+  pull_request:
+    paths:
+      - .github/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        folder: [.github, .github/shared]
+        os: [ubuntu, windows]
+
+    runs-on: ${{ fromJSON('{"ubuntu":"ubuntu-24.04", "windows":"windows-2022"}')[matrix.os] }}
+
+    defaults:
+      run:
+        working-directory: ./${{ matrix.folder }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github
+
+      - if: ${{ matrix.folder == '.github' }}
+        name: Install dependencies for github-script actions
+        uses: ./.github/actions/install-deps-github-script
+
+      - if: ${{ matrix.folder == '.github' }}
+        name: Verify all modules are importable
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { join } = await import("path");
+            const { pathToFileURL } = await import("url");
+            const fullPath = join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "src", "github-test.js");
+            const { default: importAllModules } = await import(pathToFileURL(fullPath).href);
+            await importAllModules({ core });
+
+      - name: Install dev deps
+        uses: ./.github/actions/setup-node-install-deps
+        with:
+          # actions/github-script@v8 uses Node 24
+          node-version: 24.x
+          working-directory: ./${{ matrix.folder }}
+
+      - run: npm run test:ci
+
+      - run: npm run lint
+
+      - run: npm run format:check:ci
+
+      # Content copied from https://raw.githubusercontent.com/rhysd/actionlint/2ab3a12c7848f6c15faca9a92612ef4261d0e370/.github/actionlint-matcher.json
+      - if: ${{ matrix.folder == '.github' && matrix.os == 'ubuntu'}}
+        name: Add ActionLint Problem Matcher
+        run: echo "::add-matcher::.github/matchers/actionlint.json"
+
+      - if: ${{ matrix.folder == '.github' && matrix.os == 'ubuntu'}}
+        name: Lint workflows
+        uses: docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+        with:
+          args: -color -verbose

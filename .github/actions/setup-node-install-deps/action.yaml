@@ -1,0 +1,39 @@
+name: Setup Node and install dependencies
+description: Uses specified Node version and installs dependencies (typically using "npm")
+
+inputs:
+  node-version:
+    description: "Node version to use"
+    default: 24.x
+  install-command:
+    description: "Command to install dependencies"
+    default: "npm ci --no-audit --no-fund --prefer-offline"
+  working-directory:
+    description: "Working directory"
+    default: "."
+
+runs:
+  using: "composite"
+
+  steps:
+    - uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: "npm"
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - run: |
+        echo "::group::$INSTALL_COMMAND"
+        $INSTALL_COMMAND
+        echo "::endgroup::"
+      shell: bash
+      env:
+        INSTALL_COMMAND: ${{ inputs.install-command }}
+      working-directory: ${{ inputs.working-directory }}
+
+    - run: |
+        echo "::group::npm ls -a"
+        npm ls -a || true
+        echo "::endgroup::"
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
