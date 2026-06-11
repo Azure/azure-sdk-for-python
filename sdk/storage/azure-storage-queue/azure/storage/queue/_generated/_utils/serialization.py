@@ -21,7 +21,6 @@ import re
 import sys
 import codecs
 from typing import (
-    Dict,
     Any,
     cast,
     Optional,
@@ -31,7 +30,6 @@ from typing import (
     Mapping,
     Callable,
     MutableMapping,
-    List,
 )
 
 try:
@@ -229,17 +227,25 @@ class Model:
     serialization and deserialization.
     """
 
-    _subtype_map: Dict[str, Dict[str, Any]] = {}
-    _attribute_map: Dict[str, Dict[str, Any]] = {}
-    _validation: Dict[str, Dict[str, Any]] = {}
+    _subtype_map: dict[str, dict[str, Any]] = {}
+    _attribute_map: dict[str, dict[str, Any]] = {}
+    _validation: dict[str, dict[str, Any]] = {}
 
     def __init__(self, **kwargs: Any) -> None:
-        self.additional_properties: Optional[Dict[str, Any]] = {}
+        self.additional_properties: Optional[dict[str, Any]] = {}
         for k in kwargs:  # pylint: disable=consider-using-dict-items
             if k not in self._attribute_map:
-                _LOGGER.warning("%s is not a known attribute of class %s and will be ignored", k, self.__class__)
+                _LOGGER.warning(
+                    "%s is not a known attribute of class %s and will be ignored",
+                    k,
+                    self.__class__,
+                )
             elif k in self._validation and self._validation[k].get("readonly", False):
-                _LOGGER.warning("Readonly attribute %s will be ignored in class %s", k, self.__class__)
+                _LOGGER.warning(
+                    "Readonly attribute %s will be ignored in class %s",
+                    k,
+                    self.__class__,
+                )
             else:
                 setattr(self, k, kwargs[k])
 
@@ -290,7 +296,11 @@ class Model:
         except AttributeError:
             xml_map = {}
 
-        return _create_xml_node(xml_map.get("name", cls.__name__), xml_map.get("prefix", None), xml_map.get("ns", None))
+        return _create_xml_node(
+            xml_map.get("name", cls.__name__),
+            xml_map.get("prefix", None),
+            xml_map.get("ns", None),
+        )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> JSON:
         """Return the JSON that would be sent to server from this model.
@@ -311,7 +321,7 @@ class Model:
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = attribute_transformer,
+        key_transformer: Callable[[str, dict[str, Any], Any], Any] = attribute_transformer,
         **kwargs: Any
     ) -> JSON:
         """Return a dict that can be serialized using json.dump.
@@ -380,7 +390,7 @@ class Model:
     def from_dict(
         cls,
         data: Any,
-        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
+        key_extractors: Optional[Callable[[str, dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
     ) -> Self:
         """Parse a dict using given key extractor return a model.
@@ -414,7 +424,7 @@ class Model:
             return {}
         result = dict(cls._subtype_map[key])
         for valuetype in cls._subtype_map[key].values():
-            result.update(objects[valuetype]._flatten_subtype(key, objects))  # pylint: disable=protected-access
+            result |= objects[valuetype]._flatten_subtype(key, objects)  # pylint: disable=protected-access
         return result
 
     @classmethod
@@ -451,7 +461,11 @@ class Model:
                     )
                     break
             else:
-                _LOGGER.warning("Discriminator %s is absent or null, use base class %s.", subtype_key, cls.__name__)
+                _LOGGER.warning(
+                    "Discriminator %s is absent or null, use base class %s.",
+                    subtype_key,
+                    cls.__name__,
+                )
                 break
         return cls
 
@@ -528,7 +542,7 @@ class Serializer:  # pylint: disable=too-many-public-methods
             "[]": self.serialize_iter,
             "{}": self.serialize_dict,
         }
-        self.dependencies: Dict[str, type] = dict(classes) if classes else {}
+        self.dependencies: dict[str, type] = dict(classes) if classes else {}
         self.key_transformer = full_restapi_key_transformer
         self.client_side_validation = True
 
@@ -579,7 +593,7 @@ class Serializer:  # pylint: disable=too-many-public-methods
 
                 if attr_name == "additional_properties" and attr_desc["key"] == "":
                     if target_obj.additional_properties is not None:
-                        serialized.update(target_obj.additional_properties)
+                        serialized |= target_obj.additional_properties
                     continue
                 try:
 
@@ -789,7 +803,7 @@ class Serializer:  # pylint: disable=too-many-public-methods
 
             # If dependencies is empty, try with current data class
             # It has to be a subclass of Enum anyway
-            enum_type = self.dependencies.get(data_type, data.__class__)
+            enum_type = self.dependencies.get(data_type, cast(type, data.__class__))
             if issubclass(enum_type, Enum):
                 return Serializer.serialize_enum(data, enum_obj=enum_type)
 
@@ -823,13 +837,20 @@ class Serializer:  # pylint: disable=too-many-public-methods
         :param str data_type: Type of object in the iterable.
         :rtype: str, int, float, bool
         :return: serialized object
+        :raises TypeError: raise if data_type is not one of str, int, float, bool.
         """
         custom_serializer = cls._get_custom_serializers(data_type, **kwargs)
         if custom_serializer:
             return custom_serializer(data)
         if data_type == "str":
             return cls.serialize_unicode(data)
-        return eval(data_type)(data)  # nosec # pylint: disable=eval-used
+        if data_type == "int":
+            return int(data)
+        if data_type == "float":
+            return float(data)
+        if data_type == "bool":
+            return bool(data)
+        raise TypeError("Unknown basic data type: {}".format(data_type))
 
     @classmethod
     def serialize_unicode(cls, data):
@@ -911,7 +932,11 @@ class Serializer:  # pylint: disable=too-many-public-methods
                 if isinstance(el, ET.Element):
                     el_node = el
                 else:
-                    el_node = _create_xml_node(node_name, xml_desc.get("prefix", None), xml_desc.get("ns", None))
+                    el_node = _create_xml_node(
+                        node_name,
+                        xml_desc.get("prefix", None),
+                        xml_desc.get("ns", None),
+                    )
                     if el is not None:  # Otherwise it writes "None" :-p
                         el_node.text = str(el)
                 final_result.append(el_node)
@@ -1148,7 +1173,12 @@ class Serializer:  # pylint: disable=too-many-public-methods
             if microseconds:
                 microseconds = "." + microseconds
             date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
-                utc.tm_year, utc.tm_mon, utc.tm_mday, utc.tm_hour, utc.tm_min, utc.tm_sec
+                utc.tm_year,
+                utc.tm_mon,
+                utc.tm_mday,
+                utc.tm_hour,
+                utc.tm_min,
+                utc.tm_sec,
             )
             return date + microseconds + "Z"
         except (ValueError, OverflowError) as err:
@@ -1184,7 +1214,7 @@ def rest_key_extractor(attr, attr_desc, data):  # pylint: disable=unused-argumen
 
     while "." in key:
         # Need the cast, as for some reasons "split" is typed as list[str | Any]
-        dict_keys = cast(List[str], _FLATTEN.split(key))
+        dict_keys = cast(list[str], _FLATTEN.split(key))
         if len(dict_keys) == 1:
             key = _decode_attribute_map_key(dict_keys[0])
             break
@@ -1386,7 +1416,7 @@ class Deserializer:
             "duration": (isodate.Duration, datetime.timedelta),
             "iso-8601": (datetime.datetime),
         }
-        self.dependencies: Dict[str, type] = dict(classes) if classes else {}
+        self.dependencies: dict[str, type] = dict(classes) if classes else {}
         self.key_extractors = [rest_key_extractor, xml_key_extractor]
         # Additional properties only works if the "rest_key_extractor" is used to
         # extract the keys. Making it to work whatever the key extractor is too much
@@ -1424,7 +1454,10 @@ class Deserializer:
         if hasattr(data, "_attribute_map"):
             constants = [name for name, config in getattr(data, "_validation", {}).items() if config.get("constant")]
             try:
-                for attr, mapconfig in data._attribute_map.items():  # pylint: disable=protected-access
+                for (
+                    attr,
+                    mapconfig,
+                ) in data._attribute_map.items():  # pylint: disable=protected-access
                     if attr in constants:
                         continue
                     value = getattr(data, attr)
@@ -1542,7 +1575,8 @@ class Deserializer:
             return self(target_obj, data, content_type=content_type)
         except:  # pylint: disable=bare-except
             _LOGGER.debug(
-                "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+                "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
+                exc_info=True,
             )
             return None
 
@@ -1759,7 +1793,7 @@ class Deserializer:
         :param str data_type: deserialization data type.
         :return: Deserialized basic type.
         :rtype: str, int, float or bool
-        :raises TypeError: if string format is not valid.
+        :raises TypeError: if string format is not valid or data_type is not one of str, int, float, bool.
         """
         # If we're here, data is supposed to be a basic type.
         # If it's still an XML node, take the text
@@ -1785,7 +1819,11 @@ class Deserializer:
 
         if data_type == "str":
             return self.deserialize_unicode(attr)
-        return eval(data_type)(attr)  # nosec # pylint: disable=eval-used
+        if data_type == "int":
+            return int(attr)
+        if data_type == "float":
+            return float(attr)
+        raise TypeError("Unknown basic data type: {}".format(data_type))
 
     @staticmethod
     def deserialize_unicode(data):
@@ -1840,7 +1878,11 @@ class Deserializer:
                 if enum_value.value.lower() == str(data).lower():
                     return enum_value
             # We don't fail anymore for unknown value, we deserialize as a string
-            _LOGGER.warning("Deserializer is not able to find %s as valid enum in %s", data, enum_obj)
+            _LOGGER.warning(
+                "Deserializer is not able to find %s as valid enum in %s",
+                data,
+                enum_obj,
+            )
             return Deserializer.deserialize_unicode(data)
 
     @staticmethod

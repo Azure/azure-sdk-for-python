@@ -24,7 +24,7 @@ class TestMySQLManagementCheckVirtualNetworkSubnetUsageOperations(AzureMgmtRecor
         response = self.client.check_virtual_network_subnet_usage.execute(
             location_name="str",
             parameters={"virtualNetworkResourceId": "str"},
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

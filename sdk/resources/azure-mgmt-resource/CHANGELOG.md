@@ -1,11 +1,64 @@
 # Release History
 
+## 26.0.0b1 (2026-06-08)
+
+### Features Added
+
+  - Client `ResourceManagementClient` added method `send_request`
+  - Model `GenericResource` added property `system_data`
+  - Model `GenericResourceExpanded` added property `system_data`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceGroup` added property `system_data`
+  - Model `TagsResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added model `CloudError`
+  - Added enum `CreatedByType`
+  - Added model `ErrorDetail`
+  - Added model `ExtensionResource`
+  - Added enum `Origin`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Import path for `ResourceManagementClient` has changed from `azure.mgmt.resource` to `azure.mgmt.resource.resources`.
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `extended_location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `TagDetails` renamed its instance variable `values` to `values_property`
+  - Deleted or renamed model `ResourceProviderOperationDisplayProperties`
+  - Deleted or renamed model `SubResource`
+  - Method `ProviderResourceTypesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProvidersOperations.get`/`get_at_tenant_scope` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProvidersOperations.list`/`list_at_tenant_scope` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourceGroupsOperations.begin_delete` changed its parameter `force_deletion_types` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.begin_create_or_update`/`begin_create_or_update_by_id`/`begin_delete`/`begin_delete_by_id`/`begin_update`/`begin_update_by_id`/`check_existence`/`check_existence_by_id`/`get`/`get_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.list`/`list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `GenericResourceFilter`/`ResourceGroupFilter` which actually were not used by SDK users
+
+## 25.0.0 (2026-02-04)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need to change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
+  - The following modules have been separated from `azure-mgmt-resource` into independent packages: `subscriptions`, `features`, `links`, `locks`, `policy`, `managedapplications`, `databoundaries`, `changes`, and `privatelinks`. Each module is now available as `azure-mgmt-resource-{module}`.
+  - For separated modules, if you previously imported them using statements like `from azure.mgmt.resource import SubscriptionClient`, you'll need to update your code to `from azure.mgmt.resource.subscriptions import SubscriptionClient`. If you were already using the fully qualified import path, no changes are required.
+
 ## 25.0.0b1 (2025-07-16)
 
 ### Breaking Changes
 
   - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
-  - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
+  - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need to change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
 
 ## 24.0.0 (2025-06-16)
 

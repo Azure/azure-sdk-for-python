@@ -6,34 +6,184 @@
 import random
 import re
 import functools
-from typing import Optional
+import json
+import os
+import tempfile
+from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
+from openai.types.responses import Response
+from openai.types.conversations import ConversationItem
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects.models import (
+    AzureAISearchIndex,
     Connection,
     ConnectionType,
-    CustomCredential,
     CredentialType,
-    ApiKeyCredentials,
+    DatasetCredential,
+    DatasetType,
+    DatasetVersion,
     Deployment,
     DeploymentType,
-    ModelDeployment,
     Index,
     IndexType,
-    AzureAISearchIndex,
-    DatasetVersion,
-    DatasetType,
-    DatasetCredential,
+    ModelDeployment,
 )
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live_and_not_recording
+from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+
+# Store reference to built-in open before any mocking occurs
+_BUILTIN_OPEN = open
 
 
+# Load secrets from environment variables
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_projects_tests",
-    azure_ai_projects_tests_project_endpoint="https://sanitized.services.ai.azure.com/api/projects/sanitized-project-name",
+    "",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_project_api_key="sanitized-api-key",
+    foundry_model_name="sanitized-model-deployment-name",
+    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    image_generation_model_deployment_name="sanitized-gpt-image",
+    bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
+    ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    bing_custom_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-custom-search-connection",
+    fabric_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-fabric-connection",
+    openapi_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-openapi-connection",
+    a2a_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-a2a-connection",
+    ai_search_index_name="sanitized-index-name",
+    mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    browser_automation_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-browser-automation-connection",
+    sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    fabric_iq_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-fabric-iq-connection",
+    work_iq_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-work-iq-connection",
+    bing_custom_search_instance_name="sanitized-bing-custom-search-instance",
+    completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
+    completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
+    completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
+    completed_oss_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
+    running_fine_tuning_job_id="sanitized-ftjob-id",
+    paused_fine_tuning_job_id="sanitized-ftjob-id",
+    azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_resource_group="sanitized-resource-group",
+    ai_search_user_input="What is Azure AI Projects?",
+    sharepoint_user_input="What is SharePoint?",
+    fabric_user_input="List all customers!",
+    a2a_user_input="What can the secondary agent do?",
+    bing_custom_user_input="Tell me more about foundry agent service",
+    fabric_iq_user_input="Tell me weather history in London, Ohio",
+    work_iq_user_input="What is the Work IQ?",
+    memory_store_chat_model_deployment_name="sanitized-model-deployment-name",
+    memory_store_embedding_model_deployment_name="text-embedding-ada-002",
+    foundry_agent_container_image="sanitizedregistry.azurecr.io/sanitized/sessions-agent:latest",
+    foundry_hosted_agent_name="sanitized-hosted-agent-name",
 )
+
+fineTuningServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_model_name="sanitized-model-deployment-name",
+    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_azure_resource_group="sanitized-resource-group",
+    azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
+)
+
+# Slim preparer for `.beta.models` samples/tests. These exercise local-file
+# upload + ModelVersion registration; they only need a Foundry project endpoint
+# and the LLM-validation endpoint used by sample tests.
+modelsServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+)
+
+# Fine-tuning job type constants
+SFT_JOB_TYPE: Final[str] = "sft"
+DPO_JOB_TYPE: Final[str] = "dpo"
+RFT_JOB_TYPE: Final[str] = "rft"
+
+# Training type constants
+STANDARD_TRAINING_TYPE: Final[str] = "Standard"
+GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
+DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
+
+# Method type constants
+SUPERVISED_METHOD_TYPE: Final[str] = "supervised"
+DPO_METHOD_TYPE: Final[str] = "dpo"
+REINFORCEMENT_METHOD_TYPE: Final[str] = "reinforcement"
+
+# Model type constants
+OPENAI_MODEL_TYPE: Final[str] = "openai"
+OSS_MODEL_TYPE: Final[str] = "oss"
+
+
+def patched_open_crlf_to_lf(*args, **kwargs):
+    """
+    Patched open function that converts CRLF to LF for text files.
+
+    This function should be used with mock.patch("builtins.open", side_effect=TestBase.patched_open_crlf_to_lf)
+    to ensure consistent line endings in test files during recording and playback.
+
+    Note: CRLF to LF conversion is only performed when opening text-like files (.txt, .json, .jsonl, .csv,
+    .md, .yaml, .yml, .xml) in binary read mode ("rb"). For all other modes or file types, the call is
+    forwarded to the built-in open function as is.
+    """
+    # Extract file path - first positional arg or 'file' keyword arg
+    if args:
+        file_path = args[0]
+    elif "file" in kwargs:
+        file_path = kwargs["file"]
+    else:
+        # No file path provided, just pass through
+        return _BUILTIN_OPEN(*args, **kwargs)
+
+    # Extract mode - second positional arg or 'mode' keyword arg
+    if len(args) > 1:
+        mode = str(args[1])
+    else:
+        mode = str(kwargs.get("mode", "r"))
+
+    # Check if this is binary read mode for text-like files
+    if "r" in mode and "b" in mode and file_path and isinstance(file_path, str):
+        # Check file extension to determine if it's a text file
+        text_extensions = {".txt", ".json", ".jsonl", ".csv", ".md", ".yaml", ".yml", ".xml"}
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext in text_extensions:
+            # Read the original file
+            with _BUILTIN_OPEN(file_path, "rb") as f:
+                content = f.read()
+
+            # Convert CRLF to LF
+            converted_content = content.replace(b"\r\n", b"\n")
+
+            # Only create temp file if conversion was needed
+            if converted_content != content:
+                # Create a sub temp folder and save file with same filename
+                temp_dir = tempfile.mkdtemp()
+                original_filename = os.path.basename(file_path)
+                temp_path = os.path.join(temp_dir, original_filename)
+
+                # Write the converted content to the temp file
+                print(f"Converting CRLF to LF for {file_path} and saving to {temp_path}")
+                with _BUILTIN_OPEN(temp_path, "wb") as temp_file:
+                    temp_file.write(converted_content)
+
+                # Replace file path with temp path
+                if args:
+                    # File path was passed as positional arg
+                    return _BUILTIN_OPEN(temp_path, *args[1:], **kwargs)
+                # File path was passed as keyword arg
+                kwargs = kwargs.copy()
+                kwargs["file"] = temp_path
+                return _BUILTIN_OPEN(**kwargs)
+
+    return _BUILTIN_OPEN(*args, **kwargs)
 
 
 class TestBase(AzureRecordedTestCase):
+
     test_redteams_params = {
         # cSpell:disable-next-line
         "connection_name": "naposaniwestus3",
@@ -41,19 +191,7 @@ class TestBase(AzureRecordedTestCase):
         "model_deployment_name": "gpt-4o-mini",
     }
 
-    test_connections_params = {
-        "connection_name": "custom_keys_connection",
-        "connection_type": ConnectionType.CUSTOM,
-    }
-
-    test_deployments_params = {
-        "model_publisher": "Cohere",
-        "model_name": "gpt-4o",
-        "model_deployment_name": "DeepSeek-V3",
-    }
-
     test_agents_params = {
-        "model_deployment_name": "gpt-4o",
         "agent_name": "agent-for-python-projects-sdk-testing",
     }
 
@@ -65,7 +203,7 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_indexes_params = {
-        "index_name": f"test-index-name",
+        "index_name": "test-index-name",
         "index_version": "1",
         "ai_search_connection_name": "my-ai-search-connection",
         "ai_search_index_name": "my-ai-search-index",
@@ -80,10 +218,137 @@ class TestBase(AzureRecordedTestCase):
         "connection_name": "balapvbyostoragecanary",
     }
 
+    test_models_params = {
+        "model_name_1": f"test-model-name-{random.randint(0, 99999):05d}",
+        "model_name_2": f"test-model-name-{random.randint(0, 99999):05d}",
+        "model_version": "1",
+    }
+
+    test_files_params = {
+        "test_file_name": "test_file.jsonl",
+        "file_purpose": "fine-tune",
+    }
+
+    test_finetuning_params = {
+        "sft": {
+            "openai": {
+                "model_name": "gpt-4.1",
+            },
+            "oss": {"model_name": "Ministral-3B"},
+            "training_file_name": "sft_training_set.jsonl",
+            "validation_file_name": "sft_validation_set.jsonl",
+        },
+        "dpo": {
+            "openai": {"model_name": "gpt-4o-mini"},
+            "training_file_name": "dpo_training_set.jsonl",
+            "validation_file_name": "dpo_validation_set.jsonl",
+        },
+        "rft": {
+            "openai": {"model_name": "o4-mini"},
+            "training_file_name": "rft_training_set.jsonl",
+            "validation_file_name": "rft_validation_set.jsonl",
+        },
+        "n_epochs": 1,
+        "batch_size": 1,
+        "learning_rate_multiplier": 1.0,
+    }
+
     # Regular expression describing the pattern of an Application Insights connection string.
     REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
         r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
     )
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: Literal["r", "w", "a", "x", "r+", "w+", "a+", "x+"] = "r",
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> TextIO: ...
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: Literal["rb", "wb", "ab", "xb", "r+b", "w+b", "a+b", "x+b"],
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> BinaryIO: ...
+
+    @overload
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: str,
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> IO[Any]: ...
+
+    def open_with_lf(
+        self,
+        file: Union[str, bytes, os.PathLike, int],
+        mode: str = "r",
+        buffering: int = -1,
+        encoding: Optional[str] = None,
+        errors: Optional[str] = None,
+        newline: Optional[str] = None,
+        closefd: bool = True,
+        opener: Optional[Any] = None,
+    ) -> IO[Any]:
+        """
+        Open function that converts CRLF to LF for text files.
+
+        This function has the same signature as built-in open and converts line endings
+        to ensure consistent behavior during test recording and playback.
+        """
+        return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
+
+    # helper function: create projects client using environment variables
+    def create_client(self, *, allow_preview: bool = False, **kwargs) -> AIProjectClient:
+        # fetch environment variables
+        endpoint = kwargs.pop("foundry_project_endpoint")
+        credential = self.get_credential(AIProjectClient, is_async=False)
+
+        print(f"Creating AIProjectClient with endpoint: {endpoint}")
+
+        # create and return client
+        client = AIProjectClient(
+            endpoint=endpoint,
+            credential=credential,
+            allow_preview=allow_preview,
+        )
+
+        return client
+
+    # helper function: create async projects client using environment variables
+    def create_async_client(self, *, allow_preview: bool = False, **kwargs) -> AsyncAIProjectClient:
+        # fetch environment variables
+        endpoint = kwargs.pop("foundry_project_endpoint")
+        credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+
+        print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
+
+        # create and return async client
+        client = AsyncAIProjectClient(
+            endpoint=endpoint,
+            credential=credential,
+            allow_preview=allow_preview,
+        )
+
+        return client
 
     @staticmethod
     def assert_equal_or_not_none(actual, expected=None):
@@ -118,18 +383,26 @@ class TestBase(AzureRecordedTestCase):
         if expected_is_default is not None:
             assert connection.is_default == expected_is_default
 
-        if isinstance(connection.credentials, ApiKeyCredentials):
-            assert connection.credentials.type == CredentialType.API_KEY
+        if connection.credentials.type == CredentialType.API_KEY:
             if include_credentials:
                 assert connection.credentials.api_key is not None
-        elif isinstance(connection.credentials, CustomCredential):
-            assert connection.credentials.type == CredentialType.CUSTOM
+        elif connection.credentials.type == CredentialType.CUSTOM:
             if include_credentials:
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
 
     @classmethod
+    def validate_response(cls, response: Response, *, print_message: Optional[str] = None):
+        assert response.id
+        assert response.output is not None
+        assert len(response.output) > 0
+        if print_message:
+            print(f"{print_message} (id: {response.id})")
+        else:
+            print(f"Response completed (id: {response.id})")
+
+    @classmethod
     def validate_red_team_response(
-        cls, response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
+        cls, response: Response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1
     ):
         """Assert basic red team scan response properties."""
         assert response is not None
@@ -187,7 +460,7 @@ class TestBase(AzureRecordedTestCase):
         expected_model_deployment_name: Optional[str] = None,
         expected_model_publisher: Optional[str] = None,
     ):
-        assert type(deployment) == ModelDeployment
+        assert isinstance(deployment, ModelDeployment)
         assert deployment.type == DeploymentType.MODEL_DEPLOYMENT
         assert deployment.model_version is not None
         # Comment out the below, since I see that `Cohere-embed-v3-english` has an empty capabilities dict.
@@ -214,7 +487,7 @@ class TestBase(AzureRecordedTestCase):
         TestBase.assert_equal_or_not_none(index.version, expected_index_version)
 
         if expected_index_type == IndexType.AZURE_SEARCH:
-            assert type(index) == AzureAISearchIndex
+            assert isinstance(index, AzureAISearchIndex)
             assert index.type == IndexType.AZURE_SEARCH
             TestBase.assert_equal_or_not_none(index.connection_name, expected_ai_search_connection_name)
             TestBase.assert_equal_or_not_none(index.index_name, expected_ai_search_index_name)
@@ -234,7 +507,7 @@ class TestBase(AzureRecordedTestCase):
         if expected_dataset_type:
             assert dataset.type == expected_dataset_type
         else:
-            assert dataset.type == DatasetType.URI_FILE or dataset.type == DatasetType.URI_FOLDER
+            assert dataset.type in (DatasetType.URI_FILE, DatasetType.URI_FOLDER)
 
         TestBase.assert_equal_or_not_none(dataset.name, expected_dataset_name)
         TestBase.assert_equal_or_not_none(dataset.version, expected_dataset_version)
@@ -253,3 +526,142 @@ class TestBase(AzureRecordedTestCase):
             dataset_credential.blob_reference.credential.type == "SAS"
         )  # Why is this not of type CredentialType.SAS as defined for Connections?
         assert dataset_credential.blob_reference.credential.sas_uri
+
+    @staticmethod
+    def _validate_conversation(
+        conversation: Any, *, expected_id: Optional[str] = None, expected_metadata: Optional[Dict[str, Any]] = None
+    ) -> None:
+        assert conversation.id
+        assert conversation.created_at
+        if expected_id is not None:
+            assert conversation.id == expected_id
+        if expected_metadata is not None:
+            assert conversation.metadata == expected_metadata
+        print(f"Conversation validated (id: {conversation.id})")
+
+    def _validate_agent_version(
+        self, agent: AgentVersionDetails, expected_name: Optional[str] = None, expected_version: Optional[str] = None
+    ) -> None:
+        assert agent is not None
+        assert isinstance(agent, AgentVersionDetails)
+        assert agent.id
+        if expected_name:
+            assert agent.name == expected_name
+        else:
+            assert agent.name
+        if expected_version:
+            assert agent.version == expected_version
+        else:
+            assert agent.version
+        print(f"Agent version validated (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+    def _validate_agent(
+        self, agent: AgentDetails, expected_name: Optional[str] = None, expected_latest_version: Optional[str] = None
+    ) -> None:
+        assert agent is not None
+        assert isinstance(agent, AgentDetails)
+        assert agent.id
+        if expected_name:
+            assert agent.name == expected_name
+        else:
+            assert agent.name
+        if expected_latest_version:
+            assert agent.versions.latest.version == expected_latest_version
+        else:
+            assert agent.versions.latest.version
+        print(f"Agent validated (id: {agent.id}, name: {agent.name}, latest version: {agent.versions.latest.version})")
+
+    def _validate_conversation_item(
+        self,
+        item: ConversationItem,
+        *,
+        expected_type: Optional[str] = None,
+        expected_id: Optional[str] = None,
+        expected_role: Optional[str] = None,
+        expected_content_type: Optional[str] = None,
+        expected_content_text: Optional[str] = None,
+    ) -> None:
+        assert item
+
+        # From ConversationItem:
+        if expected_type:
+            assert item.type == expected_type
+        else:
+            assert item.type
+        if expected_id:
+            assert item.id == expected_id
+        else:
+            assert item.id
+
+        # From ResponsesMessageItemResource:
+        if expected_type == "message":
+            assert item.status == "completed"
+            if expected_role:
+                assert item.role == expected_role
+            else:
+                assert item.role
+
+            # From ResponsesAssistantMessageItemResource, ResponsesDeveloperMessageItemResource, ResponsesSystemMessageItemResource, ResponsesUserMessageItemResource:
+            assert len(item.content) == 1
+
+            # From ItemContent:
+            if expected_content_type:
+                assert item.content[0].type == expected_content_type
+            if expected_content_text:
+                assert item.content[0].text == expected_content_text
+        print(
+            f"Conversation item validated (id: {item.id}, type: {item.type}, role: {item.role if item.type == 'message' else 'N/A'})"
+        )
+
+    @classmethod
+    def validate_file(
+        cls,
+        file_obj,
+        *,
+        expected_file_id: Optional[str] = None,
+        expected_filename: Optional[str] = None,
+        expected_purpose: Optional[str] = None,
+    ):
+        assert file_obj is not None
+        assert file_obj.id is not None
+        assert file_obj.bytes is not None
+        assert file_obj.created_at is not None
+        assert file_obj.filename is not None
+        assert file_obj.purpose is not None
+
+        TestBase.assert_equal_or_not_none(file_obj.id, expected_file_id)
+        TestBase.assert_equal_or_not_none(file_obj.filename, expected_filename)
+        TestBase.assert_equal_or_not_none(file_obj.purpose, expected_purpose)
+
+    @classmethod
+    def validate_fine_tuning_job(
+        cls,
+        job_obj,
+        *,
+        expected_job_id: Optional[str] = None,
+        expected_model: Optional[str] = None,
+        expected_status: Optional[str] = None,
+    ):
+        assert job_obj is not None
+        assert job_obj.id is not None
+        assert job_obj.model is not None
+        assert job_obj.created_at is not None
+        assert job_obj.status is not None
+        assert job_obj.training_file is not None
+
+        TestBase.assert_equal_or_not_none(job_obj.id, expected_job_id)
+        TestBase.assert_equal_or_not_none(job_obj.model, expected_model)
+        TestBase.assert_equal_or_not_none(job_obj.status, expected_status)
+
+    def _request_callback(self, pipeline_request) -> None:
+        self.pipeline_request = pipeline_request  # pylint: disable=attribute-defined-outside-init
+
+    @staticmethod
+    def _are_json_equal(json_str1: str, json_str2: str) -> bool:
+        try:
+            obj1 = json.loads(json_str1)
+            obj2 = json.loads(json_str2)
+            return obj1 == obj2
+        except json.JSONDecodeError as e:
+            print(f"Invalid JSON: {e}")
+            return False

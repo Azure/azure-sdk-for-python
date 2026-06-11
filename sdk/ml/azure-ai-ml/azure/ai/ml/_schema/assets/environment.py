@@ -8,7 +8,7 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump, pre_load
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     InferenceContainerProperties,
     OperatingSystemType,
     Route,

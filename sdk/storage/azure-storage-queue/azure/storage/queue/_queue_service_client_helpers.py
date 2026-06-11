@@ -9,7 +9,11 @@ from urllib.parse import urlparse
 from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import (
+        AzureNamedKeyCredential,
+        AzureSasCredential,
+        TokenCredential,
+    )
     from azure.core.credentials_async import AsyncTokenCredential
     from urllib.parse import ParseResult
 

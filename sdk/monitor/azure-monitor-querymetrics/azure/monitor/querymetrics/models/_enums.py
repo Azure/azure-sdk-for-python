@@ -28,8 +28,8 @@ class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MILLI_SECONDS = "MilliSeconds"
     """Unit of time in 1/1000th of a second."""
     BYTE_SECONDS = "ByteSeconds"
-    """Unit of data transfer or storage. It is the size of the data in bytes
-    multiplied by the time it takes to transfer or store the data in seconds."""
+    """Unit of data transfer or storage. It is the size of the data in bytes multiplied by the time it
+    takes to transfer or store the data in seconds."""
     UNSPECIFIED = "Unspecified"
     """No specified unit."""
     CORES = "Cores"

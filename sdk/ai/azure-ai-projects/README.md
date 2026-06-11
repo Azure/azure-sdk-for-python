@@ -1,24 +1,55 @@
 # Azure AI Projects client library for Python
 
-The AI Projects client library (in preview) is part of the Azure AI Foundry SDK, and provides easy access to
-resources in your Azure AI Foundry Project. Use it to:
+The AI Projects client library is part of the Microsoft Foundry SDK, and provides easy access to
+resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
-* **Create and run Agents** using methods on the `.agents` client property.
-* **Get an AzureOpenAI client** using the `.get_openai_client()` client method.
-* **Run Evaluations** to assess the performance of generative AI applications, using the `.evaluations` operations.
-* **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
-* **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
-* **Upload documents and create Datasets** to reference them using the `.datasets` operations.
-* **Create and enumerate Search Indexes** using methods the `.indexes` operations.
+* **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents** (Preview), which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
+* **Enhance Agents with specialized tools**:
+  * Agent-to-Agent (A2A) (Preview)
+  * Azure AI Search
+  * Azure Functions
+  * Bing Custom Search (Preview)
+  * Bing Grounding
+  * Browser Automation (Preview)
+  * Code Interpreter
+  * Computer Use (Preview)
+  * Fabric IQ (Preview)
+  * File Search
+  * Function Tool
+  * Image Generation
+  * Memory Search (Preview)
+  * Microsoft Fabric (Preview)
+  * Microsoft SharePoint (Preview)
+  * Model Context Protocol (MCP)
+  * OpenAPI
+  * Toolbox Search (Preview)
+  * Web Search
+  * Web Search (Preview)
+  * Work IQ (Preview)
+* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
+* **Fine-tune** AI Models on your data.
+* **Enumerate AI Models** deployed to your Foundry Project using `.deployments` operations.
+* **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
+* **Upload documents and create Datasets** to reference them using `.datasets` operations.
+* **Create and enumerate Search Indexes** using `.indexes` operations.
+* **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using `.evaluation_rules`,
+`.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
+* **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.
+* **Register and manage local AI model weights (preview)** using `.beta.models` operations.
+* **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
+* **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
+* **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
+* **Create and version toolboxes (preview)** that bundle collections of tools and skills for your agents, using `.beta.toolboxes` operations.
 
-The client library uses version `2025-05-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
+The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
-[Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
+[Microsoft Foundry](https://ai.azure.com/)
+| [Documentation](https://aka.ms/azsdk/azure-ai-projects-v2/product-doc)
 | [Samples][samples]
-| [API reference](https://aka.ms/azsdk/azure-ai-projects/python/reference)
-| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
-| [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
-| [Release history](https://aka.ms/azsdk/azure-ai-projects/python/release-history)
+| [API reference](https://aka.ms/azsdk/azure-ai-projects-v2/python/api-reference)
+| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects-v2/python/package)
+| [SDK source code](https://aka.ms/azsdk/azure-ai-projects-v2/python/code)
+| [Release history](https://aka.ms/azsdk/azure-ai-projects-v2/python/release-history)
 
 ## Reporting issues
 
@@ -28,12 +59,12 @@ To report an issue with the client library, or request additional features, plea
 
 ### Prerequisite
 
-- Python 3.9 or later.
-- An [Azure subscription][azure_sub].
-- A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-- The project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Azure AI Foundry Project overview page. Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
-- An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
+* Python 3.9 or later.
+* An [Azure subscription][azure_sub].
+* A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
+* A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
+* Client authentication is done using Entra ID. To authenticate, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
+  * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
 
@@ -43,34 +74,41 @@ To report an issue with the client library, or request additional features, plea
 pip install azure-ai-projects
 ```
 
-Note that the dependent package [azure-ai-agents](https://pypi.org/project/azure-ai-agents/) will be install as a result, if not already installed, to support `.agent` operations on the client.
+Verify that you have version 2.2.0 or above installed by running:
+
+```bash
+pip show azure-ai-projects
+```
 
 ## Key concepts
 
 ### Create and authenticate the client with Entra ID
 
-Entra ID is the only authentication method supported at the moment by the client.
+Entra ID is the only authentication method currently supported by the client.
 
-To construct a synchronous client:
+To construct a synchronous client using a context manager:
 
 ```python
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-)
+with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(
+        endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"],
+        credential=credential
+    ) as project_client,
+):
 ```
 
-To construct an asynchronous client, Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
 
 ```bash
 pip install aiohttp
 ```
 
-and update the code above to import `asyncio`, import `AIProjectClient` from the `azure.ai.projects.aio` package, and import `DefaultAzureCredential` from the `azure.identity.aio` package:
+and run:
 
 ```python
 import os
@@ -78,375 +116,82 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
-project_client = AIProjectClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-)
+async with (
+    DefaultAzureCredential() as credential,
+    AIProjectClient(
+        endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"],
+        credential=credential
+    ) as project_client,
+):
+```
+### Performing Responses operations using OpenAI client
+
+Use the `.get_openai_client()` method to obtain an authenticated [OpenAI](https://github.com/openai/openai-python) client and run Responses, Conversations, Evaluations, Files, and Fine-Tuning operations. See the **responses**, **agents**, **evaluations**, **files**, and **finetuning** folders in the [samples][samples] for complete working examples.
+
+The code below assumes the environment variable `FOUNDRY_MODEL_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See first column titled "Name" in the "Deployed models" table in your Foundry Project.
+
+<!-- SNIPPET:sample_responses_basic.responses -->
+
+```python
+with project_client.get_openai_client() as openai_client:
+    response = openai_client.responses.create(
+        model=os.environ["FOUNDRY_MODEL_NAME"],
+        input="What is the size of France in square miles?",
+    )
+    print(f"Response output: {response.output_text}")
+
+    response = openai_client.responses.create(
+        model=os.environ["FOUNDRY_MODEL_NAME"],
+        input="And what is the capital city?",
+        previous_response_id=response.id,
+    )
+    print(f"Response output: {response.output_text}")
 ```
 
-**Note:** Support for project connection string and hub-based projects has been discontinued. We recommend creating a new Azure AI Foundry resource utilizing project endpoint. If this is not possible, please pin the version of `azure-ai-projects` to `1.0.0b10` or earlier.
+<!-- END SNIPPET -->
+
+See the **responses** folder in the [samples][samples] for additional samples including streaming responses.
+
+### Agents
+
+See Foundry documentation:
+* **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quick-starts.
+* **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
+* **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
+* **[SDK samples folder][samples]** — fully runnable Python code for synchronous and asynchronous clients covering all operations below.
 
 ## Examples
 
-### Performing Agent operations
-
-The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an Agent and delete it. To see what you can do with the Agent you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) and the [README.md](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) file of the dependent `azure-ai-agents` package.
-
-The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
-
-<!-- SNIPPET:sample_agents.agents_sample -->
-
-```python
-agent = project_client.agents.create_agent(
-    model=model_deployment_name,
-    name="my-agent",
-    instructions="You are helpful agent",
-)
-print(f"Created agent, agent ID: {agent.id}")
-
-# Do something with your Agent!
-# See samples here https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples
-
-project_client.agents.delete_agent(agent.id)
-print("Deleted agent")
-```
-
-<!-- END SNIPPET -->
-
-### Get an authenticated AzureOpenAI client
-
-Your Azure AI Foundry project may have one or more AI models deployed that support chat completions or responses.
-These could be OpenAI models, Microsoft models, or models from other providers.
-Use the code below to get an authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai)
-from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions or responses calls.
-
-The code below assumes the following:
-
-* `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your
-Foundry Project, or a connected Azure OpenAI resource. As shown in the "Models + endpoints" tab, under the "Name" column.
-* `connection_name` (a string) is defined. It's the name of the connection to a resource of type "Azure OpenAI", as shown in the "Connected resources" tab, under the "Name" column, in the "Management Center" of your Foundry Project.
-
-Update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs).
-
-#### Chat completions with AzureOpenAI client
-
-<!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_chat_completions_sample-->
-
-```python
-print(
-    "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation:"
-)
-with project_client.get_openai_client(api_version="2024-10-21") as client:
-
-    response = client.chat.completions.create(
-        model=model_deployment_name,
-        messages=[
-            {
-                "role": "user",
-                "content": "How many feet are in a mile?",
-            },
-        ],
-    )
-
-    print(response.choices[0].message.content)
-
-print(
-    "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a chat completion operation:"
-)
-with project_client.get_openai_client(api_version="2024-10-21", connection_name=connection_name) as client:
-
-    response = client.chat.completions.create(
-        model=model_deployment_name,
-        messages=[
-            {
-                "role": "user",
-                "content": "How many feet are in a mile?",
-            },
-        ],
-    )
-
-    print(response.choices[0].message.content)
-```
-
-<!-- END SNIPPET -->
-
-See the "inference" folder in the [package samples][samples] for additional samples.
-
-#### Responses with AzureOpenAI client
-
-<!-- SNIPPET:sample_responses_with_azure_openai_client.aoai_responses_sample-->
-
-```python
-print(
-    "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a 'responses' operation:"
-)
-with project_client.get_openai_client(api_version="2025-04-01-preview") as client:
-
-    response = client.responses.create(
-        model=model_deployment_name,
-        input="How many feet are in a mile?",
-    )
-
-    print(response.output_text)
-
-print(
-    "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a 'responses' operation:"
-)
-with project_client.get_openai_client(
-    api_version="2025-04-01-preview", connection_name=connection_name
-) as client:
-
-    response = client.responses.create(
-        model=model_deployment_name,
-        input="How many feet are in a mile?",
-    )
-
-    print(response.output_text)
-```
-
-<!-- END SNIPPET -->
-
-See the "inference" folder in the [package samples][samples] for additional samples.
-
-### Deployments operations
-
-The code below shows some Deployments operations, which allow you to enumerate the AI models deployed to your AI Foundry Projects. These models can be seen in the "Models + endpoints" tab in your AI Foundry Project. Full samples can be found under the "deployment" folder in the [package samples][samples].
-
-<!-- SNIPPET:sample_deployments.deployments_sample-->
-
-```python
-print("List all deployments:")
-for deployment in project_client.deployments.list():
-    print(deployment)
-
-print(f"List all deployments by the model publisher `{model_publisher}`:")
-for deployment in project_client.deployments.list(model_publisher=model_publisher):
-    print(deployment)
-
-print(f"List all deployments of model `{model_name}`:")
-for deployment in project_client.deployments.list(model_name=model_name):
-    print(deployment)
-
-print(f"Get a single deployment named `{model_deployment_name}`:")
-deployment = project_client.deployments.get(model_deployment_name)
-print(deployment)
-
-# At the moment, the only deployment type supported is ModelDeployment
-if isinstance(deployment, ModelDeployment):
-    print(f"Type: {deployment.type}")
-    print(f"Name: {deployment.name}")
-    print(f"Model Name: {deployment.model_name}")
-    print(f"Model Version: {deployment.model_version}")
-    print(f"Model Publisher: {deployment.model_publisher}")
-    print(f"Capabilities: {deployment.capabilities}")
-    print(f"SKU: {deployment.sku}")
-    print(f"Connection Name: {deployment.connection_name}")
-```
-
-<!-- END SNIPPET -->
-
-### Connections operations
-
-The code below shows some Connection operations, which allow you to enumerate the Azure Resources connected to your AI Foundry Projects. These connections can be seen in the "Management Center", in the "Connected resources" tab in your AI Foundry Project. Full samples can be found under the "connections" folder in the [package samples][samples].
-
-<!-- SNIPPET:sample_connections.connections_sample-->
-
-```python
-print("List all connections:")
-for connection in project_client.connections.list():
-    print(connection)
-
-print("List all connections of a particular type:")
-for connection in project_client.connections.list(
-    connection_type=ConnectionType.AZURE_OPEN_AI,
-):
-    print(connection)
-
-print("Get the default connection of a particular type, without its credentials:")
-connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
-print(connection)
-
-print("Get the default connection of a particular type, with its credentials:")
-connection = project_client.connections.get_default(
-    connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True
-)
-print(connection)
-
-print(f"Get the connection named `{connection_name}`, without its credentials:")
-connection = project_client.connections.get(connection_name)
-print(connection)
-
-print(f"Get the connection named `{connection_name}`, with its credentials:")
-connection = project_client.connections.get(connection_name, include_credentials=True)
-print(connection)
-```
-
-<!-- END SNIPPET -->
-
-### Dataset operations
-
-The code below shows some Dataset operations. Full samples can be found under the "datasets"
-folder in the [package samples][samples].
-
-<!-- SNIPPET:sample_datasets.datasets_sample-->
-
-```python
-print(
-    f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
-)
-dataset: DatasetVersion = project_client.datasets.upload_file(
-    name=dataset_name,
-    version=dataset_version_1,
-    file_path=data_file,
-    connection_name=connection_name,
-)
-print(dataset)
-
-print(
-    f"Upload files in a folder (including sub-folders) and create a new version `{dataset_version_2}` in the same Dataset, to reference the files."
-)
-dataset = project_client.datasets.upload_folder(
-    name=dataset_name,
-    version=dataset_version_2,
-    folder=data_folder,
-    connection_name=connection_name,
-    file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
-)
-print(dataset)
-
-print(f"Get an existing Dataset version `{dataset_version_1}`:")
-dataset = project_client.datasets.get(name=dataset_name, version=dataset_version_1)
-print(dataset)
-
-print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
-dataset_credential = project_client.datasets.get_credentials(name=dataset_name, version=dataset_version_1)
-print(dataset_credential)
-
-print("List latest versions of all Datasets:")
-for dataset in project_client.datasets.list():
-    print(dataset)
-
-print(f"Listing all versions of the Dataset named `{dataset_name}`:")
-for dataset in project_client.datasets.list_versions(name=dataset_name):
-    print(dataset)
-
-print("Delete all Dataset versions created above:")
-project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
-project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
-```
-
-<!-- END SNIPPET -->
-
-### Indexes operations
-
-The code below shows some Indexes operations. Full samples can be found under the "indexes"
-folder in the [package samples][samples].
-
-<!-- SNIPPET:sample_indexes.indexes_sample-->
-
-```python
-print(
-    f"Create Index `{index_name}` with version `{index_version}`, referencing an existing AI Search resource:"
-)
-index = project_client.indexes.create_or_update(
-    name=index_name,
-    version=index_version,
-    index=AzureAISearchIndex(connection_name=ai_search_connection_name, index_name=ai_search_index_name),
-)
-print(index)
-
-print(f"Get Index `{index_name}` version `{index_version}`:")
-index = project_client.indexes.get(name=index_name, version=index_version)
-print(index)
-
-print("List latest versions of all Indexes:")
-for index in project_client.indexes.list():
-    print(index)
-
-print(f"Listing all versions of the Index named `{index_name}`:")
-for index in project_client.indexes.list_versions(name=index_name):
-    print(index)
-
-print(f"Delete Index `{index_name}` version `{index_version}`:")
-project_client.indexes.delete(name=index_name, version=index_version)
-```
-
-<!-- END SNIPPET -->
-
-### Evaluation
-
-Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
-
-The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
-
-<!-- SNIPPET:sample_evaluations.evaluations_sample-->
-
-```python
-print("Upload a single file and create a new Dataset to reference the file.")
-dataset: DatasetVersion = project_client.datasets.upload_file(
-    name=dataset_name,
-    version=dataset_version,
-    file_path=data_file,
-    connection_name=connection_name,
-)
-print(dataset)
-
-print("Create an evaluation")
-evaluation: Evaluation = Evaluation(
-    display_name="Sample Evaluation Test",
-    description="Sample evaluation for testing",
-    # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-    data=InputDataset(id=dataset.id if dataset.id else ""),
-    evaluators={
-        "relevance": EvaluatorConfiguration(
-            id=EvaluatorIds.RELEVANCE.value,
-            init_params={
-                "deployment_name": model_deployment_name,
-            },
-            data_mapping={
-                "query": "${data.query}",
-                "response": "${data.response}",
-            },
-        ),
-        "violence": EvaluatorConfiguration(
-            id=EvaluatorIds.VIOLENCE.value,
-            init_params={
-                "azure_ai_project": endpoint,
-            },
-        ),
-        "bleu_score": EvaluatorConfiguration(
-            id=EvaluatorIds.BLEU_SCORE.value,
-        ),
-    },
-)
-
-evaluation_response: Evaluation = project_client.evaluations.create(
-    evaluation,
-    headers={
-        "model-endpoint": model_endpoint,
-        "model-api-key": model_api_key,
-    },
-)
-print(evaluation_response)
-
-print("Get evaluation")
-get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
-print(get_evaluation_response)
-
-print("List evaluations")
-for evaluation in project_client.evaluations.list():
-    print(evaluation)
-```
-
-<!-- END SNIPPET -->
-
-## Tracing
-
-The AI Projects client library can be configured to emit OpenTelemetry traces for all its REST API calls. These can be viewed in the "Tracing" tab in your AI Foundry Project page, once you add an Application Insights resource and configured your application appropriately. Agent operations (via the `.agents` property) can also be instrumented, as well as OpenAI client library operations (client created by calling `get_openai_client()` method). For local debugging purposes, traces can also be omitted to the console. For more information see:
-
-* [Trace AI applications using OpenAI SDK](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application)
-* Chat-completion samples with console or Azure Monitor tracing enabled. See `samples\inference\azure-openai` folder.
-* The Tracing section in the [README.md file of the azure-ai-agents package](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/README.md#tracing).
+The table below lists the operation groups supported by the client library, with links to Foundry documentation and relevant [samples][samples] sub-folder. Additional documentation and samples may have been added after this package was released to cover the empty cells below.
+
+| Topic | Foundry documentation | Samples folder |
+|---|---|---|
+| Agents (create, run, stream) | [Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview) | `samples/agents/` |
+| Hosted agents (preview) | [Hosted agents concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents), [Deploy your first hosted agent](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent) | `samples/hosted_agents/` |
+| Agents tools | [Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog) | `samples/agents/tools/` |
+| Connections | [Add a new connection to your project](https://learn.microsoft.com/azure/foundry/how-to/connections-add?tabs=foundry-portal)| `samples/connections/` |
+| Datasets | | `samples/datasets/` |
+| Deployments | [Deployment types](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/deployment-types) | `samples/deployments/` |
+| Evaluation | [Evaluate agents](https://learn.microsoft.com/azure/foundry/observability/how-to/evaluate-agent) | `samples/evaluations/` |
+| Files (upload, retrieve, list, delete) | [OpenAI Files API](https://platform.openai.com/docs/api-reference/files) | `samples/files/` |
+| Fine-tuning | [When to use fine-tuning](https://learn.microsoft.com/azure/foundry/openai/concepts/fine-tuning-considerations), [Fine-Tuning in AI Foundry (GitHub repo)](https://github.com/microsoft-foundry/fine-tuning) | `samples/finetuning/` |
+| Indexes | [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search) | `samples/indexes/` |
+| Memory stores (preview) | | `samples/memories/` |
+| Models (preview) | | `samples/models/` |
+| Red teams (preview) | | `samples/red_team/` |
+| Responses | [Responses API](https://platform.openai.com/docs/api-reference/responses) | `samples/responses/` |
+| Routines (preview) | | |
+| Skills (preview) | | `samples/hosted_agents/` |
+| Toolboxes (preview) | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/` |
+
+
+## Client-side tracing
+
+See [Add client-side tracing to Foundry agents (preview)](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python).
+
+**Important:** GenAI tracing instrumentation is an experimental preview feature. Spans, attributes, and events may be modified in future versions. 
+
+Samples can be found in the sub-folders `agents/telemetry` and `telemetry` in the [Samples][samples] folder.
 
 ## Troubleshooting
 
@@ -475,14 +220,22 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The SDK logs HTTP request and response details, which may be useful in troubleshooting. To log to stdout, add the following at the top of your Python script:
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The logs include HTTP request and response headers and body, which are often useful when troubleshooting or reporting an issue to Microsoft.
+
+#### Default console logging
+
+To turn on client console logging define the environment variable `AZURE_AI_PROJECTS_CONSOLE_LOGGING=true` before running your Python script. Authentication bearer tokens are automatically redacted from the log. Your log may contain other sensitive information, so be sure to remove it before sharing the log with others.
+
+#### Customizing your log
+
+Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format and destination. To log to `stdout`, add the following at the top of your Python script:
 
 ```python
 import sys
 import logging
 
 # Acquire the logger for this client library. Use 'azure' to affect both
-# 'azure.core` and `azure.ai.inference' libraries.
+# `azure.core` and `azure.ai.projects' libraries.
 logger = logging.getLogger("azure")
 
 # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
@@ -504,14 +257,14 @@ By default logs redact the values of URL query strings, the values of some HTTP 
 ```python
 project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
-    endpoint=os.environ["PROJECT_ENDPOINT"],
+    endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"],
     logging_enable=True
 )
 ```
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
 
-Be sure to protect non redacted logs to avoid compromising security.
+Be sure to protect non-redacted logs to avoid compromising security.
 
 For more information, see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
 
@@ -521,26 +274,17 @@ To report an issue with the client library, or request additional features, plea
 
 ## Next steps
 
-Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
+Have a look at the [Samples][samples] folder, containing fully runnable Python code for synchronous and asynchronous clients.
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Most contributions require
-you to agree to a Contributor License Agreement (CLA) declaring that you have
-the right to, and actually do, grant us the rights to use your contribution.
-For details, visit https://cla.microsoft.com.
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
 
-When you submit a pull request, a CLA-bot will automatically determine whether
-you need to provide a CLA and decorate the PR appropriately (e.g., label,
-comment). Simply follow the instructions provided by the bot. You will only
-need to do this once across all repos using our CLA.
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the
-[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
-additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information, see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
-[samples]: https://aka.ms/azsdk/azure-ai-projects/python/samples/
+[samples]: https://aka.ms/azsdk/azure-ai-projects-v2/python/samples/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/

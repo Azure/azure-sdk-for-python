@@ -28,12 +28,18 @@ import time
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
+from . import _retry_utility_async
+from ._asynchronous_availability_strategy_handler import execute_with_availability_strategy
 from .. import exceptions
 from .. import http_constants
-from . import _retry_utility_async
+from .._availability_strategy_config import CrossRegionHedgingStrategy
+from .._constants import _Constants
+from .._request_object import RequestObject
+from .._response_decoding import decode_response_body_for_status
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
+from ..documents import _OperationType
 
-
+# cspell:ignore ppaf
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 
@@ -49,8 +55,17 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     :rtype: tuple of (dict, dict)
 
     """
-    # pylint: disable=protected-access
-
+    # pylint: disable=protected-access, too-many-branches
+    kwargs.pop(_Constants.OperationStartTime, None)
+    # Pop internal flags that should not be passed to the HTTP layer
+    kwargs.pop("_internal_pk_range_fetch", None)
+    # Sidecar mutable list (length 1) used by the /pkranges change-feed drain
+    # loop in ``routing_map_provider`` to observe the raw HTTP status without
+    # parsing headers. We populate ``status_capture[0]`` after the response is
+    # received, so callers can implement a literal ``status == 304`` drain
+    # termination check (matching peer SDKs) instead of relying on
+    # ``AsyncItemPaged`` materializing 304 as an empty page.
+    status_capture = kwargs.pop("_internal_response_status_capture", None)
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
@@ -80,8 +95,9 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
-            # Circuit breaker is applicable, so we need to use the endpoint from the request
+        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
+                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+            # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):
@@ -129,11 +145,33 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         )
 
     response = response.http_response
+    if status_capture is not None:
+        # Length-1 list pattern: written-into by _Request, read by caller
+        # after _ReadPartitionKeyRanges returns. Set before any raise so a
+        # 304 (which never raises -- only >= 400 does) and a 4xx/5xx both
+        # surface the wire status to drain-loop observers.
+        status_capture[0] = response.status_code
     headers = copy.copy(response.headers)
 
     data = response.body()
     if data:
-        data = data.decode("utf-8")
+        try:
+            data = decode_response_body_for_status(
+                data, response.status_code, request_params.operation_type
+            )
+        except UnicodeDecodeError as decode_err:
+            # Only reachable when status is < 400 and strict decode is
+            # still in effect. ``decode_response_body_for_status`` never
+            # lets malformed UTF-8 escape on status >= 400, and it honors
+            # REPLACE/IGNORE env fallback before this point. Surface as a
+            # typed SDK decode exception so wire status (e.g. 200) and
+            # response metadata are preserved verbatim; the decoder error
+            # remains available via __cause__.
+            raise DecodeError(
+                message="Failed to decode response body as UTF-8: {0}".format(decode_err.reason),
+                response=response,
+                error=decode_err,
+            ) from decode_err
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
@@ -162,6 +200,21 @@ async def _PipelineRunFunction(pipeline_client, request, **kwargs):
 
     return await pipeline_client._pipeline.run(request, **kwargs)
 
+
+def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
+    """Determine if availability strategy should be applied to the request.
+
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
+    :returns: True if availability strategy should be applied, False otherwise
+    :rtype: bool
+    """
+    return (request_params.availability_strategy is not None and
+            not request_params.is_hedging_request and
+            request_params.resource_type == http_constants.ResourceType.Document and
+            (not _OperationType.IsWriteOperation(request_params.operation_type) or
+             request_params.retry_write > 0))
+
 async def AsynchronousRequest(
     client,
     request_params,
@@ -175,7 +228,8 @@ async def AsynchronousRequest(
     """Performs one asynchronous http request according to the parameters.
 
     :param object client: Document client instance
-    :param dict request_params:
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
     :param _GlobalEndpointManager global_endpoint_manager:
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.
@@ -186,9 +240,35 @@ async def AsynchronousRequest(
     """
     request.data = _request_body_from_data(request_data)
     if request.data and isinstance(request.data, str):
-        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+        # Use UTF-8 byte length, not str length (code-point count), so the
+        # header matches the bytes the transport actually writes for any
+        # non-ASCII payload.
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data.encode("utf-8"))
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
+
+    if request_params.availability_strategy is None:
+        # if ppaf is enabled, then hedging is enabled by default
+        if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
+            request_params.availability_strategy = CrossRegionHedgingStrategy()
+
+    # Handle hedging if strategy is configured
+    if _is_availability_strategy_applicable(request_params):
+        return await execute_with_availability_strategy(
+            request_params,
+            global_endpoint_manager,
+            request,
+            lambda req_param, r: _retry_utility_async.ExecuteAsync(
+                client,
+                global_endpoint_manager,
+                _Request,
+                req_param,
+                connection_policy,
+                pipeline_client,
+                r,
+                **kwargs
+            )
+        )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return await _retry_utility_async.ExecuteAsync(

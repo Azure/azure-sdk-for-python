@@ -68,9 +68,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
     4. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.aio.SharedTokenCacheCredential` for more details.
-    5. The identity currently logged in to the Azure CLI.
-    6. The identity currently logged in to Azure PowerShell.
-    7. The identity currently logged in to the Azure Developer CLI.
+    5. The identity logged in to Visual Studio Code with the Azure Resources extension.
+    6. The identity currently logged in to the Azure CLI.
+    7. The identity currently logged in to Azure PowerShell.
+    8. The identity currently logged in to the Azure Developer CLI.
+    9. Brokered authentication. On Windows and WSL only, this uses the default account logged in via
+       Web Account Manager (WAM) if the `azure-identity-broker` package is installed.
 
     This default behavior is configurable with keyword arguments.
 
@@ -86,15 +89,18 @@ class DefaultAzureCredential(ChainedTokenCredential):
         variables from the credential. Defaults to **False**.
     :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
     :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
-        Defaults to **True**.
+        Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
         Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
-    :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
-        of the environment variable AZURE_CLIENT_ID, if any. If not specified, the pod's default identity will be used.
+        Explicitly passing `None` overrides the AZURE_CLIENT_ID environment variable and forces use of a
+        system-assigned identity.
+    :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the
+        value of `managed_identity_client_id` if specified, otherwise the value of the environment variable
+        AZURE_CLIENT_ID, if any. If not specified, the pod's default identity will be used.
     :keyword str workload_identity_tenant_id: Preferred tenant for :class:`~azure.identity.WorkloadIdentityCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.aio.SharedTokenCacheCredential`.

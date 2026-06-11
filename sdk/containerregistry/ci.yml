@@ -35,3 +35,5 @@ extends:
       safeName: azuremgmtcontainerregistry
     - name: azure-containerregistry
       safeName: azurecontainerregistry
+    - name: azure-mgmt-containerregistrytasks
+      safeName: azuremgmtcontainerregistrytasks

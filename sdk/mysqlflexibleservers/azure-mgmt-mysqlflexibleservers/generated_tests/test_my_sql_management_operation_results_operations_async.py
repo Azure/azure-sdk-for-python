@@ -25,7 +25,7 @@ class TestMySQLManagementOperationResultsOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.operation_results.get(
             location_name="str",
             operation_id="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

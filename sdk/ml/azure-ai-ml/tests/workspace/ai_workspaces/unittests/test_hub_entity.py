@@ -10,7 +10,7 @@ class TestProjectEntity:
     def test_project_schema_manipulation(self) -> None:
         hub = load_workspace(source="./tests/test_configs/workspace/ai_workspaces/aihub_min.yml")
         assert hub is not None
-        assert type(hub) == Hub
+        assert isinstance(hub, Hub)
         assert hub.name == "hub_name"
         assert hub.location == "WestCentralUS"
         assert (

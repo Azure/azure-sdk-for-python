@@ -32,11 +32,11 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_get_model_evaluation_summary_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
 
-async def sample_get_model_evaluation_summary_async():
+async def sample_get_model_eval_summary_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -68,7 +68,9 @@ async def sample_get_model_evaluation_summary_async():
             # Per-entity details
             ent_map = entities_summary.entities or {}
             for entity_name, entity_summary in ent_map.items():
-                print(f"Entity '{entity_name}': F1 = {entity_summary.f1}, Precision = {entity_summary.precision}, Recall = {entity_summary.recall}")
+                print(
+                    f"Entity '{entity_name}': F1 = {entity_summary.f1}, Precision = {entity_summary.precision}, Recall = {entity_summary.recall}"
+                )
                 print(
                     f"  True Positives: {entity_summary.true_positive_count}, "
                     f"True Negatives: {entity_summary.true_negative_count}"
@@ -95,7 +97,9 @@ async def sample_get_model_evaluation_summary_async():
             # Per-intent details
             intent_map = intents_summary.intents or {}
             for intent_name, intent_summary in intent_map.items():
-                print(f"Intent '{intent_name}': F1 = {intent_summary.f1}, Precision = {intent_summary.precision}, Recall = {intent_summary.recall}")
+                print(
+                    f"Intent '{intent_name}': F1 = {intent_summary.f1}, Precision = {intent_summary.precision}, Recall = {intent_summary.recall}"
+                )
                 print(
                     f"  True Positives: {intent_summary.true_positive_count}, "
                     f"True Negatives: {intent_summary.true_negative_count}"
@@ -105,10 +109,12 @@ async def sample_get_model_evaluation_summary_async():
                     f"False Negatives: {intent_summary.false_negative_count}"
                 )
 
+
 # [END conversation_authoring_get_model_evaluation_summary_async]
 
+
 async def main():
-    await sample_get_model_evaluation_summary_async()
+    await sample_get_model_eval_summary_async()
 
 
 if __name__ == "__main__":

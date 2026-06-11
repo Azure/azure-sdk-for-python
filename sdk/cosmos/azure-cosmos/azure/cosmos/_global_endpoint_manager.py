@@ -26,7 +26,7 @@ import logging
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Callable, Any
+from typing import Callable, Any, Optional
 
 from azure.core.exceptions import AzureError
 
@@ -34,7 +34,7 @@ from . import _constants as constants
 from . import exceptions
 from ._request_object import RequestObject
 from .documents import DatabaseAccount
-from ._location_cache import LocationCache
+from ._location_cache import LocationCache, RegionalRoutingContext
 from ._utils import current_time_millis
 
 
@@ -91,6 +91,38 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_ordered_read_locations(self):
         return self.location_cache.get_ordered_read_locations()
 
+    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
+        """Get the list of applicable read endpoints based on request parameters and excluded locations.
+
+        :param request: Request object containing operation parameters and exclusion lists
+        :type request: RequestObject
+        :returns: List of regional routing contexts available for read operations
+        :rtype: List[RegionalRoutingContext]
+        """
+        return self.location_cache._get_applicable_read_regional_routing_contexts(request)
+
+    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
+        """Get the list of applicable write endpoints based on request parameters and excluded locations.
+
+        :param request: Request object containing operation parameters and exclusion lists
+        :type request: RequestObject
+        :returns: List of regional routing contexts available for write operations
+        :rtype: List[RegionalRoutingContext]
+        """
+        return self.location_cache._get_applicable_write_regional_routing_contexts(request)
+
+    def get_region_name(self, endpoint: str, is_write_operation: bool) -> Optional[str]:
+        """Get the region name associated with an endpoint.
+
+        :param endpoint: The endpoint URL to get the region name for
+        :type endpoint: str
+        :param is_write_operation: Whether the endpoint is being used for write operations
+        :type is_write_operation: bool
+        :returns: The region name associated with the endpoint, or None if not found
+        :rtype: Optional[str]
+        """
+        return self.location_cache.get_region_name(endpoint, is_write_operation)
+
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
 
@@ -142,6 +174,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     # background full refresh (database account + health checks)
                     self._start_background_refresh(self._refresh_database_account_and_health, kwargs)
                 else:
+                    # Fetch database account if not provided or explicitly None
+                    # This ensures callers can pass None and still get correct behavior
+                    if database_account is None:
+                        database_account = self._GetDatabaseAccount(**kwargs)
                     self.location_cache.perform_on_database_account_read(database_account)
                     self._start_background_refresh(self._endpoints_health_check, kwargs)
                     self.startup = False
@@ -158,7 +194,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 except Exception as exception: #pylint: disable=broad-exception-caught
                     # background failures should not crash main thread
                     # Intentionally swallow to avoid affecting foreground; logging could be added.
-                    logger.error("Health check task failed: %s", exception, exc_info=True)
+                    logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                        "Health check task failed: %s", exception, exc_info=True)
             t = threading.Thread(target=runner, name="cosmos-endpoint-refresh", daemon=True)
             self._refresh_thread = t
             t.start()
@@ -183,14 +220,18 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except (exceptions.CosmosHttpResponseError, AzureError):
+        except (exceptions.CosmosHttpResponseError, AzureError) as e:
+            if isinstance(e, exceptions.CosmosHttpResponseError):
+                e.endpoint = self.DefaultEndpoint
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
                     return database_account
-                except (exceptions.CosmosHttpResponseError, AzureError):
+                except (exceptions.CosmosHttpResponseError, AzureError) as ex:
+                    if isinstance(ex, exceptions.CosmosHttpResponseError):
+                        ex.endpoint = locational_endpoint
                     self._mark_endpoint_unavailable(locational_endpoint, "_GetDatabaseAccount")
             raise
 

@@ -23,7 +23,7 @@ class TestMySQLManagementGetPrivateDnsZoneSuffixOperationsAsync(AzureMgmtRecorde
     @recorded_by_proxy_async
     async def test_get_private_dns_zone_suffix_execute(self, resource_group):
         response = await self.client.get_private_dns_zone_suffix.execute(
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

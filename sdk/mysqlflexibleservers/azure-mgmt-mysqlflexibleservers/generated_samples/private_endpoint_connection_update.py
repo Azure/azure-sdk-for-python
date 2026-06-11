@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/stable/2024-12-30/examples/PrivateEndpointConnectionUpdate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2025-06-01-preview/examples/PrivateEndpointConnectionUpdate.json
 if __name__ == "__main__":
     main()

@@ -40,6 +40,7 @@ class CosmosHttpResponseError(HttpResponseError):
         """
         self.headers = response.headers if response else {}
         self.sub_status = kwargs.pop('sub_status', None)
+        self.endpoint = kwargs.pop('endpoint', None)
         self.http_error_message = message
         status = status_code or (int(response.status_code) if response else 0)
 
@@ -51,6 +52,14 @@ class CosmosHttpResponseError(HttpResponseError):
 
         super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
         self.status_code = status
+
+    def __str__(self):
+        parts = [super().__str__()]
+        if self.endpoint:
+            parts.append(f"Endpoint: {self.endpoint}")
+        if self.sub_status:
+            parts.append(f"Sub Status: {self.sub_status}")
+        return " , ".join(parts)
 
 
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
@@ -117,8 +126,9 @@ class CosmosBatchOperationError(HttpResponseError):
 class CosmosClientTimeoutError(AzureError):
     """An operation failed to complete within the specified timeout."""
 
-    def __init__(self, **kwargs):
-        message = "Client operation failed to complete within specified timeout."
+    def __init__(self, message=None, **kwargs):
+        if message is None:
+            message = "The request failed to complete within the given timeout."
         self.response = None
         self.history = None
         super(CosmosClientTimeoutError, self).__init__(message, **kwargs)

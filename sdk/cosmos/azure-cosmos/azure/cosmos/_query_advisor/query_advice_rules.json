@@ -1,0 +1,55 @@
+{
+  "url_prefix": "https://aka.ms/CosmosDB/QueryAdvisor/",
+  "rules": {
+    "QA1000": {
+      "name": "PartialArrayContains",
+      "description": "Query uses ARRAY_CONTAINS with the third argument set to true.",
+      "message": "Instead of ARRAY_CONTAINS, consider using EXISTS with a subquery, which may improve performance."
+    },
+    "QA1001": {
+      "name": "DistinctAndJoin",
+      "description": "Query uses Distinct and Join.",
+      "message": "Instead of DISTINCT with a JOIN, consider using EXISTS with a subquery, which may improve performance."
+    },
+    "QA1002": {
+      "name": "Contains",
+      "description": "Query uses CONTAINS.",
+      "message": "If you are matching on a string prefix, consider using STARTSWITH."
+    },
+    "QA1003": {
+      "name": "CaseInsensitiveStartsWithOrStringEquals",
+      "description": "Query uses case-insensitive string search functions STARTSWITH or StringEquals.",
+      "message": "Instead of case-insensitive string search, consider creating a computed property with LOWER on the string field, which may improve performance."
+    },
+    "QA1004": {
+      "name": "CaseInsensitiveEndsWith",
+      "description": "Query uses case-insensitive ENDSWITH.",
+      "message": "Instead of case-insensitive ENDSWITH, consider creating a computed property with REVERSE on the string field, and use STARTSWITH for comparison, which may improve performance."
+    },
+    "QA1005": {
+      "name": "GroupByComputedProperty",
+      "description": "Query uses deterministic scalar expressions in Group By clause.",
+      "message": "Instead of using scalar expressions in GROUP BY clause, consider creating computed properties of these expressions, which may improve performance."
+    },
+    "QA1006": {
+      "name": "UpperLowerComparison",
+      "description": "Query uses Upper or Lower string comparison.",
+      "message": "Consider defining a computed property on the UPPER/LOWER function expression."
+    },
+    "QA1007": {
+      "name": "GetCurrentDateTime",
+      "description": "Query uses GetCurrentDateTime.",
+      "message": "Consider using GetCurrentDateTimeStatic instead of GetCurrentDateTime in the WHERE clause."
+    },
+    "QA1008": {
+      "name": "GetCurrentTicks",
+      "description": "Query uses GetCurrentTicks.",
+      "message": "Consider using GetCurrentTicksStatic instead of GetCurrentTicks in the WHERE clause."
+    },
+    "QA1009": {
+      "name": "GetCurrentTimestamp",
+      "description": "Query uses GetCurrentTimestamp.",
+      "message": "Consider using GetCurrentTimestampStatic instead of GetCurrentTimestamp in the WHERE clause."
+    }
+  }
+}

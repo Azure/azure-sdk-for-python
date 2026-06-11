@@ -1,17 +1,118 @@
 # Release History
 
-## 1.8.2 (Unreleased)
+## 1.8.9 (Unreleased)
 
 ### Features Added
 
+### Breaking Changes
+
+### Bugs Fixed
+- Enforce size limits on browser SDK snippet injection to guard against decompression bombs and oversized HTML response bodies (1 MiB compressed / 5 MiB decompressed caps).
+  ([#47233](https://github.com/Azure/azure-sdk-for-python/pull/47233))
+
+### Other Changes
+- Track live metrics disabling in feature SDKstats
+  ([#47141](https://github.com/Azure/azure-sdk-for-python/pull/47141))
+
+## 1.8.8 (2026-05-14)
+
+### Features Added
+- Move `AZURE_MONITOR_DISTRO_VERSION` env var assignment before exporter imports
+  ([#46869](https://github.com/Azure/azure-sdk-for-python/pull/46869))
+- Set `AZURE_MONITOR_DISTRO_VERSION` environment variable to pass distro version to the exporter
+  ([#46666](https://github.com/Azure/azure-sdk-for-python/pull/46666))
+- Register GenAI main-agent attribution processors to automatically propagate
+  `microsoft.gen_ai.main_agent.*` attributes in multi-agent GenAI systems per [spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/genai_main_agent_attribution.md)
+  ([#46703](https://github.com/Azure/azure-sdk-for-python/pull/46703))
+
+### Breaking Changes
+- Dropped support for Python 3.9. This package now supports Python 3.10+. [Follows upstream otel dropping support](https://github.com/open-telemetry/opentelemetry-python/pull/5076)
+  ([#46695](https://github.com/Azure/azure-sdk-for-python/pull/46695))
+
+### Other Changes
+- Remove deprecated events packages.
+  ([#45684](https://github.com/Azure/azure-sdk-for-python/pull/45684))
+
+## 1.8.7 (2026-03-20)
+
+### Features Added
+- Add Browser SDK loader feature
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
+
+### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes
+  ([#45539](https://github.com/Azure/azure-sdk-for-python/pull/45539))
+- Remove internal import from sample file
+  ([#45619](https://github.com/Azure/azure-sdk-for-python/pull/45619))
+
+## 1.8.6 (2026-02-05)
+
+### Features Added
+
+- Enable live metrics by default
+  ([#44902](https://github.com/Azure/azure-sdk-for-python/pull/44902))
+
+### Breaking Changes
+
+- The default sampling behavior has been changed from ApplicationInsightsSampler with 100% sampling (all traces sampled) to RateLimitedSampler with 5.0 traces per second. This change significantly reduces telemetry volume for high-traffic applications and provides better cost optimization out of the box. Impact: Applications with more than 5 requests per second will see fewer traces exported by default.
+  ([#44925](https://github.com/Azure/azure-sdk-for-python/pull/44925))
+
+### Other Changes
+- Add missing copyright headers and ensure consistent formatting across files.
+  ([#44908](https://github.com/Azure/azure-sdk-for-python/pull/44908))
+
+## 1.8.5 (2026-01-28)
+
+### Features Added
+
+- In double-instrumentation scenarios, surface in the log stream instead of just in diagnostic logs.
+  ([#44682](https://github.com/Azure/azure-sdk-for-python/pull/44682))
+
+### Bugs Fixed
+
+- Fix the format of the fixed percentage sampler constant and ensure backward compatibility
+  ([#44656](https://github.com/Azure/azure-sdk-for-python/pull/44656))
+- Only add PerformanceCounter Processors after PerformanceCounter setup to avoid circular dependency.
+  ([#44661](https://github.com/Azure/azure-sdk-for-python/pull/44661))
+
+ ### Other Changes
+
+- Declare support for Python 3.13 and 3.14
+([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
+
+## 1.8.4 (2026-01-13)
+
+### Features Added
+
+- Added support for OTEL_TRACES_SAMPLER
+  ([#44535](https://github.com/Azure/azure-sdk-for-python/pull/44535))
+- Added ability to add additional Log Record Processors and Metric Readers via configure_azure_monitor
+  ([#44367](https://github.com/Azure/azure-sdk-for-python/pull/44367))
+
+## 1.8.3 (2025-12-04)
+
+### Breaking Changes
+
+- Pin OpenTelemetry versions to guard against upstream logging breaking changes
+  ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
+
+### Bugs Fixed
+
+- Fix default value overriding user-configured sampling ratio in distro
+  ([#44162](https://github.com/Azure/azure-sdk-for-python/pull/44162))
+
+## 1.8.2 (2025-11-14)
+
+### Features Added
+
+- Add `trace_based_sampling` logger parameters to filter logs
+  ([#43811](https://github.com/Azure/azure-sdk-for-python/pull/43811))
 - Performance Counters
   ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
 - Adding more diagnostic log message IDs
   ([#43183](https://github.com/Azure/azure-sdk-for-python/pull/43183))
 - Enable Azure AI Project instrumentation
     ([#43869](https://github.com/Azure/azure-sdk-for-python/pull/43869))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -20,11 +121,10 @@
 - Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
   ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
 
-### Other Changes
-
 ## 1.8.1 (2025-09-17)
 
 ### Bugs Fixed
+
 - Fixed version pinned for opentelemetry-sdk to resolve dependency conflicts.
   ([#43012](https://github.com/Azure/azure-sdk-for-python/pull/43012))
 - Modified ordering of dependencies in setup.py to avoid dependency conflicts in future.
@@ -33,12 +133,14 @@
 ## 1.8.0 (2025-09-08)
 
 ### Features Added
+
 - Added configuration changes for RateLimited Sampler
   ([#41976](https://github.com/Azure/azure-sdk-for-python/pull/41976))
 
 ## 1.7.0 (2025-08-21)
 
 ### Features Added
+
 - Updated README to specify the python version supported by the distro.
   ([#42464](https://github.com/Azure/azure-sdk-for-python/pull/42464))
 

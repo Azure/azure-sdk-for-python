@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-07-25",
+  "apiVersions": {
+    "Microsoft.RedHatOpenShift": "2025-07-25"
+  },
+  "commit": "d0beff06ece5e53277d93233b70d46b703346576",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/OpenShiftClusters",
+  "emitterVersion": "0.62.1"
+}

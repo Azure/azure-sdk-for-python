@@ -93,8 +93,8 @@ class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
-    XPIA = "xpia"
-    GROUNDEDNESS = "generic_groundedness"
+    XPIA = "indirect_attack"
+    GROUNDEDNESS = "groundedness"
     CODE_VULNERABILITY = "code_vulnerability"
     UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
     SENSITIVE_DATA_LEAKAGE = "sensitive_data_leakage"
@@ -108,7 +108,7 @@ class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     enum over time.
     """
 
-    ECI = "eci"
+    ECI = "election_critical_information"
 
 
 # Mapping of evaluation metrics to their scoring patterns
@@ -125,6 +125,8 @@ EVALUATOR_SCORING_PATTERNS: Dict[str, EvaluatorScoringPattern] = {
     "sensitive_data_leakage": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
     "protected_material": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
     "task_adherence": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
+    "code_vulnerability": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
+    "ungrounded_attributes": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
     # 1-5 scale evaluators (quality metrics)
     "coherence": EvaluatorScoringPattern.SCALE_1_5,
     "relevance": EvaluatorScoringPattern.SCALE_1_5,

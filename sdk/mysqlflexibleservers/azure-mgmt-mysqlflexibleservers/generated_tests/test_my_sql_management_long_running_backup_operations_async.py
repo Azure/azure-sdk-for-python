@@ -27,7 +27,22 @@ class TestMySQLManagementLongRunningBackupOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 server_name="str",
                 backup_name="str",
-                api_version="2024-12-30",
+                api_version="2025-06-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_long_running_backup_begin_delete(self, resource_group):
+        response = await (
+            await self.client.long_running_backup.begin_delete(
+                resource_group_name=resource_group.name,
+                server_name="str",
+                backup_name="str",
+                api_version="2025-06-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

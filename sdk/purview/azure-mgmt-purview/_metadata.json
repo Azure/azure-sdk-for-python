@@ -1,0 +1,17 @@
+{
+  "apiVersion": "2024-04-01-preview",
+  "apiVersions": {
+    "Microsoft.Purview": "2024-04-01-preview"
+  },
+  "commit": "b373ded4a6c77a9f541ca8f020fd2072db632751",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/purview/resource-manager/Microsoft.Purview/Purview",
+  "emitterVersion": "0.61.2",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.50.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/purview/resource-manager/Microsoft.Purview/Purview/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/codespace/workspace/sdk --tag=package-2021-07-01 --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/purview/resource-manager/Microsoft.Purview/Purview/readme.md"
+}

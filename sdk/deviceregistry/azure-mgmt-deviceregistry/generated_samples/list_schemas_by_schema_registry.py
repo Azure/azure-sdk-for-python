@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-10-01/List_Schemas_BySchemaRegistry.json
+# x-ms-original-file: 2026-03-01-preview/List_Schemas_BySchemaRegistry.json
 if __name__ == "__main__":
     main()

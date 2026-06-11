@@ -62,7 +62,7 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
     async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessTokenInfo]:
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
-        return cast(AsyncManagedIdentityClient, self._client).get_cached_token(*scopes)
+        return cast(AsyncManagedIdentityClient, self._client).get_cached_token(*scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs) -> AccessTokenInfo:
         return await cast(AsyncManagedIdentityClient, self._client).request_token(*scopes, **kwargs)

@@ -39,10 +39,7 @@ from azure.ai.language.conversations.models import (
     AnalyzeConversationOperationInput,
     PiiOperationAction,
     ConversationPiiActionContent,
-    AnalyzeConversationOperationResult,
     ConversationPiiOperationResult,
-    InputWarning,
-    ConversationError,
 )
 
 
@@ -144,12 +141,6 @@ async def sample_conversation_pii_async():
                                 print(f"  Confidence score: {entity.confidence_score}\n")
                                 entities_detected.append(entity)
 
-                        if conversation.warnings:
-                            print("Warnings:")
-                            for warning in conversation.warnings:
-                                if isinstance(warning, InputWarning):
-                                    print(f"  Code: {warning.code}")
-                                    print(f"  Message: {warning.message}")
                         print()
                 else:
                     print("  [No supported results to display for this action type]")
@@ -159,11 +150,14 @@ async def sample_conversation_pii_async():
             print("\nErrors:")
             for err in d["errors"]:
                 print(f"  Code: {err.code} - {err.message}")
+
+
 # [END conversation_pii_async]
 
 
 async def main():
     await sample_conversation_pii_async()
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Union, cast
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersion
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
@@ -179,11 +179,11 @@ class ParallelComponent(
         return self.resources.instance_count if self.resources and not isinstance(self.resources, dict) else None
 
     @instance_count.setter
-    def instance_count(self, value: int) -> None:
+    def instance_count(self, value: Optional[int]) -> None:
         """Set the value of the promoted property resources.instance_count.
 
         :param value: The value to set for resources.instance_count.
-        :type value: int
+        :type value: Optional[int]
         """
         if not value:
             return
@@ -204,11 +204,11 @@ class ParallelComponent(
         return self.task.code if self.task else None
 
     @code.setter
-    def code(self, value: str) -> None:
+    def code(self, value: Optional[str]) -> None:
         """Set the value of the promoted property task.code.
 
         :param value: The value to set for task.code.
-        :type value: str
+        :type value: Optional[str]
         """
         if not value:
             return

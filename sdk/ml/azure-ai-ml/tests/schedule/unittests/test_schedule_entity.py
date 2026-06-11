@@ -19,9 +19,9 @@ class TestScheduleEntity:
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
 
         def simple_schedule_validation(schedule):
-            assert type(schedule) == JobSchedule
-            assert type(schedule.create_job) == PipelineJob
-            assert type(schedule.trigger) == CronTrigger
+            assert isinstance(schedule, JobSchedule)
+            assert isinstance(schedule.create_job, PipelineJob)
+            assert isinstance(schedule.trigger, CronTrigger)
 
         schedule = verify_entity_load_and_dump(load_schedule, simple_schedule_validation, test_path)[0]
         schedule.properties["test"] = "val"

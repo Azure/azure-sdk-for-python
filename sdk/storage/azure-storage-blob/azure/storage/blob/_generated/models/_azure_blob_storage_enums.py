@@ -29,6 +29,7 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ARCHIVE = "Archive"
     PREMIUM = "Premium"
     COLD = "Cold"
+    SMART = "Smart"
 
 
 class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -49,6 +50,7 @@ class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     ARCHIVE = "Archive"
     COLD = "Cold"
+    SMART = "Smart"
 
 
 class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -69,6 +71,7 @@ class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     ARCHIVE = "Archive"
     COLD = "Cold"
+    SMART = "Smart"
 
 
 class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -87,6 +90,7 @@ class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REHYDRATE_PENDING_TO_HOT = "rehydrate-pending-to-hot"
     REHYDRATE_PENDING_TO_COOL = "rehydrate-pending-to-cool"
     REHYDRATE_PENDING_TO_COLD = "rehydrate-pending-to-cold"
+    REHYDRATE_PENDING_TO_SMART = "rehydrate-pending-to-smart"
 
 
 class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -277,6 +281,9 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_RAGRS = "Standard_RAGRS"
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
+    STANDARD_GZRS = "Standard_GZRS"
+    PREMIUM_ZRS = "Premium_ZRS"
+    STANDARD_RAGZRS = "Standard_RAGZRS"
 
 
 class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -344,7 +351,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COPY_ID_MISMATCH = "CopyIdMismatch"
     FEATURE_VERSION_MISMATCH = "FeatureVersionMismatch"
     INCREMENTAL_COPY_BLOB_MISMATCH = "IncrementalCopyBlobMismatch"
-    INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
+    INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierSnapshotNotAllowed"
     INCREMENTAL_COPY_SOURCE_MUST_BE_SNAPSHOT = "IncrementalCopySourceMustBeSnapshot"
     INFINITE_LEASE_DURATION_REQUIRED = "InfiniteLeaseDurationRequired"
     INVALID_BLOB_OR_BLOCK = "InvalidBlobOrBlock"

@@ -7,6 +7,7 @@ import math
 from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
     ErrorCategory,
@@ -71,6 +72,8 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
     _INVALID_SCORE_MESSAGE = "Tool selection score must be 0 or 1."
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/tool_selection"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -79,11 +82,15 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
+
+        # Initialize input validator
+        self._validator = ToolCallsValidator(error_target=ErrorTarget.TOOL_SELECTION_EVALUATOR)
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
-            threshold=1,
+            threshold=threshold,
             credential=credential,
             **kwargs,
         )
@@ -136,29 +143,36 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_calls = parsed_tool_calls
 
         if not tool_calls:
-            return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
+            # If no tool calls provided and response is string, use response string as tool calls as is
+            if response and isinstance(response, str):
+                tool_calls = response
+            else:
+                return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
 
-        if not isinstance(tool_calls, list):
+        if not isinstance(tool_calls, list) and not isinstance(tool_calls, str):
             tool_calls = [tool_calls]
-        if not isinstance(tool_definitions, list):
+        if not isinstance(tool_definitions, list) and not isinstance(tool_definitions, str):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
-        try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls, tool_definitions, ErrorTarget.TOOL_SELECTION_EVALUATOR
-            )
-        except EvaluationException as e:
-            # Check if this is because no tool definitions were provided at all
-            if len(tool_definitions) == 0:
-                return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
-            else:
-                return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+        if isinstance(tool_calls, str) or isinstance(tool_definitions, str):
+            needed_tool_definitions = tool_definitions
+        else:
+            try:
+                needed_tool_definitions = self._extract_needed_tool_definitions(
+                    tool_calls, tool_definitions, ErrorTarget.TOOL_SELECTION_EVALUATOR
+                )
+            except EvaluationException:
+                # Check if this is because no tool definitions were provided at all
+                if len(tool_definitions) == 0:
+                    return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
+                else:
+                    return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
 
-        if len(needed_tool_definitions) == 0:
+        if not needed_tool_definitions:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
-        # Extract only tool names from tool calls, removing parameters and results
-        tool_names = self._extract_tool_names_from_calls(tool_calls)
+        # Extract only tool names from tool calls, removing parameters and results (skip for strings)
+        tool_names = tool_calls if isinstance(tool_calls, str) else self._extract_tool_names_from_calls(tool_calls)
 
         return {
             "query": query,
@@ -175,17 +189,51 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float]]
         """
-        # Format conversation history for cleaner evaluation
-        if "query" in eval_input:
-            eval_input["query"] = reformat_conversation_history(
-                eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._return_not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
             )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+
+        if eval_input.get("query") is None:
+            raise EvaluationException(
+                message=("Query is a required input to the Tool Selection evaluator."),
+                internal_message=("Query is a required input to the Tool Selection evaluator."),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
+            )
+
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
+        # Format conversation history for cleaner evaluation
+        eval_input["query"] = reformat_conversation_history(
+            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        )
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", {})
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
+
             score = llm_output.get("score", None)
             if score not in [0, 1]:
                 raise EvaluationException(
@@ -196,38 +244,36 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
 
             # Format the output
-            explanation = llm_output.get("explanation", "")
-            score = int(score)  # Keep as int since it's binary (0 or 1)
+            reason = llm_output.get("reason", "")
+            score = float(score)
             score_result = "pass" if score == 1 else "fail"
 
             # Add tool selection accuracy post-processing
-            details = llm_output.get("details", {})
-            if details:
-                tool_selection_accuracy = self._calculate_tool_selection_accuracy(details)
-                details["tool_selection_accuracy"] = tool_selection_accuracy
+            llm_properties = llm_output.get("properties", {}) or {}
+            if llm_properties:
+                tool_selection_accuracy = self._calculate_tool_selection_accuracy(llm_properties)
+                llm_properties["tool_selection_accuracy"] = tool_selection_accuracy
+
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             response_dict = {
                 self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
                 f"{self._result_key}_result": score_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_reason": explanation,
-                f"{self._result_key}_details": details,
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_properties": llm_properties,
             }
             return response_dict
 
         else:
             raise EvaluationException(
-                message="Tool selection evaluator returned invalid output.",
+                message="Evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
+                target=ErrorTarget.EVALUATE,
             )
 
     async def _real_call(self, **kwargs):
@@ -238,10 +284,13 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
-            return self._not_applicable_result(eval_input.get("error_message"), 1)
+            return self._return_not_applicable_result(eval_input.get("error_message"), self._threshold)
 
         result = await self._do_eval(eval_input)
 

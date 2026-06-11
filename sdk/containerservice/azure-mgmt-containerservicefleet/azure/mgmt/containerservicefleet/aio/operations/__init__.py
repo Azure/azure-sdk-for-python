@@ -13,8 +13,10 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._operations import Operations  # type: ignore
+from ._operations import ClusterMeshProfilesOperations  # type: ignore
 from ._operations import FleetsOperations  # type: ignore
 from ._operations import FleetMembersOperations  # type: ignore
+from ._operations import FleetManagedNamespacesOperations  # type: ignore
 from ._operations import GatesOperations  # type: ignore
 from ._operations import UpdateRunsOperations  # type: ignore
 from ._operations import FleetUpdateStrategiesOperations  # type: ignore
@@ -27,8 +29,10 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
+    "ClusterMeshProfilesOperations",
     "FleetsOperations",
     "FleetMembersOperations",
+    "FleetManagedNamespacesOperations",
     "GatesOperations",
     "UpdateRunsOperations",
     "FleetUpdateStrategiesOperations",

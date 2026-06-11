@@ -141,7 +141,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
             kwargs["api_version"] = api_version
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
-    @overload
+    @overload # type: ignore[override]
     def begin_analyze_text_job(
         self,
         *,
@@ -178,7 +178,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         """
 
     @overload
-    def begin_analyze_text_job(
+    def begin_analyze_text_job( # type: ignore[override]
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeTextLROPoller[ItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -196,7 +196,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         """
 
     @overload
-    def begin_analyze_text_job(
+    def begin_analyze_text_job( # type: ignore[override]
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeTextLROPoller[ItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be

@@ -32,7 +32,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from .._restclient.v2022_10_01.models import ScheduleListViewType
+from .._restclient.arm_ml_service.models import ScheduleListViewType
 from .._restclient.v2024_01_01_preview.models import TriggerOnceRequest
 from .._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId, is_ARM_id_for_parented_resource
 from .._utils._azureml_polling import AzureMLPolling

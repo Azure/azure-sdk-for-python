@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
@@ -44,6 +44,16 @@ from ...operations._operations import (
     build_auto_upgrade_profiles_delete_request,
     build_auto_upgrade_profiles_get_request,
     build_auto_upgrade_profiles_list_by_fleet_request,
+    build_cluster_mesh_profiles_apply_request,
+    build_cluster_mesh_profiles_create_or_update_request,
+    build_cluster_mesh_profiles_delete_request,
+    build_cluster_mesh_profiles_get_request,
+    build_cluster_mesh_profiles_list_by_fleet_request,
+    build_fleet_managed_namespaces_create_or_update_request,
+    build_fleet_managed_namespaces_delete_request,
+    build_fleet_managed_namespaces_get_request,
+    build_fleet_managed_namespaces_list_by_fleet_request,
+    build_fleet_managed_namespaces_update_request,
     build_fleet_members_begin_update_request,
     build_fleet_members_create_request,
     build_fleet_members_delete_request,
@@ -75,8 +85,9 @@ from ...operations._operations import (
 from .._configuration import ContainerServiceFleetMgmtClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 
 class Operations:
@@ -146,7 +157,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -159,7 +173,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -175,12 +192,938 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class ClusterMeshProfilesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.containerservicefleet.aio.ContainerServiceFleetMgmtClient`'s
+        :attr:`cluster_mesh_profiles` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerServiceFleetMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "cluster_mesh_profile_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, fleet_name: str, cluster_mesh_profile_name: str, **kwargs: Any
+    ) -> _models.ClusterMeshProfile:
+        """Get a ClusterMeshProfile.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
+        :type cluster_mesh_profile_name: str
+        :return: ClusterMeshProfile. The ClusterMeshProfile is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ClusterMeshProfile] = kwargs.pop("cls", None)
+
+        _request = build_cluster_mesh_profiles_get_request(
+            resource_group_name=resource_group_name,
+            fleet_name=fleet_name,
+            cluster_mesh_profile_name=cluster_mesh_profile_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ClusterMeshProfile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "cluster_mesh_profile_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        resource: Union[_models.ClusterMeshProfile, JSON, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_cluster_mesh_profiles_create_or_update_request(
+            resource_group_name=resource_group_name,
+            fleet_name=fleet_name,
+            cluster_mesh_profile_name=cluster_mesh_profile_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        resource: _models.ClusterMeshProfile,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterMeshProfile]:
+        """Create a ClusterMeshProfile.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
+        :type cluster_mesh_profile_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfile
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterMeshProfile. The ClusterMeshProfile
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.ClusterMeshProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterMeshProfile]:
+        """Create a ClusterMeshProfile.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
+        :type cluster_mesh_profile_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterMeshProfile. The ClusterMeshProfile
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.ClusterMeshProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterMeshProfile]:
+        """Create a ClusterMeshProfile.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
+        :type cluster_mesh_profile_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterMeshProfile. The ClusterMeshProfile
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.ClusterMeshProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "cluster_mesh_profile_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        resource: Union[_models.ClusterMeshProfile, JSON, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterMeshProfile]:
+        """Create a ClusterMeshProfile.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
+        :type cluster_mesh_profile_name: str
+        :param resource: Resource create parameters. Is one of the following types: ClusterMeshProfile,
+         JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfile or JSON or
+         IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterMeshProfile. The ClusterMeshProfile
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.ClusterMeshProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ClusterMeshProfile] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                fleet_name=fleet_name,
+                cluster_mesh_profile_name=cluster_mesh_profile_name,
+                resource=resource,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ClusterMeshProfile, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ClusterMeshProfile].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ClusterMeshProfile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "cluster_mesh_profile_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview"],
+    )
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_cluster_mesh_profiles_delete_request(
+            resource_group_name=resource_group_name,
+            fleet_name=fleet_name,
+            cluster_mesh_profile_name=cluster_mesh_profile_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "cluster_mesh_profile_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview"],
+    )
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a ClusterMeshProfile.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
+        :type cluster_mesh_profile_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                fleet_name=fleet_name,
+                cluster_mesh_profile_name=cluster_mesh_profile_name,
+                etag=etag,
+                match_condition=match_condition,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview"],
+    )
+    def list_by_fleet(
+        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ClusterMeshProfile"]:
+        """List ClusterMeshProfile resources by Fleet.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :return: An iterator like instance of ClusterMeshProfile
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.ClusterMeshProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ClusterMeshProfile]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_cluster_mesh_profiles_list_by_fleet_request(
+                    resource_group_name=resource_group_name,
+                    fleet_name=fleet_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ClusterMeshProfile],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "cluster_mesh_profile_name",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview"],
+    )
+    async def _apply_initial(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_cluster_mesh_profiles_apply_request(
+            resource_group_name=resource_group_name,
+            fleet_name=fleet_name,
+            cluster_mesh_profile_name=cluster_mesh_profile_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "cluster_mesh_profile_name",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview"],
+    )
+    async def begin_apply(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        cluster_mesh_profile_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterMeshProfile]:
+        """Applies the cluster mesh profile to selected fleet members.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
+        :type cluster_mesh_profile_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterMeshProfile. The ClusterMeshProfile
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.ClusterMeshProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ClusterMeshProfile] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._apply_initial(
+                resource_group_name=resource_group_name,
+                fleet_name=fleet_name,
+                cluster_mesh_profile_name=cluster_mesh_profile_name,
+                etag=etag,
+                match_condition=match_condition,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ClusterMeshProfile, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ClusterMeshProfile].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ClusterMeshProfile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
 
 class FleetsOperations:
@@ -241,6 +1184,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -255,11 +1199,14 @@ class FleetsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Fleet, response.json())
 
@@ -322,6 +1269,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -335,14 +1283,17 @@ class FleetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -562,6 +1513,9 @@ class FleetsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _begin_update_initial(
@@ -618,6 +1572,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -631,7 +1586,10 @@ class FleetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -639,7 +1597,7 @@ class FleetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -775,6 +1733,9 @@ class FleetsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_update(
@@ -904,6 +1865,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -917,7 +1879,10 @@ class FleetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -925,7 +1890,7 @@ class FleetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1056,7 +2021,10 @@ class FleetsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1069,7 +2037,10 @@ class FleetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Fleet], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Fleet],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1085,7 +2056,10 @@ class FleetsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1093,9 +2067,16 @@ class FleetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.Fleet"]:
+    def list_by_subscription(
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Fleet"]:
         """Lists fleets in the specified subscription.
 
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of Fleet
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.Fleet]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1118,6 +2099,8 @@ class FleetsOperations:
 
                 _request = build_fleets_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1140,7 +2123,10 @@ class FleetsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1153,7 +2139,10 @@ class FleetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Fleet], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Fleet],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1169,7 +2158,10 @@ class FleetsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1217,6 +2209,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1231,11 +2224,14 @@ class FleetsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FleetCredentialResults, response.json())
 
@@ -1308,6 +2304,7 @@ class FleetMembersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1322,11 +2319,14 @@ class FleetMembersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FleetMember, response.json())
 
@@ -1391,6 +2391,7 @@ class FleetMembersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1404,14 +2405,17 @@ class FleetMembersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1649,6 +2653,9 @@ class FleetMembersOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _begin_update_initial(
@@ -1707,6 +2714,7 @@ class FleetMembersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1720,7 +2728,10 @@ class FleetMembersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1728,7 +2739,7 @@ class FleetMembersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1877,6 +2888,9 @@ class FleetMembersOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_update(
@@ -2014,6 +3028,7 @@ class FleetMembersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2027,7 +3042,10 @@ class FleetMembersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2035,7 +3053,7 @@ class FleetMembersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2120,7 +3138,14 @@ class FleetMembersOperations:
 
     @distributed_trace
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.FleetMember"]:
         """List FleetMember resources by Fleet.
 
@@ -2129,6 +3154,13 @@ class FleetMembersOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of FleetMember
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.FleetMember]
@@ -2154,6 +3186,9 @@ class FleetMembersOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2176,7 +3211,10 @@ class FleetMembersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2189,7 +3227,10 @@ class FleetMembersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FleetMember], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FleetMember],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2205,12 +3246,1079 @@ class FleetMembersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class FleetManagedNamespacesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.containerservicefleet.aio.ContainerServiceFleetMgmtClient`'s
+        :attr:`fleet_managed_namespaces` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerServiceFleetMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "managed_namespace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, fleet_name: str, managed_namespace_name: str, **kwargs: Any
+    ) -> _models.FleetManagedNamespace:
+        """Get a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :return: FleetManagedNamespace. The FleetManagedNamespace is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespace
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FleetManagedNamespace] = kwargs.pop("cls", None)
+
+        _request = build_fleet_managed_namespaces_get_request(
+            resource_group_name=resource_group_name,
+            fleet_name=fleet_name,
+            managed_namespace_name=managed_namespace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.FleetManagedNamespace, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "managed_namespace_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        resource: Union[_models.FleetManagedNamespace, JSON, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_fleet_managed_namespaces_create_or_update_request(
+            resource_group_name=resource_group_name,
+            fleet_name=fleet_name,
+            managed_namespace_name=managed_namespace_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        resource: _models.FleetManagedNamespace,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FleetManagedNamespace]:
+        """Create a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespace
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns FleetManagedNamespace. The
+         FleetManagedNamespace is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FleetManagedNamespace]:
+        """Create a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns FleetManagedNamespace. The
+         FleetManagedNamespace is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FleetManagedNamespace]:
+        """Create a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns FleetManagedNamespace. The
+         FleetManagedNamespace is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "managed_namespace_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        resource: Union[_models.FleetManagedNamespace, JSON, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FleetManagedNamespace]:
+        """Create a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :param resource: Resource create parameters. Is one of the following types:
+         FleetManagedNamespace, JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespace or JSON or
+         IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns FleetManagedNamespace. The
+         FleetManagedNamespace is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FleetManagedNamespace] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                fleet_name=fleet_name,
+                managed_namespace_name=managed_namespace_name,
+                resource=resource,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.FleetManagedNamespace, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.FleetManagedNamespace].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.FleetManagedNamespace](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "managed_namespace_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+    )
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_fleet_managed_namespaces_delete_request(
+            resource_group_name=resource_group_name,
+            fleet_name=fleet_name,
+            managed_namespace_name=managed_namespace_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "managed_namespace_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+    )
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                fleet_name=fleet_name,
+                managed_namespace_name=managed_namespace_name,
+                etag=etag,
+                match_condition=match_condition,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+        },
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+    )
+    def list_by_fleet(
+        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.FleetManagedNamespace"]:
+        """List FleetManagedNamespace resources by Fleet.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :return: An iterator like instance of FleetManagedNamespace
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.FleetManagedNamespace]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_fleet_managed_namespaces_list_by_fleet_request(
+                    resource_group_name=resource_group_name,
+                    fleet_name=fleet_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.FleetManagedNamespace],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "managed_namespace_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        properties: Union[_models.FleetManagedNamespacePatch, JSON, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_fleet_managed_namespaces_update_request(
+            resource_group_name=resource_group_name,
+            fleet_name=fleet_name,
+            managed_namespace_name=managed_namespace_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        properties: _models.FleetManagedNamespacePatch,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FleetManagedNamespace]:
+        """Update a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespacePatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns FleetManagedNamespace. The
+         FleetManagedNamespace is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        properties: JSON,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FleetManagedNamespace]:
+        """Update a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns FleetManagedNamespace. The
+         FleetManagedNamespace is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FleetManagedNamespace]:
+        """Update a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns FleetManagedNamespace. The
+         FleetManagedNamespace is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "managed_namespace_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        managed_namespace_name: str,
+        properties: Union[_models.FleetManagedNamespacePatch, JSON, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FleetManagedNamespace]:
+        """Update a FleetManagedNamespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fleet_name: The name of the Fleet resource. Required.
+        :type fleet_name: str
+        :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
+        :type managed_namespace_name: str
+        :param properties: The resource properties to be updated. Is one of the following types:
+         FleetManagedNamespacePatch, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespacePatch or JSON
+         or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns FleetManagedNamespace. The
+         FleetManagedNamespace is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservicefleet.models.FleetManagedNamespace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FleetManagedNamespace] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                fleet_name=fleet_name,
+                managed_namespace_name=managed_namespace_name,
+                properties=properties,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.FleetManagedNamespace, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.FleetManagedNamespace].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.FleetManagedNamespace](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
 
 class GatesOperations:
@@ -2245,7 +4353,7 @@ class GatesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
     )
     async def get(self, resource_group_name: str, fleet_name: str, gate_name: str, **kwargs: Any) -> _models.Gate:
         """Get a Gate.
@@ -2288,6 +4396,7 @@ class GatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2302,11 +4411,14 @@ class GatesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Gate, response.json())
 
@@ -2330,7 +4442,7 @@ class GatesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-04-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
     )
     async def _update_initial(
         self,
@@ -2388,6 +4500,7 @@ class GatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2401,7 +4514,10 @@ class GatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2409,7 +4525,7 @@ class GatesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2546,7 +4662,7 @@ class GatesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-04-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
     )
     async def begin_update(
         self,
@@ -2640,11 +4756,29 @@ class GatesOperations:
     @api_version_validation(
         method_added_on="2025-04-01-preview",
         params_added_on={
-            "2025-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2025-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "filter",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
-        api_versions_list=["2025-04-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
     )
-    def list_by_fleet(self, resource_group_name: str, fleet_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Gate"]:
+    def list_by_fleet(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.Gate"]:
         """List Gate resources by Fleet.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2652,6 +4786,13 @@ class GatesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of Gate
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.Gate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2676,6 +4817,9 @@ class GatesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2698,7 +4842,10 @@ class GatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2711,7 +4858,10 @@ class GatesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Gate], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Gate],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2727,7 +4877,10 @@ class GatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2777,6 +4930,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def get(
@@ -2822,6 +4978,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2836,11 +4993,14 @@ class UpdateRunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UpdateRun, response.json())
 
@@ -2874,6 +5034,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -2932,6 +5095,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2945,14 +5109,17 @@ class UpdateRunsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3099,6 +5266,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_create_or_update(
@@ -3198,7 +5368,6 @@ class UpdateRunsOperations:
                 "resource_group_name",
                 "fleet_name",
                 "update_run_name",
-                "accept",
                 "etag",
                 "match_condition",
             ]
@@ -3213,6 +5382,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _delete_initial(
@@ -3260,6 +5432,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3273,7 +5446,10 @@ class UpdateRunsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3281,7 +5457,7 @@ class UpdateRunsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3298,7 +5474,6 @@ class UpdateRunsOperations:
                 "resource_group_name",
                 "fleet_name",
                 "update_run_name",
-                "accept",
                 "etag",
                 "match_condition",
             ]
@@ -3313,6 +5488,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_delete(
@@ -3394,7 +5572,15 @@ class UpdateRunsOperations:
     @api_version_validation(
         method_added_on="2023-03-15-preview",
         params_added_on={
-            "2023-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2023-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=[
             "2023-03-15-preview",
@@ -3406,10 +5592,19 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.UpdateRun"]:
         """List UpdateRun resources by Fleet.
 
@@ -3418,6 +5613,11 @@ class UpdateRunsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of UpdateRun
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.UpdateRun]
@@ -3443,6 +5643,8 @@ class UpdateRunsOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3465,7 +5667,10 @@ class UpdateRunsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3478,7 +5683,10 @@ class UpdateRunsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.UpdateRun], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.UpdateRun],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3494,7 +5702,10 @@ class UpdateRunsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3525,6 +5736,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _start_initial(
@@ -3572,6 +5786,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3585,7 +5800,10 @@ class UpdateRunsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3593,7 +5811,7 @@ class UpdateRunsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3625,6 +5843,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_start(
@@ -3679,14 +5900,10 @@ class UpdateRunsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateRun, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3736,6 +5953,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _stop_initial(
@@ -3783,6 +6003,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3796,7 +6017,10 @@ class UpdateRunsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3804,7 +6028,7 @@ class UpdateRunsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3836,6 +6060,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_stop(
@@ -3890,14 +6117,10 @@ class UpdateRunsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateRun, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3944,6 +6167,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _skip_initial(
@@ -4002,6 +6228,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4015,7 +6242,10 @@ class UpdateRunsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4023,7 +6253,7 @@ class UpdateRunsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4166,6 +6396,9 @@ class UpdateRunsOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_skip(
@@ -4227,14 +6460,10 @@ class UpdateRunsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.UpdateRun, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -4301,6 +6530,9 @@ class FleetUpdateStrategiesOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def get(
@@ -4346,6 +6578,7 @@ class FleetUpdateStrategiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4360,11 +6593,14 @@ class FleetUpdateStrategiesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FleetUpdateStrategy, response.json())
 
@@ -4396,6 +6632,9 @@ class FleetUpdateStrategiesOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -4454,6 +6693,7 @@ class FleetUpdateStrategiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4467,14 +6707,17 @@ class FleetUpdateStrategiesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4622,6 +6865,9 @@ class FleetUpdateStrategiesOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_create_or_update(
@@ -4723,7 +6969,6 @@ class FleetUpdateStrategiesOperations:
                 "resource_group_name",
                 "fleet_name",
                 "update_strategy_name",
-                "accept",
                 "etag",
                 "match_condition",
             ]
@@ -4736,6 +6981,9 @@ class FleetUpdateStrategiesOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def _delete_initial(
@@ -4783,6 +7031,7 @@ class FleetUpdateStrategiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4796,7 +7045,10 @@ class FleetUpdateStrategiesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4804,7 +7056,7 @@ class FleetUpdateStrategiesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4821,7 +7073,6 @@ class FleetUpdateStrategiesOperations:
                 "resource_group_name",
                 "fleet_name",
                 "update_strategy_name",
-                "accept",
                 "etag",
                 "match_condition",
             ]
@@ -4834,6 +7085,9 @@ class FleetUpdateStrategiesOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     async def begin_delete(
@@ -4915,7 +7169,15 @@ class FleetUpdateStrategiesOperations:
     @api_version_validation(
         method_added_on="2023-08-15-preview",
         params_added_on={
-            "2023-08-15-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2023-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=[
             "2023-08-15-preview",
@@ -4925,10 +7187,19 @@ class FleetUpdateStrategiesOperations:
             "2024-05-02-preview",
             "2025-03-01",
             "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
         ],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.FleetUpdateStrategy"]:
         """List FleetUpdateStrategy resources by Fleet.
 
@@ -4937,6 +7208,11 @@ class FleetUpdateStrategiesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of FleetUpdateStrategy
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.FleetUpdateStrategy]
@@ -4962,6 +7238,8 @@ class FleetUpdateStrategiesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4984,7 +7262,10 @@ class FleetUpdateStrategiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4997,7 +7278,10 @@ class FleetUpdateStrategiesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FleetUpdateStrategy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FleetUpdateStrategy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5013,7 +7297,10 @@ class FleetUpdateStrategiesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5053,7 +7340,14 @@ class AutoUpgradeProfilesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+        ],
     )
     async def get(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any
@@ -5098,6 +7392,7 @@ class AutoUpgradeProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5112,11 +7407,14 @@ class AutoUpgradeProfilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutoUpgradeProfile, response.json())
 
@@ -5140,7 +7438,14 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+        ],
     )
     async def _create_or_update_initial(
         self,
@@ -5198,6 +7503,7 @@ class AutoUpgradeProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5211,7 +7517,10 @@ class AutoUpgradeProfilesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5221,7 +7530,7 @@ class AutoUpgradeProfilesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5361,7 +7670,14 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+        ],
     )
     async def begin_create_or_update(
         self,
@@ -5462,12 +7778,18 @@ class AutoUpgradeProfilesOperations:
                 "resource_group_name",
                 "fleet_name",
                 "auto_upgrade_profile_name",
-                "accept",
                 "etag",
                 "match_condition",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+        ],
     )
     async def _delete_initial(
         self,
@@ -5514,6 +7836,7 @@ class AutoUpgradeProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5527,7 +7850,10 @@ class AutoUpgradeProfilesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5535,7 +7861,7 @@ class AutoUpgradeProfilesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5552,12 +7878,18 @@ class AutoUpgradeProfilesOperations:
                 "resource_group_name",
                 "fleet_name",
                 "auto_upgrade_profile_name",
-                "accept",
                 "etag",
                 "match_condition",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+        ],
     )
     async def begin_delete(
         self,
@@ -5638,12 +7970,33 @@ class AutoUpgradeProfilesOperations:
     @api_version_validation(
         method_added_on="2024-05-02-preview",
         params_added_on={
-            "2024-05-02-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2024-05-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+        ],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.AutoUpgradeProfile"]:
         """List AutoUpgradeProfile resources by Fleet.
 
@@ -5652,6 +8005,11 @@ class AutoUpgradeProfilesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of AutoUpgradeProfile
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.AutoUpgradeProfile]
@@ -5677,6 +8035,8 @@ class AutoUpgradeProfilesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5699,7 +8059,10 @@ class AutoUpgradeProfilesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5712,7 +8075,10 @@ class AutoUpgradeProfilesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AutoUpgradeProfile], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AutoUpgradeProfile],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5728,7 +8094,10 @@ class AutoUpgradeProfilesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5767,7 +8136,13 @@ class AutoUpgradeProfileOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-01", "2025-04-01-preview"],
+        api_versions_list=[
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+        ],
     )
     async def _generate_update_run_initial(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any
@@ -5799,6 +8174,7 @@ class AutoUpgradeProfileOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5812,7 +8188,10 @@ class AutoUpgradeProfileOperationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5823,7 +8202,7 @@ class AutoUpgradeProfileOperationsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["If-Match"] = self._deserialize("str", response.headers.get("If-Match"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5843,7 +8222,13 @@ class AutoUpgradeProfileOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-01", "2025-04-01-preview"],
+        api_versions_list=[
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+        ],
     )
     async def begin_generate_update_run(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any
@@ -5884,17 +8269,10 @@ class AutoUpgradeProfileOperationsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["If-Match"] = self._deserialize("str", response.headers.get("If-Match"))
-
             deserialized = _deserialize(_models.GenerateResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {

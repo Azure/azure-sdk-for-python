@@ -90,9 +90,9 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert f"{key}_score" in result
+        assert result[f"{key}_score"] == 1
+        assert result[f"{key}_passed"] is True
         assert f"{key}_reason" in result
 
     def test_evaluate_tool_selection_fail_irrelevant_tools(self, mock_model_config):
@@ -127,9 +127,9 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result
-        assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert f"{key}_score" in result
+        assert result[f"{key}_score"] == 0
+        assert result[f"{key}_passed"] is False
         assert f"{key}_reason" in result
 
     def test_evaluate_tool_selection_pass_search_query(self, mock_model_config):
@@ -158,8 +158,8 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 1
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_tool_selection_pass_data_query(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
@@ -187,8 +187,8 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 1
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_tool_selection_pass_financial_query(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
@@ -216,14 +216,14 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 1
+        assert result[f"{key}_passed"] is True
 
-    def test_evaluate_tool_selection_fail_no_tools_selected(self, mock_model_config):
+    def test_evaluate_tool_selection_not_applicable(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
 
-        query = "What's the weather like today?"
+        query = "What's the weather like today in Seattle?"
         tool_calls = []
         tool_definitions = [
             {
@@ -234,13 +234,10 @@ class TestToolSelectionEvaluator:
             }
         ]
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_reason" in result
+        assert "No tool calls found in response or provided tool_calls." in str(exc_info.value)
 
     def test_evaluate_tool_selection_not_applicable_no_tool_definitions(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
@@ -250,13 +247,10 @@ class TestToolSelectionEvaluator:
         tool_calls = []
         tool_definitions = []
 
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_reason" in result
+        assert "Tool definitions input is required but not provided." in str(exc_info.value)
 
     def test_evaluate_tool_selection_exception_invalid_score(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
@@ -284,3 +278,37 @@ class TestToolSelectionEvaluator:
             evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         assert "Invalid score value" in str(exc_info.value)
+
+    def test_evaluate_tool_selection_missing_query(self, mock_model_config):
+        """Test that evaluator raises exception when query is None or missing."""
+        evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_weather",
+                "name": "get_weather",
+                "arguments": {"location": "current"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information",
+                "parameters": {"type": "object", "properties": {"location": {"type": "string"}}},
+            }
+        ]
+
+        # Test with query=None
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=None, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)
+
+        # Test with query not provided at all
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)

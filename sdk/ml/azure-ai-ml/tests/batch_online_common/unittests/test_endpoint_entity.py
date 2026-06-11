@@ -1,23 +1,24 @@
+import copy
+import json
+import sys
+
 import pytest
 import yaml
-import json
-import copy
-import sys
 from test_utilities.utils import verify_entity_load_and_dump
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    OnlineEndpointData,
-    EndpointAuthKeys as RestEndpointAuthKeys,
-    EndpointAuthToken as RestEndpointAuthToken,
-)
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
+
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
 from azure.ai.ml.entities import (
     BatchEndpoint,
-    ManagedOnlineEndpoint,
-    KubernetesOnlineEndpoint,
-    OnlineEndpoint,
     EndpointAuthKeys,
     EndpointAuthToken,
+    KubernetesOnlineEndpoint,
+    ManagedOnlineEndpoint,
+    OnlineEndpoint,
 )
 from azure.ai.ml.exceptions import ValidationException
 
@@ -132,7 +133,7 @@ class TestBatchEndpointYAML:
 
     def test_from_rest(self) -> None:
         with open(TestBatchEndpointYAML.BATCH_ENDPOINT_REST, "r") as f:
-            batch_endpoint_rest = BatchEndpointData.deserialize(json.load(f))
+            batch_endpoint_rest = _deserialize(BatchEndpointData, json.load(f))
             batch_endpoint = BatchEndpoint._from_rest_object(batch_endpoint_rest)
             assert batch_endpoint.name == batch_endpoint_rest.name
             assert batch_endpoint.id == batch_endpoint_rest.id
@@ -332,15 +333,12 @@ class TestManagedOnlineEndpoint:
         assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
         assert online_endpoint_dict["traffic"] == online_endpoint.traffic
 
-    @pytest.mark.skipif(
-        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
-    )
     def test_equality(self) -> None:
         online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
         batch_online_endpoint = load_batch_endpoint(TestManagedOnlineEndpoint.BATCH_ENDPOINT_WITH_BLUE)
 
-        assert online_endpoint.__eq__(None)
-        assert online_endpoint.__eq__(batch_online_endpoint)
+        assert online_endpoint.__eq__(None) is NotImplemented
+        assert online_endpoint.__eq__(batch_online_endpoint) is NotImplemented
 
         other_online_endpoint = copy.deepcopy(online_endpoint)
         assert online_endpoint == other_online_endpoint

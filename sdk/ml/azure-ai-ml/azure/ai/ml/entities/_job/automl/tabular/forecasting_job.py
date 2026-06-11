@@ -100,7 +100,7 @@ class ForecastingJob(AutoMLTabular):
         """
         return self._training or ForecastingTrainingSettings()
 
-    @training.setter
+    @training.setter  # type: ignore[override]
     def training(self, value: Union[Dict, ForecastingTrainingSettings]) -> None:  # pylint: disable=unused-argument
         ...
 

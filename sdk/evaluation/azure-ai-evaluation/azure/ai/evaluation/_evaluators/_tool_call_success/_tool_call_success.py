@@ -13,8 +13,8 @@ from azure.ai.evaluation._exceptions import (
     ErrorTarget,
 )
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from azure.ai.evaluation._common._experimental import experimental
-
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +63,8 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "tool_call_success"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/tool_call_success"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -71,6 +73,14 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """Initialize the Tool Call Success evaluator."""
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+
+        # Initialize input validator
+        self._validator = ToolDefinitionsValidator(
+            error_target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
+            requires_query=False,
+            check_for_unsupported_tools=True,
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -80,6 +90,18 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             _higher_is_better=True,
             **kwargs,
         )
+
+    @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        self._validator.validate_eval_input(kwargs)
+        return await super()._real_call(**kwargs)
 
     @overload
     def __call__(
@@ -129,6 +151,12 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         if "response" not in eval_input:
             raise EvaluationException(
                 message="response is a required input to the Tool Call Success evaluator.",
@@ -136,6 +164,11 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
+            )
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._return_not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
             )
         if eval_input["response"] is None or eval_input["response"] == []:
             raise EvaluationException(
@@ -146,50 +179,67 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
 
-        eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
-
-        if "tool_definitions" in eval_input:
-            tool_definitions = eval_input["tool_definitions"]
-            filtered_tool_definitions = _filter_to_used_tools(
-                tool_definitions=tool_definitions,
-                msgs_list=eval_input["response"],
-                logger=logger,
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+            eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
+        # If response is a string, pass directly without reformatting
+        elif isinstance(eval_input["response"], str):
+            eval_input["tool_calls"] = eval_input["response"]
+        else:
+            raise EvaluationException(
+                message="response must be either a list of messages or a string.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
-            eval_input["tool_definitions"] = _reformat_tool_definitions(filtered_tool_definitions, logger)
+
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
+        # If tool definitions are string, pass directly without reformatting, else format it.
+        if "tool_definitions" in eval_input and not isinstance(eval_input["tool_definitions"], str):
+            tool_definitions = eval_input["tool_definitions"]
+            # Only if response is not a string, we filter tool definitions to only tools needed.
+            if not isinstance(eval_input["response"], str):
+                tool_definitions = _filter_to_used_tools(
+                    tool_definitions=tool_definitions,
+                    msgs_list=eval_input["response"],
+                    logger=logger,
+                )
+            eval_input["tool_definitions"] = _reformat_tool_definitions(tool_definitions, logger)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", "")
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
-            success = llm_output.get("success", False)
-            if isinstance(success, str):
-                success = success.upper() == "TRUE"
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
 
-            success_result = "pass" if success else "fail"
-            reason = llm_output.get("explanation", "")
+            llm_properties = llm_output.get("properties", {}) or {}
+
+            score = float(llm_output.get("score", 0))
+            success_result = "pass" if score >= 1.0 else "fail"
+            reason = llm_output.get("reason", "")
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
             return {
-                f"{self._result_key}": success * 1.0,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": success_result == "pass",
                 f"{self._result_key}_result": success_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_reason": f"{reason} {llm_output.get('details', '')}",
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_properties": llm_properties,
             }
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-
-        score = math.nan
-        binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
 
 
 def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
@@ -271,7 +321,7 @@ def _reformat_tool_calls_results(response, logger=None):
             if logger:
                 logger.warning(
                     f"Empty agent response extracted, likely due to input schema change. "
-                    f"Falling back to using the original response: {response}"
+                    f"Falling back to using the original response"
                 )
             return response
         return "\n".join(agent_response)
@@ -281,7 +331,7 @@ def _reformat_tool_calls_results(response, logger=None):
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
+            logger.warning(f"Agent response could not be parsed, falling back to original response")
         return response
 
 

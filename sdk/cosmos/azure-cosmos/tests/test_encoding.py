@@ -20,8 +20,11 @@ class TestEncoding(unittest.TestCase):
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
     created_db: DatabaseProxy = None
+    key_db: DatabaseProxy = None
     created_container: ContainerProxy = None
+    key_container: ContainerProxy = None
 
     @classmethod
     def setUpClass(cls):
@@ -32,13 +35,20 @@ class TestEncoding(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        # Key-auth client for control-plane operations (e.g. stored procedures)
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.key_db = cls.key_client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+        cls.key_container = cls.key_db.get_container_client(
+            test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+        # AAD (or key, depending on env var) client for data-plane operations
+        cls.client = test_config.TestConfig.create_data_client()
         cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.created_container = cls.created_db.get_container_client(
             test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_unicode_characters_in_partition_key(self):
-        test_string = u'€€ کلید پارتیشن विभाजन कुंजी 	123'  # cspell:disable-line
+        test_string = u'€€ کلید پارتیشن विभाजन कुंजी \t123'  # cspell:disable-line
         document_definition = {'pk': test_string, 'id': 'myid' + str(uuid.uuid4())}
         created_doc = self.created_container.create_item(body=document_definition)
 
@@ -46,7 +56,7 @@ class TestEncoding(unittest.TestCase):
         self.assertEqual(read_doc['pk'], test_string)
 
     def test_create_document_with_line_separator_para_seperator_next_line_unicodes(self):
-        test_string = u'Line Separator ( ) & Paragraph Separator ( ) & Next Line () & نیم‌فاصله'  # cspell:disable-line
+        test_string = u'Line Separator (\u2028) & Paragraph Separator (\u2029) & Next Line (\x85) & نیم\u200cفاصله'  # cspell:disable-line
         document_definition = {'pk': 'pk', 'id': 'myid' + str(uuid.uuid4()), 'unicode_content': test_string}
         created_doc = self.created_container.create_item(body=document_definition)
 
@@ -54,14 +64,17 @@ class TestEncoding(unittest.TestCase):
         self.assertEqual(read_doc['unicode_content'], test_string)
 
     def test_create_stored_procedure_with_line_separator_para_seperator_next_line_unicodes(self):
-        test_string = 'Line Separator ( ) & Paragraph Separator ( ) & Next Line () & نیم‌فاصله'  # cspell:disable-line
+        # scripts.create_stored_procedure and scripts.get_stored_procedure are control-plane.
+        # operations that will return 403 under AAD Data Contributor role. This test uses key_container
+        # (key-auth) for these operations.
+        test_string = 'Line Separator (\u2028) & Paragraph Separator (\u2029) & Next Line (\x85) & نیم\u200cفاصله'  # cspell:disable-line
 
-        test_string_unicode = u'Line Separator ( ) & Paragraph Separator ( ) & Next Line () & نیم‌فاصله'  # cspell:disable-line
+        test_string_unicode = u'Line Separator (\u2028) & Paragraph Separator (\u2029) & Next Line (\x85) & نیم\u200cفاصله'  # cspell:disable-line
 
         stored_proc_definition = {'id': 'myid' + str(uuid.uuid4()), 'body': test_string}
-        created_sp = self.created_container.scripts.create_stored_procedure(body=stored_proc_definition)
+        created_sp = self.key_container.scripts.create_stored_procedure(body=stored_proc_definition)
 
-        read_sp = self.created_container.scripts.get_stored_procedure(created_sp['id'])
+        read_sp = self.key_container.scripts.get_stored_procedure(created_sp['id'])
         self.assertEqual(read_sp['body'], test_string_unicode)
 
 

@@ -1,7 +1,7 @@
 -e ../../../eng/tools/azure-sdk-tools
 azure-mgmt-keyvault<9.0.0
 azure-mgmt-network<19.0.0
--e ../../resources/azure-mgmt-resource
--e ../../storage/azure-mgmt-storage
--e ../../identity/azure-identity
+../../resources/azure-mgmt-resource
+../../storage/azure-mgmt-storage
+../../identity/azure-identity
 aiohttp

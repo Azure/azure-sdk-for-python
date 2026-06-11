@@ -57,6 +57,7 @@ def sample_load_snapshot():
         print(f"Operation failed: {e.message}")
         print(e.error)
 
+
 # [END conversation_authoring_load_snapshot]
 
 

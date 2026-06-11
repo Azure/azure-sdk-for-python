@@ -13,10 +13,11 @@ breaking = false
 suppressed_skip_warnings = ["*"]
 
 [build-system]
-requires = ["setuptools", "wheel", "cibuildwheel"]
+# cibuildwheel is NOT a build-system dependency; it is the outer orchestration tool
+requires = ["setuptools", "wheel"]
 
 [tool.cibuildwheel]
-build = ["cp39*", "pp39*", "pp310*", "pp311*"]
+build = ["cp310*", "pp310*", "pp311*"]
 test-requires = "pytest"
 test-command = "pytest {project}/tests"
 test-skip = "*-macosx_arm64"

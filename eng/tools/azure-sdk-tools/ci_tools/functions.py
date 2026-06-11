@@ -16,6 +16,20 @@ from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
 from ci_tools.logging import logger
 
+# Re-export venv/pip helpers from their new home so existing imports keep working.
+from ci_tools.venv import (  # noqa: F401
+    get_venv_call,
+    get_pip_command,
+    get_venv_python,
+    install_into_venv,
+    uninstall_from_venv,
+    pip_install,
+    pip_uninstall,
+    pip_install_requirements_file,
+    run_pip_freeze,
+    get_pip_list_output,
+)
+
 import os, sys, platform, glob, re, logging
 from typing import List, Any, Optional, Tuple
 
@@ -51,22 +65,10 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 # We need to actively prevent ourselves from discovering the package in its old location. To do that we:
 #  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
 #  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
-PATHS_EXCLUDED_FROM_DISCOVERY = [
-    "sdk/textanalytics/azure-ai-textanalytics",
-]
+PATHS_EXCLUDED_FROM_DISCOVERY = []
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
-TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
-    "azure-storage-blob": "pypy",
-    "azure-storage-queue": "pypy",
-    "azure-storage-file-datalake": "pypy",
-    "azure-storage-file-share": "pypy",
-    "azure-eventhub": "pypy",
-    "azure-servicebus": "pypy",
-    "azure-ai-projects": "pypy",
-    "azure-ai-agents": "pypy",
-    "azure-identity-broker": "pypy",
-}
+TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {}
 
 omit_regression = (
     lambda x: "nspkg" not in x
@@ -92,6 +94,13 @@ omit_function_dict = {
 
 
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    """
+    Unzips a zip or tar.gz file to a given location.
+
+    :param path_to_zip_file: The path to the zip or tar.gz file.
+    :param extract_location: The directory where the contents will be extracted.
+    :return: The path to the directory where the archive was extracted.
+    """
     if path_to_zip_file.endswith(".zip"):
         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
             zip_ref.extractall(extract_location)
@@ -104,7 +113,7 @@ def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str
             return os.path.join(extract_location, extracted_dir)
 
 
-def apply_compatibility_filter(package_set: List[str]) -> List[str]:
+def apply_compatibility_filter(package_set: List[ParsedSetup]) -> List[ParsedSetup]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
     If a package is unsupported by the executable, it will be omitted from the returned list.
@@ -118,28 +127,25 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
 
     for pkg in package_set:
-        try:
-            spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
-        except RuntimeError as e:
-            logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
-            continue
+        spec_set = SpecifierSet(pkg.python_requires)
 
-        pkg_specs_override = TEST_COMPATIBILITY_MAP.get(os.path.basename(pkg), None)
+        pkg_specs_override = TEST_COMPATIBILITY_MAP.get(pkg.name, None)
 
         if pkg_specs_override:
             spec_set = SpecifierSet(pkg_specs_override)
 
         distro_compat = True
-        distro_incompat = TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP.get(os.path.basename(pkg), None)
+        distro_incompat = TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP.get(pkg.name, None)
         if distro_incompat and distro_incompat in platform.python_implementation().lower():
             distro_compat = False
 
         if running_major_version in spec_set and distro_compat:
             collected_packages.append(pkg)
 
-    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
     logging.debug(
-        "Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages))
+        "Package(s) omitted by compatibility filter: {}".format(
+            generate_difference([origpkg.name for origpkg in package_set], [pkg.name for pkg in collected_packages])
+        )
     )
 
     return collected_packages
@@ -208,12 +214,17 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     return list(set(collected_top_level_directories))
 
 
-def apply_business_filter(collected_packages: List[str], filter_type: str) -> List[str]:
-    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), collected_packages))
+def apply_business_filter(collected_packages: List[ParsedSetup], filter_type: str) -> List[ParsedSetup]:
+    pkg_set_ci_filtered = []
 
-    logging.debug("Target packages after applying business filter: {}".format(pkg_set_ci_filtered))
+    for pkg in collected_packages:
+        if omit_function_dict.get(filter_type, omit_build)(pkg.folder):
+            pkg_set_ci_filtered.append(pkg)
+
     logging.debug(
-        "Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, pkg_set_ci_filtered))
+        "Package(s) omitted by business filter: {}".format(
+            generate_difference([pkg.name for pkg in collected_packages], [pkg.name for pkg in pkg_set_ci_filtered])
+        )
     )
 
     return pkg_set_ci_filtered
@@ -248,29 +259,39 @@ def discover_targeted_packages(
         f'Results for glob_string "{glob_string}" and root directory "{target_root_dir}" are: {collected_packages}'
     )
 
-    # apply the additional contains filter
+    # apply the additional contains filter (purely string based)
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
     logger.debug(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
 
+    # now the have the initial package set, we need to walk the set and attempt to parse_setup each package
+    # this will have the impact of cleaning out any packages that have been set to not buildable anymore (EG namespace packages)
+    parsed_packages = []
+    for pkg in collected_packages:
+        try:
+            parsed_packages.append(ParsedSetup.from_path(pkg))
+        except RuntimeError as e:
+            logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
+            continue
+
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
-        collected_packages = apply_compatibility_filter(collected_packages)
-        logger.debug(f"Results after compatibility filter: {collected_packages}")
+        parsed_packages = apply_compatibility_filter(parsed_packages)
+        logger.debug(f"Results after compatibility filter: {','.join([p.name for p in parsed_packages])}")
 
     if not include_inactive:
-        collected_packages = apply_inactive_filter(collected_packages)
+        parsed_packages = apply_inactive_filter(parsed_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
-    collected_packages = apply_business_filter(collected_packages, filter_type)
-    logger.debug(f"Results after business filter: {collected_packages}")
+    parsed_packages = apply_business_filter(parsed_packages, filter_type)
+    logger.debug(f"Results after business filter: {[pkg.name for pkg in parsed_packages]}")
 
-    return sorted(collected_packages)
+    return sorted([pkg.folder for pkg in parsed_packages])
 
 
-def is_package_active(package_path: str):
-    disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
+def is_package_active(pkg: ParsedSetup) -> bool:
+    disabled = INACTIVE_CLASSIFIER in pkg.classifiers
 
-    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper().replace('-', '_')}", None)
+    override_value = os.getenv(f"ENABLE_{pkg.name.upper().replace('-', '_')}", None)
 
     if override_value:
         return str_to_bool(override_value)
@@ -278,11 +299,14 @@ def is_package_active(package_path: str):
         return not disabled
 
 
-def apply_inactive_filter(collected_packages: List[str]) -> List[str]:
+def apply_inactive_filter(collected_packages: List[ParsedSetup]) -> List[ParsedSetup]:
     packages = [pkg for pkg in collected_packages if is_package_active(pkg)]
 
-    logging.debug("Target packages after applying inactive filter: {}".format(collected_packages))
-    logging.debug("Package(s) omitted by inactive filter: {}".format(generate_difference(collected_packages, packages)))
+    logging.debug(
+        "Package(s) omitted by inactive filter: {}".format(
+            generate_difference([collected.name for collected in collected_packages], [pkg.name for pkg in packages])
+        )
+    )
 
     return packages
 
@@ -335,7 +359,7 @@ def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: Optional[str] 
     attempts to find the package within the repo to install directly from path on disk.
 
     During a CI build, it is preferred that the package is installed from a prebuilt wheel directory, as multiple CI environments attempting to install the relative
-    req can cause inconsistent installation issues during parallel tox environment execution.
+    req can cause inconsistent installation issues during parallel check execution.
     """
 
     local_package = get_package_from_repo(req)
@@ -345,7 +369,7 @@ def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: Optional[str] 
         if prebuilt_package:
             # return the first package found, there should only be a single one matching given that our prebuilt wheel directory
             # is populated by the replacement of dev_reqs.txt with the prebuilt wheels
-            # ref tox_harness replace_dev_reqs() calls
+            # ref replace_dev_reqs() calls
             return os.path.join(prebuilt_wheel_dir, prebuilt_package[0])
 
     if local_package:
@@ -461,122 +485,6 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
         logging.error(f"No sdist is found in directory {dist_dir} with package name format {pkg_format}.")
         return
     return packages[0]
-
-
-def pip_install(
-    requirements: List[str],
-    include_dependencies: bool = True,
-    python_executable: Optional[str] = None,
-    cwd: Optional[str] = None,
-) -> bool:
-    """
-    Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
-    """
-
-    exe = get_pip_command(python_executable)
-
-    command = exe + ["install"]
-
-    if requirements:
-        command.extend([req.strip() for req in requirements])
-    else:
-        return True
-
-    try:
-        if cwd:
-            subprocess.check_call(command, cwd=cwd)
-        else:
-            subprocess.check_call(command)
-    except subprocess.CalledProcessError as f:
-        return False
-
-    return True
-
-
-def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
-    """
-    Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
-    """
-    # we do not use get_pip_command here because uv pip doesn't have an uninstall command
-    exe = python_executable or sys.executable
-    command = [exe, "-m", "pip", "uninstall", "-y"]
-
-    if requirements:
-        command.extend([req.strip() for req in requirements])
-    else:
-        return True
-
-    try:
-        result = subprocess.check_call(command)
-        return True
-    except subprocess.CalledProcessError as f:
-        return False
-
-
-def get_venv_python(venv_path: str) -> str:
-    """
-    Given a python venv path, identify the crossplat reference to the python executable.
-    """
-    # if we already have a path to a python executable, return it
-    if os.path.isfile(venv_path) and os.access(venv_path, os.X_OK) and os.path.basename(venv_path).startswith("python"):
-        return venv_path
-
-    # cross-platform python in a venv
-    bin_dir = "Scripts" if os.name == "nt" else "bin"
-    python_exe = "python.exe" if os.name == "nt" else "python"
-    return os.path.join(venv_path, bin_dir, python_exe)
-
-
-def install_into_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
-    """
-    Install the requirements into an existing venv (venv_path) without activating it.
-
-    - Uses get_pip_command(get_venv_python) per request.
-    - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
-      so installation goes into the target venv reliably.
-    """
-    py = get_venv_python(venv_path_or_executable)
-    pip_cmd = get_pip_command(py)
-
-    install_targets = [r.strip() for r in requirements]
-    cmd = pip_cmd + ["install"] + install_targets
-
-    if pip_cmd[0] == "uv":
-        cmd += ["--python", py]
-    # todo: clean this up so that we're using run_logged from #42862
-    subprocess.check_call(cmd, cwd=working_directory)
-
-
-def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
-    return pip_install(["-r", requirements_file], True, python_executable)
-
-
-def get_pip_list_output(python_executable: Optional[str] = None):
-    """Uses the invoking python executable to get the output from pip list."""
-    exe = python_executable or sys.executable
-
-    pip_cmd = get_pip_command(exe)
-
-    out = subprocess.Popen(
-        pip_cmd + ["list", "--disable-pip-version-check", "--format", "freeze"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-
-    stdout, stderr = out.communicate()
-
-    collected_output = {}
-
-    if stdout and (stderr is None):
-        # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
-        for line in stdout.decode("utf-8").split(os.linesep)[2:]:
-            if line:
-                package, version = re.split("==", line)
-                collected_output[package] = version
-    else:
-        raise Exception(stderr)
-
-    return collected_output
 
 
 def pytest(args: list, cwd: Optional[str] = None, python_executable: Optional[str] = None) -> bool:
@@ -991,44 +899,6 @@ def verify_package_classifiers(
                 f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'.",
             )
     return True, None
-
-
-def get_venv_call(python_exe: Optional[str] = None) -> List[str]:
-    """
-    Determine whether to use 'uv venv' or regular 'python -m venv' based on environment.
-
-    :param str python_exe: The Python executable to use (if not using the default).
-    :return: List of command arguments for venv.
-    :rtype: List[str]
-
-    """
-    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
-
-    # soon we will change this to default to uv
-    if pip_impl == "uv":
-        return ["uv", "venv"]
-    else:
-        return [python_exe if python_exe else sys.executable, "-m", "venv"]
-
-
-def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
-    """
-    Determine whether to use 'uv pip' or regular 'pip' based on environment.
-
-    :param str python_exe: The Python executable to use (if not using the default).
-    :return: List of command arguments for pip.
-    :rtype: List[str]
-
-    """
-    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
-
-    # soon we will change this to default to uv
-    if pip_impl == "uv":
-        return ["uv", "pip"]
-    else:
-        return [python_exe if python_exe else sys.executable, "-m", "pip"]
 
 
 def is_error_code_5_allowed(target_pkg: str, pkg_name: str):

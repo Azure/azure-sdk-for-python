@@ -4,8 +4,8 @@
 from dataclasses import dataclass, fields
 from typing import Dict, no_type_check
 
-from opentelemetry.sdk._logs import LogRecord
-from opentelemetry.sdk.trace import Event, ReadableSpan
+from opentelemetry._logs import LogRecord
+from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.semconv.attributes.http_attributes import (
     HTTP_REQUEST_METHOD,
@@ -59,8 +59,7 @@ class _RequestData(_TelemetryData):
         if span.attributes:
             attributes = span.attributes
             url = trace_utils._get_url_for_http_request(attributes)
-            status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or \
-                attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or attributes.get(SpanAttributes.HTTP_STATUS_CODE)
             if status_code:
                 try:
                     status_code = int(status_code)
@@ -177,7 +176,7 @@ class _ExceptionData(_TelemetryData):
 
     @staticmethod
     @no_type_check
-    def _from_span_event(span_event: Event):
+    def _from_span_event(span_event: LogRecord):
         return _ExceptionData(
             message=str(span_event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")),
             stack_trace=str(span_event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")),

@@ -5,7 +5,7 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader,
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import CreateDeploymentDetails, DeploymentState
+from azure.ai.language.conversations.authoring.models import CreateDeploymentDetails, AssignedProjectResource
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -26,14 +26,21 @@ class TestConversationsDeployProjectSync(TestConversations):
     def test_deploy_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project_name = "EmailApp"
+        project_name = "EmailAppEnglish"
         deployment_name = "staging0828"
-        trained_model_label = "Model1"
+        trained_model_label = "ModelWithDG"
 
         project_client = client.get_project_client(project_name)
 
         # Build request body for deployment
-        details = CreateDeploymentDetails(trained_model_label=trained_model_label)
+        details = CreateDeploymentDetails(trained_model_label=trained_model_label,
+            azure_resource_ids=[
+            AssignedProjectResource(
+                resource_id="/subscriptions/b72743ec-8bb3-453f-83ad-a53e8a50712e/resourceGroups/language-sdk-rg/providers/Microsoft.CognitiveServices/accounts/sdk-test-02",
+                region="eastus2",
+            )
+            ],
+        )
 
         # Act: begin deploy and wait for completion
         poller = project_client.deployment.begin_deploy_project(

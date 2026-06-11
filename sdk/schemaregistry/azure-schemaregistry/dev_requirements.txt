@@ -1,5 +1,5 @@
 -e ../../../eng/tools/azure-sdk-tools
--e ../../core/azure-core
+../../core/azure-core
 azure-identity==1.17.0
 jsonschema>=4.10.3
 aiohttp>=3.0

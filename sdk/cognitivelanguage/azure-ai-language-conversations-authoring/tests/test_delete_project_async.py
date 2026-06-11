@@ -29,7 +29,7 @@ class TestConversationsDeleteProjectAsync(TestConversationsAsync):
     async def test_delete_project_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
         async with client:
-            project_name = "PythonImportProject0820"
+            project_name = "MyPythonProject1110Async"
 
             # Begin delete; LRO now returns None on success
             poller = await client.begin_delete_project(project_name)

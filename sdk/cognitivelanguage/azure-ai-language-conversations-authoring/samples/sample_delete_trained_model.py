@@ -60,6 +60,7 @@ def sample_delete_trained_model():
     status = captured.get("status_code")
     print(f"Delete Trained Model Response Status: {status}")
 
+
 # [END conversation_authoring_delete_trained_model]
 
 

@@ -42,12 +42,8 @@ def add_sanitizers(test_proxy):
     planetarycomputer_subscription_id = os.environ.get(
         "PLANETARYCOMPUTER_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
     )
-    planetarycomputer_tenant_id = os.environ.get(
-        "PLANETARYCOMPUTER_TENANT_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    planetarycomputer_client_id = os.environ.get(
-        "PLANETARYCOMPUTER_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
-    )
+    planetarycomputer_tenant_id = os.environ.get("PLANETARYCOMPUTER_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    planetarycomputer_client_id = os.environ.get("PLANETARYCOMPUTER_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
     planetarycomputer_client_secret = os.environ.get(
         "PLANETARYCOMPUTER_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
     )
@@ -55,12 +51,8 @@ def add_sanitizers(test_proxy):
         regex=planetarycomputer_subscription_id,
         value="00000000-0000-0000-0000-000000000000",
     )
-    add_general_regex_sanitizer(
-        regex=planetarycomputer_tenant_id, value="00000000-0000-0000-0000-000000000000"
-    )
-    add_general_regex_sanitizer(
-        regex=planetarycomputer_client_id, value="00000000-0000-0000-0000-000000000000"
-    )
+    add_general_regex_sanitizer(regex=planetarycomputer_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=planetarycomputer_client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(
         regex=planetarycomputer_client_secret,
         value="00000000-0000-0000-0000-000000000000",
@@ -71,9 +63,7 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
 
     # Sanitize request tracking headers
-    add_header_regex_sanitizer(
-        key="X-Request-ID", value="00000000000000000000000000000000"
-    )
+    add_header_regex_sanitizer(key="X-Request-ID", value="00000000000000000000000000000000")
     add_header_regex_sanitizer(key="Date", value="Mon, 01 Jan 2024 00:00:00 GMT")
     add_header_regex_sanitizer(key="Server-Timing", value="total;dur=0.0")
     add_header_regex_sanitizer(
@@ -82,9 +72,7 @@ def add_sanitizers(test_proxy):
     )
     # Note: Removed Content-Length sanitizer as it was causing matching issues with DELETE requests
     # add_header_regex_sanitizer(key="Content-Length", value="100000")
-    add_header_regex_sanitizer(
-        key="mise-correlation-id", value="00000000-0000-0000-0000-000000000000"
-    )
+    add_header_regex_sanitizer(key="mise-correlation-id", value="00000000-0000-0000-0000-000000000000")
 
     # Sanitize the endpoint hostname to match the test proxy's format
     from devtools_testutils import add_uri_regex_sanitizer, add_general_string_sanitizer
@@ -94,13 +82,12 @@ def add_sanitizers(test_proxy):
     fake_endpoint = "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com"
 
     # Replace any real geocatalog hostname with our standardized fake value
+    # Covers both .azure.com and .azure-test.net (PPE) domains
     add_uri_regex_sanitizer(
-        regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.[a-zA-Z0-9\-\.]+\.azure\.com",
+        regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.[a-zA-Z0-9\-\.]+\.azure(?:-test)?\.(?:com|net)",
         value=fake_endpoint,
     )
-    add_uri_regex_sanitizer(
-        regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.azure\.com", value=fake_endpoint
-    )
+    add_uri_regex_sanitizer(regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.azure\.com", value=fake_endpoint)
 
     # In live mode, also add a string sanitizer for the real endpoint value
     # This ensures that the EnvironmentVariableLoader's auto-sanitizer uses our fake value
@@ -137,9 +124,7 @@ def add_sanitizers(test_proxy):
         ]:
             real_container_url = os.environ.get(env_var, "")
             if real_container_url:
-                add_general_string_sanitizer(
-                    target=real_container_url, value=fake_container_url
-                )
+                add_general_string_sanitizer(target=real_container_url, value=fake_container_url)
 
     # Sanitize storage account URLs WITH URL-encoded protocol prefix (e.g., in query parameters)
     # Matches: https%3A%2F%2Fcontosdatasa.blob.core.windows.net → https%3A%2F%2FSANITIZED.blob.core.windows.net
@@ -222,6 +207,15 @@ def add_sanitizers(test_proxy):
         value='"id": "00000000-0000-0000-0000-000000000000"',
     )
 
+    # Sanitize static image filenames in both URIs and response bodies
+    # Pattern: geocatalog-<collection>-<32hex>.png (UUID without dashes)
+    # This ensures consistency between the POST response body (which contains the URL)
+    # and the subsequent GET request URI, preventing playback mismatches
+    add_general_regex_sanitizer(
+        regex=r"geocatalog-[a-zA-Z0-9\-]+-[a-f0-9]{32}\.png",
+        value="geocatalog-static-image-00000000000000000000000000000000.png",
+    )
+
     # Sanitize operation-location header for LRO polling
     # This header contains the polling URL with operation UUID that needs to be sanitized
     add_header_regex_sanitizer(
@@ -244,20 +238,17 @@ def add_sanitizers(test_proxy):
     )
 
     # Sanitize collection IDs with random hash suffixes
-    # Pattern: naip-atl-bde3e846 -> naip-atl-00000000
+    # Pattern: naip-bde3e846 -> naip-00000000
     # The service appends a random 8-character hex hash to collection IDs at runtime
-    # The env var may be "naip-atl" but the service will return "naip-atl-bde3e846"
-    planetarycomputer_collection_id = os.environ.get(
-        "PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl"
-    )
+    # The env var may be "naip" but the service will return "naip-bde3e846"
+    # NOTE: Default MUST match testpreparer.py's default ("naip")
+    planetarycomputer_collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip")
 
     # ALWAYS sanitize any collection ID with hash suffix pattern
     # We use the base collection name from env var (which may or may not already have a hash)
     import re
 
-    collection_base_match = re.match(
-        r"^(.+)-[a-f0-9]{8}$", planetarycomputer_collection_id
-    )
+    collection_base_match = re.match(r"^(.+)-[a-f0-9]{8}$", planetarycomputer_collection_id)
     if collection_base_match:
         # Env var already has hash: use the base part
         collection_base = collection_base_match.group(1)
@@ -266,12 +257,21 @@ def add_sanitizers(test_proxy):
         collection_base = planetarycomputer_collection_id
 
     # Sanitize collection IDs with hash: base-XXXXXXXX -> base-00000000
-    add_uri_regex_sanitizer(
+    # Use add_general_regex_sanitizer to catch the container name everywhere:
+    # URIs, query parameters, response bodies (inside URLs), and headers.
+    add_general_regex_sanitizer(
         regex=rf"{re.escape(collection_base)}-[a-f0-9]{{8}}",
         value=f"{collection_base}-00000000",
     )
-    add_body_regex_sanitizer(
-        regex=rf'"{re.escape(collection_base)}-[a-f0-9]{{8}}"',
-        value=f'"{collection_base}-00000000"',
-    )
-    # else: no hash suffix, use collection ID as-is (like "naip-atl")
+
+    # Also sanitize the hash suffix AFTER the EnvironmentVariableLoader replaces
+    # the real collection_id with its default value. For example, if the real
+    # collection_id is "naip-atl-2" and the default is "naip-atl", the EnvVarLoader
+    # replaces "naip-atl-2" -> "naip-atl", turning container name "naip-atl-2-1232d7af"
+    # into "naip-atl-1232d7af". We need a sanitizer for this post-replacement form too.
+    default_collection_id = "naip"
+    if collection_base != default_collection_id:
+        add_general_regex_sanitizer(
+            regex=rf"{re.escape(default_collection_id)}-[a-f0-9]{{8}}",
+            value=f"{default_collection_id}-00000000",
+        )

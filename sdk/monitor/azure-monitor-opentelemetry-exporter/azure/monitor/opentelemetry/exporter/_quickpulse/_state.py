@@ -11,7 +11,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_PROJECTION_MIN_VALUE,
     _SHORT_PING_INTERVAL_SECONDS,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     AggregationType,
     DerivedMetricInfo,
     DocumentIngress,
@@ -49,6 +49,7 @@ _QUICKPULSE_DOC_STREAM_INFOS: Dict[TelemetryType, Dict[str, List[FilterConjuncti
 # Global singleton instance for easy access throughout the codebase
 _quickpulse_manager = None
 
+
 def get_quickpulse_manager() -> "_QuickpulseManager":
     """Get the global Quickpulse Manager singleton instance.
 
@@ -60,6 +61,7 @@ def get_quickpulse_manager() -> "_QuickpulseManager":
     global _quickpulse_manager  # pylint: disable=global-statement
     if _quickpulse_manager is None:
         from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
+
         _quickpulse_manager = _QuickpulseManager()
     return _quickpulse_manager
 

@@ -10,8 +10,10 @@ from typing import Any, Dict, Iterable, Optional, cast
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
-from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+    MachineLearningServicesMgmtClient as ServiceClient102024Preview,
+)
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -338,7 +340,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_offline_store_role_assignment = True
             update_online_store_role_assignment = True
 
-        self._validate_offline_store(offline_store=offline_store)
+        self._validate_offline_store(offline_store=offline_store)  # type: ignore[arg-type]
 
         if (
             rest_workspace_obj.feature_store_settings
@@ -491,9 +493,12 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_online_store_role_assignment=update_online_store_role_assignment,
             materialization_identity_id=(
                 materialization_identity.resource_id
-                if update_workspace_role_assignment
-                or update_offline_store_role_assignment
-                or update_online_store_role_assignment
+                if materialization_identity
+                and (
+                    update_workspace_role_assignment
+                    or update_offline_store_role_assignment
+                    or update_online_store_role_assignment
+                )
                 else None
             ),
             offline_store_target=offline_store_target_to_update if update_offline_store_role_assignment else None,

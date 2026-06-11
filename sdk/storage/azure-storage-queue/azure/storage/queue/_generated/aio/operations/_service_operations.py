@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar
+from typing import Any, Callable, Literal, Optional, TypeVar
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -35,7 +35,7 @@ from ...operations._service_operations import (
 from .._configuration import AzureQueueStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class ServiceOperations:
@@ -102,12 +102,12 @@ class ServiceOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -123,7 +123,10 @@ class ServiceOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -169,11 +172,11 @@ class ServiceOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -188,7 +191,10 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -239,11 +245,11 @@ class ServiceOperations:
 
         _request = build_get_statistics_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -258,7 +264,10 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -318,12 +327,12 @@ class ServiceOperations:
 
         _request = build_get_user_delegation_key_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -339,7 +348,10 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -363,7 +375,7 @@ class ServiceOperations:
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Literal["metadata"]]] = None,
+        include: Optional[list[Literal["metadata"]]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -418,6 +430,7 @@ class ServiceOperations:
 
         _request = build_list_queues_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -425,7 +438,6 @@ class ServiceOperations:
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -440,7 +452,10 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

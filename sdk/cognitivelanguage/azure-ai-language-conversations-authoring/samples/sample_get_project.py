@@ -56,6 +56,7 @@ def sample_get_project():
     print(f"Description: {details.description}")
     print(f"Language: {details.language}")
 
+
 # [END conversation_authoring_get_project]
 
 

@@ -69,6 +69,10 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "coolnessPeriod": 0,
                                 "dataProtection": {
                                     "backup": {"backupPolicyId": "str", "backupVaultId": "str", "policyEnforced": bool},
+                                    "ransomwareProtection": {
+                                        "actualRansomwareProtectionState": "str",
+                                        "desiredRansomwareProtectionState": "str",
+                                    },
                                     "replication": {
                                         "destinationReplications": [
                                             {
@@ -133,9 +137,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "isRestoring": bool,
                                 "kerberosEnabled": bool,
                                 "keyVaultPrivateEndpointResourceId": "str",
-                                "language": "str",
                                 "ldapEnabled": bool,
-                                "ldapServerType": "str",
                                 "maximumNumberOfFiles": 0,
                                 "mountTargets": [
                                     {

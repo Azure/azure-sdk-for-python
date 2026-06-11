@@ -22,9 +22,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
 
 logger = logging.getLogger(__name__)
 
-ICACLS_PATH = os.path.join(
-    os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe"
-)
+ICACLS_PATH = os.path.join(os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe")
+
 
 def _fmt(timestamp: datetime.datetime) -> str:
     return timestamp.strftime("%Y-%m-%dT%H%M%S.%f")
@@ -37,11 +36,13 @@ def _now() -> datetime.datetime:
 def _seconds(seconds: int) -> datetime.timedelta:
     return datetime.timedelta(seconds=seconds)
 
+
 class StorageExportResult(Enum):
     LOCAL_FILE_BLOB_SUCCESS = 0
     CLIENT_STORAGE_DISABLED = 1
     CLIENT_PERSISTENCE_CAPACITY_REACHED = 2
     CLIENT_READONLY = 3
+
 
 # pylint: disable=broad-except
 class LocalFileBlob:
@@ -65,7 +66,15 @@ class LocalFileBlob:
     def put(self, data: List[Any], lease_period: int = 0) -> Union[StorageExportResult, str]:
         try:
             fullpath = self.fullpath + ".tmp"
-            with open(fullpath, "w", encoding="utf-8") as file:
+            # Use O_CREAT | O_EXCL | O_WRONLY to atomically create the file  # cspell:disable-line
+            # and fail if it already exists, preventing race conditions.
+            fd = os.open(fullpath, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)  # cspell:disable-line
+            try:
+                file = os.fdopen(fd, "w", encoding="utf-8")
+            except Exception:
+                os.close(fd)
+                raise
+            with file:
                 for item in data:
                     file.write(json.dumps(item))
                     # The official Python doc: Do not use os.linesep as a line
@@ -80,7 +89,7 @@ class LocalFileBlob:
         except Exception as ex:
             return str(ex)
 
-    def lease(self, period: int) -> Optional['LocalFileBlob']:
+    def lease(self, period: int) -> Optional["LocalFileBlob"]:
         timestamp = _now() + _seconds(period)
         fullpath: str = self.fullpath
         if fullpath.endswith(".lock"):
@@ -129,15 +138,12 @@ class LocalFileStorage:
             self._maintenance_task.cancel()
             self._maintenance_task.join()
 
-    def __enter__(self) -> 'LocalFileStorage':
+    def __enter__(self) -> "LocalFileStorage":
         return self
 
     # pylint: disable=redefined-builtin
     def __exit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[Any]
+        self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException], traceback: Optional[Any]
     ) -> None:
         self.close()
 
@@ -225,7 +231,6 @@ class LocalFileStorage:
         except Exception as ex:
             return str(ex)
 
-
     def _check_and_set_folder_permissions(self) -> bool:
         """
         Validate and set folder permissions where the telemetry data will be stored.
@@ -239,9 +244,7 @@ class LocalFileStorage:
             if os.name == "nt":
                 user = self._get_current_user()
                 if not user:
-                    logger.warning(
-                        "Failed to retrieve current user. Skipping folder permission setup."
-                    )
+                    logger.warning("Failed to retrieve current user. Skipping folder permission setup.")
                     return False
                 result = subprocess.run(
                     [
@@ -260,10 +263,32 @@ class LocalFileStorage:
                     return True
             # Unix
             else:
-                os.chmod(self._path, 0o700)
+                open_flags = (
+                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW  # pylint: disable=no-member  # cspell:disable-line
+                )
+                dir_fd = os.open(self._path, open_flags)
+                try:
+                    dir_stat = os.fstat(dir_fd)
+                    owner_uid = dir_stat.st_uid
+                    current_uid = os.getuid()  # pylint: disable=no-member
+                    if owner_uid not in (current_uid, 0):
+                        logger.error(
+                            "Storage directory %s is owned by uid %d, not the current user (%d) or admin (uid 0). "
+                            "Refusing to use this directory.",
+                            self._path,
+                            owner_uid,
+                            current_uid,
+                        )
+                        set_local_storage_setup_state_exception(
+                            f"Directory owned by uid {owner_uid}, expected {current_uid} or 0"
+                        )
+                        return False
+                    os.fchmod(dir_fd, 0o700)  # pylint: disable=no-member  # cspell:disable-line
+                finally:
+                    os.close(dir_fd)
                 return True
         except OSError as error:
-            if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
+            if getattr(error, "errno", None) == errno.EROFS:  # cspell:disable-line
                 set_local_storage_setup_state_readonly()
             else:
                 set_local_storage_setup_state_exception(str(error))
@@ -293,9 +318,7 @@ class LocalFileStorage:
                             "Persistent storage max capacity has been "
                             "reached. Currently at {}KB. Telemetry will be "
                             "lost. Please consider increasing the value of "
-                            "'storage_max_size' in exporter config.".format(
-                                str(size / 1024)
-                            )
+                            "'storage_max_size' in exporter config.".format(str(size / 1024))
                         )
                         return False
         return True

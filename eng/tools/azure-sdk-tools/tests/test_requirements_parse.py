@@ -79,8 +79,8 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
         os.path.join(expected_output_folder, f"azure_identity-{identity_version}-py3-none-any.whl"),
         os.path.join(expected_output_folder, f"azure_mgmt_core-{mgmt_core_version}-py3-none-any.whl"),
         os.path.join(expected_output_folder, f"azure_mgmt_core-{mgmt_core_version}-py3-none-any.whl"),
-        os.path.join(expected_output_folder, f"azure_sdk_tools-{sdk_tools_version}-py3-none-any.whl[build]"),
-        os.path.join(expected_output_folder, f"azure_sdk_tools-{sdk_tools_version}-py3-none-any.whl[build]"),
+        os.path.join(expected_output_folder, f"azure_sdk_tools-{sdk_tools_version}-py3-none-any.whl[conda]"),
+        os.path.join(expected_output_folder, f"azure_sdk_tools-{sdk_tools_version}-py3-none-any.whl[conda]"),
         os.path.join(expected_output_folder, f"azure_core-{core_version}-py3-none-any.whl"),
         os.path.join(expected_output_folder, f"azure_core-{core_version}-py3-none-any.whl"),
     ]

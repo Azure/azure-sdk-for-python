@@ -10,18 +10,20 @@
 FILE: snapshot_sample_async.py
 
 DESCRIPTION:
-    This sample demos how to create/retrieve/archive/recover/list configuration settings snapshot and list configuration settings of a snapshot asynchronously.
+    This sample demos how to create/retrieve/archive/recover/list configuration settings snapshot and list configuration
+    settings of a snapshot asynchronously.
 
 USAGE: python snapshot_sample_async.py
 
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
 """
+
 import asyncio
 import os
+from uuid import uuid4
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from uuid import uuid4
 
 
 async def main():

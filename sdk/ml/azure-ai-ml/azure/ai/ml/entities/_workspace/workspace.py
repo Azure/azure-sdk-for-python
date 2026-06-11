@@ -8,14 +8,14 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2024_10_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2024_10_01_preview.models import NetworkAcls as RestNetworkAcls
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import NetworkAcls as RestNetworkAcls
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import (
@@ -198,7 +198,7 @@ class Workspace(Resource):
         """
         return self._discovery_url
 
-    # Exists to appease tox's mypy rules.
+    # Exists to appease mypy rules.
     @property
     def _hub_id(self) -> Optional[str]:
         """The UID of the hub parent of the project. This is an internal property
@@ -210,7 +210,7 @@ class Workspace(Resource):
         """
         return self.__hub_id
 
-    # Exists to appease tox's mypy rules.
+    # Exists to appease mypy rules.
     @_hub_id.setter
     def _hub_id(self, value: str):
         """Set the hub of the project. This is an internal property

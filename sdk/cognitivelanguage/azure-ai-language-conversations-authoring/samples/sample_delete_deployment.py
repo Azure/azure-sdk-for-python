@@ -46,9 +46,7 @@ def sample_delete_deployment():
     project_client = client.get_project_client(project_name)
 
     # start delete (long-running operation)
-    poller = project_client.deployment.begin_delete_deployment(
-        deployment_name=deployment_name
-    )
+    poller = project_client.deployment.begin_delete_deployment(deployment_name=deployment_name)
 
     try:
         poller.result()
@@ -58,6 +56,7 @@ def sample_delete_deployment():
     except HttpResponseError as e:
         print(f"Operation failed: {e.message}")
         print(e.error)
+
 
 # [END conversation_authoring_delete_deployment]
 

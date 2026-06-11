@@ -242,7 +242,7 @@ Multiple removals of unreferenced models that are typically not used in the SDK:
 
 **Changelog Pattern**:
 
-Multiple removals of models following the pattern `xxxList`:
+Multiple removals of pageable models. A pageable model is a response wrapper for a list/paging operation whose only properties are `value`, or `next_link` plus `value`. Their names usually end with `List` but not always — verify by checking the model definition in `_models.py` or `_models_py3.py`.
 
 ```md
 - Deleted or renamed model `ElasticSanList`
@@ -311,3 +311,70 @@ Removal of multiple parameters and addition of parameters `properties` entries f
 **Impact**: Users can only get the property following the actual model structure which matches the REST API documentation.
 
 **Resolution**: Accept these breaking changes.
+
+## 12. Renaming of Properties That Conflict with Base Model Methods
+
+**Changelog Pattern**:
+
+Removal of a property and addition of a corresponding property with `_property` suffix:
+
+```md
+- Model `ExceptionEntry` deleted or renamed its instance variable `values`
+- Model `ExceptionEntry` added property `values_property`
+```
+
+**Reason**: In the base model class of TypeSpec-based SDKs, the following names are native method names: `keys`, `items`, `values`, `popitem`, `clear`, `update`, `setdefault`, `pop`, `get`, `copy`. To avoid name conflicts, properties using any of these names are automatically renamed with a `_property` suffix (e.g., `values` becomes `values_property`, `items` becomes `items_property`).
+
+**Impact**: Users need to update property access to use the `_property` suffix (e.g., `.values` to `.values_property`, `.keys` to `.keys_property`, `.items` to `.items_property`).
+
+**Resolution**: Accept these breaking changes.
+
+## 13. Renamed Model or Enum
+
+**Changelog Pattern**:
+
+Entries showing a model or enum has been renamed:
+
+```md
+- Renamed model `OldModelName` to `NewModelName`
+- Renamed enum `OldEnumName` to `NewEnumName`
+```
+
+**Reason**: TypeSpec may produce different model or enum names than Swagger (for example, due to namespace changes or naming convention differences).
+
+**Spec Pattern**:
+
+Find the type definition by examining the new name from the changelog entry:
+
+```tsp
+model NewModelName {
+  ...
+}
+
+union NewEnumName {
+  string,
+  ...
+}
+```
+
+**Resolution**:
+
+Use `@clientName` to restore the original name from the removal entry:
+
+```tsp
+@@clientName(NewModelName, "OldModelName", "python");
+@@clientName(NewEnumName, "OldEnumName", "python");
+```
+
+**Note**: Some renamed models are defined in common types (e.g., `Azure.ResourceManager.CommonTypes`) rather than the current service's TypeSpec. In that case, you may not find the type definition in the local spec — import the relevant library and reference the type by its fully qualified name. For example:
+
+```tsp
+import "@azure-tools/typespec-azure-resource-manager";
+...
+
+@@clientName(
+  Azure.ResourceManager.CommonTypes.OperationDisplay,
+  "OperationInfo",
+  "python"
+);
+```

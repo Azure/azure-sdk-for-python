@@ -23,21 +23,22 @@ class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity of an alert."""
 
     SEV0 = "Sev0"
-    """Critical"""
+    """Critical."""
     SEV1 = "Sev1"
-    """Error"""
+    """Error."""
     SEV2 = "Sev2"
-    """Warning"""
+    """Warning."""
     SEV3 = "Sev3"
-    """Informational"""
+    """Informational."""
     SEV4 = "Sev4"
-    """Verbose"""
+    """Verbose."""
 
 
 class AuthenticationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported kinds of authentication settings as discriminator."""
 
     MANAGED_IDENTITY = "ManagedIdentity"
+    """MANAGED_IDENTITY."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -58,55 +59,59 @@ class DependenciesAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     WORST_OF = "WorstOf"
     """Default behavior: Worst child health state is propagated."""
-    THRESHOLDS = "Thresholds"
-    """Based on configurable thresholds."""
+    MIN_HEALTHY = "MinHealthy"
+    """Healthy if the count/percentage of healthy children meets the threshold."""
+    MAX_NOT_HEALTHY = "MaxNotHealthy"
+    """Healthy if the count/percentage of not-healthy children stays below the threshold."""
+
+
+class DependenciesAggregationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Unit type for dependency aggregation thresholds."""
+
+    ABSOLUTE = "Absolute"
+    """Threshold is an absolute count of entities."""
+    PERCENTAGE = "Percentage"
+    """Threshold is a percentage of entities (0-100)."""
+
+
+class DiscoveryRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discovery rule specification kind discriminator."""
+
+    RESOURCE_GRAPH_QUERY = "ResourceGraphQuery"
+    """Azure Resource Graph query based discovery."""
+    APPLICATION_INSIGHTS_TOPOLOGY = "ApplicationInsightsTopology"
+    """Application Insights topology based discovery."""
 
 
 class DiscoveryRuleRecommendedSignalsBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Discovery rule recommended signal behavior."""
 
     ENABLED = "Enabled"
-    """Automatically add recommended signals"""
+    """Automatically add recommended signals."""
     DISABLED = "Disabled"
-    """Do not automatically add recommended signals"""
+    """Do not automatically add recommended signals."""
 
 
-class DiscoveryRuleRelationshipDiscoveryBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DiscoveryRuleRelationshipDiscoveryBehavior(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Discovery rule relationship discovery behavior."""
 
     ENABLED = "Enabled"
-    """Automatically attempt to discover relationships"""
+    """Automatically attempt to discover relationships."""
     DISABLED = "Disabled"
-    """Do not automatically attempt to discover relationships"""
-
-
-class DynamicThresholdDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Threshold direction for dynamic thresholds."""
-
-    LOWER_THAN = "LowerThan"
-    """Lower than"""
-    GREATER_THAN = "GreaterThan"
-    """Greater than"""
-    GREATER_OR_LOWER_THAN = "GreaterOrLowerThan"
-    """Greater or Lower Than"""
-
-
-class DynamicThresholdModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ML-based model variants."""
-
-    ANOMALY_DETECTION = "AnomalyDetection"
-    """Anomaly detection model"""
+    """Do not automatically attempt to discover relationships."""
 
 
 class EntityImpact(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of impact an entity has on health state propagation."""
 
     STANDARD = "Standard"
-    """Standard impact"""
+    """Standard impact."""
     LIMITED = "Limited"
-    """Limited impact"""
+    """Limited impact."""
     SUPPRESSED = "Suppressed"
-    """Suppressed impact"""
+    """Suppressed impact."""
 
 
 class HealthModelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -119,22 +124,24 @@ class HealthModelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     CREATING = "Creating"
+    """CREATING."""
     DELETING = "Deleting"
+    """DELETING."""
 
 
 class HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health state of an entity."""
 
     HEALTHY = "Healthy"
-    """Healthy status"""
+    """Healthy status."""
     DEGRADED = "Degraded"
-    """Degraded status"""
-    ERROR = "Error"
-    """Error status (Unhealthy)"""
+    """Degraded status."""
+    UNHEALTHY = "Unhealthy"
+    """Unhealthy status."""
     UNKNOWN = "Unknown"
-    """Unknown status"""
+    """Unknown status."""
     DELETED = "Deleted"
-    """Deleted status"""
+    """Deleted status."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -156,11 +163,17 @@ class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Metric aggregation type."""
 
     NONE = "None"
+    """NONE."""
     AVERAGE = "Average"
+    """AVERAGE."""
     COUNT = "Count"
+    """COUNT."""
     MINIMUM = "Minimum"
+    """MINIMUM."""
     MAXIMUM = "Maximum"
+    """MAXIMUM."""
     TOTAL = "Total"
+    """TOTAL."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -180,37 +193,44 @@ class RefreshInterval(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Refresh interval in ISO duration format."""
 
     PT1M = "PT1M"
-    """One Minute"""
+    """One Minute."""
     PT5M = "PT5M"
-    """Five Minutes"""
+    """Five Minutes."""
     PT10M = "PT10M"
-    """Ten Minutes"""
+    """Ten Minutes."""
     PT30M = "PT30M"
-    """Thirty Minutes"""
+    """Thirty Minutes."""
     PT1H = "PT1H"
-    """One Hour"""
+    """One Hour."""
     PT2H = "PT2H"
-    """Two Hours"""
+    """Two Hours."""
 
 
 class SignalKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported signal kinds as discriminator."""
 
     AZURE_RESOURCE_METRIC = "AzureResourceMetric"
+    """AZURE_RESOURCE_METRIC."""
     LOG_ANALYTICS_QUERY = "LogAnalyticsQuery"
+    """LOG_ANALYTICS_QUERY."""
     PROMETHEUS_METRICS_QUERY = "PrometheusMetricsQuery"
+    """PROMETHEUS_METRICS_QUERY."""
+    EXTERNAL_SIGNAL = "External"
+    """EXTERNAL_SIGNAL."""
 
 
 class SignalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Signal operator."""
 
-    LOWER_THAN = "LowerThan"
-    """Lower than"""
-    LOWER_OR_EQUALS = "LowerOrEquals"
-    """Lower than or equal to"""
     GREATER_THAN = "GreaterThan"
-    """Greater than"""
-    GREATER_OR_EQUALS = "GreaterOrEquals"
-    """Greater than or equal to"""
-    EQUALS = "Equals"
-    """Equal to"""
+    """Greater than."""
+    LESS_THAN = "LessThan"
+    """Less than."""
+    LESS_THAN_OR_EQUAL = "LessThanOrEqual"
+    """Less than or equal to."""
+    GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    """Greater than or equal to."""
+    EQUAL = "Equal"
+    """Equal to."""
+    NOT_EQUAL = "NotEqual"
+    """Not equal to."""

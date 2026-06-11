@@ -29,6 +29,7 @@ class DeleteJobPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -103,6 +104,7 @@ class DisableJobPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -177,6 +179,7 @@ class EnableJobPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -251,6 +254,7 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_schedule_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -319,6 +323,7 @@ class DeletePoolPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -380,78 +385,6 @@ class DeletePoolPollingMethod(PollingMethod):
             self._finished = True
 
 
-class DeleteCertificatePollingMethod(PollingMethod):
-    """Polling method for certificate delete operation.
-
-    This class is used to poll the status of a certificate deletion operation.
-    It checks the status of the certificate until it is deleted or an error occurs.
-    """
-
-    def __init__(
-        self,
-        client: Any,
-        initial_response: PipelineResponse,
-        deserialization_callback: Optional[Callable],
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        polling_interval: int = 5,
-    ):
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._thumbprint_algorithm = thumbprint_algorithm
-        self._thumbprint = thumbprint
-        self._status = "InProgress"
-        self._finished = False
-        self._polling_interval = polling_interval
-
-    def initialize(
-        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
-    ) -> None:
-        pass
-
-    def status(self) -> str:
-        return self._status
-
-    def finished(self) -> bool:
-        return self._finished
-
-    def resource(self) -> Optional[Any]:
-        if self._deserialization_callback and self._finished:
-            return self._deserialization_callback()
-        return None
-
-    def run(self) -> None:
-        while not self.finished():
-            self.update_status()
-            if not self.finished():
-                # add a delay if not done
-                time.sleep(self._polling_interval)
-
-    def update_status(self) -> None:
-        """Update the current status of the LRO by calling the status monitor
-        and then using the polling strategy's get_status() to set the status."""
-        try:
-            certificate = self._client.get_certificate(self._thumbprint_algorithm, self._thumbprint)
-
-            # check certificate state is DELETING state (if not in deleting state then it's succeeded)
-            if certificate.state == _models.BatchCertificateState.DELETING:
-                self._status = "InProgress"
-                self._finished = False
-            else:
-                self._status = "Succeeded"
-                self._finished = True
-
-        except ResourceNotFoundError:
-            # Certificate no longer exists, deletion is complete
-            self._status = "Succeeded"
-            self._finished = True
-        except AzureError:
-            # Another error occurred so LRO failed
-            self._status = "Failed"
-            self._finished = True
-
-
 class DeallocateNodePollingMethod(PollingMethod):
     """Polling method for node deallocate operation.
 
@@ -465,6 +398,7 @@ class DeallocateNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -543,6 +477,7 @@ class RebootNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -619,6 +554,7 @@ class ReimageNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -695,6 +631,7 @@ class RemoveNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -771,6 +708,7 @@ class ResizePoolPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -847,6 +785,7 @@ class StartNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -923,6 +862,7 @@ class StopPoolResizePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -999,6 +939,7 @@ class TerminateJobPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -1073,6 +1014,7 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_schedule_id: str,
+        *,
         polling_interval: int = 5,
     ):
         self._client = client

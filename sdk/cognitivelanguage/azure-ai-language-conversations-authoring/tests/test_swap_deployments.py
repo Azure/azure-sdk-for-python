@@ -6,7 +6,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     SwapDeploymentsDetails,
-) 
+)
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,

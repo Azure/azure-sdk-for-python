@@ -32,6 +32,8 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
     :param url: The URL of the service account, container, or blob that is the target of the
      desired operation. Required.
     :type url: str
+    :param version: Specifies the version of the operation to use for this request. Required.
+    :type version: str
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
     :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
@@ -41,16 +43,13 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
     :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
-    :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2026-02-06". Note that overriding this default value may result in unsupported behavior.
-    :paramtype version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, url: str, base_url: str = "", x_ms_lease_duration: Optional[int] = None, **kwargs: Any
+        self, url: str, version: str, base_url: str = "", x_ms_lease_duration: Optional[int] = None, **kwargs: Any
     ) -> None:
         self._config = AzureDataLakeStorageRESTAPIConfiguration(
-            url=url, x_ms_lease_duration=x_ms_lease_duration, **kwargs
+            url=url, version=version, x_ms_lease_duration=x_ms_lease_duration, **kwargs
         )
 
         _policies = kwargs.pop("policies", None)

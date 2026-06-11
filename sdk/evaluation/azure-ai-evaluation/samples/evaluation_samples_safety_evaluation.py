@@ -9,7 +9,7 @@
 """
 DESCRIPTION:
     These samples demonstrate usage of _SafetyEvaluation class with various _SafetyEvaluator instances.
-    
+
 USAGE:
     python evaluation_samples_safety_evaluation.py
 

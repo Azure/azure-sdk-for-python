@@ -31,7 +31,8 @@ from devtools_testutils import (
     test_proxy,
     add_oauth_response_sanitizer,
     add_general_regex_sanitizer,
-    remove_batch_sanitizers
+    remove_batch_sanitizers,
+    set_custom_default_matcher,
 )
 
 
@@ -45,6 +46,7 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=azure_keyvault_url, value="https://vaultname.vault.azure.net")
     add_general_regex_sanitizer(regex=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    set_custom_default_matcher(ignored_headers="Accept")
     add_oauth_response_sanitizer()
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:

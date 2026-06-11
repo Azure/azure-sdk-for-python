@@ -145,7 +145,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         :param credential: Key or token credential.
         :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
         :keyword api_version: The API version to use for this operation. Default value is
-        "2025-05-15-preview". Note that overriding this default value may result in unsupported
+        "2025-11-15-preview". Note that overriding this default value may result in unsupported
         behavior.
         :paramtype api_version: str`
         """
@@ -208,7 +208,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
     @api_version_validation(
         method_added_on="2023-04-01",
         params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
+        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     def begin_analyze_conversation_job(  # type: ignore[override]
         self, body: Union[AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
