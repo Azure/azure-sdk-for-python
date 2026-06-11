@@ -449,7 +449,7 @@ class TestFoundryEnrichmentLogRecordProcessor:
         proc = _FoundryEnrichmentLogRecordProcessor(
             agent_name="agent-a",
             agent_version="1.2.3",
-            session_id="sess-fallback-1",
+            session_id="session-fallback-1",
         )
         log_data = _FakeLogData({})
 
@@ -460,19 +460,19 @@ class TestFoundryEnrichmentLogRecordProcessor:
         assert attrs["agent_name"] == "agent-a"
         assert attrs["gen_ai.agent.version"] == "1.2.3"
         assert attrs["agent_version"] == "1.2.3"
-        assert attrs["microsoft.session.id"] == "sess-fallback-1"
-        assert attrs["agent_session_id"] == "sess-fallback-1"
+        assert attrs["microsoft.session.id"] == "session-fallback-1"
+        assert attrs["agent_session_id"] == "session-fallback-1"
 
     def test_prefers_baggage_session_id_over_fallback(self) -> None:
         proc = _FoundryEnrichmentLogRecordProcessor(
             agent_name="agent-a",
             agent_version="1.2.3",
-            session_id="sess-fallback-1",
+            session_id="session-fallback-1",
         )
         log_data = _FakeLogData({})
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", "sess-from-baggage",
+            "azure.ai.agentserver.session_id", "session-from-baggage",
         )
         token = _otel_context.attach(ctx)
         try:
@@ -481,14 +481,14 @@ class TestFoundryEnrichmentLogRecordProcessor:
             _otel_context.detach(token)
 
         attrs = log_data.log_record.attributes
-        assert attrs["microsoft.session.id"] == "sess-from-baggage"
-        assert attrs["agent_session_id"] == "sess-from-baggage"
+        assert attrs["microsoft.session.id"] == "session-from-baggage"
+        assert attrs["agent_session_id"] == "session-from-baggage"
 
     def test_does_not_overwrite_existing_log_attributes(self) -> None:
         proc = _FoundryEnrichmentLogRecordProcessor(
             agent_name="agent-a",
             agent_version="1.2.3",
-            session_id="sess-fallback-1",
+            session_id="session-fallback-1",
         )
         attrs = {
             "gen_ai.agent.name": "existing-name",
@@ -508,5 +508,4 @@ class TestFoundryEnrichmentLogRecordProcessor:
         assert attrs["agent_version"] == "0.0.1"
         assert attrs["microsoft.session.id"] == "existing-session"
         assert attrs["agent_session_id"] == "existing-session"
-
 
