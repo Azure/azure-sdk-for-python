@@ -3,7 +3,6 @@
 The AI Projects client library is part of the Microsoft Foundry SDK, and provides easy access to
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
-
 * **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents** (Preview), which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
 * **Enhance Agents with specialized tools**:
   * Agent-to-Agent (A2A) (Preview)
