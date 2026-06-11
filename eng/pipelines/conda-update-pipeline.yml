@@ -81,10 +81,14 @@ extends:
               - checkout: self
                 persistCredentials: true
 
-              - task: UsePythonVersion@0
-                displayName: 'Use Python 3.11'
-                inputs:
+              - template: /eng/pipelines/templates/steps/use-python-version.yml
+                parameters:
                   versionSpec: '3.11'
+
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  EnableTwineAuth: false
+                  EnableUvAuth: false
 
               - script: |
                   python -m pip install --upgrade pip

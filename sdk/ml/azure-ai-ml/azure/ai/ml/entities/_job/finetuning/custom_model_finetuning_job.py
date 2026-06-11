@@ -6,11 +6,13 @@
 
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     ModelProvider as RestModelProvider,
     CustomModelFineTuning as RestCustomModelFineTuningVertical,
     FineTuningJob as RestFineTuningJob,
     JobBase as RestJobBase,
+    MLFlowModelJobInput,
+    UriFileJobInput,
 )
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
@@ -75,15 +77,27 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :return: REST object representation of this object.
         :rtype: JobBase
         """
+        # TSP rest models coerce SDK Input entities to dicts at construction, so
+        # convert to TSP JobInput types up front rather than mutating after.
+        model = MLFlowModelJobInput(uri=self._model.path) if isinstance(self._model, Input) else self._model
+        training_data = (
+            UriFileJobInput(uri=self._training_data.path)
+            if isinstance(self._training_data, Input)
+            else self._training_data
+        )
+        validation_data = (
+            UriFileJobInput(uri=self._validation_data.path)
+            if isinstance(self._validation_data, Input)
+            else self._validation_data
+        )
         custom_finetuning_vertical = RestCustomModelFineTuningVertical(
             task_type=self._task,
-            model=self._model,
+            model=model,
             model_provider=self._model_provider,
-            training_data=self._training_data,
-            validation_data=self._validation_data,
+            training_data=training_data,
+            validation_data=validation_data,
             hyper_parameters=self._hyperparameters,
         )
-        self._resolve_inputs(custom_finetuning_vertical)
 
         finetuning_job = RestFineTuningJob(
             display_name=self.display_name,

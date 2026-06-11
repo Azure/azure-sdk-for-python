@@ -44,7 +44,7 @@ class MachineLearningServicesClientConfiguration:  # pylint: disable=too-many-in
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-04-01-preview")
+        api_version: str = kwargs.pop("api_version", "2026-05-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
