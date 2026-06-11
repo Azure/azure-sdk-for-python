@@ -29,7 +29,7 @@ from ._attachments import (
     _resolve_input_storage,
 )
 from ._decorator import TaskOptions, _deserialize_input, _serialize_input
-from ._exceptions import TaskConflictError, TaskFailed, TaskNotFound
+from ._exceptions import EtagConflict, TaskConflictError, TaskFailed, TaskNotFound
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
 from ._metadata import TaskMetadata
 from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest, TaskStatus
@@ -293,6 +293,10 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         "opts",
         "retry",
         "lease_last_refresh_monotonic",
+        # Spec 019 FR-A-001 / FR-A-003 — latest known etag for this task.
+        # Refreshed from every GET/CREATE/PATCH response. Used as
+        # ``if_match`` on every subsequent PATCH.
+        "current_etag",
     )
 
     def __init__(
@@ -330,6 +334,10 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         # so it doesn't issue a redundant heartbeat the moment after a
         # payload PATCH already refreshed the lease.
         self.lease_last_refresh_monotonic: float = 0.0
+        # Spec 019 FR-A-001/-003 — latest known etag, refreshed on every
+        # store interaction (create response, get response, update response).
+        # Used as ``if_match`` on subsequent PATCHes.
+        self.current_etag: str | None = None
 
 
 class TaskManager:  # pylint: disable=too-many-instance-attributes
@@ -374,6 +382,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # Spec 016 FR-002 Layer 2: periodic recovery scan task. Created
         # at startup() time; cancelled at shutdown().
         self._periodic_recovery_task: asyncio.Task[None] | None = None
+        # Spec 019 FR-A-006/-007 / C-WQ-1..3 — per-task write-queue
+        # registry. A single asyncio.Lock per task_id serializes all
+        # in-process PATCHes against that task so etag conflicts become
+        # rare (only cross-process). Lazy-created on first use; dropped
+        # in ``_active_tasks_pop`` (no leaks).
+        # Spec 019 FR-A-001/-003 — also tracks the latest known etag
+        # per task_id outside the _ActiveTask entry, so reclaim/scan
+        # paths (which have no _ActiveTask yet) can still benefit.
+        self._task_write_locks: dict[str, asyncio.Lock] = {}
+        self._task_etag_cache: dict[str, str] = {}
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -872,6 +890,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
             )
         )
+        # Spec 019 FR-A-003 — track the etag from the create response
+        # so the next PATCH carries it as if_match (FR-A-001).
+        self._track_etag(task_id, getattr(task_info, "etag", None))
 
         logger.info("Created durable task %s (%s)", task_id, fn_name)
 
@@ -1894,7 +1915,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 )
                 break
 
-        self._active_tasks.pop(task_id, None)
+        self._active_tasks_pop(task_id)
 
     async def _try_drain_steering(  # pylint: disable=too-many-branches,too-many-statements,too-many-locals
         self,
@@ -2191,13 +2212,19 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     logger.warning("Failed to complete task %s", task_id, exc_info=True)
             else:
                 try:
-                    await self._provider.update(
+                    await self._terminal_write_locked(
                         task_id,
                         TaskPatchRequest(
                             status="completed",
                             payload=payload_patch,
                         ),
                     )
+                except TaskConflictError:
+                    # Spec 019 FR-A-008 — terminal-write 412 RE-READ
+                    # decided ABANDON (lease-lost or already-terminal).
+                    # Propagate as the eviction-shape exception so
+                    # awaiters surface TaskConflictError.
+                    raise
                 except TransportClassifiedError as exc:
                     if _is_evicted(exc):
                         logger.warning(
@@ -2472,18 +2499,38 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
             # Reclaim the lease with our new instance ID
             try:
+                # Spec 019 FR-A-009 / C-LSE-2 — both reclaim sites
+                # (inline AND cold-start/periodic) carry if_match. On
+                # 412, ABANDON per §25.3 — another process beat us;
+                # let the next scan re-evaluate.
+                reclaim_etag = getattr(task_info, "etag", None)
+                self._track_etag(task_info.id, reclaim_etag)
                 await self._provider.update(
                     task_info.id,
                     TaskPatchRequest(
                         lease_owner=self._lease_owner,
                         lease_instance_id=self._instance_id,
                         lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
+                        if_match=reclaim_etag,
                     ),
                 )
                 logger.info(
                     "Reclaimed stale task %s (generation will increment)",
                     task_info.id,
                 )
+            except (EtagConflict, ValueError) as exc:
+                # 412 ABANDON for reclaim per §25.3.
+                if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
+                    logger.warning(
+                        "Failed to reclaim task %s", task_info.id, exc_info=True
+                    )
+                    continue
+                logger.info(
+                    "Reclaim 412 for task %s — another process beat us; "
+                    "letting next scan re-evaluate (FR-A-009 / §25.3 ABANDON).",
+                    task_info.id,
+                )
+                continue
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
                 continue
@@ -2536,6 +2583,248 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         if len(self._resume_callbacks) == 1:
             return next(iter(self._resume_callbacks.values()))
         return None
+
+    # --------------------------------------------------------------- #
+    # Spec 019 — Per-task write queue + etag tracking
+    # --------------------------------------------------------------- #
+
+    def _get_task_write_lock(self, task_id: str) -> asyncio.Lock:
+        """Spec 019 FR-A-006 / C-WQ-1 — return the per-task write lock.
+
+        Lazily creates the lock on first use. All in-process PATCH-
+        issuing code paths MUST acquire this lock before reading
+        state + computing the PATCH + applying it.
+
+        Reads do NOT call this method (FR-A-006 — reads are lock-free).
+
+        The lock entry is dropped by :meth:`_active_tasks_pop` when
+        the local active-entry is torn down (FR-A-007).
+        """
+        lock = self._task_write_locks.get(task_id)
+        if lock is None:
+            lock = asyncio.Lock()
+            self._task_write_locks[task_id] = lock
+        return lock
+
+    def _track_etag(self, task_id: str, etag: str | None) -> None:
+        """Spec 019 FR-A-003 — refresh the latest known etag for a task.
+
+        Called by every store-interaction site after a successful
+        response carries an etag. Stored in two places: the per-task
+        etag cache (so reclaim/scan paths without an _ActiveTask can
+        still benefit) AND, if present, on the _ActiveTask entry
+        itself.
+        """
+        if etag is None:
+            return
+        self._task_etag_cache[task_id] = etag
+        active = self._active_tasks.get(task_id)
+        if active is not None:
+            active.current_etag = etag
+
+    def _get_tracked_etag(self, task_id: str) -> str | None:
+        """Spec 019 FR-A-001 — read the latest tracked etag for a task.
+
+        Returns ``None`` if no PATCH/GET response has been observed
+        yet (this can happen on the very first write — typically a
+        ``create`` where ``if_match`` is intentionally absent).
+        """
+        active = self._active_tasks.get(task_id)
+        if active is not None and active.current_etag is not None:
+            return active.current_etag
+        return self._task_etag_cache.get(task_id)
+
+    def _active_tasks_pop(self, task_id: str) -> None:
+        """Spec 019 FR-A-007 — pop the active task entry AND drop its
+        per-task write lock + etag cache so the registries do not
+        leak across many task lifetimes.
+        """
+        self._active_tasks.pop(task_id, None)
+        self._task_write_locks.pop(task_id, None)
+        self._task_etag_cache.pop(task_id, None)
+
+    async def _provider_update_locked(
+        self,
+        task_id: str,
+        patch: TaskPatchRequest,
+        *,
+        force_if_match: bool = True,
+    ) -> Any:
+        """Spec 019 FR-A-001 / C-WQ-3 — apply a PATCH under the per-task
+        write lock with the tracked etag as ``if_match``.
+
+        - Acquires the per-task write lock (FR-A-006).
+        - Populates ``patch.if_match`` from the tracked etag when the
+          caller hasn't set one and ``force_if_match=True`` (FR-A-001).
+        - Calls ``self._provider.update(task_id, patch)``.
+        - Refreshes the tracked etag from the response (FR-A-003).
+        - Bumps lease-last-refresh if the PATCH carried lease ext
+          kwargs (FR-A-005 — dynamic cadence shadows next heartbeat).
+
+        Does NOT implement the FR-A-008 RE-READ-AND-DECIDE policy —
+        that lives in :meth:`_terminal_write_locked` for the terminal
+        suspend/complete/fail sites.
+        """
+        async with self._get_task_write_lock(task_id):
+            if force_if_match and patch.if_match is None:
+                patch.if_match = self._get_tracked_etag(task_id)
+            result = await self._provider.update(task_id, patch)
+            etag = getattr(result, "etag", None)
+            if etag:
+                self._track_etag(task_id, etag)
+            # If the PATCH piggybacked the lease, the renewal loop's
+            # next tick is pushed out (FR-A-005).
+            if patch.lease_owner is not None:
+                self._note_lease_refreshed(task_id)
+            return result
+
+    async def _terminal_write_locked(
+        self,
+        task_id: str,
+        patch: TaskPatchRequest,
+        *,
+        max_attempts: int = 5,
+    ) -> Any:
+        """Spec 019 FR-A-008 / C-WQ-3 / SC-3b — terminal-write 412
+        RE-READ-AND-DECIDE.
+
+        On 412 (EtagConflict from the provider, OR a hosted-provider
+        TransportClassifiedError(classification='conflict')), the
+        framework re-reads the record and decides:
+
+        - (a) Lease no longer ours (owner / instance_id differ, or
+          ``expiry_count`` bumped past our cached value) → ABANDON
+          and raise ``TaskConflictError(current_status='in_progress')``.
+          The new owner is mid-recovery; clobbering their state would
+          silently cancel their execution.
+        - (b) ``status`` already ``completed`` → ABANDON. Another
+          actor already wrote the terminal; raise
+          ``TaskConflictError(current_status='completed')``.
+        - (c) Lease still ours, status still ``in_progress`` → retry
+          the terminal PATCH against the new etag, up to
+          ``max_attempts`` times. Steering inputs another process
+          appended in the racing window are silently superseded —
+          the steerer's ``.result()`` then raises
+          ``TaskConflictError(current_status='completed')`` per the
+          C-STR-6 cross-process steering-after-terminate contract.
+
+        Default budget is 5 attempts.
+        """
+        prior_lease_owner = patch.lease_owner
+        prior_lease_instance = patch.lease_instance_id
+        async with self._get_task_write_lock(task_id):
+            attempts = 0
+            cached_expiry_count = self._cached_expiry_count(task_id)
+            while True:
+                attempts += 1
+                if patch.if_match is None:
+                    patch.if_match = self._get_tracked_etag(task_id)
+                try:
+                    result = await self._provider.update(task_id, patch)
+                    etag = getattr(result, "etag", None)
+                    if etag:
+                        self._track_etag(task_id, etag)
+                    return result
+                except (EtagConflict, ValueError) as exc:
+                    # The local provider raises ValueError on etag
+                    # mismatch; the hosted provider raises
+                    # TransportClassifiedError(classification="conflict")
+                    # which the caller translates to EtagConflict at
+                    # the boundary. Both arrive here as either type.
+                    if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
+                        raise
+                    if attempts >= max_attempts:
+                        raise
+                    decision = await self._terminal_412_decide(
+                        task_id,
+                        prior_lease_owner=prior_lease_owner,
+                        prior_lease_instance=prior_lease_instance,
+                        cached_expiry_count=cached_expiry_count,
+                    )
+                    if decision == "abandon_lease_lost":
+                        raise TaskConflictError(task_id, "in_progress") from exc
+                    if decision == "abandon_already_terminal":
+                        raise TaskConflictError(task_id, "completed") from exc
+                    # decision == "retry" — clear if_match and loop.
+                    patch.if_match = None
+                except TransportClassifiedError as exc:
+                    # Hosted-provider conflict (412 etag) or eviction
+                    # (binding_mismatch). Eviction goes to the eviction
+                    # path — fall through to the existing handler shape.
+                    if getattr(exc, "classification", "") == "conflict":
+                        if attempts >= max_attempts:
+                            raise
+                        decision = await self._terminal_412_decide(
+                            task_id,
+                            prior_lease_owner=prior_lease_owner,
+                            prior_lease_instance=prior_lease_instance,
+                            cached_expiry_count=cached_expiry_count,
+                        )
+                        if decision == "abandon_lease_lost":
+                            raise TaskConflictError(
+                                task_id, "in_progress"
+                            ) from exc
+                        if decision == "abandon_already_terminal":
+                            raise TaskConflictError(
+                                task_id, "completed"
+                            ) from exc
+                        patch.if_match = None
+                        continue
+                    raise
+
+    def _cached_expiry_count(self, task_id: str) -> int:
+        """Best-effort cache of the prior lease.expiry_count for FR-A-008
+        branch (a) detection. Not authoritative; absence means "no
+        cached value" and the decision falls back on lease owner /
+        instance_id comparison.
+        """
+        return getattr(self, "_expiry_count_cache", {}).get(task_id, 0)
+
+    async def _terminal_412_decide(
+        self,
+        task_id: str,
+        *,
+        prior_lease_owner: str | None,
+        prior_lease_instance: str | None,
+        cached_expiry_count: int,
+    ) -> str:
+        """Spec 019 FR-A-008 — decide what to do after a terminal-write 412.
+
+        Returns one of:
+
+        - ``"abandon_lease_lost"`` — RE-READ shows lease no longer ours
+          (owner/instance_id differ OR ``expiry_count`` bumped past
+          cached). New owner is authoritative; do not retry.
+        - ``"abandon_already_terminal"`` — RE-READ shows status already
+          terminal (``completed``).
+        - ``"retry"`` — Lease still ours, status still ``in_progress``;
+          safe to retry against the new etag.
+        """
+        try:
+            fresh = await self._provider.get(task_id)
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Can't re-read — be conservative; treat as lost.
+            return "abandon_lease_lost"
+        if fresh is None:
+            # Record vanished — treat as terminal.
+            return "abandon_already_terminal"
+        # Refresh tracked etag from the re-read.
+        etag = getattr(fresh, "etag", None)
+        if etag:
+            self._track_etag(task_id, etag)
+        # Branch (b): already terminal.
+        if getattr(fresh, "status", None) == "completed":
+            return "abandon_already_terminal"
+        # Branch (a): lease no longer ours.
+        if (
+            fresh.lease is None
+            or fresh.lease.owner != (prior_lease_owner or self._lease_owner)
+            or fresh.lease.instance_id != (prior_lease_instance or self._instance_id)
+            or fresh.lease.expiry_count > cached_expiry_count
+        ):
+            return "abandon_lease_lost"
+        # Branch (c): retry.
+        return "retry"
 
     def _lease_ext_kwargs(self, task_id: str) -> dict[str, Any]:
         """Return lease-ownership kwargs for piggyback on a payload PATCH.
