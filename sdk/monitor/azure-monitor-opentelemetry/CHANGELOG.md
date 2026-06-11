@@ -11,6 +11,8 @@
   ([#47233](https://github.com/Azure/azure-sdk-for-python/pull/47233))
 
 ### Other Changes
+- Track live metrics disabling in feature SDKstats
+  ([#47141](https://github.com/Azure/azure-sdk-for-python/pull/47141))
 
 ## 1.8.8 (2026-05-14)
 

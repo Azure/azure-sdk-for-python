@@ -1,5 +1,18 @@
 # Release History
 
+## 41.4.0b1 (2026-06-04)
+
+### Features Added
+
+  - Client `ContainerServiceClient` added operation group `maintenance_windows`
+  - Model `ContainerServiceNetworkProfile` added property `bastion_profile`
+  - Added model `BastionProfile`
+  - Added enum `BastionSku`
+  - Added model `MaintenanceWindowResource`
+  - Added model `MaintenanceWindowResourceProperties`
+  - Added enum `ResourceProvisioningState`
+  - Added operation group `MaintenanceWindowsOperations`
+
 ## 41.3.0 (2026-06-03)
 
 ### Features Added
