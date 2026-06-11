@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/Update_NamespaceAsset.json
+# x-ms-original-file: 2026-03-01-preview/Update_NamespaceAsset.json
 if __name__ == "__main__":
     main()

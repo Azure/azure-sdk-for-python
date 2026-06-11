@@ -477,6 +477,16 @@ async with QuestionAnsweringClient(endpoint=endpoint, credential=credential) as 
 ```
 
 
+## Migrating to the New SDK Architecture (Future Release)
+
+In an upcoming release, the Question Answering SDK will be restructured to separate authoring and inference operations into distinct client libraries. This separation will provide better modularity and clearer separation of concerns.
+
+### Key Changes in the New Architecture
+
+#### Separated Packages
+- **Inference operations**: Will remain in `azure-ai-language-questionanswering` 
+- **Authoring operations**: Will move to a separate authoring package
+
 ## Additional Samples
 
 The new `azure-ai-language-questionanswering` has new capabilities not supported by the old client library, you can
@@ -491,3 +501,4 @@ see additional samples [here][qna_samples].
 [aiohttp]: https://pypi.org/project/aiohttp/
 [azure_core_transport]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
 [qna_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples
+[azure_sdk_releases]: https://github.com/Azure/azure-sdk-for-python/releases

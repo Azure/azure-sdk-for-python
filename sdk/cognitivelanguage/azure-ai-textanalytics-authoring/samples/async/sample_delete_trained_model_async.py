@@ -28,7 +28,7 @@ OPTIONAL ENV VARS:
 import os
 import asyncio
 from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
 
 

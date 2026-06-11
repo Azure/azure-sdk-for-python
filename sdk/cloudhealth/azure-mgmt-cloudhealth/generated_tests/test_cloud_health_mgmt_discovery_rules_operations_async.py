@@ -33,49 +33,51 @@ class TestCloudHealthMgmtDiscoveryRulesOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_discovery_rules_create_or_update(self, resource_group):
-        response = await self.client.discovery_rules.create_or_update(
-            resource_group_name=resource_group.name,
-            health_model_name="str",
-            discovery_rule_name="str",
-            resource={
-                "id": "str",
-                "name": "str",
-                "properties": {
-                    "addRecommendedSignals": "str",
-                    "authenticationSetting": "str",
-                    "discoverRelationships": "str",
-                    "entityName": "str",
-                    "resourceGraphQuery": "str",
-                    "deletionDate": "2020-02-20 00:00:00",
-                    "displayName": "str",
-                    "errorMessage": "str",
-                    "numberOfDiscoveredEntities": 0,
-                    "provisioningState": "str",
+    async def test_discovery_rules_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.discovery_rules.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                health_model_name="str",
+                discovery_rule_name="str",
+                resource={
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "addRecommendedSignals": "str",
+                        "authenticationSetting": "str",
+                        "discoverRelationships": "str",
+                        "entityName": "str",
+                        "specification": "discovery_rule_specification",
+                        "displayName": "str",
+                        "error": {"message": "str", "context": ["str"]},
+                        "provisioningState": "str",
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
                 },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
-        )
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_discovery_rules_delete(self, resource_group):
-        response = await self.client.discovery_rules.delete(
-            resource_group_name=resource_group.name,
-            health_model_name="str",
-            discovery_rule_name="str",
-        )
+    async def test_discovery_rules_begin_delete(self, resource_group):
+        response = await (
+            await self.client.discovery_rules.begin_delete(
+                resource_group_name=resource_group.name,
+                health_model_name="str",
+                discovery_rule_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

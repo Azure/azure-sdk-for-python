@@ -23,18 +23,18 @@
 database service.
 """
 
-import asyncio # pylint: disable=do-not-import-asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Any
+from typing import Any, Optional
 
 from azure.core.exceptions import AzureError
-from azure.cosmos import DatabaseAccount
 
+from azure.cosmos import DatabaseAccount
 from .. import _constants as constants
 from .. import exceptions
-from .._location_cache import LocationCache
-from .._utils import current_time_millis
+from .._location_cache import LocationCache, RegionalRoutingContext
 from .._request_object import RequestObject
+from .._utils import current_time_millis
 
 # pylint: disable=protected-access
 
@@ -90,6 +90,39 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_ordered_read_locations(self):
         return self.location_cache.get_ordered_read_locations()
 
+    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
+        """Gets the applicable read regional routing contexts based on request parameters.
+
+        :param request: Request object containing operation parameters and exclusion lists
+        :type request: RequestObject
+        :returns: List of regional routing contexts available for read operations
+        :rtype: list[RegionalRoutingContext]
+        """
+        return self.location_cache._get_applicable_read_regional_routing_contexts(request)
+
+    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
+        """Gets the applicable write regional routing contexts based on request parameters.
+
+        :param request: Request object containing operation parameters and exclusion lists
+        :type request: RequestObject
+        :returns: List of regional routing contexts available for write operations
+        :rtype: list[RegionalRoutingContext]
+        """
+        return self.location_cache._get_applicable_write_regional_routing_contexts(request)
+
+    def get_region_name(self, endpoint, is_write_operation: bool) -> Optional[str]:
+        """Get the region name associated with an endpoint.
+
+        :param endpoint: The endpoint URL to get the region name for
+        :type endpoint: str
+        :param is_write_operation: Whether the endpoint is being used for write operations
+        :type is_write_operation: bool
+        :returns: The region name associated with the endpoint, or None if not found
+        :rtype: Optional[str]
+        """
+
+        return self.location_cache.get_region_name(endpoint, is_write_operation)
+
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
 
@@ -118,7 +151,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 await self.refresh_task
                 self.refresh_task = None
             except (Exception, asyncio.CancelledError) as exception: #pylint: disable=broad-exception-caught
-                logger.error("Health check task failed: %s", exception, exc_info=True)
+                logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Health check task failed: %s", exception, exc_info=True)
         if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
@@ -145,7 +179,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     # in background
                     self.refresh_task = asyncio.create_task(self._refresh_database_account_and_health())
                 else:
-                    if not self._aenter_used:
+                    # Fetch database account if not provided via async with pattern OR if explicitly None
+                    # This ensures callers can pass None and still get correct behavior
+                    if not self._aenter_used or database_account is None:
                         database_account = await self._GetDatabaseAccount(**kwargs)
                     self.location_cache.perform_on_database_account_read(database_account)
                     # this will perform only calls to check endpoint health
@@ -199,14 +235,18 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except (exceptions.CosmosHttpResponseError, AzureError):
+        except (exceptions.CosmosHttpResponseError, AzureError) as e:
+            if isinstance(e, exceptions.CosmosHttpResponseError):
+                e.endpoint = self.DefaultEndpoint
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
                     return database_account
-                except (exceptions.CosmosHttpResponseError, AzureError):
+                except (exceptions.CosmosHttpResponseError, AzureError) as ex:
+                    if isinstance(ex, exceptions.CosmosHttpResponseError):
+                        ex.endpoint = locational_endpoint
                     self._mark_endpoint_unavailable(locational_endpoint,"_GetDatabaseAccount")
             raise
 

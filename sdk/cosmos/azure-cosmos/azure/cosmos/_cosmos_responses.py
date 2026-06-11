@@ -2,7 +2,52 @@
 # Copyright (c) 2024 Microsoft Corporation
 
 from typing import Any, Iterable, Mapping, Optional
+
+from azure.core.async_paging import AsyncItemPaged
+from azure.core.paging import ItemPaged
 from azure.core.utils import CaseInsensitiveDict
+
+
+class CosmosItemPaged(ItemPaged[dict[str, Any]]):
+    """A custom ItemPaged class that provides access to response headers from query operations.
+
+    This class wraps the standard ItemPaged and provides access to the most recent
+    response headers captured during pagination via a shared dict populated by __QueryFeed.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        popped = kwargs.pop('response_headers', None)
+        self._response_headers: CaseInsensitiveDict = popped if popped is not None else CaseInsensitiveDict()
+        super().__init__(*args, **kwargs)
+
+    def get_response_headers(self) -> CaseInsensitiveDict:
+        """Returns a copy of the response headers from the most recent page fetch.
+
+        :return: Response headers from the last page, or empty dict if no pages have been fetched
+        :rtype: ~azure.core.utils.CaseInsensitiveDict
+        """
+        return self._response_headers.copy()
+
+
+class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
+    """A custom AsyncItemPaged class that provides access to response headers from async query operations.
+
+    This class wraps the standard AsyncItemPaged and provides access to the most recent
+    response headers captured during pagination via a shared dict populated by __QueryFeed.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        popped = kwargs.pop('response_headers', None)
+        self._response_headers: CaseInsensitiveDict = popped if popped is not None else CaseInsensitiveDict()
+        super().__init__(*args, **kwargs)
+
+    def get_response_headers(self) -> CaseInsensitiveDict:
+        """Returns a copy of the response headers from the most recent page fetch.
+
+        :return: Response headers from the last page, or empty dict if no pages have been fetched
+        :rtype: ~azure.core.utils.CaseInsensitiveDict
+        """
+        return self._response_headers.copy()
 
 
 class CosmosDict(dict[str, Any]):

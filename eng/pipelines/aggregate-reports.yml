@@ -1,5 +1,10 @@
 trigger: none
 
+parameters:
+  - name: TargetingString
+    type: string
+    default: "*"
+
 pr:
   branches:
     include:
@@ -14,6 +19,8 @@ pool:
 
 variables:
   - template: ./templates/variables/globals.yml
+  - name: TargetingString
+    value: ${{ parameters.TargetingString }}
 
 stages:
   - stage: ValidateDependencies
@@ -28,6 +35,10 @@ stages:
             condition: succeededOrFailed()
             inputs:
               versionSpec: '$(PythonVersion)'
+
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              EnableTwineAuth: false
 
           - template: /eng/pipelines/templates/steps/use-venv.yml
 
@@ -75,11 +86,16 @@ stages:
               python -m pip install -r scripts/repo_health_status_report/dev_requirements.txt
             displayName: 'Prep Environment'
 
+          - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+            parameters:
+              TokenOwners:
+                - azure
+
           - task: PythonScript@0
             condition: succeededOrFailed()
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)
             inputs:
               scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
             displayName: 'Generate Health Status Report'
@@ -91,7 +107,7 @@ stages:
           - task: PythonScript@0
             condition: succeededOrFailed()
             env:
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)
             inputs:
               scriptPath: 'scripts/repo_type_completeness/generate_main_typescores.py'
             displayName: 'Update Type Completeness Scores'

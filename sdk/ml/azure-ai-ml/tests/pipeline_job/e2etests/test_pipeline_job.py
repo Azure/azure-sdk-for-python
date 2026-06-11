@@ -124,7 +124,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         [
             # flaky parameterization
             # "non_existent_remote_component.yml",
-            "non_existent_remote_version.yml",
+            # service now accepts non_existent_remote_version without error
             "non_existent_compute.yml",
         ],
     )

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,12 +37,18 @@ def main():
         project_name="examples-projectName",
         job_definition_name="examples-jobDefinitionName",
         job_definition={
-            "properties": {"agentName": "updatedAgentName", "description": "Updated Job Definition Description"}
+            "properties": {
+                "agentName": "updatedAgentName",
+                "connections": [
+                    "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.StorageMover/storageMovers/examples-storageMoverName/connections/example-connection"
+                ],
+                "description": "Updated Job Definition Description",
+            }
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/JobDefinitions_Update.json
+# x-ms-original-file: 2025-12-01/JobDefinitions_Update.json
 if __name__ == "__main__":
     main()

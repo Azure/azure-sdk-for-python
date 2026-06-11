@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-06-01",
+  "commit": "ed16e10caee8ef2ab09f321272877d0efbec0d1e",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/batch/resource-manager/Microsoft.Batch/Batch",
+  "emitterVersion": "0.60.0"
+}

@@ -205,10 +205,11 @@ class TestSchedule(AzureRecordedTestCase):
         assert rest_schedule.name == schedule.name
         client.schedules.begin_disable(schedule.name)
         rest_schedule_job_dict = rest_schedule._to_dict()["create_job"]
-        # pop added status, default resources, empty services from rest dict
+        # pop added status, default resources, empty services, queue_settings from rest dict
         rest_schedule_job_dict.pop("status", None)
         rest_schedule_job_dict.pop("services", None)
         rest_schedule_job_dict.pop("resources", None)
+        rest_schedule_job_dict.pop("queue_settings", None)
         schedule_job_dict = schedule._to_dict()["create_job"]
         # pop job name, empty parameters from local dict
         schedule_job_dict.pop("parameters", None)

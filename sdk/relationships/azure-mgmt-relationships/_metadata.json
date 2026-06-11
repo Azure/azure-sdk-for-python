@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2023-09-01-preview",
+  "apiVersions": {
+    "Microsoft.Relationships": "2023-09-01-preview"
+  },
+  "commit": "fe03e53383d9c9c97ec22a65abd1d8c18e401abe",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/relationships/Relationships.Management",
+  "emitterVersion": "0.61.2"
+}

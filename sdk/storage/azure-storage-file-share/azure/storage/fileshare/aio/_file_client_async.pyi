@@ -135,13 +135,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         file_mode: Optional[str] = None,
         file_property_semantics: Optional[Literal["New", "Restore"]] = None,
         data: Optional[bytes] = None,
+        validate_content: Optional[Literal["auto", "crc64", "md5"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def upload_file(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -151,8 +152,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         file_change_time: Optional[Union[str, datetime]] = None,
         metadata: Optional[Dict[str, str]] = None,
         content_settings: Optional[ContentSettings] = None,
-        validate_content: bool = False,
-        max_concurrency: int = 1,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
+        max_concurrency: Optional[int] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
         encoding: str = "UTF-8",
@@ -198,10 +199,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        max_concurrency: int = 1,
-        validate_content: bool = False,
+        max_concurrency: Optional[int] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader: ...
@@ -269,7 +271,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         offset: int,
         length: int,
         *,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         file_last_write_mode: Optional[Literal["preserve", "now"]] = None,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         encoding: str = "UTF-8",

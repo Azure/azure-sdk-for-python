@@ -15,10 +15,9 @@ from azure.ai.evaluation._common.utils import (
     _get_agent_response,
     reformat_agent_response,
     reformat_tool_definitions,
+    construct_prompty_model_config,
 )
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
-
-from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
 
 @pytest.mark.unittest
@@ -938,3 +937,50 @@ class TestUtils(unittest.TestCase):
             "  Thanks for checking both cities!\n\n"
         )
         self.assertEqual(result, expected)
+
+
+@pytest.mark.unittest
+class TestConstructPromptyModelConfig(unittest.TestCase):
+    def test_extra_headers_included_in_openai_config(self):
+        model_config = {
+            "api_key": "test-key",
+            "model": "gpt-4",
+            "base_url": "https://example.com",
+            "extra_headers": {"X-Custom-Header": "custom-value"},
+        }
+        result = construct_prompty_model_config(model_config, "2024-02-01", "")
+        headers = result["parameters"]["extra_headers"]
+        assert headers["X-Custom-Header"] == "custom-value"
+        assert headers["Connection"] == "close"
+
+    def test_extra_headers_cannot_override_internal_headers(self):
+        model_config = {
+            "api_key": "test-key",
+            "model": "gpt-4",
+            "base_url": "https://example.com",
+            "extra_headers": {"Connection": "keep-alive"},
+        }
+        result = construct_prompty_model_config(model_config, "2024-02-01", "")
+        headers = result["parameters"]["extra_headers"]
+        assert headers["Connection"] == "close"
+
+    def test_no_extra_headers(self):
+        model_config = {
+            "api_key": "test-key",
+            "model": "gpt-4",
+            "base_url": "https://example.com",
+        }
+        result = construct_prompty_model_config(model_config, "2024-02-01", "")
+        headers = result["parameters"]["extra_headers"]
+        assert headers["Connection"] == "close"
+        assert "X-Custom-Header" not in headers
+
+    def test_extra_headers_invalid_type_raises_error(self):
+        model_config = {
+            "api_key": "test-key",
+            "model": "gpt-4",
+            "base_url": "https://example.com",
+            "extra_headers": "not-a-dict",
+        }
+        with pytest.raises(EvaluationException):
+            construct_prompty_model_config(model_config, "2024-02-01", "")

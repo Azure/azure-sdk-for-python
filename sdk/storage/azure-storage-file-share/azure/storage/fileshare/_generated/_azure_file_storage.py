@@ -31,6 +31,8 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     :vartype directory: azure.storage.fileshare.operations.DirectoryOperations
     :ivar file: FileOperations operations
     :vartype file: azure.storage.fileshare.operations.FileOperations
+    :param version: Specifies the version of the operation to use for this request. Required.
+    :type version: str
     :param url: The URL of the service account, share, directory or file that is the target of the
      desired operation. Required.
     :type url: str
@@ -44,9 +46,6 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     :param allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
      URI. Default value is None.
     :type allow_source_trailing_dot: bool
-    :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2026-02-06". Note that overriding this default value may result in unsupported behavior.
-    :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
      overriding this default value may result in unsupported behavior.
@@ -55,6 +54,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
+        version: str,
         url: str,
         base_url: str = "",
         file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -63,6 +63,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         self._config = AzureFileStorageConfiguration(
+            version=version,
             url=url,
             file_request_intent=file_request_intent,
             allow_trailing_dot=allow_trailing_dot,

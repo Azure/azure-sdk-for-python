@@ -65,6 +65,7 @@ The options are available for all Blob perf tests:
 - `--max-block-size` Maximum size of data in a block within a blob.
 - `--max-get-size` Initial chunk size of a Blob download.
 - `--buffer-threshold` Minimum block size to prevent full block buffering.
+- `--data-block-size` The chunk size used when reading from the network stream.
 - `--client-encryption` The version of client-side encryption to use. Leave out for no encryption.
 
 #### List Blobs command line options
@@ -77,6 +78,8 @@ The tests currently written for the T2 SDK:
 - `UploadFromFileTest` Uploads a local file of `size` bytes to a new Blob.
 - `UploadBlockTest` Upload a single block of `size` bytes within a Blob.
 - `DownloadTest` Download a stream of `size` bytes. 
+- `DownloadToFileTest` Downloads a blob of `size` bytes to a local file.
+- `DownloadBasicTest` Downloads using basic HTTP library primitives, ignoring content.
 - `ListBlobsTest` List a specified number of blobs.
 
 ### T1 Tests

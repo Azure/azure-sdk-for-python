@@ -1,14 +1,34 @@
 # Release History
 
-## 1.0.2 (Unreleased)
+## 2.0.0 (2026-06-06)
 
 ### Features Added
 
+- GA release of Azure AI Translator Text Translation SDK version 2.0.0.
+- Updated to stable API version 2026-06-06.
+- Added `TranslationTone` and `TranslationGender` enums for type-safe tone and gender options.
+
 ### Breaking Changes
 
-### Bugs Fixed
+- Removed `grade` parameter from translation options.
 
 ### Other Changes
+
+- Simplified client constructor and internal authentication handling.
+
+## 2.0.0b1 (2026-01-08)
+
+### Features Added
+
+- Added support for the Azure AI Translator API 2025-10-01-preview, including translations using LLM models, adaptive custom translations, tone variant translations, and gender-specific language translations.
+- Added `TranslationTarget` for configuring translation options.
+
+### Breaking Changes
+
+- Dictionary, sentence boundaries and text alignments features have been removed, and relevant models and properties have been removed.
+- Added `models` property to `GetSupportedLanguagesResult` to include the list of LLM models available for translations.
+- Renamed property `confidence` to `score` in `DetectedLanguage`.
+- Removed property `source_text` in `TranslatedTextItem`.
 
 ## 1.0.1 (2024-06-24)
 

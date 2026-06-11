@@ -22,6 +22,9 @@ class AzureOpenAIModelConfiguration(TypedDict):
     :type api_key: str
     :param api_version: API version to use in request to Azure OpenAI deployment. Optional.
     :type api_version: NotRequired[str]
+    :param credential: Credential object for AAD authentication. Must have a get_token(scope) method.
+        Compatible with azure.core.credentials.TokenCredential.
+    :type credential: NotRequired[Any]
 
     .. admonition:: Example:
 
@@ -41,6 +44,8 @@ class AzureOpenAIModelConfiguration(TypedDict):
     api_key: NotRequired[str]
     """API key of Azure OpenAI resource"""
     api_version: NotRequired[str]
+    credential: NotRequired[Any]
+    """Credential object for AAD authentication (must have get_token method)"""
 
 
 class OpenAIModelConfiguration(TypedDict):
@@ -56,6 +61,8 @@ class OpenAIModelConfiguration(TypedDict):
     :type base_url: NotRequired[str]
     :param organization: OpenAI organization. Optional.
     :type organization: NotRequired[str]
+    :param extra_headers: Additional HTTP headers to include in every request. Optional.
+    :type extra_headers: NotRequired[Dict[str, str]]
 
     .. admonition:: Example:
 
@@ -73,6 +80,7 @@ class OpenAIModelConfiguration(TypedDict):
     model: str
     base_url: NotRequired[str]
     organization: NotRequired[str]
+    extra_headers: NotRequired[Dict[str, str]]
 
 
 class AzureAIProject(TypedDict):
@@ -134,6 +142,7 @@ class Conversation(TypedDict):
 
 class EvaluationResult(TypedDict):
     metrics: Dict
+    oai_eval_run_ids: NotRequired[List[Dict[str, str]]]
     studio_url: NotRequired[str]
     rows: List[Dict]
     _evaluation_results_list: List[Dict]

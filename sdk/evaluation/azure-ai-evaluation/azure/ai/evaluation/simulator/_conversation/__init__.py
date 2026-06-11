@@ -11,6 +11,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 import base64
 import re
 import jinja2
+from jinja2.sandbox import SandboxedEnvironment
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
@@ -115,9 +116,8 @@ class ConversationBot:
     ) -> None:
         self.role = role
         self.conversation_template_orig = conversation_template
-        self.conversation_template: jinja2.Template = jinja2.Template(
-            conversation_template, undefined=jinja2.StrictUndefined
-        )
+        _sandbox_env = SandboxedEnvironment(undefined=jinja2.StrictUndefined)
+        self.conversation_template: jinja2.Template = _sandbox_env.from_string(conversation_template)
         self.persona_template_args = instantiation_parameters
         if self.role == ConversationRole.USER:
             self.name: str = cast(str, self.persona_template_args.get("name", role.value))
@@ -134,9 +134,7 @@ class ConversationBot:
                     self.conversation_starter = conversation_starter_content
                 else:
                     try:
-                        self.conversation_starter = jinja2.Template(
-                            conversation_starter_content, undefined=jinja2.StrictUndefined
-                        )
+                        self.conversation_starter = _sandbox_env.from_string(conversation_starter_content)
                     except jinja2.exceptions.TemplateSyntaxError as e:  # noqa: F841
                         self.conversation_starter = conversation_starter_content
             else:

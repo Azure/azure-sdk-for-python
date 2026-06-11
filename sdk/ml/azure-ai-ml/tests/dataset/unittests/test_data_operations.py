@@ -9,7 +9,7 @@ import pytest
 from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml import load_data
-from azure.ai.ml._restclient.v2022_10_01.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DataContainer,
     DataContainerProperties,
     DataVersionBase,
@@ -37,13 +37,13 @@ def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 

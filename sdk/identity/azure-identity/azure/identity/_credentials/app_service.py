@@ -5,7 +5,7 @@
 import functools
 import os
 from typing import Optional, Dict, Any
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 
 from .._constants import EnvironmentVariables
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
@@ -34,6 +34,4 @@ def _get_client_args(**kwargs: Any) -> Optional[Dict]:
 
 
 def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
-    request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": "2019-08-01", "resource": scope}, **identity_config))
-    return request
+    return HttpRequest("GET", url, params=dict({"api-version": "2019-08-01", "resource": scope}, **identity_config))

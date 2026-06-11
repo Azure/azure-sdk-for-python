@@ -41,6 +41,11 @@ class import_all(Check):
         parents = parent_parsers or []
         p = subparsers.add_parser("import_all", parents=parents, help="Run the import_all check")
         p.set_defaults(func=self.run)
+        p.add_argument(
+            "--mark_arg",
+            dest="mark_arg",
+            help='Optional pytest marker expression (as used with "pytest -m", e.g. "cosmosEmulator"); accepted for CLI compatibility but has no effect for import_all.',
+        )
         # Add any additional arguments specific to WhlCheck here (do not re-add common args)
 
     # todo: figure out venv abstraction mechanism via override
@@ -54,7 +59,9 @@ class import_all(Check):
 
         for parsed in targeted:
             pkg = parsed.folder
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
+            executable, staging_directory = self.get_executable(
+                args.isolate, args.command, sys.executable, pkg, python_version=getattr(args, "python_version", None)
+            )
 
             self.install_dev_reqs(executable, args, pkg)
 
@@ -76,8 +83,14 @@ class import_all(Check):
                 import_script_all = "from {0} import *".format(parsed.namespace)
                 commands = [executable, "-c", import_script_all]
 
-                outcomes.append(check_call(commands))
-                logger.info("Verified module dependency, no issues found")
+                outcomes.append(check_call(commands, cwd=staging_directory))
+
+                if outcomes[-1] == 0:
+                    logger.info("Verified module dependency, no issues found")
+                else:
+                    logger.error(
+                        f'Dependency issue found when invoking "{import_script_all}" against package {parsed.name}'
+                    )
             else:
                 logger.info("Package {} is excluded from dependency check".format(parsed.name))
 

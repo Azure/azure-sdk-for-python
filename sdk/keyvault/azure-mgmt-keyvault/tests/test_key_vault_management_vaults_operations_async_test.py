@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
+import json
 from azure.mgmt.keyvault.aio import KeyVaultManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
@@ -24,7 +26,50 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.vaults.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-07-01",
         )
         result = [r async for r in response]
         assert result == []
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list(self):
+        response = self.client.vaults.list(
+            filter="resourceType eq 'Microsoft.KeyVault/vaults'",
+        )
+        result = [r async for r in response]
+        assert result
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list_customized_api_version(self):
+        # This API is legacy paging API that api-version of init request and next link must be "2015-11-01".
+        # Although this API violates ARM guidelines, we have to support it for backward compatibility.
+        # So After SDK generation, you need to customize 2 lines like https://github.com/Azure/azure-sdk-for-python/pull/43559/commits/6e09d1d513da26c55c7960442f0f20f5e59e149a.
+        # And the test is to verify the customization works.
+        call_count = 0
+        inject_next_link = True
+
+        def raw_request_hook(request):
+            # api-version in next link must be "2015-11-01"
+            assert (
+                request.http_request.url.count("api-version=2015-11-01") == 1
+            ), "api-version query parameter is missing or duplicated"
+            nonlocal call_count
+            call_count += 1
+
+        def raw_response_hook(response):
+            nonlocal inject_next_link
+            if inject_next_link:
+                content = response.http_response._content.decode("utf-8")
+                data = json.loads(content)
+                if "nextLink" not in data:
+                    # make sure there is nextLink for testing
+                    data["nextLink"] = response.http_request.url.replace("&api-version=2015-11-01", "")
+                new_content = json.dumps(data).encode("utf-8")
+                response.http_response._content = new_content
+                inject_next_link = False  # only inject nextLink once
+
+        response = self.client.vaults.list(raw_request_hook=raw_request_hook, raw_response_hook=raw_response_hook)
+        result = [r async for r in response]
+        assert result
+        assert call_count >= 2  # make sure paging happened

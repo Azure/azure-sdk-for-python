@@ -6,6 +6,7 @@
 Tests for the HTTP challenge authentication implementation. These tests aren't parallelizable, because
 the challenge cache is global to the process.
 """
+
 import base64
 import functools
 from itertools import product
@@ -35,6 +36,7 @@ from _keys_test_case import KeysTestCase
 only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
 TOKEN_TYPES = [AccessToken, AccessTokenInfo]
+
 
 class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", only_default_version)
@@ -125,7 +127,6 @@ def test_enforces_tls():
         pipeline.run(HttpRequest("GET", url))
 
 
-
 def test_challenge_cache():
     url_a = get_random_url()
     challenge_a = HttpChallenge(url_a, "Bearer authorization=authority A, resource=resource A")
@@ -148,9 +149,7 @@ def test_challenge_parsing():
     tenant = "tenant"
     authority = f"https://login.authority.net/{tenant}"
     resource = "https://challenge.resource"
-    challenge = HttpChallenge(
-        "https://request.uri", challenge=f"Bearer authorization={authority}, resource={resource}"
-    )
+    challenge = HttpChallenge("https://request.uri", challenge=f"Bearer authorization={authority}, resource={resource}")
 
     assert challenge.get_authorization_server() == authority
     assert challenge.get_resource() == resource
@@ -280,6 +279,38 @@ def test_tenant(token_type):
     )
 
     test_with_challenge(challenge, tenant)
+
+
+@empty_challenge_cache
+def test_challenge_cache_casing():
+    """The challenge cache should update and retrieve challenges in a case-insensitive manner"""
+
+    url = get_random_url()
+    endpoint = f"https://authority.net/tenant-id"
+    resource = "https://vault.azure.net"
+    headers = {"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'}
+
+    challenge = HttpChallenge(
+        url,
+        headers["WWW-Authenticate"],
+        response_headers=headers,
+    )
+
+    # Store the challenge with original casing
+    HttpChallengeCache.set_challenge_for_url(url, challenge)
+    # Retrieve the challenge using a different casing
+    retrieved_challenge = HttpChallengeCache.get_challenge_for_url(url.upper())
+    assert retrieved_challenge == challenge
+    # Remove the challenge and ensure it's no longer retrievable
+    HttpChallengeCache.remove_challenge_for_url(url.upper())
+    assert HttpChallengeCache.get_challenge_for_url(url) is None
+
+    # Do the above, but with opposite casing
+    HttpChallengeCache.set_challenge_for_url(url.upper(), challenge)
+    retrieved_challenge = HttpChallengeCache.get_challenge_for_url(url)
+    assert retrieved_challenge == challenge
+    HttpChallengeCache.remove_challenge_for_url(url)
+    assert HttpChallengeCache.get_challenge_for_url(url) is None
 
 
 @empty_challenge_cache
@@ -548,8 +579,8 @@ def test_verify_challenge_resource_matches(verify_challenge_resource, token_type
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
     transport_2 = validating_transport(
         requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
@@ -557,8 +588,8 @@ def test_verify_challenge_resource_matches(verify_challenge_resource, token_type
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
@@ -603,8 +634,8 @@ def test_verify_challenge_resource_valid(verify_challenge_resource, token_type):
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)

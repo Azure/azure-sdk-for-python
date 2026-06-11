@@ -1,5 +1,66 @@
 # Release History
 
+## 10.0.0b1 (2026-03-27)
+
+### Features Added
+
+  - Client `SearchManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SearchManagementClient` added method `send_request`
+  - Client `SearchManagementClient` added operation group `offerings`
+  - Model `CheckNameAvailabilityInput` added property `type`
+  - Model `EncryptionWithCmk` added property `service_level_encryption_key`
+  - Enum `SearchBypass` added member `AZURE_PORTAL`
+  - Enum `SkuName` added member `SERVERLESS`
+  - Added model `AzureActiveDirectoryApplicationCredentials`
+  - Added model `CloudError`
+  - Added model `DataIdentity`
+  - Added model `DataNoneIdentity`
+  - Added model `DataUserAssignedIdentity`
+  - Added model `FeatureOffering`
+  - Added enum `KnowledgeRetrieval`
+  - Added model `OfferingsByRegion`
+  - Added model `OfferingsListResult`
+  - Added model `SearchResourceEncryptionKey`
+  - Added model `SkuLimits`
+  - Added model `SkuOffering`
+  - Added operation group `OfferingsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `SearchServiceUpdate` moved instance variable `replica_count`, `partition_count`, `endpoint`, `hosting_mode`, `compute_type`, `public_network_access`, `status`, `status_details`, `provisioning_state`, `network_rule_set`, `data_exfiltration_protections`, `encryption_with_cmk`, `disable_local_auth`, `auth_options`, `semantic_search`, `private_endpoint_connections`, `shared_private_link_resources`, `e_tag`, `upgrade_available` and `service_upgraded_at` under property `properties` whose type is `SearchServiceProperties`
+  - Method `ServicesOperations.check_name_availability` moved parameter `name` under parameter `check_name_availability_input`
+  - `SearchManagementRequestOptions.client_request_id` was previously used to set http header `x-ms-client-request-id` but now you can pass `request_id="..."` directly in any operation instead
+  - Method `SearchManagementClient.usage_by_subscription_sku` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `AdminKeysOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `AdminKeysOperations.regenerate` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.delete` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.list_by_service` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.update` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateLinkResourcesOperations.list_supported` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.create` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.delete` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.list_by_search_service` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.begin_create_or_update` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.check_name_availability` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.delete` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.list_by_resource_group` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.list_by_subscription` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.update` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.begin_create_or_update` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.begin_delete` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.get` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.list_by_service` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `UsagesOperations.list_by_subscription` deleted its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Deleted model `SearchManagementRequestOptions`
+
+### Other Changes
+
+  - Deleted model `AsyncOperationResult`/`ListQueryKeysResult`/`PrivateLinkResourcesResult`/`SharedPrivateLinkResourceAsyncOperationResult`/`SearchManagementClientOperationsMixin` which actually were not used by SDK users
+
 ## 9.2.0 (2025-07-21)
 
 ### Features Added

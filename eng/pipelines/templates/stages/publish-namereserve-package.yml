@@ -1,0 +1,76 @@
+trigger: none
+pr: none
+
+schedules:
+  - cron: "0 22 * * *"
+    displayName: Daily Package Name Registration
+    branches:
+      include:
+        - main
+    always: true
+
+parameters:
+  - name: NameForReservation
+    type: string
+    default: 'auto'
+  - name: VersionForReservation
+    type: string
+    default: '0.0.0'
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+    - stage: Build
+      displayName: 'Build ${{ parameters.NameForReservation }}==${{ parameters.VersionForReservation }}'
+      jobs:
+        - template: ../jobs/build-namereserve-package.yml
+          parameters:
+            NameForReservation: ${{ parameters.NameForReservation }}
+            VersionForReservation: ${{ parameters.VersionForReservation }}
+
+    - stage: Publish
+      displayName: 'Publish Name Reservation Package'
+      dependsOn: Build
+      condition: >-
+        and(
+          succeeded(),
+          ne(dependencies.Build.outputs['generate_namereserve_package.generatePackages.HasPackages'], 'false')
+        )
+      jobs:
+        - deployment: PublishPackage
+          displayName: "Publish to PyPI"
+          environment: none
+
+          variables:
+            PUBLISHDIRECTORY: "$(Pipeline.Workspace)/esrp-release/"
+
+          templateContext:
+            type: releaseJob
+            isProduction: true
+            inputs:
+            - input: pipelineArtifact
+              artifactName: NameReservePackage
+              targetPath: $(Pipeline.Workspace)/NameReservePackage
+
+          pool:
+            image: ubuntu-24.04
+            name: azsdk-pool
+            os: linux
+
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - pwsh: |
+                      New-Item -ItemType Directory -Force -Path "$(PUBLISHDIRECTORY)"
+
+                      Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage" -Recurse `
+                        | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
+                        | Copy-Item -Destination "$(PUBLISHDIRECTORY)"
+                      Get-ChildItem "$(PUBLISHDIRECTORY)"
+                    displayName: Isolate files for ESRP Publish
+
+                  - template: /eng/pipelines/templates/steps/esrp-publish.yml
+                    parameters:
+                      targetFolder: "$(PUBLISHDIRECTORY)"

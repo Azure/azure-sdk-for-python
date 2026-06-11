@@ -1,8 +1,14 @@
 # Release History
 
-## 1.7.3 (Unreleased)
+## 1.8.2 (Unreleased)
 
 ### Features Added
+
+- Added `check_configuration_settings()` method to efficiently check for configuration changes using HEAD requests, returning only headers (ETags) without response bodies.
+- `list_configuration_settings()` and `check_configuration_settings()` now return `ConfigurationSettingPaged` (sync) / `ConfigurationSettingPagedAsync` (async) to expose the `by_page(match_conditions=...)` API and per-page `etag` attribute for change detection.
+- `ConfigurationSettingPaged` and `ConfigurationSettingPagedAsync` are now publicly exported from `azure.appconfiguration`.
+- Added a `description` property to `ConfigurationSetting` and `SecretReferenceConfigurationSetting` representing the description of the key-value (requires API version `2026-04-01` or later).
+- Added a `description` property and a `description` keyword argument to `ConfigurationSnapshot`, and a `description` keyword argument to `begin_create_snapshot()` for both sync and async clients (requires API version `2026-04-01` or later).
 
 ### Breaking Changes
 
@@ -10,7 +16,25 @@
 
 ### Other Changes
 
+## 1.8.1 (2026-05-07)
+
+### Bugs Fixed
+
+- Fixed an issue where authorization failures caused crashes. Now an `HttpResponseError` is returned when the required data plane role is missing.
+
+## 1.8.0 (2026-01-26)
+
+### Features Added
+
+- Fixed AudiencePolicy to correctly handle AAD audience errors and return ClientAuthenticationError as expected.
+- Added a `match_conditions` parameter to the `by_page()` method exposed by the page iterator returned by `list_configuration_settings()` to efficiently monitor configuration changes using etags without fetching unchanged data.
+- Added query parameter normalization to support Azure Front Door as a CDN. Query parameter keys are now converted to lowercase and sorted alphabetically.
+- Added support for providing Entra ID authentication audiences via the `audience` keyword argument in the `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
+
+### Other Changes
+
 - Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`.
+- Improved authentication scope handling to automatically detect and use correct audience URLs for Azure Public Cloud, Azure US Government, and Azure China cloud environments.
 
 ## 1.7.2 (2025-10-20)
 

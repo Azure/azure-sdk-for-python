@@ -3,307 +3,288 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import csv
-import os
 import pytest
-import importlib.util
-from azure.core.exceptions import HttpResponseError
+import os
+from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
+from test_base import servicePreparer, fineTuningServicePreparer, modelsServicePreparer
+from sample_executor import (
+    AdditionalSampleTestDetail,
+    SyncSampleExecutor,
+    additionalSampleTests,
+    get_sample_paths,
+    SamplePathPasser,
+)
+from test_samples_helpers import get_sample_env_vars
+from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
 
 
-class TestSamples:
-    _samples_folder_path: str
-    _results: dict[str, tuple[bool, str]]
+class TestSamples(AzureRecordedTestCase):
 
-    """
-    Test class for running all samples in the `/sdk/ai/azure-ai-projects/samples` folder.
-
-    To run this test:
-    * 'cd' to the folder '/sdk/ai/azure-ai-projects' in your azure-sdk-for-python repo.
-    * set AZURE_AI_PROJECT_ENDPOINT=<your-project-endpoint> - Define your Azure AI Foundry project endpoint used by the test.
-    * set ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
-    * Uncomment the two lines that start with "@pytest.mark.skip" below.
-    * Run:  pytest tests\samples\test_samples.py::TestSamples
-    * Load the resulting report in Excel: tests\samples\samples_report.csv
-    """
-
-    @classmethod
-    def setup_class(cls):
-        current_path = os.path.abspath(__file__)
-        cls._samples_folder_path = os.path.join(current_path, os.pardir, os.pardir, os.pardir)
-        cls._results: dict[str, tuple[bool, str]] = {}
-
-    @classmethod
-    def teardown_class(cls):
-        """
-        Class-level teardown method that generates a report file named "samples_report.csv" after all tests have run.
-
-        The report contains one line per sample run, with three columns:
-            1. PASS or FAIL indicating the sample result.
-            2. The name of the sample.
-            3. The exception string summary if the sample failed, otherwise empty.
-
-        The report is written to the same directory as this test file.
-        """
-        report_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "samples_report.csv")
-        with open(report_path, mode="w", newline="") as file:
-            writer = csv.writer(file, quotechar='"', quoting=csv.QUOTE_ALL)  # Ensures proper quoting
-            for test_name, (passed, exception_string) in cls._results.items():
-                exception_message = f'"{exception_string.splitlines()[0]}"' if exception_string else ""
-                writer.writerow([f"{'PASS' if passed else 'FAIL'}", test_name, exception_message])
-
-    @classmethod
-    def _set_env_vars(cls, sample_name: str, **kwargs):
-        """
-        Sets environment variables for a given sample run and prints them.
-
-        Args:
-            sample_name (str): The name of the sample being executed.
-            **kwargs: Arbitrary keyword arguments representing environment variable names and their values.
-        """
-
-        print(f"\nRunning {sample_name} with environment variables: ", end="")
-        for key, value in kwargs.items():
-            if value:
-                env_key = key.upper()
-                os.environ[env_key] = value
-                print(f"{env_key}={value} ", end="")
-        print("\n")
-
-    @classmethod
-    def _run_sample(cls, sample_name: str) -> None:
-        """
-        Executes a synchronous sample file and records the result.
-
-        Args:
-            sample_name (str): The name of the sample file to execute.
-
-        Raises:
-            Exception: Re-raises any exception encountered during execution of the sample file.
-
-        Side Effects:
-            Updates the class-level _results dictionary with the execution status and error message (if any)
-            for the given sample.
-            Prints an error message to stdout if execution fails.
-        """
-
-        sample_path = os.path.normpath(os.path.join(TestSamples._samples_folder_path, sample_name))
-        with open(sample_path) as f:
-            code = f.read()
-            try:
-                exec(code)
-            except HttpResponseError as exc:
-                exception_message = f"{exc.status_code}, {exc.reason}, {str(exc)}"
-                TestSamples._results[sample_name] = (False, exception_message)
-                print(f"=================> Error running sample {sample_path}: {exception_message}")
-                raise Exception from exc
-            except Exception as exc:
-                TestSamples._results[sample_name] = (False, str(exc))
-                print(f"=================> Error running sample {sample_path}: {exc}")
-                raise Exception from exc
-            TestSamples._results[sample_name] = (True, "")
-
-    @classmethod
-    async def _run_sample_async(cls, sample_name: str) -> None:
-        """
-        Asynchronously runs a sample Python script specified by its file name.
-
-        This method dynamically imports the sample module from the given file path,
-        executes its `main()` coroutine, and records the result. If an exception occurs
-        during execution, the error is logged and re-raised.
-
-        Args:
-            sample_name (str): The name of the sample Python file to run (relative to the samples folder).
-
-        Raises:
-            ImportError: If the sample module cannot be loaded.
-            Exception: If an error occurs during the execution of the sample's `main()` coroutine.
-
-        Side Effects:
-            Updates the `_results` dictionary with the execution status and error message (if any).
-            Prints error messages to the console if execution fails.
-        """
-
-        sample_path = os.path.normpath(os.path.join(TestSamples._samples_folder_path, sample_name))
-        # Dynamically import the module from the given path
-        module_name = os.path.splitext(os.path.basename(sample_path))[0]
-        spec = importlib.util.spec_from_file_location(module_name, sample_path)
-        if spec is None or spec.loader is None:
-            raise ImportError(f"Could not load module {module_name} from {sample_path}")
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        # Await the main() coroutine defined in the sample
-        try:
-            await module.main()
-        except HttpResponseError as exc:
-            exception_message = f"{exc.status_code}, {exc.reason}, {str(exc)}"
-            TestSamples._results[sample_name] = (False, exception_message)
-            print(f"=================> Error running sample {sample_path}: {exception_message}")
-            raise Exception from exc
-        except Exception as exc:
-            TestSamples._results[sample_name] = (False, str(exc))
-            print(f"=================> Error running sample {sample_path}: {exc}")
-            raise Exception from exc
-        TestSamples._results[sample_name] = (True, "")
+    # To run this test with a specific sample, use:
+    # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_memory_search]
+    @servicePreparer()
+    # @additionalSampleTests(
+    #     [
+    #         AdditionalSampleTestDetail( # 2/28/2026 westus2 get 500
+    #             test_id="sample_agent_azure_function",
+    #             sample_filename="sample_agent_azure_function.py",
+    #             env_vars={
+    #                 "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
+    #                 "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
+    #                 "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
+    #             },
+    #         ),
+    #     ]
+    # )
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "agents/tools",
+            samples_to_skip=[
+                "sample_agent_file_search_structured_inputs.py",  # No issue to run. Just posepone recording.
+                "sample_agent_code_interpreter_structured_inputs.py",  # No issue to run. Just posepone recording.
+                "sample_agent_azure_function.py",  # In the list of additional sample tests above due to more parameters needed
+                "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
+                "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
+                "sample_agent_openapi.py",  # 400 2/28/2026 validation/tool_user_error; failing weather GET curl call in OpenAPI tool
+                "sample_agent_memory_search.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
-        "sample_name, model_deployment_name, connection_name, data_folder",
-        [
-            ("samples\\agents\\sample_agents.py", "gpt-4o", "", ""),
-            ("samples\\connections\\sample_connections.py", "", "connection1", ""),
-            ("samples\\deployments\\sample_deployments.py", "DeepSeek-V3", "", ""),
-            ("samples\\datasets\\sample_datasets.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
-            (
-                "samples\\datasets\\sample_datasets_download.py",
-                "",
-                "balapvbyostoragecanary",
-                "samples\\datasets\\data_folder",
-            ),
-            ("samples\\indexes\\sample_indexes.py", "", "", ""),
-            (
-                "samples\\inference\\azure-ai-inference\\sample_chat_completions_with_azure_ai_inference_client.py",
-                "Phi-4",
-                "",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-ai-inference\\sample_chat_completions_with_azure_ai_inference_client_and_azure_monitor_tracing.py",
-                "Phi-4",
-                "",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-ai-inference\\sample_chat_completions_with_azure_ai_inference_client_and_console_tracing.py",
-                "Phi-4",
-                "",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-openai\\sample_chat_completions_with_azure_openai_client.py",
-                "gpt-4o",
-                "connection1",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-openai\\sample_responses_with_azure_openai_client.py",
-                "gpt-4o",
-                "connection1",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-openai\\sample_chat_completions_with_azure_openai_client_and_azure_monitor_tracing.py",
-                "gpt-4o",
-                "",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-openai\\sample_chat_completions_with_azure_openai_client_and_console_tracing.py",
-                "gpt-4o",
-                "",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-ai-inference\\sample_image_embeddings_with_azure_ai_inference_client.py",
-                "Cohere-embed-v3-english",
-                "",
-                "samples\\inference\\azure-ai-inference",
-            ),
-            (
-                "samples\\inference\\azure-ai-inference\\sample_text_embeddings_with_azure_ai_inference_client.py",
-                "text-embedding-3-large",
-                "",
-                "",
-            ),
-            ("samples\\telemetry\\sample_telemetry.py", "", "", ""),
-        ],
+        "sample_path",
+        get_sample_paths(
+            "memories",
+            samples_to_skip=[],
+        ),
     )
-    @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
-    def test_samples(
-        self, sample_name: str, model_deployment_name: str, connection_name: str, data_folder: str
-    ) -> None:
-        """
-        Run all the synchronous sample code in the samples folder. If a sample throws an exception, which for example
-        happens when the service responds with an error, the test will fail.
-
-        Before running this test, you need to define the following environment variables:
-        1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
-           Azure AI Foundry project.
-        """
-
-        self._set_env_vars(
-            sample_name,
-            **{
-                "model_deployment_name": model_deployment_name,
-                "connection_name": connection_name,
-                "data_folder": data_folder,
-            },
-        )
-        TestSamples._run_sample(sample_name)
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    # To run this test: pytest tests/samples/test_samples.py::TestSamples::test_memory_samples -s
+    def test_memory_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
 
     @pytest.mark.parametrize(
-        "sample_name, model_deployment_name, connection_name, data_folder",
-        [
-            ("samples\\agents\\sample_agents_async.py", "gpt-4o", "", ""),
-            ("samples\\connections\\sample_connections_async.py", "", "connection1", ""),
-            (
-                "samples\\datasets\\sample_datasets_async.py",
-                "",
-                "balapvbyostoragecanary",
-                "samples\\datasets\\data_folder",
-            ),
-            ("samples\\deployments\\sample_deployments_async.py", "DeepSeek-V3", "", ""),
-            ("samples\\indexes\\sample_indexes_async.py", "", "", ""),
-            (
-                "samples\\inference\\azure-ai-inference\\sample_chat_completions_with_azure_ai_inference_client_async.py",
-                "Phi-4",
-                "",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-openai\\sample_chat_completions_with_azure_openai_client_async.py",
-                "gpt-4o",
-                "connection1",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-openai\\sample_responses_with_azure_openai_client_async.py",
-                "gpt-4o",
-                "connection1",
-                "",
-            ),
-            (
-                "samples\\inference\\azure-ai-inference\\sample_image_embeddings_with_azure_ai_inference_client_async.py",
-                "Cohere-embed-v3-english",
-                "",
-                "samples\\inference\\azure-ai-inference",
-            ),
-            (
-                "samples\\inference\\azure-ai-inference\\sample_text_embeddings_with_azure_ai_inference_client_async.py",
-                "text-embedding-3-large",
-                "",
-                "",
-            ),
-            ("samples\\telemetry\\sample_telemetry_async.py", "", "", ""),
-        ],
+        "sample_path",
+        get_sample_paths(
+            "agents",
+            samples_to_skip=[
+                "sample_external_agents_crud.py",  # Skipped until recordings are available.
+                "sample_workflow_multi_agent.py",  # No issue to run.  Just postpone recording.
+                "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just postpone recording.
+            ],
+        ),
     )
-    @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
-    async def test_samples_async(
-        self, sample_name: str, model_deployment_name: str, connection_name: str, data_folder: str
-    ) -> None:
-        """
-        Run all the asynchronous sample code in the samples folder. If a sample throws an exception, which for example
-        happens when the service responds with an error, the test will fail.
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_agents_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
 
-        Before running this test, you need to define the following environment variables:
-        1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
-           Azure AI Foundry project.
-        """
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "connections",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_connections_samples(self, sample_path: str, **kwargs) -> None:
+        kwargs = kwargs.copy()
+        kwargs["connection_name"] = "mcp"
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
 
-        self._set_env_vars(
-            sample_name,
-            **{
-                "model_deployment_name": model_deployment_name,
-                "connection_name": connection_name,
-                "data_folder": data_folder,
-            },
-        )
-        await TestSamples._run_sample_async(sample_name)
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "files",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_files_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "deployments",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_deployments_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "models",
+            samples_to_test=[
+                # `sample_models_basic.py` uses the `create()` helper which shells out
+                # to AzCopy. AzCopy traffic isn't captured by the test proxy, so the
+                # sample can't be replayed from a recording. Live re-recording is still
+                # exercised via the standalone tests in `tests/models/`.
+                "sample_models_create_and_poll.py",
+            ],
+        ),
+    )
+    @modelsServicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_models_samples(self, sample_path: str, **kwargs) -> None:
+        import secrets  # local import to avoid module-level dep
+
+        env_vars = get_sample_env_vars(kwargs)
+        # Foundry permanently reserves a `<name>/<version>` asset namespace even
+        # after `models.delete`, so every live re-recording needs a unique name.
+        # Sanitize back to a stable value in conftest so playback URLs match.
+        suffix = secrets.token_hex(4) if self.is_live else "00000000"
+        env_vars["MODEL_NAME"] = f"recsmplmdl{suffix}"
+        env_vars["MODEL_VERSION"] = "1"
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        # `validate_print_calls_by_llm` is intentionally not called: it requires
+        # an Azure OpenAI connection on the Foundry project, which the canary
+        # project used for `.beta.models` recordings does not have. The sample
+        # is still validated end-to-end by `executor.execute()` (any exception
+        # fails the test).
+
+    @servicePreparer()
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
+                sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "60",
+                },
+            ),
+        ]
+    )
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "datasets",
+            samples_to_skip=[
+                "sample_dataset_generation_job_simpleqna_with_prompt_source.py",  # Specified through AdditionalSampleTestDetail
+                "sample_dataset_generation_job_traces_for_finetuning.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_for_finetuning.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_traces_for_evaluation.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_with_agent_source.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_with_file_source.py",  # PR #47067: recording not yet available
+            ],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_datasets_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "chat_completions",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_chat_completions_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
+
+    @servicePreparer()
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_create_hosted_agent_from_remote_build",
+                sample_filename="sample_create_hosted_agent_from_code.py",
+                env_vars={
+                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_routines_with_schedule_trigger",
+                sample_filename="sample_routines_with_schedule_trigger.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "300",
+                },
+            ),
+        ]
+    )
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "hosted_agents",
+            samples_to_skip=[
+                "sample_routines_with_schedule_trigger.py",  # Specify through AdditionalSampleTestDetail
+                "sample_routines_crud.py",  # Skipped due to service serialization issues
+                "sample_routines_with_timer_trigger.py",  # Skipped due to service serialization issues
+            ],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
+        if os.path.basename(sample_path).startswith("sample_create_hosted_agent") and not self.is_live:
+            pytest.skip("sample_create_hosted_agent.py is skipped in replay mode due to RBAC complications.")
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "finetuning",
+            samples_to_skip=[
+                "sample_finetuning_reinforcement_job.py",  # 403 PermissionDeniedError: missing Microsoft.MachineLearningServices/workspaces/agents/action
+                "sample_finetuning_dpo_job.py",  # 401 AuthenticationError: missing AIServices/agents/write data action
+            ],
+        ),
+    )
+    @fineTuningServicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_finetuning_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_fine_tuning_sample_env_vars(sample_path, kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm()

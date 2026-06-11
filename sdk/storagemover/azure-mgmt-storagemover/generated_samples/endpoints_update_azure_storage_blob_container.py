@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/Endpoints_Update_AzureStorageBlobContainer.json
+# x-ms-original-file: 2025-12-01/Endpoints_Update_AzureStorageBlobContainer.json
 if __name__ == "__main__":
     main()

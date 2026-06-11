@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterator, ContextManager, Optional, Union
 
-import httpx
+import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline

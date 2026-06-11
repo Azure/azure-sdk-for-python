@@ -8,7 +8,7 @@ from typing import Any, Optional, Dict
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -60,9 +60,7 @@ def _get_request(scope: str, identity_config: Dict) -> HttpRequest:
         os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST, IMDS_AUTHORITY).strip("/")
         + IMDS_TOKEN_PATH
     )
-    request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": "2018-02-01", "resource": scope}, **identity_config))
-    return request
+    return HttpRequest("GET", url, params=dict({"api-version": "2018-02-01", "resource": scope}, **identity_config))
 
 
 def _check_forbidden_response(ex: HttpResponseError) -> None:
@@ -86,7 +84,9 @@ class ImdsCredential(MsalManagedIdentityClient):
         # probes for the IMDS endpoint before attempting to get a token. If None (the default),
         # the credential probes only if it's part of a ChainedTokenCredential chain.
         self._enable_imds_probe = kwargs.pop("_enable_imds_probe", None)
-        super().__init__(retry_policy_class=ImdsRetryPolicy, **dict(PIPELINE_SETTINGS, **kwargs))
+        merged_kwargs = dict(PIPELINE_SETTINGS, **kwargs)
+        retry_policy = merged_kwargs.pop("retry_policy", None) or ImdsRetryPolicy(**merged_kwargs)
+        super().__init__(retry_policy=retry_policy, **merged_kwargs)
         self._config = kwargs
 
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
@@ -124,7 +124,7 @@ class ImdsCredential(MsalManagedIdentityClient):
                 raise CredentialUnavailableError(error_message) from ex
 
         try:
-            token_info = super()._request_token(*scopes)
+            token_info = super()._request_token(*scopes, **kwargs)
         except CredentialUnavailableError:
             # Response is not json, skip the IMDS credential
             raise

@@ -5,7 +5,7 @@
 
 from typing import Any
 
-from azure.ai.ml._restclient.v2022_10_01.models import SystemData as RestSystemData
+from azure.ai.ml._restclient.arm_ml_service.models import SystemData as RestSystemData
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -53,12 +53,12 @@ class SystemData(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestSystemData) -> "SystemData":
         return cls(
-            created_by=obj.created_by,
-            created_at=obj.created_at,
-            created_by_type=obj.created_by_type,
-            last_modified_by=obj.last_modified_by,
-            last_modified_by_type=obj.last_modified_by_type,
-            last_modified_at=obj.last_modified_at,
+            created_by=getattr(obj, "created_by", None),
+            created_at=getattr(obj, "created_at", None),
+            created_by_type=getattr(obj, "created_by_type", None),
+            last_modified_by=getattr(obj, "last_modified_by", None),
+            last_modified_by_type=getattr(obj, "last_modified_by_type", None),
+            last_modified_at=getattr(obj, "last_modified_at", None),
         )
 
     def _to_rest_object(self) -> RestSystemData:

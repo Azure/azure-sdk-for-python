@@ -33,4 +33,4 @@ class TestAuthorizationManagementDenyAssignmentsOperationsAsync(AzureMgmtRecorde
     async def test_deny_assignments_list(self, resource_group):
         response = self.client.deny_assignments.list()
         result = [r async for r in response]
-        assert response
+        assert len(result)

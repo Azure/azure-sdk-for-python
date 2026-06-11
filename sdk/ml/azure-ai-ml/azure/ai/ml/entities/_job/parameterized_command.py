@@ -115,7 +115,19 @@ class ParameterizedCommand:
         return self._distribution
 
     @distribution.setter
-    def distribution(self, value: Union[dict, PyTorchDistribution, MpiDistribution]) -> None:
+    def distribution(
+        self,
+        value: Optional[
+            Union[
+                dict,
+                MpiDistribution,
+                TensorFlowDistribution,
+                PyTorchDistribution,
+                RayDistribution,
+                DistributionConfiguration,
+            ]
+        ],
+    ) -> None:
         """Sets the configuration for the distributed command component or job.
 
         :param value: The distribution configuration for distributed jobs.

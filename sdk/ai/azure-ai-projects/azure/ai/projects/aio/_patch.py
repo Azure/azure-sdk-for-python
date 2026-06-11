@@ -7,244 +7,304 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import os
 import logging
-from typing import List, Any, Optional, TYPE_CHECKING
-from typing_extensions import Self
-from azure.core.tracing.decorator_async import distributed_trace_async
+from typing import List, Any, Optional
+import httpx  # pylint: disable=networking-import-outside-azure-core-transport
+from openai import AsyncOpenAI
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.ai.agents.aio import AgentsClient
+from azure.identity.aio import get_bearer_token_provider
+from .._patch import (
+    _AuthSecretsFilter,
+    _build_openai_user_agent,
+    _resolve_openai_base_url,
+    _resolve_openai_default_headers,
+    _resolve_openai_query_params,
+)
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .._patch import _patch_user_agent
 from .operations import TelemetryOperations
-from ..models._enums import ConnectionType
-from ..models._models import ApiKeyCredentials, EntraIDCredentials
-from .._patch import _get_aoai_inference_url
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
-
-_console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in (
-    "true",
-    "1",
-    "yes",
-)
-if _console_logging_enabled:
-    import sys
-
-    # Enable detailed console logs across Azure libraries
-    azure_logger = logging.getLogger("azure")
-    azure_logger.setLevel(logging.DEBUG)
-    azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-    # Exclude detailed logs for network calls associated with getting Entra ID token.
-    identity_logger = logging.getLogger("azure.identity")
-    identity_logger.setLevel(logging.ERROR)
-    # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
-    # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
-    # (which are implemented as a separate logging policy)
-    logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
-    logger.setLevel(logging.ERROR)
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
-    :ivar agents: The asynchronous AgentsClient associated with this AIProjectClient.
-    :vartype agents: azure.ai.agents.aio.AgentsClient
+    :ivar beta: BetaOperations operations
+    :vartype beta: azure.ai.projects.aio.operations.BetaOperations
+    :ivar agents: AgentsOperations operations
+    :vartype agents: azure.ai.projects.aio.operations.AgentsOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.aio.operations.ConnectionsOperations
-    :ivar telemetry: TelemetryOperations operations
-    :vartype telemetry: azure.ai.projects.aio.operations.TelemetryOperations
-    :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.projects.aio.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.aio.operations.DatasetsOperations
-    :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
-    :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.aio.operations.RedTeamsOperations
-    :param endpoint: Project endpoint. In the form
-     "https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project"
-     if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
-     form "https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name"
-     if you want to explicitly specify the Foundry Project name. Required.
+    :ivar indexes: IndexesOperations operations
+    :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
+    :param endpoint: Foundry Project endpoint in the form
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
+     only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
+     the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :param allow_preview: Whether to enable preview features. Optional, default is False.
+     Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
+     or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
+     Set this to True to use human evaluation rule action (class :class:`~azure.ai.projects.models.HumanEvaluationPreviewRuleAction`).
+     Methods on the `.beta` sub-client (class :class:`~azure.ai.projects.aio.operations.BetaOperations`)
+     are all in preview, but do not require setting `allow_preview=True` since it's implied by the sub-client name.
+     When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
+     with the appropriate value in all relevant calls to the service.
+    :type allow_preview: bool
+    :keyword api_version: The API version to use for this operation. Known values are "v1". Default
+     value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: AsyncTokenCredential,
+        *,
+        allow_preview: bool = False,
+        **kwargs: Any,
+    ) -> None:
 
-        kwargs.setdefault("logging_enable", _console_logging_enabled)
+        self._console_logging_enabled: bool = (
+            os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
+        )
+
+        if self._console_logging_enabled:
+            import sys
+
+            # Enable detailed console logs across Azure libraries
+            azure_logger = logging.getLogger("azure")
+            azure_logger.setLevel(logging.DEBUG)
+            console_handler = logging.StreamHandler(stream=sys.stdout)
+            console_handler.addFilter(_AuthSecretsFilter())
+            azure_logger.addHandler(console_handler)
+            # Exclude detailed logs for network calls associated with getting Entra ID token.
+            logging.getLogger("azure.identity").setLevel(logging.ERROR)
+            # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
+            # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
+            # (which are implemented as a separate logging policy)
+            logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
+
+            kwargs.setdefault("logging_enable", self._console_logging_enabled)
 
         self._kwargs = kwargs.copy()
-        self._patched_user_agent = _patch_user_agent(self._kwargs.pop("user_agent", None))
+        self._custom_user_agent = self._kwargs.get("user_agent", None)
 
-        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+        super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
-        self._agents: Optional[AgentsClient] = None
 
-    @property
-    def agents(self) -> AgentsClient:  # type: ignore[name-defined]
-        """Get the asynchronous AgentsClient associated with this AIProjectClient.
-        The package azure.ai.agents must be installed to use this property.
+    def _get_openai_api_key(self, kwargs: dict):
+        """Resolve the API key for the AsyncOpenAI client.
 
-        :return: The asynchronous AgentsClient associated with this AIProjectClient.
-        :rtype: azure.ai.agents.aio.AgentsClient
+        :param kwargs: Caller keyword arguments; ``api_key`` is popped when present.
+        :type kwargs: dict
+        :return: The API key string or a bearer-token-provider callable.
+        :rtype: str or Callable
         """
-        if self._agents is None:
-            self._agents = AgentsClient(
-                endpoint=self._config.endpoint,
-                credential=self._config.credential,
-                user_agent=self._patched_user_agent,
-                **self._kwargs,
-            )
-        return self._agents
+        if "api_key" in kwargs:
+            return kwargs.pop("api_key")
+        return get_bearer_token_provider(
+            self._config.credential,  # pylint: disable=protected-access
+            "https://ai.azure.com/.default",
+        )
 
-    @distributed_trace_async
-    async def get_openai_client(
-        self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
-    ) -> "AsyncOpenAI":  # type: ignore[name-defined]
-        """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) to use with
-        AI models deployed to your AI Foundry Project or connected Azure OpenAI services.
+    def _get_openai_http_client(self, kwargs: dict):
+        """Resolve the HTTP transport client for the AsyncOpenAI client.
 
-        .. note:: The package `openai` must be installed prior to calling this method.
+        :param kwargs: Caller keyword arguments; ``http_client`` is popped when present.
+        :type kwargs: dict
+        :return: An httpx.AsyncClient instance configured with logging transport, or ``None``.
+        :rtype: httpx.AsyncClient or None
+        """
+        if "http_client" in kwargs:
+            return kwargs.pop("http_client")
+        if self._console_logging_enabled:
+            return httpx.AsyncClient(transport=_OpenAILoggingTransport())
+        return None
 
-        :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
-         See "Data plane - Inference" row in the table at
-         https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs. If this keyword
-         is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
-        :paramtype api_version: Optional[str]
-        :keyword connection_name: Optional. If specified, the connection named here must be of type Azure OpenAI.
-         The returned AzureOpenAI client will use the inference URL specified by the connected Azure OpenAI
-         service, and can be used with AI models deployed to that service. If not specified, the returned
-         AzureOpenAI client will use the inference URL of the parent AI Services resource, and can be used
-         with AI models deployed directly to your AI Foundry project.
-        :paramtype connection_name: Optional[str]
+    @distributed_trace
+    def get_openai_client(
+        self, *, agent_name: Optional[str] = None, **kwargs: Any
+    ) -> AsyncOpenAI:  # pylint: disable=too-many-branches
+        """Get an authenticated AsyncOpenAI client from the `openai` package.
 
-        :return: An authenticated AsyncAzureOpenAI client
-        :rtype: ~openai.AsyncAzureOpenAI
+        Keyword arguments are passed to the AsyncOpenAI client constructor.
 
-        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure OpenAI connection
-         does not exist.
-        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `openai` package
-         is not installed.
-        :raises ValueError: if the connection name is an empty string.
+        The AsyncOpenAI client constructor is called with:
+
+        * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
+          If ``agent_name`` is provided (and ``allow_preview=True`` was set on the AIProjectClient), ``base_url``
+          is instead set to the Agent's endpoint ``{endpoint}/agents/{agent_name}/endpoint/protocols/openai``.
+          Can be overridden by passing ``base_url`` as a keyword argument.
+        * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
+          AIProjectClient constructor, with scope "https://ai.azure.com/.default".
+          Can be overridden by passing ``api_key`` as a keyword argument.
+
+        :keyword agent_name: Optional name of an Agent. When provided, the AsyncOpenAI client's ``base_url``
+            is pointed at the Agent's endpoint. Requires ``allow_preview=True`` to have been set on the
+            AIProjectClient constructor; otherwise a :exc:`ValueError` is raised.
+        :paramtype agent_name: str or None
+
+        :return: An authenticated AsyncOpenAI client
+        :rtype: ~openai.AsyncOpenAI
+
+        :raises ValueError: If ``agent_name`` is provided but ``allow_preview=True`` was not set on the client.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if connection_name is not None and not connection_name:
-            raise ValueError("Connection name cannot be empty")
 
-        try:
-            from openai import AsyncAzureOpenAI
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "OpenAI SDK is not installed. Please install it using 'pip install openai'"
-            ) from e
+        kwargs = kwargs.copy() if kwargs else {}
 
-        if connection_name:
-            connection = await self.connections._get_with_credentials(  # pylint: disable=protected-access
-                name=connection_name, **kwargs
-            )
-            if connection.type != ConnectionType.AZURE_OPEN_AI:
-                raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
-
-            azure_endpoint = connection.target[:-1] if connection.target.endswith("/") else connection.target
-
-            if isinstance(connection.credentials, ApiKeyCredentials):
-
-                logger.debug(
-                    "[get_openai_client] Creating AsyncOpenAI client using API key authentication, on connection `%s`, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
-                    connection_name,
-                    azure_endpoint,
-                    api_version,
-                )
-                api_key = connection.credentials.api_key
-                client = AsyncAzureOpenAI(api_key=api_key, azure_endpoint=azure_endpoint, api_version=api_version)
-
-            elif isinstance(connection.credentials, EntraIDCredentials):
-
-                logger.debug(
-                    "[get_openai_client] Creating AsyncOpenAI using Entra ID authentication, on connection `%s`, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
-                    connection_name,
-                    azure_endpoint,
-                    api_version,
-                )
-
-                try:
-                    from azure.identity.aio import get_bearer_token_provider
-                except ModuleNotFoundError as e:
-                    raise ModuleNotFoundError(
-                        "azure.identity package not installed. Please install it using 'pip install azure.identity'"
-                    ) from e
-
-                client = AsyncAzureOpenAI(
-                    # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
-                    azure_ad_token_provider=get_bearer_token_provider(
-                        self._config.credential,  # pylint: disable=protected-access
-                        "https://cognitiveservices.azure.com/.default",  # pylint: disable=protected-access
-                    ),
-                    azure_endpoint=azure_endpoint,
-                    api_version=api_version,
-                )
-
-            else:
-                raise ValueError("Unsupported authentication type {connection.type}")
-
-            return client
-
-        try:
-            from azure.identity.aio import get_bearer_token_provider
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "azure.identity package not installed. Please install it using 'pip install azure.identity'"
-            ) from e
-
-        azure_endpoint = _get_aoai_inference_url(self._config.endpoint)  # pylint: disable=protected-access
+        base_url = _resolve_openai_base_url(self._config, agent_name, kwargs)
+        default_query = _resolve_openai_query_params(self._config, agent_name, kwargs)
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
-            "[get_openai_client] Creating AzureOpenAI client using Entra ID authentication, on parent AI Services resource, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
-            azure_endpoint,
-            api_version,
+            "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
+            base_url,
         )
 
-        client = AsyncAzureOpenAI(
-            # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
-            azure_ad_token_provider=get_bearer_token_provider(
-                self._config.credential,  # pylint: disable=protected-access
-                "https://cognitiveservices.azure.com/.default",  # pylint: disable=protected-access
-            ),
-            azure_endpoint=azure_endpoint,
-            api_version=api_version,
-        )
+        api_key = self._get_openai_api_key(kwargs)
+        http_client = self._get_openai_http_client(kwargs)
+        default_headers = _resolve_openai_default_headers(agent_name, kwargs)
+
+        openai_custom_user_agent = default_headers.get("User-Agent", None)
+
+        def _create_openai_client(**kwargs) -> AsyncOpenAI:
+            return AsyncOpenAI(
+                api_key=api_key,
+                base_url=base_url,
+                default_query=default_query,
+                http_client=http_client,
+                **kwargs,
+            )
+
+        dummy_client = _create_openai_client()
+
+        openai_default_user_agent = dummy_client.user_agent
+
+        if openai_custom_user_agent:
+            final_user_agent = openai_custom_user_agent
+        else:
+            final_user_agent = _build_openai_user_agent(self._custom_user_agent, openai_default_user_agent)
+
+        default_headers["User-Agent"] = final_user_agent
+
+        client = _create_openai_client(default_headers=default_headers, **kwargs)
 
         return client
 
-    async def close(self) -> None:
-        if self._agents:
-            await self.agents.close()
-        await super().close()
 
-    async def __aenter__(self) -> Self:
-        await super().__aenter__()
-        if self._agents:
-            await self.agents.__aenter__()
-        return self
+class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
+    """Custom HTTP async transport that logs OpenAI API requests and responses to the console.
 
-    async def __aexit__(self, *exc_details: Any) -> None:
-        if self._agents:
-            await self.agents.__aexit__(*exc_details)
-        await super().__aexit__(*exc_details)
+    This transport wraps httpx.AsyncHTTPTransport to intercept all HTTP traffic and print
+    detailed request/response information for debugging purposes. It automatically
+    redacts sensitive authorization headers and handles various content types including
+    multipart form data (file uploads).
+
+    Used internally by AIProjectClient when console logging is enabled via the
+    AZURE_AI_PROJECTS_CONSOLE_LOGGING environment variable.
+    """
+
+    def _sanitize_auth_header(self, headers):
+        """Sanitize authorization and api-key headers by redacting sensitive information.
+
+        :param headers: Dictionary of HTTP headers to sanitize
+        :type headers: dict
+        """
+
+        if "authorization" in headers:
+            auth_value = headers["authorization"]
+            if len(auth_value) >= 7:
+                headers["authorization"] = auth_value[:7] + "<REDACTED>"
+            else:
+                headers["authorization"] = "<ERROR>"
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        """
+        Log HTTP request and response details to console, in a nicely formatted way,
+        for OpenAI / Azure OpenAI clients.
+
+        :param request: The HTTP request to handle and log
+        :type request: httpx.Request
+
+        :return: The HTTP response received
+        :rtype: httpx.Response
+        """
+
+        print(f"\n==> Request:\n{request.method} {request.url}")
+        headers = dict(request.headers)
+        self._sanitize_auth_header(headers)
+        print("Headers:")
+        for key, value in sorted(headers.items()):
+            print(f"  {key}: {value}")
+
+        self._log_request_body(request)
+
+        response = await super().handle_async_request(request)
+
+        print(f"\n<== Response:\n{response.status_code} {response.reason_phrase}")
+        print("Headers:")
+        for key, value in sorted(dict(response.headers).items()):
+            print(f"  {key}: {value}")
+
+        content = await response.aread()
+        if content is None or content == b"":
+            print("Body: [No content]")
+        else:
+            try:
+                print(f"Body:\n {content.decode('utf-8')}")
+            except Exception:  # pylint: disable=broad-exception-caught
+                print(f"Body (raw):\n  {content!r}")
+        print("\n")
+
+        return response
+
+    def _log_request_body(self, request: httpx.Request) -> None:
+        """Log request body content safely, handling binary data and streaming content.
+
+        :param request: The HTTP request object containing the body to log
+        :type request: httpx.Request
+        """
+
+        # Check content-type header to identify file uploads
+        content_type = request.headers.get("content-type", "").lower()
+        if "multipart/form-data" in content_type:
+            print("Body: [Multipart form data - file upload, not logged]")
+            return
+
+        # Safely check if content exists without accessing it
+        if not hasattr(request, "content"):
+            print("Body: [No content attribute]")
+            return
+
+        # Very careful content access - wrap in try-catch immediately
+        try:
+            content = request.content
+        except Exception as access_error:  # pylint: disable=broad-exception-caught
+            print(f"Body: [Cannot access content: {access_error}]")
+            return
+
+        if content is None or content == b"":
+            print("Body: [No content]")
+            return
+
+        try:
+            print(f"Body:\n  {content.decode('utf-8')}")
+        except Exception:  # pylint: disable=broad-exception-caught
+            print(f"Body (raw):\n  {content!r}")
 
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level

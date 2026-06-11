@@ -1,8 +1,10 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
+from typing import cast
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     ConversationalAITask,
@@ -18,13 +20,7 @@ from azure.ai.language.conversations.models import (
     ConversationalAIIntent,
     ConversationalAIEntity,
     ConversationItemRange,
-    DateTimeResolution,
-    EntitySubtype,
-    EntityTag,
 )
-from typing import cast
-from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -123,24 +119,6 @@ class TestConversationsCase(TestConversations):
                             f"Index: {ent.conversation_item_index}"
                         )
 
-                        # Date/time resolutions
-                        if ent.resolutions:
-                            for res in ent.resolutions:
-                                if isinstance(res, DateTimeResolution):
-                                    print(
-                                        f"    - [DateTimeResolution] SubKind: {getattr(res, 'date_time_sub_kind', None)}, "
-                                        f"Timex: {res.timex}, Value: {res.value}"
-                                    )
-
-                        # Extra information (entity subtype + tags)
-                        if ent.extra_information:
-                            for extra in ent.extra_information:
-                                if isinstance(extra, EntitySubtype):
-                                    print(f"    - [EntitySubtype] Value: {extra.value}")
-                                    for tag in extra.tags or []:
-                                        tag = cast(EntityTag, tag)
-                                        print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
-
                     print()
 
                 # Global entities
@@ -155,13 +133,6 @@ class TestConversationsCase(TestConversations):
                         f"  Conversation Item ID: {ent.conversation_item_id}, " f"Index: {ent.conversation_item_index}"
                     )
 
-                    if ent.extra_information:
-                        for extra in ent.extra_information:
-                            if isinstance(extra, EntitySubtype):
-                                print(f"    - [EntitySubtype] Value: {extra.value}")
-                                for tag in extra.tags or []:
-                                    tag = cast(EntityTag, tag)
-                                    print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
                 print("-" * 40)
         finally:
             await client.close()

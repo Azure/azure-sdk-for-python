@@ -23,6 +23,7 @@ from .operations import (
     AssetEndpointProfilesOperations,
     AssetsOperations,
     BillingContainersOperations,
+    CredentialsOperations,
     NamespaceAssetsOperations,
     NamespaceDevicesOperations,
     NamespaceDiscoveredAssetsOperations,
@@ -30,6 +31,7 @@ from .operations import (
     NamespacesOperations,
     OperationStatusOperations,
     Operations,
+    PoliciesOperations,
     SchemaRegistriesOperations,
     SchemaVersionsOperations,
     SchemasOperations,
@@ -56,6 +58,10 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
     :vartype billing_containers: azure.mgmt.deviceregistry.operations.BillingContainersOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.deviceregistry.operations.NamespacesOperations
+    :ivar credentials: CredentialsOperations operations
+    :vartype credentials: azure.mgmt.deviceregistry.operations.CredentialsOperations
+    :ivar policies: PoliciesOperations operations
+    :vartype policies: azure.mgmt.deviceregistry.operations.PoliciesOperations
     :ivar namespace_assets: NamespaceAssetsOperations operations
     :vartype namespace_assets: azure.mgmt.deviceregistry.operations.NamespaceAssetsOperations
     :ivar namespace_devices: NamespaceDevicesOperations operations
@@ -81,8 +87,9 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-10-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-03-01-preview". Default value is "2026-03-01-preview". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -147,6 +154,8 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.credentials = CredentialsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.policies = PoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.namespace_assets = NamespaceAssetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

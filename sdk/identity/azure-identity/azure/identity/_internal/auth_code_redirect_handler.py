@@ -20,12 +20,20 @@ class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
 
         query = self.path.split("?", 1)[-1]
         parsed = parse_qs(query, keep_blank_values=True)
-        self.server.query_params = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in parsed.items()}
+        self.server.auth_response = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in parsed.items()}
+        self._send_success_response()
 
+    def do_POST(self):
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length).decode("utf-8")
+        parsed = parse_qs(body, keep_blank_values=True)
+        self.server.auth_response = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in parsed.items()}
+        self._send_success_response()
+
+    def _send_success_response(self):
         self.send_response(200)
         self.send_header("Content-Type", "text/html")
         self.end_headers()
-
         self.wfile.write(b"Authentication complete. You can close this window.")
 
     def log_message(self, format, *args):  # pylint: disable=redefined-builtin
@@ -35,14 +43,13 @@ class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
 class AuthCodeRedirectServer(HTTPServer):
     """HTTP server that listens for the redirect request following an authorization code authentication"""
 
-    query_params: Mapping[str, Any] = {}
-
     def __init__(self, hostname: str, port: int, timeout: int) -> None:
         HTTPServer.__init__(self, (hostname, port), AuthCodeRedirectHandler)
         self.timeout = timeout
+        self.auth_response: Mapping[str, Any] = {}
 
     def wait_for_redirect(self) -> Mapping[str, Any]:
-        while not self.query_params:
+        while not self.auth_response:
             try:
                 self.handle_request()
             except (IOError, ValueError):
@@ -53,7 +60,7 @@ class AuthCodeRedirectServer(HTTPServer):
         self.server_close()
 
         # if we timed out, this returns an empty dict
-        return self.query_params
+        return self.auth_response
 
     def handle_timeout(self):
         """Break the request-handling loop by tearing down the server"""

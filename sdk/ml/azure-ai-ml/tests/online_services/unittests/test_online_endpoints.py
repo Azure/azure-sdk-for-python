@@ -15,7 +15,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
-from azure.ai.ml._restclient.v2022_10_01.models import EndpointAuthKeys
+from azure.ai.ml._restclient.arm_ml_service.models import EndpointAuthKeys
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import (
     AAD_TOKEN_RESOURCE_ENDPOINT,
@@ -117,13 +117,13 @@ def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 

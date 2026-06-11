@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, AsyncIterator, Callable, Dict, Literal, Optional, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, Literal, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -57,7 +57,7 @@ from ...operations._blob_operations import (
 from .._configuration import AzureBlobStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class BlobOperations:  # pylint: disable=too-many-public-methods
@@ -177,6 +177,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_download_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -194,7 +195,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -214,7 +214,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -479,6 +482,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -492,7 +496,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -507,7 +510,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -576,6 +582,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-access-tier-change-time"] = self._deserialize(
             "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
         )
+        response_headers["x-ms-smart-access-tier"] = self._deserialize(
+            "str", response.headers.get("x-ms-smart-access-tier")
+        )
         response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
         response_headers["x-ms-is-current-version"] = self._deserialize(
             "bool", response.headers.get("x-ms-is-current-version")
@@ -609,6 +618,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
         request_id_parameter: Optional[str] = None,
         blob_delete_type: Literal["Permanent"] = "Permanent",
+        access_tier_if_modified_since: Optional[datetime.datetime] = None,
+        access_tier_if_unmodified_since: Optional[datetime.datetime] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
@@ -654,6 +665,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          permanently delete a blob if blob soft delete is enabled. Known values are "Permanent" and
          None. Default value is "Permanent".
         :type blob_delete_type: str
+        :param access_tier_if_modified_since: Specify this header value to operate only on a blob if
+         the access-tier has been modified since the specified date/time. Default value is None.
+        :type access_tier_if_modified_since: ~datetime.datetime
+        :param access_tier_if_unmodified_since: Specify this header value to operate only on a blob if
+         the access-tier has not been modified since the specified date/time. Default value is None.
+        :type access_tier_if_unmodified_since: ~datetime.datetime
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -692,6 +709,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -704,7 +722,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             blob_delete_type=blob_delete_type,
-            version=self._config.version,
+            access_tier_if_modified_since=access_tier_if_modified_since,
+            access_tier_if_unmodified_since=access_tier_if_unmodified_since,
             headers=_headers,
             params=_params,
         )
@@ -719,7 +738,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -768,10 +790,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_undelete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -786,7 +808,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -846,11 +871,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_expiry_request(
             url=self._config.url,
             expiry_options=expiry_options,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -865,7 +890,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -956,6 +984,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_http_headers_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
             blob_content_type=_blob_content_type,
@@ -971,7 +1000,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             blob_content_disposition=_blob_content_disposition,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -986,7 +1014,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1070,6 +1101,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_immutability_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             if_unmodified_since=_if_unmodified_since,
@@ -1078,7 +1110,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1093,7 +1124,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1163,12 +1197,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_immutability_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1183,7 +1217,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1251,12 +1288,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_legal_hold_request(
             url=self._config.url,
             legal_hold=legal_hold,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1271,7 +1308,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1290,7 +1330,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -1371,6 +1411,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
@@ -1385,7 +1426,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1400,7 +1440,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1491,6 +1534,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -1502,7 +1546,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1517,7 +1560,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1593,6 +1639,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1602,7 +1649,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1617,7 +1663,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1692,6 +1741,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1701,7 +1751,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1716,7 +1765,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1798,6 +1850,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1807,7 +1860,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1822,7 +1874,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1903,6 +1958,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
@@ -1913,7 +1969,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1928,7 +1983,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1949,7 +2007,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     async def create_snapshot(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
@@ -2029,6 +2087,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_create_snapshot_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             encryption_key=_encryption_key,
@@ -2043,7 +2102,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2058,7 +2116,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2080,11 +2141,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def start_copy_from_url(
+    async def start_copy_from_url(  # pylint: disable=too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         tier: Optional[Union[str, _models.AccessTierOptional]] = None,
         rehydrate_priority: Optional[Union[str, _models.RehydratePriority]] = None,
         request_id_parameter: Optional[str] = None,
@@ -2119,8 +2180,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
-         "Cold". Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive",
+         "Cold", and "Smart". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
          blob. Known values are: "High" and "Standard". Default value is None.
@@ -2196,6 +2257,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_start_copy_from_url_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             tier=tier,
@@ -2217,7 +2279,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2232,7 +2293,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2252,11 +2316,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def copy_from_url(
+    async def copy_from_url(  # pylint: disable=too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         tier: Optional[Union[str, _models.AccessTierOptional]] = None,
         request_id_parameter: Optional[str] = None,
         source_content_md5: Optional[bytes] = None,
@@ -2295,8 +2359,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
-         "Cold". Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive",
+         "Cold", and "Smart". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -2384,6 +2448,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_copy_from_url_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             tier=tier,
@@ -2408,7 +2473,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             copy_source_tags=copy_source_tags,
             file_request_intent=file_request_intent,
             x_ms_requires_sync=x_ms_requires_sync,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2423,7 +2487,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2503,12 +2570,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_abort_copy_from_url_request(
             url=self._config.url,
             copy_id=copy_id,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2523,7 +2590,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2557,8 +2627,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         update the blob's ETag.
 
         :param tier: Indicates the tier to be set on the blob. Known values are: "P4", "P6", "P10",
-         "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and "Cold".
-         Required.
+         "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Cold", and
+         "Smart". Required.
         :type tier: str or ~azure.storage.blob.models.AccessTierRequired
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
@@ -2614,6 +2684,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_tier_request(
             url=self._config.url,
             tier=tier,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -2622,7 +2693,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             if_tags=_if_tags,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2637,7 +2707,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2686,11 +2759,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_account_info_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2705,7 +2778,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2776,7 +2852,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         comp: Literal["query"] = kwargs.pop("comp", _params.pop("comp", "query"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if query_request else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -2807,6 +2884,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_query_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             lease_id=_lease_id,
@@ -2821,7 +2899,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2842,7 +2919,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3047,6 +3127,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_tags_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
@@ -3058,7 +3139,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_match=_if_match,
             if_none_match=_if_none_match,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3073,7 +3153,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3150,7 +3233,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if tags else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_tags = None
@@ -3175,6 +3259,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_tags_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             version_id=version_id,
             transactional_content_md5=transactional_content_md5,
@@ -3188,7 +3273,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -3204,7 +3288,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

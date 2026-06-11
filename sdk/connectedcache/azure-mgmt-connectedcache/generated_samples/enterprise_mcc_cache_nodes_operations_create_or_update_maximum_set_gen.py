@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -53,7 +54,6 @@ def main():
                     "optionalProperty3": "fpnycrbagptsujiotnjfuhlm",
                     "optionalProperty4": "gesqugrxvhxlxxyvatgrautxwlmxsf",
                     "optionalProperty5": "zknjgzpaqtvdqjydd",
-                    "proxyUrl": "ihkzxlzvpcywtzrogupqozkdud",
                     "proxyUrlConfiguration": {"proxyUrl": "hplstyg"},
                 },
                 "cacheNode": {
@@ -82,6 +82,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-05-01-preview/EnterpriseMccCacheNodesOperations_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2024-11-30-preview/EnterpriseMccCacheNodesOperations_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

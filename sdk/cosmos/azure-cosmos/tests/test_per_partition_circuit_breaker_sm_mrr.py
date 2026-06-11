@@ -10,12 +10,11 @@ from azure.core.exceptions import ServiceResponseError, ServiceRequestError
 
 import test_config
 from azure.cosmos import _partition_health_tracker, _location_cache
-from azure.cosmos import CosmosClient
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENTATIVE, UNHEALTHY
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from test_per_partition_circuit_breaker_mm import create_doc, write_operations_and_errors, operations, REGION_1, \
-    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation, CREATE, READ, validate_stats
+    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation, CREATE, READ, validate_stats, user_agent_hook
 
 COLLECTION = "created_collection"
 
@@ -38,6 +37,7 @@ def validate_unhealthy_partitions(global_endpoint_manager,
     assert unhealthy_partitions == expected_unhealthy_partitions
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
+@pytest.mark.cosmosAADCircuitBreakerMultiRegion
 class TestPerPartitionCircuitBreakerSmMrr:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
@@ -45,13 +45,18 @@ class TestPerPartitionCircuitBreakerSmMrr:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
+    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=None, **kwargs):
+        endpoint = default_endpoint or self.host
         container_id = kwargs.pop("container_id", None)
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
-        client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=[REGION_1, REGION_2],
-                              transport=custom_transport, **kwargs)
+        client_kwargs = {
+            "consistency_level": "Session",
+            "preferred_locations": [REGION_1, REGION_2],
+            "transport": custom_transport,
+            **kwargs,
+        }
+        client = test_config.TestConfig.create_data_client_for_endpoint(endpoint, **client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
@@ -71,10 +76,11 @@ class TestPerPartitionCircuitBreakerSmMrr:
         return setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate
 
     def test_stat_reset(self):
+        status_code = 500
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
             CosmosHttpResponseError(
-                status_code=503,
+                status_code=status_code,
                 message="Some injected error.")
         )
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = \
@@ -103,7 +109,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
                                             PK_VALUE,
                                             expected_uri)
                 except CosmosHttpResponseError as e:
-                    assert e.status_code == 503
+                    assert e.status_code == status_code
             validate_unhealthy_partitions(global_endpoint_manager, 0)
             validate_stats(global_endpoint_manager, 0,  2, 2, 0, 0, 0)
             sleep(25)
@@ -234,8 +240,17 @@ class TestPerPartitionCircuitBreakerSmMrr:
         # there shouldn't be region marked as unavailable
         assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
 
+    def test_circuit_breaker_user_agent_feature_flag_sm(self):
+        # Simple test to verify the user agent suffix is being updated with the relevant feature flags
+        custom_setup = self.setup_method_with_custom_transport(None)
+        container = custom_setup['col']
+        # Create a document to check the response headers
+        container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                              raw_response_hook=user_agent_hook)
+
     # test cosmos client timeout
 
 if __name__ == '__main__':
     unittest.main()
+
 

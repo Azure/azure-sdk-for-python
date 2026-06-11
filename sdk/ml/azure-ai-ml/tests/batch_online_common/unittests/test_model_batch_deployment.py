@@ -4,7 +4,7 @@
 
 import pytest
 
-from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
+from azure.ai.ml._restclient.arm_ml_service.models import BatchOutputAction
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import ModelBatchDeployment
 from azure.ai.ml.entities._load_functions import load_model_batch_deployment
@@ -24,7 +24,7 @@ class TestModelBatchDeployment:
         assert rest_deployment.location == "eastus"
         assert rest_deployment.properties.description == deployment.description
         assert rest_deployment.properties.environment_id == deployment.environment
-        assert rest_deployment.properties.model.asset_id.name == "model-1"
+        assert "model-1" in str(rest_deployment.properties.model.asset_id)
         assert rest_deployment.properties.code_configuration.code_id == deployment.code_configuration.code
         assert (
             rest_deployment.properties.code_configuration.scoring_script == deployment.code_configuration.scoring_script

@@ -76,7 +76,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(
+    async def create(  # pylint: disable=too-many-locals
         self,
         file_content_length: int,
         timeout: Optional[int] = None,
@@ -95,12 +95,14 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         content_md5: Optional[bytes] = None,
         file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
         content_length: Optional[int] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         file_http_headers: Optional[_models.FileHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         optionalbody: Optional[IO[bytes]] = None,
         **kwargs: Any
     ) -> None:
-        """Creates a new file or replaces a file. Note it only initializes the file with no content.
+        """Creates a new file or replaces a file. Can also initialize the file with content.
 
         :param file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
         :type file_content_length: int
@@ -167,6 +169,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          When the x-ms-write header is set to clear, the value of this header must be set to zero.
          Default value is None.
         :type content_length: int
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -216,6 +225,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_create_request(
             url=self._config.url,
             file_content_length=file_content_length,
+            version=self._config.version,
             timeout=timeout,
             file_content_type=_file_content_type,
             file_content_encoding=_file_content_encoding,
@@ -239,11 +249,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             content_md5=content_md5,
             file_property_semantics=file_property_semantics,
             content_length=content_length,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             file_type_constant=file_type_constant,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -259,7 +270,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -294,6 +308,9 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -349,6 +366,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_download_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             range=range,
             range_get_content_md5=range_get_content_md5,
@@ -356,7 +374,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -376,7 +393,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -491,12 +511,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -511,7 +531,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -610,11 +633,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -629,7 +652,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -642,7 +668,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_http_headers(
+    async def set_http_headers(  # pylint: disable=too-many-locals
         self,
         timeout: Optional[int] = None,
         file_content_length: Optional[int] = None,
@@ -750,6 +776,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_http_headers_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             file_content_length=file_content_length,
             file_content_type=_file_content_type,
@@ -772,7 +799,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -787,7 +813,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -868,13 +897,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -889,7 +918,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -954,6 +986,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -962,7 +995,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -977,7 +1009,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1034,13 +1069,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1055,7 +1090,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1120,6 +1158,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             proposed_lease_id=proposed_lease_id,
             request_id_parameter=request_id_parameter,
@@ -1127,7 +1166,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1142,7 +1180,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1206,6 +1247,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
@@ -1213,7 +1255,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1228,7 +1269,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1246,7 +1290,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def upload_range(
+    async def upload_range(  # pylint: disable=too-many-locals
         self,
         range: str,
         content_length: int,
@@ -1334,6 +1378,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             url=self._config.url,
             range=range,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             file_range_write=file_range_write,
             content_md5=content_md5,
@@ -1345,7 +1390,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1361,7 +1405,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1468,6 +1515,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             range=range,
             copy_source=copy_source,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             source_range=source_range,
             source_content_crc64=source_content_crc64,
@@ -1481,7 +1529,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             file_range_write_from_url=self._config.file_range_write_from_url,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1496,7 +1543,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1578,6 +1628,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_range_list_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             prevsharesnapshot=prevsharesnapshot,
             timeout=timeout,
@@ -1587,7 +1638,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1602,7 +1652,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1621,7 +1674,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def start_copy(
+    async def start_copy(  # pylint: disable=too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -1736,6 +1789,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_start_copy_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
@@ -1757,7 +1811,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1772,7 +1825,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1836,13 +1892,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_abort_copy_request(
             url=self._config.url,
             copy_id=copy_id,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1857,7 +1913,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1916,6 +1975,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_list_handles_request(
             url=self._config.url,
+            version=self._config.version,
             marker=marker,
             maxresults=maxresults,
             timeout=timeout,
@@ -1923,7 +1983,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1938,7 +1997,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2002,13 +2064,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_force_close_handles_request(
             url=self._config.url,
             handle_id=handle_id,
+            version=self._config.version,
             timeout=timeout,
             marker=marker,
             sharesnapshot=sharesnapshot,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2023,7 +2085,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2042,7 +2107,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def rename(
+    async def rename(  # pylint: disable=too-many-locals
         self,
         rename_source: str,
         timeout: Optional[int] = None,
@@ -2150,6 +2215,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_rename_request(
             url=self._config.url,
             rename_source=rename_source,
+            version=self._config.version,
             timeout=timeout,
             replace_if_exists=replace_if_exists,
             ignore_read_only=ignore_read_only,
@@ -2168,7 +2234,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2183,7 +2248,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2287,6 +2355,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_create_symbolic_link_request(
             url=self._config.url,
             link_text=link_text,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_creation_time=file_creation_time,
@@ -2297,7 +2366,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             group=group,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2312,7 +2380,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2385,12 +2456,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_symbolic_link_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2405,7 +2476,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2474,13 +2548,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_create_hard_link_request(
             url=self._config.url,
             target_file=target_file,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             file_type_constant=file_type_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2495,7 +2569,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

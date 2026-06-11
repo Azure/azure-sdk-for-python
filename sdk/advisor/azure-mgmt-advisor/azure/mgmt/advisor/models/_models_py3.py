@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class ArmErrorResponse(_serialization.Model):
@@ -35,7 +28,7 @@ class ArmErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ARMErrorResponseBody"},
     }
 
-    def __init__(self, *, error: Optional["_models.ARMErrorResponseBody"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ARMErrorResponseBody"] = None, **kwargs: Any) -> None:
         """
         :keyword error: ARM error response body.
         :paramtype error: ~azure.mgmt.advisor.models.ARMErrorResponseBody
@@ -59,7 +52,7 @@ class ARMErrorResponseBody(_serialization.Model):
         "code": {"key": "code", "type": "str"},
     }
 
-    def __init__(self, *, message: Optional[str] = None, code: Optional[str] = None, **kwargs):
+    def __init__(self, *, message: Optional[str] = None, code: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword message: Gets or sets the string that describes the error in detail and provides
          debugging information.
@@ -97,12 +90,12 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class ConfigData(Resource):
@@ -147,9 +140,9 @@ class ConfigData(Resource):
         *,
         exclude: Optional[bool] = None,
         low_cpu_threshold: Optional[Union[str, "_models.CpuThreshold"]] = None,
-        digests: Optional[List["_models.DigestConfig"]] = None,
-        **kwargs
-    ):
+        digests: Optional[list["_models.DigestConfig"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword exclude: Exclude the resource from Advisor evaluations. Valid values: False (default)
          or True.
@@ -182,8 +175,8 @@ class ConfigurationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ConfigData"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[list["_models.ConfigData"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of configurations.
         :paramtype value: list[~azure.mgmt.advisor.models.ConfigData]
@@ -232,11 +225,11 @@ class DigestConfig(_serialization.Model):
         name: Optional[str] = None,
         action_group_resource_id: Optional[str] = None,
         frequency: Optional[int] = None,
-        categories: Optional[List[Union[str, "_models.Category"]]] = None,
+        categories: Optional[list[Union[str, "_models.Category"]]] = None,
         language: Optional[str] = None,
         state: Optional[Union[str, "_models.DigestConfigState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of digest configuration. Value is case-insensitive and must be unique
          within a subscription.
@@ -301,11 +294,11 @@ class MetadataEntity(_serialization.Model):
         type: Optional[str] = None,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
-        depends_on: Optional[List[str]] = None,
-        applicable_scenarios: Optional[List[Union[str, "_models.Scenario"]]] = None,
-        supported_values: Optional[List["_models.MetadataSupportedValueDetail"]] = None,
-        **kwargs
-    ):
+        depends_on: Optional[list[str]] = None,
+        applicable_scenarios: Optional[list[Union[str, "_models.Scenario"]]] = None,
+        supported_values: Optional[list["_models.MetadataSupportedValueDetail"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The resource Id of the metadata entity.
         :paramtype id: str
@@ -347,8 +340,8 @@ class MetadataEntityListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MetadataEntity"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[list["_models.MetadataEntity"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of metadata entities.
         :paramtype value: list[~azure.mgmt.advisor.models.MetadataEntity]
@@ -379,8 +372,8 @@ class MetadataSupportedValueDetail(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id.
         :paramtype id: str
@@ -419,8 +412,8 @@ class OperationDisplayInfo(_serialization.Model):
         operation: Optional[str] = None,
         provider: Optional[str] = None,
         resource: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the operation.
         :paramtype description: str
@@ -453,8 +446,8 @@ class OperationEntity(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplayInfo"] = None, **kwargs
-    ):
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplayInfo"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -481,8 +474,8 @@ class OperationEntityListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.OperationEntity"]] = None, **kwargs
-    ):
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.OperationEntity"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
         :paramtype next_link: str
@@ -522,11 +515,11 @@ class ResourceMetadata(_serialization.Model):
         *,
         resource_id: Optional[str] = None,
         source: Optional[str] = None,
-        action: Optional[Dict[str, JSON]] = None,
+        action: Optional[dict[str, JSON]] = None,
         singular: Optional[str] = None,
         plural: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: Azure resource Id of the assessed resource.
         :paramtype resource_id: str
@@ -547,7 +540,7 @@ class ResourceMetadata(_serialization.Model):
         self.plural = plural
 
 
-class ResourceRecommendationBase(Resource):  # pylint: disable=too-many-instance-attributes
+class ResourceRecommendationBase(Resource):
     """Advisor Recommendation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -638,21 +631,21 @@ class ResourceRecommendationBase(Resource):  # pylint: disable=too-many-instance
         impacted_field: Optional[str] = None,
         impacted_value: Optional[str] = None,
         last_updated: Optional[datetime.datetime] = None,
-        metadata: Optional[Dict[str, JSON]] = None,
+        metadata: Optional[dict[str, JSON]] = None,
         recommendation_type_id: Optional[str] = None,
         short_description: Optional["_models.ShortDescription"] = None,
-        suppression_ids: Optional[List[str]] = None,
-        extended_properties: Optional[Dict[str, str]] = None,
+        suppression_ids: Optional[list[str]] = None,
+        extended_properties: Optional[dict[str, str]] = None,
         resource_metadata: Optional["_models.ResourceMetadata"] = None,
         description: Optional[str] = None,
         label: Optional[str] = None,
         learn_more_link: Optional[str] = None,
         potential_benefits: Optional[str] = None,
-        actions: Optional[List[Dict[str, JSON]]] = None,
-        remediation: Optional[Dict[str, JSON]] = None,
-        exposed_metadata_properties: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        actions: Optional[list[dict[str, JSON]]] = None,
+        remediation: Optional[dict[str, JSON]] = None,
+        exposed_metadata_properties: Optional[dict[str, JSON]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category: The category of the recommendation. Known values are: "HighAvailability",
          "Security", "Performance", "Cost", and "OperationalExcellence".
@@ -734,9 +727,9 @@ class ResourceRecommendationBaseListResult(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.ResourceRecommendationBase"]] = None,
-        **kwargs
-    ):
+        value: Optional[list["_models.ResourceRecommendationBase"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of recommendations.
         :paramtype next_link: str
@@ -763,7 +756,7 @@ class ShortDescription(_serialization.Model):
         "solution": {"key": "solution", "type": "str"},
     }
 
-    def __init__(self, *, problem: Optional[str] = None, solution: Optional[str] = None, **kwargs):
+    def __init__(self, *, problem: Optional[str] = None, solution: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword problem: The issue or opportunity identified by the recommendation and proposed
          solution.
@@ -778,7 +771,8 @@ class ShortDescription(_serialization.Model):
 
 
 class SuppressionContract(Resource):
-    """The details of the snoozed or dismissed rule; for example, the duration, name, and GUID associated with the rule.
+    """The details of the snoozed or dismissed rule; for example, the duration, name, and GUID
+    associated with the rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -812,7 +806,7 @@ class SuppressionContract(Resource):
         "expiration_time_stamp": {"key": "properties.expirationTimeStamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, suppression_id: Optional[str] = None, ttl: Optional[str] = None, **kwargs):
+    def __init__(self, *, suppression_id: Optional[str] = None, ttl: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword suppression_id: The GUID of the suppression.
         :paramtype suppression_id: str
@@ -822,7 +816,7 @@ class SuppressionContract(Resource):
         super().__init__(**kwargs)
         self.suppression_id = suppression_id
         self.ttl = ttl
-        self.expiration_time_stamp = None
+        self.expiration_time_stamp: Optional[datetime.datetime] = None
 
 
 class SuppressionContractListResult(_serialization.Model):
@@ -840,8 +834,12 @@ class SuppressionContractListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.SuppressionContract"]] = None, **kwargs
-    ):
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[list["_models.SuppressionContract"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of suppressions.
         :paramtype next_link: str

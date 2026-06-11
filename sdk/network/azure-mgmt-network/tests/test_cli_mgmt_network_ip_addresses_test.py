@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -24,7 +25,6 @@ import unittest
 import azure.mgmt.network
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
-
 
 AZURE_LOCATION = "eastus"
 

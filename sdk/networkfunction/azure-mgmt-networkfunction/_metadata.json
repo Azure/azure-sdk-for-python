@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2022-11-01",
+  "apiVersions": {
+    "Microsoft.NetworkFunction": "2022-11-01"
+  },
+  "commit": "63cb8f987d0d5fb94e781d000c7f7fc7a4a69842",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/networkfunction/NetworkFunction.Management",
+  "emitterVersion": "0.60.2"
+}

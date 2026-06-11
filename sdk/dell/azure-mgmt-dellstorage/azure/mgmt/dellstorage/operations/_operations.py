@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -38,8 +38,9 @@ from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserial
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -49,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +71,7 @@ def build_file_systems_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +100,7 @@ def build_file_systems_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +131,7 @@ def build_file_systems_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -157,12 +158,9 @@ def build_file_systems_update_request(
 def build_file_systems_delete_request(
     resource_group_name: str, filesystem_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Dell.Storage/filesystems/{filesystemName}"
     path_format_arguments = {
@@ -176,10 +174,7 @@ def build_file_systems_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_file_systems_list_by_resource_group_request(  # pylint: disable=name-too-long
@@ -188,7 +183,7 @@ def build_file_systems_list_by_resource_group_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +210,7 @@ def build_file_systems_list_by_subscription_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-21"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -245,7 +240,7 @@ class Operations:
         :attr:`operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: DellStorageMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -253,7 +248,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -328,7 +323,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -346,7 +344,7 @@ class FileSystemsOperations:
         :attr:`file_systems` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: DellStorageMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -406,7 +404,10 @@ class FileSystemsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -475,7 +476,10 @@ class FileSystemsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -804,7 +808,10 @@ class FileSystemsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -857,7 +864,10 @@ class FileSystemsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -930,7 +940,9 @@ class FileSystemsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.FileSystemResource"]:
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.FileSystemResource"]:
         """List FileSystemResource resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1010,7 +1022,10 @@ class FileSystemsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1018,7 +1033,7 @@ class FileSystemsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.FileSystemResource"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.FileSystemResource"]:
         """List FileSystemResource resources by subscription ID.
 
         :return: An iterator like instance of FileSystemResource
@@ -1094,7 +1109,10 @@ class FileSystemsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

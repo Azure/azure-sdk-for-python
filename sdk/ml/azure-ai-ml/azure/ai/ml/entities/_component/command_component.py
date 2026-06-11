@@ -21,7 +21,7 @@ from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConf
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
-from ..._restclient.v2022_10_01.models import ComponentVersion
+from ..._restclient.arm_ml_service.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
@@ -188,11 +188,11 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         return self.resources.instance_count if self.resources and not isinstance(self.resources, dict) else None
 
     @instance_count.setter
-    def instance_count(self, value: int) -> None:
+    def instance_count(self, value: Optional[int]) -> None:
         """Sets the number of instances or nodes to be used by the compute target.
 
         :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
-        :type value: int
+        :type value: Optional[int]
         """
         if not value:
             return

@@ -20,10 +20,7 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: 'all'
-  - name: UnsupportedToxEnvironments
+  - name: UnsupportedChecks
     type: string
     default: ''
   - name: InjectedPackages
@@ -82,6 +79,13 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - ${{ if eq(lower(parameters.OSName), 'macos') }}:
+      - pwsh: |
+          $dotnetroot = "$HOME/.dotnet"
+          Write-Host $dotnetroot
+          Write-Host "##vso[task.setvariable variable=DOTNET_ROOT]$dotnetroot"
+        displayName: 'Set DOTNET_ROOT'
+
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
         ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
@@ -102,12 +106,12 @@ jobs:
 
     - template: ../steps/build-test.yml
       parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        ToxTestEnv: $(toxenv)
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        CheckEnv: $(checks)
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
         TestPipeline: ${{ parameters.TestPipeline }}

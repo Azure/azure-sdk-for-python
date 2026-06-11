@@ -30,6 +30,7 @@ class DeleteJobPollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the DeleteJobPollingMethodAsync.
@@ -50,9 +51,9 @@ class DeleteJobPollingMethodAsync(AsyncPollingMethod):
         :type deserialization_callback: Optional[Callable]
         :param job_id: The unique identifier of the job being deleted.
         :type job_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -126,6 +127,7 @@ class DisableJobPollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the DisableJobPollingMethodAsync.
@@ -146,9 +148,9 @@ class DisableJobPollingMethodAsync(AsyncPollingMethod):
         :type deserialization_callback: Optional[Callable]
         :param job_id: The unique identifier of the job being disabled.
         :type job_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -222,6 +224,7 @@ class EnableJobPollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the EnableJobPollingMethodAsync.
@@ -242,9 +245,9 @@ class EnableJobPollingMethodAsync(AsyncPollingMethod):
         :type deserialization_callback: Optional[Callable]
         :param job_id: The unique identifier of the job being enabled.
         :type job_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -318,6 +321,7 @@ class DeleteJobSchedulePollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_schedule_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the DeleteJobSchedulePollingMethodAsync.
@@ -338,9 +342,9 @@ class DeleteJobSchedulePollingMethodAsync(AsyncPollingMethod):
         :type deserialization_callback: Optional[Callable]
         :param job_schedule_id: The unique identifier of the job schedule being deleted.
         :type job_schedule_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -413,6 +417,7 @@ class DeletePoolPollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the DeletePoolPollingMethodAsync.
@@ -433,9 +438,9 @@ class DeletePoolPollingMethodAsync(AsyncPollingMethod):
         :type deserialization_callback: Optional[Callable]
         :param pool_id: The unique identifier of the pool being deleted.
         :type pool_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -496,109 +501,6 @@ class DeletePoolPollingMethodAsync(AsyncPollingMethod):
             self._finished = True
 
 
-class DeleteCertificatePollingMethodAsync(AsyncPollingMethod):
-    """Polling method for certificate delete operation.
-
-    This class is used to poll the status of a certificate deletion operation.
-    It checks the status of the certificate until it is deleted or an error occurs.
-    """
-
-    def __init__(
-        self,
-        client: Any,
-        initial_response: PipelineResponse,
-        deserialization_callback: Optional[Callable],
-        thumbprint_algorithm: str,
-        thumbprint: str,
-        polling_interval: int = 5,
-    ):
-        """Initialize the DeleteCertificatePollingMethodAsync.
-
-        Sets the initial status of this long-running operation, verifies that polling
-        is possible, and initializes all necessary components for polling the certificate
-        deletion status.
-
-        :param client: An instance of the Batch client used to make API calls for
-            checking certificate status during polling.
-        :type client: Any
-        :param initial_response: The PipelineResponse returned from the initial
-            delete certificate API call.
-        :type initial_response: ~azure.core.pipeline.PipelineResponse
-        :param deserialization_callback: A callable function to transform the final
-            result before returning to the end user. Can be None if no transformation
-            is needed.
-        :type deserialization_callback: Optional[Callable]
-        :param thumbprint_algorithm: The algorithm used to generate the certificate
-            thumbprint (e.g., "sha1").
-        :type thumbprint_algorithm: str
-        :param thumbprint: The hexadecimal string representation of the certificate
-            thumbprint.
-        :type thumbprint: str
-        :param polling_interval: The time interval in seconds between polling
-            attempts. Defaults to 5 seconds.
-        :type polling_interval: int
-        """
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._thumbprint_algorithm = thumbprint_algorithm
-        self._thumbprint = thumbprint
-        self._polling_interval = polling_interval
-        self._status = "InProgress"
-        self._finished = False
-
-    def initialize(
-        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
-    ) -> None:
-        pass
-
-    def status(self) -> str:
-        return self._status
-
-    def finished(self) -> bool:
-        return self._finished
-
-    def resource(self) -> Optional[Any]:
-        if self._deserialization_callback and self._finished:
-            return self._deserialization_callback()
-        return None
-
-    async def run(self) -> None:
-        """The polling loop.
-
-        The polling should call the status monitor, evaluate and set the current status,
-        insert delay between polls, and continue polling until a terminal state is reached.
-        """
-        while not self.finished():
-            await self.update_status()
-            if not self.finished():
-                # add a delay if not done
-                await asyncio.sleep(self._polling_interval)
-
-    async def update_status(self) -> None:
-        """Update the current status of the LRO by calling the status monitor
-        and then using the polling strategy's get_status() to set the status."""
-        try:
-            certificate = await self._client.get_certificate(self._thumbprint_algorithm, self._thumbprint)
-
-            # check certificate state is DELETING state (if not in deleting state then it's succeeded)
-            if certificate.state == _models.BatchCertificateState.DELETING:
-                self._status = "InProgress"
-                self._finished = False
-            else:
-                self._status = "Succeeded"
-                self._finished = True
-
-        except ResourceNotFoundError:
-            # Certificate no longer exists, deletion is complete
-            self._status = "Succeeded"
-            self._finished = True
-        except AzureError:
-            # Another error occurred so LRO failed
-            self._status = "Failed"
-            self._finished = True
-
-
 class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
     """Polling method for node deallocate operation.
 
@@ -612,6 +514,7 @@ class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -634,11 +537,11 @@ class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
         :param pool_id: The unique identifier of the pool containing the node
             to be deallocated.
         :type pool_id: str
-        :param node_id: The unique identifier of the node to be deallocated.
-        :type node_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword node_id: The unique identifier of the node to be deallocated.
+        :paramtype node_id: str
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -715,6 +618,7 @@ class RebootNodePollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -737,11 +641,11 @@ class RebootNodePollingMethodAsync(AsyncPollingMethod):
         :param pool_id: The unique identifier of the pool containing the node
             to be rebooted.
         :type pool_id: str
-        :param node_id: The unique identifier of the node to be rebooted.
-        :type node_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword node_id: The unique identifier of the node to be rebooted.
+        :paramtype node_id: str
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -816,6 +720,7 @@ class ReimageNodePollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -838,11 +743,11 @@ class ReimageNodePollingMethodAsync(AsyncPollingMethod):
         :param pool_id: The unique identifier of the pool containing the node
             to be reimaged.
         :type pool_id: str
-        :param node_id: The unique identifier of the node to be reimaged.
-        :type node_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword node_id: The unique identifier of the node to be reimaged.
+        :paramtype node_id: str
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -917,6 +822,7 @@ class RemoveNodePollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the RemoveNodePollingMethodAsync.
@@ -938,9 +844,9 @@ class RemoveNodePollingMethodAsync(AsyncPollingMethod):
         :param pool_id: The unique identifier of the pool from which nodes
             are being removed.
         :type pool_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -1016,6 +922,7 @@ class ResizePoolPollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the ResizePoolPollingMethodAsync.
@@ -1036,9 +943,9 @@ class ResizePoolPollingMethodAsync(AsyncPollingMethod):
         :type deserialization_callback: Optional[Callable]
         :param pool_id: The unique identifier of the pool being resized.
         :type pool_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -1114,6 +1021,7 @@ class StartNodePollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -1136,11 +1044,11 @@ class StartNodePollingMethodAsync(AsyncPollingMethod):
         :param pool_id: The unique identifier of the pool containing the node
             to be started.
         :type pool_id: str
-        :param node_id: The unique identifier of the node to be started.
-        :type node_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword node_id: The unique identifier of the node to be started.
+        :paramtype node_id: str
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -1215,6 +1123,7 @@ class StopPoolResizePollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the StopPoolResizePollingMethodAsync.
@@ -1236,9 +1145,9 @@ class StopPoolResizePollingMethodAsync(AsyncPollingMethod):
         :param pool_id: The unique identifier of the pool for which resize is
             being stopped.
         :type pool_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -1314,6 +1223,7 @@ class TerminateJobPollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the TerminateJobPollingMethodAsync.
@@ -1334,9 +1244,9 @@ class TerminateJobPollingMethodAsync(AsyncPollingMethod):
         :type deserialization_callback: Optional[Callable]
         :param job_id: The unique identifier of the job being terminated.
         :type job_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response
@@ -1410,6 +1320,7 @@ class TerminateJobSchedulePollingMethodAsync(AsyncPollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_schedule_id: str,
+        *,
         polling_interval: int = 5,
     ):
         """Initialize the TerminateJobSchedulePollingMethodAsync.
@@ -1431,9 +1342,9 @@ class TerminateJobSchedulePollingMethodAsync(AsyncPollingMethod):
         :param job_schedule_id: The unique identifier of the job schedule being
             terminated.
         :type job_schedule_id: str
-        :param polling_interval: The time interval in seconds between polling
+        :keyword polling_interval: The time interval in seconds between polling
             attempts. Defaults to 5 seconds.
-        :type polling_interval: int
+        :paramtype polling_interval: int
         """
         self._client = client
         self._initial_response = initial_response

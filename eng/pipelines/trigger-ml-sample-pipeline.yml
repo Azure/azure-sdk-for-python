@@ -40,7 +40,7 @@ jobs:
         versionSpec: $(PythonVersion)
 
     - script: |
-        python -m pip install eng/tools/azure-sdk-tools[build]
+        python -m pip install eng/tools/azure-sdk-tools
         python -m pip install azure-identity
         python -m pip install azure-storage-blob
       displayName: 'Prep Environment'

@@ -23,7 +23,7 @@ from test_per_partition_circuit_breaker_sm_mrr import \
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture(scope="class", autouse=True)
+@pytest_asyncio.fixture(scope="class", loop_scope="class", autouse=True)
 async def setup_teardown():
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     yield
@@ -44,7 +44,7 @@ async def create_custom_transport_mm():
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="class")
 @pytest.mark.usefixtures("setup_teardown")
 class TestCircuitBreakerEmulatorAsync:
     host = test_config.TestConfig.host
@@ -156,6 +156,8 @@ class TestCircuitBreakerEmulatorAsync:
 
     @pytest.mark.parametrize("error", create_errors())
     async def test_write_consecutive_failure_threshold_delete_all_items_by_pk_mm_async(self, setup_teardown, error):
+        if hasattr(error, "status_code") and error.status_code == 503:
+            pytest.skip("ServiceUnavailableError will do a cross-region retry, so it has to be special cased.")
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, mm=True)
         fault_injection_container = custom_setup['col']
@@ -212,6 +214,8 @@ class TestCircuitBreakerEmulatorAsync:
 
     @pytest.mark.parametrize("error", create_errors())
     async def test_write_failure_rate_threshold_delete_all_items_by_pk_mm_async(self, setup_teardown, error):
+        if hasattr(error, "status_code") and error.status_code == 503:
+            pytest.skip("ServiceUnavailableError will do a cross-region retry, so it has to be special cased.")
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, mm=True)
         fault_injection_container = custom_setup['col']

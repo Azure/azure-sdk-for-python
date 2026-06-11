@@ -54,7 +54,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
     :type request: ~corehttp.rest.HttpRequest
     :keyword any internal_response: The response we get directly from the transport. For example, for our requests
      transport, this will be a requests.Response.
-    :keyword optional[int] block_size: The block size we are using in our transport
+    :keyword Optional[int] block_size: The block size we are using in our transport
     :keyword int status_code: The status code of the response
     :keyword str reason: The HTTP reason
     :keyword str content_type: The content type of the response
@@ -136,7 +136,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
     def content_type(self) -> Optional[str]:
         """The content type of the response.
 
-        :rtype: optional[str]
+        :rtype: Optional[str]
         :return: The content type of the response.
         """
         return self._content_type
@@ -157,7 +157,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
         :return: The response encoding. We either return the encoding set by the user,
          or try extracting the encoding from the response's content type. If all fails,
          we return `None`.
-        :rtype: optional[str]
+        :rtype: Optional[str]
         """
         try:
             return self._encoding
@@ -166,10 +166,10 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
             return self._encoding
 
     @encoding.setter
-    def encoding(self, value: str) -> None:
+    def encoding(self, value: Optional[str]) -> None:
         """Sets the response encoding.
 
-        :param str value: Sets the response encoding.
+        :param Optional[str] value: Sets the response encoding.
         """
         self._encoding = value
         self._text = None  # clear text cache
@@ -178,7 +178,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase):  # pylint: disable=too-many-inst
     def text(self, encoding: Optional[str] = None) -> str:
         """Returns the response body as a string
 
-        :param optional[str] encoding: The encoding you want to decode the text with. Can
+        :param Optional[str] encoding: The encoding you want to decode the text with. Can
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
         :rtype: str
@@ -246,7 +246,7 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse):
     :type request: ~corehttp.rest.HttpRequest
     :keyword any internal_response: The response we get directly from the transport. For example, for our requests
      transport, this will be a requests.Response.
-    :keyword optional[int] block_size: The block size we are using in our transport
+    :keyword Optional[int] block_size: The block size we are using in our transport
     :keyword int status_code: The status code of the response
     :keyword str reason: The HTTP reason
     :keyword str content_type: The content type of the response
