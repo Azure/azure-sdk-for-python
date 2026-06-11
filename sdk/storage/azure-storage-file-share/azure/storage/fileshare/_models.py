@@ -14,7 +14,7 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 
-from ._generated.models._patch import _attach_msrest_compat
+from ._generated.models._patch import _BackCompatMixin
 from ._generated._utils.serialization import Deserializer
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -43,8 +43,7 @@ def _wrap_item(item):
     return {"name": item.name, "size": item.properties.content_length, "is_directory": False}
 
 
-@_attach_msrest_compat
-class RetentionPolicy:
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -90,8 +89,7 @@ class RetentionPolicy:
         )
 
 
-@_attach_msrest_compat
-class Metrics:
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates
     for files.
 
@@ -155,8 +153,7 @@ class Metrics:
         )
 
 
-@_attach_msrest_compat
-class CorsRule:
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -245,8 +242,7 @@ class CorsRule:
         )
 
 
-@_attach_msrest_compat
-class SmbMultichannel:
+class SmbMultichannel(_BackCompatMixin):
     """Settings for Multichannel.
 
     :keyword bool enabled: If SMB Multichannel is enabled.
@@ -272,8 +268,7 @@ class SmbMultichannel:
         return cls(enabled=generated.enabled)
 
 
-@_attach_msrest_compat
-class SmbEncryptionInTransit:
+class SmbEncryptionInTransit(_BackCompatMixin):
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -299,8 +294,7 @@ class SmbEncryptionInTransit:
         return cls(required=generated.required)
 
 
-@_attach_msrest_compat
-class ShareSmbSettings:
+class ShareSmbSettings(_BackCompatMixin):
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
@@ -317,12 +311,12 @@ class ShareSmbSettings:
         "encryption_in_transit": {"key": "EncryptionInTransit", "type": "SmbEncryptionInTransit"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
-        **kwargs: Any  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.multichannel = multichannel
         self.encryption_in_transit = encryption_in_transit
@@ -332,8 +326,8 @@ class ShareSmbSettings:
     def _to_generated(self):
         return GeneratedShareSmbSettings(
             multichannel=(
-                self.multichannel._to_generated() if self.multichannel else None
-            ),  # pylint: disable=protected-access
+                self.multichannel._to_generated() if self.multichannel else None  # pylint: disable=protected-access
+            ),
             encryption_in_transit=(
                 self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
                 if self.encryption_in_transit
@@ -353,8 +347,7 @@ class ShareSmbSettings:
         )
 
 
-@_attach_msrest_compat
-class NfsEncryptionInTransit:
+class NfsEncryptionInTransit(_BackCompatMixin):
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -380,8 +373,7 @@ class NfsEncryptionInTransit:
         return cls(required=generated.required)
 
 
-@_attach_msrest_compat
-class ShareNfsSettings:
+class ShareNfsSettings(_BackCompatMixin):
     """Settings for the NFS protocol.
 
     :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
@@ -394,7 +386,9 @@ class ShareNfsSettings:
         "encryption_in_transit": {"key": "EncryptionInTransit", "type": "NfsEncryptionInTransit"},
     }
 
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(
+        self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         self.encryption_in_transit = encryption_in_transit
 
     def _to_generated(self):
@@ -417,8 +411,7 @@ class ShareNfsSettings:
         )
 
 
-@_attach_msrest_compat
-class ShareProtocolSettings:
+class ShareProtocolSettings(_BackCompatMixin):
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
     Contains protocol properties of the share service such as the SMB and NFS setting of the share service.
@@ -437,8 +430,8 @@ class ShareProtocolSettings:
         "nfs": {"key": "NFS", "type": "ShareNfsSettings"},
     }
 
-    def __init__(
-        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any  # pylint: disable=unused-argument
+    def __init__(  # pylint: disable=unused-argument
+        self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
     ) -> None:
         self.smb = smb
         self.nfs = nfs
@@ -538,8 +531,7 @@ class ShareSasPermissions:
         return parsed
 
 
-@_attach_msrest_compat
-class AccessPolicy:
+class AccessPolicy(_BackCompatMixin):
     """Access Policy class used by the set and get acl methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
