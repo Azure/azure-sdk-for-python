@@ -49,7 +49,7 @@ jobs:
             --query value)
 
           echo "::add-mask::$LABEL_SERVICE_API_KEY"
-          echo "LABEL_SERVICE_API_KEY=$LABEL_SERVICE_API_KEY" >> $GITHUB_ENV
+          echo "LABEL_SERVICE_API_KEY=$LABEL_SERVICE_API_KEY" >> "$GITHUB_ENV"
 
       # To run github-event-processor built from source, for testing purposes, uncomment everything
       # in between the Start/End-Build From Source comments and comment everything in between the
