@@ -1,6 +1,9 @@
 # Speckit / Specify - spec-driven development tooling
 specs/
-.specify/
+.specify/*
+!.specify/memory/
+.specify/memory/*
+!.specify/memory/constitution.md
 .github/
 .vscode/
 

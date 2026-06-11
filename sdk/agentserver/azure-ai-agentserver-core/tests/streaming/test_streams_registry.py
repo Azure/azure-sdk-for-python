@@ -22,7 +22,7 @@ import pytest
 
 from azure.ai.agentserver.core.streaming import (
     EventStream,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     EventStreamNotFoundError,
     streams,
 )
@@ -197,7 +197,7 @@ class TestUS5AcceptanceScenarios:
         This is the load-bearing tombstone-retention invariant (rule 36a)."""
         s = await streams.get_or_create("us5-3")
         await streams.delete("us5-3")
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await streams.get("us5-3")
 
     async def test_auto_evicted_id_raises_gone_not_notfound(self) -> None:
@@ -209,12 +209,12 @@ class TestUS5AcceptanceScenarios:
         await s.close()
         await asyncio.sleep(0.2)  # event 1 expires
         # First subscribe attempt fires CLOSED→GONE auto-transition
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             s.subscribe()
         # Now registry knows it's GONE — but tombstone wasn't installed
         # by auto-transition (instance is GONE but slot still references
         # the GONE instance). Verify the registry behavior.
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             stream = await streams.get("us5-4")
             # If get returns the GONE instance, any operation on it raises:
             await stream.emit({"n": 2})
@@ -235,7 +235,7 @@ class TestTombstoneRetention:
         """Rule 36a — delete installs tombstone; get raises Gone."""
         await streams.get_or_create("tr-1")
         await streams.delete("tr-1")
-        with pytest.raises(EventStreamGoneError):
+        with pytest.raises(EventStreamNotFoundError):
             await streams.get("tr-1")
 
     async def test_re_creation_clears_tombstone(self) -> None:

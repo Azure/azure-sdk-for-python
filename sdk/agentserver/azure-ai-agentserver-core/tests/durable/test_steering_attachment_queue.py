@@ -534,7 +534,7 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(
                 },
             },
             tags={"task_name": "t-seq-mono-plant"},
-            source={"name": "t-seq-mono-plant"},
+            source={"name": "t-seq-mono-plant", "type": "agentserver.task"},
         )
     )
 

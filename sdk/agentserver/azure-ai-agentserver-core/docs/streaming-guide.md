@@ -52,14 +52,12 @@ from azure.ai.agentserver.core.streaming import (
     EventStream,                # @runtime_checkable Protocol
     EventStreamError,           # base exception (catch-all)
     EventStreamClosedError,     # emit on a closed stream
-    EventStreamGoneError,       # any op on a destroyed stream
-    EventStreamNotFoundError,   # streams.get(id) for an unknown id
+    EventStreamNotFoundError,   # any op on an id that isn't currently a live stream
 )
 ```
 
-That's it. The concrete classes behind the three configurators are
-not part of the public API — you obtain instances via the registry
-and program against the `EventStream` Protocol.
+That's it. Obtain stream instances from the registry and program
+against the `EventStream` Protocol.
 
 ---
 
@@ -162,9 +160,9 @@ class EventStream(Protocol):
 
 Publishes one event to every currently-attached subscriber.
 
-- `payload` is opaque — the SDK never inspects, validates, or
-  rewrites it. For file-backed replay it must be serializable by
-  your chosen serializer (default: JSON).
+- `payload` is yours — pass any value compatible with your
+  serializer. For file-backed replay the default expects JSON-
+  serializable values.
 - `close=True` is an **atomic emit-and-close**: the payload is
   delivered + the stream is closed in one step, with no opportunity
   to emit again in between. For replay backings, the payload is
@@ -174,7 +172,7 @@ Publishes one event to every currently-attached subscriber.
 - Raises `EventStreamClosedError` if you call `emit` after `close`.
   This means a producer bug (you should not be emitting any more);
   HTTP layers should treat this as `5xx`, not a client error.
-- Raises `EventStreamGoneError` if the stream has been destroyed.
+- Raises `EventStreamNotFoundError` if the stream has been destroyed.
 
 ### `close()`
 
@@ -202,7 +200,7 @@ The iterator terminates cleanly with `StopAsyncIteration` when the
 stream is closed (after draining any in-flight events) **or** when
 the stream is destroyed while you are iterating (whether by
 `streams.delete(id)` or by the auto-transition described in
-§Lifecycle). `subscribe()` itself raises `EventStreamGoneError`
+§Lifecycle). `subscribe()` itself raises `EventStreamNotFoundError`
 synchronously only if the stream is already destroyed at the time
 you call it.
 
@@ -220,7 +218,7 @@ Returns the highest cursor value seen so far, or `None` if no
 events were emitted, or `None` if the active backing has no
 `cursor_fn`. After the stream is closed, this is the last cursor
 the backing saw — even if that event has since expired from
-replay. Raises `EventStreamGoneError` if the stream is destroyed.
+replay. Raises `EventStreamNotFoundError` if the stream is destroyed.
 
 `last_cursor()` is the producer's recovery primitive: a recovering
 handler reads it to learn "what cursor should I assign to my next
@@ -228,69 +226,64 @@ emit?".
 
 ---
 
-## Lifecycle: ACTIVE → CLOSED → GONE
+## Lifecycle: ACTIVE → CLOSED → (destroyed)
 
-Each stream is in one of three states:
+Each stream is **ACTIVE** or **CLOSED**. After CLOSED, the id may
+be destroyed; once destroyed, every operation against it raises
+`EventStreamNotFoundError`.
 
 | State | What it means | How you reach it |
 |---|---|---|
 | **ACTIVE** | Open to `emit`. Subscribable. | Construction (first `get_or_create(id)`). |
-| **CLOSED** | No new emits. Existing subscribers drain. New subscribers can still attach (replay backings) but no new events arrive. | `close()` from ACTIVE. |
-| **GONE** (destroyed) | `emit`, `subscribe`, and `last_cursor` all raise `EventStreamGoneError`. `close()` remains idempotent (no-op). The id is preserved in the registry so `streams.get(id)` raises `Gone`, not `NotFound`. | `streams.delete(id)`, OR (replay backings with `ttl_seconds`) automatic eviction: when the stream is CLOSED, its last retained event has expired, and at least one event was ever emitted. |
+| **CLOSED** | No new emits (`emit` raises `EventStreamClosedError`). Existing subscribers drain. New subscribers can still attach (replay backings) but no new events arrive. | `close()` from ACTIVE. |
+
+Three independent paths into destroyed:
+
+- the id was **never registered** (no `get_or_create(id)` for it ever ran);
+- the id was **explicitly `streams.delete(id)`**d;
+- the id's stream was **Closed** and its close-clock TTL
+  (`close_time + ttl_seconds`) **elapsed** — only applies to replay
+  backings constructed with `ttl_seconds`.
 
 A few practical implications:
 
-- The live backing (`use_in_memory_live`) never auto-transitions to
-  GONE — it has nothing to evict. Call `streams.delete(id)`
-  explicitly if you need to release the id.
-- The auto-transition for replay backings fires on the **next**
-  `subscribe()` or `emit()` after the eviction window has passed.
-  `last_cursor()` does not itself fire the transition — it remains
-  readable across the eviction window so a recovering handler can
-  still learn "what was my last cursor?".
+- The live backing (`use_in_memory_live`) never auto-destroys — it
+  has no TTL machinery. Call `streams.delete(id)` explicitly if you
+  need to release the id.
+- After `close_time + ttl_seconds`, the id is destroyed — regardless
+  of whether anyone is still subscribed or any retained events are
+  still in the buffer.
+- `last_cursor()` is safe to call during the close window — a
+  recovering handler can always read the last cursor it had seen
+  before close.
 
 ---
 
 ## The registry
 
 ```python
-streams.get(id)            -> EventStream      # raises NotFound, never returns a destroyed instance
-streams.get_or_create(id)  -> EventStream      # idempotent, atomic
+streams.get(id)            -> EventStream      # raises NotFound for any id that is not currently live
+streams.get_or_create(id)  -> EventStream      # idempotent
 streams.delete(id)         -> None             # idempotent
 ```
 
-- `get(id)` returns the registered stream, or raises:
-  - `EventStreamNotFoundError` — the id was never registered AND
-    `delete(id)` was never called for it.
-  - `EventStreamGoneError` — `delete(id)` has been called for this
-    id (whether or not it was ever registered). The registry
-    remembers deleted ids specifically so this distinction holds.
-  - **Note** — `get(id)` does NOT raise `Gone` for a stream that
-    auto-evicted itself (replay backing reached the CLOSED + last
-    event expired condition). It returns the instance; the caller
-    sees `Gone` only when they next call `emit` / `subscribe` /
-    `last_cursor` on it. If you need an HTTP 410 response for an
-    auto-evicted stream, attempt one operation (e.g.
-    `await stream.last_cursor()`) and map the exception.
-- `get_or_create(id)` is the **only** way to mint a stream. It is
-  atomic across concurrent callers — two coroutines racing on the
-  same id both get the same instance back. It clears any prior
-  `delete`-installed marker and creates a fresh stream. It does NOT
-  replace a stream that auto-evicted in place: that instance is
-  still in the slot and is returned as-is. To recover an id whose
-  stream auto-evicted, call `delete(id)` explicitly first (see
-  §Recovery & resumption for the file-backed pattern).
-- `delete(id)` destroys the stream, cleans up its backing resources
-  (e.g. closes file handles for file-backed replay and removes the
-  on-disk log), and records the id so future `get(id)` calls see
-  `Gone`. Idempotent — calling it on an unknown id or an
-  already-deleted id is a no-op (but still ensures the id is
-  recorded as deleted).
+- `get(id)` returns the registered stream, or raises
+  `EventStreamNotFoundError`. Treat any `NotFound` uniformly:
+  "this id is not a live stream; subscribe to a new id or treat as
+  missing".
+- `get_or_create(id)` is idempotent — every caller using the same
+  id gets the same `EventStream` instance, even from concurrent
+  coroutines. If the id was previously destroyed, a fresh stream is
+  created.
+- `delete(id)` removes the stream and any backing resources (including
+  the on-disk log for file-backed replay). Idempotent — safe to call
+  on an unknown or already-deleted id.
 
-You typically do not need to call `delete(id)` — the auto-transition
-in the replay backings cleans up for you once the TTL has elapsed.
-Call `delete(id)` explicitly when you want immediate cleanup
-(end-of-request hook, test teardown).
+You typically do not need to call `delete(id)` for replay backings
+with `ttl_seconds` configured — the close-clock auto-destroy
+cleans up for you. Call `delete(id)` explicitly when you want
+immediate cleanup (end-of-request hook, test teardown) or for
+backings without `ttl_seconds`.
 
 ---
 
@@ -299,15 +292,12 @@ Call `delete(id)` explicitly when you want immediate cleanup
 ```text
 EventStreamError                  (base — catch-all)
 ├── EventStreamClosedError        producer bug — wire-map to HTTP 5xx
-├── EventStreamGoneError          stream existed, now destroyed — HTTP 410
-└── EventStreamNotFoundError      stream never existed — HTTP 404
+└── EventStreamNotFoundError      id is not currently a live stream — HTTP 404
 ```
 
-The 404 vs 410 distinction matters for clients: 410 tells a client
-"this id was valid but is past its lifetime — don't retry"; 404
-tells a client "this id was never valid — check your routing". The
-registry preserves the distinction across the destroy boundary by
-remembering ids that have been deleted or auto-evicted.
+Every "this id is not currently a live stream" condition raises
+`EventStreamNotFoundError` (HTTP 404). Treat it uniformly:
+subscribe to a new id, or render the id as missing.
 
 ---
 
@@ -397,7 +387,7 @@ turn rehydrates the stream automatically:
 
 ```python
 from azure.ai.agentserver.core.streaming import (
-    streams, EventStreamGoneError,
+    streams, EventStreamNotFoundError,
 )
 
 streams.use_file_backed_replay(
@@ -413,7 +403,7 @@ async def producer(ctx):
     try:
         # On crash recovery this is the highest n that made it to disk.
         last = await stream.last_cursor()
-    except EventStreamGoneError:
+    except EventStreamNotFoundError:
         # The previous run closed the stream AND every persisted event
         # has since expired. The on-disk log is stale; drop it and start
         # fresh. delete() removes the file and records the deletion;
@@ -434,12 +424,12 @@ rehydration loads the persisted events, `last_cursor()` returns the
 highest cursor, and the handler resumes emitting from the next
 cursor.
 
-The `EventStreamGoneError` branch handles the edge case where the
+The `EventStreamNotFoundError` branch handles the edge case where the
 previous run completed cleanly (wrote a close marker to disk) AND
 every persisted event has since expired AND your application policy
 is "start over with a fresh stream". Without the explicit
-`delete(id)`, the registry would keep handing back the same dead
-instance.
+`delete(id)`, the next `get_or_create(id)` would re-hand-back the
+same expired stream. `delete(id)` lets you mint a fresh one.
 
 ### Don't double-track in `@task` metadata
 
@@ -466,7 +456,7 @@ Typical helper for serving a stream over Server-Sent-Events:
 ```python
 import json
 
-from azure.ai.agentserver.core.streaming import EventStreamGoneError
+from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
 
 async def _serve_sse(stream):
     """Bridge an EventStream to an SSE wire format."""
@@ -476,7 +466,7 @@ async def _serve_sse(stream):
             cursor = event.get("n")
             yield f"id: {cursor}\ndata: {json.dumps(event)}\n\n".encode()
             last_seen = cursor
-    except EventStreamGoneError:
+    except EventStreamNotFoundError:
         # Server-side cleanup ran while we were attached; tell the
         # client we're done.
         yield b"event: gone\ndata: {}\n\n"
@@ -495,10 +485,10 @@ backed stream). It will be accepted anywhere the Protocol is — the
 `@runtime_checkable` decorator on the Protocol means
 `isinstance(s, EventStream)` works.
 
-**But** you must NOT plug it into the SDK `streams` registry —
-`streams` is the lifecycle owner for SDK-bundled backings only, and
-its cleanup assumes those backings' semantics. Ship your own peer
-registry instead:
+**But** don't register your custom impl with the SDK `streams`
+registry — its cleanup is wired to the bundled backings only. Ship
+your own peer registry instead, and let consumers pick which one
+to call:
 
 ```python
 class _MyRedisStreams:
@@ -515,60 +505,6 @@ Consumers explicitly choose which registry they want:
 `await my_redis_streams.get_or_create(id)` vs
 `await streams.get_or_create(id)`. The shared interface is the
 `EventStream` Protocol; lifecycle is each registry's own concern.
-
----
-
-## Migrating from the legacy `StreamHandler` surface
-
-If you have existing code that uses the now-removed `StreamHandler`
-/ `QueueStreamHandler` / `ctx.stream(item)` / `async for chunk in
-run` API, here is the crosswalk:
-
-```python
-# OLD — removed.
-@task(stream_handler_factory=lambda task_id: QueueStreamHandler())
-async def my_handler(ctx):
-    await ctx.stream({"n": 1})
-# Consumer:
-async for chunk in run:
-    print(chunk)
-```
-
-```python
-# NEW.
-# At app startup:
-streams.use_in_memory_replay(ttl_seconds=600)
-
-# HTTP layer (subscribe-before-start):
-inv_id = request.state.invocation_id
-stream = await streams.get_or_create(inv_id)
-sse = asyncio.create_task(_serve_sse(stream))
-await my_task.start(task_id=..., input={"invocation_id": inv_id, ...})
-
-# Handler:
-@task
-async def my_handler(ctx):
-    inv_id = ctx.input["invocation_id"]
-    stream = await streams.get_or_create(inv_id)
-    await stream.emit({"n": 1})
-
-# Consumer:
-async for chunk in stream.subscribe():
-    print(chunk)
-```
-
-Migration checklist:
-
-1. Pick a backing in your app startup (one of the three `use_*`).
-2. Pass the per-turn id (e.g. `invocation_id`) through to the handler
-   via `task.start(input=...)`.
-3. Replace `ctx.stream(item)` with
-   `await stream.emit(item)` where `stream = await
-   streams.get_or_create(ctx.input["invocation_id"])`.
-4. Replace `async for chunk in run` (where `run` is a `TaskRun`)
-   with `async for chunk in stream.subscribe()` — in the HTTP layer,
-   attach the subscriber BEFORE calling `task.start(...)`.
-5. Remove any `stream_handler_factory=` kwarg from `@task(...)`.
 
 ---
 

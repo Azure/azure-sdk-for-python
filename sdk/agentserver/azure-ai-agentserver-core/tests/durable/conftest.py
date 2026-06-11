@@ -179,6 +179,168 @@ def binding_mismatch_provider_factory() -> Callable[[Any], BindingMismatchProvid
 
 
 # --------------------------------------------------------------------- #
+# Spec 019 — CapturingProvider for etag CAS / write queue tests
+# --------------------------------------------------------------------- #
+
+
+class CapturingProvider:
+    """``TaskProvider``-conforming spy that records every PATCH issued.
+
+    Wraps a delegate provider, forwards all calls, and records each
+    ``update()`` call's ``(task_id, patch)`` for assertion. Used by
+    spec 019 Area A tests to verify etag plumbing (``if_match`` carried
+    on every PATCH after the first) and to count PATCHes for the
+    dynamic-cadence lease-renewal shadow check (FR-A-005, SC-3).
+
+    The spy is transparent: no error injection (use
+    :class:`BindingMismatchProvider` for that). Read calls are NOT
+    recorded — only writes (``create``, ``update``, ``delete``) so
+    tests can assert "write count" without polluting it with reads.
+    """
+
+    def __init__(self, delegate: Any) -> None:
+        self._delegate = delegate
+        self.create_calls: list[Any] = []
+        # Each entry: (task_id, patch, if_match)
+        self.update_calls: list[tuple[str, Any, str | None]] = []
+        self.delete_calls: list[tuple[str, dict[str, Any]]] = []
+        self.list_calls: list[dict[str, Any]] = []
+
+    async def create(self, request: Any) -> Any:
+        self.create_calls.append(request)
+        return await self._delegate.create(request)
+
+    async def get(self, task_id: str) -> Any:
+        return await self._delegate.get(task_id)
+
+    async def update(self, task_id: str, patch: Any) -> Any:
+        self.update_calls.append(
+            (task_id, patch, getattr(patch, "if_match", None))
+        )
+        return await self._delegate.update(task_id, patch)
+
+    async def delete(self, task_id: str, *, force: bool = False, cascade: bool = False) -> None:
+        self.delete_calls.append((task_id, {"force": force, "cascade": cascade}))
+        await self._delegate.delete(task_id, force=force, cascade=cascade)
+
+    async def list(self, **kwargs: Any) -> Any:
+        self.list_calls.append(dict(kwargs))
+        return await self._delegate.list(**kwargs)
+
+
+@pytest.fixture
+def capturing_provider_factory() -> Callable[[Any], CapturingProvider]:
+    """Factory yielding a :class:`CapturingProvider` wrapping a delegate."""
+    return CapturingProvider
+
+
+# --------------------------------------------------------------------- #
+# Spec 019 — Conflicting412Provider for terminal-write three-branch tests
+# --------------------------------------------------------------------- #
+
+
+class Conflicting412Provider:
+    """``TaskProvider`` stub that raises ``EtagConflict`` on N updates.
+
+    Wraps a delegate. Each ``update`` call counts up; if the call
+    number is in the configured ``conflict_on`` set, the wrapper
+    raises ``EtagConflict`` BEFORE delegating. Otherwise the call
+    is delegated normally.
+
+    Optionally, before raising the configured conflict, the stub may
+    mutate the underlying record (via the delegate) to simulate a
+    concurrent cross-process writer landing changes between our
+    pre-PATCH read and our PATCH (e.g., another worker reclaiming the
+    lease). This is what drives FR-A-008 terminal-write three-branch
+    test cases:
+
+    - lease-lost branch: mutate to a different ``lease_instance_id``
+      before raising 412; framework's RE-READ shows lease no longer
+      ours → ABANDON.
+    - already-terminal branch: mutate the status to ``completed``
+      before raising; framework's RE-READ shows terminal → ABANDON.
+    - retry branch: don't mutate (or mutate something harmless);
+      framework's RE-READ shows our lease still active, status
+      ``in_progress`` → retry the terminal PATCH against the new etag,
+      which then succeeds.
+    """
+
+    def __init__(self, delegate: Any) -> None:
+        from azure.ai.agentserver.core.durable._exceptions import EtagConflict
+
+        self._delegate = delegate
+        self._EtagConflict = EtagConflict
+        self._next_update_index = 0
+        # update_index → "lease_lost" | "already_terminal" | "etag_only"
+        self._conflicts: dict[int, str] = {}
+
+    def conflict_on(self, *, update_index: int, mode: str) -> None:
+        """Configure a conflict at the ``update_index``-th update call.
+
+        :keyword update_index: zero-indexed position of the update call
+            (counted across this stub's lifetime).
+        :keyword mode: one of ``"lease_lost"`` (mutate to a different
+            ``lease_instance_id`` before raising), ``"already_terminal"``
+            (mutate ``status="completed"`` before raising), or
+            ``"etag_only"`` (don't mutate; just raise — simulates a
+            cross-process append whose effect is harmless to re-merge).
+        """
+        if mode not in {"lease_lost", "already_terminal", "etag_only"}:
+            raise ValueError(f"unknown conflict mode: {mode!r}")
+        self._conflicts[update_index] = mode
+
+    async def create(self, request: Any) -> Any:
+        return await self._delegate.create(request)
+
+    async def get(self, task_id: str) -> Any:
+        return await self._delegate.get(task_id)
+
+    async def update(self, task_id: str, patch: Any) -> Any:
+        idx = self._next_update_index
+        self._next_update_index += 1
+        mode = self._conflicts.pop(idx, None)
+        if mode is None:
+            return await self._delegate.update(task_id, patch)
+        # Mutate the underlying record before raising, then 412.
+        from azure.ai.agentserver.core.durable._models import TaskPatchRequest
+
+        if mode == "lease_lost":
+            await self._delegate.update(
+                task_id,
+                TaskPatchRequest(
+                    lease_owner=f"other-{idx}",
+                    lease_instance_id=f"other-instance-{idx}",
+                    lease_duration_seconds=60,
+                ),
+            )
+        elif mode == "already_terminal":
+            await self._delegate.update(
+                task_id,
+                TaskPatchRequest(status="completed"),
+            )
+        # "etag_only" — make no mutation; just bump the etag by
+        # touching tags with a harmless write.
+        else:
+            await self._delegate.update(
+                task_id,
+                TaskPatchRequest(tags={"_spec019_harmless": "x"}),
+            )
+        raise self._EtagConflict(task_id, message="injected by Conflicting412Provider")
+
+    async def delete(self, task_id: str, *, force: bool = False, cascade: bool = False) -> None:
+        await self._delegate.delete(task_id, force=force, cascade=cascade)
+
+    async def list(self, **kwargs: Any) -> Any:
+        return await self._delegate.list(**kwargs)
+
+
+@pytest.fixture
+def conflicting_412_provider_factory() -> Callable[[Any], Conflicting412Provider]:
+    """Factory yielding a :class:`Conflicting412Provider` wrapping a delegate."""
+    return Conflicting412Provider
+
+
+# --------------------------------------------------------------------- #
 # Fixture 2 — fake AsyncHttpTransport (US9 / SC-016 / SC-017)
 # --------------------------------------------------------------------- #
 

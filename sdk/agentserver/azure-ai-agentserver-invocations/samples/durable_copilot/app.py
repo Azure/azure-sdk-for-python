@@ -49,7 +49,7 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core.streaming import (
     EventStream,
-    EventStreamGoneError,
+    EventStreamNotFoundError,
     streams,
 )
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
@@ -84,7 +84,7 @@ async def _sse_from_iter(
             yield f"data: {json.dumps(chunk)}\n\n".encode()
         done_data = {"type": "done", "invocation_id": invocation_id}
         yield f"event: done\ndata: {json.dumps(done_data)}\n\n".encode()
-    except EventStreamGoneError:
+    except EventStreamNotFoundError:
         yield (
             f"event: superseded\n"
             f"data: {json.dumps({'type': 'superseded', 'invocation_id': invocation_id})}\n\n"
