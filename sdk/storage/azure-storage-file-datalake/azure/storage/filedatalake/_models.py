@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -11,6 +10,7 @@ from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.storage.filedatalake._generated.models._patch import _BackCompatMixin
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
@@ -23,11 +23,11 @@ from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
 from azure.storage.blob import (
-    CorsRule as GenCorsRule,
-    BlobAnalyticsLogging as GenLogging,
-    Metrics as GenMetrics,
-    RetentionPolicy as GenRetentionPolicy,
-    StaticWebsite as GenStaticWebsite,
+    BlobAnalyticsLogging,
+    CorsRule as BlobCorsRule,
+    Metrics as BlobMetrics,
+    RetentionPolicy as BlobRetentionPolicy,
+    StaticWebsite as BlobStaticWebsite,
 )
 from azure.storage.blob._models import ContainerPropertiesPaged
 
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class RetentionPolicy(GenRetentionPolicy):
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should persist.
 
     All required parameters must be populated in order to send to Azure.
@@ -58,7 +58,8 @@ class RetentionPolicy(GenRetentionPolicy):
         All data older than this value will be deleted."""
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days)
+        self.enabled = enabled
+        self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -71,8 +72,14 @@ class RetentionPolicy(GenRetentionPolicy):
             days=generated.days,
         )
 
+    @classmethod
+    def _to_generated(cls, policy: Optional["RetentionPolicy"]) -> Optional[BlobRetentionPolicy]:
+        if policy is None:
+            return policy
+        return BlobRetentionPolicy(enabled=policy.enabled, days=policy.days)
 
-class Metrics(GenMetrics):
+
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -117,8 +124,21 @@ class Metrics(GenMetrics):
             ),
         )
 
+    @classmethod
+    def _to_generated(cls, metrics: Optional["Metrics"]) -> Optional[BlobMetrics]:
+        if metrics is None:
+            return metrics
+        return BlobMetrics(
+            version=metrics.version,
+            enabled=metrics.enabled,
+            include_apis=metrics.include_apis,
+            retention_policy=RetentionPolicy._to_generated(
+                metrics.retention_policy
+            ),  # pylint: disable=protected-access
+        )
 
-class CorsRule(GenCorsRule):
+
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -171,17 +191,19 @@ class CorsRule(GenCorsRule):
         self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
-    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GenCorsRule]]:
+    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[BlobCorsRule]]:
         if rules is None:
             return rules
 
+        # Blob's public CorsRule ctor takes List[str] and joins on "," internally,
+        # so split the stored comma-joined strings back into lists before passing.
         generated_cors_list = []
         for cors_rule in rules:
-            generated_cors = GenCorsRule(
-                allowed_origins=cors_rule.allowed_origins,
-                allowed_methods=cors_rule.allowed_methods,
-                allowed_headers=cors_rule.allowed_headers,
-                exposed_headers=cors_rule.exposed_headers,
+            generated_cors = BlobCorsRule(
+                cors_rule.allowed_origins.split(",") if cors_rule.allowed_origins else [],
+                cors_rule.allowed_methods.split(",") if cors_rule.allowed_methods else [],
+                allowed_headers=cors_rule.allowed_headers.split(",") if cors_rule.allowed_headers else [],
+                exposed_headers=cors_rule.exposed_headers.split(",") if cors_rule.exposed_headers else [],
                 max_age_in_seconds=cors_rule.max_age_in_seconds,
             )
             generated_cors_list.append(generated_cors)
@@ -307,6 +329,7 @@ class FileSystemSasPermissions:
         self.list = list
         self.add = kwargs.pop("add", None)
         self.create = kwargs.pop("create", None)
+        self.tags = kwargs.pop("tags", None)
         self.move = kwargs.pop("move", None)
         self.execute = kwargs.pop("execute", None)
         self.manage_ownership = kwargs.pop("manage_ownership", None)
@@ -318,6 +341,7 @@ class FileSystemSasPermissions:
             + ("w" if self.write else "")
             + ("d" if self.delete else "")
             + ("l" if self.list else "")
+            + ("t" if self.tags else "")
             + ("m" if self.move else "")
             + ("e" if self.execute else "")
             + ("o" if self.manage_ownership else "")
@@ -346,6 +370,7 @@ class FileSystemSasPermissions:
         p_write = "w" in permission
         p_delete = "d" in permission
         p_list = "l" in permission
+        p_tags = "t" in permission
         p_move = "m" in permission
         p_execute = "e" in permission
         p_manage_ownership = "o" in permission
@@ -356,6 +381,7 @@ class FileSystemSasPermissions:
             write=p_write,
             delete=p_delete,
             list=p_list,
+            tags=p_tags,
             add=p_add,
             create=p_create,
             move=p_move,
@@ -434,6 +460,7 @@ class DirectorySasPermissions:
         self.delete = delete
         self.add = kwargs.pop("add", None)
         self.list = kwargs.pop("list", None)
+        self.tags = kwargs.pop("tags", None)
         self.move = kwargs.pop("move", None)
         self.execute = kwargs.pop("execute", None)
         self.manage_ownership = kwargs.pop("manage_ownership", None)
@@ -445,6 +472,7 @@ class DirectorySasPermissions:
             + ("w" if self.write else "")
             + ("d" if self.delete else "")
             + ("l" if self.list else "")
+            + ("t" if self.tags else "")
             + ("m" if self.move else "")
             + ("e" if self.execute else "")
             + ("o" if self.manage_ownership else "")
@@ -473,6 +501,7 @@ class DirectorySasPermissions:
         p_write = "w" in permission
         p_delete = "d" in permission
         p_list = "l" in permission
+        p_tags = "t" in permission
         p_move = "m" in permission
         p_execute = "e" in permission
         p_manage_ownership = "o" in permission
@@ -485,6 +514,7 @@ class DirectorySasPermissions:
             delete=p_delete,
             add=p_add,
             list=p_list,
+            tags=p_tags,
             move=p_move,
             execute=p_execute,
             manage_ownership=p_manage_ownership,
@@ -556,6 +586,7 @@ class FileSasPermissions:
         self.write = write
         self.delete = delete
         self.add = kwargs.pop("add", None)
+        self.tags = kwargs.pop("tags", None)
         self.move = kwargs.pop("move", None)
         self.execute = kwargs.pop("execute", None)
         self.manage_ownership = kwargs.pop("manage_ownership", None)
@@ -566,6 +597,7 @@ class FileSasPermissions:
             + ("c" if self.create else "")
             + ("w" if self.write else "")
             + ("d" if self.delete else "")
+            + ("t" if self.tags else "")
             + ("m" if self.move else "")
             + ("e" if self.execute else "")
             + ("o" if self.manage_ownership else "")
@@ -593,6 +625,7 @@ class FileSasPermissions:
         p_create = "c" in permission
         p_write = "w" in permission
         p_delete = "d" in permission
+        p_tags = "t" in permission
         p_move = "m" in permission
         p_execute = "e" in permission
         p_manage_ownership = "o" in permission
@@ -604,6 +637,7 @@ class FileSasPermissions:
             write=p_write,
             delete=p_delete,
             add=p_add,
+            tags=p_tags,
             move=p_move,
             execute=p_execute,
             manage_ownership=p_manage_ownership,
@@ -993,7 +1027,7 @@ class PathProperties(DictMixin):
         path_prop.permissions = generated.permissions
         path_prop.last_modified = _rfc_1123_to_datetime(generated.last_modified)
         path_prop.is_directory = bool(generated.is_directory)
-        path_prop.etag = generated.etag
+        path_prop.etag = generated.get("etag")
         path_prop.content_length = generated.content_length
         path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
@@ -1287,7 +1321,7 @@ class DeletedPathProperties(DictMixin):
         self.file_system = None
 
 
-class AnalyticsLogging(GenLogging):
+class AnalyticsLogging(_BackCompatMixin):
     """Azure Analytics Logging settings."""
 
     version: str
@@ -1323,8 +1357,22 @@ class AnalyticsLogging(GenLogging):
             ),
         )
 
+    @classmethod
+    def _to_generated(cls, logging: Optional["AnalyticsLogging"]) -> Optional[BlobAnalyticsLogging]:
+        if not logging:
+            return None
+        return BlobAnalyticsLogging(
+            version=logging.version,
+            delete=logging.delete,
+            read=logging.read,
+            write=logging.write,
+            retention_policy=RetentionPolicy._to_generated(
+                logging.retention_policy
+            ),  # pylint: disable=protected-access
+        )
 
-class StaticWebsite(GenStaticWebsite):
+
+class StaticWebsite(_BackCompatMixin):
     """The properties that enable an account to host a static website.
 
     :keyword bool enabled:
@@ -1367,4 +1415,15 @@ class StaticWebsite(GenStaticWebsite):
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
             default_index_document_path=generated.default_index_document_path,
+        )
+
+    @classmethod
+    def _to_generated(cls, static_website: Optional["StaticWebsite"]) -> Optional[BlobStaticWebsite]:
+        if not static_website:
+            return None
+        return BlobStaticWebsite(
+            enabled=static_website.enabled,
+            index_document=static_website.index_document,
+            error_document404_path=static_website.error_document404_path,
+            default_index_document_path=static_website.default_index_document_path,
         )

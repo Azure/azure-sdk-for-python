@@ -1,60 +1,118 @@
-# coding=utf-8
-# --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any
+import sys
+from typing import Any, Callable, Dict, List, Optional
 
-from .._utils.model_base import Model as _Model, _MyMutableMapping
+from .._utils.serialization import JSON, Model
 
-__all__: list[str] = []
-
-
-# ---------------------------------------------------------------------------
-# Backcompat shim for legacy ``knack.util.todict`` consumers (e.g. Azure CLI).
-# knack checks ``hasattr(obj, '_asdict')`` (namedtuple convention) BEFORE
-# falling back to ``obj.__dict__``.  TypeSpec ``_Model`` instances stash all
-# fields in ``__dict__['_data']`` so a naive ``__dict__`` walk sees nothing.
-# Returning the model contents with REST wire-name keys at every level
-# matches what msrest models exposed when knack walked their ``__dict__``
-# and camelCased the snake_case attributes -- preserving the JSON shape the
-# Azure CLI's ``_transformers.py`` expects.
-# ---------------------------------------------------------------------------
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 
-def _asdict_value(v: Any) -> Any:
-    if v is None:
-        return None
-    if isinstance(v, _MyMutableMapping):
-        return _patched_namedtuple_asdict(v)
-    if isinstance(v, dict):
-        return {k: _asdict_value(val) for k, val in v.items()}
-    if isinstance(v, (list, tuple, set)):
-        return type(v)(_asdict_value(x) for x in v)
-    return v
+# These public models inherited (transitively) from the autorest msrest model,
+# which exposed ``serialize``, ``deserialize``, ``from_dict``, ``as_dict``,
+# ``is_xml_model``, and ``enable_additional_properties_sending``. After the
+# migration the generated models use a different base class. The public classes mix this in to expose
+# exactly the historical methods, each delegating to ``Model``.
+class _BackCompatMixin:
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> JSON:
+        """Serialize this model to a dictionary.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes.
+        :returns: A dict JSON compatible object.
+        :rtype: JSON
+        """
+        return Model.serialize(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore[arg-type]
+
+    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> JSON:
+        """Return a dict that can be serialized using json.dump.
+
+        :param bool keep_readonly: If you want to serialize the readonly attributes.
+        :returns: A dict JSON compatible object.
+        :rtype: JSON
+        """
+        return Model.as_dict(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore[arg-type]
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+        """Deserialize this model from a dictionary.
+
+        :param data: A str using RestAPI structure. JSON by default.
+        :type data: str
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: An instance of this model.
+        :rtype: Self
+        """
+        # ``Model.deserialize`` is a classmethod already bound to ``Model``; reach
+        # through ``__func__`` so it runs with this subclass as ``cls``.
+        return Model.deserialize.__func__(cls, data, content_type=content_type)
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
+        content_type: Optional[str] = None,
+    ) -> Self:
+        """Parse a dict using a given key extractor and return a model.
+
+        :param dict data: A dict using RestAPI structure.
+        :param key_extractors: A key extractor function.
+        :type key_extractors: callable or None
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: An instance of this model.
+        :rtype: Self
+        """
+        return Model.from_dict.__func__(cls, data, key_extractors=key_extractors, content_type=content_type)
+
+    @classmethod
+    def enable_additional_properties_sending(cls) -> None:
+        """Add ``additional_properties`` to the attribute map so they are sent to the service.
+
+        :returns: None
+        :rtype: None
+        """
+        return Model.enable_additional_properties_sending.__func__(cls)
+
+    @classmethod
+    def is_xml_model(cls) -> bool:
+        """Whether this model is serialized as XML.
+
+        :returns: True if this model is serialized as XML, otherwise False.
+        :rtype: bool
+        """
+        return Model.is_xml_model.__func__(cls)
+
+    @classmethod
+    def _infer_class_models(cls) -> Dict[str, type]:
+        # Internal helper used by serialize/as_dict/deserialize/from_dict.
+        return Model._infer_class_models.__func__(cls)
+
+    @classmethod
+    def _create_xml_node(cls) -> Any:
+        # Internal helper used during XML (de)serialization.
+        return Model._create_xml_node.__func__(cls)
+
+    def __eq__(self, other: Any) -> bool:
+        return Model.__eq__(self, other)  # type: ignore[arg-type]
+
+    def __ne__(self, other: Any) -> bool:
+        return Model.__ne__(self, other)  # type: ignore[arg-type]
+
+    def __str__(self) -> str:
+        return Model.__str__(self)  # type: ignore[arg-type]
 
 
-def _patched_namedtuple_asdict(self) -> dict:
-    """Mirror msrest behaviour: include every declared field (REST wire
-    name) even when the value was never set, so legacy CLI consumers
-    that subscript by key (e.g. ``result['start']``) don't raise
-    ``KeyError`` for omitted optional fields."""
-    result: dict = {}
-    rest_fields = getattr(type(self), "_attr_to_rest_field", None) or {}
-    data = getattr(self, "_data", {}) or {}
-    for rf in rest_fields.values():
-        result[rf._rest_name] = _asdict_value(data.get(rf._rest_name))
-    for k, v in data.items():
-        if k not in result:
-            result[k] = _asdict_value(v)
-    return result
-
-
-_Model._asdict = _patched_namedtuple_asdict
+__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
