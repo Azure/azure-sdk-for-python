@@ -262,77 +262,108 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
 
     await _emit_run_start(emit, ctx, topic=topic)
 
-    completed: int = ctx.metadata.get("completed_phases", 0)
+    try:
+        completed: int = ctx.metadata.get("completed_phases", 0)
 
-    if ctx.entry_mode == "recovered" and completed > 0:
-        await emit({
-            "type": "recovered",
-            "completed_phases": completed,
-            "total_phases": NUM_PHASES,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-        })
+        if ctx.entry_mode == "recovered" and completed > 0:
+            await emit({
+                "type": "recovered",
+                "completed_phases": completed,
+                "total_phases": NUM_PHASES,
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+            })
 
-    for phase_idx in range(completed, NUM_PHASES):
-        if ctx.cancel.is_set():
-            return await _wind_down(emit, stream, ctx, inv_id, phase_idx)
+        for phase_idx in range(completed, NUM_PHASES):
+            if ctx.cancel.is_set():
+                return await _wind_down(emit, stream, ctx, inv_id, phase_idx)
 
-        phase_started_mono = time.monotonic()
-        title = _phase_title(phase_idx)
+            phase_started_mono = time.monotonic()
+            title = _phase_title(phase_idx)
 
-        await emit({
-            "type": "phase_start",
-            "phase": phase_idx + 1,
-            "total": NUM_PHASES,
-            "title": title,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-        })
+            await emit({
+                "type": "phase_start",
+                "phase": phase_idx + 1,
+                "total": NUM_PHASES,
+                "title": title,
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+            })
 
-        await _run_phase(emit, ctx, inv_id, phase_idx, topic, title)
+            await _run_phase(emit, ctx, inv_id, phase_idx, topic, title)
 
-        # --- PHASE-COMPLETE CHECKPOINT ---
-        ctx.metadata["completed_phases"] = phase_idx + 1
-        ctx.metadata["in_progress_phase"] = None
-        ctx.metadata["completed_subcalls"] = 0
-        _checkpoint_store.delete(inv_id)
-        await ctx.metadata.flush()
+            # --- PHASE-COMPLETE CHECKPOINT ---
+            ctx.metadata["completed_phases"] = phase_idx + 1
+            ctx.metadata["in_progress_phase"] = None
+            ctx.metadata["completed_subcalls"] = 0
+            _checkpoint_store.delete(inv_id)
+            await ctx.metadata.flush()
 
-        phase_duration = round(time.monotonic() - phase_started_mono, 1)
-        await emit({
-            "type": "phase_end",
-            "phase": phase_idx + 1,
-            "total": NUM_PHASES,
-            "title": title,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-            "duration_sec": phase_duration,
-        })
+            phase_duration = round(time.monotonic() - phase_started_mono, 1)
+            await emit({
+                "type": "phase_end",
+                "phase": phase_idx + 1,
+                "total": NUM_PHASES,
+                "title": title,
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+                "duration_sec": phase_duration,
+            })
 
-        if ctx.cancel.is_set():
-            return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
-
-        if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
-            await _cooldown(
-                emit, ctx, INTER_PHASE_COOLDOWN_SEC,
-                stage="inter_phase",
-                phase=phase_idx + 2,
-                total=NUM_PHASES,
-            )
             if ctx.cancel.is_set():
                 return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
 
-    await emit({
-        "type": "run_complete",
-        "server_time_utc": _now_iso(),
-        "server_uptime_sec": _server_uptime_sec(),
-        "phases_completed": NUM_PHASES,
-    })
-    # Normal completion: close stream + wipe watermarks + clear
-    # checkpoint entry. Skipped on crash (the handler exits via an
-    # exception and the orchestrator's leave_stream_open_for_recovery
-    # path keeps the stream open for the next-lifetime recovery).
-    await _finish_turn(stream, ctx, inv_id)
+            if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
+                await _cooldown(
+                    emit, ctx, INTER_PHASE_COOLDOWN_SEC,
+                    stage="inter_phase",
+                    phase=phase_idx + 2,
+                    total=NUM_PHASES,
+                )
+                if ctx.cancel.is_set():
+                    return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
+
+        await emit({
+            "type": "run_complete",
+            "server_time_utc": _now_iso(),
+            "server_uptime_sec": _server_uptime_sec(),
+            "phases_completed": NUM_PHASES,
+        })
+        # Normal completion: close stream + wipe watermarks + clear
+        # checkpoint entry. Skipped on crash (the handler exits via an
+        # exception and the orchestrator's leave_stream_open_for_recovery
+        # path keeps the stream open for the next-lifetime recovery).
+        await _finish_turn(stream, ctx, inv_id)
+    except Exception as exc:  # pylint: disable=broad-except
+        # Logical-failure path: a downstream call (e.g. the LLM) raised.
+        # Emit a terminal SSE frame so subscribers fast-fail instead of
+        # hanging on the open stream, then close the stream and re-raise
+        # so the framework records the task as failed.
+        #
+        # We catch ``Exception`` (not ``BaseException``) so cooperative
+        # cancellation (``asyncio.CancelledError``) and process death
+        # (SIGKILL, where the handler doesn't run at all) still flow
+        # through their normal paths — the orchestrator's
+        # ``leave_stream_open_for_recovery`` contract still holds for
+        # true crashes.
+        logger.exception("deep_research task failed; emitting terminal SSE frame")
+        try:
+            await emit({
+                "type": "run_failed",
+                "error": {
+                    "type": type(exc).__name__,
+                    "message": str(exc)[:2000],
+                },
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+            })
+            await _finish_turn(stream, ctx, inv_id)
+        except Exception:  # pylint: disable=broad-except
+            # If terminal-frame emission itself fails (e.g. stream is
+            # already gone) we still want to surface the original task
+            # failure rather than swallow it.
+            logger.exception("failed to emit terminal run_failed frame")
+        raise
 
 
 # --- Helpers ---------------------------------------------------------------
