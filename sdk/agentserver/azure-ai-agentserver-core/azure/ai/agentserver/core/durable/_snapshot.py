@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
-from ._attachments import _OUTPUT_KEY, _is_ref, _read_input_value
+from ._attachments import _is_ref, _read_input_value
 
 if TYPE_CHECKING:
     from ._models import TaskInfo, TaskStatus
@@ -137,10 +137,3 @@ def _parse_iso(value: Any) -> datetime | None:
         return datetime.fromisoformat(value)
     except ValueError:
         return None
-
-
-# Use _OUTPUT_KEY indirectly to avoid an unused-import warning when this
-# module is consumed via __init__'s re-export. The constant participates
-# in the design-spec narrative (FR-C-003 / FR-C-005) tying snapshot
-# resolution to the framework-reserved attachment key.
-_OUTPUT_KEY_RECORDED = _OUTPUT_KEY

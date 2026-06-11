@@ -221,3 +221,45 @@ async def test_output_over_cap_raises_output_too_large_pre_patch(local) -> None:
     finally:
         await manager.shutdown()
         mgr_mod._manager = None
+
+
+@pytest.mark.asyncio
+async def test_suspend_with_oversized_output_raises_output_too_large(local) -> None:
+    """FR-C-006 / SC-9 — suspend path equivalent of the
+    output-too-large test. Spec §39 lists ``ctx.suspend(output=...)``
+    explicitly as a raise site; this guards the symmetric path
+    (handler returns vs. handler suspends).
+
+    Without the matching arm around ``_handle_suspend`` in
+    ``_execute_task_loop``, the suspend-path OutputTooLarge would
+    propagate up to the broad ``except Exception`` handler and be
+    wrapped in ``TaskFailed`` — a developer-facing regression of the
+    spec contract.
+    """
+    from azure.ai.agentserver.core.durable import OutputTooLarge
+
+    big_blob = "Y" * (3 * 1024 * 1024)
+
+    @task(name="suspend_output_too_large", ephemeral=False)
+    async def my_task(ctx: TaskContext[str]) -> Suspended[str]:
+        return await ctx.suspend(output=big_blob, reason="oversized")
+
+    manager = TaskManager(config=_config_stub(), provider=local)
+    mgr_mod._manager = manager
+    await manager.startup()
+    try:
+        with pytest.raises(OutputTooLarge) as excinfo:
+            await my_task.run(task_id="t-suspend-too-big", input="x")
+        assert excinfo.value.task_id == "t-suspend-too-big"
+        assert excinfo.value.size_bytes > 2 * 1024 * 1024
+        # No _output attachment should have landed.
+        raw = await local.get("t-suspend-too-big")
+        assert raw is not None
+        if raw.attachments is not None:
+            assert "_output" not in raw.attachments, (
+                "_output attachment leaked despite OutputTooLarge on "
+                "the suspend path."
+            )
+    finally:
+        await manager.shutdown()
+        mgr_mod._manager = None

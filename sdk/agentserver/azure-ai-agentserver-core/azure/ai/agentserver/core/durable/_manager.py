@@ -1813,13 +1813,29 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     # metadata at this terminal-of-turn boundary (FR-015).
                     renewal_cancel.set()
                     await ctx.metadata._flush_all()
-                    await self._handle_suspend(
-                        task_id=task_id,
-                        reason=result.reason,
-                        output=result.output,
-                        metadata=ctx.metadata,
-                        opts=opts,
-                    )
+                    try:
+                        await self._handle_suspend(
+                            task_id=task_id,
+                            reason=result.reason,
+                            output=result.output,
+                            metadata=ctx.metadata,
+                            opts=opts,
+                        )
+                    except OutputTooLarge as exc:
+                        # Spec 019 FR-C-006 / SC-9 — surface OutputTooLarge
+                        # to the caller directly, NOT wrapped in TaskFailed.
+                        # Mirrors the success-arm handling above. The
+                        # handler called ctx.suspend(output=...) with a
+                        # value over the 2 MB cap; this is a developer-
+                        # facing precondition violation, not a handler bug.
+                        if not current_result_future.done():
+                            current_result_future.set_exception(exc)
+                        _resolve_queued_steerers_on_terminal(
+                            self._pending_steering_futures,
+                            task_id,
+                            current_status="failed",
+                        )
+                        break
                     if not current_result_future.done():
                         current_result_future.set_result(
                             TaskResult(

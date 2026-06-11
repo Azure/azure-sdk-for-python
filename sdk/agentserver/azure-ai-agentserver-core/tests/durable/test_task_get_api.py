@@ -31,7 +31,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import Suspended, TaskContext, task
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
@@ -102,29 +102,89 @@ async def test_task_get_raises_runtime_error_without_manager() -> None:
 async def test_task_get_returns_snapshot_for_each_status(local) -> None:
     """SC-5 — Task.get returns the expected TaskSnapshot for tasks
     in every status: pending, in_progress, suspended, completed.
+
+    Spec 019 SC-5 / C-INTROSPECT-3 — explicit coverage of every
+    legal stored status.
     """
-    from azure.ai.agentserver.core.durable import TaskSnapshot
+    import asyncio
+    from azure.ai.agentserver.core.durable import Suspended, TaskSnapshot
+
+    in_handler = asyncio.Event()
+    release_handler = asyncio.Event()
 
     @task(name="get_snap_task", ephemeral=False)
     async def my_task(ctx: TaskContext[str]) -> str:
         return "completed-output"
 
+    @task(name="get_snap_suspendable", ephemeral=False)
+    async def suspendable_task(ctx: TaskContext[str]) -> Suspended[str]:
+        return await ctx.suspend(output="paused", reason="probe")
+
+    @task(name="get_snap_blocked", ephemeral=False)
+    async def blocking_task(ctx: TaskContext[str]) -> str:
+        in_handler.set()
+        await release_handler.wait()
+        return "released"
+
     manager = TaskManager(config=_config_stub(), provider=local)
     mgr_mod._manager = manager
     await manager.startup()
     try:
-        # Completed task path: .run() ends terminal.
+        # === completed ===
         result = await my_task.run(task_id="t-snap-complete", input="hi")
         assert result.output == "completed-output"
         snap = await my_task.get("t-snap-complete")
-        assert snap is not None, "snapshot must be non-None for a completed task"
-        assert isinstance(snap, TaskSnapshot)
+        assert snap is not None and isinstance(snap, TaskSnapshot)
         assert snap.task_id == "t-snap-complete"
         assert snap.status == "completed"
-        assert snap.output == "completed-output", (
-            f"snapshot.output should match handler return value; "
-            f"got {snap.output!r}"
+        assert snap.output == "completed-output"
+        assert snap.completed_at is not None
+        assert snap.error is None
+
+        # === suspended ===
+        sus = await suspendable_task.run(task_id="t-snap-suspended", input="x")
+        assert sus.is_suspended
+        snap_sus = await suspendable_task.get("t-snap-suspended")
+        assert snap_sus is not None and isinstance(snap_sus, TaskSnapshot)
+        assert snap_sus.status == "suspended"
+        assert snap_sus.output == "paused"
+        assert snap_sus.suspension_reason == "probe"
+
+        # === in_progress ===
+        run_task = asyncio.create_task(
+            blocking_task.run(task_id="t-snap-in-progress", input="x")
         )
+        await asyncio.wait_for(in_handler.wait(), timeout=2.0)
+        snap_in_progress = await blocking_task.get("t-snap-in-progress")
+        assert snap_in_progress is not None
+        assert snap_in_progress.status == "in_progress"
+        assert snap_in_progress.started_at is not None
+        assert snap_in_progress.completed_at is None
+        release_handler.set()
+        await run_task
+
+        # === pending ===
+        # Pre-seed a pending record (no .start()/.run() to trigger
+        # automatic in_progress). Task.get must return status='pending'.
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        await local.create(
+            TaskCreateRequest(
+                id="t-snap-pending",
+                agent_name="test-agent",
+                session_id="test-session",
+                status="pending",
+                title="probe-pending",
+                payload={"input": "x"},
+                source={"name": "get_snap_task", "type": "agentserver.task"},
+            )
+        )
+        snap_pending = await my_task.get("t-snap-pending")
+        assert snap_pending is not None
+        assert snap_pending.status == "pending"
+        assert snap_pending.started_at is None
+        assert snap_pending.completed_at is None
+        assert snap_pending.output is None
     finally:
         await manager.shutdown()
         mgr_mod._manager = None
