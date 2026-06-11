@@ -67,20 +67,6 @@
   [developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
   for the full API and patterns reference.
 
-### Breaking Changes
-
-- **Spec 017** — the legacy `StreamHandler` / `QueueStreamHandler` /
-  `StreamHandlerFactory` types are REMOVED from
-  `azure.ai.agentserver.core.durable`. The `stream_handler_factory=`
-  kwarg on `@task` is REMOVED. `TaskContext.stream(item)` is REMOVED.
-  `async for chunk in run` (where `run` is a `TaskRun`) is REMOVED.
-  All streaming functionality moves to the new
-  `azure.ai.agentserver.core.streaming` subpackage with a registry-
-  based lifecycle decoupled from `@task`. The agentserver family is
-  pre-release; no backward-compat shims are owed. Migration crosswalk:
-  see the "Migrating from the legacy `StreamHandler`" section of
-  [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md).
-
 ### Other Changes
 
 - The hosted task-store transport is now built on

@@ -403,7 +403,7 @@ async def chat(ctx: TaskContext[dict]) -> dict:
     return await ctx.suspend(output={"reply": reply})
 ```
 
-(Note: explicit `ctx.metadata.flush()` is no longer required at the
+(Note: explicit `ctx.metadata.flush()` is not required at the
 suspend boundary — the framework auto-flushes metadata at every
 terminal-of-turn boundary, including steering drain shortcuts. See
 §4 Metadata.)
@@ -576,9 +576,9 @@ logs.
 
 ### Streaming (see [`docs/streaming-guide.md`](./streaming-guide.md))
 
-Streaming is **decoupled from `@task`** — handlers opt in by emitting
+Streaming is a separate primitive — handlers opt in by emitting
 to the process-level `streams` registry. There is no streaming kwarg
-on `@task` and no `ctx.stream(...)` method.
+on `@task`.
 
 ```python
 from azure.ai.agentserver.core.streaming import streams
@@ -841,13 +841,17 @@ handler ended the task before draining).
 
 - `await run.result()` — block until terminal-for-this-caller; same
   `TaskResult` semantics as above.
-- `async for chunk in run` — stream incremental output (see
-  Streaming).
 - `await run.cancel()` — signal cancellation; sets
   `ctx.cancel_requested = True` and then `ctx.cancel`. The handler
   decides the terminal shape (returns normally, suspends, or raises).
 - `run.status`, `run.metadata`, `run.lease_expiry_count` — last-known
   values; call `await run.refresh()` to re-fetch from the store.
+
+`TaskRun` is **not** an async iterable — there is no `async for ev
+in run`. Streaming lives in the peer `azure.ai.agentserver.core.streaming`
+subpackage. Handlers emit to `streams.get_or_create(id)`; consumers
+attach via `streams.get(id).subscribe(after=...)`. See the
+[streaming guide](./streaming-guide.md).
 
 ### `Suspended`
 
