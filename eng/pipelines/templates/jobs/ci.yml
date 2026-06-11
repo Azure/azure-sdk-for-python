@@ -236,15 +236,47 @@ jobs:
       parameters:
         ContinueOnError: false
 
-    - template: /eng/common/pipelines/templates/steps/verify-links.yml
-      parameters:
-        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: ''
-          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: sdk/${{ parameters.ServiceDirectory }}
-        CheckLinkGuidance: $true
-        Condition: succeededOrFailed()
+    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      - task: PowerShell@2
+        displayName: Link verification check
+        condition: succeededOrFailed()
+        inputs:
+          pwsh: true
+          workingDirectory: '$(System.DefaultWorkingDirectory)'
+          filePath: eng/common/scripts/Verify-Links.ps1
+          arguments: >
+            -urls (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+            -rootUrl "file://$(System.DefaultWorkingDirectory)/"
+            -recursive: false
+            -ignoreLinksFile $(Build.SourcesDirectory)/eng/ignore-links.txt
+            -branchReplaceRegex "^(${env:SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI}(?:\.git)?/(?:blob|tree)/)main(/.*)$"
+            -branchReplacementName ${env:SYSTEM_PULLREQUEST_SOURCECOMMITID}
+            -checkLinkGuidance: true
+            -localBuildRepoName "$env:BUILD_REPOSITORY_NAME"
+            -localBuildRepoPath $(Build.SourcesDirectory)
+            -inputCacheFile "https://azuresdkartifacts.blob.core.windows.net/verify-links-cache/verify-links-cache.txt"
+            -allowRelativeLinksFile "$(Build.SourcesDirectory)/eng/common/scripts/allow-relative-links.txt"
+
+    - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+      - task: PowerShell@2
+        displayName: Link verification check
+        condition: succeededOrFailed()
+        inputs:
+          pwsh: true
+          workingDirectory: '$(System.DefaultWorkingDirectory)/sdk/${{ parameters.ServiceDirectory }}'
+          filePath: eng/common/scripts/Verify-Links.ps1
+          arguments: >
+            -urls (Get-ChildItem -Path ./ -Recurse -Include *.md)
+            -rootUrl "file://$(System.DefaultWorkingDirectory)/sdk/${{ parameters.ServiceDirectory }}"
+            -recursive: false
+            -ignoreLinksFile $(Build.SourcesDirectory)/eng/ignore-links.txt
+            -branchReplaceRegex "^(${env:SYSTEM_PULLREQUEST_SOURCEREPOSITORYURI}(?:\.git)?/(?:blob|tree)/)main(/.*)$"
+            -branchReplacementName $(Build.SourceVersion)
+            -checkLinkGuidance: true
+            -localBuildRepoName "$env:BUILD_REPOSITORY_NAME"
+            -localBuildRepoPath $(Build.SourcesDirectory)
+            -inputCacheFile "https://azuresdkartifacts.blob.core.windows.net/verify-links-cache/verify-links-cache.txt"
+            -allowRelativeLinksFile "$(Build.SourcesDirectory)/eng/common/scripts/allow-relative-links.txt"
 
     - task: DownloadPipelineArtifact@2
       condition: succeededOrFailed()

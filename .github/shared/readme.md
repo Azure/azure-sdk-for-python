@@ -13,7 +13,7 @@ This document has two audiences:
 
 ## API reference
 
-Each module is published as a subpath export in [`package.json`](./package.json) (for example
+Each module is published as a subpath export in [`../package.json`](../package.json) (for example
 `@azure-tools/specs-shared/array`). Import directly from the subpath, e.g.:
 
 ```js
@@ -165,7 +165,6 @@ Single source of truth for breaking-change and versioning approval label names a
 ├── perf/     # Performance benchmarks (tinybench)
 ├── src/      # The shared library source (one module per file)
 ├── test/     # Vitest unit tests + fixtures and test helpers
-├── package.json        # Subpath "exports", "bin", scripts, dependencies
 ├── tsconfig.json       # Type-checking config (lint:tsc)
 ├── eslint.config.js    # ESLint config (also re-exported as eslint-base-config)
 └── vitest.config.js    # Test + coverage config
@@ -174,7 +173,7 @@ Single source of truth for breaking-change and versioning approval label names a
 ### `src`
 
 The shared library. Each file is a focused module (see the [API reference](#api-reference)) and is
-exposed to consumers through a subpath in [`package.json`](./package.json)'s `exports`. See
+exposed to consumers through a subpath in [`../package.json`](../package.json)'s `exports`. See
 [`src/README.md`](./src/README.md) for notes on consuming the code from TypeScript.
 
 Conventions:
@@ -182,7 +181,7 @@ Conventions:
 - Plain ESM JavaScript annotated with JSDoc — no separate `.ts` sources or build step. Types are
   inferred from JSDoc, so keep annotations accurate.
 - Runtime dependencies are kept to an absolute minimum (ideally zero transitive dependencies) for
-  performance, and must be a subset of the parent [`../package.json`](../package.json).
+  performance, and must be declared in [`../package.json`](../package.json).
 
 ### `test`
 
@@ -209,14 +208,14 @@ backs `npx spec-model` for dumping a `SpecModel` to JSON.
 When adding or changing shared code:
 
 1. **Add the module** under `src` as a single-responsibility file with JSDoc-annotated exports.
-2. **Export it** by adding a subpath entry to the `exports` map in [`package.json`](./package.json).
+2. **Export it** by adding a subpath entry to the `exports` map in [`../package.json`](../package.json).
 3. **Test it** by adding/updating `test/<module>.test.js`; add fixtures under `test/fixtures` if
    needed.
 4. **Keep dependencies minimal** — avoid new runtime dependencies; any you add must already exist in
    [`../package.json`](../package.json).
 5. **Document new APIs** by updating the [API reference](#api-reference) above.
 
-Useful scripts (run from `.github/shared`):
+Useful scripts (run from `.github`):
 
 | Command                | Description                                        |
 | ---------------------- | -------------------------------------------------- |

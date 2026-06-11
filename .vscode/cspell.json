@@ -1,5 +1,8 @@
 {
   "version": "0.2",
+  "import": [
+    "../.github/cspell.yaml"
+  ],
   "language": "en",
   "languageId": "python",
   "dictionaries": [
