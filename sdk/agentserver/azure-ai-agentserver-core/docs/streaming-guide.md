@@ -56,9 +56,8 @@ from azure.ai.agentserver.core.streaming import (
 )
 ```
 
-That's it. The concrete classes behind the three configurators are
-not part of the public API — you obtain instances via the registry
-and program against the `EventStream` Protocol.
+That's it. Obtain stream instances from the registry and program
+against the `EventStream` Protocol.
 
 ---
 
@@ -161,9 +160,9 @@ class EventStream(Protocol):
 
 Publishes one event to every currently-attached subscriber.
 
-- `payload` is opaque — the SDK never inspects, validates, or
-  rewrites it. For file-backed replay it must be serializable by
-  your chosen serializer (default: JSON).
+- `payload` is yours — pass any value compatible with your
+  serializer. For file-backed replay the default expects JSON-
+  serializable values.
 - `close=True` is an **atomic emit-and-close**: the payload is
   delivered + the stream is closed in one step, with no opportunity
   to emit again in between. For replay backings, the payload is
@@ -229,18 +228,14 @@ emit?".
 
 ## Lifecycle: ACTIVE → CLOSED → (destroyed)
 
-Each stream has two per-instance states; destruction is a
-registry-level concept exposed as a single error type
-(`EventStreamNotFoundError`) on the next operation against the id.
+Each stream is **ACTIVE** or **CLOSED**. After CLOSED, the id may
+be destroyed; once destroyed, every operation against it raises
+`EventStreamNotFoundError`.
 
 | State | What it means | How you reach it |
 |---|---|---|
 | **ACTIVE** | Open to `emit`. Subscribable. | Construction (first `get_or_create(id)`). |
 | **CLOSED** | No new emits (`emit` raises `EventStreamClosedError`). Existing subscribers drain. New subscribers can still attach (replay backings) but no new events arrive. | `close()` from ACTIVE. |
-
-After CLOSED, the registry MAY destroy the id. Once destroyed,
-`emit`, `subscribe`, `last_cursor`, and `streams.get(id)` all raise
-`EventStreamNotFoundError`. `close()` remains idempotent (no-op).
 
 Three independent paths into destroyed:
 
@@ -255,13 +250,12 @@ A few practical implications:
 - The live backing (`use_in_memory_live`) never auto-destroys — it
   has no TTL machinery. Call `streams.delete(id)` explicitly if you
   need to release the id.
-- The close-clock destroy for replay backings is **deterministic
-  and time-driven** (not buffer-state-driven). At `close_time +
-  ttl_seconds` the id is conceptually destroyed, regardless of who
-  is observing.
-- `last_cursor()` is side-effect-free — it does NOT trigger the
-  destroy check and remains readable across the close window so a
-  recovering handler can still learn "what was my last cursor?".
+- After `close_time + ttl_seconds`, the id is destroyed — regardless
+  of whether anyone is still subscribed or any retained events are
+  still in the buffer.
+- `last_cursor()` is safe to call during the close window — a
+  recovering handler can always read the last cursor it had seen
+  before close.
 
 ---
 
@@ -269,24 +263,21 @@ A few practical implications:
 
 ```python
 streams.get(id)            -> EventStream      # raises NotFound for any id that is not currently live
-streams.get_or_create(id)  -> EventStream      # idempotent, atomic
+streams.get_or_create(id)  -> EventStream      # idempotent
 streams.delete(id)         -> None             # idempotent
 ```
 
 - `get(id)` returns the registered stream, or raises
-  `EventStreamNotFoundError`. There is only ONE error type — the
-  three causes documented above (never registered, deleted,
-  close-clock elapsed) all surface as the same exception. Treat any
-  `NotFound` as "this id is not a live stream; subscribe to a new id
-  or treat as missing".
-- `get_or_create(id)` is the **only** way to mint a stream. It is
-  atomic across concurrent callers — two coroutines racing on the
-  same id both get the same instance back. If the id was previously
-  destroyed, the call constructs a fresh stream.
-- `delete(id)` destroys the stream, cleans up its backing resources
-  (e.g. closes file handles for file-backed replay and removes the
-  on-disk log), and marks the id as destroyed. Idempotent —
-  calling it on an unknown or already-deleted id is a no-op.
+  `EventStreamNotFoundError`. Treat any `NotFound` uniformly:
+  "this id is not a live stream; subscribe to a new id or treat as
+  missing".
+- `get_or_create(id)` is idempotent — every caller using the same
+  id gets the same `EventStream` instance, even from concurrent
+  coroutines. If the id was previously destroyed, a fresh stream is
+  created.
+- `delete(id)` removes the stream and any backing resources (including
+  the on-disk log for file-backed replay). Idempotent — safe to call
+  on an unknown or already-deleted id.
 
 You typically do not need to call `delete(id)` for replay backings
 with `ttl_seconds` configured — the close-clock auto-destroy
@@ -437,8 +428,8 @@ The `EventStreamNotFoundError` branch handles the edge case where the
 previous run completed cleanly (wrote a close marker to disk) AND
 every persisted event has since expired AND your application policy
 is "start over with a fresh stream". Without the explicit
-`delete(id)`, the registry would keep handing back the same dead
-instance.
+`delete(id)`, the next `get_or_create(id)` would re-hand-back the
+same expired stream. `delete(id)` lets you mint a fresh one.
 
 ### Don't double-track in `@task` metadata
 
@@ -494,10 +485,10 @@ backed stream). It will be accepted anywhere the Protocol is — the
 `@runtime_checkable` decorator on the Protocol means
 `isinstance(s, EventStream)` works.
 
-**But** you must NOT plug it into the SDK `streams` registry —
-`streams` is the lifecycle owner for SDK-bundled backings only, and
-its cleanup assumes those backings' semantics. Ship your own peer
-registry instead:
+**But** don't register your custom impl with the SDK `streams`
+registry — its cleanup is wired to the bundled backings only. Ship
+your own peer registry instead, and let consumers pick which one
+to call:
 
 ```python
 class _MyRedisStreams:
