@@ -1,0 +1,64 @@
+{
+  "parameters": {
+    "api-version": "2024-07-01-preview",
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "resourceGroupName": "test-rg",
+    "location": "westus",
+    "connectorName": "connectorName",
+    "parameters": {
+      "properties": {
+        "targetService": {
+          "type": "AzureResource",
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+        },
+        "authInfo": {
+          "authType": "servicePrincipalSecret",
+          "clientId": "name",
+          "principalId": "id",
+          "secret": "secret"
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app/providers/Microsoft.ServiceLinker/links/linkName",
+        "type": "Microsoft.ServiceLinker/links",
+        "name": "linkName",
+        "properties": {
+          "authInfo": {
+            "authType": "servicePrincipalSecret",
+            "clientId": "name",
+            "principalId": "id"
+          },
+          "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+          }
+        }
+      }
+    },
+    "202": {
+      "headers": {
+        "azure-asyncoperation": "http://azure.async.operation/status"
+      },
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app/providers/Microsoft.ServiceLinker/links/linkName",
+        "type": "Microsoft.ServiceLinker/links",
+        "name": "linkName",
+        "properties": {
+          "authInfo": {
+            "authType": "servicePrincipalSecret",
+            "clientId": "name",
+            "principalId": "id"
+          },
+          "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+          }
+        }
+      }
+    }
+  }
+}

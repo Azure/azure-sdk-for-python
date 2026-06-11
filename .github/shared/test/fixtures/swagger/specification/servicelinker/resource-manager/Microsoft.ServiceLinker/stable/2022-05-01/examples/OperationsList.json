@@ -1,0 +1,185 @@
+{
+  "parameters": {
+    "api-version": "2022-05-01",
+    "resourceUri": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app",
+    "linkerName": "linkName"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "display": {
+              "description": "Register the subscription for Microsoft.ServiceLinker",
+              "operation": "Register the Microsoft.ServiceLinker",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "Microsoft.ServiceLinker"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/register/action"
+          },
+          {
+            "display": {
+              "description": "Unregister the subscription for Microsoft.ServiceLinker",
+              "operation": "Unregister the Microsoft.ServiceLinker",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "Microsoft.ServiceLinker"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/unregister/action"
+          },
+          {
+            "display": {
+              "description": "read operations",
+              "operation": "read_operations",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "operations"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/operations/read"
+          },
+          {
+            "display": {
+              "description": "list dryrun jobs",
+              "operation": "Dryrun_List",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "dryruns"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/dryruns/read"
+          },
+          {
+            "display": {
+              "description": "get a dryrun job",
+              "operation": "Dryrun_Get",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "dryruns"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/dryruns/read"
+          },
+          {
+            "display": {
+              "description": "create a dryrun job to do necessary check before actual creation",
+              "operation": "Dryrun_Create",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "dryruns"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/dryruns/write"
+          },
+          {
+            "display": {
+              "description": "delete a dryrun job",
+              "operation": "Dryrun_Delete",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "dryruns"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/dryruns/delete"
+          },
+          {
+            "display": {
+              "description": "add a dryrun job to do necessary check before actual creation",
+              "operation": "Dryrun_Update",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "dryruns"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/dryruns/write"
+          },
+          {
+            "display": {
+              "description": "read operationStatuses",
+              "operation": "read_operationStatuses",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "locations/operationStatuses"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/locations/operationStatuses/read"
+          },
+          {
+            "display": {
+              "description": "write operationStatuses",
+              "operation": "write_operationStatuses",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "locations/operationStatuses"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/locations/operationStatuses/write"
+          },
+          {
+            "display": {
+              "description": "Returns list of Linkers which connects to the resource.",
+              "operation": "Linker_List",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "linkers"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/linkers/read"
+          },
+          {
+            "display": {
+              "description": "Returns Linker resource for a given name.",
+              "operation": "Linker_Get",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "linkers"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/linkers/read"
+          },
+          {
+            "display": {
+              "description": "Create or update linker resource.",
+              "operation": "Linker_CreateOrUpdate",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "linkers"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/linkers/write"
+          },
+          {
+            "display": {
+              "description": "Delete a link.",
+              "operation": "Linker_Delete",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "linkers"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/linkers/delete"
+          },
+          {
+            "display": {
+              "description": "Operation to update an existing link.",
+              "operation": "Linker_Update",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "linkers"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/linkers/write"
+          },
+          {
+            "display": {
+              "description": "Validate a link.",
+              "operation": "Linker_Validate",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "linkers"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/linkers/validateLinker/action"
+          },
+          {
+            "display": {
+              "description": "list source configurations for a linker.",
+              "operation": "Linker_ListConfigurations",
+              "provider": "Microsoft.ServiceLinker",
+              "resource": "linkers"
+            },
+            "isDataAction": false,
+            "name": "Microsoft.ServiceLinker/linkers/listConfigurations/action"
+          }
+        ]
+      }
+    }
+  }
+}

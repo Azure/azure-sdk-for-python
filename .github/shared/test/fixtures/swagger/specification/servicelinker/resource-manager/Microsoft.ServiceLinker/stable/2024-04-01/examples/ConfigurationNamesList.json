@@ -1,0 +1,52 @@
+{
+  "parameters": {
+    "api-version": "2024-04-01"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "properties": {
+              "targetService": "MICROSOFT.APPCONFIGURATION/CONFIGURATIONSTORES",
+              "clientType": "none",
+              "authType": "systemAssignedIdentity",
+              "names": [
+                {
+                  "value": "AZURE_APPCONFIGURATION_ENDPOINT",
+                  "description": "App configuration endpoint"
+                },
+                {
+                  "value": "AZURE_APPCONFIGURATION_SCOPE",
+                  "description": "The scopes required for the token."
+                }
+              ]
+            }
+          },
+          {
+            "properties": {
+              "targetService": "MICROSOFT.APPCONFIGURATION/CONFIGURATIONSTORES",
+              "clientType": "none",
+              "authType": "userAssignedIdentity",
+              "names": [
+                {
+                  "value": "AZURE_APPCONFIGURATION_ENDPOINT",
+                  "description": "App configuration endpoint"
+                },
+                {
+                  "value": "AZURE_APPCONFIGURATION_CLIENTID",
+                  "description": "The client(application) ID of the user identity."
+                },
+                {
+                  "value": "AZURE_APPCONFIGURATION_SCOPE",
+                  "description": "The scopes required for getting token."
+                }
+              ]
+            }
+          }
+        ],
+        "nextLink": null
+      }
+    }
+  }
+}

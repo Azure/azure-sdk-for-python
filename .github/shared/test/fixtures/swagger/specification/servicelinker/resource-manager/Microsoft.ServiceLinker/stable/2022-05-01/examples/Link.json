@@ -1,0 +1,29 @@
+{
+  "parameters": {
+    "api-version": "2022-05-01",
+    "resourceUri": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app",
+    "linkerName": "linkName"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app/providers/Microsoft.ServiceLinker/links/linkName",
+        "name": "linkName",
+        "type": "Microsoft.ServiceLinker/links",
+        "properties": {
+          "authInfo": {
+            "authType": "secret",
+            "name": "name"
+          },
+          "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-07-12T22:05:09Z"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "parameters": {
+    "api-version": "2024-04-01",
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "resourceGroupName": "test-rg",
+    "location": "westus",
+    "connectorName": "connectorName",
+    "parameters": {
+      "customizedKeys": {
+        "ASL_DocumentDb_ConnectionString": "MyConnectionstring"
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "configurations": [
+          {
+            "name": "MyConnectionstring",
+            "value": "ConnectionString"
+          }
+        ]
+      }
+    }
+  }
+}

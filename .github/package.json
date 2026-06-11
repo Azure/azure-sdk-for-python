@@ -1,0 +1,58 @@
+{
+  "private": true,
+  "type": "module",
+  "_comments": {
+    "dependencies": "Runtime dependencies must be kept to an absolute minimum for performance, ideally with no transitive dependencies",
+    "dependencies2": "All runtime and dev dependencies in this file, must be a superset of shared/package.json"
+  },
+  "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^15.1.3",
+    "@js-temporal/polyfill": "0.5.1",
+    "debug": "^4.4.3",
+    "js-yaml": "^4.1.0",
+    "marked": "^18.0.0",
+    "markdown-table": "^3.0.4",
+    "simple-git": "^3.36.0",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@actions/github-script": "github:actions/github-script",
+    "@eslint/js": "^10.0.0",
+    "@octokit/endpoint": "^11.0.0",
+    "@octokit/rest": "^22.0.0",
+    "@octokit/types": "^16.0.0",
+    "@octokit/webhooks-types": "^7.5.1",
+    "@tsconfig/node20": "^20.1.4",
+    "@types/debug": "^4.1.12",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.0.0",
+    "@types/semver": "^7.7.1",
+    "@vitest/coverage-v8": "^4.1.0",
+    "cross-env": "^10.1.0",
+    "eslint": "^10.0.0",
+    "fflate": "0.8.2",
+    "globals": "^17.0.0",
+    "prettier": "3.8.3",
+    "prettier-plugin-organize-imports": "^4.2.0",
+    "semver": "^7.7.1",
+    "tinybench": "^6.0.0",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.58.0",
+    "vitest": "^4.1.0"
+  },
+  "scripts": {
+    "check": "npm run test:ci && npm run lint && npm run format:check",
+    "lint": "npm run lint:eslint && npm run lint:tsc",
+    "lint:eslint": "cross-env DEBUG=eslint:eslint,eslint:linter eslint",
+    "lint:tsc": "tsc --build --verbose",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "format:check:ci": "prettier . --check --log-level debug",
+    "test": "vitest",
+    "test:ci": "vitest run --coverage --reporter=verbose",
+    "validate": "npm run lint && npm run format:check && npm run test:ci"
+  },
+  "overrides": {
+    "undici@^5.0.0": "^6.0.0"
+  }
+}

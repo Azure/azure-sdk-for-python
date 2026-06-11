@@ -1,0 +1,41 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Service A",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/a": {
+      "get": {
+        "summary": "Get A (refs B)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/B"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update A (refs C)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/C"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "B": {
+      "$ref": "./nesting/b.json#/definitions/B"
+    },
+    "C": {
+      "$ref": "c.json#/definitions/C"
+    }
+  }
+}

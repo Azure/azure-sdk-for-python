@@ -1,0 +1,43 @@
+{
+  "parameters": {
+    "api-version": "2024-07-01-preview",
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "resourceGroupName": "test-rg",
+    "location": "westus",
+    "connectorName": "connectorName"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ServiceLinker/devConnnectors/linkName",
+        "name": "linkName",
+        "type": "Microsoft.ServiceLinker/devConnectors",
+        "properties": {
+          "authInfo": {
+            "authType": "systemAssignedIdentity",
+            "roles": [
+              "customizedOwner"
+            ]
+          },
+          "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+          },
+          "publicNetworkSolution": {
+            "firewallRules": {
+              "ipRanges": [
+                "182.22.120"
+              ],
+              "callerClientIP": "true"
+            },
+            "action": "enable",
+            "deleteOrUpdateBehavior": "ForcedCleanup"
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-07-12T22:05:09Z"
+        }
+      }
+    }
+  }
+}

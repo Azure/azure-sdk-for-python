@@ -1,0 +1,36 @@
+{
+  "parameters": {
+    "api-version": "2024-07-01-preview",
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "resourceGroupName": "test-rg",
+    "location": "westus"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "name": "dryrunName",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ServiceLinker/locations/westus/dryruns/dryrunName",
+            "properties": {
+              "parameters": {
+                "actionName": "createOrUpdate",
+                "authInfo": {
+                  "authType": "secret",
+                  "name": "username"
+                },
+                "targetService": {
+                  "type": "AzureResource",
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+                }
+              }
+            },
+            "systemData": {
+              "createdAt": "2020-07-12T22:05:09Z"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

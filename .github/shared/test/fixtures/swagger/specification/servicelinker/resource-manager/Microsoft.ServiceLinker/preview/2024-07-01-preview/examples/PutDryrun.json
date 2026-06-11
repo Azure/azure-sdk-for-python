@@ -1,0 +1,116 @@
+{
+  "parameters": {
+    "api-version": "2024-07-01-preview",
+    "resourceUri": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app",
+    "dryrunName": "dryrunName",
+    "parameters": {
+      "properties": {
+        "parameters": {
+          "actionName": "createOrUpdate",
+          "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+          },
+          "authInfo": {
+            "authType": "secret",
+            "name": "name",
+            "secretInfo": {
+              "secretType": "rawValue",
+              "value": "secret"
+            }
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app/providers/Microsoft.ServiceLinker/dryruns/dryrunName",
+        "type": "Microsoft.ServiceLinker/dryruns",
+        "name": "dryrunName",
+        "properties": {
+          "parameters": {
+            "actionName": "createOrUpdate",
+            "targetService": {
+              "type": "AzureResource",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+            },
+            "authInfo": {
+              "authType": "secret",
+              "name": "name"
+            }
+          },
+          "prerequisiteResults": [
+            {
+              "type": "basicError",
+              "code": "ResourceNotFound",
+              "message": "Target resource is not found"
+            },
+            {
+              "type": "permissionsMissing",
+              "scope": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc",
+              "permissions": [
+                "Microsoft.DocumentDb/databaseAccounts/write"
+              ]
+            }
+          ],
+          "operationPreviews": [
+            {
+              "name": "configFirewallRule",
+              "operationType": "configNetwork",
+              "description": "Config firewall rule for target service to allow source service access",
+              "action": "Microsoft.DocumentDb/databaseAccounts/write",
+              "scope": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc"
+            }
+          ],
+          "provisioningState": "Succeeded"
+        }
+      }
+    },
+    "201": {
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app/providers/Microsoft.ServiceLinker/dryruns/dryrunName",
+        "type": "Microsoft.ServiceLinker/dryruns",
+        "name": "dryrunName",
+        "properties": {
+          "parameters": {
+            "actionName": "createOrUpdate",
+            "targetService": {
+              "type": "AzureResource",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+            },
+            "authInfo": {
+              "authType": "secret",
+              "name": "name"
+            }
+          },
+          "prerequisiteResults": [
+            {
+              "type": "basicError",
+              "code": "ResourceNotFound",
+              "message": "Target resource is not found"
+            },
+            {
+              "type": "permissionsMissing",
+              "scope": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc",
+              "permissions": [
+                "Microsoft.DocumentDb/databaseAccounts/write"
+              ]
+            }
+          ],
+          "operationPreviews": [
+            {
+              "name": "configFirewallRule",
+              "operationType": "configNetwork",
+              "description": "Config firewall rule for target service to allow source service access",
+              "action": "Microsoft.DocumentDb/databaseAccounts/write",
+              "scope": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc"
+            }
+          ],
+          "provisioningState": "Updating"
+        }
+      }
+    }
+  }
+}

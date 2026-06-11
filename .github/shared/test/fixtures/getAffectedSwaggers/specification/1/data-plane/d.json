@@ -1,0 +1,51 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Service D",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/d": {
+      "get": {
+        "summary": "Get D",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/D"
+            }
+          }
+        }
+      }
+    },
+    "/shared-thing": {
+      "get": {
+        "summary": "Get SharedThing",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/SharedThing"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "D": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "SharedThing": {
+      "$ref": "./shared/shared.json#/definitions/SharedThing"
+    }
+  }
+}

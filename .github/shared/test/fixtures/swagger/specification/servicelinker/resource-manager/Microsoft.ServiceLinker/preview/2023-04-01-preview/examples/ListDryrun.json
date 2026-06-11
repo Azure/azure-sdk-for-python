@@ -1,0 +1,35 @@
+{
+  "parameters": {
+    "api-version": "2023-04-01-preview",
+    "resourceUri": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app/providers/Microsoft.ServiceLinker/dryruns/dryrunName",
+            "name": "dryrunName",
+            "type": "Microsoft.ServiceLinker/dryruns",
+            "properties": {
+              "parameters": {
+                "actionName": "createOrUpdate",
+                "authInfo": {
+                  "authType": "secret",
+                  "name": "username"
+                },
+                "targetService": {
+                  "type": "AzureResource",
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DocumentDb/databaseAccounts/test-acc/mongodbDatabases/test-db"
+                }
+              }
+            },
+            "systemData": {
+              "createdAt": "2020-07-12T22:05:09Z"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

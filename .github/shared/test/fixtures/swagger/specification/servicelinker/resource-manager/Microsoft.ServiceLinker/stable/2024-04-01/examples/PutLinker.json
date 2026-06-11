@@ -1,0 +1,68 @@
+{
+  "parameters": {
+    "api-version": "2024-04-01",
+    "resourceUri": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app",
+    "linkerName": "linkName",
+    "parameters": {
+      "properties": {
+        "targetService": {
+          "type": "AzureResource",
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DBforPostgreSQL/servers/test-pg/databases/test-db"
+        },
+        "vNetSolution": {
+          "type": "serviceEndpoint"
+        },
+        "authInfo": {
+          "authType": "secret",
+          "name": "name",
+          "secretInfo": {
+            "secretType": "rawValue",
+            "value": "secret"
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "type": "Microsoft.ServiceLinker/links",
+        "name": "linkName",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app/providers/Microsoft.ServiceLinker/links/linkName",
+        "properties": {
+          "authInfo": {
+            "authType": "secret",
+            "name": "name"
+          },
+          "vNetSolution": {
+            "type": "serviceEndpoint"
+          },
+          "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DBforPostgreSQL/servers/test-pg/databases/test-db"
+          }
+        }
+      }
+    },
+    "201": {
+      "body": {
+        "type": "Microsoft.ServiceLinker/links",
+        "name": "linkName",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Web/sites/test-app/providers/Microsoft.ServiceLinker/links/linkName",
+        "properties": {
+          "authInfo": {
+            "authType": "secret",
+            "name": "name"
+          },
+          "vNetSolution": {
+            "type": "serviceEndpoint"
+          },
+          "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.DBforPostgreSQL/servers/test-pg/databases/test-db"
+          }
+        }
+      }
+    }
+  }
+}

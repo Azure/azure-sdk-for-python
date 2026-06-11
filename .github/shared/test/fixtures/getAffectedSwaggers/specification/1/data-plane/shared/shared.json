@@ -1,0 +1,20 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Shared",
+    "version": "1.0.0"
+  },
+  "definitions": {
+    "SharedThing": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

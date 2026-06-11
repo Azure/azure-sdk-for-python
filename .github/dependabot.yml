@@ -1,0 +1,74 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10 # default:5
+    cooldown:
+      default-days: 7
+    exclude-paths:
+      - ".github/workflows/*.lock.{yaml,yml}"
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/eng/tools"
+      - "/eng/tools/**"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10 # default:5
+    cooldown:
+      default-days: 7
+      exclude:
+        # Allow immediate updates of self-owned packages
+        - "@azure-tools/*"
+        - "@autorest/*"
+        - "@azure/*"
+        - "@microsoft.azure/*"
+        - "@typespec/*"
+        - "oav"
+    ignore:
+      # Updated manually to align with minimum supported Node version
+      - dependency-name: "@types/node"
+      # Updated manually by the team maintaining this package
+      - dependency-name: "@azure-tools/openai-typespec"
+      # Updated manually by the Liftr team
+      - dependency-name: "@azure-tools/typespec-liftr-base"
+      # Only allow patch updates for spec-gen-sdk
+      - dependency-name: "@azure-tools/spec-gen-sdk"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
+    groups:
+      # Ships separately from other typespec packages
+      typespec-client-generator-cli:
+        patterns:
+          - "@azure-tools/typespec-client-generator-cli"
+      # Ships separately from other typespec packages
+      openapi-to-typespec:
+        patterns:
+          - "@autorest/openapi-to-typespec"
+      typespec:
+        patterns:
+          - "*typespec*"
+      eslint:
+        patterns:
+          - "*eslint*"
+    versioning-strategy: increase-if-necessary
+  - package-ecosystem: "npm"
+    directories:
+      - "/.github"
+      - "/.github/shared"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10 # default:5
+    cooldown:
+      default-days: 7
+    ignore:
+      # Updated manually to align with minimum supported Node version
+      - dependency-name: "@types/node"
+      # Points to "github:actions/github-script" since package isn't published to npmjs
+      - dependency-name: "@types/github-script"
+    groups:
+      eslint:
+        patterns:
+          - "*eslint*"
+    versioning-strategy: increase-if-necessary

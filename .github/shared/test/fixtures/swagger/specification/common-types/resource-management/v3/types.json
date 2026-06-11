@@ -1,0 +1,69 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Common Types - Resource Management",
+    "version": "v3",
+    "description": "Common types for resource management APIs"
+  },
+  "host": "management.azure.com",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "definitions": {
+    "Resource": {
+      "type": "object",
+      "description": "Common fields that are returned in the response for all Azure Resource Manager resources",
+      "properties": {
+        "id": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Fully qualified resource ID for the resource. Ex - /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}"
+        },
+        "name": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The name of the resource"
+        },
+        "type": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or \"Microsoft.Storage/storageAccounts\""
+        }
+      }
+    },
+    "ProxyResource": {
+      "type": "object",
+      "description": "The resource model definition for a Azure Resource Manager proxy resource.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Resource"
+        }
+      ]
+    },
+    "TrackedResource": {
+      "type": "object",
+      "description": "The resource model definition for an Azure Resource Manager tracked top level resource",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Resource tags."
+        },
+        "location": {
+          "type": "string",
+          "description": "The geo-location where the resource lives"
+        }
+      },
+      "required": [
+        "location"
+      ]
+    }
+  }
+}

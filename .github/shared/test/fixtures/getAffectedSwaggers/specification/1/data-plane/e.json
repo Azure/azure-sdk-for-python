@@ -1,0 +1,38 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Service E",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/e": {
+      "get": {
+        "summary": "Get E",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/E"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "E": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "SharedThing": {
+      "$ref": "./shared/shared.json#/definitions/SharedThing"
+    }
+  }
+}

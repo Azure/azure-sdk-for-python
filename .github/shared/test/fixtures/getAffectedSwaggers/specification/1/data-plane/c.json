@@ -1,0 +1,51 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Service C",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/c": {
+      "get": {
+        "summary": "Get C",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/C"
+            }
+          }
+        }
+      }
+    },
+    "/d": {
+      "get": {
+        "summary": "Get D",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/D"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "C": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "D": {
+      "$ref": "d.json#/definitions/D"
+    }
+  }
+}

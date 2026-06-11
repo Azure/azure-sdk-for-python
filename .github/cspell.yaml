@@ -1,0 +1,106 @@
+version: "0.2"
+import:
+  - ../cspell.yaml
+ignorePaths:
+  - CODEOWNERS*
+  - arm-leases/**
+  - policies/**
+  - workflows/*.lock.yml
+  - workflows/**/*.md
+words:
+  - azmanager
+  - azsdk
+  - brch
+  - buildid
+  - byval
+  - contosowidget
+  - contosowidgetmanager
+  - dapr
+  - fflate
+  - oapi
+  - plcy
+  - pwsh
+  - retarget
+  - rhysd
+  - rpaa
+  - rpaas
+  - tsgs
+  - unstub
+  - vitest
+  - whatif
+
+overrides:
+  - filename: "**/.github/chatmodes/api-review-feedback.chatmode.md"
+    words:
+      - Swathi
+      - Pillalamarri
+
+  - filename: "**/.github/workflows/oav-runner-tests.yaml"
+    words:
+      - oavrunnertests
+
+  - filename: "**/.github/workflows/src/spec-gen-sdk-status.js"
+    words:
+      - incompleted
+
+  - filename: "**/.github/workflows/src/summarize-checks/tsgs.js"
+    words:
+      - efer
+      - rphelp
+
+  - filename: "**/.github/workflows/src/summarize-checks/labelling.js"
+    words:
+      - unlabels
+      - rpaa
+      # This spelling may be a bug
+      - rpass
+
+  - filename: "**/.github/skills/azure-api-review/references/design-decisions.md"
+    words:
+      - afec
+
+  - filename: "**/.github/copilot-review-instructions.md"
+    words:
+      - foos
+
+  - filename: "**/.github/agents/arm-api-reviewer.agent.md"
+    words:
+      - reposting
+
+  - filename: "**/.github/skills/evals/arm-api-reviewer/vally/*.yaml"
+    words:
+      - classsvc
+      - cleansvc
+      - cnatestsvc
+      - delsvc
+      - descrsvc
+      - enumsvc
+      - exsvc
+      - fmtsvc
+      - gadgetsvc
+      - handwrittensvc
+      - inlinesvc
+      - itemsvc
+      - legacysvc
+      - lrosvc
+      - namingsvc
+      - nosupprsvc
+      - proxysvc
+      - reqpropsvc
+      - secsupprsvc
+      - secretsvc
+      - tspgenservice
+      - typechgsvc
+      - widgetsvc
+
+  - filename: "**/.github/skills/evals/arm-api-reviewer/README.md"
+    words:
+      - vally
+
+  - filename: "**/.github/skills/evals/arm-api-reviewer/run-evals.ps1"
+    words:
+      - vally
+
+  - filename: "**/.github/skills/README.md"
+    words:
+      - vally

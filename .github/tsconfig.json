@@ -1,0 +1,12 @@
+// Only used for type-checking of JavaScript sources.  Folder should contain no TypeScript sources.
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    // Avoid generating tsconfig.tsbuildinfo file, which isn't useful for our scenario
+    "incremental": false,
+    "noEmit": true,
+  },
+  "exclude": ["coverage", "shared/coverage"],
+}

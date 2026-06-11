@@ -1,0 +1,27 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Test Fixture API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/item": {
+      "get": {
+        "summary": "Get an item",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "included.json#/definitions/Item"
+            },
+            "examples": {
+              "application/json": {
+                "$ref": "examples/example.json"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

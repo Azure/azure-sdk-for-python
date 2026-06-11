@@ -1,0 +1,15 @@
+# Keep in sync with eng/tools/.prettierrc.yaml
+
+plugins:
+  - prettier-plugin-organize-imports
+
+# Aligned with microsoft/typespec
+printWidth: 100
+
+overrides:
+  # tsconfig.json is actually parsed as JSONC
+  - files:
+      - tsconfig.json
+      - tsconfig.*.json
+    options:
+      parser: jsonc

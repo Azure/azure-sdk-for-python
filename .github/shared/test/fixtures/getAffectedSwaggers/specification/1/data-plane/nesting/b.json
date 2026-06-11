@@ -1,0 +1,49 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Service B",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/b": {
+      "get": {
+        "summary": "Get B (refs C)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/C"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update B (refs D)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/D"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "B": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "C": {
+      "$ref": "../c.json#/definitions/C"
+    }
+  }
+}
