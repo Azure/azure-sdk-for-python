@@ -496,15 +496,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
         return (
             {
-                s.id: (
-                    AccessPolicy(
-                        permission=s.access_policy.permission,
-                        expiry=s.access_policy.expiry,
-                        start=s.access_policy.start,
-                    )
-                    if s.access_policy
-                    else AccessPolicy()
-                )
+                s.id: AccessPolicy._from_generated(s.access_policy)  # pylint: disable=protected-access
                 for s in (identifiers.items_property or [])
             }
             if identifiers

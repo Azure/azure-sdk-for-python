@@ -439,6 +439,16 @@ class AccessPolicy(_BackCompatMixin):
         self.expiry = expiry
         self.permission = permission
 
+    @classmethod
+    def _from_generated(cls, generated: Any) -> Self:
+        if not generated:
+            return cls()
+        return cls(
+            permission=generated.permission,
+            expiry=generated.expiry,
+            start=generated.start,
+        )
+
     def _to_generated(self) -> GenAccessPolicy:
         permission = self.permission
         if isinstance(permission, QueueSasPermissions):
