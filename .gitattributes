@@ -3,6 +3,9 @@
 ###############################################################################
 * text=auto
 
+# Use unix line endings always, even on Windows
+.github/**/*.js text eol=lf
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
