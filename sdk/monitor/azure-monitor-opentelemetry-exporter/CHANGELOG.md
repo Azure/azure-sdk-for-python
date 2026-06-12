@@ -5,6 +5,10 @@
 ### Features Added
 
 ### Breaking Changes
+- Customer Facing SDKStats: Renamed metric dimension attributes from snake_case/dotted to camelCase
+  (`compute_type` -> `computeType`, `telemetry_type` -> `telemetryType`, `telemetry_success` -> `telemetrySuccess`,
+  `drop.code` -> `dropCode`, `drop.reason` -> `dropReason`, `retry.code` -> `retryCode`, `retry.reason` -> `retryReason`)
+  ([#47469](https://github.com/Azure/azure-sdk-for-python/pull/47469))
 
 ### Bugs Fixed
 
