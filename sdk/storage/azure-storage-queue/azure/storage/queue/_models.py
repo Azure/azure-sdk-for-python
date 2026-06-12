@@ -138,13 +138,16 @@ class QueueAnalyticsLogging(_BackCompatMixin):
             ),
         )
 
-    def _to_generated(self) -> GeneratedLogging:
+    @staticmethod
+    def _to_generated(logging: Optional["QueueAnalyticsLogging"]) -> Optional[GeneratedLogging]:
+        if logging is None:
+            return None
         return GeneratedLogging(
-            version=self.version,
-            delete=self.delete,
-            read=self.read,
-            write=self.write,
-            retention_policy=self.retention_policy._to_generated(),  # pylint: disable=protected-access
+            version=logging.version,
+            delete=logging.delete,
+            read=logging.read,
+            write=logging.write,
+            retention_policy=logging.retention_policy._to_generated(),  # pylint: disable=protected-access
         )
 
 
@@ -199,12 +202,15 @@ class Metrics(_BackCompatMixin):
             ),
         )
 
-    def _to_generated(self) -> GeneratedMetrics:
+    @staticmethod
+    def _to_generated(metrics: Optional["Metrics"]) -> Optional[GeneratedMetrics]:
+        if metrics is None:
+            return None
         return GeneratedMetrics(
-            version=self.version,
-            enabled=self.enabled,
-            include_apis=self.include_apis,
-            retention_policy=self.retention_policy._to_generated(),  # pylint: disable=protected-access
+            version=metrics.version,
+            enabled=metrics.enabled,
+            include_apis=metrics.include_apis,
+            retention_policy=metrics.retention_policy._to_generated(),  # pylint: disable=protected-access
         )
 
 
