@@ -57,6 +57,11 @@ class RetentionPolicy(_BackCompatMixin):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted."""
 
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+    }
+
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         self.enabled = enabled
         self.days = days
@@ -104,6 +109,13 @@ class Metrics(_BackCompatMixin):
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
+
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
 
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
@@ -182,6 +194,14 @@ class CorsRule(_BackCompatMixin):
         headers to expose to CORS clients."""
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
+
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ",".join(allowed_origins)
@@ -1336,6 +1356,14 @@ class AnalyticsLogging(_BackCompatMixin):
     """Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default."""
 
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
         self.delete = kwargs.get("delete", False)
@@ -1394,6 +1422,13 @@ class StaticWebsite(_BackCompatMixin):
     """The absolute path of the custom 404 page."""
     default_index_document_path: Optional[str]
     """Absolute path of the default index page."""
+
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "index_document": {"key": "IndexDocument", "type": "str"},
+        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
+        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
+    }
 
     def __init__(self, **kwargs: Any) -> None:
         self.enabled = kwargs.get("enabled", False)
