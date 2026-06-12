@@ -7,13 +7,11 @@
   - Model `DatabaseCreateProperties` added property `notify_keyspace_events`
   - Model `DatabaseProperties` added property `notify_keyspace_events`
   - Model `DatabaseUpdateProperties` added property `notify_keyspace_events`
-  - Enum `ManagedServiceIdentityType` added member `SYSTEM_AND_USER_ASSIGNED`
-  - Added model `ManagedServiceIdentityV4`
 
 ### Breaking Changes
 
-  - Deleted or renamed enum value `ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED`
-  - Deleted or renamed model `ManagedServiceIdentity`
+  - Renamed enum member `ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED` to `SYSTEM_AND_USER_ASSIGNED`
+  - Renamed model `ManagedServiceIdentity` to `ManagedServiceIdentityV4`
 
 ## 4.0.0b1 (2026-03-26)
 
