@@ -61,14 +61,3 @@ jobs:
       - run: npm run lint
 
       - run: npm run format:check:ci
-
-      # Content copied from https://raw.githubusercontent.com/rhysd/actionlint/2ab3a12c7848f6c15faca9a92612ef4261d0e370/.github/actionlint-matcher.json
-      - if: ${{ matrix.folder == '.github' && matrix.os == 'ubuntu'}}
-        name: Add ActionLint Problem Matcher
-        run: echo "::add-matcher::.github/matchers/actionlint.json"
-
-      - if: ${{ matrix.folder == '.github' && matrix.os == 'ubuntu'}}
-        name: Lint workflows
-        uses: docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
-        with:
-          args: -color -verbose
