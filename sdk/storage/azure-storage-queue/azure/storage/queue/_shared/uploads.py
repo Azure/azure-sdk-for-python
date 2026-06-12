@@ -55,6 +55,10 @@ def upload_data_chunks(
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
         kwargs["modified_access_conditions"] = None
+    if parallel:
+        # Access conditions do not work with parallelism
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
     uploader = uploader_class(
         service=service,
@@ -95,6 +99,10 @@ def upload_substream_blocks(
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
         kwargs["modified_access_conditions"] = None
+    if parallel:
+        # Access conditions do not work with parallelism
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -112,12 +120,7 @@ def upload_substream_blocks(
                 executor.submit(with_current_context(uploader.process_substream_block), u)
                 for u in islice(upload_tasks, 0, max_concurrency)
             ]
-            range_ids = _parallel_uploads(
-                executor,
-                uploader.process_substream_block,
-                upload_tasks,
-                running_futures,
-            )
+            range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
     else:
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
     if any(range_ids):
@@ -170,10 +173,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             # Buffer until we either reach the end of the stream or get a whole chunk.
             while True:
                 if self.total_size:
-                    read_size = min(
-                        self.chunk_size - len(data),
-                        self.total_size - (index + len(data)),
-                    )
+                    read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
                 temp = self.stream.read(read_size)
                 if not isinstance(temp, bytes):
                     raise TypeError("Blob data should be of type bytes.")

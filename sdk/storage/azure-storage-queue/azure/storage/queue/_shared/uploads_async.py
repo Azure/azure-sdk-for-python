@@ -73,6 +73,10 @@ async def upload_data_chunks(
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
         kwargs["modified_access_conditions"] = None
+    if parallel:
+        # Access conditions do not work with parallelism
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
     uploader = uploader_class(
         service=service,
@@ -119,6 +123,10 @@ async def upload_substream_blocks(
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
         kwargs["modified_access_conditions"] = None
+    if parallel:
+        # Access conditions do not work with parallelism
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -189,10 +197,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             # Buffer until we either reach the end of the stream or get a whole chunk.
             while True:
                 if self.total_size:
-                    read_size = min(
-                        self.chunk_size - len(data),
-                        self.total_size - (index + len(data)),
-                    )
+                    read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
                 temp = self.stream.read(read_size)
                 if inspect.isawaitable(temp):
                     temp = await temp
@@ -438,11 +443,7 @@ class AsyncIterStreamer:
     File-like streaming object for AsyncGenerators.
     """
 
-    def __init__(
-        self,
-        generator: AsyncGenerator[Union[bytes, str], None],
-        encoding: str = "UTF-8",
-    ):
+    def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
         self.iterator = generator.__aiter__()
         self.leftover = b""
         self.encoding = encoding
