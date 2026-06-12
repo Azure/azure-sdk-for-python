@@ -15,8 +15,12 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
     resolve_appinsights_connection_string,
+    resolve_session_id,
 )
-from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
+from azure.ai.agentserver.core._tracing import (
+    _BaggageLogRecordProcessor,
+    _FoundryEnrichmentSpanProcessor,
+)
 
 
 class _CollectorExporter(SpanExporter):
@@ -408,7 +412,7 @@ class TestFoundryEnrichmentSpanProcessor:
 
 
 class TestAgentIdentityResolution:
-    """Tests for resolve_agent_name() and resolve_agent_version()."""
+    """Tests for agent identity/session resolution helpers."""
 
     def test_agent_name_from_env(self) -> None:
         with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_NAME": "my-agent"}):
@@ -430,5 +434,78 @@ class TestAgentIdentityResolution:
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
 
+    def test_session_id_from_env(self) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "session-1"}):
+            assert resolve_session_id() == "session-1"
+
+    def test_session_id_default_empty(self) -> None:
+        env = os.environ.copy()
+        env.pop("FOUNDRY_AGENT_SESSION_ID", None)
+        with mock.patch.dict(os.environ, env, clear=True):
+            assert resolve_session_id() == ""
 
 
+class _FakeLogRecord:
+    def __init__(self, attributes):
+        self.attributes = attributes
+
+
+class _FakeLogData:
+    def __init__(self, attributes):
+        self.log_record = _FakeLogRecord(attributes)
+
+
+class TestBaggageLogRecordProcessor:
+    def test_adds_agent_and_fallback_session_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        proc.on_emit(log_data)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["gen_ai.agent.name"] == "agent-a"
+        assert attrs["gen_ai.agent.version"] == "1.2.3"
+        assert attrs["microsoft.session.id"] == "session-fallback-1"
+
+    def test_prefers_baggage_session_id_over_fallback(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", "session-from-baggage",
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["microsoft.session.id"] == "session-from-baggage"
+
+    def test_does_not_overwrite_existing_log_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        attrs = {
+            "gen_ai.agent.name": "existing-name",
+            "gen_ai.agent.version": "0.0.1",
+            "microsoft.session.id": "existing-session",
+        }
+        log_data = _FakeLogData(attrs)
+
+        proc.on_emit(log_data)
+
+        assert attrs["gen_ai.agent.name"] == "existing-name"
+        assert attrs["gen_ai.agent.version"] == "0.0.1"
+        assert attrs["microsoft.session.id"] == "existing-session"
