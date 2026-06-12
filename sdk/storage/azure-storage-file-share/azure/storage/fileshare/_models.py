@@ -619,8 +619,8 @@ class AccessPolicy(_BackCompatMixin):
             return None
         return cls(
             permission=generated.permission,
-            expiry=generated.expiry if generated.expiry else None,
-            start=generated.start if generated.start else None,
+            expiry=generated.expiry,
+            start=generated.start,
         )
 
 
