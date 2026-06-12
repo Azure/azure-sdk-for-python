@@ -172,7 +172,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         return None
 
 
-def _iter_extra_observations(metric_name: str, options: CallbackOptions) -> Iterator[Observation]:
+def _iter_additional_observations(metric_name: str, options: CallbackOptions) -> Iterator[Observation]:
     """Yield observations contributed via :func:`add_metric_callback`.
 
     Invoked by the built-in ``_StatsbeatMetrics`` callbacks at collection time.

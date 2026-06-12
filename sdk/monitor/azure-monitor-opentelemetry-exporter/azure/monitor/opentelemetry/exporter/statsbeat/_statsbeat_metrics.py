@@ -41,7 +41,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_browser_sdk_loader_feature_set,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
-    _iter_extra_observations as _additional_observations,
+    _iter_additional_observations,
 )
 from azure.monitor.opentelemetry.exporter import _utils
 
@@ -382,7 +382,7 @@ class _StatsbeatMetrics:
             if count != 0:
                 observations.append(Observation(int(count), dict(attributes)))
                 _REQUESTS_MAP[_REQ_SUCCESS_NAME[1]] = 0
-        observations.extend(_additional_observations(_REQ_SUCCESS_NAME[0], options))
+        observations.extend(_iter_additional_observations(_REQ_SUCCESS_NAME[0], options))
         return observations
 
     # pylint: disable=unused-argument
@@ -397,7 +397,7 @@ class _StatsbeatMetrics:
                     attributes["statusCode"] = code
                     observations.append(Observation(int(count), dict(attributes)))
                     _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][code] = 0  # type: ignore
-        observations.extend(_additional_observations(_REQ_FAILURE_NAME[0], options))
+        observations.extend(_iter_additional_observations(_REQ_FAILURE_NAME[0], options))
         return observations
 
     # pylint: disable=unused-argument
@@ -414,7 +414,7 @@ class _StatsbeatMetrics:
                 observations.append(Observation(result * 1000, dict(attributes)))
                 _REQUESTS_MAP[_REQ_DURATION_NAME[1]] = 0
                 _REQUESTS_MAP["count"] = 0
-        observations.extend(_additional_observations(_REQ_DURATION_NAME[0], options))
+        observations.extend(_iter_additional_observations(_REQ_DURATION_NAME[0], options))
         return observations
 
     # pylint: disable=unused-argument
@@ -429,7 +429,7 @@ class _StatsbeatMetrics:
                     attributes["statusCode"] = code
                     observations.append(Observation(int(count), dict(attributes)))
                     _REQUESTS_MAP[_REQ_RETRY_NAME[1]][code] = 0  # type: ignore
-        observations.extend(_additional_observations(_REQ_RETRY_NAME[0], options))
+        observations.extend(_iter_additional_observations(_REQ_RETRY_NAME[0], options))
         return observations
 
     # pylint: disable=unused-argument
@@ -444,7 +444,7 @@ class _StatsbeatMetrics:
                     attributes["statusCode"] = code
                     observations.append(Observation(int(count), dict(attributes)))
                     _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][code] = 0  # type: ignore
-        observations.extend(_additional_observations(_REQ_THROTTLE_NAME[0], options))
+        observations.extend(_iter_additional_observations(_REQ_THROTTLE_NAME[0], options))
         return observations
 
     # pylint: disable=unused-argument
@@ -459,7 +459,7 @@ class _StatsbeatMetrics:
                     attributes["exceptionType"] = code
                     observations.append(Observation(int(count), dict(attributes)))
                     _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0  # type: ignore
-        observations.extend(_additional_observations(_REQ_EXCEPTION_NAME[0], options))
+        observations.extend(_iter_additional_observations(_REQ_EXCEPTION_NAME[0], options))
         return observations
 
 

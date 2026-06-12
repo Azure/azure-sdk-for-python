@@ -39,7 +39,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _RP_Names,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
-    _iter_extra_observations,
+    _iter_additional_observations,
 )
 
 
@@ -974,8 +974,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
 
 
 # pylint: disable=protected-access
-class TestExtraObservationCallbacks(unittest.TestCase):
-    """Tests for StatsbeatManager.add_metric_callback and the _iter_extra_observations helper."""
+class TestAdditionalObservationCallbacks(unittest.TestCase):
+    """Tests for StatsbeatManager.add_metric_callback and the _iter_additional_observations helper."""
 
     def setUp(self):
         statsbeat_utils._ADDITIONAL_CALLBACKS.clear()
@@ -1018,10 +1018,10 @@ class TestExtraObservationCallbacks(unittest.TestCase):
             [cb1, cb2],
         )
 
-    # ---- _iter_extra_observations ----
+    # ---- _iter_additional_observations ----
 
     def test_iter_unregistered_name_yields_nothing(self):
-        self.assertEqual(list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None)), [])
+        self.assertEqual(list(_iter_additional_observations(_REQ_SUCCESS_NAME[0], None)), [])
 
     def test_iter_yields_observations_from_registered_callback(self):
         obs = Observation(7, {"endpoint": "ep1"})
@@ -1030,7 +1030,7 @@ class TestExtraObservationCallbacks(unittest.TestCase):
             yield obs
 
         StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], cb)
-        self.assertEqual(list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None)), [obs])
+        self.assertEqual(list(_iter_additional_observations(_REQ_SUCCESS_NAME[0], None)), [obs])
 
     def test_iter_aggregates_across_multiple_callbacks(self):
         obs1 = Observation(1, {"endpoint": "ep1"})
@@ -1038,7 +1038,7 @@ class TestExtraObservationCallbacks(unittest.TestCase):
         StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], lambda _options: [obs1])
         StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], lambda _options: [obs2])
         self.assertEqual(
-            list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None)),
+            list(_iter_additional_observations(_REQ_SUCCESS_NAME[0], None)),
             [obs1, obs2],
         )
 
@@ -1052,14 +1052,14 @@ class TestExtraObservationCallbacks(unittest.TestCase):
         StatsbeatManager().add_metric_callback(_REQ_SUCCESS_NAME[0], lambda _options: [good_obs])
         # Should not raise; should still emit the good observation.
         self.assertEqual(
-            list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None)),
+            list(_iter_additional_observations(_REQ_SUCCESS_NAME[0], None)),
             [good_obs],
         )
 
     def test_iter_callbacks_for_other_metrics_not_invoked(self):
         called = []
         StatsbeatManager().add_metric_callback(_REQ_FAILURE_NAME[0], lambda _options: called.append("failure") or [])
-        list(_iter_extra_observations(_REQ_SUCCESS_NAME[0], None))
+        list(_iter_additional_observations(_REQ_SUCCESS_NAME[0], None))
         self.assertEqual(called, [])
 
     # ---- integration with built-in callbacks ----
