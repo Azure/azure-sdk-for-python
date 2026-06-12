@@ -254,6 +254,7 @@ class SmbMultichannel(_BackCompatMixin):
     _attribute_map = {
         "enabled": {"key": "Enabled", "type": "bool"},
     }
+    _xml_map = {"name": "Multichannel"}
 
     def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.enabled = enabled
@@ -310,6 +311,7 @@ class ShareSmbSettings(_BackCompatMixin):
         "multichannel": {"key": "Multichannel", "type": "SmbMultichannel"},
         "encryption_in_transit": {"key": "EncryptionInTransit", "type": "SmbEncryptionInTransit"},
     }
+    _xml_map = {"name": "SMB"}
 
     def __init__(  # pylint: disable=unused-argument
         self,
@@ -385,6 +387,7 @@ class ShareNfsSettings(_BackCompatMixin):
     _attribute_map = {
         "encryption_in_transit": {"key": "EncryptionInTransit", "type": "NfsEncryptionInTransit"},
     }
+    _xml_map = {"name": "NFS"}
 
     def __init__(
         self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any  # pylint: disable=unused-argument
@@ -429,6 +432,7 @@ class ShareProtocolSettings(_BackCompatMixin):
         "smb": {"key": "SMB", "type": "ShareSmbSettings"},
         "nfs": {"key": "NFS", "type": "ShareNfsSettings"},
     }
+    _xml_map = {"name": "ProtocolSettings"}
 
     def __init__(  # pylint: disable=unused-argument
         self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
