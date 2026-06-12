@@ -1410,7 +1410,6 @@ class ShareFileClient(StorageAccountHostsMixin):
                 Dict[str, Any],
                 self._client.file.upload_range(
                     range=content_range,
-                    file_range_write="update",
                     content_length=length,
                     optional_body=data,
                     timeout=timeout,

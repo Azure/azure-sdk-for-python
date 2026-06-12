@@ -6,9 +6,35 @@
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
-"""
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+Async counterpart to ``azure.storage.fileshare._generated.operations._patch``:
+restore the ``"update"`` default for ``file_range_write`` on
+``FileOperations.upload_range`` so async public clients don't have to thread
+the kwarg through every common-path call. See the sync patch for details.
+"""
+from typing import Any, List, Optional, Union
+
+from ._operations import (
+    FileOperations as _GeneratedFileOperations,
+)
+from ... import models as _models
+
+class FileOperations(_GeneratedFileOperations):  # pylint: disable=too-many-public-methods
+
+    async def upload_range(  # pylint: disable=arguments-differ,invalid-overridden-method
+        self,
+        optional_body: Optional[bytes] = None,
+        *,
+        file_range_write: Union[str, "_models.FileRangeWriteType"] = "update",
+        **kwargs: Any,
+    ) -> None:
+        return await super().upload_range(
+            optional_body, file_range_write=file_range_write, **kwargs
+        )
+
+
+__all__: List[str] = ["FileOperations"]
+
 
 
 def patch_sdk():
