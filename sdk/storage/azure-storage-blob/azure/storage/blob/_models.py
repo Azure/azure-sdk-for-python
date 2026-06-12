@@ -201,11 +201,6 @@ class RetentionPolicy(_BackCompatMixin):
     days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
-    _validation = {
-        "enabled": {"required": True},
-        "days": {"minimum": 1},
-    }
-
     _attribute_map = {
         "enabled": {"key": "Enabled", "type": "bool"},
         "days": {"key": "Days", "type": "int"},
@@ -256,14 +251,6 @@ class BlobAnalyticsLogging(_BackCompatMixin):
     """Indicates whether all write requests should be logged."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
-
-    _validation = {
-        "version": {"required": True},
-        "delete": {"required": True},
-        "read": {"required": True},
-        "write": {"required": True},
-        "retention_policy": {"required": True},
-    }
 
     _attribute_map = {
         "version": {"key": "Version", "type": "str"},
@@ -329,10 +316,6 @@ class Metrics(_BackCompatMixin):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
-    _validation = {
-        "enabled": {"required": True},
-    }
-
     _attribute_map = {
         "version": {"key": "Version", "type": "str"},
         "enabled": {"key": "Enabled", "type": "bool"},
@@ -391,9 +374,6 @@ class StaticWebsite(_BackCompatMixin):
     default_index_document_path: Optional[str]
     """Absolute path of the default index page."""
 
-    _validation = {
-        "enabled": {"required": True},
-    }
 
     _attribute_map = {
         "enabled": {"key": "Enabled", "type": "bool"},
@@ -474,14 +454,6 @@ class CorsRule(_BackCompatMixin):
         request."""
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
-
-    _validation = {
-        "allowed_origins": {"required": True},
-        "allowed_methods": {"required": True},
-        "allowed_headers": {"required": True},
-        "exposed_headers": {"required": True},
-        "max_age_in_seconds": {"required": True, "minimum": 0},
-    }
 
     _attribute_map = {
         "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
@@ -1468,9 +1440,6 @@ class ArrowDialect(_BackCompatMixin):
     scale: Optional[int]
     """The scale of the field."""
 
-    _validation = {
-        "type": {"required": True},
-    }
 
     _attribute_map = {
         "type": {"key": "Type", "type": "str"},
@@ -1478,6 +1447,8 @@ class ArrowDialect(_BackCompatMixin):
         "precision": {"key": "Precision", "type": "int"},
         "scale": {"key": "Scale", "type": "int"},
     }
+
+    _xml_map = {"name": "Field"}
 
     def __init__(self, type, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         self.type = type
