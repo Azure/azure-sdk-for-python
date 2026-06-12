@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.napsteromniagentapi import CompanionAPIClient
+from azure.mgmt.napsteromniagentapi import NapsterOmniagentApiMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = CompanionAPIClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = NapsterOmniagentApiMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import CompanionAPIClientConfiguration
+from ._configuration import NapsterOmniAgentApiMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import Operations, OrganizationsOperations, SaaSOperationGroupOperations
 
@@ -31,8 +31,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class CompanionAPIClient:
-    """CompanionAPIClient.
+class NapsterOmniAgentApiMgmtClient:
+    """NapsterOmniAgentApiMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.napsteromniagentapi.operations.Operations
@@ -74,7 +74,7 @@ class CompanionAPIClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = CompanionAPIClientConfiguration(
+        self._config = NapsterOmniAgentApiMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

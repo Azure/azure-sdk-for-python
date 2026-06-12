@@ -48,7 +48,7 @@ from ...operations._operations import (
     build_organizations_update_request,
     build_saa_soperation_group_activate_resource_request,
 )
-from .._configuration import CompanionAPIClientConfiguration
+from .._configuration import NapsterOmniAgentApiMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -62,14 +62,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.napsteromniagentapi.aio.CompanionAPIClient`'s
+        :class:`~azure.mgmt.napsteromniagentapi.aio.NapsterOmniAgentApiMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CompanionAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NapsterOmniAgentApiMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -173,14 +175,16 @@ class OrganizationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.napsteromniagentapi.aio.CompanionAPIClient`'s
+        :class:`~azure.mgmt.napsteromniagentapi.aio.NapsterOmniAgentApiMgmtClient`'s
         :attr:`organizations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CompanionAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NapsterOmniAgentApiMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1384,14 +1388,16 @@ class SaaSOperationGroupOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.napsteromniagentapi.aio.CompanionAPIClient`'s
+        :class:`~azure.mgmt.napsteromniagentapi.aio.NapsterOmniAgentApiMgmtClient`'s
         :attr:`saa_soperation_group` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CompanionAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: NapsterOmniAgentApiMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

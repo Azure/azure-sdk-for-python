@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.napsteromniagentapi import CompanionAPIClient
+from azure.mgmt.napsteromniagentapi import NapsterOmniAgentApiMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.napsteromniagentapi import CompanionAPIClient
 
 
 def main():
-    client = CompanionAPIClient(
+    client = NapsterOmniAgentApiMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

@@ -21,14 +21,22 @@ load_dotenv()
 # For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    companionapi_subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    companionapi_tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    companionapi_client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    companionapi_client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=companionapi_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=companionapi_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=companionapi_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=companionapi_client_secret, value="00000000-0000-0000-0000-000000000000")
+    napsteromniagentapimgmt_subscription_id = os.environ.get(
+        "AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    napsteromniagentapimgmt_tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    napsteromniagentapimgmt_client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    napsteromniagentapimgmt_client_secret = os.environ.get(
+        "AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=napsteromniagentapimgmt_subscription_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=napsteromniagentapimgmt_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=napsteromniagentapimgmt_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(
+        regex=napsteromniagentapimgmt_client_secret, value="00000000-0000-0000-0000-000000000000"
+    )
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
