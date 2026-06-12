@@ -37,7 +37,7 @@
         "azure.mgmt.redisenterprise.models.MaintenanceConfiguration": "Microsoft.Cache.MaintenanceConfiguration",
         "azure.mgmt.redisenterprise.models.MaintenanceWindow": "Microsoft.Cache.MaintenanceWindow",
         "azure.mgmt.redisenterprise.models.MaintenanceWindowSchedule": "Microsoft.Cache.MaintenanceWindowSchedule",
-        "azure.mgmt.redisenterprise.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
+        "azure.mgmt.redisenterprise.models.ManagedServiceIdentity": "Azure.ResourceManager.Legacy.ManagedServiceIdentityV4",
         "azure.mgmt.redisenterprise.models.Migration": "Microsoft.Cache.Migration",
         "azure.mgmt.redisenterprise.models.MigrationValidationDisparity": "Microsoft.Cache.MigrationValidationDisparity",
         "azure.mgmt.redisenterprise.models.MigrationValidationError": "Microsoft.Cache.MigrationValidationError",
@@ -86,7 +86,7 @@
         "azure.mgmt.redisenterprise.models.PublicNetworkAccess": "Microsoft.Cache.PublicNetworkAccess",
         "azure.mgmt.redisenterprise.models.Kind": "Microsoft.Cache.Kind",
         "azure.mgmt.redisenterprise.models.SkuName": "Microsoft.Cache.SkuName",
-        "azure.mgmt.redisenterprise.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
+        "azure.mgmt.redisenterprise.models.ManagedServiceIdentityType": "Azure.ResourceManager.Legacy.ManagedServiceIdentityType",
         "azure.mgmt.redisenterprise.models.SourceType": "Microsoft.Cache.SourceType",
         "azure.mgmt.redisenterprise.models.MigrationProvisioningState": "Microsoft.Cache.MigrationProvisioningState",
         "azure.mgmt.redisenterprise.operations.Operations.list": "Azure.ResourceManager.Operations.list",
@@ -161,5 +161,6 @@
         "azure.mgmt.redisenterprise.aio.operations.MigrationOperations.begin_cancel": "Microsoft.Cache.Migrations.cancel",
         "azure.mgmt.redisenterprise.operations.OperationsStatusOperations.get": "Microsoft.Cache.OperationsStatusOperationGroup.get",
         "azure.mgmt.redisenterprise.aio.operations.OperationsStatusOperations.get": "Microsoft.Cache.OperationsStatusOperationGroup.get"
-    }
+    },
+    "CrossLanguageVersion": "85516cef0cdd"
 }

@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.caches.begin_pool_change(
+    response = client.caches.begin_pool_change(
         resource_group_name="myRG",
         account_name="account1",
         pool_name="pool1",
@@ -40,8 +40,9 @@ def main():
             "newPoolResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool2"
         },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-01-01/Caches_PoolChange.json
+# x-ms-original-file: 2026-04-01/Caches_PoolChange.json
 if __name__ == "__main__":
     main()
