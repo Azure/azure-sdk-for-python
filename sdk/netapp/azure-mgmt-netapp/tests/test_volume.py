@@ -1,7 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 import time
 import pytest
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import (
     NetworkFeatures,
