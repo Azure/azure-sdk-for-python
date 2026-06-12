@@ -1,4 +1,4 @@
-directory: specification/machinelearningservices/MFE.Dataplane.v2020_09_01_dataplanepreview
-commit: f6ef4ce44b4cd6c50ebb85fba455be8c8ff1ac35
-repo: saanikaguptamicrosoft/azure-rest-api-specs
+directory: specification/machinelearningservices/MFE.Dataplane.V2020_09_01_DataplanePreview.Management
+commit: 80f3147605c451f04e55c94ed12ae91303001957
+repo: Azure/azure-rest-api-specs
 additionalDirectories: []
