@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b5 (2026-06-12)
+
+### Bugs Fixed
+
+- Fixed exception tracing for streaming responses so errors raised while iterating streaming results are captured correctly and invocation/session logging context is reset after streaming completes.
+
 ## 1.0.0b4 (2026-05-21)
 
 ### Features Added
