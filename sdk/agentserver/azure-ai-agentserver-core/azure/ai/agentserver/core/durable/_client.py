@@ -49,6 +49,7 @@ from ._attachments import (
     _validate_attachment_size,
 )
 from ._exceptions import TaskNotFound
+from ._exceptions_internal import _HostedConflict
 from ._models import (
     TaskCreateRequest,
     TaskInfo,
@@ -272,6 +273,68 @@ def _parse_json_body(
         ) from exc
 
 
+def _raise_hosted_conflict_for_response(response: Any) -> None:
+    """Spec 020 / §39.1 — translate service error codes to ``_HostedConflict``.
+
+    The hosted task service emits distinct ``code`` strings inside its JSON
+    error envelope for each failure cause (``task_immutable``,
+    ``invalid_state_transition``, ``lease_held_by_another``,
+    ``task_already_exists``, ``lease_ownership_changed``,
+    ``etag_mismatch``, ``invalid_request``). The framework's lifecycle
+    code dispatches on these to choose recovery action (retry vs
+    translate to a public exception vs log-as-bug).
+
+    This function raises ``_HostedConflict(_code=<code>, status_code=<wire status>)``
+    when the response body carries a recognized service code. Otherwise it
+    returns silently so the caller can fall through to the generic
+    ``_classify_store_write_error`` path (transient / evicted / conflict /
+    permanent).
+
+    :param response: The pipeline response object.
+    :type response: Any
+    """
+    status = getattr(response, "status_code", 0)
+    headers = getattr(response, "headers", {}) or {}
+    try:
+        raw = response.body()
+    except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
+        raw = None
+    body = _maybe_decompress(raw, headers) if raw else None
+    if not body:
+        return
+    try:
+        payload = json.loads(body)
+    except (ValueError, TypeError, UnicodeDecodeError):
+        return
+    if not isinstance(payload, dict):
+        return
+    err = payload.get("error")
+    if not isinstance(err, dict):
+        return
+    code = err.get("code")
+    if code not in _SPEC_020_SERVICE_CODES:
+        return
+    message = err.get("message") if isinstance(err.get("message"), str) else None
+    raise _HostedConflict(
+        _code=code,
+        status_code=int(status),
+        message=message,
+    )
+
+
+_SPEC_020_SERVICE_CODES = frozenset(
+    {
+        "task_immutable",
+        "invalid_state_transition",
+        "lease_held_by_another",
+        "task_already_exists",
+        "lease_ownership_changed",
+        "etag_mismatch",
+        "invalid_request",
+    }
+)
+
+
 def _raise_classified(
     response: Any,
     *,
@@ -284,6 +347,10 @@ def _raise_classified(
     (spec 016 FR-032) so every non-success response funnels through
     the FR-006 classifier and carries the canonical outcome label.
 
+    Spec 020 additionally checks for the service's distinct error
+    codes before the generic classification — when one matches, an
+    internal ``_HostedConflict`` is raised instead (see §39.1).
+
     :param response: The pipeline response object.
     :type response: Any
     :keyword method: HTTP method of the originating request (for error context).
@@ -291,6 +358,11 @@ def _raise_classified(
     :keyword url: Request URL (for error context).
     :paramtype url: str
     """
+    # Spec 020: check for service-coded errors first. If matched,
+    # _HostedConflict is raised and we never reach the generic
+    # classifier below.
+    _raise_hosted_conflict_for_response(response)
+
     status = getattr(response, "status_code", 0)
     headers = getattr(response, "headers", {}) or {}
     try:

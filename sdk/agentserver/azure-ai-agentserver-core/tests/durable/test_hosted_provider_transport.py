@@ -187,13 +187,16 @@ async def test_no_retry_on_409_binding_mismatch() -> None:
 
 @pytest.mark.asyncio
 async def test_no_retry_on_409_other_body() -> None:
-    """SC-017(b) corollary: a 409 with NON-binding_mismatch body is
-    classified as 'conflict' and STILL not retried."""
+    """SC-017(b) corollary: a 409 with NON-binding_mismatch body and
+    no spec-020 service code is classified as 'conflict' and STILL not retried."""
 
     transport = FakeAsyncHttpTransport(
         [
+            # Use a non-spec-020 code so this exercises the legacy
+            # generic-409 path rather than the new _HostedConflict
+            # dispatch (which has its own dedicated test class).
             FakeResponse.json_response(
-                {"error": {"code": "etag_mismatch"}}, status_code=409
+                {"error": {"code": "some_other_code"}}, status_code=409
             ),
         ]
     )
@@ -364,6 +367,20 @@ def test_classifier_table(status: int, body: bytes | None, expected: str) -> Non
 class TestSpec020HostedConflictDispatch:
     """B-Hosted-1: service `code` → `_HostedConflict(_code=...)` dispatch."""
 
+    @staticmethod
+    def _make_response(status_code: int, body: bytes) -> Any:
+        """Build a minimal response-shape with `.body()` callable + status_code + headers."""
+        class _Resp:
+            def __init__(self) -> None:
+                self.status_code = status_code
+                self.headers: dict[str, str] = {}
+                self._body = body
+
+            def body(self) -> bytes:
+                return self._body
+
+        return _Resp()
+
     @pytest.mark.parametrize(
         "service_code,status_code",
         [
@@ -380,36 +397,50 @@ class TestSpec020HostedConflictDispatch:
         self, service_code: str, status_code: int
     ) -> None:
         """C-ERR-4: classifier raises `_HostedConflict(_code=<service_code>)`
-        carrying the wire status_code.
-
-        RED until `_HostedConflict` lands in `_exceptions_internal.py` (or
-        equivalent) AND `_classify_store_write_error` dispatches on the
-        `code` field of the JSON error envelope.
+        carrying the wire status_code, when the response body's
+        ``error.code`` matches one of the spec-020 service codes.
         """
-        # The internal type does not exist yet — this import is the RED
-        # signal. We do it inside the test (not at module import) so the
-        # other tests in this file remain runnable.
-        from azure.ai.agentserver.core.durable._exceptions_internal import (  # noqa: F401
-            _HostedConflict,  # type: ignore[attr-defined]
+        from azure.ai.agentserver.core.durable._client import (
+            _raise_hosted_conflict_for_response,
+        )
+        from azure.ai.agentserver.core.durable._exceptions_internal import (
+            _HostedConflict,
         )
 
         body = (
             b'{"error": {"code": "' + service_code.encode() + b'", "message": "x"}}'
         )
-        response = FakeResponse(status_code=status_code, body=body)
-        with pytest.raises(Exception) as exc_info:  # type: ignore[no-untyped-call]
-            _classify_store_write_error(response, method="PATCH", url="/tasks/t1")
+        response = self._make_response(status_code=status_code, body=body)
+        with pytest.raises(_HostedConflict) as exc_info:
+            _raise_hosted_conflict_for_response(response)
 
         exc = exc_info.value
-        assert exc.__class__.__name__ == "_HostedConflict", (
-            f"classifier must raise _HostedConflict for service-code "
-            f"responses; got {type(exc).__name__}"
-        )
-        assert getattr(exc, "_code", None) == service_code, (
+        assert exc._code == service_code, (
             f"_HostedConflict._code must carry the service code {service_code!r}; "
-            f"got {getattr(exc, '_code', None)!r}"
+            f"got {exc._code!r}"
         )
-        assert getattr(exc, "status_code", None) == status_code
+        assert exc.status_code == status_code
+
+    def test_unknown_code_does_not_raise(self) -> None:
+        """Unknown service codes pass through (caller falls back to generic classifier)."""
+        from azure.ai.agentserver.core.durable._client import (
+            _raise_hosted_conflict_for_response,
+        )
+
+        response = self._make_response(
+            status_code=500,
+            body=b'{"error": {"code": "server_error", "message": "x"}}',
+        )
+        _raise_hosted_conflict_for_response(response)
+
+    def test_non_json_body_does_not_raise(self) -> None:
+        """Malformed body passes through."""
+        from azure.ai.agentserver.core.durable._client import (
+            _raise_hosted_conflict_for_response,
+        )
+
+        response = self._make_response(status_code=500, body=b"<html>broken</html>")
+        _raise_hosted_conflict_for_response(response)
 
     def test_hosted_conflict_is_internal_only(self) -> None:
         """C-ERR-4: `_HostedConflict` is underscore-prefixed and lives in
@@ -429,17 +460,45 @@ class TestSpec020OpaqueCursorRoundTrip:
     @pytest.mark.asyncio
     async def test_list_cursor_passed_back_verbatim(self) -> None:
         """C-PRV-12: opaque cursor from service is passed back as `after`
-        on the next page unchanged.
+        on the next page unchanged. The provider does NOT parse it."""
+        from urllib.parse import parse_qs, urlparse
 
-        RED until the hosted provider's list() supports cursor pagination
-        and round-trips whatever opaque token the service returned.
-        """
-        # This test exercises the contract: the provider does NOT parse
-        # the cursor; whatever opaque string the service returned MUST be
-        # passed back unchanged on the next list request. The current
-        # provider may not support cursor-based pagination at all — that
-        # is itself the RED signal.
-        pytest.fail(
-            "Spec 020 B-Hosted-2: hosted provider list() opaque-cursor "
-            "round-trip not yet implemented (Phase 2)."
+        opaque_cursor = "abc.123_xyz-OPAQUE-TOKEN-4096-chars-could-fit-here"
+
+        # Page 1 → cursor; Page 2 → has_more=false, no cursor.
+        page1_body = (
+            b'{"data": [{"id": "t1", "agent_name": "a", "session_id": "s",'
+            b' "status": "completed"}],'
+            b' "has_more": true, "last_id": "' + opaque_cursor.encode() + b'"}'
+        )
+        page2_body = (
+            b'{"data": [{"id": "t2", "agent_name": "a", "session_id": "s",'
+            b' "status": "completed"}],'
+            b' "has_more": false}'
+        )
+
+        transport = FakeAsyncHttpTransport(
+            [
+                FakeResponse(status_code=200, body=page1_body),
+                FakeResponse(status_code=200, body=page2_body),
+            ]
+        )
+        provider = _make_provider(transport)
+        try:
+            results = await provider.list(agent_name="a", session_id="s")
+        finally:
+            await provider.close()
+
+        assert len(results) == 2
+        assert results[0].id == "t1" and results[1].id == "t2"
+
+        # Inspect the second request URL — `after=<opaque_cursor>` must
+        # appear verbatim (not URL-escaped beyond what's necessary, not
+        # truncated, not parsed).
+        assert len(transport.requests) == 2
+        url2 = transport.requests[1].url
+        query = parse_qs(urlparse(url2).query)
+        assert query.get("after") == [opaque_cursor], (
+            f"second-page request must carry after={opaque_cursor!r} verbatim; "
+            f"got {query.get('after')!r}"
         )
