@@ -54,19 +54,13 @@ from ...operations._operations import (
     build_beta_agents_delete_session_request,
     build_beta_agents_download_code_request,
     build_beta_agents_download_session_file_request,
-    build_beta_agents_get_candidate_file_request,
-    build_beta_agents_get_optimization_candidate_config_request,
-    build_beta_agents_get_optimization_candidate_request,
-    build_beta_agents_get_optimization_candidate_results_request,
     build_beta_agents_get_optimization_job_request,
     build_beta_agents_get_session_log_stream_request,
     build_beta_agents_get_session_request,
-    build_beta_agents_list_optimization_candidates_request,
     build_beta_agents_list_optimization_jobs_request,
     build_beta_agents_list_session_files_request,
     build_beta_agents_list_sessions_request,
     build_beta_agents_patch_agent_details_request,
-    build_beta_agents_promote_candidate_request,
     build_beta_agents_stop_session_request,
     build_beta_agents_upload_session_file_request,
     build_beta_datasets_cancel_generation_job_request,
@@ -235,7 +229,9 @@ class AgentsOperations:
 
     @distributed_trace_async
     async def get(self, agent_name: str, **kwargs: Any) -> _models.AgentDetails:
-        """Retrieves the agent.
+        """Get an agent.
+
+        Retrieves an agent definition by its unique name.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -302,7 +298,9 @@ class AgentsOperations:
     async def delete(
         self, agent_name: str, *, force: Optional[bool] = None, **kwargs: Any
     ) -> _models.DeleteAgentResponse:
-        """Deletes an agent. For hosted agents, if any version has active sessions, the request is
+        """Delete an agent.
+
+        Deletes an agent. For hosted agents, if any version has active sessions, the request is
         rejected with HTTP 409 unless ``force`` is set to true. When force is true, all associated
         sessions are cascade-deleted along with the agent and its versions.
 
@@ -383,7 +381,9 @@ class AgentsOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.AgentDetails"]:
-        """Returns the list of all agents.
+        """List agents.
+
+        Returns a paged collection of agent resources.
 
         :keyword kind: Filter agents by kind. If not provided, all agents are returned. Known values
          are: "prompt", "hosted", "workflow", and "external". Default value is None.
@@ -480,7 +480,9 @@ class AgentsOperations:
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version.
+        """Create an agent version.
+
+        Creates a new version for the specified agent and returns the created version resource.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -515,7 +517,9 @@ class AgentsOperations:
     async def create_version(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version.
+        """Create an agent version.
+
+        Creates a new version for the specified agent and returns the created version resource.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -538,7 +542,9 @@ class AgentsOperations:
     async def create_version(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version.
+        """Create an agent version.
+
+        Creates a new version for the specified agent and returns the created version resource.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -569,7 +575,9 @@ class AgentsOperations:
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version.
+        """Create an agent version.
+
+        Creates a new version for the specified agent and returns the created version resource.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -685,7 +693,9 @@ class AgentsOperations:
         description: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version from a manifest.
+        """Create an agent version from manifest.
+
+        Imports the provided manifest to create a new version for the specified agent.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -720,7 +730,9 @@ class AgentsOperations:
     async def create_version_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version from a manifest.
+        """Create an agent version from manifest.
+
+        Imports the provided manifest to create a new version for the specified agent.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -743,7 +755,9 @@ class AgentsOperations:
     async def create_version_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version from a manifest.
+        """Create an agent version from manifest.
+
+        Imports the provided manifest to create a new version for the specified agent.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -774,7 +788,9 @@ class AgentsOperations:
         description: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version from a manifest.
+        """Create an agent version from manifest.
+
+        Imports the provided manifest to create a new version for the specified agent.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -882,7 +898,9 @@ class AgentsOperations:
 
     @distributed_trace_async
     async def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionDetails:
-        """Retrieves a specific version of an agent.
+        """Get an agent version.
+
+        Retrieves the specified version of an agent by its agent name and version identifier.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -952,7 +970,9 @@ class AgentsOperations:
     async def delete_version(
         self, agent_name: str, agent_version: str, *, force: Optional[bool] = None, **kwargs: Any
     ) -> _models.DeleteAgentVersionResponse:
-        """Deletes a specific version of an agent. For hosted agents, if the version has active sessions,
+        """Delete an agent version.
+
+        Deletes a specific version of an agent. For hosted agents, if the version has active sessions,
         the request is rejected with HTTP 409 unless ``force`` is set to true. When force is true, all
         sessions associated with this version are cascade-deleted.
 
@@ -1037,7 +1057,9 @@ class AgentsOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.AgentVersionDetails"]:
-        """Returns the list of versions of an agent.
+        """List agent versions.
+
+        Returns a paged collection of versions for the specified agent.
 
         :param agent_name: The name of the agent to retrieve versions for. Required.
         :type agent_name: str
@@ -1143,6 +1165,8 @@ class EvaluationRulesOperations:
     async def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
         """Get an evaluation rule.
 
+        Retrieves the specified evaluation rule and its configuration.
+
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
@@ -1204,6 +1228,8 @@ class EvaluationRulesOperations:
     async def delete(self, id: str, **kwargs: Any) -> None:
         """Delete an evaluation rule.
 
+        Removes the specified evaluation rule from the project.
+
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :return: None
@@ -1254,6 +1280,8 @@ class EvaluationRulesOperations:
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
+        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
+
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
@@ -1271,6 +1299,8 @@ class EvaluationRulesOperations:
         self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
+
+        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
@@ -1290,6 +1320,8 @@ class EvaluationRulesOperations:
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
+        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
+
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
@@ -1307,6 +1339,8 @@ class EvaluationRulesOperations:
         self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
+
+        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
@@ -1387,7 +1421,10 @@ class EvaluationRulesOperations:
         enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluationRule"]:
-        """List all evaluation rules.
+        """List evaluation rules.
+
+        Returns the evaluation rules configured for the project, optionally filtered by action type,
+        agent name, or enabled state.
 
         :keyword action_type: Filter by the type of evaluation rule. Known values are:
          "continuousEvaluation" and "humanEvaluationPreview". Default value is None.
@@ -1503,7 +1540,10 @@ class ConnectionsOperations:
 
     @distributed_trace_async
     async def _get(self, name: str, **kwargs: Any) -> _models.Connection:
-        """Get a connection by name, without populating connection credentials.
+        """Get a connection.
+
+        Retrieves the specified connection and its configuration details without including credential
+        values.
 
         :param name: The friendly name of the connection, provided by the user. Required.
         :type name: str
@@ -1569,7 +1609,9 @@ class ConnectionsOperations:
 
     @distributed_trace_async
     async def _get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
-        """Get a connection by name, with its connection credentials.
+        """Get a connection with credentials.
+
+        Retrieves the specified connection together with its credential values.
 
         :param name: The friendly name of the connection, provided by the user. Required.
         :type name: str
@@ -1641,13 +1683,16 @@ class ConnectionsOperations:
         default_connection: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.Connection"]:
-        """List all connections in the project, without populating connection credentials.
+        """List connections.
 
-        :keyword connection_type: List connections of this specific type. Known values are:
+        Returns the connections available in the current project, optionally filtered by type or
+        default status.
+
+        :keyword connection_type: Lists connections of this specific type. Known values are:
          "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
          "AppConfig", "AppInsights", "CustomKeys", and "RemoteTool_Preview". Default value is None.
         :paramtype connection_type: str or ~azure.ai.projects.models.ConnectionType
-        :keyword default_connection: List connections that are default connections. Default value is
+        :keyword default_connection: Lists connections that are default connections. Default value is
          None.
         :paramtype default_connection: bool
         :return: An iterator like instance of Connection
@@ -1756,7 +1801,9 @@ class DatasetsOperations:
 
     @distributed_trace
     def list_versions(self, name: str, **kwargs: Any) -> AsyncItemPaged["_models.DatasetVersion"]:
-        """List all versions of the given DatasetVersion.
+        """List versions.
+
+        List all versions of the given DatasetVersion.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -1847,7 +1894,9 @@ class DatasetsOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.DatasetVersion"]:
-        """List the latest version of each DatasetVersion.
+        """List latest versions.
+
+        List the latest version of each DatasetVersion.
 
         :return: An iterator like instance of DatasetVersion
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.DatasetVersion]
@@ -1935,7 +1984,9 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def get(self, name: str, version: str, **kwargs: Any) -> _models.DatasetVersion:
-        """Get the specific version of the DatasetVersion. The service returns 404 Not Found error if the
+        """Get a version.
+
+        Get the specific version of the DatasetVersion. The service returns 404 Not Found error if the
         DatasetVersion does not exist.
 
         :param name: The name of the resource. Required.
@@ -2000,7 +2051,9 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def delete(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the DatasetVersion. The service returns 204 No Content if the
+        """Delete a version.
+
+        Delete the specific version of the DatasetVersion. The service returns 204 No Content if the
         DatasetVersion was deleted successfully or if the DatasetVersion does not exist.
 
         :param name: The name of the resource. Required.
@@ -2060,7 +2113,9 @@ class DatasetsOperations:
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or update an existing DatasetVersion with the given version id.
+        """Create or update a version.
+
+        Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2086,7 +2141,9 @@ class DatasetsOperations:
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or update an existing DatasetVersion with the given version id.
+        """Create or update a version.
+
+        Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2112,7 +2169,9 @@ class DatasetsOperations:
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or update an existing DatasetVersion with the given version id.
+        """Create or update a version.
+
+        Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2132,7 +2191,9 @@ class DatasetsOperations:
     async def create_or_update(
         self, name: str, version: str, dataset_version: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DatasetVersion:
-        """Create a new or update an existing DatasetVersion with the given version id.
+        """Create or update a version.
+
+        Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2217,7 +2278,9 @@ class DatasetsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Start a new or get an existing pending upload of a dataset for a specific version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2243,7 +2306,9 @@ class DatasetsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Start a new or get an existing pending upload of a dataset for a specific version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2269,7 +2334,9 @@ class DatasetsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Start a new or get an existing pending upload of a dataset for a specific version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2293,7 +2360,9 @@ class DatasetsOperations:
         pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Start a new or get an existing pending upload of a dataset for a specific version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2371,7 +2440,9 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def get_credentials(self, name: str, version: str, **kwargs: Any) -> _models.DatasetCredential:
-        """Get the SAS credential to access the storage account associated with a Dataset version.
+        """Get dataset credentials.
+
+        Gets the SAS credential to access the storage account associated with a Dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2453,7 +2524,9 @@ class DeploymentsOperations:
 
     @distributed_trace_async
     async def get(self, name: str, **kwargs: Any) -> _models.Deployment:
-        """Get a deployed model.
+        """Get a deployment.
+
+        Gets a deployed model.
 
         :param name: Name of the deployment. Required.
         :type name: str
@@ -2526,7 +2599,10 @@ class DeploymentsOperations:
         deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.Deployment"]:
-        """List all deployed models in the project.
+        """List deployments.
+
+        Returns the deployed models available in the current project, optionally filtered by publisher,
+        model name, or deployment type.
 
         :keyword model_publisher: Model publisher to filter models by. Default value is None.
         :paramtype model_publisher: str
@@ -2643,7 +2719,9 @@ class IndexesOperations:
 
     @distributed_trace
     def list_versions(self, name: str, **kwargs: Any) -> AsyncItemPaged["_models.Index"]:
-        """List all versions of the given Index.
+        """List versions.
+
+        List all versions of the given Index.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2734,7 +2812,9 @@ class IndexesOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Index"]:
-        """List the latest version of each Index.
+        """List latest versions.
+
+        List the latest version of each Index.
 
         :return: An iterator like instance of Index
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Index]
@@ -2822,7 +2902,9 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def get(self, name: str, version: str, **kwargs: Any) -> _models.Index:
-        """Get the specific version of the Index. The service returns 404 Not Found error if the Index
+        """Get a version.
+
+        Get the specific version of the Index. The service returns 404 Not Found error if the Index
         does not exist.
 
         :param name: The name of the resource. Required.
@@ -2887,7 +2969,9 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def delete(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the Index. The service returns 204 No Content if the Index was
+        """Delete a version.
+
+        Delete the specific version of the Index. The service returns 204 No Content if the Index was
         deleted successfully or if the Index does not exist.
 
         :param name: The name of the resource. Required.
@@ -2947,7 +3031,9 @@ class IndexesOperations:
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.Index:
-        """Create a new or update an existing Index with the given version id.
+        """Create or update a version.
+
+        Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2967,7 +3053,9 @@ class IndexesOperations:
     async def create_or_update(
         self, name: str, version: str, index: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Index:
-        """Create a new or update an existing Index with the given version id.
+        """Create or update a version.
+
+        Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2993,7 +3081,9 @@ class IndexesOperations:
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.Index:
-        """Create a new or update an existing Index with the given version id.
+        """Create or update a version.
+
+        Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -3013,7 +3103,9 @@ class IndexesOperations:
     async def create_or_update(
         self, name: str, version: str, index: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Index:
-        """Create a new or update an existing Index with the given version id.
+        """Create or update a version.
+
+        Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -3089,7 +3181,7 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
 
-class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
+class BetaAgentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3116,7 +3208,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         agent_card: Optional[_models.AgentCard] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates an agent endpoint.
+        """Update an agent endpoint.
+
+        Applies a merge-patch update to the specified agent endpoint configuration.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -3136,7 +3230,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def patch_agent_details(
         self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates an agent endpoint.
+        """Update an agent endpoint.
+
+        Applies a merge-patch update to the specified agent endpoint configuration.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -3154,7 +3250,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def patch_agent_details(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates an agent endpoint.
+        """Update an agent endpoint.
+
+        Applies a merge-patch update to the specified agent endpoint configuration.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -3178,7 +3276,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         agent_card: Optional[_models.AgentCard] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates an agent endpoint.
+        """Update an agent endpoint.
+
+        Applies a merge-patch update to the specified agent endpoint configuration.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -3269,7 +3369,12 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         code_zip_sha256: str,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """create_version_from_code.
+        """Create an agent version from code.
+
+        Creates a new agent version from code. Uploads the code zip and creates a new version for an
+        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
+        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
+        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -3292,7 +3397,12 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def create_version_from_code(
         self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """create_version_from_code.
+        """Create an agent version from code.
+
+        Creates a new agent version from code. Uploads the code zip and creates a new version for an
+        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
+        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
+        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -3320,7 +3430,12 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         code_zip_sha256: str,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """create_version_from_code.
+        """Create an agent version from code.
+
+        Creates a new agent version from code. Uploads the code zip and creates a new version for an
+        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
+        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
+        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -3404,7 +3519,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def download_code(
         self, agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        """Download the code zip for a code-based hosted agent.
+        """Download agent code.
+
+        Downloads the code zip for a code-based hosted agent.
         Returns the previously-uploaded zip (``application/zip``).
 
         If ``agent_version`` is supplied, returns that version's code zip; otherwise
@@ -3490,7 +3607,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         agent_session_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentSessionResource:
-        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        """Create a session.
+
+        Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
         from ``version_indicator`` and enforces session ownership using the provided isolation key for
         session-mutating operations.
 
@@ -3522,7 +3641,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentSessionResource:
-        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        """Create a session.
+
+        Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
         from ``version_indicator`` and enforces session ownership using the provided isolation key for
         session-mutating operations.
 
@@ -3551,7 +3672,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentSessionResource:
-        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        """Create a session.
+
+        Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
         from ``version_indicator`` and enforces session ownership using the provided isolation key for
         session-mutating operations.
 
@@ -3581,7 +3704,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         agent_session_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentSessionResource:
-        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        """Create a session.
+
+        Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
         from ``version_indicator`` and enforces session ownership using the provided isolation key for
         session-mutating operations.
 
@@ -3676,7 +3801,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def get_session(
         self, agent_name: str, session_id: str, *, user_isolation_key: Optional[str] = None, **kwargs: Any
     ) -> _models.AgentSessionResource:
-        """Retrieves a session by ID.
+        """Get a session.
+
+        Retrieves the details of a hosted agent session by agent name and session identifier.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
@@ -3750,7 +3877,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def delete_session(
         self, agent_name: str, session_id: str, *, user_isolation_key: Optional[str] = None, **kwargs: Any
     ) -> None:
-        """Deletes a session synchronously. Returns 204 No Content when the session is deleted or does not
+        """Delete a session.
+
+        Deletes a session synchronously. Returns 204 No Content when the session is deleted or does not
         exist.
 
         :param agent_name: The name of the agent. Required.
@@ -3810,7 +3939,10 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def stop_session(self, agent_name: str, session_id: str, **kwargs: Any) -> None:
-        """Stops a session. Returns 204 No Content when the stop succeeds.
+        """Stop a session.
+
+        Terminates the specified hosted agent session and returns 204 No Content when the request
+        succeeds.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
@@ -3874,7 +4006,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.AgentSessionResource"]:
-        """Returns a list of sessions for the specified agent.
+        """List sessions for an agent.
+
+        Returns a paged collection of sessions associated with the specified agent endpoint.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
@@ -3966,7 +4100,9 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def get_session_log_stream(
         self, agent_name: str, agent_version: str, session_id: str, **kwargs: Any
     ) -> _models.SessionLogEvent:
-        """Streams console logs (stdout / stderr) for a specific hosted agent session
+        """Stream console logs for a hosted agent session.
+
+        Streams console logs (stdout / stderr) for a specific hosted agent session
         as a Server-Sent Events (SSE) stream.
 
         Each SSE frame contains:
@@ -4074,8 +4210,10 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         user_isolation_key: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SessionFileWriteResult:
-        """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
-        exceeding this limit return 413 Payload Too Large.
+        """Upload a session file.
+
+        Uploads binary file content to the specified path in the session sandbox. The service stores
+        the file relative to the session home directory and rejects payloads larger than 50 MB.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
@@ -4166,7 +4304,10 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         user_isolation_key: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        """Download a file from the session sandbox as a binary stream.
+        """Download a session file.
+
+        Downloads the file at the specified sandbox path as a binary stream. The path is resolved
+        relative to the session home directory.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
@@ -4250,9 +4391,11 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.SessionDirectoryEntry"]:
-        """List files and directories at a given path in the session sandbox. Returns only the immediate
-        children of the specified directory (non-recursive). If path is not provided, lists the session
-        home directory.
+        """List session files.
+
+        Returns files and directories at the specified path in the session sandbox. The response
+        includes only the immediate children of the target directory and defaults to the session home
+        directory when no path is supplied.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
@@ -4359,8 +4502,10 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         user_isolation_key: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """Delete a file or directory from the session sandbox. If ``recursive`` is false (default) and
-        the target is a non-empty directory, the API returns 409 Conflict.
+        """Delete a session file.
+
+        Deletes the specified file or directory from the session sandbox. When ``recursive`` is false,
+        deleting a non-empty directory returns 409 Conflict.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
@@ -4428,7 +4573,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def create_optimization_job(
         self,
-        inputs: _models.OptimizationJobInputs,
+        job: _models.OptimizationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -4439,8 +4584,8 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
         idempotent retry.
 
-        :param inputs: The optimization job inputs. Required.
-        :type inputs: ~azure.ai.projects.models.OptimizationJobInputs
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.models.OptimizationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -4454,15 +4599,15 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_optimization_job(
-        self, inputs: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OptimizationJob:
         """Creates an agent optimization job.
 
         Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
         idempotent retry.
 
-        :param inputs: The optimization job inputs. Required.
-        :type inputs: JSON
+        :param job: The job to create. Required.
+        :type job: JSON
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -4477,7 +4622,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def create_optimization_job(
         self,
-        inputs: IO[bytes],
+        job: IO[bytes],
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -4488,8 +4633,8 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
         idempotent retry.
 
-        :param inputs: The optimization job inputs. Required.
-        :type inputs: IO[bytes]
+        :param job: The job to create. Required.
+        :type job: IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -4503,20 +4648,16 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def create_optimization_job(
-        self,
-        inputs: Union[_models.OptimizationJobInputs, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
+        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
     ) -> _models.OptimizationJob:
         """Creates an agent optimization job.
 
         Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
         idempotent retry.
 
-        :param inputs: The optimization job inputs. Is one of the following types:
-         OptimizationJobInputs, JSON, IO[bytes] Required.
-        :type inputs: ~azure.ai.projects.models.OptimizationJobInputs or JSON or IO[bytes]
+        :param job: The job to create. Is one of the following types: OptimizationJob, JSON, IO[bytes]
+         Required.
+        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -4540,10 +4681,10 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(inputs, (IOBase, bytes)):
-            _content = inputs
+        if isinstance(job, (IOBase, bytes)):
+            _content = job
         else:
-            _content = json.dumps(inputs, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_agents_create_optimization_job_request(
             operation_id=operation_id,
@@ -4597,7 +4738,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
         """Get info about an agent optimization job.
 
-        Get an optimization job by id. Returns 202 while in progress, 200 when terminal.
+        Get an optimization job by id.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
@@ -4637,7 +4778,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -4673,7 +4814,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         status: Optional[Union[str, _models.JobStatus]] = None,
         agent_name: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.OptimizationJob"]:
+    ) -> AsyncItemPaged["_models.OptimizationJobListItem"]:
         """Returns a list of agent optimization jobs.
 
         List optimization jobs. Supports cursor pagination and optional status / agent_name filters.
@@ -4697,14 +4838,15 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
-        :return: An iterator like instance of OptimizationJob
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.OptimizationJob]
+        :return: An iterator like instance of OptimizationJobListItem
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.OptimizationJobListItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OptimizationJob]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.OptimizationJobListItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4736,7 +4878,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.OptimizationJob],
+                List[_models.OptimizationJobListItem],
                 deserialized.get("data", []),
             )
             if cls:
@@ -4768,7 +4910,8 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     async def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
         """Cancels an agent optimization job.
 
-        Request cancellation. Idempotent on terminal states.
+        Request cancellation of a running or queued job. Returns an error if the job is already in a
+        terminal state.
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
@@ -4832,16 +4975,13 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_optimization_job(self, job_id: str, *, force: Optional[bool] = None, **kwargs: Any) -> None:
+    async def delete_optimization_job(self, job_id: str, **kwargs: Any) -> None:
         """Deletes an agent optimization job.
 
         Delete the job and its candidate artifacts. Cancels first if non-terminal.
 
         :param job_id: The ID of the job to delete. Required.
         :type job_id: str
-        :keyword force: When true, force-delete even if the job is in a non-terminal state. Default
-         value is None.
-        :paramtype force: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4861,7 +5001,6 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_beta_agents_delete_optimization_job_request(
             job_id=job_id,
-            force=force,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4889,569 +5028,6 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace
-    def list_optimization_candidates(
-        self,
-        job_id: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.OptimizationCandidate"]:
-        """Returns a list of candidates for an optimization job.
-
-        List candidates produced by a job.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of OptimizationCandidate
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.OptimizationCandidate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.OptimizationCandidate]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agents_list_optimization_candidates_request(
-                job_id=job_id,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.OptimizationCandidate],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
-
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def get_optimization_candidate(
-        self, job_id: str, candidate_id: str, **kwargs: Any
-    ) -> _models.CandidateMetadata:
-        """Get a candidate by id.
-
-        Get a single candidate's metadata, manifest, and promotion info.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :param candidate_id: The candidate id. Required.
-        :type candidate_id: str
-        :return: CandidateMetadata. The CandidateMetadata is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.CandidateMetadata
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.CandidateMetadata] = kwargs.pop("cls", None)
-
-        _request = build_beta_agents_get_optimization_candidate_request(
-            job_id=job_id,
-            candidate_id=candidate_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.CandidateMetadata, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_optimization_candidate_config(
-        self, job_id: str, candidate_id: str, **kwargs: Any
-    ) -> _models.CandidateDeployConfig:
-        """Get candidate deploy config.
-
-        Get the candidate's deploy config JSON. Used to compose ``agents.create_version(...)`` from a
-        candidate.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :param candidate_id: The candidate id. Required.
-        :type candidate_id: str
-        :return: CandidateDeployConfig. The CandidateDeployConfig is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.CandidateDeployConfig
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.CandidateDeployConfig] = kwargs.pop("cls", None)
-
-        _request = build_beta_agents_get_optimization_candidate_config_request(
-            job_id=job_id,
-            candidate_id=candidate_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.CandidateDeployConfig, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_optimization_candidate_results(
-        self, job_id: str, candidate_id: str, **kwargs: Any
-    ) -> _models.CandidateResults:
-        """Get candidate evaluation results.
-
-        Get full per-task evaluation results for a candidate.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :param candidate_id: The candidate id. Required.
-        :type candidate_id: str
-        :return: CandidateResults. The CandidateResults is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.CandidateResults
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.CandidateResults] = kwargs.pop("cls", None)
-
-        _request = build_beta_agents_get_optimization_candidate_results_request(
-            job_id=job_id,
-            candidate_id=candidate_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.CandidateResults, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_candidate_file(
-        self, job_id: str, candidate_id: str, *, path: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Get a candidate file.
-
-        Stream a specific file from the candidate's blob directory.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :param candidate_id: The candidate id. Required.
-        :type candidate_id: str
-        :keyword path: Relative path of the file to download (e.g. 'files/examples.jsonl'). Required.
-        :paramtype path: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_beta_agents_get_candidate_file_request(
-            job_id=job_id,
-            candidate_id=candidate_id,
-            path=path,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def promote_candidate(
-        self,
-        job_id: str,
-        candidate_id: str,
-        candidate_request: _models.PromoteCandidateRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PromoteCandidateResponse:
-        """Promote a candidate.
-
-        Promotes a candidate, recording the deployment timestamp and target agent version.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :param candidate_id: The candidate id to promote. Required.
-        :type candidate_id: str
-        :param candidate_request: Promotion details. Required.
-        :type candidate_request: ~azure.ai.projects.models.PromoteCandidateRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PromoteCandidateResponse. The PromoteCandidateResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.PromoteCandidateResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def promote_candidate(
-        self,
-        job_id: str,
-        candidate_id: str,
-        candidate_request: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PromoteCandidateResponse:
-        """Promote a candidate.
-
-        Promotes a candidate, recording the deployment timestamp and target agent version.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :param candidate_id: The candidate id to promote. Required.
-        :type candidate_id: str
-        :param candidate_request: Promotion details. Required.
-        :type candidate_request: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PromoteCandidateResponse. The PromoteCandidateResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.PromoteCandidateResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def promote_candidate(
-        self,
-        job_id: str,
-        candidate_id: str,
-        candidate_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PromoteCandidateResponse:
-        """Promote a candidate.
-
-        Promotes a candidate, recording the deployment timestamp and target agent version.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :param candidate_id: The candidate id to promote. Required.
-        :type candidate_id: str
-        :param candidate_request: Promotion details. Required.
-        :type candidate_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PromoteCandidateResponse. The PromoteCandidateResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.PromoteCandidateResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def promote_candidate(
-        self,
-        job_id: str,
-        candidate_id: str,
-        candidate_request: Union[_models.PromoteCandidateRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PromoteCandidateResponse:
-        """Promote a candidate.
-
-        Promotes a candidate, recording the deployment timestamp and target agent version.
-
-        :param job_id: The optimization job id. Required.
-        :type job_id: str
-        :param candidate_id: The candidate id to promote. Required.
-        :type candidate_id: str
-        :param candidate_request: Promotion details. Is one of the following types:
-         PromoteCandidateRequest, JSON, IO[bytes] Required.
-        :type candidate_request: ~azure.ai.projects.models.PromoteCandidateRequest or JSON or IO[bytes]
-        :return: PromoteCandidateResponse. The PromoteCandidateResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.PromoteCandidateResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PromoteCandidateResponse] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(candidate_request, (IOBase, bytes)):
-            _content = candidate_request
-        else:
-            _content = json.dumps(candidate_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agents_promote_candidate_request(
-            job_id=job_id,
-            candidate_id=candidate_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PromoteCandidateResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
 
 class BetaEvaluationTaxonomiesOperations:
     """
@@ -5472,7 +5048,9 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace_async
     async def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
-        """Get an evaluation run by name.
+        """Get an evaluation taxonomy.
+
+        Retrieves the specified evaluation taxonomy.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -5536,6 +5114,9 @@ class BetaEvaluationTaxonomiesOperations:
         self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluationTaxonomy"]:
         """List evaluation taxonomies.
+
+        Returns the evaluation taxonomies available in the project, optionally filtered by input name
+        or input type.
 
         :keyword input_name: Filter by the evaluation input name. Default value is None.
         :paramtype input_name: str
@@ -5629,7 +5210,9 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace_async
     async def delete(self, name: str, **kwargs: Any) -> None:
-        """Delete an evaluation taxonomy by name.
+        """Delete an evaluation taxonomy.
+
+        Removes the specified evaluation taxonomy from the project.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -5681,6 +5264,8 @@ class BetaEvaluationTaxonomiesOperations:
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
+        Creates or replaces the specified evaluation taxonomy with the provided definition.
+
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
         :param taxonomy: The evaluation taxonomy. Required.
@@ -5698,6 +5283,8 @@ class BetaEvaluationTaxonomiesOperations:
         self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
+
+        Creates or replaces the specified evaluation taxonomy with the provided definition.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
@@ -5717,6 +5304,8 @@ class BetaEvaluationTaxonomiesOperations:
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
+        Creates or replaces the specified evaluation taxonomy with the provided definition.
+
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
         :param taxonomy: The evaluation taxonomy. Required.
@@ -5734,6 +5323,8 @@ class BetaEvaluationTaxonomiesOperations:
         self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
+
+        Creates or replaces the specified evaluation taxonomy with the provided definition.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
@@ -5811,6 +5402,8 @@ class BetaEvaluationTaxonomiesOperations:
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
+        Update an evaluation taxonomy.
+
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
         :param taxonomy: The evaluation taxonomy. Required.
@@ -5828,6 +5421,8 @@ class BetaEvaluationTaxonomiesOperations:
         self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
+
+        Update an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
@@ -5847,6 +5442,8 @@ class BetaEvaluationTaxonomiesOperations:
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
+        Update an evaluation taxonomy.
+
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
         :param taxonomy: The evaluation taxonomy. Required.
@@ -5864,6 +5461,8 @@ class BetaEvaluationTaxonomiesOperations:
         self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
+
+        Update an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
@@ -5962,7 +5561,9 @@ class BetaEvaluatorsOperations:
         limit: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluatorVersion"]:
-        """List all versions of the given evaluator.
+        """List evaluator versions.
+
+        Returns the available versions for the specified evaluator.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6068,7 +5669,9 @@ class BetaEvaluatorsOperations:
         limit: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluatorVersion"]:
-        """List the latest version of each evaluator.
+        """List latest evaluator versions.
+
+        Lists the latest version of each evaluator.
 
         :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
          of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
@@ -6165,8 +5768,9 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace_async
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
-        """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
-        the EvaluatorVersion does not exist.
+        """Get an evaluator version.
+
+        Retrieves the specified evaluator version, returning 404 if it does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6230,8 +5834,9 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace_async
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the EvaluatorVersion. The service returns 204 No Content if the
-        EvaluatorVersion was deleted successfully or if the EvaluatorVersion does not exist.
+        """Delete an evaluator version.
+
+        Removes the specified evaluator version. Returns 204 whether the version existed or not.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6289,7 +5894,9 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
-        """Create a new EvaluatorVersion with auto incremented version id.
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6307,7 +5914,9 @@ class BetaEvaluatorsOperations:
     async def create_version(
         self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
-        """Create a new EvaluatorVersion with auto incremented version id.
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6325,7 +5934,9 @@ class BetaEvaluatorsOperations:
     async def create_version(
         self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
-        """Create a new EvaluatorVersion with auto incremented version id.
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6343,7 +5954,9 @@ class BetaEvaluatorsOperations:
     async def create_version(
         self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluatorVersion:
-        """Create a new EvaluatorVersion with auto incremented version id.
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6425,7 +6038,9 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
-        """Update an existing EvaluatorVersion with the given version id.
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6445,7 +6060,9 @@ class BetaEvaluatorsOperations:
     async def update_version(
         self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
-        """Update an existing EvaluatorVersion with the given version id.
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6471,7 +6088,9 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
-        """Update an existing EvaluatorVersion with the given version id.
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6495,7 +6114,9 @@ class BetaEvaluatorsOperations:
         evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
-        """Update an existing EvaluatorVersion with the given version id.
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6580,7 +6201,10 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Start a new or get an existing pending upload of an evaluator for a specific version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified evaluator
+        version.
 
         :param name: Required.
         :type name: str
@@ -6606,7 +6230,10 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Start a new or get an existing pending upload of an evaluator for a specific version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified evaluator
+        version.
 
         :param name: Required.
         :type name: str
@@ -6632,7 +6259,10 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Start a new or get an existing pending upload of an evaluator for a specific version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified evaluator
+        version.
 
         :param name: Required.
         :type name: str
@@ -6656,7 +6286,10 @@ class BetaEvaluatorsOperations:
         pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Start a new or get an existing pending upload of an evaluator for a specific version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified evaluator
+        version.
 
         :param name: Required.
         :type name: str
@@ -6746,7 +6379,10 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatasetCredential:
-        """Get the SAS credential to access the storage account associated with an Evaluator version.
+        """Get evaluator credentials.
+
+        Retrieves SAS credentials for accessing the storage account associated with the specified
+        evaluator version.
 
         :param name: Required.
         :type name: str
@@ -6772,7 +6408,10 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatasetCredential:
-        """Get the SAS credential to access the storage account associated with an Evaluator version.
+        """Get evaluator credentials.
+
+        Retrieves SAS credentials for accessing the storage account associated with the specified
+        evaluator version.
 
         :param name: Required.
         :type name: str
@@ -6798,7 +6437,10 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatasetCredential:
-        """Get the SAS credential to access the storage account associated with an Evaluator version.
+        """Get evaluator credentials.
+
+        Retrieves SAS credentials for accessing the storage account associated with the specified
+        evaluator version.
 
         :param name: Required.
         :type name: str
@@ -6822,7 +6464,10 @@ class BetaEvaluatorsOperations:
         credential_request: Union[_models.EvaluatorCredentialRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatasetCredential:
-        """Get the SAS credential to access the storage account associated with an Evaluator version.
+        """Get evaluator credentials.
+
+        Retrieves SAS credentials for accessing the storage account associated with the specified
+        evaluator version.
 
         :param name: Required.
         :type name: str
@@ -6911,7 +6556,7 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorGenerationJob:
-        """Creates an evaluator generation job.
+        """Create an evaluator generation job.
 
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
@@ -6933,7 +6578,7 @@ class BetaEvaluatorsOperations:
     async def create_generation_job(
         self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorGenerationJob:
-        """Creates an evaluator generation job.
+        """Create an evaluator generation job.
 
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
@@ -6960,7 +6605,7 @@ class BetaEvaluatorsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorGenerationJob:
-        """Creates an evaluator generation job.
+        """Create an evaluator generation job.
 
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
@@ -6986,7 +6631,7 @@ class BetaEvaluatorsOperations:
         operation_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.EvaluatorGenerationJob:
-        """Creates an evaluator generation job.
+        """Create an evaluator generation job.
 
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
@@ -7072,7 +6717,7 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace_async
     async def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
-        """Get info about an evaluator generation job.
+        """Get an evaluator generation job.
 
         Gets the details of an evaluator generation job by its ID.
 
@@ -7149,9 +6794,11 @@ class BetaEvaluatorsOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluatorGenerationJob"]:
-        """Returns a list of evaluator generation jobs.
+        """List evaluator generation jobs.
 
-        Returns a list of evaluator generation jobs.
+        Returns a list of evaluator generation jobs. The List API has up to a few seconds of
+        propagation delay, so a recently created job may not appear immediately; use the Get evaluator
+        generation job API with the job ID to retrieve a specific job without delay.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -7235,7 +6882,7 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace_async
     async def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
-        """Cancels an evaluator generation job.
+        """Cancel an evaluator generation job.
 
         Cancels an evaluator generation job by its ID.
 
@@ -7302,7 +6949,9 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace_async
     async def delete_generation_job(self, job_id: str, **kwargs: Any) -> None:
-        """Deletes an evaluator generation job by its ID. Deletes the job record only; the generated
+        """Delete an evaluator generation job.
+
+        Deletes an evaluator generation job by its ID. Deletes the job record only; the generated
         evaluator (if any) is preserved.
 
         :param job_id: The ID of the job to delete. Required.
@@ -7375,7 +7024,9 @@ class BetaInsightsOperations:
     async def generate(
         self, insight: _models.Insight, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
-        """Generate Insights.
+        """Generate insights.
+
+        Generates an insights report from the provided evaluation configuration.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Required.
@@ -7392,7 +7043,9 @@ class BetaInsightsOperations:
     async def generate(
         self, insight: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
-        """Generate Insights.
+        """Generate insights.
+
+        Generates an insights report from the provided evaluation configuration.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Required.
@@ -7409,7 +7062,9 @@ class BetaInsightsOperations:
     async def generate(
         self, insight: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
-        """Generate Insights.
+        """Generate insights.
+
+        Generates an insights report from the provided evaluation configuration.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Required.
@@ -7424,7 +7079,9 @@ class BetaInsightsOperations:
 
     @distributed_trace_async
     async def generate(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
-        """Generate Insights.
+        """Generate insights.
+
+        Generates an insights report from the provided evaluation configuration.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Is one of the following types: Insight, JSON, IO[bytes] Required.
@@ -7501,7 +7158,9 @@ class BetaInsightsOperations:
     async def get(
         self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
     ) -> _models.Insight:
-        """Get a specific insight by Id.
+        """Get an insight.
+
+        Retrieves the specified insight report and its results.
 
         :param insight_id: The unique identifier for the insights report. Required.
         :type insight_id: str
@@ -7579,7 +7238,9 @@ class BetaInsightsOperations:
         include_coordinates: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.Insight"]:
-        """List all insights in reverse chronological order (newest first).
+        """List insights.
+
+        Returns insights in reverse chronological order, with the most recent entries first.
 
         :keyword type: Filter by the type of analysis. Known values are: "EvaluationRunClusterInsight",
          "AgentClusterInsight", and "EvaluationComparison". Default value is None.
@@ -7717,6 +7378,8 @@ class BetaMemoryStoresOperations:
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
+        Creates a memory store resource with the provided configuration.
+
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
@@ -7740,6 +7403,8 @@ class BetaMemoryStoresOperations:
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
+        Creates a memory store resource with the provided configuration.
+
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7755,6 +7420,8 @@ class BetaMemoryStoresOperations:
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
+
+        Creates a memory store resource with the provided configuration.
 
         :param body: Required.
         :type body: IO[bytes]
@@ -7778,6 +7445,8 @@ class BetaMemoryStoresOperations:
         **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
+
+        Creates a memory store resource with the provided configuration.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -7877,6 +7546,8 @@ class BetaMemoryStoresOperations:
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
+        Updates the specified memory store with the supplied configuration changes.
+
         :param name: The name of the memory store to update. Required.
         :type name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7898,6 +7569,8 @@ class BetaMemoryStoresOperations:
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
+        Updates the specified memory store with the supplied configuration changes.
+
         :param name: The name of the memory store to update. Required.
         :type name: str
         :param body: Required.
@@ -7915,6 +7588,8 @@ class BetaMemoryStoresOperations:
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
+
+        Updates the specified memory store with the supplied configuration changes.
 
         :param name: The name of the memory store to update. Required.
         :type name: str
@@ -7939,6 +7614,8 @@ class BetaMemoryStoresOperations:
         **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
+
+        Updates the specified memory store with the supplied configuration changes.
 
         :param name: The name of the memory store to update. Required.
         :type name: str
@@ -8023,7 +7700,9 @@ class BetaMemoryStoresOperations:
 
     @distributed_trace_async
     async def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
-        """Retrieve a memory store.
+        """Get a memory store.
+
+        Retrieves the specified memory store and its current configuration.
 
         :param name: The name of the memory store to retrieve. Required.
         :type name: str
@@ -8095,7 +7774,9 @@ class BetaMemoryStoresOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.MemoryStoreDetails"]:
-        """List all memory stores.
+        """List memory stores.
+
+        Returns the memory stores available to the caller.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -8179,6 +7860,8 @@ class BetaMemoryStoresOperations:
     @distributed_trace_async
     async def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
         """Delete a memory store.
+
+        Deletes the specified memory store.
 
         :param name: The name of the memory store to delete. Required.
         :type name: str
@@ -8274,7 +7957,9 @@ class BetaMemoryStoresOperations:
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
     ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
+        """Search memories.
+
+        Searches the specified memory store for memories relevant to the provided conversation context.
 
         :param name: The name of the memory store to search. Required.
         :type name: str
@@ -8482,7 +8167,10 @@ class BetaMemoryStoresOperations:
         update_delay: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
+        """Update memories.
+
+        Starts an update that writes conversation memories into the specified memory store. The
+        operation returns a long-running status location for polling the update result.
 
         :param name: The name of the memory store to update. Required.
         :type name: str
@@ -8573,7 +8261,9 @@ class BetaMemoryStoresOperations:
     async def delete_scope(
         self, name: str, *, scope: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
+        """Delete memories by scope.
+
+        Deletes all memories in the specified memory store that are associated with the provided scope.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8593,7 +8283,9 @@ class BetaMemoryStoresOperations:
     async def delete_scope(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
+        """Delete memories by scope.
+
+        Deletes all memories in the specified memory store that are associated with the provided scope.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8612,7 +8304,9 @@ class BetaMemoryStoresOperations:
     async def delete_scope(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
+        """Delete memories by scope.
+
+        Deletes all memories in the specified memory store that are associated with the provided scope.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8631,7 +8325,9 @@ class BetaMemoryStoresOperations:
     async def delete_scope(
         self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
+        """Delete memories by scope.
+
+        Deletes all memories in the specified memory store that are associated with the provided scope.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8726,7 +8422,9 @@ class BetaMemoryStoresOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryItem:
-        """Create a memory item in a memory store.
+        """Create a memory item.
+
+        Creates a memory item in the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8750,7 +8448,9 @@ class BetaMemoryStoresOperations:
     async def create_memory(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryItem:
-        """Create a memory item in a memory store.
+        """Create a memory item.
+
+        Creates a memory item in the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8768,7 +8468,9 @@ class BetaMemoryStoresOperations:
     async def create_memory(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryItem:
-        """Create a memory item in a memory store.
+        """Create a memory item.
+
+        Creates a memory item in the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8793,7 +8495,9 @@ class BetaMemoryStoresOperations:
         kind: Union[str, _models.MemoryItemKind] = _Unset,
         **kwargs: Any
     ) -> _models.MemoryItem:
-        """Create a memory item in a memory store.
+        """Create a memory item.
+
+        Creates a memory item in the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8889,7 +8593,9 @@ class BetaMemoryStoresOperations:
     async def update_memory(
         self, name: str, memory_id: str, *, content: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryItem:
-        """Update a memory item in a memory store.
+        """Update a memory item.
+
+        Updates the specified memory item in the memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8909,7 +8615,9 @@ class BetaMemoryStoresOperations:
     async def update_memory(
         self, name: str, memory_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryItem:
-        """Update a memory item in a memory store.
+        """Update a memory item.
+
+        Updates the specified memory item in the memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8929,7 +8637,9 @@ class BetaMemoryStoresOperations:
     async def update_memory(
         self, name: str, memory_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryItem:
-        """Update a memory item in a memory store.
+        """Update a memory item.
+
+        Updates the specified memory item in the memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -8949,7 +8659,9 @@ class BetaMemoryStoresOperations:
     async def update_memory(
         self, name: str, memory_id: str, body: Union[JSON, IO[bytes]] = _Unset, *, content: str = _Unset, **kwargs: Any
     ) -> _models.MemoryItem:
-        """Update a memory item in a memory store.
+        """Update a memory item.
+
+        Updates the specified memory item in the memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -9036,7 +8748,9 @@ class BetaMemoryStoresOperations:
 
     @distributed_trace_async
     async def get_memory(self, name: str, memory_id: str, **kwargs: Any) -> _models.MemoryItem:
-        """Retrieve a memory item from a memory store.
+        """Get a memory item.
+
+        Retrieves the specified memory item from the memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -9115,7 +8829,9 @@ class BetaMemoryStoresOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncItemPaged["_models.MemoryItem"]:
-        """List all memory items in a memory store.
+        """List memory items.
+
+        Returns memory items from the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -9160,7 +8876,9 @@ class BetaMemoryStoresOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncItemPaged["_models.MemoryItem"]:
-        """List all memory items in a memory store.
+        """List memory items.
+
+        Returns memory items from the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -9204,7 +8922,9 @@ class BetaMemoryStoresOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncItemPaged["_models.MemoryItem"]:
-        """List all memory items in a memory store.
+        """List memory items.
+
+        Returns memory items from the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -9248,7 +8968,9 @@ class BetaMemoryStoresOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.MemoryItem"]:
-        """List all memory items in a memory store.
+        """List memory items.
+
+        Returns memory items from the specified memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -9365,7 +9087,9 @@ class BetaMemoryStoresOperations:
 
     @distributed_trace_async
     async def delete_memory(self, name: str, memory_id: str, **kwargs: Any) -> _models.DeleteMemoryResult:
-        """Delete a memory item from a memory store.
+        """Delete a memory item.
+
+        Deletes the specified memory item from the memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
@@ -9451,7 +9175,9 @@ class BetaModelsOperations:
 
     @distributed_trace
     def list_versions(self, name: str, **kwargs: Any) -> AsyncItemPaged["_models.ModelVersion"]:
-        """List all versions of the given ModelVersion.
+        """List versions.
+
+        List all versions of the given ModelVersion.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9542,7 +9268,9 @@ class BetaModelsOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ModelVersion"]:
-        """List the latest version of each ModelVersion.
+        """List latest versions.
+
+        List the latest version of each ModelVersion.
 
         :return: An iterator like instance of ModelVersion
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ModelVersion]
@@ -9630,8 +9358,9 @@ class BetaModelsOperations:
 
     @distributed_trace_async
     async def get(self, name: str, version: str, **kwargs: Any) -> _models.ModelVersion:
-        """Get the specific version of the ModelVersion. The service returns 404 Not Found error if the
-        ModelVersion does not exist.
+        """Get a model version.
+
+        Retrieves the specified model version, returning 404 if it does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9695,7 +9424,9 @@ class BetaModelsOperations:
 
     @distributed_trace_async
     async def delete(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the ModelVersion. The service returns 200 OK if the ModelVersion
+        """Delete a model version.
+
+        Delete the specific version of the ModelVersion. The service returns 200 OK if the ModelVersion
         was deleted successfully or if the ModelVersion does not exist.
 
         :param name: The name of the resource. Required.
@@ -9755,7 +9486,9 @@ class BetaModelsOperations:
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.ModelVersion:
-        """Update an existing ModelVersion with the given version id.
+        """Update a model version.
+
+        Update an existing ModelVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9782,7 +9515,9 @@ class BetaModelsOperations:
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.ModelVersion:
-        """Update an existing ModelVersion with the given version id.
+        """Update a model version.
+
+        Update an existing ModelVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9809,7 +9544,9 @@ class BetaModelsOperations:
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.ModelVersion:
-        """Update an existing ModelVersion with the given version id.
+        """Update a model version.
+
+        Update an existing ModelVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9834,7 +9571,9 @@ class BetaModelsOperations:
         model_version_update: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.ModelVersion:
-        """Update an existing ModelVersion with the given version id.
+        """Update a model version.
+
+        Update an existing ModelVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9921,8 +9660,10 @@ class BetaModelsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CreateAsyncResponse:
-        """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
-        a Location header for polling.
+        """Create a model version async.
+
+        Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
+        a location header for polling the operation status.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -9942,8 +9683,10 @@ class BetaModelsOperations:
     async def pending_create_version(
         self, name: str, version: str, model_version: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateAsyncResponse:
-        """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
-        a Location header for polling.
+        """Create a model version async.
+
+        Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
+        a location header for polling the operation status.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -9969,8 +9712,10 @@ class BetaModelsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CreateAsyncResponse:
-        """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
-        a Location header for polling.
+        """Create a model version async.
+
+        Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
+        a location header for polling the operation status.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -9990,8 +9735,10 @@ class BetaModelsOperations:
     async def pending_create_version(
         self, name: str, version: str, model_version: Union[_models.ModelVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CreateAsyncResponse:
-        """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
-        a Location header for polling.
+        """Create a model version async.
+
+        Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
+        a location header for polling the operation status.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10079,7 +9826,9 @@ class BetaModelsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
-        """Start or retrieve a pending upload for a model version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified model version.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10106,7 +9855,9 @@ class BetaModelsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
-        """Start or retrieve a pending upload for a model version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified model version.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10133,7 +9884,9 @@ class BetaModelsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
-        """Start or retrieve a pending upload for a model version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified model version.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10158,7 +9911,9 @@ class BetaModelsOperations:
         pending_upload_request: Union[_models.ModelPendingUploadRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
-        """Start or retrieve a pending upload for a model version.
+        """Start a pending upload.
+
+        Initiates a new pending upload or retrieves an existing one for the specified model version.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10245,7 +10000,9 @@ class BetaModelsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatasetCredential:
-        """Get credentials for a model version asset.
+        """Get model asset credentials.
+
+        Retrieves temporary credentials for accessing the storage backing the specified model version.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10271,7 +10028,9 @@ class BetaModelsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatasetCredential:
-        """Get credentials for a model version asset.
+        """Get model asset credentials.
+
+        Retrieves temporary credentials for accessing the storage backing the specified model version.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10297,7 +10056,9 @@ class BetaModelsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatasetCredential:
-        """Get credentials for a model version asset.
+        """Get model asset credentials.
+
+        Retrieves temporary credentials for accessing the storage backing the specified model version.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10321,7 +10082,9 @@ class BetaModelsOperations:
         credential_request: Union[_models.ModelCredentialRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatasetCredential:
-        """Get credentials for a model version asset.
+        """Get model asset credentials.
+
+        Retrieves temporary credentials for accessing the storage backing the specified model version.
 
         :param name: Name of the model. Required.
         :type name: str
@@ -10416,7 +10179,9 @@ class BetaRedTeamsOperations:
 
     @distributed_trace_async
     async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
-        """Get a redteam by name.
+        """Get a redteam.
+
+        Retrieves the specified redteam and its configuration.
 
         :param name: Identifier of the red team run. Required.
         :type name: str
@@ -10477,7 +10242,9 @@ class BetaRedTeamsOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.RedTeam"]:
-        """List a redteam by name.
+        """List redteams.
+
+        Returns the redteams available in the current project.
 
         :return: An iterator like instance of RedTeam
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RedTeam]
@@ -10567,7 +10334,9 @@ class BetaRedTeamsOperations:
     async def create(
         self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RedTeam:
-        """Creates a redteam run.
+        """Create a redteam run.
+
+        Submits a new redteam run for execution with the provided configuration.
 
         :param red_team: Redteam to be run. Required.
         :type red_team: ~azure.ai.projects.models.RedTeam
@@ -10581,7 +10350,9 @@ class BetaRedTeamsOperations:
 
     @overload
     async def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
-        """Creates a redteam run.
+        """Create a redteam run.
+
+        Submits a new redteam run for execution with the provided configuration.
 
         :param red_team: Redteam to be run. Required.
         :type red_team: JSON
@@ -10597,7 +10368,9 @@ class BetaRedTeamsOperations:
     async def create(
         self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RedTeam:
-        """Creates a redteam run.
+        """Create a redteam run.
+
+        Submits a new redteam run for execution with the provided configuration.
 
         :param red_team: Redteam to be run. Required.
         :type red_team: IO[bytes]
@@ -10611,7 +10384,9 @@ class BetaRedTeamsOperations:
 
     @distributed_trace_async
     async def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
-        """Creates a redteam run.
+        """Create a redteam run.
+
+        Submits a new redteam run for execution with the provided configuration.
 
         :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
          Required.
@@ -10716,6 +10491,8 @@ class BetaRoutinesOperations:
     ) -> _models.Routine:
         """Create or update a routine.
 
+        Creates a new routine or replaces an existing routine with the supplied definition.
+
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -10741,6 +10518,8 @@ class BetaRoutinesOperations:
     ) -> _models.Routine:
         """Create or update a routine.
 
+        Creates a new routine or replaces an existing routine with the supplied definition.
+
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :param body: Required.
@@ -10758,6 +10537,8 @@ class BetaRoutinesOperations:
         self, routine_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Routine:
         """Create or update a routine.
+
+        Creates a new routine or replaces an existing routine with the supplied definition.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
@@ -10784,6 +10565,8 @@ class BetaRoutinesOperations:
         **kwargs: Any
     ) -> _models.Routine:
         """Create or update a routine.
+
+        Creates a new routine or replaces an existing routine with the supplied definition.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
@@ -10872,7 +10655,9 @@ class BetaRoutinesOperations:
 
     @distributed_trace_async
     async def get(self, routine_name: str, **kwargs: Any) -> _models.Routine:
-        """Retrieve a routine.
+        """Get a routine.
+
+        Retrieves the specified routine and its current configuration.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
@@ -10939,6 +10724,8 @@ class BetaRoutinesOperations:
     async def enable(self, routine_name: str, **kwargs: Any) -> _models.Routine:
         """Enable a routine.
 
+        Enables the specified routine so it can be dispatched.
+
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :return: Routine. The Routine is compatible with MutableMapping
@@ -11003,6 +10790,8 @@ class BetaRoutinesOperations:
     @distributed_trace_async
     async def disable(self, routine_name: str, **kwargs: Any) -> _models.Routine:
         """Disable a routine.
+
+        Disables the specified routine so it no longer runs.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
@@ -11070,6 +10859,8 @@ class BetaRoutinesOperations:
         self, *, limit: Optional[int] = None, before: Optional[str] = None, order: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.Routine"]:
         """List routines.
+
+        Returns the routines available in the current project.
 
         :keyword limit: The maximum number of routines to return. Default value is None.
         :paramtype limit: int
@@ -11148,6 +10939,8 @@ class BetaRoutinesOperations:
     async def delete(self, routine_name: str, **kwargs: Any) -> None:
         """Delete a routine.
 
+        Deletes the specified routine.
+
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :return: None
@@ -11208,6 +11001,8 @@ class BetaRoutinesOperations:
         **kwargs: Any
     ) -> AsyncItemPaged["_models.RoutineRun"]:
         """List prior runs for a routine.
+
+        Returns prior runs recorded for the specified routine.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
@@ -11300,6 +11095,8 @@ class BetaRoutinesOperations:
     ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
+        Queues an asynchronous dispatch for the specified routine.
+
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -11319,6 +11116,8 @@ class BetaRoutinesOperations:
     ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
+        Queues an asynchronous dispatch for the specified routine.
+
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :param body: Required.
@@ -11336,6 +11135,8 @@ class BetaRoutinesOperations:
         self, routine_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
+
+        Queues an asynchronous dispatch for the specified routine.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
@@ -11359,6 +11160,8 @@ class BetaRoutinesOperations:
         **kwargs: Any
     ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
+
+        Queues an asynchronous dispatch for the specified routine.
 
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
@@ -11461,6 +11264,8 @@ class BetaSchedulesOperations:
     async def delete(self, schedule_id: str, **kwargs: Any) -> None:
         """Delete a schedule.
 
+        Deletes the specified schedule resource.
+
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
         :return: None
@@ -11507,7 +11312,9 @@ class BetaSchedulesOperations:
 
     @distributed_trace_async
     async def get(self, schedule_id: str, **kwargs: Any) -> _models.Schedule:
-        """Get a schedule by id.
+        """Get a schedule.
+
+        Retrieves the specified schedule resource.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
@@ -11574,7 +11381,9 @@ class BetaSchedulesOperations:
         enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.Schedule"]:
-        """List all schedules.
+        """List schedules.
+
+        Returns schedules that match the supplied type and enabled filters.
 
         :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
          Default value is None.
@@ -11671,7 +11480,9 @@ class BetaSchedulesOperations:
     async def create_or_update(
         self, schedule_id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
-        """Create or update operation template.
+        """Create or update a schedule.
+
+        Creates a new schedule or updates an existing schedule with the supplied definition.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
@@ -11689,7 +11500,9 @@ class BetaSchedulesOperations:
     async def create_or_update(
         self, schedule_id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
-        """Create or update operation template.
+        """Create or update a schedule.
+
+        Creates a new schedule or updates an existing schedule with the supplied definition.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
@@ -11707,7 +11520,9 @@ class BetaSchedulesOperations:
     async def create_or_update(
         self, schedule_id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
-        """Create or update operation template.
+        """Create or update a schedule.
+
+        Creates a new schedule or updates an existing schedule with the supplied definition.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
@@ -11725,7 +11540,9 @@ class BetaSchedulesOperations:
     async def create_or_update(
         self, schedule_id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
-        """Create or update operation template.
+        """Create or update a schedule.
+
+        Creates a new schedule or updates an existing schedule with the supplied definition.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
@@ -11799,7 +11616,9 @@ class BetaSchedulesOperations:
 
     @distributed_trace_async
     async def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
-        """Get a schedule run by id.
+        """Get a schedule run.
+
+        Retrieves the specified run for a schedule.
 
         :param schedule_id: The unique identifier of the schedule. Required.
         :type schedule_id: str
@@ -11874,7 +11693,9 @@ class BetaSchedulesOperations:
         enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.ScheduleRun"]:
-        """List all schedule runs.
+        """List schedule runs.
+
+        Returns schedule runs that match the supplied filters.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
@@ -12001,7 +11822,9 @@ class BetaToolboxesOperations:
         policies: Optional[_models.ToolboxPolicies] = None,
         **kwargs: Any
     ) -> _models.ToolboxVersionObject:
-        """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
+        """Create a new version of a toolbox.
+
+        Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
 
         :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
          Required.
@@ -12031,7 +11854,9 @@ class BetaToolboxesOperations:
     async def create_version(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxVersionObject:
-        """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
+        """Create a new version of a toolbox.
+
+        Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
 
         :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
          Required.
@@ -12050,7 +11875,9 @@ class BetaToolboxesOperations:
     async def create_version(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxVersionObject:
-        """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
+        """Create a new version of a toolbox.
+
+        Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
 
         :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
          Required.
@@ -12078,7 +11905,9 @@ class BetaToolboxesOperations:
         policies: Optional[_models.ToolboxPolicies] = None,
         **kwargs: Any
     ) -> _models.ToolboxVersionObject:
-        """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
+        """Create a new version of a toolbox.
+
+        Creates a new toolbox version, provisioning the toolbox itself if it does not already exist.
 
         :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
          Required.
@@ -12182,6 +12011,8 @@ class BetaToolboxesOperations:
     async def get(self, name: str, **kwargs: Any) -> _models.ToolboxObject:
         """Retrieve a toolbox.
 
+        Retrieves the specified toolbox and its current configuration.
+
         :param name: The name of the toolbox to retrieve. Required.
         :type name: str
         :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
@@ -12252,7 +12083,9 @@ class BetaToolboxesOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.ToolboxObject"]:
-        """List all toolboxes.
+        """List toolboxes.
+
+        Returns the toolboxes available in the current project.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -12343,7 +12176,9 @@ class BetaToolboxesOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.ToolboxVersionObject"]:
-        """List all versions of a toolbox.
+        """List toolbox versions.
+
+        Returns the available versions for the specified toolbox.
 
         :param name: The name of the toolbox to list versions for. Required.
         :type name: str
@@ -12431,6 +12266,8 @@ class BetaToolboxesOperations:
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
         """Retrieve a specific version of a toolbox.
 
+        Retrieves the specified version of a toolbox by name and version identifier.
+
         :param name: The name of the toolbox. Required.
         :type name: str
         :param version: The version identifier to retrieve. Required.
@@ -12501,6 +12338,8 @@ class BetaToolboxesOperations:
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
+        Updates the toolbox's default version pointer to the specified version.
+
         :param name: The name of the toolbox to update. Required.
         :type name: str
         :keyword default_version: The version identifier that the toolbox should point to. When set,
@@ -12520,6 +12359,8 @@ class BetaToolboxesOperations:
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
+        Updates the toolbox's default version pointer to the specified version.
+
         :param name: The name of the toolbox to update. Required.
         :type name: str
         :param body: Required.
@@ -12538,6 +12379,8 @@ class BetaToolboxesOperations:
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
+        Updates the toolbox's default version pointer to the specified version.
+
         :param name: The name of the toolbox to update. Required.
         :type name: str
         :param body: Required.
@@ -12555,6 +12398,8 @@ class BetaToolboxesOperations:
         self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
+
+        Updates the toolbox's default version pointer to the specified version.
 
         :param name: The name of the toolbox to update. Required.
         :type name: str
@@ -12639,7 +12484,9 @@ class BetaToolboxesOperations:
 
     @distributed_trace_async
     async def delete(self, name: str, **kwargs: Any) -> None:
-        """Delete a toolbox and all its versions.
+        """Delete a toolbox.
+
+        Removes the specified toolbox along with all of its versions.
 
         :param name: The name of the toolbox to delete. Required.
         :type name: str
@@ -12692,6 +12539,8 @@ class BetaToolboxesOperations:
     @distributed_trace_async
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
         """Delete a specific version of a toolbox.
+
+        Removes the specified version of a toolbox.
 
         :param name: The name of the toolbox. Required.
         :type name: str
@@ -12764,7 +12613,9 @@ class BetaSkillsOperations:
 
     @distributed_trace_async
     async def get(self, name: str, **kwargs: Any) -> _models.SkillDetails:
-        """Retrieves a skill.
+        """Retrieve a skill.
+
+        Retrieves the specified skill and its current configuration.
 
         :param name: The unique name of the skill. Required.
         :type name: str
@@ -12836,7 +12687,9 @@ class BetaSkillsOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.SkillDetails"]:
-        """Returns the list of all skills.
+        """List skills.
+
+        Returns the skills available in the current project.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -12923,6 +12776,8 @@ class BetaSkillsOperations:
     ) -> _models.SkillDetails:
         """Update a skill.
 
+        Modifies the specified skill's configuration.
+
         :param name: The name of the skill to update. Required.
         :type name: str
         :keyword default_version: The version identifier that the skill should point to. When set, the
@@ -12942,6 +12797,8 @@ class BetaSkillsOperations:
     ) -> _models.SkillDetails:
         """Update a skill.
 
+        Modifies the specified skill's configuration.
+
         :param name: The name of the skill to update. Required.
         :type name: str
         :param body: Required.
@@ -12960,6 +12817,8 @@ class BetaSkillsOperations:
     ) -> _models.SkillDetails:
         """Update a skill.
 
+        Modifies the specified skill's configuration.
+
         :param name: The name of the skill to update. Required.
         :type name: str
         :param body: Required.
@@ -12977,6 +12836,8 @@ class BetaSkillsOperations:
         self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
     ) -> _models.SkillDetails:
         """Update a skill.
+
+        Modifies the specified skill's configuration.
 
         :param name: The name of the skill to update. Required.
         :type name: str
@@ -13061,7 +12922,9 @@ class BetaSkillsOperations:
 
     @distributed_trace_async
     async def delete(self, name: str, **kwargs: Any) -> _models.DeleteSkillResult:
-        """Deletes a skill.
+        """Delete a skill.
+
+        Removes the specified skill and its associated versions.
 
         :param name: The unique name of the skill. Required.
         :type name: str
@@ -13134,7 +12997,9 @@ class BetaSkillsOperations:
         default: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.SkillVersion:
-        """Creates a new version of a skill. If the skill does not exist, it will be created.
+        """Create a new version of a skill.
+
+        Creates a new version of a skill. If the skill does not exist, it will be created.
 
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
@@ -13155,7 +13020,9 @@ class BetaSkillsOperations:
     async def create(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SkillVersion:
-        """Creates a new version of a skill. If the skill does not exist, it will be created.
+        """Create a new version of a skill.
+
+        Creates a new version of a skill. If the skill does not exist, it will be created.
 
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
@@ -13173,7 +13040,9 @@ class BetaSkillsOperations:
     async def create(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SkillVersion:
-        """Creates a new version of a skill. If the skill does not exist, it will be created.
+        """Create a new version of a skill.
+
+        Creates a new version of a skill. If the skill does not exist, it will be created.
 
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
@@ -13197,7 +13066,9 @@ class BetaSkillsOperations:
         default: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.SkillVersion:
-        """Creates a new version of a skill. If the skill does not exist, it will be created.
+        """Create a new version of a skill.
+
+        Creates a new version of a skill. If the skill does not exist, it will be created.
 
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
@@ -13284,7 +13155,9 @@ class BetaSkillsOperations:
     async def create_from_files(
         self, name: str, content: _models.CreateSkillVersionFromFilesBody, **kwargs: Any
     ) -> _models.SkillVersion:
-        """Creates a new version of a skill from uploaded files via multipart form data.
+        """Create a skill version from uploaded files.
+
+        Creates a new version of a skill from uploaded files via multipart form data.
 
         :param name: The name of the skill. Required.
         :type name: str
@@ -13297,7 +13170,9 @@ class BetaSkillsOperations:
 
     @overload
     async def create_from_files(self, name: str, content: JSON, **kwargs: Any) -> _models.SkillVersion:
-        """Creates a new version of a skill from uploaded files via multipart form data.
+        """Create a skill version from uploaded files.
+
+        Creates a new version of a skill from uploaded files via multipart form data.
 
         :param name: The name of the skill. Required.
         :type name: str
@@ -13312,7 +13187,9 @@ class BetaSkillsOperations:
     async def create_from_files(
         self, name: str, content: Union[_models.CreateSkillVersionFromFilesBody, JSON], **kwargs: Any
     ) -> _models.SkillVersion:
-        """Creates a new version of a skill from uploaded files via multipart form data.
+        """Create a skill version from uploaded files.
+
+        Creates a new version of a skill from uploaded files via multipart form data.
 
         :param name: The name of the skill. Required.
         :type name: str
@@ -13393,7 +13270,9 @@ class BetaSkillsOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.SkillVersion"]:
-        """List all versions of a skill.
+        """List skill versions.
+
+        Returns the available versions for the specified skill.
 
         :param name: The name of the skill to list versions for. Required.
         :type name: str
@@ -13481,6 +13360,8 @@ class BetaSkillsOperations:
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.SkillVersion:
         """Retrieve a specific version of a skill.
 
+        Retrieves the specified version of a skill by name and version identifier.
+
         :param name: The name of the skill. Required.
         :type name: str
         :param version: The version identifier to retrieve. Required.
@@ -13549,6 +13430,8 @@ class BetaSkillsOperations:
     async def download(self, name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         """Download the zip content for the default version of a skill.
 
+        Downloads the zip content for the default version of a skill.
+
         :param name: The name of the skill. Required.
         :type name: str
         :return: AsyncIterator[bytes]
@@ -13613,6 +13496,8 @@ class BetaSkillsOperations:
     @distributed_trace_async
     async def download_version(self, name: str, version: str, **kwargs: Any) -> AsyncIterator[bytes]:
         """Download the zip content for a specific version of a skill.
+
+        Downloads the zip content for a specific version of a skill.
 
         :param name: The name of the skill. Required.
         :type name: str
@@ -13681,6 +13566,8 @@ class BetaSkillsOperations:
     @distributed_trace_async
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> _models.DeleteSkillVersionResult:
         """Delete a specific version of a skill.
+
+        Removes the specified version of a skill.
 
         :param name: The name of the skill. Required.
         :type name: str
@@ -13767,9 +13654,9 @@ class BetaDatasetsOperations:
 
     @distributed_trace_async
     async def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
-        """Get info about a data generation job.
+        """Get a data generation job.
 
-        Gets the details of a data generation job by its ID.
+        Retrieves the specified data generation job and its current status.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
@@ -13844,7 +13731,7 @@ class BetaDatasetsOperations:
         before: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.DataGenerationJob"]:
-        """Returns a list of data generation jobs.
+        """List data generation jobs.
 
         Returns a list of data generation jobs.
 
@@ -13936,9 +13823,9 @@ class BetaDatasetsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DataGenerationJob:
-        """Creates a data generation job.
+        """Create a data generation job.
 
-        Creates a data generation job.
+        Submits a new data generation job for asynchronous execution.
 
         :param job: The job to create. Required.
         :type job: ~azure.ai.projects.models.DataGenerationJob
@@ -13957,9 +13844,9 @@ class BetaDatasetsOperations:
     async def create_generation_job(
         self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DataGenerationJob:
-        """Creates a data generation job.
+        """Create a data generation job.
 
-        Creates a data generation job.
+        Submits a new data generation job for asynchronous execution.
 
         :param job: The job to create. Required.
         :type job: JSON
@@ -13983,9 +13870,9 @@ class BetaDatasetsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DataGenerationJob:
-        """Creates a data generation job.
+        """Create a data generation job.
 
-        Creates a data generation job.
+        Submits a new data generation job for asynchronous execution.
 
         :param job: The job to create. Required.
         :type job: IO[bytes]
@@ -14008,9 +13895,9 @@ class BetaDatasetsOperations:
         operation_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.DataGenerationJob:
-        """Creates a data generation job.
+        """Create a data generation job.
 
-        Creates a data generation job.
+        Submits a new data generation job for asynchronous execution.
 
         :param job: The job to create. Is one of the following types: DataGenerationJob, JSON,
          IO[bytes] Required.
@@ -14093,9 +13980,9 @@ class BetaDatasetsOperations:
 
     @distributed_trace_async
     async def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
-        """Cancels a data generation job.
+        """Cancel a data generation job.
 
-        Cancels a data generation job by its ID.
+        Cancels the specified data generation job if it is still in progress.
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
@@ -14160,9 +14047,9 @@ class BetaDatasetsOperations:
 
     @distributed_trace_async
     async def delete_generation_job(self, job_id: str, **kwargs: Any) -> None:
-        """Deletes a data generation job.
+        """Delete a data generation job.
 
-        Deletes a data generation job by its ID.
+        Removes the specified data generation job and its associated output.
 
         :param job_id: The ID of the job to delete. Required.
         :type job_id: str
