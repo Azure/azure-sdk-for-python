@@ -1172,6 +1172,16 @@ class AccessPolicy(_BackCompatMixin):
             expiry=serialize_iso(self.expiry),
             permission=permission,
         )
+    
+    @classmethod
+    def _from_generated(cls, generated: Optional[GenAccessPolicy]) -> Optional["AccessPolicy"]:
+        if generated is None:
+            return None
+        return cls(
+            permission=generated.permission,
+            expiry=generated.expiry if generated.expiry else None,
+            start=generated.start if generated.start else None,
+        )
 
 
 class BlobSasPermissions(object):

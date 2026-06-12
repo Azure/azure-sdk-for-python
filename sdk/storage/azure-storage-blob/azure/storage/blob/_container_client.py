@@ -694,9 +694,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             )
         except HttpResponseError as error:
             process_storage_error(error)
+        items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
+        for si in items or []:
+            if si.access_policy is not None:
+                si.access_policy = AccessPolicy._from_generated(si.access_policy)  # pylint: disable=protected-access
         return {
             "public_access": response.get("blob_public_access"),
-            "signed_identifiers": identifiers.items_property or [],
+            "signed_identifiers": items or [],
         }
 
     @distributed_trace
