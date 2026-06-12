@@ -37,7 +37,7 @@ from ._list_blobs_helper import (
     FilteredBlobPaged,
     IgnoreListBlobsDeserializer,
 )
-from ._models import BlobProperties, BlobType, ContainerProperties, FilteredBlob
+from ._models import AccessPolicy, BlobProperties, BlobType, ContainerProperties, FilteredBlob
 from ._serialize import get_access_conditions, get_api_version, get_container_cpk_scope_info, get_modify_conditions
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.request_handlers import add_metadata_headers
@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
     from azure.storage.blob import BlobServiceClient
-    from ._models import AccessPolicy, PremiumPageBlobTier, PublicAccess, StandardBlobTier
+    from ._models import PremiumPageBlobTier, PublicAccess, StandardBlobTier
 
 
 class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods

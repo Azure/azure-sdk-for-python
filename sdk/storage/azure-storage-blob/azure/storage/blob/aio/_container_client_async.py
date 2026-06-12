@@ -50,7 +50,7 @@ from .._encryption import StorageEncryptionMixin
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import SignedIdentifier, SignedIdentifiers
 from .._list_blobs_helper import IgnoreListBlobsDeserializer
-from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
+from .._models import AccessPolicy, ContainerProperties, BlobType, BlobProperties, FilteredBlob
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
@@ -62,7 +62,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from ._blob_service_client_async import BlobServiceClient
-    from .._models import AccessPolicy, StandardBlobTier, PremiumPageBlobTier, PublicAccess
+    from .._models import StandardBlobTier, PremiumPageBlobTier, PublicAccess
 
 
 class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public-methods
@@ -710,9 +710,13 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             )
         except HttpResponseError as error:
             process_storage_error(error)
+        items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
+        for si in items or []:
+            if si.access_policy is not None:
+                si.access_policy = AccessPolicy._from_generated(si.access_policy)  # pylint: disable=protected-access
         return {
             "public_access": response.get("blob_public_access"),
-            "signed_identifiers": identifiers.items_property or [],
+            "signed_identifiers": items or [],
         }
 
     @distributed_trace_async
