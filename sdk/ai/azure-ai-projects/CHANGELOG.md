@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 Breaking changes in beta methods:
+* Agent Optimization methods `.beta.agents.*optimization*` were re-written. Updated from v1 to v2 preview, focusing on cleanup to better align with Foundry job guidelines and platform standards. The v1 surface accumulated unused candidate sub-resources, internal-detail properties, and custom operation patterns inconsistent with the Foundry platform. The v2 API removes redundant models and operations, adopts shared Foundry job patterns (`JobLike<>`, standard job verbs), and introduces typed discriminated unions for dataset inputs and evaluator references.
 * Method `.beta.agents.list_optimization_candidates` now returns `ItemPaged[OptimizationCandidate]` instead of `AgentsPagedResultOptimizationCandidate`. The `after` parameter has been removed (use continuation-token-based paging instead).
 
 ### Sample updates
