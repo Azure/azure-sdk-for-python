@@ -16,8 +16,7 @@
   "ignorePaths": [
     ".devcontainer/**",
     "eng/**",
-    ".github/CODEOWNERS",
-    ".github/**/*.lock.yml",
+    ".github/**",
     "scripts/**",
     "**/tests/recordings/**",
     ".vscode/cspell.json",
@@ -141,8 +140,6 @@
     "conda/conda-recipes/msrest/meta.yaml",
     "conda/conda-recipes/uamqp/meta.yaml",
     "conda/conda-releaselogs/azure-mgmt.md",
-    ".github/workflows/azure-sdk-tools.yml",
-    ".github/workflows/actionlint.yml",
     "sdk/ai/azure-ai-voicelive/azure/ai/voicelive/models/_*.py",
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
