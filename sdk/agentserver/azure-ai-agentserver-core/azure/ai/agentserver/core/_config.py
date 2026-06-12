@@ -293,6 +293,15 @@ def resolve_agent_version() -> str:
     return os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
 
 
+def resolve_session_id() -> str:
+    """Resolve the session ID from the ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+
+    :return: The session ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, "")
+
+
 def resolve_agent_id() -> str:
     """Resolve the agent ID.
 
