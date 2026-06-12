@@ -80,11 +80,13 @@ jobs:
             exit 1
           fi
 
-          echo "typespec_repo=$REPO" >> $GITHUB_OUTPUT
-          echo "typespec_ref=$REF" >> $GITHUB_OUTPUT
-          echo "typespec_display_ref=$DISPLAY_REF" >> $GITHUB_OUTPUT
-          echo "typespec_ref_url=$REF_URL" >> $GITHUB_OUTPUT
-          echo "typespec_pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          {
+            echo "typespec_repo=$REPO"
+            echo "typespec_ref=$REF"
+            echo "typespec_display_ref=$DISPLAY_REF"
+            echo "typespec_ref_url=$REF_URL"
+            echo "typespec_pr_number=$PR_NUMBER"
+          } >> "$GITHUB_OUTPUT"
           echo "::notice::Regenerating from ${REPO}@${DISPLAY_REF}"
 
       - name: Checkout microsoft/typespec
@@ -206,7 +208,9 @@ jobs:
 
           # Restore regenerated files from the temp dir.
           mkdir -p "$GENERATED_DIR"
-          rm -rf "$GENERATED_DIR"/*
+          # Use ${var:?} so that if GENERATED_DIR is empty, the command aborts
+          # instead of expanding to "rm -rf /*" and deleting the filesystem.
+          rm -rf "${GENERATED_DIR:?}"/*
           cp -r "$TMPDIR"/. "$GENERATED_DIR"
           rm -rf "$TMPDIR"
           git add -f "$GENERATED_DIR"/
