@@ -1,5 +1,25 @@
 # Release History
 
+## 8.0.0b2 (2026-05-25)
+
+### Features Added
+
+  - Client `ManagedServiceIdentityClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ManagedServiceIdentityClient` added method `send_request`
+  - Added model `AssignmentRestrictions`
+  - Added model `ClaimsMatchingExpression`
+  - Added model `CloudError`
+  - Added model `ExtensionResource`
+  - Added enum `IsolationScope`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Identity` moved instance variable `tenant_id`, `principal_id` and `client_id` under property `properties` whose type is `UserAssignedIdentityProperties`
+  - Model `IdentityUpdate` moved instance variable `tenant_id`, `principal_id` and `client_id` under property `properties` whose type is `UserAssignedIdentityProperties`
+  - Method `FederatedIdentityCredentialsOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+
 ## 8.0.0b1 (2025-08-15)
 
 ### Breaking Changes

@@ -31,11 +31,11 @@
         "mlFlowTrackingUri": "ml_flow_tracking_uri",
         "allowRoleAssignmentOnRG": true,
         "systemDatastoresAuthMode": "AccessKey",
-        "managedNetwork": {},
+        "managedNetwork": {"isolationMode": "Disabled"},
         "provisionNetworkNow": true,
-        "featureStoreSettings": {},
-        "serverlessComputeSettings": {},
-        "networkAcls": {}
+        "featureStoreSettings": {"computeRuntime": {"sparkRuntimeVersion": "3.3.0"}},
+        "serverlessComputeSettings": {"serverlessComputeNoPublicIP": false},
+        "networkAcls": {"defaultAction": "Allow"}
     },
     "identity": {"type": "ManagedServiceIdentityType"}
 }

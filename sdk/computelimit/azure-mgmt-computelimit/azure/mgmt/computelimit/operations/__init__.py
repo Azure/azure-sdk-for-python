@@ -16,6 +16,7 @@ from ._operations import Operations  # type: ignore
 from ._operations import GuestSubscriptionsOperations  # type: ignore
 from ._operations import SharedLimitsOperations  # type: ignore
 from ._operations import FeaturesOperations  # type: ignore
+from ._operations import VmFamiliesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -26,6 +27,7 @@ __all__ = [
     "GuestSubscriptionsOperations",
     "SharedLimitsOperations",
     "FeaturesOperations",
+    "VmFamiliesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
