@@ -37,7 +37,7 @@
         "azure.mgmt.redisenterprise.models.MaintenanceConfiguration": "Microsoft.Cache.MaintenanceConfiguration",
         "azure.mgmt.redisenterprise.models.MaintenanceWindow": "Microsoft.Cache.MaintenanceWindow",
         "azure.mgmt.redisenterprise.models.MaintenanceWindowSchedule": "Microsoft.Cache.MaintenanceWindowSchedule",
-        "azure.mgmt.redisenterprise.models.ManagedServiceIdentityV4": "Azure.ResourceManager.Legacy.ManagedServiceIdentityV4",
+        "azure.mgmt.redisenterprise.models.ManagedServiceIdentity": "Azure.ResourceManager.Legacy.ManagedServiceIdentityV4",
         "azure.mgmt.redisenterprise.models.Migration": "Microsoft.Cache.Migration",
         "azure.mgmt.redisenterprise.models.MigrationValidationDisparity": "Microsoft.Cache.MigrationValidationDisparity",
         "azure.mgmt.redisenterprise.models.MigrationValidationError": "Microsoft.Cache.MigrationValidationError",
@@ -162,5 +162,5 @@
         "azure.mgmt.redisenterprise.operations.OperationsStatusOperations.get": "Microsoft.Cache.OperationsStatusOperationGroup.get",
         "azure.mgmt.redisenterprise.aio.operations.OperationsStatusOperations.get": "Microsoft.Cache.OperationsStatusOperationGroup.get"
     },
-    "CrossLanguageVersion": "96462527f856"
+    "CrossLanguageVersion": "85516cef0cdd"
 }

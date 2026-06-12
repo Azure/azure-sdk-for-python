@@ -1,17 +1,12 @@
 # Release History
 
-## 4.0.0b2 (2026-06-11)
+## 4.0.0b2 (2026-06-12)
 
 ### Features Added
 
   - Model `DatabaseCreateProperties` added property `notify_keyspace_events`
   - Model `DatabaseProperties` added property `notify_keyspace_events`
   - Model `DatabaseUpdateProperties` added property `notify_keyspace_events`
-
-### Breaking Changes
-
-  - Renamed enum member `ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED` to `SYSTEM_AND_USER_ASSIGNED`
-  - Renamed model `ManagedServiceIdentity` to `ManagedServiceIdentityV4`
 
 ## 4.0.0b1 (2026-03-26)
 

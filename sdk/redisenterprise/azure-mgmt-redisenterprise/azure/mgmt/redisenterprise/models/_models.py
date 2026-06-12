@@ -433,7 +433,7 @@ class Cluster(TrackedResource):
     :ivar zones: The availability zones.
     :vartype zones: list[str]
     :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityV4
+    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.ClusterCreateProperties"] = rest_field(
@@ -446,7 +446,7 @@ class Cluster(TrackedResource):
     """The SKU to create, which affects price, performance, and features. Required."""
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The availability zones."""
-    identity: Optional["_models.ManagedServiceIdentityV4"] = rest_field(
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
@@ -475,7 +475,7 @@ class Cluster(TrackedResource):
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ClusterCreateProperties"] = None,
         zones: Optional[list[str]] = None,
-        identity: Optional["_models.ManagedServiceIdentityV4"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -829,7 +829,7 @@ class ClusterUpdate(_Model):
     :ivar properties: Other properties of the cluster.
     :vartype properties: ~azure.mgmt.redisenterprise.models.ClusterUpdateProperties
     :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityV4
+    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
@@ -840,7 +840,7 @@ class ClusterUpdate(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Other properties of the cluster."""
-    identity: Optional["_models.ManagedServiceIdentityV4"] = rest_field(
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
@@ -868,7 +868,7 @@ class ClusterUpdate(_Model):
         *,
         sku: Optional["_models.Sku"] = None,
         properties: Optional["_models.ClusterUpdateProperties"] = None,
-        identity: Optional["_models.ManagedServiceIdentityV4"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
@@ -1863,7 +1863,7 @@ class MaintenanceWindowSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentityV4(_Model):
+class ManagedServiceIdentity(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
