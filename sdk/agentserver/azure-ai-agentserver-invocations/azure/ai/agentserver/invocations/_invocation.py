@@ -363,7 +363,17 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         invocation_id: str,
         session_id: str,
     ) -> StreamingResponse:
-        """Wrap streaming body iteration with invocation logging/tracing context."""
+        """Wrap streaming body iteration with invocation logging/tracing context.
+
+        :param response: Streaming response to wrap.
+        :type response: StreamingResponse
+        :param invocation_id: Invocation identifier to stamp in context/logging.
+        :type invocation_id: str
+        :param session_id: Session identifier to stamp in context/logging.
+        :type session_id: str
+        :return: The response with a wrapped body_iterator.
+        :rtype: StreamingResponse
+        """
         original_iterator = response.body_iterator
 
         async def _wrapped_body() -> AsyncIterator[Any]:
