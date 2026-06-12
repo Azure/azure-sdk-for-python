@@ -28,9 +28,20 @@ class LeaseInfo:
     :type expires_at: str
     :param expiry_count: Number of times ownership changed via expiry.
     :type expiry_count: int
+    :param heartbeat_at: ISO 8601 wall-time of the most recent lease
+        write (acquisition, renewal, or force-expire). Provider-stamped;
+        the framework never writes this. See SOT §22.1 LSE-W-10.
+    :type heartbeat_at: str
     """
 
-    __slots__ = ("owner", "instance_id", "generation", "expires_at", "expiry_count")
+    __slots__ = (
+        "owner",
+        "instance_id",
+        "generation",
+        "expires_at",
+        "expiry_count",
+        "heartbeat_at",
+    )
 
     def __init__(
         self,
@@ -39,18 +50,20 @@ class LeaseInfo:
         generation: int,
         expires_at: str,
         expiry_count: int = 0,
+        heartbeat_at: str = "",
     ) -> None:
         self.owner = owner
         self.instance_id = instance_id
         self.generation = generation
         self.expires_at = expires_at
         self.expiry_count = expiry_count
+        self.heartbeat_at = heartbeat_at
 
     def __repr__(self) -> str:
         return (
             f"LeaseInfo(owner={self.owner!r}, instance_id={self.instance_id!r}, "
             f"generation={self.generation!r}, expires_at={self.expires_at!r}, "
-            f"expiry_count={self.expiry_count!r})"
+            f"expiry_count={self.expiry_count!r}, heartbeat_at={self.heartbeat_at!r})"
         )
 
     def __eq__(self, other: object) -> bool:
@@ -62,6 +75,7 @@ class LeaseInfo:
             and self.generation == other.generation
             and self.expires_at == other.expires_at
             and self.expiry_count == other.expiry_count
+            and self.heartbeat_at == other.heartbeat_at
         )
 
 
@@ -192,6 +206,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
                 generation=lease_data.get("generation", 0),
                 expires_at=lease_data.get("expires_at", ""),
                 expiry_count=lease_data.get("expiry_count", 0),
+                heartbeat_at=lease_data.get("heartbeat_at", ""),
             )
             if lease_data
             else None
@@ -241,6 +256,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
                 "generation": self.lease.generation,
                 "expires_at": self.lease.expires_at,
                 "expiry_count": self.lease.expiry_count,
+                "heartbeat_at": self.lease.heartbeat_at,
             }
         else:
             result["lease"] = None
@@ -372,6 +388,13 @@ class TaskPatchRequest:
         from the dict are unchanged. ``None`` for the field itself
         means "no attachments changes in this PATCH".
     :type attachments: dict[str, Any] | None
+    :param clear_attachments: When ``True``, wipe ALL attachments on
+        the task. The hosted provider serializes this as the wire form
+        ``"attachments": null`` (the service's "clear all" gesture
+        per §23.10); the local provider clears the dict directly.
+        Mutually exclusive with ``attachments={...}`` in the same
+        request — combination is rejected as ``invalid_request``.
+    :type clear_attachments: bool
     """
 
     __slots__ = (
@@ -385,6 +408,7 @@ class TaskPatchRequest:
         "lease_duration_seconds",
         "if_match",
         "attachments",
+        "clear_attachments",
     )
 
     def __init__(
@@ -399,6 +423,7 @@ class TaskPatchRequest:
         lease_duration_seconds: int | None = None,
         if_match: str | None = None,
         attachments: dict[str, Any] | None = None,
+        clear_attachments: bool = False,
     ) -> None:
         self.status = status
         self.payload = payload
@@ -410,3 +435,4 @@ class TaskPatchRequest:
         self.lease_duration_seconds = lease_duration_seconds
         self.if_match = if_match
         self.attachments = attachments
+        self.clear_attachments = clear_attachments
