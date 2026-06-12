@@ -46,9 +46,6 @@ exclude = [
     "azure.storage.extensions",
 ]
 
-[tool.setuptools.package-data]
-"azure.storage.extensions.checksums" = ["py.typed", "*.pyi"]
-
 [tool.azure-sdk-build]
 mypy = false
 pyright = false
