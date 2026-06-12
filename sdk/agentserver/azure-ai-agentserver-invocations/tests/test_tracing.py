@@ -335,6 +335,34 @@ def test_streaming_returns_response():
     assert resp.status_code == 200
 
 
+def test_streaming_iteration_exception_records_trace_error():
+    """Exceptions raised while iterating streaming responses are traced and re-raised."""
+    server = _make_streaming_tracing_server()
+    client = TestClient(server)
+
+    @server.invoke_handler
+    async def handle(request: Request) -> StreamingResponse:
+        async def generate():
+            yield b"chunk1\n"
+            raise RuntimeError("stream exploded")
+
+        return StreamingResponse(generate(), media_type="text/plain")
+
+    with patch("azure.ai.agentserver.invocations._invocation.logger.error") as mock_log_error:
+        with patch("azure.ai.agentserver.invocations._invocation.trace.get_current_span") as mock_get_span:
+            mock_span = mock_get_span.return_value
+            mock_span.is_recording.return_value = True
+
+            with pytest.raises(RuntimeError, match="stream exploded"):
+                client.post("/invocations", content=b"test")
+
+            mock_span.set_status.assert_called_once_with(trace.StatusCode.ERROR, "stream exploded")
+            mock_span.set_attribute.assert_called_once_with("error.type", "RuntimeError")
+            mock_span.record_exception.assert_called_once()
+            assert isinstance(mock_span.record_exception.call_args.args[0], RuntimeError)
+            mock_log_error.assert_called_once()
+
+
 # ---------------------------------------------------------------------------
 # Incoming W3C baggage propagation
 # ---------------------------------------------------------------------------
@@ -511,4 +539,3 @@ def test_incoming_baggage_stamped_on_handler_spans():
 
 def test_project_endpoint_env_var():
     """FOUNDRY_PROJECT_ENDPOINT constant matches the expected env var name."""
-
