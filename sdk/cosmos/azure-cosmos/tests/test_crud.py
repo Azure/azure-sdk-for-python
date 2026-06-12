@@ -1393,8 +1393,11 @@ class TestCRUDOperations(unittest.TestCase):
 
             elapsed_time = time.time() - start_time
 
-            # Should fail close to 5 seconds (not wait for all requests)
-            self.assertLess(elapsed_time, 7)  # Allow some overhead
+            # Should fail close to 5 seconds (not wait for all requests). Upper bound
+            # is loose to absorb the cold-cache /pkranges drain (a 200+ETag fetch followed
+            # by a 304 confirmation, see PR #47245) which adds one extra round trip --
+            # under DelayedTransport(3s) that is +3s on top of the data-plane delay.
+            self.assertLess(elapsed_time, 12)  # Allow overhead for the cold-cache drain round trips
             self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
 
             # Verify operation succeeds when no timeout is passed(default is close to 7 days)

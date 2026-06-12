@@ -39,6 +39,7 @@ USAGE:
 """
 
 import os
+import itertools
 import time
 import uuid
 from datetime import datetime, timezone
@@ -49,7 +50,13 @@ from dotenv import load_dotenv
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import JobStatus, PageOrder
+from azure.ai.projects.models import (
+    EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
+    JobStatus,
+    PageOrder,
+    PromptEvaluatorGenerationJobSource,
+)
 
 load_dotenv()
 
@@ -65,32 +72,25 @@ operation_id = f"rubric-lifecycle-{short}"
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
-# Shared job body used both for the initial create and the idempotency replay.
-job_body = {
-    "model": model_name,
-    "name": "Lifecycle demo",
-    "evaluator_name": evaluator_name,
-    "evaluator_display_name": "Lifecycle demo",
-    "evaluator_description": "Minimal job used to demonstrate the LRO + list/delete lifecycle.",
-    "sources": [
-        {
-            "type": "Prompt",
-            "description": "Inline application overview.",
-            "prompt": "You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
-        }
-    ],
-}
+# Shared job used both for the initial create and the idempotency replay.
+job_body = EvaluatorGenerationJob(
+    inputs=EvaluatorGenerationInputs(
+        model=model_name,
+        evaluator_name=evaluator_name,
+        evaluator_display_name="Lifecycle demo",
+        evaluator_description="Minimal job used to demonstrate the LRO + list/delete lifecycle.",
+        sources=[
+            PromptEvaluatorGenerationJobSource(
+                description="Inline application overview.",
+                prompt="You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
+            ),
+        ],
+    ),
+)
 
 with (
     DefaultAzureCredential() as credential,
-    # `allow_preview` and `api_version` are required for the evaluator
-    # generation endpoints in this preview.
-    AIProjectClient(
-        endpoint=endpoint,
-        credential=credential,
-        allow_preview=True,
-        api_version="2025-11-15-preview",
-    ) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Create the generation job. `operation_id` makes the call idempotent -
     # re-submitting with the same id returns the existing job.
@@ -116,8 +116,11 @@ with (
     print(f"Generated evaluator `{evaluator.name}` version `{evaluator.version}`.")
 
     # 3. List the 5 most recent generation jobs in this project.
+    #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
-    for entry in project_client.beta.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC):
+    for entry in itertools.islice(
+        project_client.beta.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5
+    ):
         entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
         print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 

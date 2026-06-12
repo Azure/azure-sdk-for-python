@@ -33,11 +33,11 @@ def main():
     response = client.fleet_members.get(
         resource_group_name="rgfleets",
         fleet_name="fleet1",
-        fleet_member_name="fleet1",
+        fleet_member_name="member1",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/FleetMembers_Get.json
+# x-ms-original-file: 2026-03-02-preview/FleetMembers_Get.json
 if __name__ == "__main__":
     main()
