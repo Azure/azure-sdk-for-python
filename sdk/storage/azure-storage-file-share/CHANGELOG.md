@@ -6,6 +6,7 @@
 
 ### Other Changes
 - Legacy transports will not be supported moving forward
+- Return type of AccessPolicies in get_share_access_policies is now the public AccessPolicy model
 
 ## 12.26.0 (2026-06-08)
 

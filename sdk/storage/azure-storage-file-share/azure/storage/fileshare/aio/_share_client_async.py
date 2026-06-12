@@ -19,7 +19,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_permission, deserialize_share_properties
 from .._generated.aio import FileClient as AzureFileStorage
 from .._generated.models import DeleteSnapshotsOptionType, ShareStats, SignedIdentifier, SignedIdentifiers
-from .._models import ShareProtocols
+from .._models import AccessPolicy, ShareProtocols
 from .._parser import _parse_snapshot, _strip_snapshot_from_url
 from .._share_client_helpers import _create_permission_for_share_options, _format_url, _from_share_url, _parse_url
 from .._shared.policies_async import ExponentialRetry
@@ -35,7 +35,7 @@ from ._file_client_async import ShareFileClient
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import AccessPolicy, DirectoryProperties, FileProperties, ShareProperties
+    from .._models import DirectoryProperties, FileProperties, ShareProperties
 
 
 class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]  # pylint: disable=too-many-public-methods
@@ -801,12 +801,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             )
         except HttpResponseError as error:
             process_storage_error(error)
+        items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
+        for si in items or []:
+            if si.access_policy is not None:
+                si.access_policy = AccessPolicy._from_generated(si.access_policy)  # pylint: disable=protected-access
         return {
             "public_access": response.get("share_public_access"),
-            "signed_identifiers": (
-                identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
-            )
-            or [],
+            "signed_identifiers": items or [],
         }
 
     @distributed_trace_async

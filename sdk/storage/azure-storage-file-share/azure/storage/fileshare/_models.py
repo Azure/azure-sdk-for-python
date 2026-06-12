@@ -609,6 +609,16 @@ class AccessPolicy(_BackCompatMixin):
             permission=permission,
         )
 
+    @classmethod
+    def _from_generated(cls, generated: Optional[GenAccessPolicy]) -> Optional["AccessPolicy"]:
+        if generated is None:
+            return None
+        return cls(
+            permission=generated.permission,
+            expiry=Deserializer.deserialize_iso(generated.expiry) if generated.expiry else None,
+            start=Deserializer.deserialize_iso(generated.start) if generated.start else None,
+        )
+
 
 class LeaseProperties(DictMixin):
     """File or Share Lease Properties."""
