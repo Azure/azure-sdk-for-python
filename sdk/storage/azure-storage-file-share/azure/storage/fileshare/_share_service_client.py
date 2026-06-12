@@ -18,8 +18,10 @@ from ._generated import FileClient as AzureFileStorage
 from ._generated.models import KeyInfo, StorageServiceProperties
 from ._models import (
     CorsRule,
+    Metrics,
     ShareProperties,
     SharePropertiesPaged,
+    ShareProtocolSettings,
     service_properties_deserialize,
 )
 from ._parser import _strip_snapshot_from_url
@@ -38,7 +40,6 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from ._models import Metrics, ShareProtocolSettings
     from ._shared.models import UserDelegationKey
 
 
@@ -325,12 +326,10 @@ class ShareServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop("timeout", None)
         props = StorageServiceProperties(
-            hour_metrics=hour_metrics._to_generated() if hour_metrics else None,  # pylint: disable=protected-access
-            minute_metrics=(
-                minute_metrics._to_generated() if minute_metrics else None  # pylint: disable=protected-access
-            ),
+            hour_metrics=Metrics._to_generated(hour_metrics),  # pylint: disable=protected-access
+            minute_metrics=Metrics._to_generated(minute_metrics),  # pylint: disable=protected-access
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
-            protocol=protocol._to_generated() if protocol else None,  # pylint: disable=protected-access
+            protocol=ShareProtocolSettings._to_generated(protocol),  # pylint: disable=protected-access
         )
         try:
             self._client.service.set_properties(

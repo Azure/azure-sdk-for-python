@@ -140,14 +140,17 @@ class Metrics(_BackCompatMixin):
             ),
         )
 
-    def _to_generated(self):
+    @staticmethod
+    def _to_generated(metrics: Optional["Metrics"]) -> Optional[GeneratedMetrics]:
+        if metrics is None:
+            return None
         return GeneratedMetrics(
-            version=self.version,
-            enabled=self.enabled,
-            include_apis=self.include_apis,
+            version=metrics.version,
+            enabled=metrics.enabled,
+            include_apis=metrics.include_apis,
             retention_policy=(
-                self.retention_policy._to_generated()  # pylint: disable=protected-access
-                if self.retention_policy
+                metrics.retention_policy._to_generated()  # pylint: disable=protected-access
+                if metrics.retention_policy
                 else None
             ),
         )
@@ -451,10 +454,13 @@ class ShareProtocolSettings(_BackCompatMixin):
             nfs=ShareNfsSettings._from_generated(generated.nfs),  # pylint: disable=protected-access
         )
 
-    def _to_generated(self):
+    @staticmethod
+    def _to_generated(settings: Optional["ShareProtocolSettings"]) -> Optional[GeneratedShareProtocolSettings]:
+        if settings is None:
+            return None
         return GeneratedShareProtocolSettings(
-            smb=self.smb._to_generated() if self.smb else None,  # pylint: disable=protected-access
-            nfs=self.nfs._to_generated() if self.nfs else None,  # pylint: disable=protected-access
+            smb=settings.smb._to_generated() if settings.smb else None,  # pylint: disable=protected-access
+            nfs=settings.nfs._to_generated() if settings.nfs else None,  # pylint: disable=protected-access
         )
 
 
