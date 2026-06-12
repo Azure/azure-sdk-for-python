@@ -42,6 +42,7 @@ from ._exceptions import (
     TaskNotFound,
     _AttachmentTooLarge,
 )
+from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
 from ._metadata import TaskMetadata
 from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest, TaskStatus
@@ -518,9 +519,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     "Install with: pip install azure-ai-agentserver-core[hosted]"
                 ) from exc
 
-            logger.info(
-                "Hosted environment detected; using HostedTaskProvider"
-            )
+            logger.info("Hosted environment detected; using HostedTaskProvider")
             return HostedTaskProvider(
                 project_endpoint=config.project_endpoint,
                 credential=DefaultAzureCredential(),
@@ -593,13 +592,21 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         agent_name = self._config.agent_name or "default"
 
         # All filters are now server-side
-        return await self._provider.list(
-            agent_name=agent_name,
-            session_id=resolved_session,
-            status=status,
-            tag={_TAG_TASK_NAME: fn_name},
-            source_type=_SOURCE_TYPE,
-        )
+        try:
+            return await self._provider.list(
+                agent_name=agent_name,
+                session_id=resolved_session,
+                status=status,
+                tag={_TAG_TASK_NAME: fn_name},
+                source_type=_SOURCE_TYPE,
+            )
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc)
+            if translated is None:
+                raise RuntimeError(
+                    "Task list did not converge after retryable conflict"
+                ) from exc
+            raise translated from exc
 
     def _register_steering_future(self, task_id: str) -> asyncio.Future[Any]:
         """Create and register a future for a queued steering input.
@@ -681,9 +688,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             try:
                 await self._recover_stale_tasks()
             except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Periodic recovery scan iteration failed", exc_info=True
-                )
+                logger.warning("Periodic recovery scan iteration failed", exc_info=True)
 
     async def shutdown(self) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
@@ -700,7 +705,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             self._periodic_recovery_task.cancel()
             try:
                 await self._periodic_recovery_task
-            except (asyncio.CancelledError, Exception):  # pylint: disable=broad-exception-caught
+            except (
+                asyncio.CancelledError,
+                Exception,
+            ):  # pylint: disable=broad-exception-caught
                 pass
             self._periodic_recovery_task = None
 
@@ -726,9 +734,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # blocks every shutdown for the full window even when tasks are
         # already done.
         if self._active_tasks:
-            deadline = (
-                asyncio.get_event_loop().time() + self._shutdown_grace_seconds
-            )
+            deadline = asyncio.get_event_loop().time() + self._shutdown_grace_seconds
             try:
                 while self._active_tasks:
                     if asyncio.get_event_loop().time() >= deadline:
@@ -940,22 +946,43 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         tags[_TAG_TASK_NAME] = fn_name
 
         # Create task with lease
-        task_info = await self._provider.create(
-            TaskCreateRequest(
-                id=task_id,
-                agent_name=agent_name,
-                session_id=resolved_session,
-                status="in_progress",
-                title=title,
-                payload=payload,
-                tags=tags or None,
-                source=source,
-                attachments=attachments,
-                lease_owner=self._lease_owner,
-                lease_instance_id=self._instance_id,
-                lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
+        try:
+            task_info = await self._provider.create(
+                TaskCreateRequest(
+                    id=task_id,
+                    agent_name=agent_name,
+                    session_id=resolved_session,
+                    status="in_progress",
+                    title=title,
+                    payload=payload,
+                    tags=tags or None,
+                    source=source,
+                    attachments=attachments,
+                    lease_owner=self._lease_owner,
+                    lease_instance_id=self._instance_id,
+                    lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
+                )
             )
-        )
+        except _HostedConflict as exc:
+            observed_status: str | None = None
+            if exc._code == "task_already_exists":
+                try:
+                    observed = await self._provider.get(task_id)
+                    observed_status = (
+                        getattr(observed, "status", None) if observed else None
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    observed_status = None
+            translated = _translate_hosted_conflict(
+                exc, task_id=task_id, observed_status=observed_status
+            )
+            if translated is None:
+                if exc._code == "lease_ownership_changed":
+                    raise TaskConflictError(task_id, "in_progress") from exc
+                raise RuntimeError(
+                    f"Task {task_id!r} create did not converge after retryable conflict"
+                ) from exc
+            raise translated from exc
         # Spec 019 FR-A-003 — track the etag from the create response
         # so the next PATCH carries it as if_match (FR-A-001).
         self._track_etag(task_id, getattr(task_info, "etag", None))
@@ -1148,13 +1175,25 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # per the spec's assumptions.
         try:
             task_info = await self._provider_get_tracked(task_id)
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc, task_id=task_id)
+            if (
+                translated is None
+                or getattr(translated, "current_status", None) == "in_progress"
+            ):
+                return None
+            raise translated from exc
         except TransportClassifiedError as exc:
             if _is_evicted(exc):
                 # Even reads classified as evicted (unexpected per
                 # assumption but defensive) map to "not active".
                 return None
             raise
-        if task_info is None or task_info.status in ("completed", "suspended", "pending"):
+        if task_info is None or task_info.status in (
+            "completed",
+            "suspended",
+            "pending",
+        ):
             return None
         # Status is in_progress. Check whether the lease is dead per
         # FR-004. If so, perform inline reclaim and re-enter as
@@ -1172,6 +1211,19 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             opts = self._resume_opts.get(fn_name)
             try:
                 await self._reclaim_one(task_info)
+            except _HostedConflict as exc:
+                translated = _translate_hosted_conflict(exc, task_id=task_id)
+                if (
+                    translated is None
+                    or getattr(translated, "current_status", None) == "in_progress"
+                ):
+                    logger.warning(
+                        "get_active_run: reclaim of %s lost a provider race; "
+                        "returning None (same shape as 'not active here')",
+                        task_id,
+                    )
+                    return None
+                raise translated from exc
             except TransportClassifiedError as exc:
                 if _is_evicted(exc):
                     logger.warning(
@@ -1403,9 +1455,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # written by ``_execute_task_loop`` on every handler-raised exception
         # and cleared by the steering-drain path; default 0 covers fresh and
         # never-failed tasks.
-        persisted_retry_attempt = (task_info.payload or {}).get(
-            "_retry_attempt", 0
-        )
+        persisted_retry_attempt = (task_info.payload or {}).get("_retry_attempt", 0)
 
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
@@ -1680,9 +1730,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             return timeout_seconds
         if task_info is None or not task_info.payload:
             return timeout_seconds
-        started_ts = _parse_turn_started_at(
-            task_info.payload.get(_TURN_STARTED_AT_KEY)
-        )
+        started_ts = _parse_turn_started_at(task_info.payload.get(_TURN_STARTED_AT_KEY))
         if started_ts is None:
             return timeout_seconds
         import time  # pylint: disable=import-outside-toplevel
@@ -1754,11 +1802,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 # status as 'in_progress' (do NOT write terminal),
                 # preserve queued steering inputs (FR-028), and signal
                 # awaiters with TaskCancelled.
-                from ._context import _ExitForRecovery as _ExitSentinel  # pylint: disable=import-outside-toplevel
+                from ._context import (
+                    _ExitForRecovery as _ExitSentinel,
+                )  # pylint: disable=import-outside-toplevel
+
                 if isinstance(result, _ExitSentinel):
                     from ._exceptions import (  # pylint: disable=import-outside-toplevel
                         TaskCancelled,
                     )
+
                     renewal_cancel.set()
                     # (a) Flush metadata (FR-015 auto-flush).
                     await ctx.metadata._flush_all()
@@ -1774,6 +1826,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                                 lease_instance_id="",
                                 lease_duration_seconds=0,
                             ),
+                        )
+                    except _HostedConflict as exc:
+                        translated = _translate_hosted_conflict(exc, task_id=task_id)
+                        logger.warning(
+                            "exit_for_recovery: lease release for task %s "
+                            "failed with provider conflict %s; the next "
+                            "process startup recovery will reclaim",
+                            task_id,
+                            type(translated).__name__ if translated else "retryable",
+                            exc_info=True,
                         )
                     except TransportClassifiedError as exc:
                         if not _is_evicted(exc):
@@ -2138,10 +2200,32 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     **self._lease_ext_kwargs(task_id),
                 ),
             )
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc, task_id=task_id)
+            if translated is None:
+                if _conflict_attempt >= 5:
+                    raise RuntimeError(
+                        f"Steering drain for {task_id!r} did not converge "
+                        "after 5 etag-conflict retries"
+                    ) from exc
+                logger.warning(
+                    "Provider write conflict during steering drain for %s, retrying "
+                    "(attempt %d)",
+                    task_id,
+                    _conflict_attempt + 1,
+                )
+                return await self._try_drain_steering(
+                    task_id=task_id,
+                    ctx=ctx,
+                    opts=opts,
+                    _conflict_attempt=_conflict_attempt + 1,
+                )
+            raise translated from exc
         except (ValueError, TransportClassifiedError) as exc:
-            if isinstance(exc, TransportClassifiedError) and getattr(
-                exc, "classification", None
-            ) != "conflict":
+            if (
+                isinstance(exc, TransportClassifiedError)
+                and getattr(exc, "classification", None) != "conflict"
+            ):
                 raise
             if _conflict_attempt >= 5:
                 raise RuntimeError(
@@ -2149,8 +2233,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     "after 5 etag-conflict retries"
                 ) from exc
             logger.warning(
-                "Etag conflict during steering drain for %s, retrying "
-                "(attempt %d)",
+                "Etag conflict during steering drain for %s, retrying " "(attempt %d)",
                 task_id,
                 _conflict_attempt + 1,
             )
@@ -2311,6 +2394,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             except _AttachmentTooLarge as exc:
                 # FR-D-004 — translate to OutputTooLarge for the developer.
                 raise _remap_attachment_error(exc) from exc
+            except _HostedConflict as exc:
+                translated = _translate_hosted_conflict(exc, task_id=task_id)
+                if translated is None:
+                    if exc._code == "lease_ownership_changed":
+                        raise TaskConflictError(task_id, "in_progress") from exc
+                    raise EtagConflict(task_id) from exc
+                raise translated from exc
             except TransportClassifiedError as exc:
                 if _is_evicted(exc):
                     logger.warning(
@@ -2356,6 +2446,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         if opts.ephemeral:
             try:
                 await self._provider.delete(task_id, force=True)
+            except _HostedConflict as hosted_exc:
+                translated = _translate_hosted_conflict(hosted_exc, task_id=task_id)
+                if translated is None:
+                    raise TaskConflictError(task_id, "in_progress") from hosted_exc
+                raise translated from hosted_exc
             except TransportClassifiedError as transport_exc:
                 if _is_evicted(transport_exc):
                     logger.warning(
@@ -2394,6 +2489,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 # 412 RE-READ decided ABANDON; propagate as the
                 # eviction-shape exception for awaiters.
                 raise
+            except _HostedConflict as hosted_exc:
+                translated = _translate_hosted_conflict(hosted_exc, task_id=task_id)
+                if translated is None:
+                    if hosted_exc._code == "lease_ownership_changed":
+                        raise TaskConflictError(task_id, "in_progress") from hosted_exc
+                    raise EtagConflict(task_id) from hosted_exc
+                raise translated from hosted_exc
             except TransportClassifiedError as transport_exc:
                 if _is_evicted(transport_exc):
                     logger.warning(
@@ -2510,6 +2612,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         except _AttachmentTooLarge as exc:
             # FR-D-004 — translate to OutputTooLarge for the developer.
             raise _remap_attachment_error(exc) from exc
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc, task_id=task_id)
+            if translated is None:
+                if exc._code == "lease_ownership_changed":
+                    raise TaskConflictError(task_id, "in_progress") from exc
+                raise EtagConflict(task_id) from exc
+            raise translated from exc
         except TransportClassifiedError as exc:
             if _is_evicted(exc):
                 logger.warning(
@@ -2526,9 +2635,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         logger.info("Task %s suspended: %s", task_id, reason)
 
-    async def _steering_cleanup_orphan_attachments(
-        self, task_info: TaskInfo
-    ) -> None:
+    async def _steering_cleanup_orphan_attachments(self, task_info: TaskInfo) -> None:
         """Spec 018 — delete orphaned ``_steering_input_*`` attachments.
 
         On startup-scan / recovery, walk ``task_info.attachments`` for
@@ -2552,9 +2659,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         from ._attachments import (  # pylint: disable=import-outside-toplevel
             _STEERING_INPUT_KEY_PREFIX,
         )
+
         steering_keys = {
-            k for k in task_info.attachments
-            if k.startswith(_STEERING_INPUT_KEY_PREFIX)
+            k for k in task_info.attachments if k.startswith(_STEERING_INPUT_KEY_PREFIX)
         }
         if not steering_keys:
             return
@@ -2647,6 +2754,20 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     "Reclaimed stale task %s (generation will increment)",
                     task_info.id,
                 )
+            except _HostedConflict as exc:
+                translated = _translate_hosted_conflict(exc, task_id=task_info.id)
+                if (
+                    translated is None
+                    or getattr(translated, "current_status", None) == "in_progress"
+                ):
+                    logger.info(
+                        "Reclaim conflict for task %s — another process beat us; "
+                        "letting next scan re-evaluate.",
+                        task_info.id,
+                    )
+                    continue
+                logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
+                continue
             except (EtagConflict, ValueError) as exc:
                 # 412 ABANDON for reclaim per §25.3.
                 if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
@@ -2780,7 +2901,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         where a subsequent PATCH may rely on the latest etag (the
         normal read-then-PATCH pattern across the framework).
         """
-        info = await self._provider.get(task_id)
+        try:
+            info = await self._provider.get(task_id)
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc, task_id=task_id)
+            if translated is None:
+                if exc._code == "lease_ownership_changed":
+                    raise TaskConflictError(task_id, "in_progress") from exc
+                raise EtagConflict(task_id) from exc
+            raise translated from exc
         if info is not None:
             self._track_etag(task_id, getattr(info, "etag", None))
         return info
@@ -2867,6 +2996,25 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     if etag:
                         self._track_etag(task_id, etag)
                     return result
+                except _HostedConflict as exc:
+                    translated = _translate_hosted_conflict(exc, task_id=task_id)
+                    if translated is not None:
+                        raise translated from exc
+                    if attempts >= max_attempts:
+                        if exc._code == "lease_ownership_changed":
+                            raise TaskConflictError(task_id, "in_progress") from exc
+                        raise EtagConflict(task_id) from exc
+                    decision = await self._terminal_412_decide(
+                        task_id,
+                        prior_lease_owner=prior_lease_owner,
+                        prior_lease_instance=prior_lease_instance,
+                        cached_expiry_count=cached_expiry_count,
+                    )
+                    if decision == "abandon_lease_lost":
+                        raise TaskConflictError(task_id, "in_progress") from exc
+                    if decision == "abandon_already_terminal":
+                        raise TaskConflictError(task_id, "completed") from exc
+                    patch.if_match = None
                 except (EtagConflict, ValueError) as exc:
                     # The local provider raises ValueError on etag
                     # mismatch; the hosted provider raises
@@ -2903,13 +3051,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                             cached_expiry_count=cached_expiry_count,
                         )
                         if decision == "abandon_lease_lost":
-                            raise TaskConflictError(
-                                task_id, "in_progress"
-                            ) from exc
+                            raise TaskConflictError(task_id, "in_progress") from exc
                         if decision == "abandon_already_terminal":
-                            raise TaskConflictError(
-                                task_id, "completed"
-                            ) from exc
+                            raise TaskConflictError(task_id, "completed") from exc
                         patch.if_match = None
                         continue
                     raise

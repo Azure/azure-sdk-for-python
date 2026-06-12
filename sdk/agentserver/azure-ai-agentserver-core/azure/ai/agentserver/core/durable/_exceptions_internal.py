@@ -16,6 +16,12 @@ is documented in ``docs/task-and-streaming-spec.md`` §39.1.
 
 from __future__ import annotations
 
+import logging
+
+from ._exceptions import TaskConflictError, TaskPreconditionFailed
+
+logger = logging.getLogger("azure.ai.agentserver.durable")
+
 
 class _HostedConflict(Exception):
     """Internal discriminator for service-emitted error codes.
@@ -82,3 +88,43 @@ class _HostedConflict(Exception):
 # excludes it from `from _exceptions_internal import *` and signals
 # package-private intent.
 __all__: list[str] = []
+
+
+def _translate_hosted_conflict(
+    exc: "_HostedConflict",
+    task_id: str | None = None,
+    observed_status: str | None = None,
+) -> "Exception | None":
+    """Translate a `_HostedConflict` to a developer-facing exception.
+
+    Returns None for transient codes the caller should retry
+    (``etag_mismatch``, ``lease_ownership_changed``). Otherwise returns the
+    public exception the caller should raise.
+    """
+    effective_task_id = task_id or exc.task_id or "<unknown>"
+    code = exc._code
+
+    if code in {"etag_mismatch", "lease_ownership_changed"}:
+        return None
+    if code == "lease_held_by_another":
+        return TaskConflictError(effective_task_id, "in_progress")
+    if code == "task_immutable":
+        return TaskConflictError(effective_task_id, "completed")
+    if code == "task_already_exists":
+        return TaskConflictError(effective_task_id, observed_status or "in_progress")
+    if code == "invalid_request":
+        return TaskPreconditionFailed(effective_task_id, exc.message or exc._code)
+    if code == "invalid_state_transition":
+        logger.warning(
+            "Framework generated an invalid task state transition for task %s",
+            effective_task_id,
+            exc_info=True,
+        )
+        return RuntimeError("Framework generated an invalid task state transition.")
+
+    logger.warning(
+        "Task provider returned an unrecognized internal conflict for task %s",
+        effective_task_id,
+        exc_info=True,
+    )
+    return RuntimeError("Task operation failed due to an internal conflict.")

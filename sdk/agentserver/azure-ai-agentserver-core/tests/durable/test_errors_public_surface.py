@@ -26,8 +26,12 @@ Reference: docs/task-and-streaming-spec.md §23.7, §39, §59 C-ATT-4.
 from __future__ import annotations
 
 import importlib
+from pathlib import Path
+from typing import Any
 
 import pytest
+
+from azure.ai.agentserver.core.durable import TaskContext, task
 
 
 # --------------------------------------------------------------------- #
@@ -42,9 +46,9 @@ def test_output_too_large_is_public() -> None:
     """
     from azure.ai.agentserver.core.durable import OutputTooLarge
 
-    assert issubclass(OutputTooLarge, ValueError), (
-        "OutputTooLarge MUST be a ValueError subclass per FR-D-001"
-    )
+    assert issubclass(
+        OutputTooLarge, ValueError
+    ), "OutputTooLarge MUST be a ValueError subclass per FR-D-001"
     # Must accept the documented constructor shape.
     exc = OutputTooLarge(task_id="t", size_bytes=3_000_000, max_bytes=2_097_152)
     assert exc.task_id == "t"
@@ -77,12 +81,10 @@ def test_attachment_too_large_not_public() -> None:
 
 
 def test_attachment_limit_exceeded_not_public() -> None:
-    """FR-D-003 / SC-11 — same rule for ``AttachmentLimitExceeded``.
-    """
+    """FR-D-003 / SC-11 — same rule for ``AttachmentLimitExceeded``."""
     mod = importlib.import_module("azure.ai.agentserver.core.durable")
     assert "AttachmentLimitExceeded" not in (mod.__all__ or ()), (
-        "AttachmentLimitExceeded must NOT appear in durable.__all__ "
-        "(FR-D-003)."
+        "AttachmentLimitExceeded must NOT appear in durable.__all__ " "(FR-D-003)."
     )
     with pytest.raises(ImportError):
         exec(
@@ -212,9 +214,9 @@ def test_hosted_conflict_is_not_public() -> None:
         "_HostedConflict is internal; it MUST NOT be exported via the "
         "public `durable` namespace."
     )
-    assert "_HostedConflict" not in getattr(pub, "__all__", []), (
-        "_HostedConflict must not appear in __all__."
-    )
+    assert "_HostedConflict" not in getattr(
+        pub, "__all__", []
+    ), "_HostedConflict must not appear in __all__."
 
 
 def test_no_service_code_strings_as_public_type_names() -> None:
@@ -239,3 +241,229 @@ def test_no_service_code_strings_as_public_type_names() -> None:
             f"{name!r} must not be exported from the public durable namespace "
             f"— service codes belong to internal dispatch only."
         )
+
+
+# ===========================================================================
+# Spec 020 Phase 2c — framework translation of internal hosted conflicts
+# ===========================================================================
+
+
+class _HostedConflictInjectingProvider:
+    """Provider wrapper that injects one internal hosted conflict per op."""
+
+    def __init__(self, delegate: Any) -> None:
+        self._delegate = delegate
+        self._failures: dict[str, list[tuple[str, int, str | None]]] = {}
+        self.hide_first_get_for: set[str] = set()
+        self.update_calls = 0
+
+    def fail_once(
+        self,
+        op: str,
+        code: str,
+        *,
+        status_code: int = 409,
+        message: str | None = None,
+    ) -> None:
+        self._failures.setdefault(op, []).append((code, status_code, message))
+
+    def _pop_failure(self, op: str, task_id: str | None) -> None:
+        failures = self._failures.get(op)
+        if not failures:
+            return
+        code, status_code, message = failures.pop(0)
+        from azure.ai.agentserver.core.durable._exceptions_internal import (
+            _HostedConflict,
+        )
+
+        raise _HostedConflict(
+            _code=code,
+            status_code=status_code,
+            message=message,
+            task_id=task_id,
+        )
+
+    async def create(self, request: Any) -> Any:
+        task_id = getattr(request, "id", None)
+        self._pop_failure("create", task_id)
+        return await self._delegate.create(request)
+
+    async def get(self, task_id: str) -> Any:
+        if task_id in self.hide_first_get_for:
+            self.hide_first_get_for.remove(task_id)
+            return None
+        self._pop_failure("get", task_id)
+        return await self._delegate.get(task_id)
+
+    async def update(self, task_id: str, patch: Any) -> Any:
+        self.update_calls += 1
+        self._pop_failure("update", task_id)
+        return await self._delegate.update(task_id, patch)
+
+    async def delete(
+        self, task_id: str, *, force: bool = False, cascade: bool = False
+    ) -> None:
+        self._pop_failure("delete", task_id)
+        await self._delegate.delete(task_id, force=force, cascade=cascade)
+
+    async def list(self, **kwargs: Any) -> Any:
+        self._pop_failure("list", None)
+        return await self._delegate.list(**kwargs)
+
+
+async def _setup_translation_manager(tmp_path: Path) -> tuple[Any, Any, Any]:
+    from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+    from azure.ai.agentserver.core.durable._manager import TaskManager
+
+    import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+    delegate = LocalFileTaskProvider(Path(str(tmp_path)))
+    provider = _HostedConflictInjectingProvider(delegate)
+    config = type(
+        "C",
+        (),
+        {
+            "agent_name": "test-agent",
+            "session_id": "test-session",
+            "agent_version": "1.0.0",
+            "is_hosted": False,
+        },
+    )()
+    manager = TaskManager(config=config, provider=provider)
+    mgr_mod._manager = manager
+    await manager.startup()
+    return manager, mgr_mod, provider
+
+
+async def _teardown_translation_manager(manager: Any, mgr_mod: Any) -> None:
+    await manager.shutdown()
+    mgr_mod._manager = None
+
+
+async def _seed_task(provider: Any, task_id: str, status: str) -> None:
+    from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+    await provider._delegate.create(  # pylint: disable=protected-access
+        TaskCreateRequest(
+            id=task_id,
+            agent_name="test-agent",
+            session_id="test-session",
+            status=status,
+            title=f"{task_id}-title",
+            payload={"input": "seed"},
+        )
+    )
+
+
+@pytest.mark.asyncio
+async def test_task_run_translates_task_immutable_to_completed_conflict(
+    tmp_path,
+) -> None:
+    from azure.ai.agentserver.core.durable._exceptions import TaskConflictError
+    from azure.ai.agentserver.core.durable._exceptions_internal import _HostedConflict
+
+    manager, mgr_mod, provider = await _setup_translation_manager(tmp_path)
+    try:
+        await _seed_task(provider, "hosted-immutable", "pending")
+        provider.fail_once(
+            "update",
+            "task_immutable",
+            message="Completed tasks are immutable.",
+        )
+
+        @task(title="hosted-immutable")
+        async def immutable_task(ctx: TaskContext[str]) -> str:
+            return "unreachable"
+
+        with pytest.raises(TaskConflictError) as excinfo:
+            await immutable_task.run(task_id="hosted-immutable", input="new")
+        assert excinfo.value.current_status == "completed"
+        assert not isinstance(excinfo.value, _HostedConflict)
+    finally:
+        await _teardown_translation_manager(manager, mgr_mod)
+
+
+@pytest.mark.asyncio
+async def test_task_already_exists_observes_status_for_public_conflict(
+    tmp_path,
+) -> None:
+    from azure.ai.agentserver.core.durable._exceptions import TaskConflictError
+
+    manager, mgr_mod, provider = await _setup_translation_manager(tmp_path)
+    try:
+        await _seed_task(provider, "hosted-create-race", "completed")
+        provider.hide_first_get_for.add("hosted-create-race")
+        provider.fail_once(
+            "create",
+            "task_already_exists",
+            message="Task already exists.",
+        )
+
+        @task(title="hosted-create-race")
+        async def create_race_task(ctx: TaskContext[str]) -> str:
+            return "unreachable"
+
+        with pytest.raises(TaskConflictError) as excinfo:
+            await create_race_task.run(task_id="hosted-create-race", input="new")
+        assert excinfo.value.task_id == "hosted-create-race"
+        assert excinfo.value.current_status == "completed"
+    finally:
+        await _teardown_translation_manager(manager, mgr_mod)
+
+
+@pytest.mark.asyncio
+async def test_invalid_request_translates_to_task_precondition_failed(tmp_path) -> None:
+    from azure.ai.agentserver.core.durable._exceptions import TaskPreconditionFailed
+    from azure.ai.agentserver.core.durable._exceptions_internal import _HostedConflict
+
+    manager, mgr_mod, provider = await _setup_translation_manager(tmp_path)
+    try:
+        await _seed_task(provider, "hosted-invalid-request", "pending")
+        provider.fail_once(
+            "update",
+            "invalid_request",
+            status_code=400,
+            message="lease rule failed",
+        )
+
+        @task(title="hosted-invalid-request")
+        async def invalid_request_task(ctx: TaskContext[str]) -> str:
+            return "unreachable"
+
+        with pytest.raises(TaskPreconditionFailed) as excinfo:
+            await invalid_request_task.run(
+                task_id="hosted-invalid-request", input="new"
+            )
+        assert excinfo.value.task_id == "hosted-invalid-request"
+        assert "lease rule failed" in str(excinfo.value)
+        assert not isinstance(excinfo.value, _HostedConflict)
+    finally:
+        await _teardown_translation_manager(manager, mgr_mod)
+
+
+@pytest.mark.asyncio
+async def test_etag_mismatch_retries_without_exposing_hosted_conflict(tmp_path) -> None:
+    from azure.ai.agentserver.core.durable._exceptions_internal import _HostedConflict
+
+    manager, mgr_mod, provider = await _setup_translation_manager(tmp_path)
+    try:
+        await _seed_task(provider, "hosted-etag-retry", "suspended")
+        provider.fail_once(
+            "update",
+            "etag_mismatch",
+            status_code=412,
+            message="ETag mismatch.",
+        )
+
+        @task(title="hosted-etag-retry")
+        async def etag_retry_task(ctx: TaskContext[str]) -> str:
+            return f"resumed:{ctx.input}"
+
+        result = await etag_retry_task.run(task_id="hosted-etag-retry", input="new")
+        assert result.output == "resumed:new"
+        assert provider.update_calls >= 2
+    except Exception as exc:
+        assert not isinstance(exc, _HostedConflict)
+        raise
+    finally:
+        await _teardown_translation_manager(manager, mgr_mod)

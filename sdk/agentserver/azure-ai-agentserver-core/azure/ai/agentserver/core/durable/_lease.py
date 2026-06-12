@@ -21,6 +21,7 @@ from typing import Any
 from ._models import TaskPatchRequest
 from ._provider import TaskProvider
 from ._client import TransportClassifiedError
+from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 
 logger = logging.getLogger("azure.ai.agentserver.durable")
 
@@ -193,6 +194,39 @@ async def lease_renewal_loop(
                     logger.debug(
                         "Steering poll failed for task %s", task_id, exc_info=True
                     )
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc, task_id=task_id)
+            if (
+                translated is None
+                or getattr(translated, "current_status", None) == "in_progress"
+            ):
+                if on_cancel_callback is not None:
+                    logger.warning(
+                        "Lease renewal lost ownership for task %s — cancelling local execution",
+                        task_id,
+                    )
+                    on_cancel_callback.set()
+                    break
+            consecutive_failures += 1
+            logger.warning(
+                "Lease renewal failed for task %s (attempt %d/%d): %s",
+                task_id,
+                consecutive_failures,
+                on_failure_count,
+                translated,
+                exc_info=True,
+            )
+            if (
+                consecutive_failures >= on_failure_count
+                and on_cancel_callback is not None
+            ):
+                logger.error(
+                    "Lease renewal failed %d times for task %s — signalling cancellation",
+                    on_failure_count,
+                    task_id,
+                )
+                on_cancel_callback.set()
+                break
         except TransportClassifiedError as exc:
             if (
                 getattr(exc, "classification", None) == "evicted"

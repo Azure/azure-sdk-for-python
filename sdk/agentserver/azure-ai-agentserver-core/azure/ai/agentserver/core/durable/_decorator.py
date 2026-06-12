@@ -36,6 +36,7 @@ import re
 
 from ._client import TransportClassifiedError as _TransportClassifiedError
 from ._context import TaskContext
+from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import TaskRun
@@ -649,7 +650,7 @@ class Task(Generic[Input, Output]):
         )
 
         manager = get_task_manager()
-        return await manager.provider.get(task_id)
+        return await manager._provider_get_tracked(task_id)  # noqa: SLF001
 
     async def get_active_run(self, task_id: str) -> TaskRun[Output] | None:
         """Return a TaskRun handle for an active (in-progress) task.
@@ -808,7 +809,11 @@ class Task(Generic[Input, Output]):
 
         for _attempt in range(max_retries):
             task_info = (
-                existing if _attempt == 0 else await manager.provider.get(task_id)
+                existing
+                if _attempt == 0
+                else await manager._provider_get_tracked(
+                    task_id
+                )  # pylint: disable=protected-access
             )
             if task_info is None:
                 raise RuntimeError(
@@ -844,6 +849,7 @@ class Task(Generic[Input, Output]):
                 _STEERING_THRESHOLD_BYTES,
                 _resolve_input_storage,
             )
+
             next_seq = int(steering.get("next_input_seq", 0))
             steering_key = f"{_STEERING_INPUT_KEY_PREFIX}{next_seq}"
             store_mode, queue_entry = _resolve_input_storage(
@@ -881,9 +887,9 @@ class Task(Generic[Input, Output]):
             # the caller is not the active owner of the task (the
             # ``_lease_ext_kwargs`` helper returns ``{}`` in that
             # case, so the wire format is unchanged).
-            lease_kwargs = manager._lease_ext_kwargs(  # pylint: disable=protected-access
+            lease_kwargs = manager._lease_ext_kwargs(
                 task_id
-            )
+            )  # pylint: disable=protected-access
             try:
                 await manager.provider.update(
                     task_id,
@@ -904,6 +910,11 @@ class Task(Generic[Input, Output]):
                 if active and hasattr(active, "context") and active.context is not None:
                     active.context.cancel.set()
                 return
+            except _HostedConflict as exc:
+                translated = _translate_hosted_conflict(exc, task_id=task_id)
+                if translated is None:
+                    continue
+                raise translated from exc
             except ValueError:
                 # Local provider etag conflict -- retry with the new etag
                 continue
@@ -986,6 +997,15 @@ class Task(Generic[Input, Output]):
                 input_id=input_id,
                 if_last_input_id=if_last_input_id,
             )
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc, task_id=task_id)
+            if translated is None:
+                if exc._code == "lease_ownership_changed":
+                    raise TaskConflictError(task_id, "in_progress") from exc
+                raise RuntimeError(
+                    f"Task {task_id!r} operation did not converge after retryable conflict"
+                ) from exc
+            raise translated from exc
         except _TransportClassifiedError as exc:
             if getattr(exc, "classification", None) == "evicted":
                 # Pre-import only at the eviction site to avoid a cycle.
@@ -1026,7 +1046,9 @@ class Task(Generic[Input, Output]):
         )
 
         manager = get_task_manager()
-        existing = await manager.provider.get(task_id)
+        existing = await manager._provider_get_tracked(
+            task_id
+        )  # pylint: disable=protected-access
 
         resolved_retry = self._opts.retry
 
@@ -1132,17 +1154,38 @@ class Task(Generic[Input, Output]):
                         ),
                     )
                     break
+                except _HostedConflict as exc:
+                    translated = _translate_hosted_conflict(exc, task_id=task_id)
+                    if translated is not None:
+                        raise translated from exc
+                    refreshed = await manager._provider_get_tracked(
+                        task_id
+                    )  # pylint: disable=protected-access
+                    if refreshed is None:
+                        raise RuntimeError(
+                            f"Task {task_id!r} disappeared during suspended-resume retry"
+                        ) from exc
+                    _check_input_precondition(
+                        existing=refreshed,
+                        task_id=task_id,
+                        input_id=input_id,
+                        if_last_input_id=if_last_input_id,
+                    )
+                    current_info = refreshed
                 except (ValueError, _TransportClassifiedError) as exc:
                     # Etag conflict -- re-fetch, re-check precondition, retry.
                     # Local provider raises ValueError; hosted task store
                     # raises TransportClassifiedError with classification=
                     # "conflict" (412 etag mismatch or 409). Both are
                     # the same logical concurrency outcome.
-                    if isinstance(exc, _TransportClassifiedError) and getattr(
-                        exc, "classification", None
-                    ) != "conflict":
+                    if (
+                        isinstance(exc, _TransportClassifiedError)
+                        and getattr(exc, "classification", None) != "conflict"
+                    ):
                         raise
-                    refreshed = await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
+                    refreshed = await manager._provider_get_tracked(
+                        task_id
+                    )  # pylint: disable=protected-access
                     if refreshed is None:
                         raise RuntimeError(
                             f"Task {task_id!r} disappeared during suspended-resume retry"
@@ -1191,7 +1234,9 @@ class Task(Generic[Input, Output]):
                 _lease_is_dead,
             )
 
-            active_locally = manager._active_tasks.get(task_id) is not None  # pylint: disable=protected-access
+            active_locally = (
+                manager._active_tasks.get(task_id) is not None
+            )  # pylint: disable=protected-access
             lease_dead = _lease_is_dead(
                 existing,
                 this_lease_owner=manager._lease_owner,  # pylint: disable=protected-access
@@ -1204,7 +1249,17 @@ class Task(Generic[Input, Output]):
                 # the outer _lifecycle_start wrapper converts it to
                 # TaskConflictError (FR-008 Invariant 1 shape).
                 try:
-                    await manager._reclaim_one(existing)  # pylint: disable=protected-access
+                    await manager._reclaim_one(
+                        existing
+                    )  # pylint: disable=protected-access
+                except _HostedConflict as exc:
+                    translated = _translate_hosted_conflict(exc, task_id=task_id)
+                    if (
+                        translated is None
+                        or getattr(translated, "current_status", None) == "in_progress"
+                    ):
+                        raise TaskConflictError(task_id, "in_progress") from exc
+                    raise translated from exc
                 except _TransportClassifiedError as exc:
                     if getattr(exc, "classification", None) == "evicted":
                         raise TaskConflictError(task_id, "in_progress") from exc
@@ -1374,8 +1429,7 @@ def task(
     ) -> Task[Any, Any]:
         if not asyncio.iscoroutinefunction(func):
             raise TypeError(
-                f"@task requires an async function, "
-                f"got {func.__qualname__!r}"
+                f"@task requires an async function, " f"got {func.__qualname__!r}"
             )
 
         input_type, output_type = _extract_generic_args(func)
