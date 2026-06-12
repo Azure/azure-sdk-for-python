@@ -19,6 +19,7 @@ from ._operations import (
 )
 from ... import models as _models
 
+
 class FileOperations(_GeneratedFileOperations):  # pylint: disable=too-many-public-methods
 
     async def upload_range(  # pylint: disable=arguments-differ,invalid-overridden-method
@@ -28,13 +29,10 @@ class FileOperations(_GeneratedFileOperations):  # pylint: disable=too-many-publ
         file_range_write: Union[str, "_models.FileRangeWriteType"] = "update",
         **kwargs: Any,
     ) -> None:
-        return await super().upload_range(
-            optional_body, file_range_write=file_range_write, **kwargs
-        )
+        return await super().upload_range(optional_body, file_range_write=file_range_write, **kwargs)
 
 
 __all__: List[str] = ["FileOperations"]
-
 
 
 def patch_sdk():
