@@ -49,6 +49,11 @@ class RetentionPolicy(_BackCompatMixin):
     days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
+    _validation = {
+        "enabled": {"required": True},
+        "days": {"minimum": 1},
+    }
+
     _attribute_map = {
         "enabled": {"key": "Enabled", "type": "bool"},
         "days": {"key": "Days", "type": "int"},
@@ -167,6 +172,10 @@ class Metrics(_BackCompatMixin):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
+    _validation = {
+        "enabled": {"required": True},
+    }
+
     _attribute_map = {
         "version": {"key": "Version", "type": "str"},
         "enabled": {"key": "Enabled", "type": "bool"},
@@ -248,6 +257,14 @@ class CorsRule(_BackCompatMixin):
     allowed_headers: str
     """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
         request."""
+
+    _validation = {
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
+    }
 
     _attribute_map = {
         "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
