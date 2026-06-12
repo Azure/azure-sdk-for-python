@@ -483,6 +483,7 @@
     },
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "CrossLanguageVersion": "9cf16cec0d0a"
 =======
     "CrossLanguageVersion": "3ae42dbde611"
@@ -490,4 +491,7 @@
 =======
     "CrossLanguageVersion": "ca205130211f"
 >>>>>>> 04139a93e3 ([azure-ai-projects] Emit SDK from TypeSpec, using latest OpenAI TypeSpec package (#47318))
+=======
+    "CrossLanguageVersion": "9cf16cec0d0a"
+>>>>>>> 5757d1c726 (Emit from latest TypeSpec, including new Agent Optimization methods (#47482))
 }

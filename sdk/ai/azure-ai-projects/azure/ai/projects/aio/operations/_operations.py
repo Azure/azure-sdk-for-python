@@ -5029,6 +5029,7 @@ class BetaAgentsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     @distributed_trace
     def list_optimization_candidates(
@@ -5594,6 +5595,8 @@ class BetaAgentsOperations:
         return deserialized  # type: ignore
 
 >>>>>>> 5fce783a23 ([azure-ai-projects] Emit SDK from TypeSpec (commit 6aa89cf) (#47294))
+=======
+>>>>>>> 5757d1c726 (Emit from latest TypeSpec, including new Agent Optimization methods (#47482))
 
 class BetaEvaluationTaxonomiesOperations:
     """
