@@ -619,8 +619,8 @@ class AccessPolicy(_BackCompatMixin):
             return None
         return cls(
             permission=generated.permission,
-            expiry=Deserializer.deserialize_iso(generated.expiry) if generated.expiry else None,
-            start=Deserializer.deserialize_iso(generated.start) if generated.start else None,
+            expiry=generated.expiry if generated.expiry else None,
+            start=generated.start if generated.start else None,
         )
 
 
