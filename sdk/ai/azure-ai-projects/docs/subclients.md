@@ -4,7 +4,7 @@ This document lists all sub-clients available on `AIProjectClient` and their pub
 
 ## Summary
 
-There are a total of 140 unique public methods across all sub-clients.
+There are a total of 134 unique public methods across all sub-clients.
 
 ### Top-level Sub-clients (stable operations)
 
@@ -22,7 +22,7 @@ There are a total of 140 unique public methods across all sub-clients.
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `beta.agents` | BetaAgentsOperations | 24 |
+| `beta.agents` | BetaAgentsOperations | 18 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 13 |
@@ -89,19 +89,13 @@ Alphabetically sorted, with ".beta" sub-client at the end. If the method is a ne
 .beta.agents.delete_session_file
 .beta.agents.download_code
 .beta.agents.download_session_file
-.beta.agents.get_candidate_file
-.beta.agents.get_optimization_candidate
-.beta.agents.get_optimization_candidate_config
-.beta.agents.get_optimization_candidate_results
 .beta.agents.get_optimization_job
 .beta.agents.get_session
 .beta.agents.get_session_log_stream
-.beta.agents.list_optimization_candidates
 .beta.agents.list_optimization_jobs
 .beta.agents.list_session_files
 .beta.agents.list_sessions
 .beta.agents.patch_agent_details
-.beta.agents.promote_candidate
 .beta.agents.stop_session
 .beta.agents.upload_session_file*
 
@@ -150,12 +144,12 @@ Alphabetically sorted, with ".beta" sub-client at the end. If the method is a ne
 .beta.memory_stores.update_memory
 
 .beta.models.create*
-.beta.models.pending_create_version
 .beta.models.delete
 .beta.models.get
 .beta.models.get_credentials
 .beta.models.list
 .beta.models.list_versions
+.beta.models.pending_create_version
 .beta.models.pending_upload
 .beta.models.update
 
