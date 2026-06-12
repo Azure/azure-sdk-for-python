@@ -49,8 +49,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DATA_GENERATION_JOBS_V1_PREVIEW."""
     MODELS_V1_PREVIEW = "Models=V1Preview"
     """MODELS_V1_PREVIEW."""
-    AGENTS_OPTIMIZATION_V1_PREVIEW = "AgentsOptimization=V1Preview"
-    """AGENTS_OPTIMIZATION_V1_PREVIEW."""
+    AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
+    """AGENTS_OPTIMIZATION_V2_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -123,6 +123,8 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
     """RESPONSES."""
+    A2A = "a2a"
+    """A2A."""
     MCP = "mcp"
     """MCP."""
     INVOCATIONS = "invocations"
@@ -790,6 +792,15 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has failed."""
     CANCELED = "Canceled"
     """The operation has been canceled by the user."""
+
+
+class OptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminator values for the dataset input union."""
+
+    INLINE = "inline"
+    """Inline dataset — items are provided directly in the request body."""
+    REFERENCE = "reference"
+    """Reference to a registered Foundry dataset by name and version."""
 
 
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):

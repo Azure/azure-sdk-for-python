@@ -39,6 +39,7 @@ from ._enums import (
     MemoryStoreKind,
     MemoryStoreObjectType,
     OpenApiAuthType,
+    OptimizationDatasetInputType,
     PendingUploadType,
     RecurrenceType,
     RoutineActionType,
@@ -856,40 +857,6 @@ class AgenticIdentityPreviewCredentials(BaseCredentials, discriminator="AgenticI
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = CredentialType.AGENTIC_IDENTITY_PREVIEW  # type: ignore
-
-
-class AgentIdentifier(_Model):
-    """Identifies the registered Foundry agent to optimize (request-only). Skills, tools, and
-    system_prompt are specified in options.optimization_config.
-
-    :ivar agent_name: Registered Foundry agent name (required). Required.
-    :vartype agent_name: str
-    :ivar agent_version: Pinned agent version. Defaults to latest if omitted.
-    :vartype agent_version: str
-    """
-
-    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Registered Foundry agent name (required). Required."""
-    agent_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Pinned agent version. Defaults to latest if omitted."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        agent_name: str,
-        agent_version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class AgentIdentity(_Model):
@@ -2635,208 +2602,6 @@ class BrowserAutomationToolParameters(_Model):
         self,
         *,
         connection: "_models.BrowserAutomationToolConnectionParameters",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CandidateDeployConfig(_Model):
-    """Deploy-config blob for a candidate. Suitable for setting OPTIMIZATION_CONFIG on a hosted-agent
-    version.
-
-    :ivar instructions: System prompt / instructions.
-    :vartype instructions: str
-    :ivar model: Foundry deployment name.
-    :vartype model: str
-    :ivar temperature: Optional sampling temperature.
-    :vartype temperature: float
-    :ivar skills: Optional skill overrides.
-    :vartype skills: list[dict[str, any]]
-    :ivar tools: Optional tool overrides.
-    :vartype tools: list[dict[str, any]]
-    """
-
-    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """System prompt / instructions."""
-    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Foundry deployment name."""
-    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional sampling temperature."""
-    skills: Optional[list[dict[str, Any]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional skill overrides."""
-    tools: Optional[list[dict[str, Any]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional tool overrides."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        instructions: Optional[str] = None,
-        model: Optional[str] = None,
-        temperature: Optional[float] = None,
-        skills: Optional[list[dict[str, Any]]] = None,
-        tools: Optional[list[dict[str, Any]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CandidateFileInfo(_Model):
-    """File entry in a candidate's blob directory.
-
-    :ivar path: Relative path of the file. Required.
-    :vartype path: str
-    :ivar type: File type category (e.g. 'config', 'results'). Required.
-    :vartype type: str
-    :ivar size_bytes: File size in bytes. Required.
-    :vartype size_bytes: int
-    """
-
-    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Relative path of the file. Required."""
-    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """File type category (e.g. 'config', 'results'). Required."""
-    size_bytes: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """File size in bytes. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        path: str,
-        type: str,
-        size_bytes: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CandidateMetadata(_Model):
-    """Candidate metadata returned by GET /candidates/{id}.
-
-    :ivar candidate_id: Server-assigned candidate identifier. Required.
-    :vartype candidate_id: str
-    :ivar job_id: Owning optimization job id. Required.
-    :vartype job_id: str
-    :ivar candidate_name: Display name of the candidate. Required.
-    :vartype candidate_name: str
-    :ivar status: Candidate lifecycle status. Required.
-    :vartype status: str
-    :ivar score: Candidate's aggregate score.
-    :vartype score: float
-    :ivar has_results: Whether detailed results are available for this candidate. Required.
-    :vartype has_results: bool
-    :ivar created_at: Timestamp when the candidate was created, represented in Unix time. Required.
-    :vartype created_at: ~datetime.datetime
-    :ivar updated_at: Timestamp when the candidate was last updated, represented in Unix time.
-     Required.
-    :vartype updated_at: ~datetime.datetime
-    :ivar promotion: Promotion metadata. Null if not promoted.
-    :vartype promotion: ~azure.ai.projects.models.PromotionInfo
-    :ivar files: Files in the candidate's blob directory. Required.
-    :vartype files: list[~azure.ai.projects.models.CandidateFileInfo]
-    """
-
-    candidate_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Server-assigned candidate identifier. Required."""
-    job_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Owning optimization job id. Required."""
-    candidate_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Display name of the candidate. Required."""
-    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Candidate lifecycle status. Required."""
-    score: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Candidate's aggregate score."""
-    has_results: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether detailed results are available for this candidate. Required."""
-    created_at: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
-    )
-    """Timestamp when the candidate was created, represented in Unix time. Required."""
-    updated_at: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
-    )
-    """Timestamp when the candidate was last updated, represented in Unix time. Required."""
-    promotion: Optional["_models.PromotionInfo"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Promotion metadata. Null if not promoted."""
-    files: list["_models.CandidateFileInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Files in the candidate's blob directory. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        candidate_id: str,
-        job_id: str,
-        candidate_name: str,
-        status: str,
-        has_results: bool,
-        created_at: datetime.datetime,
-        updated_at: datetime.datetime,
-        files: list["_models.CandidateFileInfo"],
-        score: Optional[float] = None,
-        promotion: Optional["_models.PromotionInfo"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CandidateResults(_Model):
-    """Full per-task evaluation results for a candidate, returned by GET /candidates/{id}/results.
-
-    :ivar candidate_id: Owning candidate id. Required.
-    :vartype candidate_id: str
-    :ivar results: Per-task evaluation rows. Required.
-    :vartype results: list[~azure.ai.projects.models.OptimizationTaskResult]
-    """
-
-    candidate_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Owning candidate id. Required."""
-    results: list["_models.OptimizationTaskResult"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-task evaluation rows. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        candidate_id: str,
-        results: list["_models.OptimizationTaskResult"],
     ) -> None: ...
 
     @overload
@@ -5099,83 +4864,6 @@ class DatasetEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discrimi
         self.type = EvaluatorGenerationJobSourceType.DATASET  # type: ignore
 
 
-class DatasetInfo(_Model):
-    """Metadata about the dataset used for optimization, surfaced in the response.
-
-    :ivar name: Dataset name when using a registered dataset reference. Null for inline datasets.
-    :vartype name: str
-    :ivar version: Dataset version when using a registered dataset reference. Null for inline
-     datasets.
-    :vartype version: str
-    :ivar task_count: Number of tasks/rows in the dataset. Required.
-    :vartype task_count: int
-    :ivar is_inline: True when the dataset was provided inline in the request body. Required.
-    :vartype is_inline: bool
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Dataset name when using a registered dataset reference. Null for inline datasets."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Dataset version when using a registered dataset reference. Null for inline datasets."""
-    task_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of tasks/rows in the dataset. Required."""
-    is_inline: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """True when the dataset was provided inline in the request body. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_count: int,
-        is_inline: bool,
-        name: Optional[str] = None,
-        version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DatasetRef(_Model):
-    """Reference to a registered dataset in the Foundry Dataset Service.
-
-    :ivar name: Dataset name. Required.
-    :vartype name: str
-    :ivar version: Dataset version. If not specified, the latest version is used.
-    :vartype version: str
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Dataset name. Required."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Dataset version. If not specified, the latest version is used."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class DatasetReference(_Model):
     """Reference to a versioned Foundry Dataset.
 
@@ -6858,6 +6546,12 @@ class EvaluatorVersion(_Model):
     :vartype evaluator_type: str or ~azure.ai.projects.models.EvaluatorType
     :ivar categories: The categories of the evaluator. Required.
     :vartype categories: list[str or ~azure.ai.projects.models.EvaluatorCategory]
+    :ivar supported_evaluation_levels: Evaluation levels this evaluator supports (e.g., ``turn``,
+     ``conversation``). When omitted on create, the service defaults to ``["turn"]``. On update,
+     omitting this field leaves it unchanged; an empty list is rejected. Custom code-based
+     evaluators support only ``turn``; custom prompt-based evaluators support exactly one level
+     (``turn`` or ``conversation``).
+    :vartype supported_evaluation_levels: list[str or ~azure.ai.projects.models.EvaluationLevel]
     :ivar definition: Definition of the evaluator. Required.
     :vartype definition: ~azure.ai.projects.models.EvaluatorDefinition
     :ivar generation_artifacts: Provenance artifacts from the generation pipeline. Read-only;
@@ -6893,6 +6587,13 @@ class EvaluatorVersion(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The categories of the evaluator. Required."""
+    supported_evaluation_levels: Optional[list[Union[str, "_models.EvaluationLevel"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluation levels this evaluator supports (e.g., ``turn``, ``conversation``). When omitted on
+     create, the service defaults to ``[\"turn\"]``. On update, omitting this field leaves it
+     unchanged; an empty list is rejected. Custom code-based evaluators support only ``turn``;
+     custom prompt-based evaluators support exactly one level (``turn`` or ``conversation``)."""
     definition: "_models.EvaluatorDefinition" = rest_field(visibility=["read", "create"])
     """Definition of the evaluator. Required."""
     generation_artifacts: Optional["_models.EvaluatorGenerationArtifacts"] = rest_field(visibility=["read"])
@@ -6925,6 +6626,7 @@ class EvaluatorVersion(_Model):
         definition: "_models.EvaluatorDefinition",
         display_name: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
+        supported_evaluation_levels: Optional[list[Union[str, "_models.EvaluationLevel"]]] = None,
         description: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
     ) -> None: ...
@@ -10872,46 +10574,27 @@ class OpenApiTool(Tool, discriminator="openapi"):
         self.type = ToolType.OPENAPI  # type: ignore
 
 
-class OptimizationAgentDefinition(_Model):
-    """Agent definition returned in response payloads (includes resolved config).
+class OptimizationAgentIdentifier(_Model):
+    """Identifies the registered Foundry agent to optimize (request-only). Skills, tools, and
+    system_prompt are specified in options.optimization_config.
 
-    :ivar agent_name: Agent name.
+    :ivar agent_name: Registered Foundry agent name (required). Required.
     :vartype agent_name: str
-    :ivar agent_version: Agent version.
+    :ivar agent_version: Pinned agent version. Defaults to latest if omitted.
     :vartype agent_version: str
-    :ivar model: Model deployment name.
-    :vartype model: str
-    :ivar system_prompt: System prompt / instructions.
-    :vartype system_prompt: str
-    :ivar skills: Agent skills.
-    :vartype skills: list[dict[str, any]]
-    :ivar tools: Agent tools.
-    :vartype tools: list[dict[str, any]]
     """
 
-    agent_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Agent name."""
+    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Registered Foundry agent name (required). Required."""
     agent_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Agent version."""
-    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Model deployment name."""
-    system_prompt: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """System prompt / instructions."""
-    skills: Optional[list[dict[str, Any]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Agent skills."""
-    tools: Optional[list[dict[str, Any]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Agent tools."""
+    """Pinned agent version. Defaults to latest if omitted."""
 
     @overload
     def __init__(
         self,
         *,
-        agent_name: Optional[str] = None,
+        agent_name: str,
         agent_version: Optional[str] = None,
-        model: Optional[str] = None,
-        system_prompt: Optional[str] = None,
-        skills: Optional[list[dict[str, Any]]] = None,
-        tools: Optional[list[dict[str, Any]]] = None,
     ) -> None: ...
 
     @overload
@@ -10933,22 +10616,12 @@ class OptimizationCandidate(_Model):
     :vartype candidate_id: str
     :ivar name: Display name of the candidate (e.g., 'baseline', 'instruction-v2'). Required.
     :vartype name: str
-    :ivar config: The agent configuration that produced this candidate. Required.
-    :vartype config: ~azure.ai.projects.models.OptimizationAgentDefinition
     :ivar mutations: What was mutated from the baseline (e.g., {system_prompt: 'new prompt'}).
-     Required.
     :vartype mutations: dict[str, any]
     :ivar avg_score: Average composite score across all tasks. Required.
     :vartype avg_score: float
     :ivar avg_tokens: Average token usage across all tasks. Required.
     :vartype avg_tokens: float
-    :ivar pass_rate: Fraction of tasks that met the pass threshold. Required.
-    :vartype pass_rate: float
-    :ivar task_scores: Individual task-level scores. Required.
-    :vartype task_scores: list[~azure.ai.projects.models.OptimizationTaskResult]
-    :ivar is_pareto_optimal: Whether this candidate is on the Pareto frontier (score vs cost).
-     Required.
-    :vartype is_pareto_optimal: bool
     :ivar eval_id: Foundry evaluation identifier used to score this candidate.
     :vartype eval_id: str
     :ivar eval_run_id: Foundry evaluation run identifier for this candidate's scoring run.
@@ -10961,24 +10634,12 @@ class OptimizationCandidate(_Model):
     """Server-assigned candidate identifier. Use with GET /candidates/{id} sub-endpoints."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Display name of the candidate (e.g., 'baseline', 'instruction-v2'). Required."""
-    config: "_models.OptimizationAgentDefinition" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The agent configuration that produced this candidate. Required."""
-    mutations: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """What was mutated from the baseline (e.g., {system_prompt: 'new prompt'}). Required."""
+    mutations: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """What was mutated from the baseline (e.g., {system_prompt: 'new prompt'})."""
     avg_score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Average composite score across all tasks. Required."""
     avg_tokens: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Average token usage across all tasks. Required."""
-    pass_rate: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Fraction of tasks that met the pass threshold. Required."""
-    task_scores: list["_models.OptimizationTaskResult"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Individual task-level scores. Required."""
-    is_pareto_optimal: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether this candidate is on the Pareto frontier (score vs cost). Required."""
     eval_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Foundry evaluation identifier used to score this candidate."""
     eval_run_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10993,14 +10654,10 @@ class OptimizationCandidate(_Model):
         self,
         *,
         name: str,
-        config: "_models.OptimizationAgentDefinition",
-        mutations: dict[str, Any],
         avg_score: float,
         avg_tokens: float,
-        pass_rate: float,
-        task_scores: list["_models.OptimizationTaskResult"],
-        is_pareto_optimal: bool,
         candidate_id: Optional[str] = None,
+        mutations: Optional[dict[str, Any]] = None,
         eval_id: Optional[str] = None,
         eval_run_id: Optional[str] = None,
         promotion: Optional["_models.PromotionInfo"] = None,
@@ -11017,6 +10674,187 @@ class OptimizationCandidate(_Model):
         super().__init__(*args, **kwargs)
 
 
+class OptimizationDatasetCriterion(_Model):
+    """Evaluation criterion: a name + instruction pair used for per-item scoring.
+
+    :ivar name: Criterion name. Required.
+    :vartype name: str
+    :ivar instruction: Criterion instruction / description. Required.
+    :vartype instruction: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Criterion name. Required."""
+    instruction: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Criterion instruction / description. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        instruction: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OptimizationDatasetInput(_Model):
+    """Base discriminated model for dataset input. Either inline items or a registered reference.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    OptimizationInlineDatasetInput, OptimizationReferenceDatasetInput
+
+    :ivar type: Dataset input type discriminator. Required. Known values are: "inline" and
+     "reference".
+    :vartype type: str or ~azure.ai.projects.models.OptimizationDatasetInputType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Dataset input type discriminator. Required. Known values are: \"inline\" and \"reference\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OptimizationDatasetItem(_Model):
+    """A single item in an inline dataset.
+
+    :ivar query: The user query / prompt.
+    :vartype query: str
+    :ivar ground_truth: Expected ground truth answer.
+    :vartype ground_truth: str
+    :ivar desired_num_turns: Desired number of conversation turns for simulation mode (1-20).
+    :vartype desired_num_turns: int
+    :ivar criteria: Per-item evaluation criteria.
+    :vartype criteria: list[~azure.ai.projects.models.OptimizationDatasetCriterion]
+    """
+
+    query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The user query / prompt."""
+    ground_truth: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Expected ground truth answer."""
+    desired_num_turns: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Desired number of conversation turns for simulation mode (1-20)."""
+    criteria: Optional[list["_models.OptimizationDatasetCriterion"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-item evaluation criteria."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        query: Optional[str] = None,
+        ground_truth: Optional[str] = None,
+        desired_num_turns: Optional[int] = None,
+        criteria: Optional[list["_models.OptimizationDatasetCriterion"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OptimizationEvaluatorRef(_Model):
+    """Reference to a named evaluator, optionally pinned to a version.
+
+    :ivar name: Evaluator name. Required.
+    :vartype name: str
+    :ivar version: Evaluator version. If not specified, the latest version is used.
+    :vartype version: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Evaluator name. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Evaluator version. If not specified, the latest version is used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OptimizationInlineDatasetInput(OptimizationDatasetInput, discriminator="inline"):
+    """Inline dataset — items supplied directly in the request body.
+
+    :ivar type: Dataset input type discriminator. Required. Inline dataset — items are provided
+     directly in the request body.
+    :vartype type: str or ~azure.ai.projects.models.INLINE
+    :ivar items_property: Dataset items. Required.
+    :vartype items_property: list[~azure.ai.projects.models.OptimizationDatasetItem]
+    """
+
+    type: Literal[OptimizationDatasetInputType.INLINE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Dataset input type discriminator. Required. Inline dataset — items are provided directly in the
+     request body."""
+    items_property: list["_models.OptimizationDatasetItem"] = rest_field(
+        name="items", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="items"
+    )
+    """Dataset items. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        items_property: list["_models.OptimizationDatasetItem"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = OptimizationDatasetInputType.INLINE  # type: ignore
+
+
 class OptimizationJob(_Model):
     """Agent optimization job resource — a long-running job that optimizes an agent's configuration
     (instructions, model, skills, tools) to maximize evaluation scores. On success, the result
@@ -11024,48 +10862,48 @@ class OptimizationJob(_Model):
 
     :ivar id: Server-assigned unique identifier. Required.
     :vartype id: str
+    :ivar inputs: Caller-supplied inputs.
+    :vartype inputs: ~azure.ai.projects.models.OptimizationJobInputs
+    :ivar result: Result produced on success.
+    :vartype result: ~azure.ai.projects.models.OptimizationJobResult
     :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
      "succeeded", "failed", and "cancelled".
     :vartype status: str or ~azure.ai.projects.models.JobStatus
     :ivar error: Error details — populated only on failure.
     :vartype error: ~azure.ai.projects.models.ApiError
-    :ivar result: Result produced on success.
-    :vartype result: ~azure.ai.projects.models.OptimizationJobResult
-    :ivar inputs: Caller-supplied inputs.
-    :vartype inputs: ~azure.ai.projects.models.OptimizationJobInputs
     :ivar created_at: The timestamp when the job was created, represented in Unix time. Required.
     :vartype created_at: ~datetime.datetime
-    :ivar updated_at: The timestamp when the job was last updated (status, progress, or result
-     change), represented in Unix time.
+    :ivar updated_at: The timestamp when the job was last updated, represented in Unix time.
+     Required.
     :vartype updated_at: ~datetime.datetime
-    :ivar progress: Progress while in flight. Absent in terminal states.
+    :ivar progress: Progress snapshot. May be present in terminal states reflecting last-known
+     progress.
     :vartype progress: ~azure.ai.projects.models.OptimizationJobProgress
-    :ivar dataset: Metadata about the dataset used for this optimization job.
-    :vartype dataset: ~azure.ai.projects.models.DatasetInfo
+    :ivar warnings: Non-fatal warnings emitted at any point during optimization.
+    :vartype warnings: list[str]
     """
 
     id: str = rest_field(visibility=["read"])
     """Server-assigned unique identifier. Required."""
+    inputs: Optional["_models.OptimizationJobInputs"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Caller-supplied inputs."""
+    result: Optional["_models.OptimizationJobResult"] = rest_field(visibility=["read"])
+    """Result produced on success."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
      \"succeeded\", \"failed\", and \"cancelled\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error details — populated only on failure."""
-    result: Optional["_models.OptimizationJobResult"] = rest_field(visibility=["read"])
-    """Result produced on success."""
-    inputs: Optional["_models.OptimizationJobInputs"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Caller-supplied inputs."""
     created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
     """The timestamp when the job was created, represented in Unix time. Required."""
-    updated_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
-    """The timestamp when the job was last updated (status, progress, or result change), represented
-     in Unix time."""
+    updated_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The timestamp when the job was last updated, represented in Unix time. Required."""
     progress: Optional["_models.OptimizationJobProgress"] = rest_field(visibility=["read"])
-    """Progress while in flight. Absent in terminal states."""
-    dataset: Optional["_models.DatasetInfo"] = rest_field(visibility=["read"])
-    """Metadata about the dataset used for this optimization job."""
+    """Progress snapshot. May be present in terminal states reflecting last-known progress."""
+    warnings: Optional[list[str]] = rest_field(visibility=["read"])
+    """Non-fatal warnings emitted at any point during optimization."""
 
     @overload
     def __init__(
@@ -11089,32 +10927,38 @@ class OptimizationJobInputs(_Model):
     """Caller-supplied inputs for an optimization job.
 
     :ivar agent: The agent (and pinned version) being optimized. Required.
-    :vartype agent: ~azure.ai.projects.models.AgentIdentifier
-    :ivar train_dataset_reference: Reference to a registered training dataset (required). Required.
-    :vartype train_dataset_reference: ~azure.ai.projects.models.DatasetRef
-    :ivar validation_dataset_reference: Optional held-out validation dataset for measuring
-     generalization of the final candidate.
-    :vartype validation_dataset_reference: ~azure.ai.projects.models.DatasetRef
-    :ivar evaluators: Job-level evaluators (referenced by name). Per-task criteria may override.
-     Default: ['task_adherence'].
-    :vartype evaluators: list[str]
+    :vartype agent: ~azure.ai.projects.models.OptimizationAgentIdentifier
+    :ivar train_dataset: Training dataset — either inline items or a reference to a registered
+     dataset. Required. Required.
+    :vartype train_dataset: ~azure.ai.projects.models.OptimizationDatasetInput
+    :ivar validation_dataset: Optional held-out validation dataset for measuring generalization of
+     the final candidate.
+    :vartype validation_dataset: ~azure.ai.projects.models.OptimizationDatasetInput
+    :ivar evaluators: Job-level evaluators referenced by name and optional version. Required; at
+     least one must be provided. Required.
+    :vartype evaluators: list[~azure.ai.projects.models.OptimizationEvaluatorRef]
     :ivar options: Tuning knobs and run-mode.
     :vartype options: ~azure.ai.projects.models.OptimizationOptions
     """
 
-    agent: "_models.AgentIdentifier" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The agent (and pinned version) being optimized. Required."""
-    train_dataset_reference: "_models.DatasetRef" = rest_field(
+    agent: "_models.OptimizationAgentIdentifier" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Reference to a registered training dataset (required). Required."""
-    validation_dataset_reference: Optional["_models.DatasetRef"] = rest_field(
+    """The agent (and pinned version) being optimized. Required."""
+    train_dataset: "_models.OptimizationDatasetInput" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Training dataset — either inline items or a reference to a registered dataset. Required.
+     Required."""
+    validation_dataset: Optional["_models.OptimizationDatasetInput"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional held-out validation dataset for measuring generalization of the final candidate."""
-    evaluators: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Job-level evaluators (referenced by name). Per-task criteria may override. Default:
-     ['task_adherence']."""
+    evaluators: list["_models.OptimizationEvaluatorRef"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Job-level evaluators referenced by name and optional version. Required; at least one must be
+     provided. Required."""
     options: Optional["_models.OptimizationOptions"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11124,10 +10968,10 @@ class OptimizationJobInputs(_Model):
     def __init__(
         self,
         *,
-        agent: "_models.AgentIdentifier",
-        train_dataset_reference: "_models.DatasetRef",
-        validation_dataset_reference: Optional["_models.DatasetRef"] = None,
-        evaluators: Optional[list[str]] = None,
+        agent: "_models.OptimizationAgentIdentifier",
+        train_dataset: "_models.OptimizationDatasetInput",
+        evaluators: list["_models.OptimizationEvaluatorRef"],
+        validation_dataset: Optional["_models.OptimizationDatasetInput"] = None,
         options: Optional["_models.OptimizationOptions"] = None,
     ) -> None: ...
 
@@ -11142,11 +10986,51 @@ class OptimizationJobInputs(_Model):
         super().__init__(*args, **kwargs)
 
 
+class OptimizationJobListItem(_Model):
+    """Slim job representation returned by the LIST endpoint.
+
+    :ivar id: Server-assigned unique identifier. Required.
+    :vartype id: str
+    :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
+     "succeeded", "failed", and "cancelled".
+    :vartype status: str or ~azure.ai.projects.models.JobStatus
+    :ivar error: Error details — populated only on failure.
+    :vartype error: ~azure.ai.projects.models.ApiError
+    :ivar created_at: The timestamp when the job was created, represented in Unix time. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The timestamp when the job was last updated, represented in Unix time.
+     Required.
+    :vartype updated_at: ~datetime.datetime
+    :ivar progress: Progress snapshot. May be present in terminal states reflecting last-known
+     progress.
+    :vartype progress: ~azure.ai.projects.models.OptimizationJobProgress
+    :ivar agent: The agent targeted by this optimization job.
+    :vartype agent: ~azure.ai.projects.models.OptimizationAgentIdentifier
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Server-assigned unique identifier. Required."""
+    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
+    """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
+     \"succeeded\", \"failed\", and \"cancelled\"."""
+    error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
+    """Error details — populated only on failure."""
+    created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The timestamp when the job was created, represented in Unix time. Required."""
+    updated_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The timestamp when the job was last updated, represented in Unix time. Required."""
+    progress: Optional["_models.OptimizationJobProgress"] = rest_field(visibility=["read"])
+    """Progress snapshot. May be present in terminal states reflecting last-known progress."""
+    agent: Optional["_models.OptimizationAgentIdentifier"] = rest_field(visibility=["read"])
+    """The agent targeted by this optimization job."""
+
+
 class OptimizationJobProgress(_Model):
     """In-flight progress; only populated while status is queued or in_progress.
 
-    :ivar current_iteration: 1-based current iteration index. Required.
-    :vartype current_iteration: int
+    :ivar candidates_completed: Number of candidates whose evaluation has completed so far.
+     Required.
+    :vartype candidates_completed: int
     :ivar best_score: Best score observed so far across all candidates. Required.
     :vartype best_score: float
     :ivar elapsed_seconds: Wall-clock time elapsed in seconds since the job began executing.
@@ -11154,8 +11038,8 @@ class OptimizationJobProgress(_Model):
     :vartype elapsed_seconds: float
     """
 
-    current_iteration: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """1-based current iteration index. Required."""
+    candidates_completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of candidates whose evaluation has completed so far. Required."""
     best_score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Best score observed so far across all candidates. Required."""
     elapsed_seconds: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -11165,7 +11049,7 @@ class OptimizationJobProgress(_Model):
     def __init__(
         self,
         *,
-        current_iteration: int,
+        candidates_completed: int,
         best_score: float,
         elapsed_seconds: float,
     ) -> None: ...
@@ -11184,56 +11068,30 @@ class OptimizationJobProgress(_Model):
 class OptimizationJobResult(_Model):
     """Terminal-state result body. Populated when status is succeeded or failed.
 
-    :ivar baseline: Evaluation scores for the original (un-optimized) agent configuration.
-    :vartype baseline: ~azure.ai.projects.models.OptimizationCandidate
-    :ivar best: The highest-scoring candidate found during optimization.
-    :vartype best: ~azure.ai.projects.models.OptimizationCandidate
+    :ivar baseline: Candidate ID of the original (un-optimized) baseline evaluation.
+    :vartype baseline: str
+    :ivar best: Candidate ID of the highest-scoring candidate found during optimization.
+    :vartype best: str
     :ivar candidates: All evaluated candidates including baseline.
     :vartype candidates: list[~azure.ai.projects.models.OptimizationCandidate]
-    :ivar options: The options used for this optimization run.
-    :vartype options: ~azure.ai.projects.models.OptimizationOptions
-    :ivar warnings: Non-fatal warnings from the optimization run (e.g., target attribute failures
-     that were skipped).
-    :vartype warnings: list[str]
-    :ivar all_target_attributes_failed: True when all target attributes failed — only the baseline
-     was evaluated.
-    :vartype all_target_attributes_failed: bool
     """
 
-    baseline: Optional["_models.OptimizationCandidate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Evaluation scores for the original (un-optimized) agent configuration."""
-    best: Optional["_models.OptimizationCandidate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The highest-scoring candidate found during optimization."""
+    baseline: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Candidate ID of the original (un-optimized) baseline evaluation."""
+    best: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Candidate ID of the highest-scoring candidate found during optimization."""
     candidates: Optional[list["_models.OptimizationCandidate"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """All evaluated candidates including baseline."""
-    options: Optional["_models.OptimizationOptions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The options used for this optimization run."""
-    warnings: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Non-fatal warnings from the optimization run (e.g., target attribute failures that were
-     skipped)."""
-    all_target_attributes_failed: Optional[bool] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """True when all target attributes failed — only the baseline was evaluated."""
 
     @overload
     def __init__(
         self,
         *,
-        baseline: Optional["_models.OptimizationCandidate"] = None,
-        best: Optional["_models.OptimizationCandidate"] = None,
+        baseline: Optional[str] = None,
+        best: Optional[str] = None,
         candidates: Optional[list["_models.OptimizationCandidate"]] = None,
-        options: Optional["_models.OptimizationOptions"] = None,
-        warnings: Optional[list[str]] = None,
-        all_target_attributes_failed: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -11250,8 +11108,9 @@ class OptimizationJobResult(_Model):
 class OptimizationOptions(_Model):
     """Tuning knobs and run-mode for an optimization job.
 
-    :ivar max_iterations: Maximum optimization iterations per strategy. Must be >= 1. Default: 5.
-    :vartype max_iterations: int
+    :ivar max_candidates: Maximum number of optimization candidates to generate. Must be >= 1.
+     Default: 5.
+    :vartype max_candidates: int
     :ivar optimization_config: Per-target-attribute configuration overrides. Contains skills,
      tools, system_prompt for the agent, plus model space for model optimization.
     :vartype optimization_config: dict[str, any]
@@ -11267,8 +11126,8 @@ class OptimizationOptions(_Model):
     :vartype evaluation_level: str or ~azure.ai.projects.models.EvaluationLevel
     """
 
-    max_iterations: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Maximum optimization iterations per strategy. Must be >= 1. Default: 5."""
+    max_candidates: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of optimization candidates to generate. Must be >= 1. Default: 5."""
     optimization_config: Optional[dict[str, Any]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11290,7 +11149,7 @@ class OptimizationOptions(_Model):
     def __init__(
         self,
         *,
-        max_iterations: Optional[int] = None,
+        max_candidates: Optional[int] = None,
         optimization_config: Optional[dict[str, Any]] = None,
         eval_model: Optional[str] = None,
         optimization_model: Optional[str] = None,
@@ -11308,71 +11167,32 @@ class OptimizationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OptimizationTaskResult(_Model):
-    """Per-task evaluation result for a single candidate.
+class OptimizationReferenceDatasetInput(OptimizationDatasetInput, discriminator="reference"):
+    """Reference to a registered Foundry dataset.
 
-    :ivar task_name: Task name (from the dataset). Required.
-    :vartype task_name: str
-    :ivar query: The user query / input for the task.
-    :vartype query: str
-    :ivar scores: Per-evaluator scores keyed by evaluator name. Required.
-    :vartype scores: dict[str, float]
-    :ivar composite_score: Composite score combining all evaluator scores. Required.
-    :vartype composite_score: float
-    :ivar tokens: Total tokens consumed during the agent run for this task. Required.
-    :vartype tokens: int
-    :ivar duration_seconds: Wall-clock seconds for this task's agent execution. Required.
-    :vartype duration_seconds: float
-    :ivar passed: Whether the task met the pass threshold. Required.
-    :vartype passed: bool
-    :ivar error_message: Error message if the task failed during execution.
-    :vartype error_message: str
-    :ivar rationales: Per-evaluator reasoning keyed by evaluator name.
-    :vartype rationales: dict[str, str]
-    :ivar response: Raw agent response text.
-    :vartype response: str
-    :ivar run_id: Identifier of the agent run that produced this result.
-    :vartype run_id: str
+    :ivar type: Dataset input type discriminator. Required. Reference to a registered Foundry
+     dataset by name and version.
+    :vartype type: str or ~azure.ai.projects.models.REFERENCE
+    :ivar name: Registered dataset name. Required.
+    :vartype name: str
+    :ivar version: Dataset version. If not specified, the latest version is used.
+    :vartype version: str
     """
 
-    task_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Task name (from the dataset). Required."""
-    query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The user query / input for the task."""
-    scores: dict[str, float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Per-evaluator scores keyed by evaluator name. Required."""
-    composite_score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Composite score combining all evaluator scores. Required."""
-    tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Total tokens consumed during the agent run for this task. Required."""
-    duration_seconds: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Wall-clock seconds for this task's agent execution. Required."""
-    passed: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the task met the pass threshold. Required."""
-    error_message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Error message if the task failed during execution."""
-    rationales: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Per-evaluator reasoning keyed by evaluator name."""
-    response: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Raw agent response text."""
-    run_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of the agent run that produced this result."""
+    type: Literal[OptimizationDatasetInputType.REFERENCE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Dataset input type discriminator. Required. Reference to a registered Foundry dataset by name
+     and version."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Registered dataset name. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dataset version. If not specified, the latest version is used."""
 
     @overload
     def __init__(
         self,
         *,
-        task_name: str,
-        scores: dict[str, float],
-        composite_score: float,
-        tokens: int,
-        duration_seconds: float,
-        passed: bool,
-        query: Optional[str] = None,
-        error_message: Optional[str] = None,
-        rationales: Optional[dict[str, str]] = None,
-        response: Optional[str] = None,
-        run_id: Optional[str] = None,
+        name: str,
+        version: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -11384,6 +11204,7 @@ class OptimizationTaskResult(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type = OptimizationDatasetInputType.REFERENCE  # type: ignore
 
 
 class TelemetryEndpoint(_Model):
@@ -11623,89 +11444,6 @@ class ProceduralMemoryItem(MemoryItem, discriminator="procedural"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = MemoryItemKind.PROCEDURAL  # type: ignore
-
-
-class PromoteCandidateRequest(_Model):
-    """Request body for promoting a candidate to a Foundry agent version.
-
-    :ivar agent_name: Name of the Foundry agent to promote to. Required.
-    :vartype agent_name: str
-    :ivar agent_version: Version of the Foundry agent to promote to. Required.
-    :vartype agent_version: str
-    """
-
-    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the Foundry agent to promote to. Required."""
-    agent_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Version of the Foundry agent to promote to. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        agent_name: str,
-        agent_version: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PromoteCandidateResponse(_Model):
-    """Response after successfully promoting a candidate.
-
-    :ivar candidate_id: The promoted candidate id. Required.
-    :vartype candidate_id: str
-    :ivar status: Status after promotion. Required.
-    :vartype status: str
-    :ivar promoted_at: Timestamp when promotion occurred, represented in Unix time. Required.
-    :vartype promoted_at: ~datetime.datetime
-    :ivar agent_name: Name of the Foundry agent promoted to. Required.
-    :vartype agent_name: str
-    :ivar agent_version: Version of the Foundry agent promoted to. Required.
-    :vartype agent_version: str
-    """
-
-    candidate_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The promoted candidate id. Required."""
-    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Status after promotion. Required."""
-    promoted_at: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
-    )
-    """Timestamp when promotion occurred, represented in Unix time. Required."""
-    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the Foundry agent promoted to. Required."""
-    agent_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Version of the Foundry agent promoted to. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        candidate_id: str,
-        status: str,
-        promoted_at: datetime.datetime,
-        agent_name: str,
-        agent_version: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class PromotionInfo(_Model):
@@ -12013,7 +11751,7 @@ class ProtocolVersionRecord(_Model):
     """A record mapping for a single protocol and its version.
 
     :ivar protocol: The protocol type. Required. Known values are: "activity_protocol",
-     "responses", "mcp", "invocations", and "invocations_ws".
+     "responses", "a2a", "mcp", "invocations", and "invocations_ws".
     :vartype protocol: str or ~azure.ai.projects.models.AgentProtocol
     :ivar version: The version string for the protocol, e.g. 'v0.1.1'. Required.
     :vartype version: str
@@ -12022,8 +11760,8 @@ class ProtocolVersionRecord(_Model):
     protocol: Union[str, "_models.AgentProtocol"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The protocol type. Required. Known values are: \"activity_protocol\", \"responses\", \"mcp\",
-     \"invocations\", and \"invocations_ws\"."""
+    """The protocol type. Required. Known values are: \"activity_protocol\", \"responses\", \"a2a\",
+     \"mcp\", \"invocations\", and \"invocations_ws\"."""
     version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version string for the protocol, e.g. 'v0.1.1'. Required."""
 
@@ -12444,7 +12182,7 @@ class RoutineRun(_Model):
 
     :ivar id: The unique run identifier for the routine attempt. Required.
     :vartype id: str
-    :ivar status: The run status.
+    :ivar status: The run status. Is one of the following types: str
     :vartype status: str
     :ivar phase: The AgentExtensions lifecycle phase for the routine attempt. Known values are:
      "queued", "dispatching", "completed", and "failed".
@@ -12497,8 +12235,8 @@ class RoutineRun(_Model):
 
     id: str = rest_field(visibility=["read"])
     """The unique run identifier for the routine attempt. Required."""
-    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The run status."""
+    status: Optional["_types.RoutineRunStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The run status. Is one of the following types: str"""
     phase: Optional[Union[str, "_models.RoutineRunPhase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12564,7 +12302,7 @@ class RoutineRun(_Model):
     def __init__(
         self,
         *,
-        status: Optional[str] = None,
+        status: Optional["_types.RoutineRunStatus"] = None,
         phase: Optional[Union[str, "_models.RoutineRunPhase"]] = None,
         trigger_type: Optional[Union[str, "_models.RoutineTriggerType"]] = None,
         trigger_name: Optional[str] = None,
