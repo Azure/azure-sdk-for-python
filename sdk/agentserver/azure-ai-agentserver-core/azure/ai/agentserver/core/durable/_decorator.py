@@ -77,8 +77,7 @@ def _strip_reserved_tags(tags: dict[str, str]) -> dict[str, str]:
     reserved = [k for k in tags if k.startswith(_RESERVED_TAG_PREFIX)]
     if reserved:
         _logger.warning(
-            "Ignoring reserved tag(s) %s — tags prefixed with %r are "
-            "framework-owned and cannot be overridden",
+            "Ignoring reserved tag(s) %s — tags prefixed with %r are " "framework-owned and cannot be overridden",
             reserved,
             _RESERVED_TAG_PREFIX,
         )
@@ -88,15 +87,9 @@ def _strip_reserved_tags(tags: dict[str, str]) -> dict[str, str]:
 
 def _validate_task_id(task_id: str) -> None:
     if not task_id or len(task_id) > _MAX_TASK_ID_LENGTH:
-        raise ValueError(
-            f"task_id must be 1-{_MAX_TASK_ID_LENGTH} characters, "
-            f"got {len(task_id)}"
-        )
+        raise ValueError(f"task_id must be 1-{_MAX_TASK_ID_LENGTH} characters, " f"got {len(task_id)}")
     if not _VALID_TASK_ID_RE.match(task_id):
-        raise ValueError(
-            f"task_id contains invalid characters: {task_id!r}. "
-            f"Allowed: [a-zA-Z0-9\\-_.:] "
-        )
+        raise ValueError(f"task_id contains invalid characters: {task_id!r}. " f"Allowed: [a-zA-Z0-9\\-_.:] ")
 
 
 def _extract_generic_args(
@@ -127,10 +120,7 @@ def _extract_generic_args(
                 break
 
     if ctx_param is None:
-        raise TypeError(
-            f"Durable task function {fn.__qualname__!r} must accept a "
-            f"TaskContext[Input] parameter"
-        )
+        raise TypeError(f"Durable task function {fn.__qualname__!r} must accept a " f"TaskContext[Input] parameter")
 
     ctx_hint = hints[ctx_param.name]
     args = get_args(ctx_hint)
@@ -174,11 +164,7 @@ def _deserialize_input(value: Any, input_type: type[Any]) -> Any:
     if hasattr(input_type, "model_validate"):
         return input_type.model_validate(value)
     # dict-constructable class
-    if (
-        isinstance(value, dict)
-        and callable(input_type)
-        and input_type not in (dict, str, int, float, bool, list)
-    ):
+    if isinstance(value, dict) and callable(input_type) and input_type not in (dict, str, int, float, bool, list):
         try:
             return input_type(**value)
         except TypeError:
@@ -460,16 +446,11 @@ class Task(Generic[Input, Output]):
         if callable(tags):
             result = tags(input_val, task_id)
             if not isinstance(result, dict):
-                raise TypeError(
-                    f"tags callable must return dict[str, str], "
-                    f"got {type(result).__name__}"
-                )
+                raise TypeError(f"tags callable must return dict[str, str], " f"got {type(result).__name__}")
             return _strip_reserved_tags(result)
         return _strip_reserved_tags(dict(tags) if tags else {})
 
-    def _merge_tags(
-        self, input_val: Input, task_id: str, call_tags: dict[str, str] | None
-    ) -> dict[str, str]:
+    def _merge_tags(self, input_val: Input, task_id: str, call_tags: dict[str, str] | None) -> dict[str, str]:
         merged = self._resolve_tags(input_val, task_id)
         if call_tags:
             merged.update(_strip_reserved_tags(call_tags))
@@ -547,8 +528,7 @@ class Task(Generic[Input, Output]):
         _validate_task_id(task_id)
         if if_last_input_id is not None and input_id is None:
             raise TypeError(
-                "if_last_input_id requires input_id (a precondition without an "
-                "advancing id is not meaningful)"
+                "if_last_input_id requires input_id (a precondition without an " "advancing id is not meaningful)"
             )
         handle = await self._lifecycle_start(
             task_id=task_id,
@@ -620,8 +600,7 @@ class Task(Generic[Input, Output]):
         _validate_task_id(task_id)
         if if_last_input_id is not None and input_id is None:
             raise TypeError(
-                "if_last_input_id requires input_id (a precondition without an "
-                "advancing id is not meaningful)"
+                "if_last_input_id requires input_id (a precondition without an " "advancing id is not meaningful)"
             )
         return await self._lifecycle_start(
             task_id=task_id,
@@ -811,14 +790,10 @@ class Task(Generic[Input, Output]):
             task_info = (
                 existing
                 if _attempt == 0
-                else await manager._provider_get_tracked(
-                    task_id
-                )  # pylint: disable=protected-access
+                else await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
             )
             if task_info is None:
-                raise RuntimeError(
-                    f"Task {task_id!r} disappeared during steering append"
-                )
+                raise RuntimeError(f"Task {task_id!r} disappeared during steering append")
 
             # (Spec 013 US2) Re-check the input precondition on each retry to
             # catch a concurrent steer that may have advanced `last_input_id`
@@ -887,9 +862,7 @@ class Task(Generic[Input, Output]):
             # the caller is not the active owner of the task (the
             # ``_lease_ext_kwargs`` helper returns ``{}`` in that
             # case, so the wire format is unchanged).
-            lease_kwargs = manager._lease_ext_kwargs(
-                task_id
-            )  # pylint: disable=protected-access
+            lease_kwargs = manager._lease_ext_kwargs(task_id)  # pylint: disable=protected-access
             try:
                 await manager.provider.update(
                     task_id,
@@ -900,13 +873,9 @@ class Task(Generic[Input, Output]):
                         **lease_kwargs,
                     ),
                 )
-                manager._note_lease_refreshed(  # pylint: disable=protected-access
-                    task_id
-                )
+                manager._note_lease_refreshed(task_id)  # pylint: disable=protected-access
                 # Signal the running task's cancel event so it can short-circuit
-                active = manager._active_tasks.get(
-                    task_id
-                )  # pylint: disable=protected-access  # noqa: SLF001
+                active = manager._active_tasks.get(task_id)  # pylint: disable=protected-access  # noqa: SLF001
                 if active and hasattr(active, "context") and active.context is not None:
                     active.context.cancel.set()
                 return
@@ -924,9 +893,7 @@ class Task(Generic[Input, Output]):
                     continue
                 raise
 
-        raise RuntimeError(
-            f"Failed to append steering input after {max_retries} retries"
-        )
+        raise RuntimeError(f"Failed to append steering input after {max_retries} retries")
 
     def _create_steering_ack_run(
         self,
@@ -1002,9 +969,7 @@ class Task(Generic[Input, Output]):
             if translated is None:
                 if exc._code == "lease_ownership_changed":
                     raise TaskConflictError(task_id, "in_progress") from exc
-                raise RuntimeError(
-                    f"Task {task_id!r} operation did not converge after retryable conflict"
-                ) from exc
+                raise RuntimeError(f"Task {task_id!r} operation did not converge after retryable conflict") from exc
             raise translated from exc
         except _TransportClassifiedError as exc:
             if getattr(exc, "classification", None) == "evicted":
@@ -1046,9 +1011,7 @@ class Task(Generic[Input, Output]):
         )
 
         manager = get_task_manager()
-        existing = await manager._provider_get_tracked(
-            task_id
-        )  # pylint: disable=protected-access
+        existing = await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
 
         resolved_retry = self._opts.retry
 
@@ -1158,13 +1121,9 @@ class Task(Generic[Input, Output]):
                     translated = _translate_hosted_conflict(exc, task_id=task_id)
                     if translated is not None:
                         raise translated from exc
-                    refreshed = await manager._provider_get_tracked(
-                        task_id
-                    )  # pylint: disable=protected-access
+                    refreshed = await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
                     if refreshed is None:
-                        raise RuntimeError(
-                            f"Task {task_id!r} disappeared during suspended-resume retry"
-                        ) from exc
+                        raise RuntimeError(f"Task {task_id!r} disappeared during suspended-resume retry") from exc
                     _check_input_precondition(
                         existing=refreshed,
                         task_id=task_id,
@@ -1183,13 +1142,9 @@ class Task(Generic[Input, Output]):
                         and getattr(exc, "classification", None) != "conflict"
                     ):
                         raise
-                    refreshed = await manager._provider_get_tracked(
-                        task_id
-                    )  # pylint: disable=protected-access
+                    refreshed = await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
                     if refreshed is None:
-                        raise RuntimeError(
-                            f"Task {task_id!r} disappeared during suspended-resume retry"
-                        ) from exc
+                        raise RuntimeError(f"Task {task_id!r} disappeared during suspended-resume retry") from exc
                     # Re-check the precondition against the now-refreshed view.
                     # On a precondition failure here, the exception propagates
                     # out (validation failure, not concurrency conflict).
@@ -1208,17 +1163,15 @@ class Task(Generic[Input, Output]):
             # PATCH already returned the updated TaskInfo -- no GET needed.
             if updated_info is None:
                 raise RuntimeError(f"Task {task_id!r} disappeared after input patch")
-            return (
-                await manager._start_existing_task(  # pylint: disable=protected-access
-                    fn=self._fn,
-                    fn_name=self.name,
-                    task_info=updated_info,
-                    entry_mode="resumed",
-                    input_val=input,
-                    input_type=self._input_type,
-                    opts=self._opts,
-                    retry=resolved_retry,
-                )
+            return await manager._start_existing_task(  # pylint: disable=protected-access
+                fn=self._fn,
+                fn_name=self.name,
+                task_info=updated_info,
+                entry_mode="resumed",
+                input_val=input,
+                input_type=self._input_type,
+                opts=self._opts,
+                retry=resolved_retry,
             )
 
         if existing.status == "in_progress":
@@ -1234,9 +1187,7 @@ class Task(Generic[Input, Output]):
                 _lease_is_dead,
             )
 
-            active_locally = (
-                manager._active_tasks.get(task_id) is not None
-            )  # pylint: disable=protected-access
+            active_locally = manager._active_tasks.get(task_id) is not None  # pylint: disable=protected-access
             lease_dead = _lease_is_dead(
                 existing,
                 this_lease_owner=manager._lease_owner,  # pylint: disable=protected-access
@@ -1249,15 +1200,10 @@ class Task(Generic[Input, Output]):
                 # the outer _lifecycle_start wrapper converts it to
                 # TaskConflictError (FR-008 Invariant 1 shape).
                 try:
-                    await manager._reclaim_one(
-                        existing
-                    )  # pylint: disable=protected-access
+                    await manager._reclaim_one(existing)  # pylint: disable=protected-access
                 except _HostedConflict as exc:
                     translated = _translate_hosted_conflict(exc, task_id=task_id)
-                    if (
-                        translated is None
-                        or getattr(translated, "current_status", None) == "in_progress"
-                    ):
+                    if translated is None or getattr(translated, "current_status", None) == "in_progress":
                         raise TaskConflictError(task_id, "in_progress") from exc
                     raise translated from exc
                 except _TransportClassifiedError as exc:
@@ -1268,9 +1214,7 @@ class Task(Generic[Input, Output]):
                 # Stale with steering recovery state — recover via steered path
                 if self._opts.steerable and existing.payload:
                     steering = existing.payload.get("_steering", {})
-                    if steering.get("drain_in_progress") or steering.get(
-                        "pending_inputs"
-                    ):
+                    if steering.get("drain_in_progress") or steering.get("pending_inputs"):
                         return await manager._start_existing_task(  # pylint: disable=protected-access
                             fn=self._fn,
                             fn_name=self.name,
@@ -1428,9 +1372,7 @@ def task(
         func: Callable[..., Any],
     ) -> Task[Any, Any]:
         if not asyncio.iscoroutinefunction(func):
-            raise TypeError(
-                f"@task requires an async function, " f"got {func.__qualname__!r}"
-            )
+            raise TypeError(f"@task requires an async function, " f"got {func.__qualname__!r}")
 
         input_type, output_type = _extract_generic_args(func)
 

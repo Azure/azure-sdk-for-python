@@ -25,6 +25,7 @@ Reference: docs/task-and-streaming-spec.md §23.7, §39, §59 C-ATT-4.
 
 from __future__ import annotations
 
+import asyncio
 import importlib
 from pathlib import Path
 from typing import Any
@@ -217,6 +218,30 @@ def test_hosted_conflict_is_not_public() -> None:
     assert "_HostedConflict" not in getattr(
         pub, "__all__", []
     ), "_HostedConflict must not appear in __all__."
+
+
+@pytest.mark.asyncio
+async def test_task_run_delete_translates_hosted_conflict() -> None:
+    """TaskRun.delete surfaces public TaskConflictError, not _HostedConflict."""
+    from azure.ai.agentserver.core.durable import TaskConflictError
+    from azure.ai.agentserver.core.durable._exceptions_internal import _HostedConflict
+    from azure.ai.agentserver.core.durable._run import TaskRun
+
+    class _Provider:
+        async def delete(self, task_id: str, *, force: bool = False, cascade: bool = False) -> None:
+            raise _HostedConflict(
+                _code="task_immutable",
+                status_code=409,
+                message="completed",
+                task_id=task_id,
+            )
+
+    result_future: asyncio.Future[Any] = asyncio.get_running_loop().create_future()
+    run = TaskRun("t-delete", provider=_Provider(), result_future=result_future)  # type: ignore[arg-type]
+
+    with pytest.raises(TaskConflictError) as exc_info:
+        await run.delete()
+    assert exc_info.value.task_id == "t-delete"
 
 
 def test_no_service_code_strings_as_public_type_names() -> None:

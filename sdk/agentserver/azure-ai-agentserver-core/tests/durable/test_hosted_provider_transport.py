@@ -25,6 +25,7 @@ Coverage map:
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import pytest
@@ -34,6 +35,7 @@ from azure.ai.agentserver.core.durable._client import (
     TransportClassifiedError,
     _classify_store_write_error,
 )
+from azure.ai.agentserver.core.durable._models import TaskPatchRequest
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
     AsyncRetryPolicy,
@@ -502,3 +504,43 @@ class TestSpec020OpaqueCursorRoundTrip:
             f"second-page request must carry after={opaque_cursor!r} verbatim; "
             f"got {query.get('after')!r}"
         )
+
+
+@pytest.mark.asyncio
+async def test_update_clear_attachments_sends_null_on_wire() -> None:
+    """Hosted PATCH clear_attachments=True serializes as attachments:null."""
+    transport = FakeAsyncHttpTransport(
+        [
+            FakeResponse.json_response(
+                {"id": "t-clear", "agent_name": "a", "session_id": "s", "status": "pending"},
+                status_code=200,
+            )
+        ]
+    )
+    provider = _make_provider(transport)
+    try:
+        await provider.update("t-clear", TaskPatchRequest(clear_attachments=True))
+    finally:
+        await provider.close()
+
+    assert len(transport.requests) == 1
+    assert transport.requests[0].body is not None
+    body = json.loads(transport.requests[0].body.decode("utf-8"))
+    assert body["attachments"] is None
+
+
+@pytest.mark.asyncio
+async def test_update_clear_attachments_rejects_attachment_patch() -> None:
+    """Hosted provider rejects mutually exclusive attachment clear/upsert."""
+    from azure.ai.agentserver.core.durable._exceptions_internal import _HostedConflict
+
+    provider = _make_provider(FakeAsyncHttpTransport())
+    try:
+        with pytest.raises(_HostedConflict) as exc_info:
+            await provider.update(
+                "t-clear",
+                TaskPatchRequest(clear_attachments=True, attachments={"a": "b"}),
+            )
+    finally:
+        await provider.close()
+    assert exc_info.value._code == "invalid_request"

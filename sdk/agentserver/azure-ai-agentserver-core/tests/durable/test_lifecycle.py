@@ -564,6 +564,8 @@ class TestSpec016ThreeLayerRecovery:
                 title="orphan",
                 payload={},
                 lease_owner="some-previous-lifetime",
+                lease_instance_id="some-previous-instance",
+                lease_duration_seconds=60,
             )
         )
 

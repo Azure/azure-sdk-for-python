@@ -13,6 +13,7 @@ import pytest
 from azure.ai.agentserver.core.durable._local_provider import (
     LocalFileTaskProvider,
 )
+from azure.ai.agentserver.core.durable._exceptions_internal import _HostedConflict
 from azure.ai.agentserver.core.durable._models import (
     TaskCreateRequest,
     TaskPatchRequest,
@@ -32,10 +33,8 @@ def sample_create_request() -> TaskCreateRequest:
         agent_name="test-agent",
         session_id="session-001",
         status="pending",
+        title="test task",
         payload={"input": {"data": "hello"}},
-        lease_owner="owner-1",
-        lease_instance_id="inst-1",
-        lease_duration_seconds=60,
     )
 
 
@@ -122,7 +121,7 @@ class TestLocalProviderCRUD:
     ) -> None:
         """delete removes a task."""
         task_record = await provider.create(sample_create_request)
-        await provider.delete(task_record.id)
+        await provider.delete(task_record.id, force=True)
         result = await provider.get(task_record.id)
         assert result is None
 
@@ -139,12 +138,14 @@ class TestLocalProviderListing:
             agent_name="agent-a",
             session_id="s1",
             status="pending",
+            title="task a",
             payload={},
         )
         req2 = TaskCreateRequest(
             agent_name="agent-b",
             session_id="s1",
             status="pending",
+            title="task b",
             payload={},
         )
         await provider.create(req1)
@@ -163,6 +164,7 @@ class TestLocalProviderListing:
             agent_name="agent",
             session_id="s1",
             status="pending",
+            title="task",
             payload={},
         )
         task_record = await provider.create(req)
@@ -296,6 +298,18 @@ class TestSpec019LocalProviderExpiryCountParity:
     Reference: docs/task-and-streaming-spec.md §22 / §29 / §59 C-LSE-3.
     """
 
+    @staticmethod
+    def _leased_create_request() -> TaskCreateRequest:
+        return TaskCreateRequest(
+            agent_name="test-agent",
+            session_id="session-001",
+            title="lease test",
+            status="in_progress",
+            lease_owner="owner-1",
+            lease_instance_id="inst-1",
+            lease_duration_seconds=60,
+        )
+
     @pytest.mark.asyncio
     async def test_local_provider_bumps_expiry_count_on_real_handoff(
         self,
@@ -306,7 +320,7 @@ class TestSpec019LocalProviderExpiryCountParity:
         expiry_count += 1."""
         import datetime as _dt
 
-        created = await provider.create(sample_create_request)
+        created = await provider.create(self._leased_create_request())
         assert created.lease is not None
         assert created.lease.expiry_count == 0
 
@@ -347,7 +361,7 @@ class TestSpec019LocalProviderExpiryCountParity:
         """FR-D-006 — same-instance lease renewal MUST NOT bump
         expiry_count.
         """
-        created = await provider.create(sample_create_request)
+        created = await provider.create(self._leased_create_request())
         assert created.lease is not None
         prior_count = created.lease.expiry_count
 
@@ -378,7 +392,7 @@ class TestSpec019LocalProviderExpiryCountParity:
         lease has expired (same-owner-different-instance restart;
         the prior lease was still valid) MUST NOT bump expiry_count.
         """
-        created = await provider.create(sample_create_request)
+        created = await provider.create(self._leased_create_request())
         assert created.lease is not None
         prior_count = created.lease.expiry_count
 
@@ -453,6 +467,29 @@ class TestSpec020Validation:
         bad = TaskCreateRequest(agent_name="a", session_id="s", title="")
         with pytest.raises(Exception):
             await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v2_title_none_required(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-2: title=None is rejected the same as an empty title."""
+        bad = TaskCreateRequest(agent_name="a", session_id="s", title=None)
+        with pytest.raises(_HostedConflict) as exc_info:
+            await provider.create(bad)
+        assert exc_info.value._code == "invalid_request"
+
+    @pytest.mark.asyncio
+    async def test_real_world_title_gets_same_lease_validation(self, provider: LocalFileTaskProvider) -> None:
+        """Validation applies to every title value, not only the spec test title."""
+        bad = TaskCreateRequest(
+            agent_name="a",
+            session_id="s",
+            title="customer import",
+            lease_owner="owner",
+            lease_instance_id="instance",
+            lease_duration_seconds=60,
+        )
+        with pytest.raises(_HostedConflict) as exc_info:
+            await provider.create(bad)
+        assert exc_info.value._code == "invalid_request"
 
     @pytest.mark.asyncio
     async def test_v3_tag_key_regex(self, provider: LocalFileTaskProvider) -> None:
@@ -621,8 +658,22 @@ class TestSpec020StateMachine:
         assert result.status == "completed"
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "field_name,value",
+        [
+            ("id", "other"),
+            ("agent_name", "other-agent"),
+            ("session_id", "other-session"),
+            ("title", "other-title"),
+            ("description", "other-description"),
+            ("source", {"type": "other"}),
+        ],
+    )
     async def test_b3_immutable_fields_rejected(
-        self, provider: LocalFileTaskProvider
+        self,
+        provider: LocalFileTaskProvider,
+        field_name: str,
+        value: Any,
     ) -> None:
         """C-LCM-8: id/agent_name/session_id/title/description/source can't be
         PATCHed.
@@ -630,15 +681,10 @@ class TestSpec020StateMachine:
         Note: today's TaskPatchRequest doesn't expose these as fields; this test
         documents that the provider rejects them at the JSON-layer in case
         anyone constructs the underlying patch dict directly."""
-        created = await provider.create(
-            TaskCreateRequest(agent_name="a", session_id="s", title="t")
-        )
-        # Direct dict-payload patch carrying an immutable field
-        # would be rejected on the wire side. Today the typed
-        # request doesn't allow this; future hosted-client work
-        # may surface it. Marking as documentation-test for now.
-        snap = await provider.get(created.id)
-        assert snap is not None and snap.title == "t"
+        created = await provider.create(TaskCreateRequest(agent_name="a", session_id="s", title="t"))
+        with pytest.raises(_HostedConflict) as exc_info:
+            provider._reject_immutable_patch_fields({field_name: value}, created.id)  # noqa: SLF001
+        assert exc_info.value._code == "invalid_request"
 
     @pytest.mark.asyncio
     async def test_b4_suspension_reason_only_with_suspended(

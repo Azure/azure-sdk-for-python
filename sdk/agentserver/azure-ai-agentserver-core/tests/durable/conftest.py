@@ -475,6 +475,14 @@ class FakeAsyncHttpTransport:
             )
         response_data = self._responses.pop(0)
         body = getattr(request, "body", None) or getattr(request, "data", None)
+        if body is None:
+            body = getattr(request, "content", None)
+            if callable(body):
+                body = body()
+        if body is None:
+            body = getattr(request, "_data", None) or getattr(request, "_body", None)
+        if isinstance(body, str):
+            body = body.encode("utf-8")
         if body is not None and not isinstance(body, (bytes, bytearray)):
             try:
                 body = bytes(body)

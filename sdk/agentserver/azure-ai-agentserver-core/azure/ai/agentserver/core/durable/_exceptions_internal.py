@@ -77,9 +77,7 @@ class _HostedConflict(Exception):
 
     def __repr__(self) -> str:
         return (
-            f"_HostedConflict(_code={self._code!r}, "
-            f"status_code={self.status_code!r}, "
-            f"task_id={self.task_id!r})"
+            f"_HostedConflict(_code={self._code!r}, " f"status_code={self.status_code!r}, " f"task_id={self.task_id!r})"
         )
 
 
@@ -113,7 +111,10 @@ def _translate_hosted_conflict(
     if code == "task_already_exists":
         return TaskConflictError(effective_task_id, observed_status or "in_progress")
     if code == "invalid_request":
-        return TaskPreconditionFailed(effective_task_id, exc.message or exc._code)
+        return TaskPreconditionFailed(
+            effective_task_id,
+            exc.message or "the task request failed a validation precondition",
+        )
     if code == "invalid_state_transition":
         logger.warning(
             "Framework generated an invalid task state transition for task %s",

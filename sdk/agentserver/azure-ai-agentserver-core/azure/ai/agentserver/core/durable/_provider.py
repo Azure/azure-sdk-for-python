@@ -78,12 +78,19 @@ class TaskProvider(Protocol):
     async def list(
         self,
         *,
-        agent_name: str,
-        session_id: str,
-        status: TaskStatus | None = None,
+        agent_name: str | None = None,
+        session_id: str | None = None,
+        status: TaskStatus | str | None = None,
         lease_owner: str | None = None,
         tag: dict[str, str] | None = None,
         source_type: str | None = None,
+        has_error: bool | None = None,
+        lease_expired: bool | None = None,
+        limit: int | None = None,
+        after: str | None = None,
+        before: str | None = None,
+        order: str | None = None,
+        omit_attachment_values: bool = False,
     ) -> list[TaskInfo]:
         """List tasks with filters.
 

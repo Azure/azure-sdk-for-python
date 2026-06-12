@@ -191,15 +191,10 @@ async def lease_renewal_loop(
                 try:
                     await steering_poll_callback()
                 except Exception:  # pylint: disable=broad-exception-caught
-                    logger.debug(
-                        "Steering poll failed for task %s", task_id, exc_info=True
-                    )
+                    logger.debug("Steering poll failed for task %s", task_id, exc_info=True)
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc, task_id=task_id)
-            if (
-                translated is None
-                or getattr(translated, "current_status", None) == "in_progress"
-            ):
+            if translated is None or getattr(translated, "current_status", None) == "in_progress":
                 if on_cancel_callback is not None:
                     logger.warning(
                         "Lease renewal lost ownership for task %s — cancelling local execution",
@@ -216,10 +211,7 @@ async def lease_renewal_loop(
                 translated,
                 exc_info=True,
             )
-            if (
-                consecutive_failures >= on_failure_count
-                and on_cancel_callback is not None
-            ):
+            if consecutive_failures >= on_failure_count and on_cancel_callback is not None:
                 logger.error(
                     "Lease renewal failed %d times for task %s — signalling cancellation",
                     on_failure_count,
@@ -228,10 +220,7 @@ async def lease_renewal_loop(
                 on_cancel_callback.set()
                 break
         except TransportClassifiedError as exc:
-            if (
-                getattr(exc, "classification", None) == "evicted"
-                and on_cancel_callback is not None
-            ):
+            if getattr(exc, "classification", None) == "evicted" and on_cancel_callback is not None:
                 # Spec 016 FR-007: orphan-sandbox eviction at the lease-renewal
                 # site. Stop renewing immediately; signal the local cleanup
                 # callback so _manager.py can cancel the local execution,
@@ -256,10 +245,7 @@ async def lease_renewal_loop(
                 exc,
                 exc_info=True,
             )
-            if (
-                consecutive_failures >= on_failure_count
-                and on_cancel_callback is not None
-            ):
+            if consecutive_failures >= on_failure_count and on_cancel_callback is not None:
                 logger.error(
                     "Lease renewal failed %d times for task %s — signalling cancellation",
                     on_failure_count,
@@ -276,10 +262,7 @@ async def lease_renewal_loop(
                 on_failure_count,
                 exc_info=True,
             )
-            if (
-                consecutive_failures >= on_failure_count
-                and on_cancel_callback is not None
-            ):
+            if consecutive_failures >= on_failure_count and on_cancel_callback is not None:
                 logger.error(
                     "Lease renewal failed %d times for task %s — signalling cancellation",
                     on_failure_count,

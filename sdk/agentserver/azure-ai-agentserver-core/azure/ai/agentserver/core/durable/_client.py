@@ -238,10 +238,7 @@ def _parse_json_body(
         raise TransportClassifiedError(
             status=status,
             classification=_classify_store_write_error(status, None),
-            message=(
-                f"task-store {method} {url}: failed to read response body: "
-                f"{type(exc).__name__}: {exc}"
-            ),
+            message=(f"task-store {method} {url}: failed to read response body: " f"{type(exc).__name__}: {exc}"),
             request_id=str(headers.get("x-ms-request-id", "") or "") or None,
         ) from exc
     body = _maybe_decompress(raw, headers)
@@ -374,9 +371,7 @@ def _raise_classified(
     raise TransportClassifiedError(
         status=status,
         classification=classification,
-        message=(
-            f"task-store {method} {url}: classified={classification} status={status}"
-        ),
+        message=(f"task-store {method} {url}: classified={classification} status={status}"),
         request_id=str(headers.get("x-ms-request-id", "") or "") or None,
         body_prefix=_body_prefix(body),
     )
@@ -483,7 +478,9 @@ class HostedTaskProvider:
         :return: The wire HTTP response.
         :rtype: Any
         """
-        pipeline_response = await self._client._pipeline.run(request)  # pylint: disable=protected-access  # noqa: SLF001
+        pipeline_response = await self._client._pipeline.run(
+            request
+        )  # pylint: disable=protected-access  # noqa: SLF001
         return pipeline_response.http_response
 
     async def create(self, request: TaskCreateRequest) -> TaskInfo:
@@ -543,7 +540,7 @@ class HostedTaskProvider:
             "POST",
             self._base_url,
             params=params,
-            json=body,
+            content=json.dumps(body),
             headers={"Content-Type": "application/json"},
         )
         response = await self._send(http_request)
@@ -602,6 +599,15 @@ class HostedTaskProvider:
             body["error"] = patch.error
         if patch.suspension_reason is not None:
             body["suspension_reason"] = patch.suspension_reason
+        if getattr(patch, "clear_attachments", False) and patch.attachments is not None:
+            raise _HostedConflict(
+                _code="invalid_request",
+                status_code=400,
+                message="clear_attachments cannot be combined with attachments patch.",
+                task_id=task_id,
+            )
+        if getattr(patch, "clear_attachments", False):
+            body["attachments"] = None
         if patch.attachments is not None:
             # Spec 018 — enforce per-attachment 2 MB cap on every
             # non-null value in the patch. (We don't enforce the
@@ -634,7 +640,7 @@ class HostedTaskProvider:
             "PATCH",
             url,
             params=params,
-            json=body,
+            content=json.dumps(body),
             headers=headers,
         )
         response = await self._send(http_request)
@@ -681,12 +687,19 @@ class HostedTaskProvider:
     async def list(
         self,
         *,
-        agent_name: str,
-        session_id: str,
-        status: TaskStatus | None = None,
+        agent_name: str | None = None,
+        session_id: str | None = None,
+        status: TaskStatus | str | None = None,
         lease_owner: str | None = None,
         tag: dict[str, str] | None = None,
         source_type: str | None = None,
+        has_error: bool | None = None,
+        lease_expired: bool | None = None,
+        limit: int | None = None,
+        after: str | None = None,
+        before: str | None = None,
+        order: str | None = None,
+        omit_attachment_values: bool = False,
     ) -> list[TaskInfo]:
         """List tasks via GET /tasks with automatic cursor pagination.
 
@@ -709,10 +722,12 @@ class HostedTaskProvider:
         """
         params: dict[str, str] = {
             "api-version": _API_VERSION,
-            "agent_name": agent_name,
-            "session_id": session_id,
-            "limit": "100",
+            "limit": str(limit if limit is not None else 100),
         }
+        if agent_name is not None:
+            params["agent_name"] = agent_name
+        if session_id is not None:
+            params["session_id"] = session_id
         if status is not None:
             params["status"] = status
         if lease_owner is not None:
@@ -722,6 +737,18 @@ class HostedTaskProvider:
                 params[f"tag.{key}"] = value
         if source_type is not None:
             params["source_type"] = source_type
+        if has_error is not None:
+            params["has_error"] = str(has_error).lower()
+        if lease_expired is not None:
+            params["lease_expired"] = str(lease_expired).lower()
+        if after is not None:
+            params["after"] = after
+        if before is not None:
+            params["before"] = before
+        if order is not None:
+            params["order"] = order
+        if omit_attachment_values:
+            params["omit_attachment_values"] = "true"
 
         all_tasks: list[TaskInfo] = []
         while True:

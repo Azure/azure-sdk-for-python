@@ -69,9 +69,7 @@ _ALLOWED_TRANSITIONS: dict[str, set[str]] = {
 }
 
 # Fields that MUST NOT appear in a PATCH body (§28a.6 / §24).
-IMMUTABLE_PATCH_FIELDS = frozenset(
-    {"id", "agent_name", "session_id", "title", "description", "source"}
-)
+IMMUTABLE_PATCH_FIELDS = frozenset({"id", "agent_name", "session_id", "title", "description", "source"})
 
 
 # ── Helpers ──────────────────────────────────────────────────────────
@@ -93,9 +91,7 @@ def _canonical_json_bytes(value: Any) -> int:
     Canonicalization matches the service's measurement:
     ``sort_keys=True`` + compact separators (no whitespace).
     """
-    return len(
-        json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    )
+    return len(json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8"))
 
 
 def normalize_legacy_status(status: str | None) -> str | None:
@@ -254,14 +250,11 @@ def validate_create_status(status: str | None) -> str:
     if status == "failed":
         _reject(
             "invalid_request",
-            "Unsupported status 'failed'. Represent failures as completed tasks "
-            "with a non-null error.",
+            "Unsupported status 'failed'. Represent failures as completed tasks " "with a non-null error.",
         )
     normalized = _LEGACY_STATUS_ALIASES.get(status, status)
     if normalized not in {"pending", "in_progress"}:
-        _reject(
-            "invalid_request", "status on create must be pending or in_progress."
-        )
+        _reject("invalid_request", "status on create must be pending or in_progress.")
     return normalized
 
 
@@ -277,8 +270,7 @@ def validate_patch_status(status: str | None) -> str | None:
     if status == "failed":
         _reject(
             "invalid_request",
-            "Unsupported status 'failed'. Represent failures as completed tasks "
-            "with a non-null error.",
+            "Unsupported status 'failed'. Represent failures as completed tasks " "with a non-null error.",
         )
     normalized = _LEGACY_STATUS_ALIASES.get(status, status)
     if normalized not in _LEGAL_STATUSES:
@@ -312,40 +304,30 @@ def validate_lease_params(
     Returns the normalized triplet when all three are supplied, ``None``
     when none are supplied. Raises ``_HostedConflict`` when partial.
     """
-    any_set = (
-        bool(owner) or bool(instance_id) or duration_seconds is not None
-    )
-    all_set = (
-        bool(owner) and bool(instance_id) and duration_seconds is not None
-    )
+    any_set = bool(owner) or bool(instance_id) or duration_seconds is not None
+    all_set = bool(owner) and bool(instance_id) and duration_seconds is not None
     if any_set and not all_set:
         _reject(
             "invalid_request",
-            "lease_owner, lease_instance_id, and lease_duration_seconds must "
-            "be provided together.",
+            "lease_owner, lease_instance_id, and lease_duration_seconds must " "be provided together.",
         )
     if not all_set:
         return None
     assert owner is not None and instance_id is not None  # type narrowing
     assert duration_seconds is not None
-    if duration_seconds != 0 and not (
-        LEASE_DURATION_MIN <= duration_seconds <= LEASE_DURATION_MAX
-    ):
+    if duration_seconds != 0 and not (LEASE_DURATION_MIN <= duration_seconds <= LEASE_DURATION_MAX):
         _reject(
             "invalid_request",
-            f"lease_duration_seconds must be 0 or between {LEASE_DURATION_MIN} "
-            f"and {LEASE_DURATION_MAX}.",
+            f"lease_duration_seconds must be 0 or between {LEASE_DURATION_MIN} " f"and {LEASE_DURATION_MAX}.",
         )
     if len(owner) > MAX_LEASE_IDENTITY_LEN:
         _reject(
             "invalid_request",
-            f"lease_owner exceeds the maximum allowed length of "
-            f"{MAX_LEASE_IDENTITY_LEN}.",
+            f"lease_owner exceeds the maximum allowed length of " f"{MAX_LEASE_IDENTITY_LEN}.",
         )
     if len(instance_id) > MAX_LEASE_IDENTITY_LEN:
         _reject(
             "invalid_request",
-            f"lease_instance_id exceeds the maximum allowed length of "
-            f"{MAX_LEASE_IDENTITY_LEN}.",
+            f"lease_instance_id exceeds the maximum allowed length of " f"{MAX_LEASE_IDENTITY_LEN}.",
         )
     return (owner.strip(), instance_id.strip(), duration_seconds)

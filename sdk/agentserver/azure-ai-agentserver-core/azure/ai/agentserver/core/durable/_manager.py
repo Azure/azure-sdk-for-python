@@ -67,9 +67,7 @@ _TAG_TASK_NAME = "_task_name"
 _DEFAULT_LEASE_SECONDS = 60
 
 #: Pre-computed server version segment for source stamps.
-_SOURCE_SERVER_VERSION = _build_server_version(
-    "azure-ai-agentserver-core", _CORE_VERSION
-)
+_SOURCE_SERVER_VERSION = _build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
@@ -94,10 +92,7 @@ def _is_evicted(exc: BaseException) -> bool:
     :return: True if the exception is an eviction-classified rejection.
     :rtype: bool
     """
-    return (
-        isinstance(exc, TransportClassifiedError)
-        and getattr(exc, "classification", None) == "evicted"
-    )
+    return isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) == "evicted"
 
 
 # Spec 016 FR-002 Layer 2 / FR-009 / gap-list §FR-009:
@@ -603,9 +598,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc)
             if translated is None:
-                raise RuntimeError(
-                    "Task list did not converge after retryable conflict"
-                ) from exc
+                raise RuntimeError("Task list did not converge after retryable conflict") from exc
             raise translated from exc
 
     def _register_steering_future(self, task_id: str) -> asyncio.Future[Any]:
@@ -654,9 +647,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # deterministically (FR-009).
         try:
             loop = asyncio.get_running_loop()
-            self._periodic_recovery_task = loop.create_task(
-                self._periodic_recovery_loop()
-            )
+            self._periodic_recovery_task = loop.create_task(self._periodic_recovery_loop())
         except RuntimeError:
             # No running loop (called from outside async context); skip
             # — the layer-1 startup scan above still covered the
@@ -771,10 +762,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                         exc_info=True,
                     )
         except asyncio.CancelledError:
-            logger.info(
-                "TaskManager shutdown lease-expire interrupted; "
-                "continuing to in-process task cancellation"
-            )
+            logger.info("TaskManager shutdown lease-expire interrupted; " "continuing to in-process task cancellation")
 
         # Cancel all renewal and execution tasks. Always do this so handlers
         # listening on the cancellation signal wake up and exit cleanly.
@@ -968,20 +956,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             if exc._code == "task_already_exists":
                 try:
                     observed = await self._provider.get(task_id)
-                    observed_status = (
-                        getattr(observed, "status", None) if observed else None
-                    )
+                    observed_status = getattr(observed, "status", None) if observed else None
                 except Exception:  # pylint: disable=broad-exception-caught
                     observed_status = None
-            translated = _translate_hosted_conflict(
-                exc, task_id=task_id, observed_status=observed_status
-            )
+            translated = _translate_hosted_conflict(exc, task_id=task_id, observed_status=observed_status)
             if translated is None:
                 if exc._code == "lease_ownership_changed":
                     raise TaskConflictError(task_id, "in_progress") from exc
-                raise RuntimeError(
-                    f"Task {task_id!r} create did not converge after retryable conflict"
-                ) from exc
+                raise RuntimeError(f"Task {task_id!r} create did not converge after retryable conflict") from exc
             raise translated from exc
         # Spec 019 FR-A-003 — track the etag from the create response
         # so the next PATCH carries it as if_match (FR-A-001).
@@ -1047,9 +1029,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 on_cancel_callback=cancel_event,
                 steering_poll_callback=steering_poll_cb_cs,
                 last_refresh_provider=lambda tid=task_id: (
-                    self._active_tasks[tid].lease_last_refresh_monotonic
-                    if tid in self._active_tasks
-                    else 0.0
+                    self._active_tasks[tid].lease_last_refresh_monotonic if tid in self._active_tasks else 0.0
                 ),
                 # Spec 019 FR-A-006 — heartbeat PATCH MUST be routed
                 # through the per-task write queue so it serializes
@@ -1120,9 +1100,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             raise TaskNotFound(task_id)
 
         if task_info.status != "suspended":
-            raise ValueError(
-                f"Task {task_id!r} is {task_info.status!r}, not 'suspended'"
-            )
+            raise ValueError(f"Task {task_id!r} is {task_info.status!r}, not 'suspended'")
 
         # Find the resume callback by scanning registered names
         fn = self._find_resume_callback(task_info)
@@ -1138,9 +1116,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         logger.info("Resumed task %s", task_id)
 
-    async def get_active_run(  # pylint: disable=too-many-return-statements
-        self, task_id: str
-    ) -> TaskRun[Any] | None:
+    async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:  # pylint: disable=too-many-return-statements
         """Return a TaskRun handle for an active (in-progress) task.
 
         Spec 016 FR-005 (US3 / US4): consults the store, not only
@@ -1177,10 +1153,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             task_info = await self._provider_get_tracked(task_id)
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc, task_id=task_id)
-            if (
-                translated is None
-                or getattr(translated, "current_status", None) == "in_progress"
-            ):
+            if translated is None or getattr(translated, "current_status", None) == "in_progress":
                 return None
             raise translated from exc
         except TransportClassifiedError as exc:
@@ -1213,10 +1186,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 await self._reclaim_one(task_info)
             except _HostedConflict as exc:
                 translated = _translate_hosted_conflict(exc, task_id=task_id)
-                if (
-                    translated is None
-                    or getattr(translated, "current_status", None) == "in_progress"
-                ):
+                if translated is None or getattr(translated, "current_status", None) == "in_progress":
                     logger.warning(
                         "get_active_run: reclaim of %s lost a provider race; "
                         "returning None (same shape as 'not active here')",
@@ -1334,9 +1304,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # Recovery (entry_mode == "recovered") does NOT re-stamp turn-
         # start AND does NOT clear output — it's a continuation of the
         # SAME turn, not a new one.
-        resume_clears_output = (
-            entry_mode != "recovered" and task_info.status == "suspended"
-        )
+        resume_clears_output = entry_mode != "recovered" and task_info.status == "suspended"
         if resume_clears_output:
             turn_start_payload["output"] = None
         # Decide whether this PATCH is actually necessary, and whether
@@ -1397,9 +1365,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         if input_val is not None:
             resolved_input = input_val
         elif task_info.payload and "input" in task_info.payload:
-            raw_input = _read_input_value(
-                task_info.payload["input"], task_info.attachments
-            )
+            raw_input = _read_input_value(task_info.payload["input"], task_info.attachments)
             if input_type is not None:
                 resolved_input = _deserialize_input(raw_input, input_type)
             else:
@@ -1434,11 +1400,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         is_steered_turn = bool(steering.get("drain_in_progress"))
 
         # For steerable recovery with drain_in_progress, use active_input
-        if (
-            entry_mode == "recovered"
-            and steering.get("drain_in_progress")
-            and "active_input" in steering
-        ):
+        if entry_mode == "recovered" and steering.get("drain_in_progress") and "active_input" in steering:
             raw_active = steering["active_input"]
             if input_type is not None:
                 resolved_input = _deserialize_input(raw_active, input_type)
@@ -1505,9 +1467,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 on_cancel_callback=cancel_event,
                 steering_poll_callback=steering_poll_cb,
                 last_refresh_provider=lambda tid=task_id: (
-                    self._active_tasks[tid].lease_last_refresh_monotonic
-                    if tid in self._active_tasks
-                    else 0.0
+                    self._active_tasks[tid].lease_last_refresh_monotonic if tid in self._active_tasks else 0.0
                 ),
                 # Spec 019 FR-A-006 — route through the per-task write queue.
                 update_via_queue=self._provider_update_locked,
@@ -1661,9 +1621,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         watchdog_task: asyncio.Task[None] | None = None
         if opts.timeout is not None:
             timeout_seconds = opts.timeout.total_seconds()
-            remaining = await self._compute_remaining_for_watchdog(
-                task_id, timeout_seconds, ctx
-            )
+            remaining = await self._compute_remaining_for_watchdog(task_id, timeout_seconds, ctx)
             watchdog_task = asyncio.create_task(
                 self._timeout_watchdog(
                     timeout_seconds=timeout_seconds,
@@ -1926,10 +1884,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                             ctx = new_ctx
                             attempt = 0
                             active = self._active_tasks.get(task_id)
-                            if (
-                                active
-                                and active.result_future is not current_result_future
-                            ):
+                            if active and active.result_future is not current_result_future:
                                 current_result_future = active.result_future
                             continue
                 else:
@@ -1960,6 +1915,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                             metadata=ctx.metadata,
                             opts=opts,
                         )
+                    except TaskConflictError as exc:
+                        if not current_result_future.done():
+                            current_result_future.set_exception(exc)
+                        _resolve_queued_steerers_on_terminal(
+                            self._pending_steering_futures,
+                            task_id,
+                            current_status=exc.current_status,
+                        )
+                        break
                     except OutputTooLarge as exc:
                         # Spec 019 FR-C-006 / SC-9 — surface OutputTooLarge
                         # to the caller directly, NOT wrapped in TaskFailed.
@@ -2053,9 +2017,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                             ),
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
-                        logger.debug(
-                            "Failed to update error field for retry", exc_info=True
-                        )
+                        logger.debug("Failed to update error field for retry", exc_info=True)
                     await asyncio.sleep(delay)
                     attempt += 1
                     continue
@@ -2205,12 +2167,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             if translated is None:
                 if _conflict_attempt >= 5:
                     raise RuntimeError(
-                        f"Steering drain for {task_id!r} did not converge "
-                        "after 5 etag-conflict retries"
+                        f"Steering drain for {task_id!r} did not converge " "after 5 etag-conflict retries"
                     ) from exc
                 logger.warning(
-                    "Provider write conflict during steering drain for %s, retrying "
-                    "(attempt %d)",
+                    "Provider write conflict during steering drain for %s, retrying " "(attempt %d)",
                     task_id,
                     _conflict_attempt + 1,
                 )
@@ -2222,15 +2182,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 )
             raise translated from exc
         except (ValueError, TransportClassifiedError) as exc:
-            if (
-                isinstance(exc, TransportClassifiedError)
-                and getattr(exc, "classification", None) != "conflict"
-            ):
+            if isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) != "conflict":
                 raise
             if _conflict_attempt >= 5:
                 raise RuntimeError(
-                    f"Steering drain for {task_id!r} did not converge "
-                    "after 5 etag-conflict retries"
+                    f"Steering drain for {task_id!r} did not converge " "after 5 etag-conflict retries"
                 ) from exc
             logger.warning(
                 "Etag conflict during steering drain for %s, retrying " "(attempt %d)",
@@ -2358,9 +2314,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             try:
                 await self._provider.delete(task_id, force=True)
             except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Failed to delete ephemeral task %s", task_id, exc_info=True
-                )
+                logger.warning("Failed to delete ephemeral task %s", task_id, exc_info=True)
         else:
             # Spec 019 FR-C-005 — output is ALWAYS persisted via the
             # _output attachment (never inline in payload). FR-C-006
@@ -2660,14 +2614,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             _STEERING_INPUT_KEY_PREFIX,
         )
 
-        steering_keys = {
-            k for k in task_info.attachments if k.startswith(_STEERING_INPUT_KEY_PREFIX)
-        }
+        steering_keys = {k for k in task_info.attachments if k.startswith(_STEERING_INPUT_KEY_PREFIX)}
         if not steering_keys:
             return
-        pending: list[Any] = (
-            (task_info.payload or {}).get("_steering", {}).get("pending_inputs", [])
-        )
+        pending: list[Any] = (task_info.payload or {}).get("_steering", {}).get("pending_inputs", [])
         referenced = {
             _ref_key(entry)
             for entry in pending
@@ -2756,13 +2706,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 )
             except _HostedConflict as exc:
                 translated = _translate_hosted_conflict(exc, task_id=task_info.id)
-                if (
-                    translated is None
-                    or getattr(translated, "current_status", None) == "in_progress"
-                ):
+                if translated is None or getattr(translated, "current_status", None) == "in_progress":
                     logger.info(
-                        "Reclaim conflict for task %s — another process beat us; "
-                        "letting next scan re-evaluate.",
+                        "Reclaim conflict for task %s — another process beat us; " "letting next scan re-evaluate.",
                         task_info.id,
                     )
                     continue
@@ -2771,9 +2717,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             except (EtagConflict, ValueError) as exc:
                 # 412 ABANDON for reclaim per §25.3.
                 if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
-                    logger.warning(
-                        "Failed to reclaim task %s", task_info.id, exc_info=True
-                    )
+                    logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
                     continue
                 logger.info(
                     "Reclaim 412 for task %s — another process beat us; "
@@ -3176,9 +3120,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         except RuntimeError:  # no running loop (sync context)
             pass
 
-    def _make_metadata_flush(
-        self, task_id: str
-    ) -> Callable[[Optional[str], dict[str, Any]], Awaitable[None]]:
+    def _make_metadata_flush(self, task_id: str) -> Callable[[Optional[str], dict[str, Any]], Awaitable[None]]:
         """Create a per-namespace flush callback for metadata persistence.
 
         The callback persists each namespace into its dedicated payload

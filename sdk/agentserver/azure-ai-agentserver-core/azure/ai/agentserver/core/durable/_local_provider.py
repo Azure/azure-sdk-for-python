@@ -60,16 +60,11 @@ def _is_lease_expired(lease: LeaseInfo | None) -> bool:
 
 
 def _expires_at(duration_seconds: int) -> str:
-    return (
-        datetime.datetime.now(datetime.timezone.utc)
-        + datetime.timedelta(seconds=duration_seconds)
-    ).isoformat()
+    return (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=duration_seconds)).isoformat()
 
 
 def _invalid_request(message: str, task_id: str | None = None) -> None:
-    raise _HostedConflict(
-        _code="invalid_request", status_code=400, message=message, task_id=task_id
-    )
+    raise _HostedConflict(_code="invalid_request", status_code=400, message=message, task_id=task_id)
 
 
 def _lease_held(task_id: str) -> None:
@@ -131,9 +126,7 @@ class LocalFileTaskProvider:
                     return path
         return None
 
-    def _iter_task_paths(
-        self, agent_name: str | None, session_id: str | None
-    ) -> Iterable[Path]:
+    def _iter_task_paths(self, agent_name: str | None, session_id: str | None) -> Iterable[Path]:
         if not self._base_dir.exists():
             return []
         if agent_name is not None and session_id is not None:
@@ -188,19 +181,10 @@ class LocalFileTaskProvider:
     @staticmethod
     def _validate_create_request(request: TaskCreateRequest, task_id: str) -> str:
         _validation.validate_task_id(task_id)
-        _validation.validate_required_string(
-            request.agent_name, "agent_name", _validation.MAX_AGENT_NAME_LEN
-        )
-        _validation.validate_required_string(
-            request.session_id, "session_id", _validation.MAX_SESSION_ID_LEN
-        )
-        if request.title is not None:
-            _validation.validate_required_string(
-                request.title, "title", _validation.MAX_TITLE_LEN
-            )
-        _validation.validate_optional_string(
-            request.description, "description", _validation.MAX_DESCRIPTION_LEN
-        )
+        _validation.validate_required_string(request.agent_name, "agent_name", _validation.MAX_AGENT_NAME_LEN)
+        _validation.validate_required_string(request.session_id, "session_id", _validation.MAX_SESSION_ID_LEN)
+        _validation.validate_required_string(request.title, "title", _validation.MAX_TITLE_LEN)
+        _validation.validate_optional_string(request.description, "description", _validation.MAX_DESCRIPTION_LEN)
         _validation.validate_tags(request.tags)
         _validation.validate_payload_size(request.payload)
         _validation.validate_source(request.source)
@@ -216,9 +200,7 @@ class LocalFileTaskProvider:
             return _validation.validate_patch_status(request.status) or "pending"
 
     @staticmethod
-    def _validate_create_attachments(
-        task_id: str, attachments: dict[str, Any] | None
-    ) -> dict[str, Any] | None:
+    def _validate_create_attachments(task_id: str, attachments: dict[str, Any] | None) -> dict[str, Any] | None:
         if attachments is None:
             return None
         additions = sum(1 for value in attachments.values() if value is not None)
@@ -239,18 +221,13 @@ class LocalFileTaskProvider:
         now = _now_iso()
         task_id = request.id or f"task-{os.urandom(8).hex()}"
         status = self._validate_create_request(request, task_id)
-        try:
-            lease_request = _validation.validate_lease_params(
-                request.lease_owner,
-                request.lease_instance_id,
-                request.lease_duration_seconds,
-            )
-        except _HostedConflict:
-            if request.title == "t":
-                raise
-            lease_request = None
+        lease_request = _validation.validate_lease_params(
+            request.lease_owner,
+            request.lease_instance_id,
+            request.lease_duration_seconds,
+        )
 
-        if status == "pending" and lease_request is not None and request.title is not None:
+        if status == "pending" and lease_request is not None:
             _invalid_request(
                 "lease_owner, lease_instance_id, and lease_duration_seconds must "
                 "not be provided when status is pending.",
@@ -315,9 +292,12 @@ class LocalFileTaskProvider:
         return self._read_task(path)
 
     @staticmethod
-    def _reject_immutable_patch_fields(patch: TaskPatchRequest, task_id: str) -> None:
+    def _reject_immutable_patch_fields(patch: TaskPatchRequest | dict[str, Any], task_id: str) -> None:
         for field_name in _validation.IMMUTABLE_PATCH_FIELDS:
-            value = getattr(patch, field_name, None)
+            if isinstance(patch, dict):
+                value = patch.get(field_name)
+            else:
+                value = getattr(patch, field_name, None)
             if value is None:
                 continue
             if field_name == "source":
@@ -342,14 +322,8 @@ class LocalFileTaskProvider:
         )
 
     @staticmethod
-    def _lease_matches(
-        lease: LeaseInfo | None, owner: str, instance_id: str
-    ) -> bool:
-        return (
-            lease is not None
-            and lease.owner == owner
-            and lease.instance_id == instance_id
-        )
+    def _lease_matches(lease: LeaseInfo | None, owner: str, instance_id: str) -> bool:
+        return lease is not None and lease.owner == owner and lease.instance_id == instance_id
 
     @staticmethod
     def _apply_lease_acquisition(
@@ -369,17 +343,14 @@ class LocalFileTaskProvider:
             elif current.owner == owner:
                 generation = current.generation + 1
                 if expired:
-                    if task.title is None:
-                        expiry_count = current.expiry_count + 1
+                    expiry_count = current.expiry_count + 1
                     task.started_at = now
             elif expired:
                 generation = current.generation + 1
                 expiry_count = current.expiry_count + 1
                 task.started_at = now
-            elif task.title == "t":
-                _lease_held(task.id)
             else:
-                generation = current.generation + 1
+                _lease_held(task.id)
 
         task.lease = LeaseInfo(
             owner=owner,
@@ -410,19 +381,13 @@ class LocalFileTaskProvider:
             )
         if status_change and target_status in {"completed", "suspended"}:
             _invalid_request(
-                "lease parameters cannot be supplied when transitioning to "
-                f"{target_status}.",
+                "lease parameters cannot be supplied when transitioning to " f"{target_status}.",
                 task.id,
             )
         if status_change and task.status == "in_progress" and target_status == "pending":
             if not LocalFileTaskProvider._lease_matches(task.lease, owner, instance_id):
                 _lease_held(task.id)
-        if (
-            not status_change
-            and duration_seconds > 0
-            and task.status not in {"in_progress", "suspended"}
-            and task.title is not None
-        ):
+        if not status_change and duration_seconds > 0 and task.status not in {"in_progress", "suspended"}:
             _invalid_request(
                 "Lease renewal is only allowed when current status is in_progress.",
                 task.id,
@@ -434,12 +399,7 @@ class LocalFileTaskProvider:
                 task.lease, owner, instance_id
             ):
                 _lease_held(task.id)
-        elif (
-            task.lease is not None
-            and task.lease.owner != owner
-            and not _is_lease_expired(task.lease)
-            and task.title == "t"
-        ):
+        elif task.lease is not None and task.lease.owner != owner and not _is_lease_expired(task.lease):
             _lease_held(task.id)
 
     @staticmethod
@@ -532,9 +492,7 @@ class LocalFileTaskProvider:
         )
 
         if getattr(patch, "clear_attachments", False) and patch.attachments is not None:
-            _invalid_request(
-                "clear_attachments cannot be combined with attachments patch.", task_id
-            )
+            _invalid_request("clear_attachments cannot be combined with attachments patch.", task_id)
 
         target_status = normalized_status or task.status
         if patch.suspension_reason is not None and target_status != "suspended":
@@ -546,16 +504,15 @@ class LocalFileTaskProvider:
         if task.status == "completed":
             if self._patch_is_completed_noop(patch, normalized_status, lease_request):
                 return task
-            if task.title == "t":
-                raise _HostedConflict(
-                    _code="task_immutable",
-                    status_code=409,
-                    message="Completed tasks are immutable.",
-                    task_id=task_id,
-                )
+            raise _HostedConflict(
+                _code="task_immutable",
+                status_code=409,
+                message="Completed tasks are immutable.",
+                task_id=task_id,
+            )
 
         status_change = normalized_status is not None and normalized_status != task.status
-        if status_change and not (task.status == "completed" and task.title != "t"):
+        if status_change:
             _validation.validate_transition(task.status, target_status)
         self._validate_lease_rules(task, target_status, status_change, lease_request)
 
@@ -634,7 +591,7 @@ class LocalFileTaskProvider:
             raise TaskNotFound(task_id)
         if if_match is not None and if_match != task.etag:
             _etag_mismatch(task_id)
-        if task.status != "completed" and not force and task.title is not None:
+        if task.status != "completed" and not force:
             _invalid_request("Non-terminal tasks require force=true for deletion.", task_id)
         path.unlink(missing_ok=True)
         logger.debug("Deleted local task %s", task_id)

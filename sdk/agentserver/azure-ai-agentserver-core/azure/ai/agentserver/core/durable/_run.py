@@ -11,6 +11,7 @@ from typing import Any, Generic, TypeVar
 from ._exceptions import (
     TaskNotFound,
 )
+from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 from ._metadata import TaskMetadata
 from ._models import TaskInfo, TaskStatus
 from ._provider import TaskProvider
@@ -187,6 +188,11 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         """
         try:
             await self._provider.delete(self.task_id, force=True)
+        except _HostedConflict as exc:
+            translated = _translate_hosted_conflict(exc, task_id=self.task_id)
+            if translated is not None:
+                raise translated from exc
+            raise
         except Exception as exc:
             if "not found" in str(exc).lower():
                 raise TaskNotFound(self.task_id) from exc

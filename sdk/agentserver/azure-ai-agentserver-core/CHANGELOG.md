@@ -145,6 +145,66 @@
 
 ### Other Changes
 
+- **Local file provider parity with the hosted task service (spec 020).**
+  The local file-backed task provider used in dev mode now enforces
+  the same validation, state machine, lease semantics, attachment
+  rules, and list-filter surface as the hosted task service. This
+  closes silent "works locally, fails in service" divergences:
+
+  - Field validation: task id regex (`^[a-zA-Z0-9_-]{1,128}$`),
+    required `agent_name` / `session_id` / `title` on create, tag key
+    regex (`^[a-zA-Z0-9_.\-]{1,64}$`) + max 16 entries + max 256 char
+    values, payload ≤ 1 MB, error ≤ 64 KB, source ≤ 4 KB,
+    suspension_reason ≤ 256 chars, `source.type` required when source
+    supplied, `"failed"` status rejected, `"done"` legacy alias
+    normalized to `"completed"`, attachment key regex.
+  - State machine: full `pending` ⇄ `in_progress` ⇄ `suspended` →
+    `completed` transition matrix enforcement; terminal-task
+    immutability (PATCH on `completed` rejected except no-op
+    `completed → completed`); immutable fields on PATCH (`id`,
+    `agent_name`, `session_id`, `title`, `description`, `source`);
+    `suspension_reason` only allowed with `status=suspended`; DELETE
+    on non-terminal task without `force=true` rejected; DELETE honors
+    `If-Match`.
+  - Lease: duration must be 0 (force-expire) or 10..3600;
+    `(lease_owner, lease_instance_id, lease_duration_seconds)` are
+    all-or-nothing; different-owner takeover when the existing lease
+    is live is rejected; `in_progress → pending` requires matching
+    lease; lease renewal only allowed on `in_progress`; force-expire
+    cannot combine with status change and requires lease ownership
+    unless already expired; `expiry_count` bumps on different-owner
+    takeover when the prior lease was expired; `started_at` resets
+    on re-acquisition when prior was expired; new `heartbeat_at`
+    field stamped on every lease write.
+  - Status-transition side effects: transitions to / from each state
+    now clear / set the right combination of `lease`,
+    `suspension_reason`, `started_at`, `completed_at`.
+  - PATCH semantics: `payload` patch branches on type (object →
+    shallow merge, non-object → full replace; previously assumed dict).
+  - Attachments: per-key null-as-delete (existing) plus new
+    top-level clear-all gesture via `TaskPatchRequest.clear_attachments`
+    flag (mirrors the service's `attachments: null` wire form).
+  - List filters: `has_error`, `lease_expired`, `omit_attachment_values`
+    added; pagination via `after` cursor + `limit` (default 20, max
+    100); `order` accepts `"asc"` / `"desc"` by `created_at`;
+    `before` parameter rejected (forward-only cursor pagination);
+    status filter normalizes `"done"` → `"completed"`; `agent_name`
+    and `session_id` are now optional (workspace-wide listing).
+
+- **Hosted provider distinguishes service error codes internally
+  (spec 020).** The hosted task service now returns distinct error
+  codes (`task_immutable`, `invalid_state_transition`,
+  `lease_held_by_another`, `task_already_exists`,
+  `lease_ownership_changed`, `etag_mismatch`, `invalid_request`).
+  The framework's response classifier now dispatches on these so
+  retry-able codes (`etag_mismatch`, `lease_ownership_changed`)
+  are retried transparently, while terminal conflicts surface as
+  the appropriate developer-facing `TaskConflictError` /
+  `TaskPreconditionFailed`. **No new developer-visible exception
+  types** — internal dispatch is fully absorbed inside the
+  framework. Existing `except TaskConflictError:` callers keep
+  working unchanged.
+
 - The hosted task-store transport is now built on
   `azure.core.AsyncPipelineClient` instead of `httpx` / `aiohttp`;
   neither `httpx` nor `aiohttp` is a production dependency of this

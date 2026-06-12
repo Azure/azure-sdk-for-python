@@ -531,9 +531,6 @@ class TestSteeringRecovery:
         from azure.ai.agentserver.core.durable._manager import (
             TaskManager,
         )
-        from azure.ai.agentserver.core.durable._models import (
-            TaskPatchRequest,
-        )
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
@@ -560,23 +557,23 @@ class TestSteeringRecovery:
         run1 = await chat.start(task_id="t1", input={"msg": "A"})
         await asyncio.wait_for(run1.result(), timeout=5.0)
 
-        # Simulate crash state: task is in_progress with drain_in_progress
-        # Reset status to in_progress and inject steering state
-        await provider.update(
-            "t1",
-            TaskPatchRequest(
-                status="in_progress",
-                payload={
-                    "_steering": {
-                        "generation": 1,
-                        "active_input": {"msg": "B"},
-                        "pending_inputs": [],
-                        "cancel_requested": False,
-                        "drain_in_progress": True,
-                    },
-                },
-            ),
-        )
+        # Simulate crash state: rewrite the stored record directly to model
+        # an on-disk snapshot captured before the terminal PATCH completed.
+        stored = await provider.get("t1")
+        assert stored is not None
+        stored.status = "in_progress"
+        stored.payload = {
+            **(stored.payload or {}),
+            "_steering": {
+                "generation": 1,
+                "active_input": {"msg": "B"},
+                "pending_inputs": [],
+                "cancel_requested": False,
+                "drain_in_progress": True,
+            },
+        }
+        stored.completed_at = None
+        provider._write_task(stored)  # noqa: SLF001
 
         await manager.shutdown()
         mgr_mod._manager = None
