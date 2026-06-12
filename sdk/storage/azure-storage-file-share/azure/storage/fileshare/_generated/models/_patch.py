@@ -24,6 +24,8 @@ else:
 # exactly the historical methods, each delegating to ``Model``.
 class _BackCompatMixin:
 
+    _validation = {}
+
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> JSON:
         """Serialize this model to a dictionary.
 
