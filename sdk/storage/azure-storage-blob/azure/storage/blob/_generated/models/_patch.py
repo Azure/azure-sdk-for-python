@@ -31,6 +31,7 @@ else:
 # migration the generated models use a different base class. The public classes mix this in to expose
 # exactly the historical methods, each delegating to ``Model``.
 class _BackCompatMixin:
+    _validation = {}
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> JSON:
         """Serialize this model to a dictionary.
@@ -274,7 +275,6 @@ class CorsRule(_GeneratedCorsRule):
 
 class StaticWebsite(_GeneratedStaticWebsite):
     """Back-compat subclass of the generated ``StaticWebsite``. See :class:`Logging`."""
-
 
 _apply_back_compat_to_generated(
     Logging,
