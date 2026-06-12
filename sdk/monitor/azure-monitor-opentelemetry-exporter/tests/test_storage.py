@@ -428,21 +428,27 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_put_with_lease_period(self):
         test_input = (1, 2, 3)
         custom_lease_period = 120  # 2 minutes
+        test_path = os.path.join(TEST_FOLDER, "lease_test")
+        os.makedirs(test_path, exist_ok=True)
 
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "lease_test")) as stor:
-            result = stor.put(test_input, lease_period=custom_lease_period)
-            self.assertIsInstance(result, StorageExportResult)
-            # Verify the file was created with lease period
-            self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
+            with LocalFileStorage(test_path) as stor:
+                result = stor.put(test_input, lease_period=custom_lease_period)
+                self.assertIsInstance(result, StorageExportResult)
+                # Verify the file was created with lease period
+                self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
 
     def test_put_default_lease_period(self):
         test_input = (1, 2, 3)
+        test_path = os.path.join(TEST_FOLDER, "default_lease_test")
+        os.makedirs(test_path, exist_ok=True)
 
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "default_lease_test"), lease_period=90) as stor:
-            result = stor.put(test_input)
-            self.assertIsInstance(result, StorageExportResult)
-            # File should be created with lease (since default lease_period > 0)
-            self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+        with mock.patch.object(LocalFileStorage, "_check_and_set_folder_permissions", return_value=True):
+            with LocalFileStorage(test_path, lease_period=90) as stor:
+                result = stor.put(test_input)
+                self.assertIsInstance(result, StorageExportResult)
+                # File should be created with lease (since default lease_period > 0)
+                self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
 
     def test_check_and_set_folder_permissions_oserror_sets_exception_state(self):
         test_input = (1, 2, 3)
