@@ -10,8 +10,10 @@ import {
   SYNC_METADATA_WARNING,
   buildTitleQuery,
   dispatchForPackages,
+  evaluateFinalCiGate,
   findMatchingReviewPrs,
   parseSyncMetadata,
+  requiredChecksGate,
 } from "./dispatch_review_branch_syncs.js";
 
 function metadataBlock(overrides = {}) {
@@ -101,4 +103,66 @@ test("dispatchForPackages skips apireview working branches", async () => {
 
   assert.equal(count, 0);
   assert.deepEqual(dispatches, []);
+});
+
+test("requiredChecksGate waits for required Azure DevOps status contexts", () => {
+  const result = requiredChecksGate({
+    requiredStatusChecks: { contexts: ["Azure Pipelines / python"], checks: [] },
+    combinedStatus: { state: "pending", statuses: [{ context: "Azure Pipelines / python", state: "pending" }] },
+    checkRuns: [],
+  });
+
+  assert.equal(result.ready, false);
+  assert.match(result.reason, /Azure Pipelines/);
+});
+
+test("requiredChecksGate accepts required check runs that completed successfully", () => {
+  const result = requiredChecksGate({
+    requiredStatusChecks: { contexts: [], checks: [{ context: "API.md Consistency" }] },
+    combinedStatus: { state: "success", statuses: [] },
+    checkRuns: [{ name: "API.md Consistency", status: "completed", conclusion: "success" }],
+  });
+
+  assert.equal(result.ready, true);
+});
+
+test("evaluateFinalCiGate exits when consistency has not passed", async () => {
+  const result = await evaluateFinalCiGate({
+    workingSha: "abc123",
+    getCommitPullRequestsFn: async () => [
+      {
+        state: "open",
+        head: { sha: "abc123", ref: "feature/api-change", repo: { owner: { login: "Azure" } } },
+        base: { ref: "main" },
+      },
+    ],
+    getWorkflowRunsForShaFn: async () => [],
+  });
+
+  assert.equal(result.ready, false);
+  assert.match(result.reason, /consistency has not passed/);
+});
+
+test("evaluateFinalCiGate resolves working branch when full CI is green", async () => {
+  const result = await evaluateFinalCiGate({
+    workingSha: "abc123",
+    getCommitPullRequestsFn: async () => [
+      {
+        state: "open",
+        head: { sha: "abc123", ref: "feature/api-change", repo: { owner: { login: "Azure" } } },
+        base: { ref: "main" },
+      },
+    ],
+    getWorkflowRunsForShaFn: async () => [{ id: 42, status: "completed", conclusion: "success" }],
+    getRequiredStatusChecksForBranchFn: async () => ({ contexts: ["Azure Pipelines / python"], checks: [] }),
+    getCombinedStatusForShaFn: async () => ({
+      state: "success",
+      statuses: [{ context: "Azure Pipelines / python", state: "success" }],
+    }),
+    getCheckRunsForShaFn: async () => [{ name: "API.md Consistency", status: "completed", conclusion: "success" }],
+  });
+
+  assert.equal(result.ready, true);
+  assert.equal(result.consistencyRunId, "42");
+  assert.deepEqual(result.workingBranch, { owner: "Azure", branch: "feature/api-change", sha: "abc123" });
 });

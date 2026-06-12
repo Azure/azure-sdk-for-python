@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { REPO_ROOT } from "../api-md-consistency/common.js";
+import { appendGithubOutput, REPO_ROOT } from "../api-md-consistency/common.js";
 import { readVersion } from "../api-md-consistency/adapters/python.js";
 
 const REPO_OWNER = "Azure";
@@ -14,6 +14,9 @@ const SYNC_METADATA_MARKER = "api-md-review-sync";
 const SYNC_METADATA_WARNING = "DO NOT MODIFY THESE CONTENTS!";
 const SYNC_WORKFLOW_ID = "api-md-sync-review-branch.yml";
 const SYNC_WORKFLOW_REF = "main";
+const CONSISTENCY_WORKFLOW_ID = "api-consistency.yml";
+const PASSING_STATUS_STATES = new Set(["success"]);
+const PASSING_CHECK_CONCLUSIONS = new Set(["success", "neutral", "skipped"]);
 
 function normalizePackageDir(packageDir) {
   const normalized = packageDir.trim().replace(/\\/g, "/");
@@ -88,7 +91,7 @@ function metadataMatches(metadata, packageRecord, workingBranch) {
   );
 }
 
-async function githubRequest(method, apiPath, { token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN, body } = {}) {
+async function githubRequest(method, apiPath, { token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN, body, allow404 = false } = {}) {
   const response = await fetch(`https://api.github.com${apiPath}`, {
     method,
     headers: {
@@ -100,6 +103,10 @@ async function githubRequest(method, apiPath, { token = process.env.GITHUB_TOKEN
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
+
+  if (allow404 && (response.status === 403 || response.status === 404)) {
+    return undefined;
+  }
 
   if (!response.ok) {
     throw new Error(`GitHub API request failed (${response.status}): ${await response.text()}`);
@@ -138,6 +145,180 @@ async function createWorkflowDispatch(workflowId, ref, inputs) {
   await githubRequest("POST", `/repos/${REPO_SLUG}/actions/workflows/${workflowId}/dispatches`, {
     body: { ref, inputs },
   });
+}
+
+async function getCommitPullRequests(sha) {
+  return await githubRequest("GET", `/repos/${REPO_SLUG}/commits/${sha}/pulls`);
+}
+
+async function getWorkflowRunsForSha(workflowId, sha) {
+  const params = new URLSearchParams({ head_sha: sha, status: "completed", per_page: "20" });
+  const data = await githubRequest("GET", `/repos/${REPO_SLUG}/actions/workflows/${workflowId}/runs?${params}`);
+  return data?.workflow_runs || [];
+}
+
+async function getCombinedStatusForSha(sha) {
+  return await githubRequest("GET", `/repos/${REPO_SLUG}/commits/${sha}/status`);
+}
+
+async function getCheckRunsForSha(sha) {
+  const params = new URLSearchParams({ per_page: "100" });
+  const data = await githubRequest("GET", `/repos/${REPO_SLUG}/commits/${sha}/check-runs?${params}`);
+  return data?.check_runs || [];
+}
+
+async function getRequiredStatusChecksForBranch(branch) {
+  return await githubRequest("GET", `/repos/${REPO_SLUG}/branches/${encodeURIComponent(branch)}/protection/required_status_checks`, {
+    allow404: true,
+  });
+}
+
+function selectWorkingPullRequest(pullRequests, sha) {
+  return (pullRequests || []).find((pr) => pr?.state === "open" && pr?.head?.sha === sha) || undefined;
+}
+
+function findSuccessfulConsistencyRun(workflowRuns, consistencyRunId) {
+  return (workflowRuns || []).find((run) => {
+    if (consistencyRunId && String(run.id) !== String(consistencyRunId)) {
+      return false;
+    }
+    return run.status === "completed" && run.conclusion === "success";
+  });
+}
+
+function statusGate(combinedStatus) {
+  if (combinedStatus?.state && combinedStatus.state !== "success") {
+    return { ready: false, reason: `Waiting for combined commit status: ${combinedStatus.state}` };
+  }
+
+  const statuses = combinedStatus?.statuses || [];
+  const blocking = statuses.filter((status) => !PASSING_STATUS_STATES.has(status.state));
+  if (blocking.length) {
+    return {
+      ready: false,
+      reason: `Waiting for commit statuses: ${blocking.map((status) => `${status.context}=${status.state}`).join(", ")}`,
+    };
+  }
+  return { ready: true };
+}
+
+function isCurrentDispatcherRun(checkRun, currentRunId) {
+  if (!currentRunId) {
+    return false;
+  }
+  return [checkRun.details_url, checkRun.html_url].some((url) => typeof url === "string" && url.includes(`/runs/${currentRunId}`));
+}
+
+function checkRunGate(checkRuns, currentRunId) {
+  const relevantCheckRuns = (checkRuns || []).filter((checkRun) => !isCurrentDispatcherRun(checkRun, currentRunId));
+  const blocking = relevantCheckRuns.filter((checkRun) => {
+    if (checkRun.status !== "completed") {
+      return true;
+    }
+    return !PASSING_CHECK_CONCLUSIONS.has(checkRun.conclusion);
+  });
+
+  if (blocking.length) {
+    return {
+      ready: false,
+      reason: `Waiting for check runs: ${blocking
+        .map((checkRun) => `${checkRun.name}=${checkRun.status}${checkRun.conclusion ? `/${checkRun.conclusion}` : ""}`)
+        .join(", ")}`,
+    };
+  }
+  return { ready: true };
+}
+
+function requiredCheckNames(requiredStatusChecks) {
+  return [
+    ...(requiredStatusChecks?.contexts || []),
+    ...(requiredStatusChecks?.checks || []).map((check) => check.context).filter(Boolean),
+  ];
+}
+
+function requiredChecksGate({ requiredStatusChecks, combinedStatus, checkRuns, currentRunId }) {
+  const names = requiredCheckNames(requiredStatusChecks);
+  if (!names.length) {
+    const statusResult = statusGate(combinedStatus);
+    if (!statusResult.ready) {
+      return statusResult;
+    }
+    return checkRunGate(checkRuns, currentRunId);
+  }
+
+  const statusesByContext = new Map((combinedStatus?.statuses || []).map((status) => [status.context, status]));
+  const checkRunsByName = new Map((checkRuns || []).map((checkRun) => [checkRun.name, checkRun]));
+  const blocking = [];
+
+  for (const name of names) {
+    const status = statusesByContext.get(name);
+    const checkRun = checkRunsByName.get(name);
+    const statusPassed = status && PASSING_STATUS_STATES.has(status.state);
+    const checkRunPassed =
+      checkRun && !isCurrentDispatcherRun(checkRun, currentRunId) && checkRun.status === "completed" && PASSING_CHECK_CONCLUSIONS.has(checkRun.conclusion);
+    if (!statusPassed && !checkRunPassed) {
+      blocking.push(name);
+    }
+  }
+
+  if (blocking.length) {
+    return { ready: false, reason: `Waiting for required checks: ${blocking.join(", ")}` };
+  }
+  return { ready: true };
+}
+
+async function evaluateFinalCiGate({
+  workingSha,
+  consistencyRunId,
+  currentRunId,
+  getCommitPullRequestsFn = getCommitPullRequests,
+  getWorkflowRunsForShaFn = getWorkflowRunsForSha,
+  getCombinedStatusForShaFn = getCombinedStatusForSha,
+  getCheckRunsForShaFn = getCheckRunsForSha,
+  getRequiredStatusChecksForBranchFn = getRequiredStatusChecksForBranch,
+}) {
+  const pullRequest = selectWorkingPullRequest(await getCommitPullRequestsFn(workingSha), workingSha);
+  if (!pullRequest) {
+    return { ready: false, reason: `No open pull request found for ${workingSha}.` };
+  }
+
+  const consistencyRun = findSuccessfulConsistencyRun(
+    await getWorkflowRunsForShaFn(CONSISTENCY_WORKFLOW_ID, workingSha),
+    consistencyRunId,
+  );
+  if (!consistencyRun) {
+    return { ready: false, reason: `API.md consistency has not passed for ${workingSha}.` };
+  }
+
+  const requiredCheckResult = requiredChecksGate({
+    requiredStatusChecks: await getRequiredStatusChecksForBranchFn(pullRequest.base.ref),
+    combinedStatus: await getCombinedStatusForShaFn(workingSha),
+    checkRuns: await getCheckRunsForShaFn(workingSha),
+    currentRunId,
+  });
+  if (!requiredCheckResult.ready) {
+    return requiredCheckResult;
+  }
+
+  return {
+    ready: true,
+    reason: "All required API.md, GitHub, and Azure DevOps checks have passed.",
+    consistencyRunId: String(consistencyRun.id),
+    workingBranch: {
+      owner: pullRequest.head.repo.owner.login,
+      branch: pullRequest.head.ref,
+      sha: workingSha,
+    },
+  };
+}
+
+function writeGateOutputs(gateResult) {
+  appendGithubOutput("should_dispatch", gateResult.ready ? "true" : "false");
+  appendGithubOutput("reason", gateResult.reason || "");
+  appendGithubOutput("consistency_run_id", gateResult.consistencyRunId || "");
+  appendGithubOutput("working_owner", gateResult.workingBranch?.owner || "");
+  appendGithubOutput("working_branch", gateResult.workingBranch?.branch || "");
+  appendGithubOutput("working_sha", gateResult.workingBranch?.sha || "");
 }
 
 async function findMatchingReviewPrs({ searchPullRequestsFn = searchPullRequests, packageRecord, workingBranch }) {
@@ -235,6 +416,10 @@ function parseArgs(argv) {
       args.dryRun = true;
       continue;
     }
+    if (arg === "--resolve-gate") {
+      args.resolveGate = true;
+      continue;
+    }
     if (!arg.startsWith("--")) {
       throw new Error(`Unexpected argument: ${arg}`);
     }
@@ -243,7 +428,8 @@ function parseArgs(argv) {
     index += 1;
   }
 
-  for (const required of ["packagesFile", "workingOwner", "workingBranch", "workingSha"]) {
+  const requiredArgs = args.resolveGate ? ["workingSha"] : ["packagesFile", "workingOwner", "workingBranch", "workingSha"];
+  for (const required of requiredArgs) {
     if (!args[required]) {
       throw new Error(`Missing required argument --${required.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`);
     }
@@ -254,6 +440,17 @@ function parseArgs(argv) {
 
 async function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
+  if (args.resolveGate) {
+    const gateResult = await evaluateFinalCiGate({
+      workingSha: args.workingSha,
+      consistencyRunId: args.consistencyRunId,
+      currentRunId: args.currentRunId,
+    });
+    writeGateOutputs(gateResult);
+    console.log(gateResult.reason);
+    return;
+  }
+
   await dispatchForPackages({
     packageDirs: readPackageDirs(args.packagesFile),
     workingBranch: {
@@ -282,10 +479,15 @@ export {
   SYNC_METADATA_WARNING,
   buildTitleQuery,
   dispatchForPackages,
+  evaluateFinalCiGate,
   findMatchingReviewPrs,
+  findSuccessfulConsistencyRun,
   metadataMatches,
   normalizePackageDir,
   packageRecordFromDir,
   parseSyncMetadata,
   readPackageDirs,
+  statusGate,
+  checkRunGate,
+  requiredChecksGate,
 };

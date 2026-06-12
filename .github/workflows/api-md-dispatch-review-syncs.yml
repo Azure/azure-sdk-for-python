@@ -4,58 +4,79 @@ on:
   workflow_run:
     workflows: ["API.md Consistency"]
     types: [completed]
+  status:
+  check_run:
+    types: [completed]
 
 permissions:
   actions: write
+  checks: read
   contents: read
   pull-requests: read
+  statuses: read
 
 concurrency:
-  group: api-md-dispatch-review-syncs-${{ github.event.workflow_run.head_repository.owner.login }}-${{ github.event.workflow_run.head_branch }}
+  group: api-md-dispatch-review-syncs-${{ github.event.workflow_run.head_sha || github.event.check_run.head_sha || github.event.sha }}
   cancel-in-progress: true
 
 jobs:
   dispatch:
     if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      !startsWith(github.event.workflow_run.head_branch, 'apireview/')
+      github.event_name != 'check_run' || github.event.check_run.name != 'dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout trusted workflow scripts
         uses: actions/checkout@v6
-
-      - name: Checkout working SHA for package metadata
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ github.event.workflow_run.head_repository.full_name }}
-          ref: ${{ github.event.workflow_run.head_sha }}
-          path: working
-          fetch-depth: 1
-          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: lts/*
 
+      - name: Resolve final CI gate
+        id: gate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          node .github/workflows/src/api-md-review-sync/dispatch_review_branch_syncs.js
+          --resolve-gate
+          --working-sha "${{ github.event.workflow_run.head_sha || github.event.check_run.head_sha || github.event.sha }}"
+          --consistency-run-id "${{ github.event.workflow_run.id || '' }}"
+          --current-run-id "${{ github.run_id }}"
+
+      - name: Checkout working SHA for package metadata
+        if: ${{ steps.gate.outputs.should_dispatch == 'true' }}
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ steps.gate.outputs.working_owner }}/azure-sdk-for-python
+          ref: ${{ steps.gate.outputs.working_sha }}
+          path: working
+          fetch-depth: 1
+          persist-credentials: false
+
       - name: Download API.md consistency artifacts
+        if: ${{ steps.gate.outputs.should_dispatch == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download "${{ github.event.workflow_run.id }}" --name api-md-affected-packages --dir .artifacts || true
+          gh run download "${{ steps.gate.outputs.consistency_run_id }}" --name api-md-affected-packages --dir .artifacts || true
 
       - name: Dispatch matching review branch syncs
-        if: ${{ hashFiles('.artifacts/affected_package_dirs.txt') != '' }}
+        if: ${{ steps.gate.outputs.should_dispatch == 'true' && hashFiles('.artifacts/affected_package_dirs.txt') != '' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: >-
           node .github/workflows/src/api-md-review-sync/dispatch_review_branch_syncs.js
           --packages-file .artifacts/affected_package_dirs.txt
-          --working-owner "${{ github.event.workflow_run.head_repository.owner.login }}"
-          --working-branch "${{ github.event.workflow_run.head_branch }}"
-          --working-sha "${{ github.event.workflow_run.head_sha }}"
+          --working-owner "${{ steps.gate.outputs.working_owner }}"
+          --working-branch "${{ steps.gate.outputs.working_branch }}"
+          --working-sha "${{ steps.gate.outputs.working_sha }}"
           --repo-root working
 
       - name: No affected packages
-        if: ${{ hashFiles('.artifacts/affected_package_dirs.txt') == '' }}
+        if: ${{ steps.gate.outputs.should_dispatch == 'true' && hashFiles('.artifacts/affected_package_dirs.txt') == '' }}
         run: echo "No affected API.md packages were published by the consistency run."
+
+      - name: Final CI gate not ready
+        if: ${{ steps.gate.outputs.should_dispatch != 'true' }}
+        run: echo "${{ steps.gate.outputs.reason }}"
