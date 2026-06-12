@@ -4,26 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# This file remains only for two things that setuptools cannot yet express
-# declaratively in pyproject.toml without opting into experimental config:
-#   1. Compiling the limited-API C extension(s).
-#   2. Overriding bdist_wheel so wheels built against Py_LIMITED_API are
-#      tagged abi3 and become reusable across CPython 3.x versions.
-# Can be removed once experimental is removed from https://github.com/pypa/setuptools/blob/84ed5913724df5a12dc804e1d5efe12508e706d2/setuptools/config/pyprojecttoml.py#L135
+# This file remains for two pieces of config that setuptools cannot yet
+# express declaratively in pyproject.toml without opting into experimental
+# config:
+#   1. The limited-API C extension(s) — [tool.setuptools.ext-modules] is
+#      still experimental.
+#   2. The abi3 wheel tag (py_limited_api) — the equivalent
+#      [tool.distutils.bdist_wheel] table is also still experimental.
+# This file can be removed once both experimental gates are dropped in
+# https://github.com/pypa/setuptools/blob/84ed5913724df5a12dc804e1d5efe12508e706d2/setuptools/config/pyprojecttoml.py#L135
 
 from setuptools import setup, Extension
-from setuptools.command.bdist_wheel import bdist_wheel
-
-
-class bdist_wheel_abi3(bdist_wheel):
-    """Override bdist_wheel tag behavior to add abi3 tag."""
-
-    def get_tag(self):
-        python, abi, plat = super().get_tag()
-
-        if python.startswith("cp"):
-            return python, "abi3", plat
-        return python, abi, plat
 
 
 setup(
@@ -36,5 +27,5 @@ setup(
             py_limited_api=True,
         ),
     ],
-    cmdclass={"bdist_wheel": bdist_wheel_abi3},
+    options={"bdist_wheel": {"py_limited_api": "cp310"}},
 )
