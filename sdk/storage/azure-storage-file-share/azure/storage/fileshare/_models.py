@@ -62,6 +62,11 @@ class RetentionPolicy(_BackCompatMixin):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted."""
 
+    _validation = {
+        "enabled": {"required": True},
+        "days": {"maximum": 365, "minimum": 1},
+    }
+
     _attribute_map = {
         "enabled": {"key": "Enabled", "type": "bool"},
         "days": {"key": "Days", "type": "int"},
@@ -113,6 +118,11 @@ class Metrics(_BackCompatMixin):
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
+
+    _validation = {
+        "version": {"required": True},
+        "enabled": {"required": True},
+    }
 
     _attribute_map = {
         "version": {"key": "Version", "type": "str"},
@@ -200,6 +210,14 @@ class CorsRule(_BackCompatMixin):
         headers to expose to CORS clients."""
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
+
+    _validation = {
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
+    }
 
     _attribute_map = {
         "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
@@ -386,6 +404,7 @@ class ShareNfsSettings(_BackCompatMixin):
 
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
+
 
     _attribute_map = {
         "encryption_in_transit": {"key": "EncryptionInTransit", "type": "NfsEncryptionInTransit"},
