@@ -513,7 +513,6 @@ def test_incoming_baggage_does_not_break_span_parenting():
     assert captured_trace_id == caller_trace_id
     assert captured_parent_id == caller_span_id
 
-
 def test_incoming_baggage_empty_header():
     """Empty baggage header does not cause errors."""
     server = _make_tracing_server()
