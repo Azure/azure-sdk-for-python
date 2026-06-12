@@ -1,5 +1,6 @@
 import json
 import unittest
+from unittest.mock import MagicMock, patch
 
 from scripts.api_md_workflow import create_api_review_pr as workflow
 
@@ -50,6 +51,18 @@ class ApiReviewPrTests(unittest.TestCase):
     def tearDown(self):
         workflow.set_command_runner_for_test(None)
         workflow.set_github_api_for_test(None)
+
+    def test_github_api_request_uses_timeout(self):
+        response = MagicMock()
+        response.read.return_value = b'{"ok": true}'
+        response_context = MagicMock()
+        response_context.__enter__.return_value = response
+
+        with patch.object(workflow, "urlopen", return_value=response_context) as urlopen:
+            self.assertEqual(workflow.GitHubApi(None)._request("GET", "https://example.test"), {"ok": True})
+
+        urlopen.assert_called_once()
+        self.assertEqual(urlopen.call_args.kwargs["timeout"], workflow.GITHUB_API_TIMEOUT_SECONDS)
 
     def test_target_reference_info_links_matching_open_pr_from_direct_head_query(self):
         workflow.set_command_runner_for_test(stub_git_branches(["users/example/direct-feature"]))

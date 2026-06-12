@@ -92,10 +92,10 @@ class TestRunOutputDirectory:
     @patch("azpysdk.apistub.create_package_and_install")
     @patch("azpysdk.apistub.install_into_venv")
     @patch("azpysdk.apistub.set_envvar_defaults")
-    def test_isolate_installs_dependencies(
+    def test_isolate_does_not_install_dependencies(
         self, _env, install_into_venv, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
     ):
-        """When --isolate is passed, apistub should install dependencies."""
+        """When only --isolate is passed, apistub should not install dependencies."""
         monkeypatch.chdir(os.getcwd())
         stub = apistub()
         staging = str(tmp_path / "staging")
@@ -111,7 +111,40 @@ class TestRunOutputDirectory:
         ) as pip_freeze, patch.object(
             stub, "run_venv_command"
         ):
-            args = self._make_args(isolate=True)
+            stub.run(self._make_args(isolate=True))
+
+        install_dev_reqs.assert_not_called()
+        install_into_venv.assert_not_called()
+        pip_freeze.assert_not_called()
+
+    @patch(
+        "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    )
+    @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
+    @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
+    @patch("azpysdk.apistub.create_package_and_install")
+    @patch("azpysdk.apistub.install_into_venv")
+    @patch("azpysdk.apistub.set_envvar_defaults")
+    def test_install_deps_installs_dependencies(
+        self, _env, install_into_venv, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
+    ):
+        """When --install-deps is passed, apistub should install dependencies."""
+        monkeypatch.chdir(os.getcwd())
+        stub = apistub()
+        staging = str(tmp_path / "staging")
+        os.makedirs(staging, exist_ok=True)
+        fake_parsed = MagicMock()
+        fake_parsed.folder = str(tmp_path)
+        fake_parsed.name = "azure-core"
+
+        with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
+            stub, "get_executable", return_value=(sys.executable, staging)
+        ), patch.object(stub, "install_dev_reqs") as install_dev_reqs, patch.object(
+            stub, "pip_freeze"
+        ) as pip_freeze, patch.object(
+            stub, "run_venv_command"
+        ):
+            args = self._make_args(install_deps=True)
             stub.run(args)
 
         install_dev_reqs.assert_called_once_with(sys.executable, args, str(tmp_path))

@@ -162,6 +162,8 @@ async def run_check(
     async with semaphore:
         start = time.time()
         cmd = base_args + [check, "--isolate", package]
+        if check == "apistub":
+            cmd += ["--install-deps"]
         if python_version:
             cmd += ["--python", python_version]
         if service:

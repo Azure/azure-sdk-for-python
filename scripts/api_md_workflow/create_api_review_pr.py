@@ -23,7 +23,7 @@ REMOTE = "origin"
 MAIN_REF = f"{REMOTE}/main"
 SYNC_METADATA_MARKER = "api-md-review-sync"
 SYNC_METADATA_WARNING = "DO NOT MODIFY THESE CONTENTS!"
-METADATA_FIELDS_TO_VALIDATE = ["apiMdSha256", "parserVersion"]
+GITHUB_API_TIMEOUT_SECONDS = 30
 
 
 class GitHubApiError(Exception):
@@ -179,12 +179,14 @@ class GitHubApi:
 
         request = Request(url, data=data, headers=headers, method=method)
         try:
-            with urlopen(request) as response:
+            with urlopen(request, timeout=GITHUB_API_TIMEOUT_SECONDS) as response:
                 body = response.read().decode("utf-8")
                 return json.loads(body) if body else None
         except HTTPError as error:
             details = error.read().decode("utf-8", errors="replace")
             raise GitHubApiError(error.code, details or str(error)) from error
+        except TimeoutError as error:
+            raise GitHubApiError(1, f"GitHub API request timed out: {error}") from error
         except URLError as error:
             raise GitHubApiError(1, str(error)) from error
 
