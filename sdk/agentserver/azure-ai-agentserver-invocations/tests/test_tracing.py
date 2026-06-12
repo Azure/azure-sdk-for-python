@@ -363,6 +363,47 @@ def test_streaming_iteration_exception_records_trace_error():
             mock_log_error.assert_called_once()
 
 
+def test_streaming_wrapper_resets_contextvars():
+    """Streaming wrapper resets the contextvar tokens it sets."""
+    server = _make_streaming_tracing_server()
+    client = TestClient(server)
+
+    @server.invoke_handler
+    async def handle(request: Request) -> StreamingResponse:
+        async def generate():
+            yield b"chunk1\n"
+
+        return StreamingResponse(generate(), media_type="text/plain")
+
+    class _FakeContextVar:
+        def __init__(self):
+            self.set_tokens = []
+            self.reset_tokens = []
+
+        def set(self, value):
+            token = (len(self.set_tokens), value)
+            self.set_tokens.append(token)
+            return token
+
+        def reset(self, token):
+            self.reset_tokens.append(token)
+
+        def get(self, default=""):
+            return default
+
+    fake_inv = _FakeContextVar()
+    fake_session = _FakeContextVar()
+    with patch("azure.ai.agentserver.invocations._invocation._invocation_id_var", fake_inv):
+        with patch("azure.ai.agentserver.invocations._invocation._session_id_var", fake_session):
+            resp = client.post("/invocations", content=b"test")
+
+    assert resp.status_code == 200
+    assert len(fake_inv.set_tokens) == 2
+    assert len(fake_session.set_tokens) == 2
+    assert fake_inv.reset_tokens == fake_inv.set_tokens
+    assert fake_session.reset_tokens == fake_session.set_tokens
+
+
 # ---------------------------------------------------------------------------
 # Incoming W3C baggage propagation
 # ---------------------------------------------------------------------------

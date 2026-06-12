@@ -427,9 +427,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 ),
             )
         finally:
-            # For streaming responses, context cleanup of invocation_id/session_id
-            # is handled by the wrapper. But we always reset the original tokens
-            # and detach baggage from the calling context here.
+            # Always reset the request-scope tokens and detach baggage from the
+            # calling context here. The streaming wrapper separately resets the
+            # tokens it sets for stream iteration.
             _invocation_id_var.reset(inv_token)
             _session_id_var.reset(session_token)
             try:
@@ -444,8 +444,8 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
 
             async def _wrapped_body() -> AsyncIterator[Any]:
                 # Re-establish the invocation context for the streaming task
-                _invocation_id_var.set(invocation_id)
-                _session_id_var.set(session_id)
+                stream_inv_token = _invocation_id_var.set(invocation_id)
+                stream_session_token = _session_id_var.set(session_id)
                 try:
                     async for chunk in original_iterator:
                         yield chunk
@@ -461,6 +461,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                         span.set_attribute("error.type", type(exc).__name__)
                         span.record_exception(exc)
                     raise
+                finally:
+                    _invocation_id_var.reset(stream_inv_token)
+                    _session_id_var.reset(stream_session_token)
 
             response.body_iterator = _wrapped_body()
 
