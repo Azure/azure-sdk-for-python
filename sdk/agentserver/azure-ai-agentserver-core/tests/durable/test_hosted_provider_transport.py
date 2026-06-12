@@ -345,3 +345,101 @@ def test_classifier_table(status: int, body: bytes | None, expected: str) -> Non
     transport behavior tests above for one-stop reviewer navigation."""
 
     assert _classify_store_write_error(status, body) == expected
+
+
+# ===========================================================================
+# Spec 020 — Workstream B: hosted-provider service-code dispatch (RED first)
+# ===========================================================================
+#
+# Per §39.1 of the SOT (task-and-streaming-spec.md), the hosted task
+# service now returns distinct `code` strings in its error envelopes:
+# task_immutable / invalid_state_transition / lease_held_by_another /
+# task_already_exists / lease_ownership_changed / etag_mismatch /
+# invalid_request. The hosted provider's response classifier MUST
+# dispatch on these codes via a private `_HostedConflict(_code, status_code)`
+# internal exception, which the framework then translates to the existing
+# public exception types (no new public exports — C-ERR-4/5).
+
+
+class TestSpec020HostedConflictDispatch:
+    """B-Hosted-1: service `code` → `_HostedConflict(_code=...)` dispatch."""
+
+    @pytest.mark.parametrize(
+        "service_code,status_code",
+        [
+            ("task_immutable", 409),
+            ("invalid_state_transition", 409),
+            ("lease_held_by_another", 409),
+            ("task_already_exists", 409),
+            ("lease_ownership_changed", 409),
+            ("etag_mismatch", 412),
+            ("invalid_request", 400),
+        ],
+    )
+    def test_classifier_raises_hosted_conflict_with_service_code(
+        self, service_code: str, status_code: int
+    ) -> None:
+        """C-ERR-4: classifier raises `_HostedConflict(_code=<service_code>)`
+        carrying the wire status_code.
+
+        RED until `_HostedConflict` lands in `_exceptions_internal.py` (or
+        equivalent) AND `_classify_store_write_error` dispatches on the
+        `code` field of the JSON error envelope.
+        """
+        # The internal type does not exist yet — this import is the RED
+        # signal. We do it inside the test (not at module import) so the
+        # other tests in this file remain runnable.
+        from azure.ai.agentserver.core.durable._exceptions_internal import (  # noqa: F401
+            _HostedConflict,  # type: ignore[attr-defined]
+        )
+
+        body = (
+            b'{"error": {"code": "' + service_code.encode() + b'", "message": "x"}}'
+        )
+        response = FakeResponse(status_code=status_code, body=body)
+        with pytest.raises(Exception) as exc_info:  # type: ignore[no-untyped-call]
+            _classify_store_write_error(response, method="PATCH", url="/tasks/t1")
+
+        exc = exc_info.value
+        assert exc.__class__.__name__ == "_HostedConflict", (
+            f"classifier must raise _HostedConflict for service-code "
+            f"responses; got {type(exc).__name__}"
+        )
+        assert getattr(exc, "_code", None) == service_code, (
+            f"_HostedConflict._code must carry the service code {service_code!r}; "
+            f"got {getattr(exc, '_code', None)!r}"
+        )
+        assert getattr(exc, "status_code", None) == status_code
+
+    def test_hosted_conflict_is_internal_only(self) -> None:
+        """C-ERR-4: `_HostedConflict` is underscore-prefixed and lives in
+        `_exceptions_internal`. It is NOT importable from the public
+        `durable` namespace."""
+        import azure.ai.agentserver.core.durable as pub
+
+        assert not hasattr(pub, "_HostedConflict"), (
+            "_HostedConflict must not leak into the public surface."
+        )
+
+
+class TestSpec020OpaqueCursorRoundTrip:
+    """B-Hosted-2: hosted provider round-trips the service's opaque
+    continuation cursor without parsing it."""
+
+    @pytest.mark.asyncio
+    async def test_list_cursor_passed_back_verbatim(self) -> None:
+        """C-PRV-12: opaque cursor from service is passed back as `after`
+        on the next page unchanged.
+
+        RED until the hosted provider's list() supports cursor pagination
+        and round-trips whatever opaque token the service returned.
+        """
+        # This test exercises the contract: the provider does NOT parse
+        # the cursor; whatever opaque string the service returned MUST be
+        # passed back unchanged on the next list request. The current
+        # provider may not support cursor-based pagination at all — that
+        # is itself the RED signal.
+        pytest.fail(
+            "Spec 020 B-Hosted-2: hosted provider list() opaque-cursor "
+            "round-trip not yet implemented (Phase 2)."
+        )

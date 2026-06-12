@@ -191,3 +191,51 @@ def test_output_too_large_remap_from_internal_output_key() -> None:
         raise dispatcher(internal)
     assert excinfo.value.task_id == "t"
     assert excinfo.value.size_bytes == 3_000_000
+
+
+# ===========================================================================
+# Spec 020 — Workstream C: no new public exports from the parity work
+# ===========================================================================
+
+
+def test_hosted_conflict_is_not_public() -> None:
+    """C-ERR-4: `_HostedConflict` MUST NOT be in the public exception surface.
+
+    It is an internal discriminator the framework's response classifier
+    raises so lifecycle code can branch on the service's distinct error
+    codes (task_immutable, lease_held_by_another, etag_mismatch, ...).
+    The developer never imports it, catches it, or sees its name.
+    """
+    import azure.ai.agentserver.core.durable as pub
+
+    assert not hasattr(pub, "_HostedConflict"), (
+        "_HostedConflict is internal; it MUST NOT be exported via the "
+        "public `durable` namespace."
+    )
+    assert "_HostedConflict" not in getattr(pub, "__all__", []), (
+        "_HostedConflict must not appear in __all__."
+    )
+
+
+def test_no_service_code_strings_as_public_type_names() -> None:
+    """C-ERR-5: service error code strings must NOT appear as public type names.
+
+    The service emits codes like 'task_immutable', 'lease_held_by_another',
+    etc. These are internal dispatch keys only; no developer-facing Python
+    class should be named after them.
+    """
+    import azure.ai.agentserver.core.durable as pub
+
+    service_code_camel_cases = {
+        "TaskImmutable",
+        "InvalidStateTransition",
+        "LeaseHeldByAnother",
+        "TaskAlreadyExists",
+        "LeaseOwnershipChanged",
+        "EtagMismatch",
+    }
+    for name in service_code_camel_cases:
+        assert not hasattr(pub, name), (
+            f"{name!r} must not be exported from the public durable namespace "
+            f"— service codes belong to internal dispatch only."
+        )

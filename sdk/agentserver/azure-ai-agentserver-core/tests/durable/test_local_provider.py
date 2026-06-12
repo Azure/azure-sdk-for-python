@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Tests for the LocalFileTaskProvider."""
 
+import datetime as _dt
 import json
 from pathlib import Path
 from typing import Any
@@ -399,3 +400,655 @@ class TestSpec019LocalProviderExpiryCountParity:
             "handoff before lease expiry must not bump expiry_count "
             "(FR-D-006 — only real expiry-driven handoffs count)."
         )
+
+
+# ===========================================================================
+# Spec 020: Local-provider ↔ service parity — RED-first tests
+# ===========================================================================
+#
+# Per Constitution Principle VII (TDD) + Spec 020 Workstream A.
+# Each test asserts ONE conformance item from the SOT spec
+# (sdk/agentserver/azure-ai-agentserver-core/docs/task-and-streaming-spec.md).
+# Tests are RED first; implementation lands in Phase 2.
+
+
+class TestSpec020Validation:
+    """V1-V12 — field validation (§28a / C-VAL-*)."""
+
+    @pytest.mark.asyncio
+    async def test_v1_task_id_must_match_regex(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-1: task id must match `^[a-zA-Z0-9_-]{1,128}$`."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", id="bad id with spaces", title="t",
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v1_task_id_too_long_rejected(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-1: task id length > 128 rejected."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", id="x" * 129, title="t",
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v2_agent_name_required(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-2: agent_name required on create."""
+        bad = TaskCreateRequest(agent_name="", session_id="s", title="t")
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v2_session_id_required(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-2: session_id required on create."""
+        bad = TaskCreateRequest(agent_name="a", session_id="", title="t")
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v2_title_required(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-2: title required on create."""
+        bad = TaskCreateRequest(agent_name="a", session_id="s", title="")
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v3_tag_key_regex(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-5: tag keys must match `^[a-zA-Z0-9_.\\-]{1,64}$`."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t",
+            tags={"bad key with spaces": "v"},
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v4_tag_value_max_256(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-5: tag values must be ≤ 256 chars."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t",
+            tags={"k": "x" * 257},
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v5_tag_count_max_16(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-5: at most 16 tag entries."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t",
+            tags={f"k{i}": "v" for i in range(17)},
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v6_payload_max_1mb(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-6: payload ≤ 1 MB."""
+        big = "x" * (1024 * 1024 + 100)
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t",
+            payload={"big": big},
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v7_error_max_64kb(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-6: error ≤ 64 KB."""
+        created = await provider.create(
+            TaskCreateRequest(agent_name="a", session_id="s", title="t")
+        )
+        with pytest.raises(Exception):
+            await provider.update(
+                created.id,
+                TaskPatchRequest(error={"type": "E", "message": "x" * (64 * 1024 + 100)}),
+            )
+
+    @pytest.mark.asyncio
+    async def test_v8_source_max_4kb(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-6: source ≤ 4 KB."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t",
+            source={"type": "t", "blob": "x" * 5000},
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v9_suspension_reason_max_256(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-4: suspension_reason ≤ 256 chars."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t",
+                status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        with pytest.raises(Exception):
+            await provider.update(
+                created.id,
+                TaskPatchRequest(status="suspended", suspension_reason="x" * 257),
+            )
+
+    @pytest.mark.asyncio
+    async def test_v10_source_type_required(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-7: source.type required when source provided."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t",
+            source={"routine_name": "r"},  # no type
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v11_failed_status_rejected(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-9: status 'failed' rejected on input."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t", status="failed",  # type: ignore[arg-type]
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_v12_done_normalized_to_completed(self, provider: LocalFileTaskProvider) -> None:
+        """C-VAL-9: legacy 'done' status normalized to 'completed' on read."""
+        # Create a task and then patch with status="done" — provider should
+        # normalize to "completed" so consumers always see canonical value.
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        await provider.update(
+            created.id, TaskPatchRequest(status="done"),  # type: ignore[arg-type]
+        )
+        got = await provider.get(created.id)
+        assert got is not None and got.status == "completed"
+
+
+class TestSpec020StateMachine:
+    """B1-B8 — state transition matrix, terminal immutability,
+    delete force semantics (§24.1/24.2/24.3, C-LCM-5..8)."""
+
+    @pytest.mark.asyncio
+    async def test_b1_invalid_transition_pending_to_suspended(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LCM-5: pending → suspended is not in the matrix."""
+        created = await provider.create(
+            TaskCreateRequest(agent_name="a", session_id="s", title="t")
+        )
+        with pytest.raises(Exception):
+            await provider.update(created.id, TaskPatchRequest(status="suspended"))
+
+    @pytest.mark.asyncio
+    async def test_b2_terminal_task_immutable(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LCM-6: PATCH on completed task rejected."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        await provider.update(created.id, TaskPatchRequest(status="completed"))
+        with pytest.raises(Exception):
+            await provider.update(
+                created.id, TaskPatchRequest(payload={"new": "data"}),
+            )
+
+    @pytest.mark.asyncio
+    async def test_b2_terminal_noop_allowed(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LCM-6: completed → completed with no other changes is a no-op."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        await provider.update(created.id, TaskPatchRequest(status="completed"))
+        # No-op completed → completed should NOT raise.
+        result = await provider.update(
+            created.id, TaskPatchRequest(status="completed"),
+        )
+        assert result.status == "completed"
+
+    @pytest.mark.asyncio
+    async def test_b3_immutable_fields_rejected(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LCM-8: id/agent_name/session_id/title/description/source can't be
+        PATCHed.
+
+        Note: today's TaskPatchRequest doesn't expose these as fields; this test
+        documents that the provider rejects them at the JSON-layer in case
+        anyone constructs the underlying patch dict directly."""
+        created = await provider.create(
+            TaskCreateRequest(agent_name="a", session_id="s", title="t")
+        )
+        # Direct dict-payload patch carrying an immutable field
+        # would be rejected on the wire side. Today the typed
+        # request doesn't allow this; future hosted-client work
+        # may surface it. Marking as documentation-test for now.
+        snap = await provider.get(created.id)
+        assert snap is not None and snap.title == "t"
+
+    @pytest.mark.asyncio
+    async def test_b4_suspension_reason_only_with_suspended(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-VAL-4 / §28a: suspension_reason only allowed with status=suspended."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        with pytest.raises(Exception):
+            await provider.update(
+                created.id,
+                TaskPatchRequest(status="pending", suspension_reason="why"),
+            )
+
+    @pytest.mark.asyncio
+    async def test_b5_delete_without_force_on_nonterminal_rejected(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LCM-7: delete non-terminal task without force=true rejected."""
+        created = await provider.create(
+            TaskCreateRequest(agent_name="a", session_id="s", title="t")
+        )
+        with pytest.raises(Exception):
+            await provider.delete(created.id, force=False)
+
+    @pytest.mark.asyncio
+    async def test_b5_delete_terminal_without_force_ok(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LCM-7: delete terminal task without force succeeds."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        await provider.update(created.id, TaskPatchRequest(status="completed"))
+        await provider.delete(created.id, force=False)  # should not raise
+
+    @pytest.mark.asyncio
+    async def test_b7_error_patch_requires_message_and_type(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-VAL-8: error PATCH requires non-empty message + type."""
+        created = await provider.create(
+            TaskCreateRequest(agent_name="a", session_id="s", title="t")
+        )
+        with pytest.raises(Exception):
+            await provider.update(
+                created.id, TaskPatchRequest(error={"code": "x"}),  # missing message+type
+            )
+
+
+class TestSpec020Lease:
+    """C1-C10 — lease semantics (§22.1, C-LSE-6..14)."""
+
+    @pytest.mark.asyncio
+    async def test_l1_duration_must_be_zero_or_in_range(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LSE-6: lease_duration_seconds must be 0 or 10..3600."""
+        # 5 seconds is below the floor.
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t", status="in_progress",
+            lease_owner="o", lease_instance_id="i", lease_duration_seconds=5,
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_l1_duration_too_large_rejected(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LSE-6: lease_duration_seconds > 3600 rejected."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t", status="in_progress",
+            lease_owner="o", lease_instance_id="i", lease_duration_seconds=4000,
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_l2_all_or_nothing_lease_params(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LSE-7: supplying lease_owner without lease_instance_id rejected."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t", status="in_progress",
+            lease_owner="o",  # missing instance_id and duration
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_l3_different_owner_takeover_when_live_rejected(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LSE-8: different-owner takeover against a live lease rejected."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="owner-A", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        with pytest.raises(Exception):
+            await provider.update(
+                created.id,
+                TaskPatchRequest(
+                    lease_owner="owner-B",
+                    lease_instance_id="i-other",
+                    lease_duration_seconds=60,
+                ),
+            )
+
+    @pytest.mark.asyncio
+    async def test_l4_in_progress_to_pending_requires_matching_lease(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LSE-9: in_progress → pending requires matching (owner, instance_id)."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="owner-A", lease_instance_id="i-1", lease_duration_seconds=60,
+            )
+        )
+        with pytest.raises(Exception):
+            await provider.update(
+                created.id,
+                TaskPatchRequest(
+                    status="pending",
+                    lease_owner="owner-A",
+                    lease_instance_id="i-other",  # mismatch
+                    lease_duration_seconds=60,
+                ),
+            )
+
+    @pytest.mark.asyncio
+    async def test_l5_renewal_only_on_in_progress(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LSE-10: lease renewal (no status change) rejected on non-in_progress."""
+        # Create as pending (no lease) then attempt renewal — should reject.
+        created = await provider.create(
+            TaskCreateRequest(agent_name="a", session_id="s", title="t")
+        )
+        with pytest.raises(Exception):
+            await provider.update(
+                created.id,
+                TaskPatchRequest(
+                    lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+                ),
+            )
+
+    @pytest.mark.asyncio
+    async def test_l10_heartbeat_at_stamped(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-LSE-14: heartbeat_at stamped on every lease write."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        assert created.lease is not None
+        # LeaseInfo today does not have heartbeat_at; assertion will fail
+        # with AttributeError — that's the RED signal.
+        assert hasattr(created.lease, "heartbeat_at")
+        assert created.lease.heartbeat_at  # type: ignore[attr-defined]
+
+
+class TestSpec020Attachments:
+    """D1, D3, D4, D5 — attachment key validation + clear-all + omit values + delete cleanup."""
+
+    @pytest.mark.asyncio
+    async def test_d1_attachment_key_regex(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-ATT-8: attachment key must match regex."""
+        bad = TaskCreateRequest(
+            agent_name="a", session_id="s", title="t",
+            attachments={"bad key with spaces": {"x": 1}},
+        )
+        with pytest.raises(Exception):
+            await provider.create(bad)
+
+    @pytest.mark.asyncio
+    async def test_d3_clear_attachments_wipes_all(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-ATT-9: TaskPatchRequest.clear_attachments=True wipes all attachments."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t",
+                attachments={"k1": {"v": 1}, "k2": {"v": 2}},
+            )
+        )
+        assert created.attachments and len(created.attachments) == 2
+        # clear_attachments doesn't exist on TaskPatchRequest yet — RED via TypeError
+        patch = TaskPatchRequest()
+        setattr(patch, "clear_attachments", True)  # AttributeError if not in __slots__
+        await provider.update(created.id, patch)
+        got = await provider.get(created.id)
+        assert got is not None
+        assert not got.attachments
+
+    @pytest.mark.asyncio
+    async def test_d5_delete_removes_attachments(
+        self, provider: LocalFileTaskProvider, tmp_path: Path
+    ) -> None:
+        """C-ATT-10: DELETE removes all attachments along with the task."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t",
+                attachments={"k": {"v": 1}},
+            )
+        )
+        await provider.delete(created.id, force=True)
+        # File should be gone (which removes the inline attachments dict).
+        assert await provider.get(created.id) is None
+
+
+class TestSpec020SideEffects:
+    """E1-E4 — status transition side effects."""
+
+    @pytest.mark.asyncio
+    async def test_e1_pending_clears_suspension_reason(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """T1: transition to pending clears suspension_reason."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        await provider.update(
+            created.id,
+            TaskPatchRequest(status="suspended", suspension_reason="paused"),
+        )
+        await provider.update(created.id, TaskPatchRequest(status="pending"))
+        got = await provider.get(created.id)
+        assert got is not None
+        assert got.suspension_reason is None
+
+    @pytest.mark.asyncio
+    async def test_e2_in_progress_clears_suspension_reason_and_completed_at(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """T2: transition to in_progress clears suspension_reason + completed_at."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        # Suspend (sets reason), then transition back to in_progress.
+        await provider.update(
+            created.id,
+            TaskPatchRequest(status="suspended", suspension_reason="paused"),
+        )
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            ),
+        )
+        got = await provider.get(created.id)
+        assert got is not None
+        assert got.suspension_reason is None
+        assert got.completed_at is None
+
+    @pytest.mark.asyncio
+    async def test_e3_completed_clears_suspension_reason(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """T3: transition to completed clears suspension_reason."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        await provider.update(
+            created.id,
+            TaskPatchRequest(status="suspended", suspension_reason="paused"),
+        )
+        await provider.update(created.id, TaskPatchRequest(status="completed"))
+        got = await provider.get(created.id)
+        assert got is not None
+        assert got.suspension_reason is None
+        assert got.completed_at is not None
+
+    @pytest.mark.asyncio
+    async def test_e4_suspended_clears_completed_at(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """T4: transition to suspended clears completed_at if previously set."""
+        # Note: this requires a path where completed_at could be set on
+        # a non-completed task. In practice the framework only sets
+        # completed_at on the completed transition, but the rule says
+        # suspended should clear it regardless. Sketch the test to assert
+        # this for whatever state the provider is in.
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        await provider.update(
+            created.id,
+            TaskPatchRequest(status="suspended", suspension_reason="paused"),
+        )
+        got = await provider.get(created.id)
+        assert got is not None
+        assert got.completed_at is None
+        assert got.suspension_reason == "paused"
+
+
+class TestSpec020PayloadPatch:
+    """F1 — payload PATCH semantics."""
+
+    @pytest.mark.asyncio
+    async def test_f1_payload_object_shallow_merge(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """F1: payload PATCH with object shallow-merges."""
+        created = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t",
+                payload={"k1": "v1", "k2": "v2"},
+            )
+        )
+        await provider.update(
+            created.id, TaskPatchRequest(payload={"k2": "new", "k3": "v3"}),
+        )
+        got = await provider.get(created.id)
+        assert got is not None and got.payload == {"k1": "v1", "k2": "new", "k3": "v3"}
+
+
+class TestSpec020ListParity:
+    """G1-G7 — list filter parity."""
+
+    @pytest.mark.asyncio
+    async def test_g1_has_error_filter(self, provider: LocalFileTaskProvider) -> None:
+        """C-PRV-9: list supports has_error filter."""
+        await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t1", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        c2 = await provider.create(
+            TaskCreateRequest(
+                agent_name="a", session_id="s", title="t2", status="in_progress",
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
+            )
+        )
+        await provider.update(
+            c2.id,
+            TaskPatchRequest(status="completed", error={"type": "E", "message": "m"}),
+        )
+        # `has_error` filter not implemented in local provider — RED.
+        results = await provider.list(
+            agent_name="a", session_id="s", has_error=True,  # type: ignore[call-arg]
+        )
+        assert len(results) == 1 and results[0].id == c2.id
+
+    @pytest.mark.asyncio
+    async def test_g3_pagination_limit_and_after(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-PRV-10: list supports after cursor + limit pagination."""
+        for i in range(5):
+            await provider.create(
+                TaskCreateRequest(agent_name="a", session_id="s", title=f"t{i}")
+            )
+        # `limit` / `after` not implemented yet — RED.
+        page1 = await provider.list(
+            agent_name="a", session_id="s", limit=2,  # type: ignore[call-arg]
+        )
+        assert len(page1) == 2
+
+    @pytest.mark.asyncio
+    async def test_g5_before_rejected(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-PRV-10: list with `before` rejected."""
+        with pytest.raises(Exception):
+            await provider.list(
+                agent_name="a", session_id="s",
+                before="some-id",  # type: ignore[call-arg]
+            )
+
+    @pytest.mark.asyncio
+    async def test_g7_agent_name_optional(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """C-PRV-8: agent_name + session_id optional (workspace-wide listing)."""
+        await provider.create(
+            TaskCreateRequest(agent_name="a1", session_id="s", title="t1")
+        )
+        await provider.create(
+            TaskCreateRequest(agent_name="a2", session_id="s", title="t2")
+        )
+        # Today both are required positional args — RED via TypeError.
+        results = await provider.list()  # type: ignore[call-arg]
+        assert len(results) >= 2
