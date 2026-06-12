@@ -5,10 +5,10 @@ on:
     branches:
       - main
     paths:
-      - .github/workflows/**
+      - .github/**
   pull_request:
     paths:
-      - .github/workflows/**
+      - .github/**
   workflow_dispatch:
 
 permissions:
