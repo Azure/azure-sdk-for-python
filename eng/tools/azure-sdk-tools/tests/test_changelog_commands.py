@@ -303,7 +303,7 @@ class TestResolvePackage:
         mock_get_pkg.return_value = SimpleNamespace(name="azure-core")
         result = changelog._resolve_package("sdk/core/azure-core")
         assert result == "azure-core"
-        mock_get_pkg.assert_called_once_with(os.path.abspath("sdk/core/azure-core"), REPO_ROOT)
+        mock_get_pkg.assert_called_once_with(os.path.join(REPO_ROOT, "sdk/core/azure-core"), REPO_ROOT)
 
     @patch("azpysdk.changelog.get_package_from_repo")
     def test_bare_name_resolves(self, mock_get_pkg):

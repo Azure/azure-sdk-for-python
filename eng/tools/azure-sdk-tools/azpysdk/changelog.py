@@ -198,9 +198,15 @@ class changelog(Check):
         """Resolve a package argument to a Chronus package name."""
         if not package_arg:
             return None
-        # Resolve relative paths (e.g. ".") to absolute so get_package_from_repo
-        # doesn't accidentally glob against the repo root.
-        target = os.path.abspath(package_arg) if os.path.exists(package_arg) else package_arg
+        path_like = (
+            os.path.isabs(package_arg) or package_arg.startswith(".") or os.sep in package_arg or "/" in package_arg
+        )
+        if os.path.isabs(package_arg):
+            target = os.path.abspath(package_arg)
+        elif path_like:
+            target = os.path.join(REPO_ROOT, package_arg)
+        else:
+            target = package_arg
         try:
             parsed = get_package_from_repo(target, REPO_ROOT)
             return parsed.name if parsed else package_arg
