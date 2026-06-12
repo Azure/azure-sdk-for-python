@@ -60,11 +60,11 @@ POST_EMITTER_SCRIPT_NAME = "PostEmitter.ps1"
 def run_post_emitter_script(sdk_code_path: str) -> None:
     """Run the optional post-emitter PowerShell script for a package, if present.
 
-    When a script named ``PostEmitter.ps1`` exists directly inside the generated
-    package folder (``sdk/<service>/azure-*``), it is executed after code
-    generation so service teams can run custom post-processing on the generated
-    SDK. The script's stdout/stderr are captured and logged so they appear in the
-    pipeline output. Failures are logged but never fail the overall generation.
+    When a script whose name matches ``POST_EMITTER_SCRIPT_NAME`` exists directly
+    inside the generated package folder (``sdk/<service>/azure-*``), it is executed
+    after code generation so service teams can run custom post-processing on the
+    generated SDK. The script's stdout/stderr are captured and logged so they appear
+    in the pipeline output. Failures are logged but never fail the overall generation.
     """
     package_folder = Path(sdk_code_path).resolve()
     script_path = package_folder / POST_EMITTER_SCRIPT_NAME
