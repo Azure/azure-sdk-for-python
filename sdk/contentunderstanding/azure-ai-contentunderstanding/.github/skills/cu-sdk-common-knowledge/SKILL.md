@@ -30,7 +30,7 @@ Always read the relevant page (via `fetch_webpage`) before answering if the refe
 | **Service limits** | https://learn.microsoft.com/azure/ai-services/content-understanding/service-limits |
 | **Region & language support** | https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support |
 | **Prebuilt analyzers** | https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/prebuilt-analyzers |
-| **Create custom analyzer** | https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer?tabs=portal%2Cdocument&pivots=programming-language-rest |
+| **Create custom analyzer** | https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer?tabs=portal%2Cdocument&pivots=programming-language-python |
 | **Document markdown** | https://learn.microsoft.com/azure/ai-services/content-understanding/document/markdown |
 | **Document elements** | https://learn.microsoft.com/azure/ai-services/content-understanding/document/elements |
 | **Video overview** | https://learn.microsoft.com/azure/ai-services/content-understanding/video/overview |
@@ -40,6 +40,14 @@ Always read the relevant page (via `fetch_webpage`) before answering if the refe
 | **REST API reference** | https://learn.microsoft.com/rest/api/contentunderstanding/operation-groups |
 
 > **Search tip:** If the above pages don't cover the user's question, search the doc tree at `https://learn.microsoft.com/azure/ai-services/content-understanding/`.
+
+### Python SDK Resources
+
+| Resource | Link |
+|----------|------|
+| **Python package on PyPI** | https://pypi.org/project/azure-ai-contentunderstanding/ |
+| **Python SDK README** | https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md |
+| **Python SDK Samples** | https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples |
 
 ## Related Skills
 
