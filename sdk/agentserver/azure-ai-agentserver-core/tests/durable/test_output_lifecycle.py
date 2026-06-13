@@ -31,7 +31,7 @@ from azure.ai.agentserver.core.durable import (
     TaskContext,
     TaskFailed,
     task,
-)
+    multi_turn_task)
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
@@ -46,8 +46,7 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 @pytest.fixture
@@ -76,7 +75,7 @@ async def test_resume_clears_payload_output_and_attachment(local) -> None:
     release_handler = asyncio.Event()
     turn_count = 0
 
-    @task(name="resume_clears_output", ephemeral=False)
+    @multi_turn_task(name="resume_clears_output")
     async def my_task(ctx: TaskContext[str]) -> Suspended[str]:
         nonlocal turn_count
         turn_count += 1
@@ -157,7 +156,7 @@ async def test_drain_phase1_clears_payload_output_and_attachment(local) -> None:
     release_handler = asyncio.Event()
     turn_count = 0
 
-    @task(name="drain_clears_output", steerable=True, ephemeral=False)
+    @multi_turn_task(name="drain_clears_output", steerable=True)
     async def my_task(ctx: TaskContext[str]) -> Suspended[str]:
         nonlocal turn_count
         turn_count += 1
@@ -215,7 +214,7 @@ async def test_handle_failure_clears_output(local) -> None:
     """
     turn_count = 0
 
-    @task(name="failure_clears_output", ephemeral=False)
+    @multi_turn_task(name="failure_clears_output")
     async def my_task(ctx: TaskContext[str]) -> Suspended[str]:
         nonlocal turn_count
         turn_count += 1

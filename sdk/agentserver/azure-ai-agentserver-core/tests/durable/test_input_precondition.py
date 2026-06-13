@@ -25,7 +25,7 @@ from azure.ai.agentserver.core.durable import (
     LastInputIdPreconditionFailed,
     TaskContext,
     task,
-)
+    multi_turn_task)
 from azure.ai.agentserver.core.durable._exceptions import TaskPreconditionFailed
 
 
@@ -35,18 +35,18 @@ from azure.ai.agentserver.core.durable._exceptions import TaskPreconditionFailed
 # ---------------------------------------------------------------------------
 
 
-@task(name="us2-fast-completing", steerable=False, ephemeral=False)
+@multi_turn_task(name="us2-fast-completing", steerable=False)
 async def _fast_completing(ctx: TaskContext[dict]) -> dict:
     return {"echo": ctx.input}
 
 
-@task(name="us2-steerable-suspending", steerable=True, ephemeral=False)
+@multi_turn_task(name="us2-steerable-suspending", steerable=True)
 async def _steerable_suspending(ctx: TaskContext[dict]) -> dict:
     """Steerable task that suspends after first input."""
     return await ctx.suspend(reason="waiting_for_next_input")
 
 
-@task(name="us2-long-running-steerable", steerable=True, ephemeral=False)
+@multi_turn_task(name="us2-long-running-steerable", steerable=True)
 async def _long_running_steerable(ctx: TaskContext[dict]) -> dict:
     """Steerable task that takes a while so we can steer it."""
     try:
@@ -75,8 +75,7 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -107,8 +106,7 @@ async def test_if_last_input_id_without_input_id_raises_type_error(tmp_path: Pat
             await _fast_completing.start(
                 task_id="t-1",
                 input={"x": 1},
-                if_last_input_id="must-match-something",
-            )
+                if_last_input_id="must-match-something")
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -121,8 +119,7 @@ async def test_fresh_chain_input_id_only_succeeds(tmp_path: Path) -> None:
         run = await _fast_completing.start(
             task_id="t-fresh-1",
             input={"hi": "there"},
-            input_id="msg-A",
-        )
+            input_id="msg-A")
         await run.result()
         info = await manager.provider.get("t-fresh-1")
         assert info is not None
@@ -139,8 +136,7 @@ async def test_precondition_match_advances_last_input_id_on_resume(tmp_path: Pat
         run1 = await _steerable_suspending.start(
             task_id="t-precond-match",
             input={"turn": 1},
-            input_id="msg-1",
-        )
+            input_id="msg-1")
         await asyncio.sleep(0.2)  # let it suspend
         info = await manager.provider.get("t-precond-match")
         assert info is not None
@@ -151,8 +147,7 @@ async def test_precondition_match_advances_last_input_id_on_resume(tmp_path: Pat
             task_id="t-precond-match",
             input={"turn": 2},
             input_id="msg-2",
-            if_last_input_id="msg-1",
-        )
+            if_last_input_id="msg-1")
         await asyncio.sleep(0.2)
         info = await manager.provider.get("t-precond-match")
         assert info is not None
@@ -169,8 +164,7 @@ async def test_precondition_mismatch_raises_on_resume(tmp_path: Path) -> None:
         run1 = await _steerable_suspending.start(
             task_id="t-precond-mismatch",
             input={"turn": 1},
-            input_id="msg-1",
-        )
+            input_id="msg-1")
         await asyncio.sleep(0.2)
 
         with pytest.raises(LastInputIdPreconditionFailed) as excinfo:
@@ -178,8 +172,7 @@ async def test_precondition_mismatch_raises_on_resume(tmp_path: Path) -> None:
                 task_id="t-precond-mismatch",
                 input={"turn": 2},
                 input_id="msg-2",
-                if_last_input_id="msg-stale-XYZ",
-            )
+                if_last_input_id="msg-stale-XYZ")
 
         # Exposed fields carry the diagnostic information.
     # spec 022 FR-077: exception.task_id removed
@@ -211,8 +204,7 @@ async def test_input_id_only_advances_chain_head_unconditionally(tmp_path: Path)
         await _steerable_suspending.start(
             task_id="t-fresh-rejected",
             input={"turn": 1},
-            input_id="msg-1",
-        )
+            input_id="msg-1")
         await asyncio.sleep(0.2)
 
         info = await manager.provider.get("t-fresh-rejected")
@@ -243,8 +235,7 @@ async def test_legacy_callers_unaffected(tmp_path: Path) -> None:
     try:
         run = await _fast_completing.start(
             task_id="t-legacy",
-            input={"x": 1},
-        )
+            input={"x": 1})
         await run.result()
         info = await manager.provider.get("t-legacy")
         assert info is not None
@@ -262,8 +253,7 @@ async def test_precondition_match_on_steering_append(tmp_path: Path) -> None:
         run1 = await _long_running_steerable.start(
             task_id="t-steer-precond",
             input={"turn": 1},
-            input_id="msg-1",
-        )
+            input_id="msg-1")
         # Give it a moment to actually start running.
         await asyncio.sleep(0.1)
 
@@ -272,8 +262,7 @@ async def test_precondition_match_on_steering_append(tmp_path: Path) -> None:
             task_id="t-steer-precond",
             input={"turn": 2},
             input_id="msg-2",
-            if_last_input_id="msg-1",
-        )
+            if_last_input_id="msg-1")
         # Wait for the ack (signal sent).
         await asyncio.sleep(0.3)
         info = await manager.provider.get("t-steer-precond")
@@ -291,8 +280,7 @@ async def test_precondition_mismatch_on_steering_append(tmp_path: Path) -> None:
         run1 = await _long_running_steerable.start(
             task_id="t-steer-mismatch",
             input={"turn": 1},
-            input_id="msg-1",
-        )
+            input_id="msg-1")
         await asyncio.sleep(0.1)
 
         with pytest.raises(LastInputIdPreconditionFailed) as excinfo:
@@ -300,8 +288,7 @@ async def test_precondition_mismatch_on_steering_append(tmp_path: Path) -> None:
                 task_id="t-steer-mismatch",
                 input={"turn": 2},
                 input_id="msg-2",
-                if_last_input_id="msg-NOPE",
-            )
+                if_last_input_id="msg-NOPE")
     # spec 022 FR-077: exception.task_id removed
         assert excinfo.value.actual_last_input_id == "msg-1"
 
@@ -323,8 +310,7 @@ async def test_framework_namespace_isolated_from_user_payload(tmp_path: Path) ->
         await _fast_completing.start(
             task_id="t-ns-iso",
             input={"_last_input_id": "USER-INJECTED"},
-            input_id="msg-A",
-        )
+            input_id="msg-A")
         info = await manager.provider.get("t-ns-iso")
         assert info is not None
         # The framework slot should reflect the framework-supplied id,

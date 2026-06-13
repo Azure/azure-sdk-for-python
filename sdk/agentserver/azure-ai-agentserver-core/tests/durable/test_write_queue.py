@@ -26,7 +26,7 @@ import pytest
 from azure.ai.agentserver.core.durable import (
     TaskContext,
     task,
-)
+    multi_turn_task)
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
@@ -41,8 +41,7 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 @pytest.fixture
@@ -81,7 +80,7 @@ async def test_concurrent_metadata_flushes_serialize(local) -> None:
 
     local.update = _capturing_update  # type: ignore[method-assign]
 
-    @task(name="parallel_flushes", ephemeral=False)
+    @multi_turn_task(name="parallel_flushes")
     async def my_task(ctx: TaskContext[str]) -> str:
         # Spawn N concurrent flushes inside the handler — all
         # against the same task's metadata.
@@ -138,7 +137,7 @@ async def test_reads_do_not_acquire_lock(local) -> None:
     in_flush_barrier = asyncio.Event()
     release_flush = asyncio.Event()
 
-    @task(name="reads_no_lock", ephemeral=False)
+    @multi_turn_task(name="reads_no_lock")
     async def my_task(ctx: TaskContext[str]) -> str:
         # Touch metadata once so the namespace exists.
         ctx.metadata["x"] = 1
@@ -189,7 +188,7 @@ async def test_lock_removed_when_active_entry_torn_down(local) -> None:
     The exact attribute name is implementation-defined; tests look
     for either ``_write_locks`` or ``_task_write_queue``.
     """
-    @task(name="lock_teardown", ephemeral=False)
+    @multi_turn_task(name="lock_teardown")
     async def my_task(ctx: TaskContext[str]) -> str:
         ctx.metadata["x"] = 1
         await ctx.metadata.flush()

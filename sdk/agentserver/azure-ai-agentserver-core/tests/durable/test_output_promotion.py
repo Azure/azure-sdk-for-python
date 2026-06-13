@@ -31,7 +31,7 @@ from azure.ai.agentserver.core.durable import (
     Suspended,
     TaskContext,
     task,
-)
+    multi_turn_task)
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
@@ -46,8 +46,7 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 @pytest.fixture
@@ -73,7 +72,7 @@ async def test_suspend_output_always_uses_attachment(local) -> None:
     the ``_output`` attachment; ``payload["output"]`` MUST be a ref,
     never the inline value.
     """
-    @task(name="suspend_attach", ephemeral=False)
+    @multi_turn_task(name="suspend_attach")
     async def my_task(ctx: TaskContext[str]) -> Suspended[dict]:
         return await ctx.suspend(output={"k": "v"}, reason="tiny")
 
@@ -107,7 +106,7 @@ async def test_complete_output_always_uses_attachment(local) -> None:
     """FR-C-005 — ``_handle_success`` for non-ephemeral tasks must also
     write output via ``_output`` attachment, not inline.
     """
-    @task(name="complete_attach", ephemeral=False)
+    @multi_turn_task(name="complete_attach")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "done"
 
@@ -139,7 +138,7 @@ async def test_suspend_output_none_writes_explicit_null(local) -> None:
     """
     turn_count = 0
 
-    @task(name="output_none_writes", ephemeral=False)
+    @multi_turn_task(name="output_none_writes")
     async def my_task(ctx: TaskContext[str]) -> Suspended[str]:
         nonlocal turn_count
         turn_count += 1
@@ -199,7 +198,7 @@ async def test_output_over_cap_raises_output_too_large_pre_patch(local) -> None:
     # ~3 MB of JSON-serializable data.
     big_blob = "X" * (3 * 1024 * 1024)
 
-    @task(name="output_too_large", ephemeral=False)
+    @multi_turn_task(name="output_too_large")
     async def my_task(ctx: TaskContext[str]) -> str:
         return big_blob
 
@@ -241,7 +240,7 @@ async def test_suspend_with_oversized_output_raises_output_too_large(local) -> N
 
     big_blob = "Y" * (3 * 1024 * 1024)
 
-    @task(name="suspend_output_too_large", ephemeral=False)
+    @multi_turn_task(name="suspend_output_too_large")
     async def my_task(ctx: TaskContext[str]) -> Suspended[str]:
         return await ctx.suspend(output=big_blob, reason="oversized")
 

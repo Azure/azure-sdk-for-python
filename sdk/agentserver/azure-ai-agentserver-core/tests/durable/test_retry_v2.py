@@ -42,8 +42,7 @@ def _fast_retry(max_attempts: int) -> RetryPolicy:
         max_attempts=max_attempts,
         initial_delay=timedelta(milliseconds=1),
         backoff_coefficient=1.0,
-        jitter=False,
-    )
+        jitter=False)
 
 
 def _multi_turn_task(**kwargs: Any) -> Any:
@@ -71,8 +70,7 @@ async def _setup_manager(provider_wrapper: Any | None = None) -> tuple[Any, Any,
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -91,8 +89,7 @@ async def _wait_for_record(
     task_id: str,
     *,
     status: str | None = None,
-    timeout: float = 5.0,
-) -> Any:
+    timeout: float = 5.0) -> Any:
     loop = asyncio.get_running_loop()
     deadline = loop.time() + timeout
     last_record = None
@@ -123,8 +120,7 @@ async def _seed_stale_task(
     *,
     task_id: str,
     retry_attempt: int,
-    input_value: Any,
-) -> None:
+    input_value: Any) -> None:
     from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
     await manager.provider.create(
@@ -134,8 +130,7 @@ async def _seed_stale_task(
             session_id="test-session",
             status="in_progress",
             title="retry-v2-stale",
-            payload={"input": input_value, "_retry_attempt": retry_attempt},
-        )
+            payload={"input": input_value, "_retry_attempt": retry_attempt})
     )
     task_file = store_dir / "test-agent" / "test-session" / f"{task_id}.json"
     data = json.loads(task_file.read_text())
@@ -224,8 +219,7 @@ class TestPerHandlerRetryBudget:
                 store_dir,
                 task_id=task_id,
                 retry_attempt=1,
-                input_value="same-attempt",
-            )
+                input_value="same-attempt")
             run = await recovered.start(task_id=task_id, input="ignored")
             assert await asyncio.wait_for(run.result(), timeout=5.0) == "recovered@1"
             assert observed == [1]

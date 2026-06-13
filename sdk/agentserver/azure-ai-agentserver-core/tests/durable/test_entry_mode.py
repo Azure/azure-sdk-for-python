@@ -9,8 +9,7 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    task,
-)
+    task)
 
 
 class TestEntryMode:
@@ -18,11 +17,9 @@ class TestEntryMode:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+            TaskManager)
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -35,8 +32,7 @@ class TestEntryMode:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -69,7 +65,7 @@ class TestEntryMode:
         """Calling .run() on a suspended task produces entry_mode='resumed' with new input."""
         observed: list[tuple[str, str]] = []
 
-        @task(title="test-resume", ephemeral=False)
+        @multi_turn_task(title="test-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
             return await ctx.suspend(output={"partial": True})
@@ -94,7 +90,7 @@ class TestEntryMode:
         """Platform-initiated resume (handle_resume) produces entry_mode='resumed'."""
         observed: list[str] = []
 
-        @task(title="test-platform-resume", ephemeral=False)
+        @multi_turn_task(title="test-platform-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return await ctx.suspend(output="waiting")
@@ -122,7 +118,7 @@ class TestEntryMode:
         """Calling .run() on a stale in_progress task produces entry_mode='recovered'."""
         observed: list[str] = []
 
-        @task(title="test-recover", ephemeral=False)
+        @multi_turn_task(title="test-recover")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return "recovered-ok"
@@ -130,8 +126,7 @@ class TestEntryMode:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             from azure.ai.agentserver.core.durable._models import (
-                TaskCreateRequest,
-            )
+                TaskCreateRequest)
 
             # Manually create a stale in_progress task
             await manager.provider.create(
@@ -141,8 +136,7 @@ class TestEntryMode:
                     session_id="test-session",
                     status="in_progress",
                     title="stale-test",
-                    payload={"input": "old-data"},
-                )
+                    payload={"input": "old-data"})
             )
 
             # Backdate the updated_at to make it stale
@@ -158,8 +152,7 @@ class TestEntryMode:
 
             result = await my_task.run(
                 task_id="stale-1",
-                input="new-data",
-            )
+                input="new-data")
             assert result == "recovered-ok"
             assert observed == ["recovered"]
         finally:
@@ -233,8 +226,7 @@ class TestRecoveryRetryAttempt:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import TaskManager
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
@@ -248,8 +240,7 @@ class TestRecoveryRetryAttempt:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -271,8 +262,7 @@ class TestRecoveryRetryAttempt:
                 session_id="test-session",
                 status="in_progress",
                 title="recovered-retry",
-                payload={"input": "x", "_retry_attempt": retry_attempt},
-            )
+                payload={"input": "x", "_retry_attempt": retry_attempt})
         )
         task_file = (
             Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
@@ -295,7 +285,7 @@ class TestRecoveryRetryAttempt:
         """
         observed: list[tuple[str, int]] = []
 
-        @task(title="rec-attempt", ephemeral=False)
+        @multi_turn_task(title="rec-attempt")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.retry_attempt))
             return "done"
@@ -305,8 +295,7 @@ class TestRecoveryRetryAttempt:
             await self._seed_stale(manager, tmp_path, "rec-attempt-1", retry_attempt=3)
             result = await my_task.run(
                 task_id="rec-attempt-1",
-                input="ignored",
-            )
+                input="ignored")
             assert result == "done"
             assert observed == [("recovered", 3)], (
                 "FR-001 violated: recovered handler must see entry_mode="
@@ -329,7 +318,7 @@ class TestRecoveryRetryAttempt:
         """
         observed: list[int] = []
 
-        @task(title="rec-no-bump", ephemeral=False)
+        @multi_turn_task(title="rec-no-bump")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"
@@ -339,8 +328,7 @@ class TestRecoveryRetryAttempt:
             await self._seed_stale(manager, tmp_path, "rec-no-bump-1", retry_attempt=1)
             await my_task.run(
                 task_id="rec-no-bump-1",
-                input="ignored",
-            )
+                input="ignored")
             assert observed == [1], (
                 "FR-003 violated: recovery entry MUST surface "
                 f"retry_attempt=1 verbatim; got {observed!r}. "
@@ -355,11 +343,9 @@ class TestEntryModeV2Matrix:
 
     async def _setup_manager(self, tmp_path, *, startup=True):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+            TaskManager)
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -372,8 +358,7 @@ class TestEntryModeV2Matrix:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         if startup:
@@ -416,8 +401,7 @@ class TestEntryModeV2Matrix:
                 source={"name": task_name, "type": "agentserver.task"},
                 lease_owner=derive_lease_owner("test-agent", "test-session"),
                 lease_instance_id="previous-instance",
-                lease_duration_seconds=60,
-            )
+                lease_duration_seconds=60)
         )
         created.lease.expires_at = (
             datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=10)
@@ -511,8 +495,7 @@ class TestEntryModeV2Matrix:
             provider,
             task_id="fr063-scanner",
             task_name="fr063-scanner-reclaim",
-            input_value="persisted",
-        )
+            input_value="persisted")
         try:
             await manager.startup()
             await self._eventually(lambda: observed)
@@ -534,8 +517,7 @@ class TestEntryModeV2Matrix:
             provider,
             task_id="fr063-inline",
             task_name="fr063-inline-reclaim",
-            input_value="persisted",
-        )
+            input_value="persisted")
         try:
             run = await my_task.start(task_id="fr063-inline", input="new-caller-input")
             assert await run.result() == "recovered"

@@ -58,8 +58,7 @@ class _ManagerFixture:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider, shutdown_grace_seconds=0.1)
         mgr_mod._manager = manager  # noqa: SLF001
         await manager.startup()

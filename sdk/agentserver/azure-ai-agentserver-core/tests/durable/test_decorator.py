@@ -19,8 +19,7 @@ import pytest
 from azure.ai.agentserver.core.durable import (
     Task,
     TaskContext,
-    task,
-)
+    task)
 
 
 class TestTaskDecorator:
@@ -54,8 +53,7 @@ class TestTaskDecorator:
             name="full",
             ephemeral=False,
             title="My Title",
-            timeout=timedelta(minutes=5),
-        )
+            timeout=timedelta(minutes=5))
         async def my_task(ctx: TaskContext[dict]) -> str:
             return ""
 
@@ -97,8 +95,7 @@ class TestTaskDecorator:
             "lease_duration_seconds",
             "max_pending",
             "tags",
-        ],
-    )
+        ])
     def test_task_decorator_rejects_retired_args(self, kwarg: str) -> None:
         """FR-006: ``@task`` rejects the retired decorator options.
 

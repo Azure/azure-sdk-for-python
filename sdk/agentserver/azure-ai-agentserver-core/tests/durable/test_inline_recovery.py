@@ -35,8 +35,7 @@ try:
         multi_turn_task,  # type: ignore[attr-defined]
         TaskConflictError,
         TaskContext,
-        SteeringQueueFull,
-    )
+        SteeringQueueFull)
     _NEW_SURFACE_AVAILABLE = True
 except ImportError:
     _NEW_SURFACE_AVAILABLE = False
@@ -72,8 +71,7 @@ async def _setup(tmp_path: Path) -> tuple[Any, Any]:
             "lease_renewal_interval_seconds": 30,
             "owner_instance_id": "inst-1",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(provider=provider, config=config)
     set_task_manager(manager)
     await manager.startup()
@@ -94,8 +92,7 @@ class TestCrashRecoveryUsesPersistedInput:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="FR-033: requires multi_turn_task (RED until Phase 2-6 lands)",
-    )
+        reason="FR-033: requires multi_turn_task (RED until Phase 2-6 lands)")
     async def test_scanner_recovery_uses_persisted_input(self, tmp_path: Path) -> None:
         """Scanner-reclaimed handler runs with persisted payload['input']."""
         observed_inputs: list[Any] = []
@@ -120,8 +117,7 @@ class TestCrashRecoveryUsesPersistedInput:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="FR-033: requires multi_turn_task (RED)",
-    )
+        reason="FR-033: requires multi_turn_task (RED)")
     async def test_inline_recovery_uses_persisted_input_not_callers_new(
         self, tmp_path: Path
     ) -> None:
@@ -154,8 +150,7 @@ class TestInlineRecoveryAlgorithm:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="FR-034: requires multi_turn_task (RED)",
-    )
+        reason="FR-034: requires multi_turn_task (RED)")
     async def test_inline_recovery_one_shot_rejects_new_input(self, tmp_path: Path) -> None:
         """One-shot inline-recovery: caller's new input gets TaskConflictError."""
         @task(name="one_shot_recovery")  # type: ignore[misc]
@@ -170,8 +165,7 @@ class TestInlineRecoveryAlgorithm:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="FR-034: requires multi_turn_task (RED)",
-    )
+        reason="FR-034: requires multi_turn_task (RED)")
     async def test_inline_recovery_multi_turn_non_steerable_rejects(
         self, tmp_path: Path
     ) -> None:
@@ -186,8 +180,7 @@ class TestInlineRecoveryAlgorithm:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="FR-034: requires multi_turn_task (RED)",
-    )
+        reason="FR-034: requires multi_turn_task (RED)")
     async def test_inline_recovery_steerable_queues_new_input(self, tmp_path: Path) -> None:
         """Steerable multi-turn: caller's new input is queued."""
         observed_inputs: list[Any] = []
@@ -209,8 +202,7 @@ class TestInlineRecoveryAlgorithm:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="FR-034: requires multi_turn_task (RED)",
-    )
+        reason="FR-034: requires multi_turn_task (RED)")
     async def test_inline_recovery_acquires_lease_via_cas(self, tmp_path: Path) -> None:
         """CAS-based lease acquisition prevents races with the original owner."""
         # Detailed CAS race testing requires deep manager hooks; this test
@@ -224,8 +216,7 @@ class TestObservationalIdentity:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="FR-035: requires multi_turn_task (RED)",
-    )
+        reason="FR-035: requires multi_turn_task (RED)")
     async def test_crash_then_recover_indistinguishable_from_continuous(
         self, tmp_path: Path
     ) -> None:
@@ -261,29 +252,25 @@ class TestSC004CrashRecovery:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="SC-004: requires multi_turn_task (RED)",
-    )
+        reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_one_shot_fresh(self, tmp_path: Path) -> None:
         """One-shot fresh handler — crash recovery re-invokes."""
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="SC-004: requires multi_turn_task (RED)",
-    )
+        reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_multi_turn_fresh(self, tmp_path: Path) -> None:
         """Multi-turn first turn — crash recovery re-invokes."""
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="SC-004: requires multi_turn_task (RED)",
-    )
+        reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_multi_turn_resumed_turn(self, tmp_path: Path) -> None:
         """Multi-turn resumed turn — crash recovery preserves prior metadata."""
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="SC-004: requires multi_turn_task (RED)",
-    )
+        reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_steerable_with_queued_inputs(
         self, tmp_path: Path
     ) -> None:
@@ -295,14 +282,12 @@ class TestSC015InlineRecoveryAlgo:
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="SC-015: requires multi_turn_task (RED)",
-    )
+        reason="SC-015: requires multi_turn_task (RED)")
     async def test_steerable_inline_recovery_matches_non_crash(self, tmp_path: Path) -> None:
         """Steerable: inline-recovery + new-input-queued matches non-crash flow."""
 
     @pytest.mark.skipif(
         not _NEW_SURFACE_AVAILABLE,
-        reason="SC-015: requires multi_turn_task (RED)",
-    )
+        reason="SC-015: requires multi_turn_task (RED)")
     async def test_non_steerable_inline_recovery_matches_non_crash(self, tmp_path: Path) -> None:
         """Non-steerable: inline-recovery + caller's new-input-rejected matches non-crash flow."""

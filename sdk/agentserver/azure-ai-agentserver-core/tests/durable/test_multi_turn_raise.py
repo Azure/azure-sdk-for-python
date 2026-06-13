@@ -25,21 +25,18 @@ try:
         TaskFailed,
         multi_turn_task,
         task,
-        TaskErrorDict,
-    )
+        TaskErrorDict)
     _NEW_SURFACE_AVAILABLE = True
 except ImportError:
     _NEW_SURFACE_AVAILABLE = False
     from azure.ai.agentserver.core.durable import (
-        TaskCancelled, TaskContext, TaskFailed, task,
-    )
+        TaskCancelled, TaskContext, TaskFailed, task)
     multi_turn_task = None  # type: ignore[assignment]
     TaskErrorDict = None  # type: ignore[assignment]
 
 pytestmark = pytest.mark.skipif(
     not _NEW_SURFACE_AVAILABLE,
-    reason="spec 022: requires `multi_turn_task` / `TaskErrorDict` (RED until Phase 2-5)",
-)
+    reason="spec 022: requires `multi_turn_task` / `TaskErrorDict` (RED until Phase 2-5)")
 
 
 class MyError(RuntimeError):
@@ -48,11 +45,9 @@ class MyError(RuntimeError):
 
 async def _setup_manager(tmp_path: Path, provider_wrapper: Any | None = None) -> tuple[Any, Any, Any]:
     from azure.ai.agentserver.core.durable._local_provider import (
-        LocalFileTaskProvider,
-    )
+        LocalFileTaskProvider)
     from azure.ai.agentserver.core.durable._manager import (
-        TaskManager,
-    )
+        TaskManager)
     import azure.ai.agentserver.core.durable._manager as mgr_mod
 
     base_provider = LocalFileTaskProvider(Path(str(tmp_path)))
@@ -65,8 +60,7 @@ async def _setup_manager(tmp_path: Path, provider_wrapper: Any | None = None) ->
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -83,8 +77,7 @@ async def _wait_for_record(
     task_id: str,
     *,
     status: str | None = None,
-    timeout: float = 5.0,
-) -> Any:
+    timeout: float = 5.0) -> Any:
     loop = asyncio.get_running_loop()
     deadline = loop.time() + timeout
     while True:
@@ -137,7 +130,7 @@ def _exception_public_fields(exc: BaseException) -> set[str]:
     for cls in type(exc).mro():
         slots = getattr(cls, "__slots__", ())
         if isinstance(slots, str):
-            slots = (slots,)
+            slots = (slots)
         for slot in slots:
             if isinstance(slot, str) and not slot.startswith("_") and hasattr(exc, slot):
                 fields.add(slot)
@@ -161,8 +154,7 @@ class TestReturnIsImplicitSuspend:
             result1 = await chat.run(
                 task_id="return-x",
                 input_id="turn-1",
-                input={"value": "one"},
-            )
+                input={"value": "one"})
 
             assert result1 == {"echo": "one", "input_id": "turn-1"}
             record = await _wait_for_record(manager, "return-x", status="suspended")
@@ -172,8 +164,7 @@ class TestReturnIsImplicitSuspend:
             run2 = await chat.start(
                 task_id="return-x",
                 input_id="turn-2",
-                input={"value": "two"},
-            )
+                input={"value": "two"})
             assert await run2.result() == {"echo": "two", "input_id": "turn-2"}
             assert seen == [("fresh", "turn-1"), ("resumed", "turn-2")]
         finally:
@@ -294,16 +285,14 @@ class TestMultiTurnRaiseDoesNotKillChain:
                 failing = await chat.start(
                     task_id="many-raises",
                     input_id=f"fail-{index}",
-                    input={"value": f"fail-{index}"},
-                )
+                    input={"value": f"fail-{index}"})
                 with pytest.raises(TaskFailed):
                     await asyncio.wait_for(failing.result(), timeout=5.0)
 
                 result = await chat.run(
                     task_id="many-raises",
                     input_id=f"success-{index}",
-                    input={"value": f"success-{index}"},
-                )
+                    input={"value": f"success-{index}"})
                 assert result == f"ok:success-{index}"
                 record = await _wait_for_record(manager, "many-raises", status="suspended")
                 assert (record.payload or {}).get("input") is None

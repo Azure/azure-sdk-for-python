@@ -37,14 +37,13 @@ from azure.ai.agentserver.core.durable import (
     TaskContext,
     TaskFailed,
     task,
-)
+    multi_turn_task)
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
 from azure.ai.agentserver.core.durable._models import (
     TaskCreateRequest,
-    TaskPatchRequest,
-)
+    TaskPatchRequest)
 
 
 def _config_stub():
@@ -56,8 +55,7 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 @pytest.fixture
@@ -89,7 +87,7 @@ async def test_every_patch_after_first_carries_if_match(captured_local) -> None:
     any framework-internal PATCHes that follow MUST all carry
     ``if_match``.
     """
-    @task(name="if_match_etag_task", ephemeral=False)
+    @multi_turn_task(name="if_match_etag_task")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "ok"
 
@@ -123,7 +121,7 @@ async def test_delete_does_not_carry_if_match(captured_local) -> None:
     auto-deletes the record on terminal exit; that delete must
     not carry ``if_match``.
     """
-    @task(name="delete_etag_task", ephemeral=True)
+    @task(name="delete_etag_task")
     async def ephemeral_task(ctx: TaskContext[str]) -> str:
         return "done"
 
@@ -157,7 +155,7 @@ async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
     """
     import datetime
 
-    @task(name="reclaim_etag_task", ephemeral=False)
+    @multi_turn_task(name="reclaim_etag_task")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "recovered"
 
@@ -177,8 +175,7 @@ async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
             source={"name": "reclaim_etag_task", "type": "agentserver.task"},
             lease_owner="test-agent|session:test-session",
             lease_instance_id="prev-instance",
-            lease_duration_seconds=60,
-        )
+            lease_duration_seconds=60)
     )
     # Manually backdate the lease.
     stored = await captured_local._delegate.get("t-stale")  # noqa: SLF001
@@ -226,7 +223,7 @@ async def test_terminal_412_lease_lost_abandons(conflicting_local) -> None:
     On the framework's RE-READ, it sees a different instance_id and
     MUST stop.
     """
-    @task(name="terminal_412_lease_lost", ephemeral=False)
+    @multi_turn_task(name="terminal_412_lease_lost")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "completed-payload"
 
@@ -252,7 +249,7 @@ async def test_terminal_412_already_terminal_abandons(conflicting_local) -> None
     """FR-A-008 (b) / SC-3b — on terminal-write 412, if RE-READ shows
     ``status="completed"`` already, ABANDON.
     """
-    @task(name="terminal_412_already_terminal", ephemeral=False)
+    @multi_turn_task(name="terminal_412_already_terminal")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "ok"
 
@@ -286,7 +283,7 @@ async def test_terminal_412_lease_ours_retries(conflicting_local) -> None:
     handler's outcome would be lost in the store even though the
     caller's future may have resolved early).
     """
-    @task(name="terminal_412_retry", ephemeral=False)
+    @multi_turn_task(name="terminal_412_retry")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "succeed-on-retry"
 

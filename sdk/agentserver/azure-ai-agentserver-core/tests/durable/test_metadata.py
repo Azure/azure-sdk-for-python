@@ -423,8 +423,7 @@ class TestTaskMetadataNamedNamespaces:
             "stop_auto_flush",
             "_auto_flush_loop",
             "_flush_task",
-            "_flush_interval",
-        )
+            "_flush_interval")
         offenders = [name for name in forbidden if name in source]
         assert not offenders, (
             f"_metadata.py must not mention retired auto-flush symbols: "
@@ -465,8 +464,7 @@ class TestTaskMetadataRecoveryDurability:
 
     @pytest.mark.asyncio
     async def test_named_namespace_survives_recovery_with_independent_state(
-        self,
-    ) -> None:
+        self) -> None:
         """Each `payload["metadata:<name>"]` is restored to its own facade.
 
         Simulates a crash by:

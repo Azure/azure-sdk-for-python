@@ -20,7 +20,7 @@ from azure.ai.agentserver.core.durable import (
     TaskDeferred,
     TaskContext,
     task,
-)
+    multi_turn_task)
 
 # Spec 016 FR-022 + SC-014 (US6): TaskTerminated is REMOVED — importing
 # it from the public package now raises ImportError (verified by
@@ -35,11 +35,9 @@ class _ManagerFixture:
     @staticmethod
     async def setup(tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+            TaskManager)
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -52,8 +50,7 @@ class _ManagerFixture:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -82,8 +79,7 @@ class TestExecutionTimeout:
 
             @task(
                 name="timeout_coop",
-                timeout=timedelta(seconds=0.2),
-            )
+                timeout=timedelta(seconds=0.2))
             async def slow_task(ctx: TaskContext[Any]) -> str:
                 # Wait until cooperative cancel fires
                 while not ctx.cancel.is_set():
@@ -209,7 +205,7 @@ class TestExitForRecovery:
         try:
             from azure.ai.agentserver.core.durable._exceptions import TaskFailed
 
-            @task(name="exit_misuse", ephemeral=False)
+            @multi_turn_task(name="exit_misuse")
             async def misuse(ctx: TaskContext[str]) -> str:
                 # ctx.shutdown is NOT set — calling exit_for_recovery
                 # must raise RuntimeError immediately.
@@ -237,7 +233,7 @@ class TestExitForRecovery:
 
             shutdown_triggered = asyncio.Event()
 
-            @task(name="exit_shutdown", ephemeral=False)
+            @multi_turn_task(name="exit_shutdown")
             async def shutdown_aware(ctx: TaskContext[str]) -> str:
                 # Wait for the test to signal "shutdown is happening".
                 await shutdown_triggered.wait()
@@ -302,7 +298,7 @@ class TestSpec016PerTurnTimeout:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @task(name="t086_fresh", ephemeral=False)
+            @multi_turn_task(name="t086_fresh")
             async def my_task(ctx: TaskContext[str]) -> str:
                 return "done"
 
@@ -328,7 +324,7 @@ class TestSpec016PerTurnTimeout:
 
         original_stamp = "2026-06-01T00:00:00.000000Z"
 
-        @task(name="t086_recover", ephemeral=False)
+        @multi_turn_task(name="t086_recover")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "recovered"
 
@@ -345,8 +341,7 @@ class TestSpec016PerTurnTimeout:
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="previous-inst",
                     lease_duration_seconds=60,
-                    source={"name": "t086_recover", "type": "agentserver.task"},
-                )
+                    source={"name": "t086_recover", "type": "agentserver.task"})
             )
             await my_task.run(task_id="t086-recover-1", input="ignored")
 
@@ -400,8 +395,7 @@ class TestSpec016PerTurnTimeout:
                     lease_instance_id="previous-inst",
                     lease_duration_seconds=60,
                     source={"name": "t092_immediate_fire",
-                            "type": "agentserver.task"},
-                )
+                            "type": "agentserver.task"})
             )
             await my_task.run(task_id="t092-fire", input="ignored")
             # Per FR-025: recovered watchdog with remaining==0 pre-sets
@@ -427,8 +421,7 @@ class TestSpec016PerTurnTimeout:
         requires injecting time, which adds fragility.
         """
         from azure.ai.agentserver.core.durable._manager import (
-            _parse_turn_started_at,
-        )
+            _parse_turn_started_at)
         import time
 
         # Forward jump: turn_started_at is way in the past → elapsed
@@ -491,15 +484,14 @@ class TestSpec016ExitForRecoveryExtended:
         """
         from azure.ai.agentserver.core.durable._exceptions import TaskCancelled
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod_local
 
         observed: list[str] = []
         triggered = asyncio.Event()
 
-        @task(name="t094b_recover", ephemeral=False)
+        @multi_turn_task(name="t094b_recover")
         async def handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             if ctx.entry_mode == "recovered":
@@ -519,8 +511,7 @@ class TestSpec016ExitForRecoveryExtended:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager1 = TaskManager(config=config, provider=provider)
         mgr_mod_local._manager = manager1
         await manager1.startup()
@@ -553,9 +544,7 @@ class TestSpec016ExitForRecoveryExtended:
             TaskPatchRequest(
                 lease_owner=new_manager._lease_owner,  # noqa: SLF001
                 lease_instance_id="prev-incarnation",
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
         mgr_mod_local._manager = new_manager
         await new_manager.startup()
         # Layer 1 recovery scan should have re-entered the handler.
@@ -587,7 +576,7 @@ class TestSpec016ExitForRecoveryExtended:
 
         gate = asyncio.Event()
 
-        @task(name="t096_preserve_queue", steerable=True, ephemeral=False)
+        @multi_turn_task(name="t096_preserve_queue", steerable=True)
         async def handler(ctx: TaskContext[dict]) -> dict:
             # Wait for the test to queue a steering input + signal.
             await gate.wait()

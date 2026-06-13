@@ -79,8 +79,7 @@ def _config_stub() -> Any:
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 async def _setup_manager(
@@ -104,8 +103,7 @@ async def _wait_for_record(
     task_id: str,
     *,
     status: str | None = None,
-    timeout: float = 5.0,
-) -> Any:
+    timeout: float = 5.0) -> Any:
     deadline = asyncio.get_running_loop().time() + timeout
     record = None
     while True:
@@ -124,8 +122,7 @@ async def _wait_for_payload_value(
     key: str,
     expected: Any,
     *,
-    timeout: float = 5.0,
-) -> Any:
+    timeout: float = 5.0) -> Any:
     deadline = asyncio.get_running_loop().time() + timeout
     while True:
         record = await provider.get(task_id)
@@ -305,8 +302,7 @@ class TestNoErrorPersistence:
 
             @task(
                 name="persistence-no-interim-error",
-                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False),
-            )
+                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False))
             async def always_fails(ctx: TaskContext[str]) -> str:
                 nonlocal attempts
                 attempts += 1
@@ -432,8 +428,7 @@ class TestLastInputIdRetention:
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="prior-incarnation",
                     lease_duration_seconds=60,
-                    source={"name": "persistence-last-input-id-recovery", "type": "agentserver.task"},
-                )
+                    source={"name": "persistence-last-input-id-recovery", "type": "agentserver.task"})
             )
 
             await manager._recover_stale_tasks()  # noqa: SLF001
@@ -456,8 +451,7 @@ class TestRetryAttemptClearing:
 
             @_multi_turn_task(
                 name="persistence-retry-cleared",
-                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False),
-            )
+                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False))
             async def chat(ctx: TaskContext[str]) -> str:
                 nonlocal attempts
                 attempts += 1
@@ -481,8 +475,7 @@ class TestRetryAttemptClearing:
 
             @task(
                 name="persistence-retry-kept",
-                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(seconds=0.2), jitter=False),
-            )
+                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(seconds=0.2), jitter=False))
             async def retrying(ctx: TaskContext[str]) -> str:
                 if ctx.retry_attempt == 0:
                     first_attempt.set()
@@ -511,8 +504,7 @@ class TestRetryAttemptClearing:
 
             @_multi_turn_task(
                 name="persistence-retry-new-turn",
-                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False),
-            )
+                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False))
             async def chat(ctx: TaskContext[str]) -> str:
                 nonlocal first_turn_invocations
                 turn_attempts.append((ctx.input, ctx.retry_attempt))

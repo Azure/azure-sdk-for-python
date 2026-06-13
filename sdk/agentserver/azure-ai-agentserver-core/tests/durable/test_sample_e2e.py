@@ -24,7 +24,7 @@ from azure.ai.agentserver.core.durable import (
     TaskContext,
     TaskConflictError,
     task,
-)
+    multi_turn_task)
 
 
 class _ManagerFixture:
@@ -33,11 +33,9 @@ class _ManagerFixture:
     @staticmethod
     async def setup(tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+            TaskManager)
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -50,8 +48,7 @@ class _ManagerFixture:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -100,8 +97,7 @@ class TestSourceSampleE2E:
 
             result = await with_source.run(
                 task_id=task_id,
-                input=None,
-            )
+                input=None)
             assert result == "done"
 
             # Verify source was auto-stamped on the task record
@@ -128,11 +124,11 @@ class TestListE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @task(name="e2e_list_alpha", ephemeral=False)
+            @multi_turn_task(name="e2e_list_alpha")
             async def alpha(ctx: TaskContext[Any]) -> str:
                 return "alpha_done"
 
-            @task(name="e2e_list_beta", ephemeral=False)
+            @multi_turn_task(name="e2e_list_beta")
             async def beta(ctx: TaskContext[Any]) -> str:
                 return "beta_done"
 
@@ -165,7 +161,7 @@ class TestListE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @task(name="e2e_list_status", ephemeral=False)
+            @multi_turn_task(name="e2e_list_status")
             async def suspendable(ctx: TaskContext[Any]) -> str:
                 if ctx.entry_mode == "fresh":
                     return await ctx.suspend(reason="waiting")
@@ -175,7 +171,7 @@ class TestListE2E:
             handle = await suspendable.start(task_id="status-1", input=None)
             result = await handle.result()
     # spec 022: result is raw output (Suspended wrapper removed)
-            @task(name="e2e_list_status", ephemeral=False)
+            @multi_turn_task(name="e2e_list_status")
             async def completer(ctx: TaskContext[Any]) -> str:
                 return "done"
 
@@ -218,7 +214,7 @@ class TestListE2E:
         try:
             task_id = uuid.uuid4().hex
 
-            @task(name="e2e_tag_stamp", ephemeral=False)
+            @multi_turn_task(name="e2e_tag_stamp")
             async def stamped(ctx: TaskContext[Any]) -> str:
                 return "done"
 
@@ -290,16 +286,14 @@ class TestMultiturnSampleE2E:
 
                 return await ctx.suspend(
                     reason="awaiting_user_input",
-                    output={"reply": reply, "turn": state["turn_count"]},
-                )
+                    output={"reply": reply, "turn": state["turn_count"]})
 
             task_id = "e2e-session-001"
 
             # --- Turn 1: start ---
             run1 = await session_workflow.start(
                 task_id=task_id,
-                input={"session_id": "s1", "message": "Hello"},
-            )
+                input={"session_id": "s1", "message": "Hello"})
             # Collect stream items
             streamed = []
             async for chunk in run1:
@@ -330,9 +324,7 @@ class TestMultiturnSampleE2E:
             await manager._provider.update(
                 task_id,
                 TaskPatchRequest(
-                    payload={"input": {"session_id": "s1", "message": "Continue"}},
-                ),
-            )
+                    payload={"input": {"session_id": "s1", "message": "Continue"}}))
             # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
             pass
 
@@ -355,9 +347,7 @@ class TestMultiturnSampleE2E:
             await manager._provider.update(
                 task_id,
                 TaskPatchRequest(
-                    payload={"input": {"session_id": "s1", "message": "done"}},
-                ),
-            )
+                    payload={"input": {"session_id": "s1", "message": "done"}}))
             # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
             pass
 
@@ -392,8 +382,7 @@ from langgraph.checkpoint.sqlite import SqliteSaver as _SqliteSaver  # noqa: E40
 from langgraph.graph import (
     END as _END,
     START as _START,
-    StateGraph as _SG,
-)  # noqa: E402
+    StateGraph as _SG)  # noqa: E402
 from langgraph.types import Command as _Cmd, interrupt as _interrupt  # noqa: E402
 
 
@@ -407,8 +396,7 @@ _LGConvState = TypedDict(
     {
         "messages": typing.Annotated[list, _lg_add_messages],
         "is_complete": bool,
-    },
-)
+    })
 
 
 def _lg_process_input(state: dict) -> dict:
@@ -439,8 +427,7 @@ def _build_lg_graph(checkpointer):
     builder.add_conditional_edges(
         "wait_for_user",
         _lg_should_continue,
-        {"continue": "process_input", "end": _END},
-    )
+        {"continue": "process_input", "end": _END})
     return builder.compile(checkpointer=checkpointer)
 
 
@@ -482,8 +469,7 @@ class TestLangGraphSampleE2E:
                     await asyncio.to_thread(
                         graph.invoke,
                         {"messages": [_HM(content=message)], "is_complete": False},
-                        thread_config,
-                    )
+                        thread_config)
 
                 state = await asyncio.to_thread(graph.get_state, thread_config)
 
@@ -496,8 +482,7 @@ class TestLangGraphSampleE2E:
                         output={
                             "reply": ai_msgs[-1].content if ai_msgs else "",
                             "turn": len(user_msgs),
-                        },
-                    )
+                        })
 
                 msgs = state.values.get("messages", [])
                 user_count = len([m for m in msgs if isinstance(m, _HM)])
@@ -508,8 +493,7 @@ class TestLangGraphSampleE2E:
             # --- Turn 1: start ---
             run1 = await lg_session.start(
                 task_id=task_id,
-                input={"session_id": "lg-s1", "message": "Hello"},
-            )
+                input={"session_id": "lg-s1", "message": "Hello"})
 
             result1 = await run1.result()
     # spec 022: result is raw output (Suspended wrapper removed)
@@ -525,9 +509,7 @@ class TestLangGraphSampleE2E:
                 TaskPatchRequest(
                     payload={
                         "input": {"session_id": "lg-s1", "message": "Tell me more"}
-                    },
-                ),
-            )
+                    }))
             # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
             pass
 
@@ -551,9 +533,7 @@ class TestLangGraphSampleE2E:
             await manager._provider.update(
                 task_id,
                 TaskPatchRequest(
-                    payload={"input": {"session_id": "lg-s1", "message": "done"}},
-                ),
-            )
+                    payload={"input": {"session_id": "lg-s1", "message": "done"}}))
             # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
             pass
 
@@ -621,16 +601,14 @@ class TestLifecycleE2E:
 
                 return await ctx.suspend(
                     reason="awaiting_user_input",
-                    output={"reply": reply, "turn": state["turn_count"]},
-                )
+                    output={"reply": reply, "turn": state["turn_count"]})
 
             task_id = "e2e-lifecycle-001"
 
             # Turn 1: fresh start
             run1 = await lifecycle_session.start(
                 task_id=task_id,
-                input={"session_id": "ls1", "message": "Hello"},
-            )
+                input={"session_id": "ls1", "message": "Hello"})
             result1 = await run1.result()
     # spec 022: result is raw output (Suspended wrapper removed)
             info = await lifecycle_session._get(task_id)
@@ -640,8 +618,7 @@ class TestLifecycleE2E:
             # Turn 2: auto-resume via .start()
             run2 = await lifecycle_session.start(
                 task_id=task_id,
-                input={"session_id": "ls1", "message": "Continue"},
-            )
+                input={"session_id": "ls1", "message": "Continue"})
             result2 = await run2.result()
     # spec 022: result is raw output (Suspended wrapper removed)
             assert result2["turn"] == 2
@@ -649,8 +626,7 @@ class TestLifecycleE2E:
             # Turn 3: end session via .start()
             run3 = await lifecycle_session.start(
                 task_id=task_id,
-                input={"session_id": "ls1", "message": "done"},
-            )
+                input={"session_id": "ls1", "message": "done"})
             result3 = await run3.result()
             assert result3["finished"] is True
 
@@ -666,7 +642,7 @@ class TestLifecycleE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @task(name="e2e_completes_fast", ephemeral=False)
+            @multi_turn_task(name="e2e_completes_fast")
             async def completes_fast(ctx: TaskContext[Any]) -> str:
                 return "done"
 
@@ -777,8 +753,7 @@ class TestInvocationStoreDurability:
             inv_id = f"inv-{uuid.uuid4()}"
             run = await inv_suspend_task.start(
                 task_id="inv-suspend-001",
-                input={"invocation_id": inv_id},
-            )
+                input={"invocation_id": inv_id})
             result = await run.result()
     # spec 022: result is raw output (Suspended wrapper removed)
             stored = _inv_load(inv_id)
@@ -820,8 +795,7 @@ class TestInvocationStoreDurability:
             inv_id = f"inv-{uuid.uuid4()}"
             result = await inv_complete_task.run(
                 task_id="inv-complete-001",
-                input={"invocation_id": inv_id},
-            )
+                input={"invocation_id": inv_id})
             assert result["finished"] is True
 
             stored = _inv_load(inv_id)
@@ -852,7 +826,7 @@ class TestInvocationStoreDurability:
 
         try:
 
-            @task(name="e2e_inv_conflict", ephemeral=False)
+            @multi_turn_task(name="e2e_inv_conflict")
             async def inv_conflict_task(ctx: TaskContext[Any]) -> dict:
                 inv_id = ctx.input["invocation_id"]
                 _inv_save(inv_id, {"status": "running"})
@@ -864,8 +838,7 @@ class TestInvocationStoreDurability:
             inv1 = f"inv-{uuid.uuid4()}"
             await inv_conflict_task.run(
                 task_id="inv-conflict-001",
-                input={"invocation_id": inv1},
-            )
+                input={"invocation_id": inv1})
             assert _inv_load(inv1)["status"] == "completed"
 
             # Second start on same completed task → conflict, no store write
@@ -873,8 +846,7 @@ class TestInvocationStoreDurability:
             with pytest.raises(TaskConflictError):
                 await inv_conflict_task.start(
                     task_id="inv-conflict-001",
-                    input={"invocation_id": inv2},
-                )
+                    input={"invocation_id": inv2})
 
             # inv2 was never created in the store
             assert _inv_load(inv2) is None
@@ -939,7 +911,7 @@ class TestClaudeSteeringSampleE2E:
             store: dict[str, dict[str, Any]] = {}
             conv_store: dict[str, list[dict[str, str]]] = {}
 
-            @task(name="e2e_claude_chat", steerable=True)
+            @multi_turn_task(name="e2e_claude_chat", steerable=True)
             async def claude_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 session_id = ctx.input["session_id"]
                 message = ctx.input["message"]
@@ -987,8 +959,7 @@ class TestClaudeSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Hello",
                     "invocation_id": "inv-1",
-                },
-            )
+                })
             result = await asyncio.wait_for(run.result(), timeout=5.0)
     # spec 022: result is raw output (Suspended wrapper removed)
             assert result["reply"] == "Echo: Hello"
@@ -1008,7 +979,7 @@ class TestClaudeSteeringSampleE2E:
             store: dict[str, dict[str, Any]] = {}
             conv_store: dict[str, list[dict[str, str]]] = {}
 
-            @task(name="e2e_claude_chat", steerable=True)
+            @multi_turn_task(name="e2e_claude_chat", steerable=True)
             async def claude_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 session_id = ctx.input["session_id"]
                 message = ctx.input["message"]
@@ -1054,8 +1025,7 @@ class TestClaudeSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Hello",
                     "invocation_id": "inv-a",
-                },
-            )
+                })
             await asyncio.sleep(0.05)
 
             store["inv-b"] = {"status": "queued"}
@@ -1065,8 +1035,7 @@ class TestClaudeSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Nevermind",
                     "invocation_id": "inv-b",
-                },
-            )
+                })
 
             assert store["inv-b"]["status"] == "queued"
 
@@ -1093,7 +1062,7 @@ class TestClaudeSteeringSampleE2E:
             store: dict[str, dict[str, Any]] = {}
             conv_store: dict[str, list[dict[str, str]]] = {}
 
-            @task(name="e2e_claude_chat", steerable=True)
+            @multi_turn_task(name="e2e_claude_chat", steerable=True)
             async def claude_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 session_id = ctx.input["session_id"]
                 message = ctx.input["message"]
@@ -1133,18 +1102,15 @@ class TestClaudeSteeringSampleE2E:
 
             run_a = await claude_chat.start(
                 task_id="claude-rf",
-                input={"session_id": "s1", "message": "A", "invocation_id": "rf-a"},
-            )
+                input={"session_id": "s1", "message": "A", "invocation_id": "rf-a"})
             await asyncio.sleep(0.05)
 
             run_b = await claude_chat.start(
                 task_id="claude-rf",
-                input={"session_id": "s1", "message": "B", "invocation_id": "rf-b"},
-            )
+                input={"session_id": "s1", "message": "B", "invocation_id": "rf-b"})
             run_c = await claude_chat.start(
                 task_id="claude-rf",
-                input={"session_id": "s1", "message": "C", "invocation_id": "rf-c"},
-            )
+                input={"session_id": "s1", "message": "C", "invocation_id": "rf-c"})
 
             result_c = await asyncio.wait_for(run_c.result(), timeout=5.0)
             assert result_c["reply"] == "Reply to C"
@@ -1224,7 +1190,7 @@ class TestCopilotSteeringSampleE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @task(name="e2e_copilot_chat", steerable=True)
+            @multi_turn_task(name="e2e_copilot_chat", steerable=True)
             async def copilot_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
@@ -1258,8 +1224,7 @@ class TestCopilotSteeringSampleE2E:
                 try:
                     done, pending = await asyncio.wait(
                         {cancel_task, idle_task},
-                        return_when=asyncio.FIRST_COMPLETED,
-                    )
+                        return_when=asyncio.FIRST_COMPLETED)
                     for t in pending:
                         t.cancel()
                     if cancel_task in done and idle_task not in done:
@@ -1288,8 +1253,7 @@ class TestCopilotSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Explain decorators",
                     "invocation_id": "inv-1",
-                },
-            )
+                })
             result = await asyncio.wait_for(run.result(), timeout=5.0)
     # spec 022: result is raw output (Suspended wrapper removed)
             assert result["reply"] == "Echo: Explain decorators"
@@ -1306,7 +1270,7 @@ class TestCopilotSteeringSampleE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @task(name="e2e_copilot_chat", steerable=True)
+            @multi_turn_task(name="e2e_copilot_chat", steerable=True)
             async def copilot_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
@@ -1338,8 +1302,7 @@ class TestCopilotSteeringSampleE2E:
                 try:
                     done, pending = await asyncio.wait(
                         {cancel_task, idle_task},
-                        return_when=asyncio.FIRST_COMPLETED,
-                    )
+                        return_when=asyncio.FIRST_COMPLETED)
                     for t in pending:
                         t.cancel()
                     if cancel_task in done and idle_task not in done:
@@ -1368,8 +1331,7 @@ class TestCopilotSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "decorators",
                     "invocation_id": "inv-a",
-                },
-            )
+                })
             await asyncio.sleep(0.05)
 
             store["inv-b"] = {"status": "queued"}
@@ -1379,8 +1341,7 @@ class TestCopilotSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "async/await",
                     "invocation_id": "inv-b",
-                },
-            )
+                })
 
             assert store["inv-b"]["status"] == "queued"
 
@@ -1422,7 +1383,7 @@ class TestLangGraphSteeringSampleE2E:
             store: dict[str, dict[str, Any]] = {}
             checkpoints: list[str] = []
 
-            @task(name="e2e_lg_session", steerable=True)
+            @multi_turn_task(name="e2e_lg_session", steerable=True)
             async def lg_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
@@ -1460,8 +1421,7 @@ class TestLangGraphSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Plan a trip",
                     "invocation_id": "lg-a",
-                },
-            )
+                })
             await asyncio.sleep(0.05)
 
             # Steer while A is running
@@ -1472,8 +1432,7 @@ class TestLangGraphSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Go to Paris",
                     "invocation_id": "lg-b",
-                },
-            )
+                })
             assert store["lg-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
@@ -1496,7 +1455,7 @@ class TestLangGraphSteeringSampleE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @task(name="e2e_lg_session", steerable=True, ephemeral=False)
+            @multi_turn_task(name="e2e_lg_session", steerable=True)
             async def lg_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
@@ -1520,8 +1479,7 @@ class TestLangGraphSteeringSampleE2E:
             # Turn 1: normal
             run1 = await lg_session.start(
                 task_id="lg-mt",
-                input={"session_id": "s1", "message": "Turn1", "invocation_id": "mt-1"},
-            )
+                input={"session_id": "s1", "message": "Turn1", "invocation_id": "mt-1"})
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
     # spec 022: result is raw output (Suspended wrapper removed)
             assert store["mt-1"]["status"] == "completed"
@@ -1529,16 +1487,14 @@ class TestLangGraphSteeringSampleE2E:
             # Turn 2: resume
             run2 = await lg_session.start(
                 task_id="lg-mt",
-                input={"session_id": "s1", "message": "Turn2", "invocation_id": "mt-2"},
-            )
+                input={"session_id": "s1", "message": "Turn2", "invocation_id": "mt-2"})
             await asyncio.sleep(0.05)
 
             # Turn 3: steer while turn 2 is running
             store["mt-3"] = {"status": "queued"}
             run3 = await lg_session.start(
                 task_id="lg-mt",
-                input={"session_id": "s1", "message": "Turn3", "invocation_id": "mt-3"},
-            )
+                input={"session_id": "s1", "message": "Turn3", "invocation_id": "mt-3"})
             assert store["mt-3"]["status"] == "queued"
 
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
@@ -1592,8 +1548,7 @@ class TestSSEStreamingE2E:
 
             run = await sse_stream.start(
                 task_id="sse-1",
-                input={"invocation_id": "inv-sse-1"},
-            )
+                input={"invocation_id": "inv-sse-1"})
 
             chunks: list[dict[str, Any]] = []
             async for chunk in run:
@@ -1621,7 +1576,7 @@ class TestSSEStreamingE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @task(name="e2e_sse_steer", steerable=True)
+            @multi_turn_task(name="e2e_sse_steer", steerable=True)
             async def sse_steer(ctx: TaskContext[dict]) -> dict[str, Any]:
                 invocation_id = ctx.input["invocation_id"]
                 store[invocation_id] = {"status": "running"}
@@ -1647,14 +1602,12 @@ class TestSSEStreamingE2E:
                 store[invocation_id] = {"status": "completed", "reply": reply}
                 return await ctx.suspend(
                     reason="awaiting_user_input",
-                    output={"invocation_id": invocation_id, "reply": reply},
-                )
+                    output={"invocation_id": invocation_id, "reply": reply})
 
             # Start turn 1
             run1 = await sse_steer.start(
                 task_id="sse-steer-1",
-                input={"invocation_id": "inv-s1"},
-            )
+                input={"invocation_id": "inv-s1"})
 
             # Collect some chunks from turn 1
             chunks1: list[dict[str, Any]] = []
@@ -1664,8 +1617,7 @@ class TestSSEStreamingE2E:
                     # Steer with turn 2 while turn 1 is streaming
                     await sse_steer.start(
                         task_id="sse-steer-1",
-                        input={"invocation_id": "inv-s2"},
-                    )
+                        input={"invocation_id": "inv-s2"})
                     break
 
             # Turn 1 should have been superseded
@@ -1707,8 +1659,7 @@ class TestSSEStreamingE2E:
 
             run = await sse_snapshot.start(
                 task_id="sse-snap-1",
-                input={"invocation_id": "inv-snap-1"},
-            )
+                input={"invocation_id": "inv-snap-1"})
 
             chunks: list[dict[str, Any]] = []
             async for chunk in run:

@@ -80,6 +80,9 @@ class RetryPolicy:
         if max_attempts < 1:
             raise ValueError(f"max_attempts must be >= 1, got {max_attempts}")
         if retry_on is not None:
+            # Accept a bare class as a single-element tuple — Pythonic.
+            if isinstance(retry_on, type) and issubclass(retry_on, BaseException):
+                retry_on = (retry_on,)
             for exc_type in retry_on:
                 if not isinstance(exc_type, type) or not issubclass(
                     exc_type, Exception

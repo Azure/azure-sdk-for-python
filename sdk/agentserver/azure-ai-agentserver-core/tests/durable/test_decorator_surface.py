@@ -25,8 +25,7 @@ try:
         Task,
         MultiTurnTask,
         RetryPolicy,
-        TaskContext,
-    )
+        TaskContext)
     _NEW_SURFACE_AVAILABLE = True
 except ImportError:
     _NEW_SURFACE_AVAILABLE = False
@@ -36,8 +35,7 @@ except ImportError:
 
 pytestmark = pytest.mark.skipif(
     not _NEW_SURFACE_AVAILABLE,
-    reason="spec 022: requires `multi_turn_task` / `MultiTurnTask` (RED until Phase 2)",
-)
+    reason="spec 022: requires `multi_turn_task` / `MultiTurnTask` (RED until Phase 2)")
 
 
 async def _setup_manager(tmp_path: Path):
@@ -55,8 +53,7 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -96,7 +93,7 @@ class TestDecoratorSignatures:
         """@task rejects steerable= at decoration time."""
         with pytest.raises(TypeError):
 
-            @task(name="surface-task-steerable", steerable=True)  # type: ignore[call-arg]
+            @multi_turn_task(name="surface-task-steerable", steerable=True)  # type: ignore[call-arg]
             async def fn(ctx: TaskContext[int]) -> int:
                 return ctx.input
 
@@ -105,7 +102,7 @@ class TestDecoratorSignatures:
         """@task rejects ephemeral= at decoration time."""
         with pytest.raises(TypeError):
 
-            @task(name="surface-task-ephemeral", ephemeral=False)  # type: ignore[call-arg]
+            @multi_turn_task(name="surface-task-ephemeral")  # type: ignore[call-arg]
             async def fn(ctx: TaskContext[int]) -> int:
                 return ctx.input
 
@@ -375,8 +372,7 @@ class TestRetryPolicyShape:
             max_delay=10.0,
             backoff_coefficient=2.0,
             jitter=0.1,
-            retry_on=None,
-        )
+            retry_on=None)
 
         assert policy.max_attempts == 3
         assert policy.initial_delay == 1.0
@@ -390,14 +386,14 @@ class TestRetryPolicyShape:
         policy.max_delay = 20.0
         policy.backoff_coefficient = 1.5
         policy.jitter = 0.2
-        policy.retry_on = (ValueError,)
+        policy.retry_on = (ValueError)
 
         assert policy.max_attempts == 4
         assert policy.initial_delay == 2.0
         assert policy.max_delay == 20.0
         assert policy.backoff_coefficient == 1.5
         assert policy.jitter == 0.2
-        assert policy.retry_on == (ValueError,)
+        assert policy.retry_on == (ValueError)
 
     def test_RetryPolicy_preset_factories(self) -> None:
         """Preset factories are module-level callables with explicit signatures."""
@@ -405,8 +401,7 @@ class TestRetryPolicyShape:
             exponential_backoff,
             fixed_delay,
             linear_backoff,
-            no_retry,
-        )
+            no_retry)
 
         for factory in (exponential_backoff, fixed_delay, linear_backoff, no_retry):
             signature = inspect.signature(factory)

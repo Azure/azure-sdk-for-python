@@ -21,10 +21,10 @@ from azure.ai.agentserver.core.durable import (
     LastInputIdPreconditionFailed,
     TaskContext,
     task,
-)
+    multi_turn_task)
 
 
-@task(name="us2-suspend-long-ago", steerable=True, ephemeral=False)
+@multi_turn_task(name="us2-suspend-long-ago", steerable=True)
 async def _suspend_long_ago(ctx: TaskContext[dict]) -> dict:
     return await ctx.suspend(reason="awaiting_next_input")
 
@@ -43,8 +43,7 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -58,16 +57,14 @@ async def _teardown_manager(manager, mgr_mod):
 
 @pytest.mark.asyncio
 async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
-    tmp_path: Path,
-) -> None:
+    tmp_path: Path) -> None:
     """After a long-suspend, `_last_input_id` survives input clearing."""
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
         await _suspend_long_ago.start(
             task_id="t-suspend-long",
             input={"turn": 1},
-            input_id="msg-1",
-        )
+            input_id="msg-1")
         await asyncio.sleep(0.2)
         # Verify task is suspended and input slots are cleared (US4),
         # but _last_input_id slot survives.
@@ -86,8 +83,7 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
             task_id="t-suspend-long",
             input={"turn": 2},
             input_id="msg-2",
-            if_last_input_id="msg-1",
-        )
+            if_last_input_id="msg-1")
         await asyncio.sleep(0.2)
         info = await manager.provider.get("t-suspend-long")
         assert info is not None
@@ -98,16 +94,14 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
 
 @pytest.mark.asyncio
 async def test_suspended_long_ago_resume_with_stale_predecessor_fails(
-    tmp_path: Path,
-) -> None:
+    tmp_path: Path) -> None:
     """Stale `if_last_input_id` against a long-suspended task is rejected."""
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
         await _suspend_long_ago.start(
             task_id="t-suspend-long-stale",
             input={"turn": 1},
-            input_id="msg-1",
-        )
+            input_id="msg-1")
         await asyncio.sleep(0.2)
 
         with pytest.raises(LastInputIdPreconditionFailed) as excinfo:
@@ -115,8 +109,7 @@ async def test_suspended_long_ago_resume_with_stale_predecessor_fails(
                 task_id="t-suspend-long-stale",
                 input={"turn": 2},
                 input_id="msg-2",
-                if_last_input_id="msg-XYZ",
-            )
+                if_last_input_id="msg-XYZ")
     # spec 022 FR-077: exception.task_id removed
         assert excinfo.value.actual_last_input_id == "msg-1"
         # Task remains suspended, slot unchanged.

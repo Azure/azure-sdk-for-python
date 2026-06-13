@@ -11,13 +11,11 @@ from typing import Any
 import pytest
 
 from azure.ai.agentserver.core.durable._local_provider import (
-    LocalFileTaskProvider,
-)
+    LocalFileTaskProvider)
 from azure.ai.agentserver.core.durable._exceptions_internal import _HostedConflict
 from azure.ai.agentserver.core.durable._models import (
     TaskCreateRequest,
-    TaskPatchRequest,
-)
+    TaskPatchRequest)
 
 
 @pytest.fixture
@@ -34,8 +32,7 @@ def sample_create_request() -> TaskCreateRequest:
         session_id="session-001",
         status="pending",
         title="test task",
-        payload={"input": {"data": "hello"}},
-    )
+        payload={"input": {"data": "hello"}})
 
 
 class TestLocalProviderCRUD:
@@ -45,8 +42,7 @@ class TestLocalProviderCRUD:
     async def test_create_and_get(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """create returns a TaskInfo; get retrieves it."""
         task_record = await provider.create(sample_create_request)
         assert task_record.id
@@ -61,14 +57,12 @@ class TestLocalProviderCRUD:
     async def test_update_status(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """update changes the status."""
         task_record = await provider.create(sample_create_request)
         patch = TaskPatchRequest(
             status="in_progress",
-            if_match=task_record.etag,
-        )
+            if_match=task_record.etag)
         updated = await provider.update(task_record.id, patch)
         assert updated.status == "in_progress"
 
@@ -76,14 +70,12 @@ class TestLocalProviderCRUD:
     async def test_update_payload(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """update merges payload."""
         task_record = await provider.create(sample_create_request)
         patch = TaskPatchRequest(
             payload={"output": {"result": 42}},
-            if_match=task_record.etag,
-        )
+            if_match=task_record.etag)
         updated = await provider.update(task_record.id, patch)
         assert updated.payload is not None
         assert updated.payload["output"]["result"] == 42
@@ -94,14 +86,12 @@ class TestLocalProviderCRUD:
     async def test_etag_mismatch_raises(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """update raises on ETag mismatch."""
         task_record = await provider.create(sample_create_request)
         patch = TaskPatchRequest(
             status="in_progress",
-            if_match="wrong-etag",
-        )
+            if_match="wrong-etag")
         with pytest.raises(ValueError, match="ETag mismatch"):
             await provider.update(task_record.id, patch)
 
@@ -117,8 +107,7 @@ class TestLocalProviderCRUD:
     async def test_delete_task(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """delete removes a task."""
         task_record = await provider.create(sample_create_request)
         await provider.delete(task_record.id, force=True)
@@ -139,15 +128,13 @@ class TestLocalProviderListing:
             session_id="s1",
             status="pending",
             title="task a",
-            payload={},
-        )
+            payload={})
         req2 = TaskCreateRequest(
             agent_name="agent-b",
             session_id="s1",
             status="pending",
             title="task b",
-            payload={},
-        )
+            payload={})
         await provider.create(req1)
         await provider.create(req2)
 
@@ -165,13 +152,11 @@ class TestLocalProviderListing:
             session_id="s1",
             status="pending",
             title="task",
-            payload={},
-        )
+            payload={})
         task_record = await provider.create(req)
         patch = TaskPatchRequest(
             status="in_progress",
-            if_match=task_record.etag,
-        )
+            if_match=task_record.etag)
         await provider.update(task_record.id, patch)
 
         pending = await provider.list(
@@ -307,15 +292,13 @@ class TestSpec019LocalProviderExpiryCountParity:
             status="in_progress",
             lease_owner="owner-1",
             lease_instance_id="inst-1",
-            lease_duration_seconds=60,
-        )
+            lease_duration_seconds=60)
 
     @pytest.mark.asyncio
     async def test_local_provider_bumps_expiry_count_on_real_handoff(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """FR-D-006 / SC-13 — expired lease + different instance_id =>
         expiry_count += 1."""
 
@@ -338,9 +321,7 @@ class TestSpec019LocalProviderExpiryCountParity:
             TaskPatchRequest(
                 lease_owner=created.lease.owner,
                 lease_instance_id="reclaimer-instance",
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
 
         after = await provider.get(created.id)
         assert after is not None
@@ -355,8 +336,7 @@ class TestSpec019LocalProviderExpiryCountParity:
     async def test_local_provider_no_bump_on_same_instance_renewal(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """FR-D-006 — same-instance lease renewal MUST NOT bump
         expiry_count.
         """
@@ -370,9 +350,7 @@ class TestSpec019LocalProviderExpiryCountParity:
             TaskPatchRequest(
                 lease_owner=created.lease.owner,
                 lease_instance_id=created.lease.instance_id,
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
 
         after = await provider.get(created.id)
         assert after is not None and after.lease is not None
@@ -385,8 +363,7 @@ class TestSpec019LocalProviderExpiryCountParity:
     async def test_local_provider_no_bump_on_unexpired_handoff(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """FR-D-006 — handoff to a new instance BEFORE the prior
         lease has expired (same-owner-different-instance restart;
         the prior lease was still valid) MUST NOT bump expiry_count.
@@ -403,9 +380,7 @@ class TestSpec019LocalProviderExpiryCountParity:
             TaskPatchRequest(
                 lease_owner=created.lease.owner,
                 lease_instance_id="reclaimer-fresh",
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
 
         after = await provider.get(created.id)
         assert after is not None and after.lease is not None
@@ -440,8 +415,7 @@ class TestStartedAtImmutability:
             status="in_progress",
             lease_owner="owner-1",
             lease_instance_id="inst-1",
-            lease_duration_seconds=60,
-        )
+            lease_duration_seconds=60)
 
     @pytest.mark.asyncio
     async def test_started_at_set_on_create_in_progress(
@@ -458,8 +432,7 @@ class TestStartedAtImmutability:
     async def test_started_at_set_on_pending_to_in_progress(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """The first ``pending → in_progress`` PATCH stamps ``started_at``."""
         created = await provider.create(sample_create_request)
         assert created.started_at is None, "pending create should not set started_at"
@@ -470,9 +443,7 @@ class TestStartedAtImmutability:
                 status="in_progress",
                 lease_owner="owner-1",
                 lease_instance_id="inst-1",
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
         after = await provider.get(created.id)
         assert after is not None
         assert after.started_at is not None, (
@@ -504,9 +475,7 @@ class TestStartedAtImmutability:
             TaskPatchRequest(
                 lease_owner=created.lease.owner,
                 lease_instance_id="reclaimer-instance",
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
 
         after = await provider.get(created.id)
         assert after is not None
@@ -544,9 +513,7 @@ class TestStartedAtImmutability:
             TaskPatchRequest(
                 lease_owner=created.lease.owner,
                 lease_instance_id="inst-2-restarted",
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
 
         after = await provider.get(created.id)
         assert after is not None
@@ -558,8 +525,7 @@ class TestStartedAtImmutability:
     async def test_started_at_unchanged_on_suspend_then_resume(
         self,
         provider: LocalFileTaskProvider,
-        sample_create_request: TaskCreateRequest,
-    ) -> None:
+        sample_create_request: TaskCreateRequest) -> None:
         """A suspend → in_progress cycle (e.g., multi-turn next-turn entry)
         MUST NOT reset ``started_at`` to the resume time."""
         created = await provider.create(sample_create_request)
@@ -571,9 +537,7 @@ class TestStartedAtImmutability:
                 status="in_progress",
                 lease_owner="owner-1",
                 lease_instance_id="inst-1",
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
         after_first = await provider.get(created.id)
         assert after_first is not None
         original_started_at = after_first.started_at
@@ -582,8 +546,7 @@ class TestStartedAtImmutability:
         # Suspend.
         await provider.update(
             created.id,
-            TaskPatchRequest(status="suspended"),
-        )
+            TaskPatchRequest(status="suspended"))
 
         # Resume — second in_progress entry; started_at must not change.
         await provider.update(
@@ -592,9 +555,7 @@ class TestStartedAtImmutability:
                 status="in_progress",
                 lease_owner="owner-1",
                 lease_instance_id="inst-1",
-                lease_duration_seconds=60,
-            ),
-        )
+                lease_duration_seconds=60))
         after_resume = await provider.get(created.id)
         assert after_resume is not None
         assert after_resume.started_at == original_started_at, (
@@ -619,8 +580,7 @@ class TestSpec020Validation:
     async def test_v1_task_id_must_match_regex(self, provider: LocalFileTaskProvider) -> None:
         """C-VAL-1: task id must match `^[a-zA-Z0-9_-]{1,128}$`."""
         bad = TaskCreateRequest(
-            agent_name="a", session_id="s", id="bad id with spaces", title="t",
-        )
+            agent_name="a", session_id="s", id="bad id with spaces", title="t")
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -628,8 +588,7 @@ class TestSpec020Validation:
     async def test_v1_task_id_too_long_rejected(self, provider: LocalFileTaskProvider) -> None:
         """C-VAL-1: task id length > 128 rejected."""
         bad = TaskCreateRequest(
-            agent_name="a", session_id="s", id="x" * 129, title="t",
-        )
+            agent_name="a", session_id="s", id="x" * 129, title="t")
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -671,8 +630,7 @@ class TestSpec020Validation:
             title="customer import",
             lease_owner="owner",
             lease_instance_id="instance",
-            lease_duration_seconds=60,
-        )
+            lease_duration_seconds=60)
         with pytest.raises(_HostedConflict) as exc_info:
             await provider.create(bad)
         assert exc_info.value._code == "invalid_request"
@@ -682,8 +640,7 @@ class TestSpec020Validation:
         """C-VAL-5: tag keys must match `^[a-zA-Z0-9_.\\-]{1,64}$`."""
         bad = TaskCreateRequest(
             agent_name="a", session_id="s", title="t",
-            tags={"bad key with spaces": "v"},
-        )
+            tags={"bad key with spaces": "v"})
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -692,8 +649,7 @@ class TestSpec020Validation:
         """C-VAL-5: tag values must be ≤ 256 chars."""
         bad = TaskCreateRequest(
             agent_name="a", session_id="s", title="t",
-            tags={"k": "x" * 257},
-        )
+            tags={"k": "x" * 257})
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -702,8 +658,7 @@ class TestSpec020Validation:
         """C-VAL-5: at most 16 tag entries."""
         bad = TaskCreateRequest(
             agent_name="a", session_id="s", title="t",
-            tags={f"k{i}": "v" for i in range(17)},
-        )
+            tags={f"k{i}": "v" for i in range(17)})
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -713,8 +668,7 @@ class TestSpec020Validation:
         big = "x" * (1024 * 1024 + 100)
         bad = TaskCreateRequest(
             agent_name="a", session_id="s", title="t",
-            payload={"big": big},
-        )
+            payload={"big": big})
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -727,16 +681,14 @@ class TestSpec020Validation:
         with pytest.raises(Exception):
             await provider.update(
                 created.id,
-                TaskPatchRequest(error={"type": "E", "message": "x" * (64 * 1024 + 100)}),
-            )
+                TaskPatchRequest(error={"type": "E", "message": "x" * (64 * 1024 + 100)}))
 
     @pytest.mark.asyncio
     async def test_v8_source_max_4kb(self, provider: LocalFileTaskProvider) -> None:
         """C-VAL-6: source ≤ 4 KB."""
         bad = TaskCreateRequest(
             agent_name="a", session_id="s", title="t",
-            source={"type": "t", "blob": "x" * 5000},
-        )
+            source={"type": "t", "blob": "x" * 5000})
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -747,14 +699,12 @@ class TestSpec020Validation:
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t",
                 status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         with pytest.raises(Exception):
             await provider.update(
                 created.id,
-                TaskPatchRequest(status="suspended", suspension_reason="x" * 257),
-            )
+                TaskPatchRequest(status="suspended", suspension_reason="x" * 257))
 
     @pytest.mark.asyncio
     async def test_v10_source_type_required(self, provider: LocalFileTaskProvider) -> None:
@@ -783,8 +733,7 @@ class TestSpec020Validation:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         await provider.update(
             created.id, TaskPatchRequest(status="done"),  # type: ignore[arg-type]
@@ -816,14 +765,12 @@ class TestSpec020StateMachine:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         await provider.update(created.id, TaskPatchRequest(status="completed"))
         with pytest.raises(Exception):
             await provider.update(
-                created.id, TaskPatchRequest(payload={"new": "data"}),
-            )
+                created.id, TaskPatchRequest(payload={"new": "data"}))
 
     @pytest.mark.asyncio
     async def test_b2_terminal_noop_allowed(
@@ -833,14 +780,12 @@ class TestSpec020StateMachine:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         await provider.update(created.id, TaskPatchRequest(status="completed"))
         # No-op completed → completed should NOT raise.
         result = await provider.update(
-            created.id, TaskPatchRequest(status="completed"),
-        )
+            created.id, TaskPatchRequest(status="completed"))
         assert result.status == "completed"
 
     @pytest.mark.asyncio
@@ -853,14 +798,12 @@ class TestSpec020StateMachine:
             ("title", "other-title"),
             ("description", "other-description"),
             ("source", {"type": "other"}),
-        ],
-    )
+        ])
     async def test_b3_immutable_fields_rejected(
         self,
         provider: LocalFileTaskProvider,
         field_name: str,
-        value: Any,
-    ) -> None:
+        value: Any) -> None:
         """C-LCM-8: id/agent_name/session_id/title/description/source can't be
         PATCHed.
 
@@ -880,14 +823,12 @@ class TestSpec020StateMachine:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         with pytest.raises(Exception):
             await provider.update(
                 created.id,
-                TaskPatchRequest(status="pending", suspension_reason="why"),
-            )
+                TaskPatchRequest(status="pending", suspension_reason="why"))
 
     @pytest.mark.asyncio
     async def test_b5_delete_without_force_on_nonterminal_rejected(
@@ -908,8 +849,7 @@ class TestSpec020StateMachine:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         await provider.update(created.id, TaskPatchRequest(status="completed"))
         await provider.delete(created.id, force=False)  # should not raise
@@ -939,8 +879,7 @@ class TestSpec020Lease:
         # 5 seconds is below the floor.
         bad = TaskCreateRequest(
             agent_name="a", session_id="s", title="t", status="in_progress",
-            lease_owner="o", lease_instance_id="i", lease_duration_seconds=5,
-        )
+            lease_owner="o", lease_instance_id="i", lease_duration_seconds=5)
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -951,8 +890,7 @@ class TestSpec020Lease:
         """C-LSE-6: lease_duration_seconds > 3600 rejected."""
         bad = TaskCreateRequest(
             agent_name="a", session_id="s", title="t", status="in_progress",
-            lease_owner="o", lease_instance_id="i", lease_duration_seconds=4000,
-        )
+            lease_owner="o", lease_instance_id="i", lease_duration_seconds=4000)
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -976,8 +914,7 @@ class TestSpec020Lease:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="owner-A", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="owner-A", lease_instance_id="i", lease_duration_seconds=60)
         )
         with pytest.raises(Exception):
             await provider.update(
@@ -985,9 +922,7 @@ class TestSpec020Lease:
                 TaskPatchRequest(
                     lease_owner="owner-B",
                     lease_instance_id="i-other",
-                    lease_duration_seconds=60,
-                ),
-            )
+                    lease_duration_seconds=60))
 
     @pytest.mark.asyncio
     async def test_l4_in_progress_to_pending_requires_matching_lease(
@@ -997,8 +932,7 @@ class TestSpec020Lease:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="owner-A", lease_instance_id="i-1", lease_duration_seconds=60,
-            )
+                lease_owner="owner-A", lease_instance_id="i-1", lease_duration_seconds=60)
         )
         with pytest.raises(Exception):
             await provider.update(
@@ -1007,9 +941,7 @@ class TestSpec020Lease:
                     status="pending",
                     lease_owner="owner-A",
                     lease_instance_id="i-other",  # mismatch
-                    lease_duration_seconds=60,
-                ),
-            )
+                    lease_duration_seconds=60))
 
     @pytest.mark.asyncio
     async def test_l5_renewal_only_on_in_progress(
@@ -1024,9 +956,7 @@ class TestSpec020Lease:
             await provider.update(
                 created.id,
                 TaskPatchRequest(
-                    lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-                ),
-            )
+                    lease_owner="o", lease_instance_id="i", lease_duration_seconds=60))
 
     @pytest.mark.asyncio
     async def test_l10_heartbeat_at_stamped(
@@ -1036,8 +966,7 @@ class TestSpec020Lease:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         assert created.lease is not None
         # LeaseInfo today does not have heartbeat_at; assertion will fail
@@ -1056,8 +985,7 @@ class TestSpec020Attachments:
         """C-ATT-8: attachment key must match regex."""
         bad = TaskCreateRequest(
             agent_name="a", session_id="s", title="t",
-            attachments={"bad key with spaces": {"x": 1}},
-        )
+            attachments={"bad key with spaces": {"x": 1}})
         with pytest.raises(Exception):
             await provider.create(bad)
 
@@ -1069,8 +997,7 @@ class TestSpec020Attachments:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t",
-                attachments={"k1": {"v": 1}, "k2": {"v": 2}},
-            )
+                attachments={"k1": {"v": 1}, "k2": {"v": 2}})
         )
         assert created.attachments and len(created.attachments) == 2
         # clear_attachments doesn't exist on TaskPatchRequest yet — RED via TypeError
@@ -1089,8 +1016,7 @@ class TestSpec020Attachments:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t",
-                attachments={"k": {"v": 1}},
-            )
+                attachments={"k": {"v": 1}})
         )
         await provider.delete(created.id, force=True)
         # File should be gone (which removes the inline attachments dict).
@@ -1108,13 +1034,11 @@ class TestSpec020SideEffects:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         await provider.update(
             created.id,
-            TaskPatchRequest(status="suspended", suspension_reason="paused"),
-        )
+            TaskPatchRequest(status="suspended", suspension_reason="paused"))
         await provider.update(created.id, TaskPatchRequest(status="pending"))
         got = await provider.get(created.id)
         assert got is not None
@@ -1128,21 +1052,17 @@ class TestSpec020SideEffects:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         # Suspend (sets reason), then transition back to in_progress.
         await provider.update(
             created.id,
-            TaskPatchRequest(status="suspended", suspension_reason="paused"),
-        )
+            TaskPatchRequest(status="suspended", suspension_reason="paused"))
         await provider.update(
             created.id,
             TaskPatchRequest(
                 status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            ),
-        )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60))
         got = await provider.get(created.id)
         assert got is not None
         assert got.suspension_reason is None
@@ -1156,13 +1076,11 @@ class TestSpec020SideEffects:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         await provider.update(
             created.id,
-            TaskPatchRequest(status="suspended", suspension_reason="paused"),
-        )
+            TaskPatchRequest(status="suspended", suspension_reason="paused"))
         await provider.update(created.id, TaskPatchRequest(status="completed"))
         got = await provider.get(created.id)
         assert got is not None
@@ -1182,13 +1100,11 @@ class TestSpec020SideEffects:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         await provider.update(
             created.id,
-            TaskPatchRequest(status="suspended", suspension_reason="paused"),
-        )
+            TaskPatchRequest(status="suspended", suspension_reason="paused"))
         got = await provider.get(created.id)
         assert got is not None
         assert got.completed_at is None
@@ -1206,12 +1122,10 @@ class TestSpec020PayloadPatch:
         created = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t",
-                payload={"k1": "v1", "k2": "v2"},
-            )
+                payload={"k1": "v1", "k2": "v2"})
         )
         await provider.update(
-            created.id, TaskPatchRequest(payload={"k2": "new", "k3": "v3"}),
-        )
+            created.id, TaskPatchRequest(payload={"k2": "new", "k3": "v3"}))
         got = await provider.get(created.id)
         assert got is not None and got.payload == {"k1": "v1", "k2": "new", "k3": "v3"}
 
@@ -1225,19 +1139,16 @@ class TestSpec020ListParity:
         await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t1", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         c2 = await provider.create(
             TaskCreateRequest(
                 agent_name="a", session_id="s", title="t2", status="in_progress",
-                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60,
-            )
+                lease_owner="o", lease_instance_id="i", lease_duration_seconds=60)
         )
         await provider.update(
             c2.id,
-            TaskPatchRequest(status="completed", error={"type": "E", "message": "m"}),
-        )
+            TaskPatchRequest(status="completed", error={"type": "E", "message": "m"}))
         # `has_error` filter not implemented in local provider — RED.
         results = await provider.list(
             agent_name="a", session_id="s", has_error=True,  # type: ignore[call-arg]

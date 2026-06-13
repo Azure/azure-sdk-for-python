@@ -23,7 +23,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
@@ -38,8 +38,7 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 @pytest.fixture
@@ -54,7 +53,7 @@ async def test_every_patch_carries_lease_extension_trio(captured_local) -> None:
     lease-extension trio (lease_owner, lease_instance_id,
     lease_duration_seconds) so every write doubles as a heartbeat.
     """
-    @task(name="lease_trio_task", ephemeral=False)
+    @multi_turn_task(name="lease_trio_task")
     async def my_task(ctx: TaskContext[str]) -> str:
         ctx.metadata["k"] = 1
         await ctx.metadata.flush()
@@ -102,7 +101,7 @@ async def test_dynamic_cadence_shadows_heartbeats(captured_local) -> None:
     tags / attachments / status / error change — i.e., a pure
     heartbeat-only PATCH (lease fields only, nothing else).
     """
-    @task(name="dynamic_cadence", ephemeral=False)
+    @multi_turn_task(name="dynamic_cadence")
     async def my_task(ctx: TaskContext[str]) -> str:
         # Issue many flushes spaced << default renewal interval.
         for i in range(20):

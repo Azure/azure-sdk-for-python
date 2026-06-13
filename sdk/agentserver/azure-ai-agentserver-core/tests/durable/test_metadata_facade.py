@@ -18,8 +18,7 @@ from azure.ai.agentserver.core.durable import (
     TaskContext,
     TaskFailed,
     TaskMetadata,
-    task,
-)
+    task)
 
 
 def _multi_turn_task(*args: Any, **kwargs: Any) -> Any:
@@ -44,8 +43,7 @@ async def _setup_manager(tmp_path: Path, provider_factory: Any | None = None) ->
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -174,8 +172,7 @@ class TestAutoFlushLifecycle:
     async def test_metadata_flushed_at_retry_exhausted(self, tmp_path: Path, capturing_provider_factory: Any) -> None:
         @_multi_turn_task(
             name="fr045-flush-retry-exhausted",
-            retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2),
-        )
+            retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2))
         async def handler(ctx: TaskContext[str]) -> str:
             ctx.metadata["boundary"] = f"retry-{ctx.retry_attempt}"
             raise RuntimeError("boom")
@@ -242,8 +239,7 @@ class TestAutoFlushLoadBearingOnRaise:
 
         @_multi_turn_task(
             name="fr045-retry-visible",
-            retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2),
-        )
+            retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2))
         async def handler(ctx: TaskContext[str]) -> str:
             if ctx.input == "fail":
                 ctx.metadata["retry_marker"] = f"attempt-{ctx.retry_attempt}"

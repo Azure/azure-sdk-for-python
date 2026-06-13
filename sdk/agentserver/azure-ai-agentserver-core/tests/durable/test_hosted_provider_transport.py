@@ -33,8 +33,7 @@ import pytest
 from azure.ai.agentserver.core.durable._client import (
     HostedTaskProvider,
     TransportClassifiedError,
-    _classify_store_write_error,
-)
+    _classify_store_write_error)
 from azure.ai.agentserver.core.durable._models import TaskPatchRequest
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
@@ -43,8 +42,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HeadersPolicy,
     RequestIdPolicy,
-    UserAgentPolicy,
-)
+    UserAgentPolicy)
 
 from .conftest import FakeAsyncHttpTransport, FakeResponse
 
@@ -72,8 +70,7 @@ def _make_provider(transport: FakeAsyncHttpTransport) -> HostedTaskProvider:
     return HostedTaskProvider(
         project_endpoint="https://example.invalid",
         credential=_StubCredential(),  # type: ignore[arg-type]
-        transport=transport,
-    )
+        transport=transport)
 
 
 # --------------------------------------------------------------------- #
@@ -112,15 +109,13 @@ def test_pipeline_policy_chain_composition() -> None:
             # TaskApiLoggingPolicy slot: find by class name.
             idx = next(
                 (i for i, p in enumerate(policies) if type(p).__name__ == "TaskApiLoggingPolicy"),
-                -1,
-            )
+                -1)
             assert idx != -1, "TaskApiLoggingPolicy missing from pipeline (FR-031)"
             positions.append(idx)
             continue
         idx = next(
             (i for i, p in enumerate(policies) if isinstance(p, expected)),
-            -1,
-        )
+            -1)
         assert idx != -1, (
             f"Required policy {expected.__name__} missing from pipeline. "
             f"Saw: {[t.__name__ for t in policy_types]}"
@@ -173,8 +168,7 @@ async def test_no_retry_on_409_binding_mismatch() -> None:
         [
             FakeResponse.json_response(
                 {"error": {"code": "binding_mismatch", "message": "evicted"}},
-                status_code=409,
-            ),
+                status_code=409),
         ]
     )
     provider = _make_provider(transport)
@@ -224,8 +218,7 @@ async def test_request_carries_user_agent_and_request_id() -> None:
         [
             FakeResponse.json_response(
                 {"id": "t-1", "agent_name": "a", "session_id": "s", "status": "pending"},
-                status_code=200,
-            ),
+                status_code=200),
         ]
     )
     provider = _make_provider(transport)
@@ -270,8 +263,7 @@ async def test_gzip_response_decoded_at_call_site() -> None:
         [
             FakeResponse.gzip_json_response(
                 {"id": "t-1", "agent_name": "a", "session_id": "s", "status": "pending"},
-                status_code=200,
-            ),
+                status_code=200),
         ]
     )
     provider = _make_provider(transport)
@@ -296,8 +288,7 @@ async def test_non_json_200_body_raises_classified_error() -> None:
         [
             FakeResponse.html_response(
                 "<html><body>Gateway 502 sentinel page</body></html>",
-                status_code=200,
-            ),
+                status_code=200),
         ]
     )
     provider = _make_provider(transport)
@@ -331,8 +322,7 @@ async def test_non_json_200_body_raises_classified_error() -> None:
         (
             409,
             b'{"error": {"code": "binding_mismatch", "message": "x"}}',
-            "evicted",
-        ),
+            "evicted"),
         # Conflict: 409 with other body, 412.
         (409, b'{"error": {"code": "etag_mismatch"}}', "conflict"),
         (409, b"", "conflict"),
@@ -343,8 +333,7 @@ async def test_non_json_200_body_raises_classified_error() -> None:
         (400, None, "permanent"),
         (403, None, "permanent"),
         (422, None, "permanent"),
-    ],
-)
+    ])
 def test_classifier_table(status: int, body: bytes | None, expected: str) -> None:
     """FR-006 enumeration: pure-function table test paired with the
     transport behavior tests above for one-stop reviewer navigation."""
@@ -393,8 +382,7 @@ class TestSpec020HostedConflictDispatch:
             ("lease_ownership_changed", 409),
             ("etag_mismatch", 412),
             ("invalid_request", 400),
-        ],
-    )
+        ])
     def test_classifier_raises_hosted_conflict_with_service_code(
         self, service_code: str, status_code: int
     ) -> None:
@@ -403,11 +391,9 @@ class TestSpec020HostedConflictDispatch:
         ``error.code`` matches one of the spec-020 service codes.
         """
         from azure.ai.agentserver.core.durable._client import (
-            _raise_hosted_conflict_for_response,
-        )
+            _raise_hosted_conflict_for_response)
         from azure.ai.agentserver.core.durable._exceptions_internal import (
-            _HostedConflict,
-        )
+            _HostedConflict)
 
         body = (
             b'{"error": {"code": "' + service_code.encode() + b'", "message": "x"}}'
@@ -426,20 +412,17 @@ class TestSpec020HostedConflictDispatch:
     def test_unknown_code_does_not_raise(self) -> None:
         """Unknown service codes pass through (caller falls back to generic classifier)."""
         from azure.ai.agentserver.core.durable._client import (
-            _raise_hosted_conflict_for_response,
-        )
+            _raise_hosted_conflict_for_response)
 
         response = self._make_response(
             status_code=500,
-            body=b'{"error": {"code": "server_error", "message": "x"}}',
-        )
+            body=b'{"error": {"code": "server_error", "message": "x"}}')
         _raise_hosted_conflict_for_response(response)
 
     def test_non_json_body_does_not_raise(self) -> None:
         """Malformed body passes through."""
         from azure.ai.agentserver.core.durable._client import (
-            _raise_hosted_conflict_for_response,
-        )
+            _raise_hosted_conflict_for_response)
 
         response = self._make_response(status_code=500, body=b"<html>broken</html>")
         _raise_hosted_conflict_for_response(response)
@@ -513,8 +496,7 @@ async def test_update_clear_attachments_sends_null_on_wire() -> None:
         [
             FakeResponse.json_response(
                 {"id": "t-clear", "agent_name": "a", "session_id": "s", "status": "pending"},
-                status_code=200,
-            )
+                status_code=200)
         ]
     )
     provider = _make_provider(transport)
@@ -539,8 +521,7 @@ async def test_update_clear_attachments_rejects_attachment_patch() -> None:
         with pytest.raises(_HostedConflict) as exc_info:
             await provider.update(
                 "t-clear",
-                TaskPatchRequest(clear_attachments=True, attachments={"a": "b"}),
-            )
+                TaskPatchRequest(clear_attachments=True, attachments={"a": "b"}))
     finally:
         await provider.close()
     assert exc_info.value._code == "invalid_request"

@@ -13,7 +13,7 @@ from typing import Any
 
 import pytest
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[2]
@@ -70,9 +70,7 @@ async def _force_expire_lease(manager: Any, task_id: str) -> None:
         TaskPatchRequest(
             lease_owner=manager._lease_owner,  # noqa: SLF001
             lease_instance_id=manager._instance_id,  # noqa: SLF001
-            lease_duration_seconds=0,
-        ),
-    )
+            lease_duration_seconds=0))
 
 
 class _ManagerFixture:
@@ -96,13 +94,11 @@ class _ManagerFixture:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(
             config=config,
             provider=provider,
-            shutdown_grace_seconds=shutdown_grace_seconds,
-        )
+            shutdown_grace_seconds=shutdown_grace_seconds)
         mgr_mod._manager = manager  # noqa: SLF001
         await manager.startup()
         return manager, mgr_mod, store_dir
@@ -388,8 +384,7 @@ class TestTimeoutMultiTurn:
             @_multi_turn_task(
                 name=_unique("timeout_multi_watchdog_rearmed"),
                 timeout=timedelta(seconds=0.2),
-                steerable=True,
-            )
+                steerable=True)
             async def steerable(ctx: TaskContext[str]) -> str:
                 starts.append(asyncio.get_event_loop().time())
                 if ctx.input == "active":
@@ -426,7 +421,7 @@ class TestExitForRecovery:
         try:
             TaskDeferred = _public_exception("TaskDeferred")
 
-            @task(name=_unique("exit_deferred"), ephemeral=False)
+            @multi_turn_task(name=_unique("exit_deferred"))
             async def defer(ctx: TaskContext[str]) -> str:
                 ctx.shutdown.set()
                 return await ctx.exit_for_recovery()
@@ -477,7 +472,7 @@ class TestLeaseExpiryCrash:
             invocations: list[tuple[str, str]] = []
             first_entered = asyncio.Event()
 
-            @task(name=_unique("crash_recovery"), ephemeral=False)
+            @multi_turn_task(name=_unique("crash_recovery"))
             async def crashy(ctx: TaskContext[str]) -> str:
                 invocations.append((ctx.entry_mode, ctx.input))
                 if ctx.entry_mode == "recovered":
@@ -688,7 +683,7 @@ class TestShutdown:
         try:
             entered = asyncio.Event()
 
-            @task(name=_unique("shutdown_returns"), ephemeral=False)
+            @multi_turn_task(name=_unique("shutdown_returns"))
             async def shutdown_aware(ctx: TaskContext[str]) -> str:
                 entered.set()
                 while not ctx.shutdown.is_set():
@@ -709,7 +704,7 @@ class TestShutdown:
             entered = asyncio.Event()
             task_id = _unique("one_shot")
 
-            @task(name=_unique("shutdown_crash"), ephemeral=False)
+            @multi_turn_task(name=_unique("shutdown_crash"))
             async def ignores_shutdown(ctx: TaskContext[str]) -> str:
                 entered.set()
                 await asyncio.Event().wait()

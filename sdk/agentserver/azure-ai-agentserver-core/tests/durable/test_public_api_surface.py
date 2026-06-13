@@ -294,8 +294,7 @@ def test_is_stale_not_importable_from_durable_subpackage() -> None:
     # cite the predecessor by name.
     pattern = re.compile(
         r"^\s*(?:def\s+_is_stale\b|_is_stale\s*=|from\s+\S+\s+import.*\b_is_stale\b|import\s+_is_stale\b)",
-        re.MULTILINE,
-    )
+        re.MULTILINE)
     for py_file in durable_dir.rglob("*.py"):
         text = py_file.read_text(encoding="utf-8")
         for m in pattern.finditer(text):

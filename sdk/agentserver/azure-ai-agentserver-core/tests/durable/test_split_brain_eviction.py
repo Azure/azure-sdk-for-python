@@ -42,14 +42,13 @@ from azure.ai.agentserver.core.durable import (
     TaskConflictError,
     TaskContext,
     task,
-)
+    multi_turn_task)
 from azure.ai.agentserver.core.durable._client import TransportClassifiedError
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
 from azure.ai.agentserver.core.durable._models import (
     TaskCreateRequest,
-    TaskPatchRequest,
-)
+    TaskPatchRequest)
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 
 from .conftest import BindingMismatchProvider
@@ -79,8 +78,7 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 # --------------------------------------------------------------------- #
@@ -110,8 +108,7 @@ def test_binding_mismatch_stub_raises_classified_error(stubbable_provider_factor
 
 @pytest.mark.asyncio
 async def test_startup_scan_skips_evicted_records_without_raising(
-    stubbable_provider_factory,
-) -> None:
+    stubbable_provider_factory) -> None:
     """T034 / FR-007: startup scan tolerates per-record eviction —
     skips the record with WARNING log, never retries, never aborts the
     scan loop.
@@ -132,8 +129,7 @@ async def test_startup_scan_skips_evicted_records_without_raising(
             session_id="test-session",
             status="in_progress",
             title="healthy",
-            payload={},
-        )
+            payload={})
     )
     await stub.create(
         TaskCreateRequest(
@@ -142,8 +138,7 @@ async def test_startup_scan_skips_evicted_records_without_raising(
             session_id="test-session",
             status="in_progress",
             title="evicted",
-            payload={},
-        )
+            payload={})
     )
     stub.reject_on("update", task_id="t-evicted")
 
@@ -163,8 +158,7 @@ async def test_startup_scan_skips_evicted_records_without_raising(
 
 @pytest.mark.asyncio
 async def test_lease_renewal_eviction_cancels_local_execution(
-    stubbable_provider_factory,
-) -> None:
+    stubbable_provider_factory) -> None:
     """T035 / FR-007: when lease_renewal_loop's PATCH is rejected with
     binding_mismatch, the framework cancels local execution via the
     on_cancel_callback. Verified via the lease_renewal_loop directly
@@ -209,8 +203,7 @@ async def test_lease_renewal_eviction_cancels_local_execution(
 
 @pytest.mark.asyncio
 async def test_run_against_evicted_raises_taskconflict(
-    stubbable_provider_factory,
-) -> None:
+    stubbable_provider_factory) -> None:
     """T036 / FR-008 / SC-006: ``.run()`` against an in-progress record
     whose store-write path is evicted MUST raise
     ``TaskConflictError(current_status="in_progress")`` — the SAME
@@ -244,8 +237,7 @@ async def test_run_against_evicted_raises_taskconflict(
                 session_id="test-session",
                 status="in_progress",
                 title="evict-run",
-                payload={},
-            )
+                payload={})
         )
         # Backdate to past the legacy threshold so the in_progress path
         # would normally reclaim; the create+update being rejected forces
@@ -269,8 +261,7 @@ async def test_run_against_evicted_raises_taskconflict(
 
 @pytest.mark.asyncio
 async def test_split_brain_handler_executes_exactly_once(
-    stubbable_provider_factory,
-) -> None:
+    stubbable_provider_factory) -> None:
     """SC-002 / T038: two TaskManagers against the same session id;
     one side's writes are evicted via binding_mismatch. The handler
     MUST execute exactly once across both instances; exactly one
@@ -282,7 +273,7 @@ async def test_split_brain_handler_executes_exactly_once(
 
     execution_count = 0
 
-    @task(name="split_brain_task", ephemeral=False)
+    @multi_turn_task(name="split_brain_task")
     async def my_task(ctx: TaskContext[str]) -> str:
         nonlocal execution_count
         execution_count += 1
@@ -330,8 +321,7 @@ async def test_split_brain_handler_executes_exactly_once(
 
 @pytest.mark.asyncio
 async def test_input_enqueue_eviction_classified_as_evicted(
-    stubbable_provider_factory,
-) -> None:
+    stubbable_provider_factory) -> None:
     """T038a / FR-006: every store-write site, INCLUDING input enqueue,
     funnels through the classifier and treats binding_mismatch as
     ``evicted`` (not ``conflict``). The steerer's future receives
@@ -345,7 +335,7 @@ async def test_input_enqueue_eviction_classified_as_evicted(
 
     stub = stubbable_provider_factory()
 
-    @task(name="enqueue_evict", steerable=True, ephemeral=False)
+    @multi_turn_task(name="enqueue_evict", steerable=True)
     async def my_task(ctx: TaskContext[dict]) -> dict:
         return {"got": ctx.input}
 
@@ -369,8 +359,7 @@ async def test_input_enqueue_eviction_classified_as_evicted(
                         "pending_inputs": [],
                         "drain_in_progress": False,
                     }
-                },
-            )
+                })
         )
         # Configure the stub to evict any update (the enqueue is a PATCH).
         stub.reject_on("update", task_id="t-eq")
@@ -407,7 +396,7 @@ async def test_invariant_1_eviction_column(
 
     stub = stubbable_provider_factory()
 
-    @task(name="inv1", steerable=steerable, ephemeral=False)
+    @multi_turn_task(name="inv1", steerable=steerable)
     async def my_task(ctx: TaskContext[str]) -> str:
         return "ok"
 
@@ -425,8 +414,7 @@ async def test_invariant_1_eviction_column(
                 title="inv1",
                 payload={"_steering": {"generation": 0, "pending_inputs": []}}
                 if steerable
-                else {},
-            )
+                else {})
         )
         stub.reject_on("create", task_id="t-inv1")
         stub.reject_on("update", task_id="t-inv1")

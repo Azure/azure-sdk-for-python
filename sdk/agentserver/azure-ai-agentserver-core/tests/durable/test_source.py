@@ -9,8 +9,7 @@ import pytest
 
 from azure.ai.agentserver.core.durable._models import (
     TaskCreateRequest,
-    TaskInfo,
-)
+    TaskInfo)
 
 
 class TestTaskInfoSource:
@@ -84,8 +83,7 @@ class TestSourceLocalProvider:
     @pytest.mark.asyncio
     async def test_source_persisted_and_retrieved(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
         src = {"type": "test", "run_id": "abc123"}
@@ -93,8 +91,7 @@ class TestSourceLocalProvider:
             agent_name="agent",
             session_id="test-session",
             title="source test",
-            source=src,
-        )
+            source=src)
         created = await provider.create(req)
         assert created.source == src
 
@@ -106,8 +103,7 @@ class TestSourceLocalProvider:
     @pytest.mark.asyncio
     async def test_source_none_not_persisted(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
         req = TaskCreateRequest(agent_name="agent", session_id="test-session", title="source test")
@@ -122,8 +118,7 @@ class TestSourceLocalProvider:
     async def test_source_immutable_after_create(self, tmp_path):
         """Source must not be changeable via PATCH — TaskPatchRequest has no source field."""
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._models import TaskPatchRequest
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
@@ -131,8 +126,7 @@ class TestSourceLocalProvider:
             agent_name="agent",
             session_id="test-session",
             title="source test",
-            source={"type": "original"},
-        )
+            source={"type": "original"})
         created = await provider.create(req)
 
         # Patch does not touch source

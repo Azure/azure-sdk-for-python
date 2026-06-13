@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 
 
 async def _setup_manager(tmp_path: Path):
@@ -32,8 +32,7 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -51,7 +50,7 @@ async def test_suspend_clears_payload_input(tmp_path: Path) -> None:
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
 
-        @task(name="suspending", steerable=True, ephemeral=False)
+        @multi_turn_task(name="suspending", steerable=True)
         async def suspending(ctx: TaskContext[dict]) -> None:
             return await ctx.suspend(reason="testing-us4")
 
@@ -78,7 +77,7 @@ async def test_suspend_preserves_metadata(tmp_path: Path) -> None:
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
 
-        @task(name="meta", steerable=True, ephemeral=False)
+        @multi_turn_task(name="meta", steerable=True)
         async def with_metadata(ctx: TaskContext[dict]) -> None:
             ctx.metadata["dev_key"] = "dev_value"
             await ctx.metadata.flush()

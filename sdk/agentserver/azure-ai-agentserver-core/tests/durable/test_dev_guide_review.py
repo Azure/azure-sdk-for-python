@@ -195,8 +195,7 @@ _REMOVED_NAMES: tuple[str, ...] = (
     "steering_generation",
     "CancelSignal",
     "TaskTerminated",
-    ".terminate(",
-)
+    ".terminate(")
 
 
 def _strip_rename_map(guide: str) -> str:
@@ -253,8 +252,7 @@ _REQUIRED_SECTIONS: tuple[tuple[str, str], ...] = (
     ("reference", r"^##\s+(?:5\.\s+)?Reference\b"),
     ("patterns", r"^##\s+(?:6\.\s+)?Patterns\b"),
     ("operational", r"^##\s+(?:7\.\s+)?Operational\b"),
-    ("what_not", r"^##\s+(?:8\.\s+)?What This Is NOT\b"),
-)
+    ("what_not", r"^##\s+(?:8\.\s+)?What This Is NOT\b"))
 
 
 def test_required_sections_present_in_order() -> None:
@@ -293,8 +291,7 @@ _CANONICAL_STATEMENTS: tuple[str, ...] = (
     # _* convention
     "reserved",
     # explicit flush
-    "flush()",
-)
+    "flush()")
 
 
 def test_canonical_statements_present() -> None:
@@ -322,8 +319,7 @@ _INVARIANT_PAIRS: tuple[tuple[str, str], ...] = (
     # contradicts the new explicit-flush model.
     ("auto-flush", "explicit flush"),
     # retry counter is durable; can't say "per-process retry"
-    ("per-process retry", "cross-lifetime"),
-)
+    ("per-process retry", "cross-lifetime"))
 
 
 def test_no_internal_contradictions() -> None:
@@ -404,8 +400,7 @@ _SPEC_016_REQUIRED_SYMBOLS: tuple[str, ...] = (
     "ctx.cancel_requested",
     "ctx.pending_input_count",
     "ctx.is_steered_turn",
-    "ctx.exit_for_recovery",
-)
+    "ctx.exit_for_recovery")
 
 
 def test_spec_016_new_symbols_present_in_concepts_and_reference() -> None:

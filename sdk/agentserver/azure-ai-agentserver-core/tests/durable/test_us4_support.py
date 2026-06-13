@@ -15,19 +15,19 @@ from pathlib import Path
 import pytest
 
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 
 
 # Module-level task definitions to allow `get_type_hints` to resolve
 # TaskContext (which lives in the module namespace).
 
 
-@task(name="us4-completing-ephemeral", steerable=False, ephemeral=True)
+@task(name="us4-completing-ephemeral")
 async def _completing_ephemeral(ctx: TaskContext[dict]) -> dict:
     return {"result": "done"}
 
 
-@task(name="us4-completing-retain", steerable=False, ephemeral=False)
+@multi_turn_task(name="us4-completing-retain", steerable=False)
 async def _completing_retain(ctx: TaskContext[dict]) -> dict:
     return {"result": "done"}
 
@@ -46,8 +46,7 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -229,8 +228,7 @@ def test_no_source_reference_to_generation_results() -> None:
         cwd=Path(__file__).parent.parent.parent.parent.parent.parent,
         capture_output=True,
         text=True,
-        check=False,
-    )
+        check=False)
     if result.stdout.strip():
         # An "actual use" line has an assignment (=), subscript brackets adjacent
         # to "generation_results", or a function call. Lines whose *content*

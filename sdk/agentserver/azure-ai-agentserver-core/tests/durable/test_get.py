@@ -10,7 +10,7 @@ import pytest
 from azure.ai.agentserver.core.durable import (
     TaskContext,
     task,
-)
+    multi_turn_task)
 
 
 class TestGet:
@@ -18,11 +18,9 @@ class TestGet:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+            TaskManager)
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -35,8 +33,7 @@ class TestGet:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -50,7 +47,7 @@ class TestGet:
     async def test_get_existing_task(self, tmp_path) -> None:
         """get() returns TaskInfo for an existing task."""
 
-        @task(title="get-test", ephemeral=False)
+        @multi_turn_task(title="get-test")
         async def my_task(ctx: TaskContext[str]) -> str:
             return await ctx.suspend(output="paused")
 
@@ -86,7 +83,7 @@ class TestGet:
     async def test_get_returns_correct_state(self, tmp_path) -> None:
         """get() returns correct info for various task states."""
 
-        @task(title="get-states", ephemeral=False)
+        @multi_turn_task(title="get-states")
         async def my_task(ctx: TaskContext[str]) -> str:
             return await ctx.suspend(output="waiting")
 
@@ -102,8 +99,7 @@ class TestGet:
                     session_id="test-session",
                     status="suspended",
                     title="suspended-task",
-                    payload={"output": "half-done"},
-                )
+                    payload={"output": "half-done"})
             )
             await manager.provider.create(
                 TaskCreateRequest(
@@ -112,8 +108,7 @@ class TestGet:
                     session_id="test-session",
                     status="completed",
                     title="done-task",
-                    payload={"output": "final"},
-                )
+                    payload={"output": "final"})
             )
             await manager.provider.create(
                 TaskCreateRequest(
@@ -122,8 +117,7 @@ class TestGet:
                     session_id="test-session",
                     status="in_progress",
                     title="running-task",
-                    payload={},
-                )
+                    payload={})
             )
 
             suspended = await my_task._get("state-suspended")

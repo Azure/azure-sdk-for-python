@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
@@ -35,8 +35,7 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 @pytest.fixture
@@ -96,7 +95,7 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
     Both have expired leases. After cold-start, the framework MUST
     have reclaimed only the framework-owned record.
     """
-    @task(name="reclaim_target", ephemeral=False)
+    @multi_turn_task(name="reclaim_target")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "recovered"
 
@@ -118,8 +117,7 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
             source={"name": "reclaim_target", "type": "agentserver.task"},
             lease_owner="test-agent|session:test-session",
             lease_instance_id="prev-instance",
-            lease_duration_seconds=60,
-        )
+            lease_duration_seconds=60)
     )
     foreign_record = await captured_local.create(
         TaskCreateRequest(
@@ -133,8 +131,7 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
             source={"name": "third_party_task", "type": "third_party.runner"},
             lease_owner="test-agent|session:test-session",
             lease_instance_id="prev-instance",
-            lease_duration_seconds=60,
-        )
+            lease_duration_seconds=60)
     )
     # Backdate both leases.
     for tid in ("t-ours", "t-foreign"):

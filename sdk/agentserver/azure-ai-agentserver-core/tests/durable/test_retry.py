@@ -16,7 +16,7 @@ from azure.ai.agentserver.core.durable import (
     TaskContext,
     TaskFailed,
     task,
-)
+    multi_turn_task)
 
 
 # ---------------------------------------------------------------------------
@@ -41,8 +41,7 @@ class TestRetryPolicyConstruction:
             max_delay=timedelta(seconds=120),
             max_attempts=10,
             retry_on=(ValueError, ConnectionError),
-            jitter=False,
-        )
+            jitter=False)
         assert p.initial_delay == timedelta(seconds=5)
         assert p.backoff_coefficient == 3.0
         assert p.max_delay == timedelta(seconds=120)
@@ -72,7 +71,7 @@ class TestRetryPolicyConstruction:
         with pytest.raises(
             TypeError, match="retry_on entries must be Exception subclasses"
         ):
-            RetryPolicy(retry_on=(str,))  # type: ignore[arg-type]
+            RetryPolicy(retry_on=(str))  # type: ignore[arg-type]
 
     def test_repr(self) -> None:
         p = RetryPolicy(max_attempts=5)
@@ -100,8 +99,7 @@ class TestComputeDelay:
             initial_delay=timedelta(seconds=1),
             backoff_coefficient=2.0,
             max_delay=timedelta(seconds=120),
-            jitter=False,
-        )
+            jitter=False)
         assert p.compute_delay(0) == 1.0  # 1 * 2^0
         assert p.compute_delay(1) == 2.0  # 1 * 2^1
         assert p.compute_delay(2) == 4.0  # 1 * 2^2
@@ -113,8 +111,7 @@ class TestComputeDelay:
             initial_delay=timedelta(seconds=5),
             backoff_coefficient=1.0,
             max_delay=timedelta(seconds=5),
-            jitter=False,
-        )
+            jitter=False)
         for attempt in range(5):
             assert p.compute_delay(attempt) == 5.0
 
@@ -123,8 +120,7 @@ class TestComputeDelay:
             initial_delay=timedelta(seconds=1),
             backoff_coefficient=10.0,
             max_delay=timedelta(seconds=30),
-            jitter=False,
-        )
+            jitter=False)
         # 1 * 10^2 = 100, but capped at 30
         assert p.compute_delay(2) == 30.0
 
@@ -133,8 +129,7 @@ class TestComputeDelay:
             initial_delay=timedelta(seconds=10),
             backoff_coefficient=1.0,
             max_delay=timedelta(seconds=10),
-            jitter=True,
-        )
+            jitter=True)
         for _ in range(100):
             delay = p.compute_delay(0)
             assert 7.5 <= delay <= 12.5  # 10 * [0.75, 1.25]
@@ -144,8 +139,7 @@ class TestComputeDelay:
             initial_delay=timedelta(seconds=2),
             backoff_coefficient=3.0,
             max_delay=timedelta(seconds=200),
-            jitter=False,
-        )
+            jitter=False)
         assert p.compute_delay(0) == 2.0  # 2 * 3^0
         assert p.compute_delay(1) == 6.0  # 2 * 3^1
         assert p.compute_delay(2) == 18.0  # 2 * 3^2
@@ -177,11 +171,11 @@ class TestShouldRetry:
         assert p.should_retry(5, RuntimeError("test")) is False
 
     def test_matching_exception(self) -> None:
-        p = RetryPolicy(max_attempts=5, retry_on=(ValueError,), jitter=False)
+        p = RetryPolicy(max_attempts=5, retry_on=(ValueError), jitter=False)
         assert p.should_retry(0, ValueError("bad")) is True
 
     def test_non_matching_exception(self) -> None:
-        p = RetryPolicy(max_attempts=5, retry_on=(ValueError,), jitter=False)
+        p = RetryPolicy(max_attempts=5, retry_on=(ValueError), jitter=False)
         assert p.should_retry(0, RuntimeError("nope")) is False
 
     def test_none_means_all_exceptions(self) -> None:
@@ -191,7 +185,7 @@ class TestShouldRetry:
         assert p.should_retry(0, RuntimeError("c")) is True
 
     def test_subclass_matching(self) -> None:
-        p = RetryPolicy(max_attempts=5, retry_on=(OSError,), jitter=False)
+        p = RetryPolicy(max_attempts=5, retry_on=(OSError), jitter=False)
         assert (
             p.should_retry(0, ConnectionError("net")) is True
         )  # ConnectionError is OSError subclass
@@ -245,11 +239,9 @@ class TestRetryIntegration:
     async def _setup_manager(self, tmp_path):
         """Create a manager with local file provider pointing to tmp_path."""
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+            TaskManager)
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -262,8 +254,7 @@ class TestRetryIntegration:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -280,8 +271,7 @@ class TestRetryIntegration:
 
         @task(
             title="retry-test",
-            retry=RetryPolicy.exponential_backoff(max_attempts=3),
-        )
+            retry=RetryPolicy.exponential_backoff(max_attempts=3))
         async def flaky(ctx: TaskContext[str]) -> str:
             call_log.append(ctx.retry_attempt)
             if ctx.retry_attempt < 2:
@@ -293,8 +283,7 @@ class TestRetryIntegration:
             with patch("asyncio.sleep", new_callable=AsyncMock):
                 result = await flaky.run(
                     task_id="retry-1",
-                    input="test",
-                )
+                    input="test")
             assert result == "success"
             assert call_log == [0, 1, 2]
         finally:
@@ -308,10 +297,8 @@ class TestRetryIntegration:
             title="always-fail",
             retry=RetryPolicy(
                 max_attempts=3,
-                retry_on=(ValueError,),
-                jitter=False,
-            ),
-        )
+                retry_on=(ValueError),
+                jitter=False))
         async def always_fail(ctx: TaskContext[str]) -> str:
             raise ValueError(f"boom on attempt {ctx.retry_attempt}")
 
@@ -321,8 +308,7 @@ class TestRetryIntegration:
                 with pytest.raises(TaskFailed) as exc_info:
                     await always_fail.run(
                         task_id="exhaust-1",
-                        input="test",
-                    )
+                        input="test")
             error = exc_info.value.error
             assert error["type"] == "exhausted_retries"
             assert error["attempts"] == 3
@@ -338,10 +324,8 @@ class TestRetryIntegration:
             title="wrong-exc",
             retry=RetryPolicy(
                 max_attempts=5,
-                retry_on=(ValueError,),
-                jitter=False,
-            ),
-        )
+                retry_on=(ValueError),
+                jitter=False))
         async def wrong_exc(ctx: TaskContext[str]) -> str:
             attempts.append(ctx.retry_attempt)
             raise TypeError("not retryable")
@@ -351,8 +335,7 @@ class TestRetryIntegration:
             with pytest.raises(TaskFailed):
                 await wrong_exc.run(
                     task_id="nonretry-1",
-                    input="test",
-                )
+                    input="test")
             # Only ran once — no retries for TypeError
             assert attempts == [0]
         finally:
@@ -385,8 +368,7 @@ class TestRetryAttemptDurability:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import TaskManager
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
@@ -400,8 +382,7 @@ class TestRetryAttemptDurability:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -418,8 +399,7 @@ class TestRetryAttemptDurability:
         *,
         task_id: str,
         retry_attempt: int,
-        input_value: str = "carry-over",
-    ) -> None:
+        input_value: str = "carry-over") -> None:
         """Create a stale ``in_progress`` task that simulates a prior lifetime.
 
         ``payload["_retry_attempt"]`` is the durable counter that FR-001
@@ -439,8 +419,7 @@ class TestRetryAttemptDurability:
                 payload={
                     "input": input_value,
                     "_retry_attempt": retry_attempt,
-                },
-            )
+                })
         )
         task_file = (
             Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
@@ -464,7 +443,7 @@ class TestRetryAttemptDurability:
         """
         observed: list[int] = []
 
-        @task(title="recovered-retry-aware", ephemeral=False)
+        @multi_turn_task(title="recovered-retry-aware")
         async def handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"
@@ -476,8 +455,7 @@ class TestRetryAttemptDurability:
             )
             result = await handler.run(
                 task_id="durable-1",
-                input="ignored-by-recovery",
-            )
+                input="ignored-by-recovery")
             assert result == "ok"
             assert observed == [2], (
                 "FR-001 violated: handler MUST observe the persisted "
@@ -508,10 +486,8 @@ class TestRetryAttemptDurability:
             ephemeral=False,
             retry=RetryPolicy(
                 max_attempts=3,
-                retry_on=(ValueError,),
-                jitter=False,
-            ),
-        )
+                retry_on=(ValueError),
+                jitter=False))
         async def always_fail(ctx: TaskContext[str]) -> str:
             invocations.append(ctx.retry_attempt)
             raise ValueError(f"boom at retry_attempt={ctx.retry_attempt}")
@@ -525,8 +501,7 @@ class TestRetryAttemptDurability:
                 with pytest.raises(TaskFailed):
                     await always_fail.run(
                         task_id="budget-1",
-                        input="ignored",
-                    )
+                        input="ignored")
             assert invocations == [2], (
                 "FR-002 violated: with max_attempts=3 and 2 retries already "
                 "consumed across a crash, recovery has exactly ONE attempt "
@@ -556,10 +531,8 @@ class TestRetryAttemptDurability:
             ephemeral=False,
             retry=RetryPolicy(
                 max_attempts=3,
-                retry_on=(ValueError,),
-                jitter=False,
-            ),
-        )
+                retry_on=(ValueError),
+                jitter=False))
         async def succeed_now(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return f"done@{ctx.retry_attempt}"
@@ -571,8 +544,7 @@ class TestRetryAttemptDurability:
             )
             result = await succeed_now.run(
                 task_id="no-consume-1",
-                input="ignored",
-            )
+                input="ignored")
             assert result == "done@2"
             assert observed == [2], (
                 "FR-003 violated: handler must observe persisted "
@@ -615,8 +587,7 @@ class TestRetryAttemptDurability:
         @task(
             title="steerable-retry-aware",
             ephemeral=False,
-            steerable=True,
-        )
+            steerable=True)
         async def steer_handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             # Spec 016 FR-012 (US5): the completion path no longer drains
@@ -648,8 +619,7 @@ class TestRetryAttemptDurability:
                             "pending_inputs": ["second"],
                             "generation": 1,
                         },
-                    },
-                )
+                    })
             )
             task_file = (
                 Path(str(tmp_path)) / "test-agent" / "test-session" / "steer-reset-1.json"
@@ -660,8 +630,7 @@ class TestRetryAttemptDurability:
 
             await steer_handler.run(
                 task_id="steer-reset-1",
-                input="ignored",
-            )
+                input="ignored")
 
             info = await manager.provider.get("steer-reset-1")
             assert info is not None

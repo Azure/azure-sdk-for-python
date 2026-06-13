@@ -24,18 +24,15 @@ from azure.ai.agentserver.core.durable._attachments import (
     _resolve_input_storage,
     _serialized_size_bytes,
     _validate_attachment_count,
-    _validate_attachment_size,
-)
+    _validate_attachment_size)
 from azure.ai.agentserver.core.durable._exceptions import (
     AttachmentLimitExceeded,
     AttachmentTooLarge,
-    InputTooLarge,
-)
+    InputTooLarge)
 from azure.ai.agentserver.core.durable._models import (
     TaskCreateRequest,
     TaskInfo,
-    TaskPatchRequest,
-)
+    TaskPatchRequest)
 
 
 # --------------------------------------------------------------------------- #
@@ -112,8 +109,7 @@ def test_is_ref_positive():
         {"__attachment_ref__": {"key": "k"}},  # missing hash
         {"__attachment_ref__": {"hash": "h"}},  # missing key
         {"__attachment_ref__": {"key": "k", "hash": "h"}, "extra": 1},  # > 1 top-level key
-    ],
-)
+    ])
 def test_is_ref_negative(non_ref):
     assert _is_ref(non_ref) is False
 
@@ -135,8 +131,7 @@ def test_resolve_inline_small_value():
         "small",
         threshold_bytes=_INPUT_THRESHOLD_BYTES,
         key_for_attachment=_FUNCTION_INPUT_KEY,
-        task_id="t1",
-    )
+        task_id="t1")
     assert mode == "inline"
     assert value == "small"
 
@@ -147,8 +142,7 @@ def test_resolve_attachment_when_over_threshold():
         big,
         threshold_bytes=_INPUT_THRESHOLD_BYTES,
         key_for_attachment=_FUNCTION_INPUT_KEY,
-        task_id="t1",
-    )
+        task_id="t1")
     assert mode == "attachment"
     assert _is_ref(value)
     assert _ref_key(value) == _FUNCTION_INPUT_KEY
@@ -166,8 +160,7 @@ def test_resolve_steering_threshold_boundary():
         just_under,
         threshold_bytes=_STEERING_THRESHOLD_BYTES,
         key_for_attachment="_steering_input_0",
-        task_id="t",
-    )
+        task_id="t")
     assert mode_at == "inline"
 
     # 1 byte over the threshold → promoted.
@@ -177,8 +170,7 @@ def test_resolve_steering_threshold_boundary():
         over,
         threshold_bytes=_STEERING_THRESHOLD_BYTES,
         key_for_attachment="_steering_input_1",
-        task_id="t",
-    )
+        task_id="t")
     assert mode_over == "attachment"
     assert _ref_key(value_over) == "_steering_input_1"
 
@@ -191,8 +183,7 @@ def test_resolve_raises_inputtoolarge_when_over_cap():
             huge,
             threshold_bytes=_INPUT_THRESHOLD_BYTES,
             key_for_attachment="_input",
-            task_id="t-huge",
-        )
+            task_id="t-huge")
     # spec 022 FR-077: exception.task_id removed
     assert excinfo.value.max_bytes == _MAX_ATTACHMENT_SIZE_BYTES
     assert excinfo.value.size_bytes > _MAX_ATTACHMENT_SIZE_BYTES
@@ -277,8 +268,7 @@ def test_taskinfo_attachments_round_trip():
         session_id="s",
         status="in_progress",
         payload={"input": "hello"},
-        attachments={"_input": {"big": "value"}},
-    )
+        attachments={"_input": {"big": "value"}})
     d = info.to_dict()
     assert d["attachments"] == {"_input": {"big": "value"}}
     info2 = TaskInfo.from_dict(d)
@@ -292,8 +282,7 @@ def test_taskinfo_attachments_absent_when_none():
         session_id="s",
         status="pending",
         payload={"input": "hello"},
-        attachments=None,
-    )
+        attachments=None)
     d = info.to_dict()
     assert "attachments" not in d
 
@@ -304,15 +293,13 @@ def test_taskcreaterequest_carries_attachments():
         session_id="s",
         id="t1",
         title="t",
-        attachments={"_input": {"foo": "bar"}},
-    )
+        attachments={"_input": {"foo": "bar"}})
     assert req.attachments == {"_input": {"foo": "bar"}}
 
 
 def test_taskpatchrequest_carries_attachments_including_null():
     req = TaskPatchRequest(
-        attachments={"_input": None, "_steering_input_3": {"v": 1}},
-    )
+        attachments={"_input": None, "_steering_input_3": {"v": 1}})
     assert req.attachments == {"_input": None, "_steering_input_3": {"v": 1}}
 
 
@@ -325,8 +312,7 @@ import asyncio
 from pathlib import Path
 
 from azure.ai.agentserver.core.durable._local_provider import (
-    LocalFileTaskProvider,
-)
+    LocalFileTaskProvider)
 
 
 @pytest.fixture
@@ -342,8 +328,7 @@ def test_local_create_with_attachments(local_provider: LocalFileTaskProvider):
                 session_id="s",
                 id="t-attach-1",
                 title="x",
-                attachments={"_input": {"k": "v"}, "_steering_input_0": "hello"},
-            )
+                attachments={"_input": {"k": "v"}, "_steering_input_0": "hello"})
         )
         assert info.attachments == {"_input": {"k": "v"}, "_steering_input_0": "hello"}
         # Re-read from disk to confirm persistence.
@@ -362,8 +347,7 @@ def test_local_patch_attachments_null_is_delete(local_provider):
                 session_id="s",
                 id="t-attach-2",
                 title="x",
-                attachments={"_input": "value-A", "_steering_input_0": "value-B"},
-            )
+                attachments={"_input": "value-A", "_steering_input_0": "value-B"})
         )
         # PATCH: null deletes one, new value adds another
         await local_provider.update(
@@ -374,8 +358,7 @@ def test_local_patch_attachments_null_is_delete(local_provider):
                     "_steering_input_1": "value-C",  # add
                     "_steering_input_0": "value-B-updated",  # update
                 }
-            ),
-        )
+            ))
         info = await local_provider.get("t-attach-2")
         assert info is not None
         assert info.attachments == {
@@ -396,8 +379,7 @@ def test_local_create_oversize_raises(local_provider):
                     session_id="s",
                     id="t-oversize",
                     title="x",
-                    attachments={"k": huge},
-                )
+                    attachments={"k": huge})
             )
 
     asyncio.run(_go())
@@ -413,8 +395,7 @@ def test_local_create_over_count_raises(local_provider):
                     session_id="s",
                     id="t-overcount",
                     title="x",
-                    attachments=too_many,
-                )
+                    attachments=too_many)
             )
 
     asyncio.run(_go())
@@ -430,8 +411,7 @@ def test_local_patch_attachments_unchanged_when_field_absent(local_provider):
                 session_id="s",
                 id="t-untouched",
                 title="x",
-                attachments={"_input": "stays-put"},
-            )
+                attachments={"_input": "stays-put"})
         )
         await local_provider.update(
             "t-untouched",
@@ -466,22 +446,18 @@ def test_local_patch_attachments_over_count_cap_raises(local_provider):
                 session_id="s",
                 id="t-patch-cap-1",
                 title="x",
-                attachments=existing,
-            )
+                attachments=existing)
         )
         # PATCH adding 2 more would push us to 21 → must raise.
         with pytest.raises(AttachmentLimitExceeded):
             await local_provider.update(
                 "t-patch-cap-1",
                 TaskPatchRequest(
-                    attachments={"new-a": "1", "new-b": "2"},
-                ),
-            )
+                    attachments={"new-a": "1", "new-b": "2"}))
         # PATCH that adds exactly 1 (to reach 20) MUST succeed.
         await local_provider.update(
             "t-patch-cap-1",
-            TaskPatchRequest(attachments={"new-c": "3"}),
-        )
+            TaskPatchRequest(attachments={"new-c": "3"}))
         info = await local_provider.get("t-patch-cap-1")
         assert info is not None
         assert len(info.attachments) == 20
@@ -503,16 +479,13 @@ def test_local_patch_attachments_delete_makes_room_for_add(local_provider):
                 session_id="s",
                 id="t-patch-swap",
                 title="x",
-                attachments=existing,
-            )
+                attachments=existing)
         )
         # PATCH: delete one, add one. Projected count is still 20.
         await local_provider.update(
             "t-patch-swap",
             TaskPatchRequest(
-                attachments={"k0": None, "k-new": "value"},
-            ),
-        )
+                attachments={"k0": None, "k-new": "value"}))
         info = await local_provider.get("t-patch-swap")
         assert info is not None
         assert len(info.attachments) == 20
@@ -531,14 +504,12 @@ def test_local_patch_attachments_oversize_value_raises(local_provider):
                 agent_name="a",
                 session_id="s",
                 id="t-patch-oversize",
-                title="x",
-            )
+                title="x")
         )
         huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 5)
         with pytest.raises(AttachmentTooLarge):
             await local_provider.update(
                 "t-patch-oversize",
-                TaskPatchRequest(attachments={"big": huge}),
-            )
+                TaskPatchRequest(attachments={"big": huge}))
 
     asyncio.run(_go())

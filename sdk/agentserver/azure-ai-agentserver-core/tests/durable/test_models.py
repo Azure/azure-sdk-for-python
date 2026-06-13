@@ -14,13 +14,11 @@ import pytest
 from azure.ai.agentserver.core.durable._models import (
     TaskCreateRequest,
     TaskInfo,
-    TaskPatchRequest,
-)
+    TaskPatchRequest)
 from azure.ai.agentserver.core.durable._exceptions import (
     TaskCancelled,
     TaskFailed,
-    TaskNotFound,
-)
+    TaskNotFound)
 
 
 class TestTaskStatus:
@@ -42,8 +40,7 @@ class TestTaskCreateRequest:
             agent_name="agent",
             session_id="test-session",
             status="pending",
-            payload={},
-        )
+            payload={})
         assert req.agent_name == "agent"
         assert req.status == "pending"
 
@@ -51,16 +48,14 @@ class TestTaskCreateRequest:
         """Default status is 'pending'."""
         req = TaskCreateRequest(
             agent_name="agent",
-            session_id="test-session",
-        )
+            session_id="test-session")
         assert req.status == "pending"
 
     def test_optional_fields_default_none(self) -> None:
         """Optional fields default to None."""
         req = TaskCreateRequest(
             agent_name="agent",
-            session_id="test-session",
-        )
+            session_id="test-session")
         assert req.lease_owner is None
         assert req.lease_instance_id is None
         assert req.lease_duration_seconds is None

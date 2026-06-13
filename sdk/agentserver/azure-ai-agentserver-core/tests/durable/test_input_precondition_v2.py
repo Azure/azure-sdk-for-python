@@ -14,8 +14,7 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     LastInputIdPreconditionFailed,
-    TaskContext,
-)
+    TaskContext)
 
 
 def _multi_turn_task(*args: Any, **kwargs: Any) -> Any:
@@ -38,8 +37,7 @@ async def _setup_manager(tmp_path: Path, *, startup: bool = True) -> tuple[Any, 
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     if startup:
@@ -68,8 +66,7 @@ async def _seed_recoverable_record(provider: Any, *, task_id: str, task_name: st
             source={"name": task_name, "type": "agentserver.task"},
             lease_owner=derive_lease_owner("test-agent", "test-session"),
             lease_instance_id="previous-instance",
-            lease_duration_seconds=60,
-        )
+            lease_duration_seconds=60)
     )
     past = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=10)).isoformat()
     created.lease.expires_at = past
@@ -117,8 +114,7 @@ class TestIfLastInputIdPrecondition:
                     task_id="fr076-mismatch",
                     input="two",
                     input_id="c",
-                    if_last_input_id="b",
-                )
+                    if_last_input_id="b")
             assert excinfo.value.actual_last_input_id == "a"
         finally:
             await _teardown_manager(manager, mgr_mod)
@@ -137,8 +133,7 @@ class TestIfLastInputIdPrecondition:
                     task_id="fr076-no-expected",
                     input="two",
                     input_id="c",
-                    if_last_input_id="b",
-                )
+                    if_last_input_id="b")
             assert excinfo.value.actual_last_input_id == "a"
             assert not hasattr(excinfo.value, "expected_last_input_id")
         finally:
@@ -191,8 +186,7 @@ class TestLastInputIdNotRecoveryInputSource:
             provider,
             task_id="fr029-recovery",
             task_name="fr029-recovery-input-source",
-            input_value="b",
-        )
+            input_value="b")
         try:
             await manager.startup()
             for _ in range(40):

@@ -24,22 +24,19 @@ from typing import Any
 import pytest
 import pytest_asyncio
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 from azure.ai.agentserver.core.durable._attachments import (
     _STEERING_INPUT_KEY_PREFIX,
     _STEERING_QUEUE_CAP,
     _STEERING_THRESHOLD_BYTES,
     _is_ref,
-    _ref_key,
-)
+    _ref_key)
 from azure.ai.agentserver.core.durable._exceptions import SteeringQueueFull
 from azure.ai.agentserver.core.durable._local_provider import (
-    LocalFileTaskProvider,
-)
+    LocalFileTaskProvider)
 from azure.ai.agentserver.core.durable._manager import (
     TaskManager,
-    set_task_manager,
-)
+    set_task_manager)
 from azure.ai.agentserver.core.durable._models import TaskPatchRequest
 
 
@@ -52,8 +49,7 @@ def _config_stub(session_id: str = "s018-steer-session"):
             "session_id": session_id,
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 @pytest_asyncio.fixture
@@ -64,8 +60,7 @@ async def manager_local(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     mgr = TaskManager(
         config=config,
         provider=LocalFileTaskProvider(base_dir=tmp_path / "tasks"),
-        shutdown_event=asyncio.Event(),
-    )
+        shutdown_event=asyncio.Event())
     set_task_manager(mgr)
     await mgr.startup()
     try:
@@ -87,7 +82,7 @@ async def test_small_steering_input_stays_inline(manager_local: TaskManager) -> 
     started = asyncio.Event()
     proceed = asyncio.Event()
 
-    @task(name="t-steer-small", steerable=True)
+    @multi_turn_task(name="t-steer-small", steerable=True)
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await proceed.wait()
@@ -127,7 +122,7 @@ async def test_large_steering_input_promoted(manager_local: TaskManager) -> None
     started = asyncio.Event()
     proceed = asyncio.Event()
 
-    @task(name="t-steer-big", steerable=True)
+    @multi_turn_task(name="t-steer-big", steerable=True)
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await proceed.wait()
@@ -163,8 +158,7 @@ async def test_large_steering_input_promoted(manager_local: TaskManager) -> None
 
 @pytest.mark.asyncio
 async def test_drain_does_not_renumber_existing_attachments(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """The user's concern: dequeue MUST NOT trigger re-upload / re-keying.
 
     After appending A and B (both promoted) and draining A, B's
@@ -177,7 +171,7 @@ async def test_drain_does_not_renumber_existing_attachments(
     drain_signal = asyncio.Event()
     started_count = 0
 
-    @task(name="t-steer-monotonic", steerable=True)
+    @multi_turn_task(name="t-steer-monotonic", steerable=True)
     async def runner(ctx: TaskContext[dict]) -> dict:
         nonlocal started_count
         started_count += 1
@@ -241,7 +235,7 @@ async def test_steering_queue_9_cap(manager_local: TaskManager) -> None:
     started = asyncio.Event()
     block = asyncio.Event()
 
-    @task(name="t-steer-9cap", steerable=True)
+    @multi_turn_task(name="t-steer-9cap", steerable=True)
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await block.wait()
@@ -281,7 +275,7 @@ async def test_drain_co_deletes_attachment(manager_local: TaskManager) -> None:
     big = "z" * (_STEERING_THRESHOLD_BYTES + 200)
     drain_signal = asyncio.Event()
 
-    @task(name="t-steer-drain", steerable=True)
+    @multi_turn_task(name="t-steer-drain", steerable=True)
     async def runner(ctx: TaskContext[dict]) -> dict:
         await drain_signal.wait()
         drain_signal.clear()
@@ -326,16 +320,14 @@ async def test_drain_co_deletes_attachment(manager_local: TaskManager) -> None:
 
 @pytest.mark.asyncio
 async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """SC-12: orphaned _steering_input_* attachments are cleaned up on recovery."""
 
     # Manually plant a task in the local provider with an orphaned
     # steering attachment (a key whose ref is NOT in pending_inputs).
     from azure.ai.agentserver.core.durable._models import (
         LeaseInfo,
-        TaskCreateRequest,
-    )
+        TaskCreateRequest)
 
     create = TaskCreateRequest(
         agent_name="s018-steer-agent",
@@ -358,8 +350,7 @@ async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(
             "_steering_input_0": "orphan-A",  # not referenced
             "_steering_input_1": "orphan-B",  # not referenced
             "_input": "real input",  # NOT a steering key — must be preserved
-        },
-    )
+        })
     await manager_local.provider.create(create)
 
     # Invoke the cleanup directly (it would normally fire from
@@ -384,8 +375,7 @@ async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(
 
 @pytest.mark.asyncio
 async def test_steering_append_oversized_raises_input_too_large(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """Parity with function input: steering input > 2 MB raises InputTooLarge.
 
     Gap-fill: previously only the function-input path was tested for the
@@ -395,14 +385,13 @@ async def test_steering_append_oversized_raises_input_too_large(
     it. This pins the behavior end-to-end through ``_append_steering_input``.
     """
     from azure.ai.agentserver.core.durable._attachments import (
-        _MAX_ATTACHMENT_SIZE_BYTES,
-    )
+        _MAX_ATTACHMENT_SIZE_BYTES)
     from azure.ai.agentserver.core.durable._exceptions import InputTooLarge
 
     started = asyncio.Event()
     block = asyncio.Event()
 
-    @task(name="t-steer-oversized", steerable=True)
+    @multi_turn_task(name="t-steer-oversized", steerable=True)
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await block.wait()
@@ -422,8 +411,7 @@ async def test_steering_append_oversized_raises_input_too_large(
 
 @pytest.mark.asyncio
 async def test_drain_inline_entry_leaves_attachments_untouched(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """Symmetric to test_drain_co_deletes_attachment: a drain of an inline
     queue entry MUST NOT issue an attachments delete.
 
@@ -434,7 +422,7 @@ async def test_drain_inline_entry_leaves_attachments_untouched(
     big = "b" * (_STEERING_THRESHOLD_BYTES + 100)
     drain_signal = asyncio.Event()
 
-    @task(name="t-steer-mixed", steerable=True)
+    @multi_turn_task(name="t-steer-mixed", steerable=True)
     async def runner(ctx: TaskContext[dict]) -> dict:
         await drain_signal.wait()
         drain_signal.clear()
@@ -486,8 +474,7 @@ async def test_drain_inline_entry_leaves_attachments_untouched(
 
 @pytest.mark.asyncio
 async def test_post_drain_new_append_gets_next_seq_not_zero(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """Monotonic invariant tighter: next_input_seq survives drains.
 
     Plant a task with ``next_input_seq=5``, empty pending queue, NO
@@ -506,7 +493,7 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(
     started = asyncio.Event()
     block = asyncio.Event()
 
-    @task(name="t-seq-mono-plant", steerable=True)
+    @multi_turn_task(name="t-seq-mono-plant", steerable=True)
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await block.wait()
@@ -535,8 +522,7 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(
                 },
             },
             tags={"task_name": "t-seq-mono-plant"},
-            source={"name": "t-seq-mono-plant", "type": "agentserver.task"},
-        )
+            source={"name": "t-seq-mono-plant", "type": "agentserver.task"})
     )
 
     # Start the in-process tracking so subsequent .start() append-paths

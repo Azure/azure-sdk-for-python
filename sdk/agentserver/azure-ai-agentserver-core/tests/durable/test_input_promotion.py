@@ -22,7 +22,7 @@ from typing import Any
 import pytest
 import pytest_asyncio
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 from azure.ai.agentserver.core.durable._attachments import (
     _FUNCTION_INPUT_KEY,
     _INPUT_THRESHOLD_BYTES,
@@ -30,16 +30,13 @@ from azure.ai.agentserver.core.durable._attachments import (
     _compute_attachment_hash,
     _is_ref,
     _ref_hash,
-    _ref_key,
-)
+    _ref_key)
 from azure.ai.agentserver.core.durable._exceptions import InputTooLarge
 from azure.ai.agentserver.core.durable._local_provider import (
-    LocalFileTaskProvider,
-)
+    LocalFileTaskProvider)
 from azure.ai.agentserver.core.durable._manager import (
     TaskManager,
-    set_task_manager,
-)
+    set_task_manager)
 
 
 def _config_stub(session_id: str = "s018-test-session"):
@@ -51,8 +48,7 @@ def _config_stub(session_id: str = "s018-test-session"):
             "session_id": session_id,
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
 
 
 @pytest_asyncio.fixture
@@ -65,8 +61,7 @@ async def manager_local(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     mgr = TaskManager(
         config=config,
         provider=LocalFileTaskProvider(base_dir=tmp_path / "tasks"),
-        shutdown_event=asyncio.Event(),
-    )
+        shutdown_event=asyncio.Event())
     set_task_manager(mgr)
     await mgr.startup()
     try:
@@ -87,7 +82,7 @@ async def test_small_input_stays_inline_in_payload(manager_local: TaskManager) -
     started = asyncio.Event()
     proceed = asyncio.Event()
 
-    @task(name="t-small-inline", steerable=True)
+    @multi_turn_task(name="t-small-inline", steerable=True)
     async def blocking(ctx: TaskContext[dict]) -> dict:
         started.set()
         await proceed.wait()
@@ -120,7 +115,7 @@ async def test_large_input_promoted_to_attachment(manager_local: TaskManager) ->
 
     seen_input: dict[str, Any] = {}
 
-    @task(name="t-big-input", steerable=True)
+    @multi_turn_task(name="t-big-input", steerable=True)
     async def capture(ctx: TaskContext[dict]) -> dict:
         seen_input["v"] = ctx.input  # capture so test can compare
         return await ctx.suspend(reason="probe", output={"captured": True})
@@ -143,8 +138,7 @@ async def test_large_input_promoted_to_attachment(manager_local: TaskManager) ->
 
 @pytest.mark.asyncio
 async def test_large_input_writes_ref_and_attachment_atomically(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """SC-2: at create time the task MUST have attachments['_input'] + ref in payload['input']."""
 
     big = {"v": "y" * (_INPUT_THRESHOLD_BYTES + 50)}
@@ -153,7 +147,7 @@ async def test_large_input_writes_ref_and_attachment_atomically(
     started = asyncio.Event()
     proceed = asyncio.Event()
 
-    @task(name="t-big-blocking", steerable=True)
+    @multi_turn_task(name="t-big-blocking", steerable=True)
     async def blocking(ctx: TaskContext[dict]) -> dict:
         started.set()
         await proceed.wait()
@@ -180,8 +174,7 @@ async def test_large_input_writes_ref_and_attachment_atomically(
 
 @pytest.mark.asyncio
 async def test_oversized_input_raises_input_too_large(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """SC-10: an input that serializes to > 2 MB raises pre-HTTP."""
 
     too_big = {"v": "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 100)}
@@ -197,13 +190,12 @@ async def test_oversized_input_raises_input_too_large(
 
 @pytest.mark.asyncio
 async def test_suspend_with_promoted_input_deletes_attachment_atomically(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """SC-9 + C-8: suspend PATCH must include attachments={'_input': None}."""
 
     big = {"v": "w" * (_INPUT_THRESHOLD_BYTES + 1000)}
 
-    @task(name="t-suspend-clear", steerable=True)
+    @multi_turn_task(name="t-suspend-clear", steerable=True)
     async def will_suspend(ctx: TaskContext[dict]) -> dict:
         return await ctx.suspend(reason="probe")
 
@@ -225,8 +217,7 @@ async def test_suspend_with_promoted_input_deletes_attachment_atomically(
 
 @pytest.mark.asyncio
 async def test_recovery_surfaces_promoted_input_as_ctx_input(
-    manager_local: TaskManager,
-) -> None:
+    manager_local: TaskManager) -> None:
     """SC-3 end-to-end: after a "crash" (manager teardown + fresh manager
     + recovery), a task whose input was promoted MUST present that input
     to ``ctx.input`` exactly as the caller passed it.
@@ -243,7 +234,7 @@ async def test_recovery_surfaces_promoted_input_as_ctx_input(
     # in-band start.
     captured: dict[str, Any] = {}
 
-    @task(name="t-recovery-capture", steerable=True)
+    @multi_turn_task(name="t-recovery-capture", steerable=True)
     async def recover(ctx: TaskContext[dict]) -> dict:
         captured["input"] = ctx.input
         captured["entry_mode"] = ctx.entry_mode
@@ -256,8 +247,7 @@ async def test_recovery_surfaces_promoted_input_as_ctx_input(
     # what a previous lifetime would have written before being evicted.
     from azure.ai.agentserver.core.durable._attachments import (
         _FUNCTION_INPUT_KEY,
-        _make_ref,
-    )
+        _make_ref)
     from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
     ref = _make_ref(_FUNCTION_INPUT_KEY, big)
@@ -274,8 +264,7 @@ async def test_recovery_surfaces_promoted_input_as_ctx_input(
             payload={"input": ref, "metadata": {}},
             attachments={_FUNCTION_INPUT_KEY: big},
             tags={"task_name": "t-recovery-capture"},
-            source={"name": "t-recovery-capture", "type": "agentserver.task"},
-        )
+            source={"name": "t-recovery-capture", "type": "agentserver.task"})
     )
 
     # Drive recovery scan directly (simulates the periodic loop / startup).

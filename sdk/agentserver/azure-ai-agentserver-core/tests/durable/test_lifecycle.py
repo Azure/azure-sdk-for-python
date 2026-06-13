@@ -12,7 +12,7 @@ import pytest
 from azure.ai.agentserver.core.durable import (
     TaskContext,
     task,
-)
+    multi_turn_task)
 from azure.ai.agentserver.core.durable._exceptions import TaskConflictError
 
 
@@ -21,11 +21,9 @@ class TestLifecycle:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+            TaskManager)
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -38,8 +36,7 @@ class TestLifecycle:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -52,8 +49,7 @@ class TestLifecycle:
     def _create_stale_task(self, tmp_path, task_id, status="in_progress"):
         """Write a stale task file directly to simulate a crashed task."""
         from azure.ai.agentserver.core.durable._models import (
-            TaskCreateRequest,
-        )
+            TaskCreateRequest)
         import asyncio
 
         async def _create(provider):
@@ -64,8 +60,7 @@ class TestLifecycle:
                     session_id="test-session",
                     status=status,
                     title="stale-test",
-                    payload={"input": "old-data"},
-                )
+                    payload={"input": "old-data"})
             )
 
         return _create
@@ -119,8 +114,7 @@ class TestLifecycle:
                     session_id="test-session",
                     status="pending",
                     title="pending-test",
-                    payload={"input": "pending-data"},
-                )
+                    payload={"input": "pending-data"})
             )
             result = await my_task.run(task_id="lc-pending-1", input="new-data")
             assert result == "started"
@@ -133,7 +127,7 @@ class TestLifecycle:
         """run() on suspended task → resumes with new input, entry_mode='resumed'."""
         observed: list[tuple[str, str]] = []
 
-        @task(title="lifecycle-resume", ephemeral=False)
+        @multi_turn_task(title="lifecycle-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
             return await ctx.suspend(output="waiting")
@@ -177,8 +171,7 @@ class TestLifecycle:
                     payload={},
                     lease_owner="other-agent|session:other-session",
                     lease_instance_id="other-inst",
-                    lease_duration_seconds=60,
-                )
+                    lease_duration_seconds=60)
             )
             with pytest.raises(TaskConflictError) as exc_info:
                 await my_task.run(task_id="lc-conflict-1", input="data")
@@ -208,15 +201,13 @@ class TestLifecycle:
                     session_id="test-session",
                     status="in_progress",
                     title="stale-test",
-                    payload={"input": "old"},
-                )
+                    payload={"input": "old"})
             )
             self._backdate_task(tmp_path, "lc-stale-1")
 
             result = await my_task.run(
                 task_id="lc-stale-1",
-                input="new",
-            )
+                input="new")
             assert result == "recovered"
             assert observed_mode == ["recovered"]
         finally:
@@ -241,8 +232,7 @@ class TestLifecycle:
                     session_id="test-session",
                     status="completed",
                     title="done-test",
-                    payload={"output": "final"},
-                )
+                    payload={"output": "final"})
             )
             with pytest.raises(TaskConflictError) as exc_info:
                 await my_task.run(task_id="lc-completed-1", input="data")
@@ -282,8 +272,7 @@ class TestLifecycle:
                     payload={},
                     lease_owner="other-agent|session:other-session",
                     lease_instance_id="other-inst",
-                    lease_duration_seconds=60,
-                )
+                    lease_duration_seconds=60)
             )
             with pytest.raises(TaskConflictError):
                 await my_task.start(task_id="lc-start-conflict", input="data")
@@ -348,8 +337,7 @@ class TestLifecycle:
                     session_id="test-session",
                     status="in_progress",
                     title="timeout-test",
-                    payload={"input": "old"},
-                )
+                    payload={"input": "old"})
             )
             self._backdate_task(tmp_path, "lc-timeout-1")
 
@@ -357,8 +345,7 @@ class TestLifecycle:
             # 300s threshold → recovery is triggered.
             result = await my_task.run(
                 task_id="lc-timeout-1",
-                input="new",
-            )
+                input="new")
             assert result == "ok"
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -387,8 +374,7 @@ class TestSpec016ThreeLayerRecovery:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -401,8 +387,7 @@ class TestSpec016ThreeLayerRecovery:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -422,7 +407,7 @@ class TestSpec016ThreeLayerRecovery:
 
         observed: list[str] = []
 
-        @task(name="t043_resurrect", ephemeral=False)
+        @multi_turn_task(name="t043_resurrect")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return "resumed-ok"
@@ -446,8 +431,7 @@ class TestSpec016ThreeLayerRecovery:
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="previous-instance",
                     lease_duration_seconds=60,
-                    source={"name": "t043_resurrect", "type": "agentserver.task"},
-                )
+                    source={"name": "t043_resurrect", "type": "agentserver.task"})
             )
             # get_active_run sees the dead-lease orphan, reclaims it
             # inline, and returns a TaskRun bound to the new lifetime.
@@ -464,7 +448,7 @@ class TestSpec016ThreeLayerRecovery:
         """T043 / FR-005 / SC-003: terminal records return None."""
         from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
-        @task(name="t043_terminal", ephemeral=False)
+        @multi_turn_task(name="t043_terminal")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "ok"
 
@@ -477,8 +461,7 @@ class TestSpec016ThreeLayerRecovery:
                     session_id="test-session",
                     status="completed",
                     title="done",
-                    payload={"output": '"done"'},
-                )
+                    payload={"output": '"done"'})
             )
             run = await my_task.get_active_run("t043-done")
             assert run is None
@@ -505,7 +488,7 @@ class TestSpec016ThreeLayerRecovery:
 
         recovered: list[str] = []
 
-        @task(name="t045_periodic", ephemeral=False)
+        @multi_turn_task(name="t045_periodic")
         async def my_task(ctx: TaskContext[str]) -> str:
             recovered.append(ctx.entry_mode)
             return "ok"
@@ -528,8 +511,7 @@ class TestSpec016ThreeLayerRecovery:
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="previous-instance",
                     lease_duration_seconds=60,
-                    source={"name": "t045_periodic", "type": "agentserver.task"},
-                )
+                    source={"name": "t045_periodic", "type": "agentserver.task"})
             )
             # Wait up to 2 seconds for the periodic scan to fire and
             # for the recovered handler to execute.
@@ -552,8 +534,7 @@ class TestSpec016ThreeLayerRecovery:
         # Just seed a normal record + an in_progress orphan. The startup
         # scan runs in _setup_manager; if it raises, the test fails.
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+            LocalFileTaskProvider)
         provider = LocalFileTaskProvider(base_dir=Path(str(tmp_path)))
         await provider.create(
             TaskCreateRequest(
@@ -565,8 +546,7 @@ class TestSpec016ThreeLayerRecovery:
                 payload={},
                 lease_owner="some-previous-lifetime",
                 lease_instance_id="some-previous-instance",
-                lease_duration_seconds=60,
-            )
+                lease_duration_seconds=60)
         )
 
         from azure.ai.agentserver.core.durable._manager import TaskManager
@@ -580,8 +560,7 @@ class TestSpec016ThreeLayerRecovery:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            },
-        )()
+            })()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         # Should NOT raise even though there's an orphan.

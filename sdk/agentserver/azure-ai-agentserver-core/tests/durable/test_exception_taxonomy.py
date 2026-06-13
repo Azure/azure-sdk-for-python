@@ -27,8 +27,7 @@ PUBLIC_EXCEPTION_NAMES = (
     "TaskConflictError",
     "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
-    "InputTooLarge",
-)
+    "InputTooLarge")
 
 
 def _durable_module() -> Any:
@@ -70,7 +69,7 @@ def _instance_field_names(exc: BaseException) -> set[str]:
     for cls in type(exc).__mro__:
         slots = getattr(cls, "__slots__", ())
         if isinstance(slots, str):
-            slot_names = (slots,)
+            slot_names = (slots)
         else:
             slot_names = slots
         for name in slot_names:
@@ -96,8 +95,7 @@ async def _setup_manager(tmp_path: Path) -> tuple[Any, Any]:
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        },
-    )()
+        })()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -252,7 +250,7 @@ class TestTypedDicts:
             "last_error_type",
             "traceback",
         }
-        assert get_args(hints["type"]) == ("exhausted_retries",)
+        assert get_args(hints["type"]) == ("exhausted_retries")
         assert hints["attempts"] is int
         assert hints["last_error"] is str
         assert hints["last_error_type"] is str
@@ -290,8 +288,7 @@ class TestJSONValueAlias:
                 if get_origin(arg) is list
                 or getattr(arg, "__origin__", None) is list
             ),
-            None,
-        )
+            None)
         dict_branch = next(
             (
                 arg
@@ -299,8 +296,7 @@ class TestJSONValueAlias:
                 if get_origin(arg) is dict
                 or getattr(arg, "__origin__", None) is dict
             ),
-            None,
-        )
+            None)
         assert list_branch is not None
         assert dict_branch is not None
 
