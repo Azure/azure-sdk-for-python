@@ -19,9 +19,7 @@ wire shapes. HTTP route plumbing for response APIs. The platform
 itself.
 
 This document is the authoritative single source of truth for the
-two primitives in scope. It **supersedes** any prior dev-side
-speckit specs or scratch reference docs that existed during the
-design iterations leading to the current implementation.
+two primitives in scope.
 
 It **references** the *Foundry Task Storage Protocol Specification*
 as the authoritative description of the hosted task store's HTTP
@@ -543,35 +541,85 @@ fences it before the effect.
 
 ### §11. Suspend, resume, and multi-turn
 
-`await ctx.suspend(output=...)` is the explicit "this turn is done;
-park me; wake me when the caller has more input" boundary. It:
+Multi-turn chains end every turn with a bare `return X` from the
+handler. The framework treats this **return-is-implicit-suspend**:
 
-1. Transitions the stored status from `in_progress` to `suspended`.
+1. Transitions the stored status from `in_progress` to `suspended`
+   with `suspension_reason="run_completion"`.
 2. Persists a snapshot of every touched metadata namespace.
-3. Persists the `output` envelope **as an attachment** (always —
-   even when `output=None`; see §20 output field lifecycle and §23.8
-   atomic co-write rules). Suspend NEVER writes inline output.
+3. Does NOT persist `X` anywhere in the task record. `X` resolves
+   the caller's `await run.result()` in-process and is then gone.
 4. Clears `payload["input"]` (and the corresponding attachment if
    the input was promoted) — the consumed input is no longer needed
-   and would only inflate the next payload write.
+   and would inflate the next payload write.
 5. Clears `_steering["active_input"]` (mechanism state lives, but
    the consumed input value goes).
-6. Resolves the caller's `.run()` / `.start()` with a
-   `Suspended(output=...)`-bearing `TaskResult(status="suspended")`.
+6. Clears `payload["_retry_attempt"]` so the next turn starts with
+   a fresh retry budget.
+7. Preserves `payload["_last_input_id"]` so the next
+   `if_last_input_id` precondition can be evaluated.
+
+The caller's `await run.result()` resolves to `X` directly (typed
+as the handler's `Output`). No wrapper class.
 
 The next `.run(task_id=same, input=new)` or
 `.start(task_id=same, input=new)` transitions the status back to
-`in_progress`, **clears the persisted output** (both
-`payload["output"]` and the `_output` attachment, in a single
-co-PATCH per §23.8 item 8) so the suspended-turn output never
-contaminates the resumed turn's record, and re-invokes the handler
-with `ctx.entry_mode="resumed"`, `ctx.input=new`, and `ctx.metadata`
+`in_progress` and re-invokes the handler with
+`ctx.entry_mode="resumed"`, `ctx.input=new`, and `ctx.metadata`
 re-hydrated.
 
-This same machinery is what multi-turn conversations and
-human-in-the-loop approval flows ride. The framework does NOT
-distinguish "multi-turn" from "single-call with one suspend" — they
-are the same primitive applied iteratively.
+The same machinery is what multi-turn conversations and
+human-in-the-loop approval flows ride.
+
+One-shot tasks do NOT use this mechanism. A one-shot `@task`
+handler's `return X` is a terminal completion: the framework
+resolves the caller's `.result()` with `X` and then deletes the
+record (one-shot is always ephemeral).
+
+#### Multi-turn raise semantics
+
+If a multi-turn handler RAISES (an unhandled exception other than
+`asyncio.CancelledError`), the chain still transitions to
+`suspended` (NOT `completed` / `failed`) so subsequent turns can
+continue:
+
+1. Transitions to `suspended` with
+   `suspension_reason="run_completion"`.
+2. NO `payload["error"]` is written — the chain record does not
+   carry the per-turn failure diagnostic.
+3. The framework emits a structured ERROR log named
+   `durable_task_handler_failure` with `task_id`, `input_id`,
+   `error_type`, `error_message`.
+4. The caller's `await run.result()` raises
+   `TaskFailed(error=TaskErrorDict(...))`.
+5. Queued steerers (multi-turn `steerable=True`) promote per §12:
+   the next queued input becomes the next turn's input, and the
+   handler re-invokes with `ctx.entry_mode="resumed"`,
+   `ctx.is_steered_turn=True`.
+
+#### Chain identity: `input_id` and `if_last_input_id`
+
+Both `.run()` and `.start()` accept two optional keyword arguments
+that thread caller-supplied chain identity through the persisted
+record:
+
+- **`input_id`** — record-only. The framework writes
+  `payload["_last_input_id"] = input_id` after accepting the input;
+  no precondition is checked.
+- **`if_last_input_id`** — precondition. The framework requires the
+  stored `_last_input_id` to equal `if_last_input_id` (the
+  predecessor the caller claims to be extending). Mismatch raises
+  `LastInputIdPreconditionFailed(actual_last_input_id=<stored>)`.
+
+For multi-turn, `input_id` is the per-turn identity. For one-shot,
+`input_id` defaults to `task_id` (the 1:1 invariant `task_id ==
+input_id`).
+
+Implementations MUST reject `if_last_input_id` provided without
+`input_id` (`TypeError` at the call site). The pair is orthogonal:
+`input_id` alone is idempotency / chain-head tracking;
+`(input_id, if_last_input_id)` together is HTTP-`If-Match`-style
+chain extension.
 
 #### Chain identity: `input_id` and `if_last_input_id`
 
@@ -1618,36 +1666,20 @@ tick is computed dynamically from the per-task last-refresh time
 (NOT a fixed cadence), so a PATCH within the last `interval`
 seconds fully shadows the next heartbeat. See §56.
 
-### §26. Recovery `POST /tasks/resume` endpoint
+### §26. Recovery — internal lifecycle, no public HTTP endpoint
 
-The framework exposes a single Starlette-compatible HTTP route to
-allow the platform (or any external trigger) to invoke a
-suspended task's resume callback:
+There is no HTTP route for resume. Resume is initiated from
+caller code via the normal `Task.start` / `Task.run` (one-shot)
+or `MultiTurnTask.start` / `MultiTurnTask.run` (multi-turn) entry
+points. The framework's lifecycle state machine transitions a
+`suspended` task back to `in_progress` and re-enters the handler
+without exposing a server-side endpoint.
 
-```
-POST /tasks/resume
-Content-Type: application/json
-
-{"task_id": "<task-id>"}
-```
-
-Response codes:
-
-| Code | Meaning |
-|---|---|
-| `202 Accepted` | Resume dispatched. |
-| `400 Bad Request` | Malformed JSON, missing/non-string `task_id`. |
-| `404 Not Found` | Task not found OR not in any resumable state (e.g. missing record entirely; the framework's `handle_resume` raises an exception whose message contains the substring `"not found"`). |
-| `409 Conflict` | Task is already in a non-resumable state — `handle_resume` raised an exception whose message contains `"not 'suspended'"`, `"already"`, or `"conflict"`. The typical case: caller tried to resume a task whose status is `in_progress`. |
-| `503 Service Unavailable` | Task manager singleton not initialized — `get_task_manager()` raised `RuntimeError`. |
-| `500 Internal Server Error` | Any other unhandled exception during `handle_resume`. |
-
-The body is empty on all responses. Implementations exposing the
-framework over HTTP MUST register this route at exactly this path.
-
-This is the only HTTP route the framework itself contributes. All
-other HTTP plumbing (responses, invocations) lives in their
-respective packages.
+Crash recovery for tasks that died mid-`in_progress` is handled
+internally by the periodic recovery scanner described in §55:
+the scanner detects abandoned leases and re-invokes the handler
+with the persisted `payload["input"]` and
+`entry_mode="recovered"`.
 
 ---
 
@@ -2042,35 +2074,67 @@ MUST expose. Names are given in the Python style; idiomatic naming
 in other languages is acceptable but the *behavior* and *parameters*
 MUST match.
 
-### §32. `task` decorator and `TaskOptions`
+### §32. `task` and `multi_turn_task` decorators
 
-The `task` decorator wraps an `async def fn(ctx: TaskContext[I]) -> O`
-function and returns a `Task[I, O]` handle.
+The framework exposes **two decorators**. Each wraps an
+`async def fn(ctx: TaskContext[Input]) -> Output` function and
+returns a typed handle of a **distinct class**.
 
 ```
 @task(
-    name:        str | None = None,                     # default: fn.__qualname__
-    title:       str | Callable[[I, str], str] | None = None,
-    timeout:     timedelta | None = None,
-    ephemeral:   bool = True,
-    retry:       RetryPolicy | None = None,
-    steerable:   bool = False,
+    name:    str,                       # REQUIRED
+    title:   str | None = None,         # static; no callable factory
+    timeout: timedelta | None = None,
+    retry:   RetryPolicy | None = None,
 )
+async def one_shot(ctx: TaskContext[I]) -> O: ...
+# → Task[I, O]
+
+@multi_turn_task(
+    name:      str,                     # REQUIRED
+    title:     str | None = None,
+    timeout:   timedelta | None = None,
+    retry:     RetryPolicy | None = None,
+    steerable: bool = False,            # opt-in steering queue
+)
+async def chain(ctx: TaskContext[I]) -> O: ...
+# → MultiTurnTask[I, O]
 ```
+
+Both decorators accept ONLY the kwargs listed. Unknown kwargs raise
+`TypeError` at decoration time. `title` is a static string — the
+callable-factory form is not accepted (rarely used, simpler surface,
+cleaner type).
+
+Per-decorator kwarg semantics:
 
 | Kwarg | Meaning |
 |---|---|
-| `name` | Stable identity for recovery routing — written to `source.name` and the `_task_name` tag. Always set explicitly in production code; changing it strands existing tasks. |
-| `title` | Human-readable title (string or callable evaluating to one); written to `TaskInfo.title`. |
-| `timeout` | Per-turn cooperative budget (§14). When elapsed, the framework sets `ctx.timeout_exceeded` then `ctx.cancel`. |
-| `ephemeral` | If `True`, the framework deletes the persisted record on terminal exit. Default `True`. |
-| `retry` | `RetryPolicy` for handler-raised exceptions (§15). |
-| `steerable` | Enables `.start()`-on-`in_progress` to queue a steering input instead of raising `TaskConflictError` (§12). |
+| `name` | Stable identity for recovery routing — written to `source.name` and the `_task_name` tag. Changing it strands existing tasks. |
+| `title` | Human-readable title written to `TaskInfo.title`. |
+| `timeout` | Per-turn cooperative wall-clock watchdog (§14). When elapsed, the framework sets `ctx.timeout_exceeded` then `ctx.cancel`. |
+| `retry` | `RetryPolicy` for handler-raised exceptions (§15). `None` (default) = no retry. |
+| `steerable` | (`@multi_turn_task` only.) Enables `.start()` against an in-flight chain to queue a steering input instead of raising `TaskConflictError` (§12). |
+
+There is no `ephemeral` kwarg. One-shot `@task` is **always**
+ephemeral — the record is deleted on terminal exit. Multi-turn
+`@multi_turn_task` is **never** ephemeral — the chain stays alive
+in `suspended` between turns and is removed only via
+`MultiTurnTask.delete(task_id)` (§35).
 
 All decorator options are recovery-safe: after a crash the framework
-only knows about the registered decorator's view; per-call overrides
-would silently disappear. The framework offers `Task.options(**overrides)`
-to derive a variant with overrides without re-defining the function.
+only knows about the registered decorator's view. Per-call option
+overrides are deliberately not supported.
+
+The handler's first parameter MUST be named `ctx`. The framework
+binds positionally, but it validates the name at decoration time so
+guide examples and call sites stay consistent.
+
+The two return classes (`Task[I, O]` and `MultiTurnTask[I, O]`)
+are deliberately distinct (NOT a subclass relationship). The type
+checker can therefore enforce "no `.delete()` on one-shot" and
+"multi-turn `get_active_run` requires `(task_id, input_id)`"
+statically.
 
 #### Framework-owned constants exposed on this surface
 
@@ -2091,131 +2155,178 @@ MUST use these exact values for byte-compatibility with the canonical
 Python implementation; any value change would silently change
 recovery / overflow behavior across processes that share a store.
 
-### §33. `Task` handle
+### §33. `Task` (one-shot) and `MultiTurnTask` (multi-turn) handles
 
-The decorated function becomes a `Task[I, O]` exposing exactly two
-keyword-only entry points (no positional args):
+The two decorators produce two distinct classes. Their entry-point
+signatures differ in identifier rules: one-shot `task_id` is
+OPTIONAL (auto-generated as a GUID when omitted, per the 1:1
+one-shot invariant `task_id == input_id`); multi-turn `task_id` is
+MANDATORY (it identifies the chain).
 
 ```
-async def run(
-    *,
-    task_id:           str,
-    input:             I,
-    input_id:          str | None = None,
-    if_last_input_id:  str | None = None,
-) -> TaskResult[O]: ...
+class Task(Generic[Input, Output]):
+    name: str
 
-async def start(
-    *,
-    task_id:           str,
-    input:             I,
-    input_id:          str | None = None,
-    if_last_input_id:  str | None = None,
-) -> TaskRun[O]: ...
+    async def run(
+        self, *,
+        input:            Input,
+        task_id:          str | None = None,
+        input_id:         str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> Output: ...
+
+    async def start(
+        self, *,
+        input:            Input,
+        task_id:          str | None = None,
+        input_id:         str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> TaskRun[Output]: ...
+
+    async def get_active_run(
+        self, task_id: str,
+    ) -> TaskRun[Output] | None: ...
+
+
+class MultiTurnTask(Generic[Input, Output]):
+    name: str
+
+    async def run(
+        self, *,
+        task_id:          str,
+        input:            Input,
+        input_id:         str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> Output: ...
+
+    async def start(
+        self, *,
+        task_id:          str,
+        input:            Input,
+        input_id:         str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> TaskRun[Output]: ...
+
+    async def get_active_run(
+        self, task_id: str, input_id: str,
+    ) -> TaskRun[Output] | None: ...
+
+    async def delete(self, task_id: str) -> None: ...
 ```
 
-`.run()` blocks until the task reaches a terminal-for-this-caller
-state and returns a `TaskResult` (or raises a typed exception).
+`.run()` blocks until the run / turn reaches a terminal-for-this-
+caller state and returns the handler's `Output` directly, or raises
+a typed exception (§39).
 
-`.start()` returns immediately with a `TaskRun` handle the caller
-can poll, stream, or `await handle.result()` on.
+`.start()` returns immediately with a `TaskRun[Output]` handle the
+caller can `await` (sugar for `.result()`), `await .result()` on,
+or `.cancel()`. The handle's public surface is described in §35.
 
-Both accept the same `input_id` / `if_last_input_id` chain primitives
-(§11). Implementations MUST raise at the call site when
-`if_last_input_id` is provided without `input_id`.
+Both `.run` and `.start` accept the same `input_id` /
+`if_last_input_id` chain primitives (§11). Implementations MUST
+raise `TypeError` at the call site when `if_last_input_id` is
+provided without `input_id`.
 
-`Task` also exposes:
+`get_active_run` looks up the currently-running run / turn:
 
-- `Task.options(**overrides) -> Task` — derive a new handle with
-  different option values, sharing the same function.
-- `Task.get_active_run(task_id) -> TaskRun | None` — look up the
-  currently-running task by id. Behavior: (1) checks the in-process
-  active-task table; if found, returns the bound `TaskRun`. (2)
-  Otherwise consults the store via `provider.get(task_id)`. If
-  the record exists with status `in_progress` and the lease is
-  dead (per `_lease_is_dead`, §22), this method INLINE-RECLAIMS
-  the task — same code path as `.start()`'s "reclaim sub-case"
-  — and returns a `TaskRun` bound to the newly-spawned recovery
-  execution. If the record does not exist OR status is not
-  reclaimable from this process's perspective, returns `None`.
-  Implementers SHOULD make this method idempotent against a
-  recently-completed reclaim — calling twice in quick succession
-  should not start two recovery executions.
-- `Task.get(task_id) -> TaskSnapshot | None` — read-only
-  introspection for any non-deleted task. Returns a
-  `TaskSnapshot` (§35a) hydrated from `provider.get(task_id)`,
-  resolving any promoted `_output` attachment per §20. Returns
-  `None` if the record does not exist. **Never reclaims, never
-  spawns a recovery execution, never extends the lease, never
-  takes a write lock.** Works for any status (pending,
-  in_progress, suspended, completed). Mirrors the instance-method
-  shape of `get_active_run` (this is the read-only sibling). MUST
-  raise `RuntimeError` if no task manager has been initialized in
-  the calling process. Same `Task` instance routing as
-  `get_active_run` — calling on the wrong `Task` instance is a
-  programmer error and the framework MAY check the stored
-  function-name tag matches.
+- One-shot (`Task.get_active_run(task_id)`): (1) checks the
+  in-process active-task table; if found, returns the bound
+  `TaskRun`. (2) Otherwise consults the store via
+  `provider.get(task_id)`. If the record exists with status
+  `in_progress` and the lease is dead (per `_lease_is_dead`,
+  §22), this method INLINE-RECLAIMS the task — same code path
+  as `.start()`'s "reclaim sub-case" — and returns a `TaskRun`
+  bound to the newly-spawned recovery execution. If the record
+  does not exist OR status is not reclaimable from this
+  process's perspective, returns `None`. Implementers SHOULD
+  make this method idempotent against a recently-completed
+  reclaim.
+- Multi-turn (`MultiTurnTask.get_active_run(task_id, input_id)`):
+  returns the in-flight handle iff the chain is currently
+  running with the **exact** `input_id`; otherwise `None`. The
+  required `input_id` argument prevents accidental cross-turn
+  attach.
+
+`MultiTurnTask.delete(task_id)` force-removes the chain: cancels
+the in-flight turn (active caller's `.result()` resolves with
+`TaskCancelled()`), resolves all queued steerer callers' futures
+with `TaskCancelled()`, and force-deletes the record. Idempotent
+(no-op if the chain is already gone).
 
 There is no per-call override for `title` / `retry` / `steerable` /
-`ephemeral` / `timeout` — all of those are decorator-configured for
-recovery safety.
+`timeout` — all of those are decorator-configured for recovery
+safety.
+
+The `Task` class has **no** `.delete()` method. One-shot tasks
+are always ephemeral; the framework deletes the persisted record
+on terminal exit.
 
 ### §34. `TaskContext`
 
-The single argument every handler receives. Properties:
+The single argument every handler receives. Read-only properties:
 
 | Property | Type | Description |
 |---|---|---|
-| `input` | `I` | The typed input value. |
-| `entry_mode` | `"fresh" \| "resumed" \| "recovered"` | Why this turn started (§6). |
+| `input` | `Input` | The typed input value. |
 | `task_id` | `str` | Task identity. |
+| `input_id` | `str` | Per-turn input identity. For one-shot, defaults to `task_id` (1:1 invariant). For multi-turn, the framework auto-generates a GUID per turn unless the caller supplied one. |
+| `entry_mode` | `"fresh" \| "resumed" \| "recovered"` | Why this turn started (§6). |
 | `metadata` | `TaskMetadata` | Callable namespace facade (§17). |
 | `cancel` | event-like (`asyncio.Event` in Python) | Set when cancellation is requested for any reason. |
 | `shutdown` | event-like | Set when the container is shutting down. Precondition for `exit_for_recovery()`. |
 | `timeout_exceeded` | `bool` | True once the per-turn timeout fired. Set BEFORE `cancel` (§13 ordering invariant). Never reset within a turn. |
 | `cancel_requested` | `bool` | True once external `TaskRun.cancel()` was called. Set BEFORE `cancel`. Never reset within a turn. |
-| `pending_input_count` | `int` | Live count of currently queued steering inputs. Designed to be computed on every access via an internal callable provider (NOT a stored snapshot) so it reflects inputs queued mid-handler. Reads as `0` for non-steerable tasks AND for any provider failure (failure-tolerant). **Known gap (canonical Python implementation):** the in-memory side-channel that updates the live count is not currently populated by the steering append path, so handlers observe `0` even when `ctx.cancel` is set by steering. Other-language implementers MUST wire the side-channel from the steering-append path so this property reflects reality; the spec invariant (live count) is the design intent. |
+| `pending_input_count` | `int` | Live count of currently queued steering inputs (multi-turn `steerable=True` only). Reads as `0` for non-steerable tasks AND for any provider failure (failure-tolerant). Computed on every access so it reflects inputs queued mid-handler. |
 | `is_steered_turn` | `bool` | True iff this turn was constructed by the steering-drain code path. False otherwise. |
 | `retry_attempt` | `int` | Cross-lifetime retry counter (§15). |
-| `recovery_count` | `int` | Increments each time the task was re-acquired by a new lifetime. Mirrored from the lease's `generation` field at construction time. |
 
-Methods:
+Public method:
 
 ```
-async def suspend(*, output: Any = None, reason: str | None = None) -> Suspended: ...
-async def exit_for_recovery() -> Any: ...
+async def exit_for_recovery() -> None: ...
 ```
-
-`suspend(output=, reason=)` — see §11. Implementations MAY accept
-both positional and keyword shorthand for `output=`. MUST be used
-as `return await ctx.suspend(...)` — the returned value is an
-opaque framework sentinel that the manager interprets as "transition
-to suspended"; storing or wrapping the sentinel without returning
-it leaves the task in `in_progress` with no path back.
 
 `exit_for_recovery()` — see §16. MUST raise `RuntimeError` if
-`shutdown.is_set() == False`; otherwise returns a private framework
-sentinel that the manager interprets to flush metadata, release the
-lease, and preserve `in_progress` status. Like `suspend()`, MUST be
-used as `return await ctx.exit_for_recovery()`.
+`shutdown.is_set() == False`; otherwise releases the lease without
+writing a terminal status, leaves the task `in_progress`, and raises
+`TaskDeferred` upward to the caller of `.result()`. The recovery
+scanner re-invokes the handler with the persisted `payload["input"]`
+in a future process lifetime.
+
+`TaskContext` has NO `suspend()` method. Multi-turn handlers end a
+turn with bare `return X`; the framework treats the return as an
+implicit suspend (chain stays alive in `suspended`; caller's
+`await run.result()` resolves to `X`).
+
+The handler's first parameter MUST be named `ctx`. The framework
+binds positionally, but it validates the name at decoration time so
+guide examples and call sites stay consistent.
 
 Implementations MUST NOT expose public setters for any cause boolean
 or counter. They are framework-owned read-only fields.
 
 ### §35. `TaskRun`
 
-The handle returned by `.start()`. Useful members:
+The handle returned by `.start()`. Slim public surface:
 
-| Member | Description |
-|---|---|
-| `await run.result()` | Block until terminal-for-this-caller; returns `TaskResult` or raises a typed exception. |
-| `await run.cancel()` | Signal external cancellation. MUST set `ctx.cancel_requested = True` BEFORE setting `ctx.cancel` (ordering invariant — handler observing `ctx.cancel` is guaranteed to see at least one cause boolean already True). The handler picks the terminal shape. |
-| `await run.delete()` | Delete the persisted record. Idempotent. Provider exceptions whose message contains the substring `"not found"` (case-insensitive) MUST be re-raised as `TaskNotFound(task_id)`; other exceptions propagate unchanged. |
-| `await run.refresh()` | Re-fetch status, lease expiry count, and metadata snapshot from the store. |
-| `run.status` | Last known `TaskStatus`. |
-| `run.metadata` | Last known metadata dict snapshot. |
-| `run.lease_expiry_count` | Last known lease `expiry_count`. |
-| `await run` | Awaiting the run is sugar for `run.result()`. |
+| Member | Type | Description |
+|---|---|---|
+| `run.task_id` | `str` | Task identity. |
+| `run.input_id` | `str` | Per-turn input identity. |
+| `run.metadata` | `TaskMetadata` | Live reference to the run's metadata facade (the same instance the handler sees as `ctx.metadata`). |
+| `await run.result()` | `Output` | Block until terminal-for-this-caller; returns the handler's typed return value directly OR raises a typed exception (§39). |
+| `await run.cancel()` | `None` | Signal cooperative cancellation. MUST set `ctx.cancel_requested = True` BEFORE setting `ctx.cancel` (ordering invariant — handler observing `ctx.cancel` is guaranteed to see at least one cause boolean already True). The handler picks the terminal shape. |
+| `await run` | `Output` | Awaiting the run directly is sugar for `await run.result()`. |
+
+That is the entire surface. The handle deliberately has NO
+`status` / `delete` / `refresh` / `lease_expiry_count`:
+
+- Chain-level deletion uses `MultiTurnTask.delete(task_id)`.
+- Read-only inspection of the persisted record goes through
+  the task manager's provider (`await manager.provider.get(task_id)`
+  returns the internal `TaskInfo`).
+- Lease bookkeeping is framework-internal — developers don't
+  observe it.
 
 **`TaskRun` is NOT an async iterable.** It does not implement
 `__aiter__` / `__anext__`; there is no `async for chunk in run`
@@ -2235,72 +2346,42 @@ removed. If a developer wants a single `await run` plus an
 incremental stream, they explicitly attach to the streaming
 registry (Part VI).
 
-### §35a. `TaskSnapshot`
 
-The return type of `Task.get(task_id)`. A read-only point-in-time
-view of any non-deleted task — pending, in_progress, suspended, or
-completed. Same shape regardless of status.
+### §35a. Read-only inspection — internal
 
-| Field | Type | Description |
-|---|---|---|
-| `task_id` | `str` | The persisted task id. |
-| `status` | `TaskStatus` literal (`pending\|in_progress\|suspended\|completed`) | The four-value stored status (§24). |
-| `created_at` | `datetime` | Server-stamped record-creation time. |
-| `updated_at` | `datetime` | Server-stamped last-PATCH time. |
-| `started_at` | `datetime \| None` | Time the first turn entered `in_progress`. Set once on the first `pending → in_progress` (or `create(status="in_progress")`) transition and **never updated thereafter** — lease re-acquisition, recovery scanner takeover, and suspend/resume cycles all preserve the original value. `None` while still `pending`. |
-| `completed_at` | `datetime \| None` | Time the record transitioned to terminal `completed`. `None` for non-terminal statuses. |
-| `output` | `O \| None` | The resolved output value. The framework reads `payload["output"]`, follows the `_output` attachment if it is a ref (§20, §23), and surfaces the typed value (`O` on success; the suspend envelope value `X` for suspended; `None` if the handler returned None or the task has not produced output). |
-| `error` | `dict \| None` | Structured error info (`{"type": ..., "message": ..., "details": ...}`) for failed terminations. `None` for non-failure status. |
-| `suspension_reason` | `str \| None` | The `reason=` argument passed to the last `ctx.suspend()` call. `None` unless status is `suspended`. |
-| `metadata` | `dict[str, Any]` | The default-namespace metadata only (parity with what the runtime exposes via `ctx.metadata`). Non-default namespaces are NOT surfaced on the snapshot. |
-| `lease_expiry_count` | `int` | Current expiry counter (§22); `0` unless the lease has expired at least once. |
+There is no `TaskSnapshot` type and no `Task.get(task_id)` method
+on the public surface. Read-only inspection of a persisted task
+record is done through the task manager's provider directly —
+`await manager.provider.get(task_id)` returns the internal
+`TaskInfo` envelope, which is the framework's own storage shape
+(see §19). The public decorator surface stays small and
+write-shaped on purpose: anything an external observer wants
+about a task record is available on `TaskInfo`, and the framework
+does not project a parallel "snapshot wrapper" onto the public
+surface.
 
-Fields deliberately excluded from `TaskSnapshot`:
+For active-execution inspection (attach to an in-flight run from
+a different coroutine or request handler), use
+`Task.get_active_run(task_id)` / `MultiTurnTask.get_active_run(task_id,
+input_id)` — both return a `TaskRun` handle bound to the live
+execution (or `None` if the task is not currently in flight in
+this process and cannot be reclaimed inline).
 
-- `payload` — internal envelope (carries refs, framework slots).
-- `attachments` — internal storage; output is materialized into
-  `output` already.
-- `lease` / `lease_owner` / `lease_etag` — server-driven control
-  plane; not relevant to a read-only viewer.
-- `_steering` payload subtree — opaque framework state.
-- The `etag` — `TaskSnapshot` is read-only; CAS is for write paths.
+### §36. `TaskRun.result()` returns `Output` directly
 
-`TaskSnapshot` is a frozen value object. Implementations SHOULD NOT
-expose any mutator. The instance the caller receives reflects the
-record at the moment `Task.get` ran; re-call `Task.get` to refresh.
+`await TaskRun.result()` (and equivalently `await task_run`)
+resolves to the handler's typed return value of type `Output` —
+no wrapper class, no envelope. Failure / cancellation /
+deferral conditions surface as typed exceptions raised at the
+`await` site (see §39).
 
-`Task.get` returns `None` when the record does not exist (deleted
-or never created). It MUST raise `RuntimeError` if no task manager
-is initialized in the calling process (mirrors `get_active_run`).
-It MUST NOT raise on a non-existent task — `None` is the documented
-shape.
+There is no `TaskResult` wrapper class and no `Suspended` sentinel
+on the public surface. Multi-turn handlers use a bare `return X`
+to end a turn; the chain implicit-suspends and the caller's
+`await run.result()` resolves to `X` directly. The framework does
+not persist `X` anywhere in the task record — `X` lives only in
+the in-process future the caller is awaiting.
 
-
-
-`TaskResult[O]` is the caller-observable outcome of a single
-`.run()` / `.result()` call. Two values for its status:
-
-| `TaskResult.status` | Meaning | `output` |
-|---|---|---|
-| `"completed"` | Handler returned normally. | The return value. |
-| `"suspended"` | Handler called `ctx.suspend(output=X)`. | `X` (the suspend envelope). |
-
-Convenience properties: `is_completed`, `is_suspended`.
-Also exposes `suspension_reason: str | None` (populated only on the
-suspended branch).
-
-This `TaskResult.status` literal is DIFFERENT from the four-value
-`TaskStatus` literal (`pending|in_progress|suspended|completed`).
-The four-value literal is the *stored lifecycle state*; the
-two-value `TaskResult.status` is the *caller-observable outcome of
-this single call*. Unsuccessful terminations (failure / cancel)
-are stored as `completed` but communicated to the caller via typed
-exceptions, never as a third `TaskResult.status` value.
-
-`Suspended[O]` is the type the handler returns from
-`return await ctx.suspend(output=X, reason=R)`. It is what the
-framework writes into the suspend envelope and what the caller's
-`TaskResult.output` carries on the suspended branch.
 
 ### §37. `TaskMetadata`
 
@@ -2411,50 +2492,81 @@ synchronized retries across instances.
 
 ### §39. Error taxonomy
 
-The framework defines the following exception hierarchy. All
-runtime conditions are surfaced via one of these.
+The public exception surface is seven types. Every developer-observable
+condition the framework can signal surfaces through one of these. Each
+carries only **new information** the caller doesn't already have (the
+caller already knows the `task_id` they passed, and has `task_id` /
+`input_id` on the `TaskRun` handle they hold); exceptions do not
+redundantly carry `task_id`.
 
-#### Developer-facing (catch these)
+#### Outcome exceptions (raised from `.run()` / `TaskRun.result()`)
 
-| Exception | Raised by | When |
+| Exception | Fields | When |
 |---|---|---|
-| `TaskFailed(task_id, error: dict)` | `.run()` / `.result()` | Handler raised an unhandled exception. `error` is a structured dict `{type, message, cause?}`. |
-| `TaskCancelled(task_id)` | `.run()` / `.result()` | Handler ended via the cooperative-cancel path (e.g., re-raised `asyncio.CancelledError` after observing `ctx.cancel`) OR via `ctx.exit_for_recovery()`. MUST NOT inherit `asyncio.CancelledError` (would be suppressed by generic handlers). |
-| `TaskNotFound(task_id)` | `handle.result()` / `.start()` | Referenced `task_id` has been deleted between calls. |
-| `TaskConflictError(task_id, current_status)` | `.run()` / `.start()` / `handle.result()` (queued steerer) | Single error type for any "task is busy / not available" state — live-elsewhere non-steerable, evicted (split-brain protection), or terminal-with-queued-steerer. |
-| `LastInputIdPreconditionFailed(task_id, expected, actual)` | `.start(if_last_input_id=...)` | Chain precondition not satisfied. Subclass of `TaskPreconditionFailed`. |
-| `TaskPreconditionFailed(task_id, message)` | `.start(...)` | Base for input-acceptance preconditions. |
-| `SteeringQueueFull(task_id, max_pending)` | `.start(...)` against steerable | Queue is at its cap (9). |
-| `InputTooLarge(task_id, size_bytes, max_bytes)` | `.start()` / `.run()` (any input write site: `_input` or `_steering_input_<seq>`) | Input serialized > 2 MB. Subclass of `ValueError`. |
-| `OutputTooLarge(task_id, size_bytes, max_bytes)` | `.run()` / handler completion / `ctx.suspend(output=...)` | Output value serialized > 2 MB at the framework's output-write sites (`_handle_success`, `_handle_suspend`). Subclass of `ValueError`. |
+| `TaskFailed` | `error: TaskErrorDict \| TaskExhaustedRetriesErrorDict` | Handler raised an unhandled exception (or retries were exhausted). Inspect `error` for the structured diagnostic. |
+| `TaskCancelled` | — (bare) | This run / turn was cancelled: cooperative `TaskRun.cancel()` honoured by the handler raising `CancelledError`; per-turn `timeout=` watchdog honoured the same way; queued steerer cancelled before promotion; `MultiTurnTask.delete()` invalidated an in-flight run. Multi-turn chains stay alive (queued steerers promote per §11); one-shot is gone. |
+| `TaskDeferred` | — (bare) | Handler called `ctx.exit_for_recovery()` during shutdown. This lifetime is deferring — the task stays `in_progress` and the recovery scanner re-invokes the handler in a future process lifetime. Semantically DISTINCT from `TaskCancelled`. |
 
-`AttachmentTooLarge` and `AttachmentLimitExceeded` are **NOT
-developer-facing.** Attachments are a framework implementation
-detail (§23) — developers never name them, never set them, never
-need to know they exist. Surfacing those exception names on the
-developer API would leak the internal split between `payload` and
-`attachments` and would force developers to learn vocabulary
-that has no meaning at their layer.
+`TaskCancelled` MUST NOT inherit `asyncio.CancelledError` —
+generic `except CancelledError` handlers would swallow it
+silently, which is the wrong behavior for a task-level signal.
 
-Internally these conditions still exist; they are caught by the
-framework and converted to the right developer-facing exception
-based on which attachment key the framework was writing:
+`TaskCancelled` and `TaskDeferred` carry **no fields**. Cancellation
+causes can compound (e.g., `cancel_requested` AND `timeout_exceeded`
+fire together) and the framework cannot deterministically pick a
+single "reason" string. Causes are observable via the structured
+failure log (§structured-logs) and via the handler-side cause
+booleans on `TaskContext` (§34). For deferral, the meaning is
+uniform — there is nothing to disambiguate.
 
-- writes to `_input` or `_steering_input_<seq>` → `InputTooLarge`
-- writes to `_output` → `OutputTooLarge`
-- any other attachment key → `RuntimeError` (a framework bug; the
-  framework owns the only attachment keys in use, so reaching
-  this branch means the framework wrote a key it shouldn't have)
+`TaskFailed.error` is a `TypedDict`. The framework constructs one
+of two shapes:
 
-#### Internal (advanced / framework-internal)
+```
+class TaskErrorDict(TypedDict):
+    type: str         # exception class name, e.g. "ValueError"
+    message: str      # str(exc)
+    traceback: str    # traceback.format_exc()
 
-| Exception | Notes |
+class TaskExhaustedRetriesErrorDict(TypedDict):
+    type: Literal["exhausted_retries"]
+    attempts: int
+    last_error: str
+    last_error_type: str
+    traceback: str
+```
+
+The `TaskFailed.error` field union is `TaskErrorDict |
+TaskExhaustedRetriesErrorDict`; type-checkers can discriminate on
+the `type` literal.
+
+#### Pre-resolution exceptions (raised from `.run()` / `.start()`)
+
+| Exception | Fields | When |
+|---|---|---|
+| `TaskConflictError` | `current_status: str` | `.run` / `.start` against a task in a state that can't accept the call: one-shot in_progress or completed; non-steerable multi-turn in_progress. `current_status` lets the caller distinguish in-flight (attach via `get_active_run`) vs. terminal (need a new `task_id` or accept the existing outcome). |
+| `LastInputIdPreconditionFailed` | `actual_last_input_id: str \| None` | The `if_last_input_id` precondition does not match. Caller already knows what they passed via `if_last_input_id=`; `actual` is the new info. |
+| `SteeringQueueFull` | — (bare) | Multi-turn `steerable=True` only. Steering queue at capacity. Caller backs off / surfaces 429. |
+| `InputTooLarge` | — (bare) | Input write rejected because the serialized input exceeds the per-input cap. Caller shrinks or chunks the input. |
+
+#### Net surface
+
+Seven exceptions: `TaskFailed`, `TaskCancelled`, `TaskDeferred`,
+`TaskConflictError`, `LastInputIdPreconditionFailed`,
+`SteeringQueueFull`, `InputTooLarge`. Plus two `TypedDict`s
+(`TaskErrorDict`, `TaskExhaustedRetriesErrorDict`) and the public
+type alias `JSONValue` for the metadata value space.
+
+#### Internal exceptions (NOT part of the public surface)
+
+| Exception | Purpose |
 |---|---|
-| `_AttachmentTooLarge(task_id, attachment_key, size_bytes, max_bytes)` | Provider-level cap-violation signal. NOT exported from `durable/__init__.py`. Framework catches and re-raises as `InputTooLarge` / `OutputTooLarge` per the dispatch above. |
-| `_AttachmentLimitExceeded(task_id, current_count, max_count)` | Provider-level per-task attachment-count cap signal. NOT exported. Unreachable in normal framework operation (worst case is 11 of 20 slots — §23.2) — if it propagates, the framework converts it to `RuntimeError` at the boundary. |
-| `EtagConflict(task_id, message?)` | Optimistic concurrency conflict at the provider boundary. Framework retries internally; only escapes for low-level callers manipulating etags directly. |
-| `_HostedConflict(_code: str, status_code: int, message?, task_id?)` | Single internal type the hosted provider's response classifier raises for service responses carrying a structured error code. The framework matches on `_code` to dispatch (see §39.1). The local provider raises the same type with the same `_code` directly, so internal call-site code is provider-agnostic. NOT exported; never reaches developer code. |
-| `TransportClassifiedError(classification: "transient" \| "evicted" \| "conflict" \| "permanent")` | Hosted provider's classification wrapper around lower-level HTTP failures (timeouts, 5xx, eviction). Internal to hosted provider; framework dispatches based on `classification`. |
+| `TaskNotFound` | Internal classifier raised by the manager / provider when a record is missing. The public surface absorbs this: `MultiTurnTask.delete` is idempotent (no-op on missing record), `get_active_run` returns `None` on missing, and there is no `.get()` / `.refresh()` on `TaskRun`. Developers never catch `TaskNotFound`. |
+| `TaskPreconditionFailed` | Internal precondition-failure base. Specific precondition failures get their own typed subclass (e.g., `LastInputIdPreconditionFailed`); the bare base is not exported. |
+| `EtagConflict` | Optimistic concurrency conflict at the provider boundary. Framework retries internally; only escapes for low-level callers manipulating etags directly. |
+| `_HostedConflict(_code: str, status_code: int, ...)` | Single internal type the hosted provider's response classifier raises for service responses with a structured error code. The framework matches on `_code` to dispatch (see §39.1). The local provider raises the same type with the same `_code` directly, so internal call-site code is provider-agnostic. |
+| `_AttachmentTooLarge` / `_AttachmentLimitExceeded` | Provider-internal cap-violation signals. Framework catches at attachment-write sites and re-raises as `InputTooLarge` (input writes) based on the attachment-key prefix. |
+| `TransportClassifiedError(classification: "transient" \| "evicted" \| "conflict" \| "permanent")` | Hosted provider's classification wrapper around lower-level HTTP failures. Internal to hosted provider; framework dispatches on `classification`. |
 
 The underscore prefix on `_AttachmentTooLarge` /
 `_AttachmentLimitExceeded` / `_HostedConflict` is the Python-canonical
@@ -2462,18 +2574,6 @@ signal for "package-private; never imported by developer code." Other-
 language implementations MUST place the equivalent exceptions at
 package-private visibility — never as documented developer-facing
 types.
-
-`TaskCancelled` does NOT inherit `asyncio.CancelledError` by
-design. Wrapping it under `CancelledError` causes generic asyncio
-`except CancelledError` handlers to swallow it silently, which is
-the wrong behavior for a *task-level* signal (it should propagate
-to the caller's awaiting `.result()`).
-
-The earlier `TaskTerminated` exception (and corresponding
-`TaskRun.terminate()` API) has been REMOVED. The framework no
-longer supports forced termination. Callers use `TaskRun.cancel()`
-and the handler picks the terminal shape via its reaction to
-`ctx.cancel`.
 
 #### 39.1 Service error codes → internal `_HostedConflict` → developer-facing
 
@@ -2488,18 +2588,19 @@ table works against either backing.
 | Service `code` | HTTP | When emitted | Framework action |
 |---|---|---|---|
 | `task_immutable` | 409 | PATCH on a `completed` task (except no-op completed → completed) | Translate → `TaskConflictError(current_status="completed")`. |
-| `invalid_state_transition` | 409 | PATCH whose declared status transition is not in §24.1 matrix | **Framework bug** — the framework drives transitions, not the developer. Log + raise `RuntimeError` (developer's call should never have produced this; the framework's lifecycle code constructed a bad PATCH). |
-| `lease_held_by_another` | 409 | Lease acquisition / renewal against a record whose lease is held by a different owner (and not expired); or in_progress→pending with mismatched lease; or force-expire with mismatched lease and lease still live | Translate → `TaskConflictError(current_status="in_progress")`. |
+| `invalid_state_transition` | 409 | PATCH whose declared status transition is not in §24.1 matrix | **Framework bug** — the framework drives transitions, not the developer. Log + raise `RuntimeError`. |
+| `lease_held_by_another` | 409 | Lease acquisition / renewal against a record whose lease is held by a different owner (and not expired) | Translate → `TaskConflictError(current_status="in_progress")`. |
 | `task_already_exists` | 409 | CREATE on an existing `task_id` | Framework's lifecycle resolution branches on existing task; this only escapes if the framework's `.start()` race-resolution path is broken. Translate → `TaskConflictError(current_status=<observed status>)`. |
-| `lease_ownership_changed` | 409 | Service Cosmos race: between our read and our write, another owner stole the lease | Hosted-only. Treat as `lease_held_by_another` — same developer-observable behavior (lease is held by someone else). Local never raises this (no concurrent writers in a single-process file backend). |
+| `lease_ownership_changed` | 409 | Service Cosmos race: between read and write, another owner stole the lease | Hosted-only. Treat as `lease_held_by_another`. |
 | `etag_mismatch` | 412 | If-Match precondition failure | **Retry** with re-read (transparent to developer); after bounded retries exhausted, escape as `EtagConflict` (internal — only escapes to low-level callers). |
-| `invalid_request` | 400 | Any field-validation violation (§28a) or lease-rule violation (§22.1) or delete-without-force on non-terminal (§24.3) | Translate → `TaskPreconditionFailed(task_id, message)`. The message describes WHICH field / rule was violated. |
+| `invalid_request` | 400 | Any field-validation violation (§28a) or lease-rule violation (§22.1) or delete-without-force on non-terminal (§24.3) | Translate → internal `TaskPreconditionFailed`. For the specific `if_last_input_id` mismatch, translate → `LastInputIdPreconditionFailed(actual_last_input_id=<stored>)`. |
 
 **Zero new developer-visible exception types from this table.**
-All translation targets above already exist in the public
-exception hierarchy. The internal `_HostedConflict._code` strings
-never appear in developer code, error messages, docstrings, or
-exported names — they are pure dispatch keys.
+All translation targets above are either in the seven-name public
+surface or are internal types absorbed before reaching developer
+code. The internal `_HostedConflict._code` strings never appear in
+developer code, error messages, docstrings, or exported names —
+they are pure dispatch keys.
 
 ---
 
