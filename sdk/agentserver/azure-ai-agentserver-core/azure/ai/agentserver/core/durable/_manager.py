@@ -2024,7 +2024,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                         TaskCancelled,
                     )
 
-                    current_result_future.set_exception(TaskCancelled(task_id))
+                    current_result_future.set_exception(TaskCancelled())
                 break  # cancellation is never retried
 
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -2090,9 +2090,19 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 if not current_result_future.done():
                     if isinstance(exc, asyncio.CancelledError):
                         # Spec 022 FR-012/077 — bare TaskCancelled (no fields).
-                        current_result_future.set_exception(TaskCancelled(task_id))
+                        current_result_future.set_exception(TaskCancelled())
                     else:
                         current_result_future.set_exception(TaskFailed(task_id, error_dict))
+                    # Spec 022 FR-015 — discard callback so "Future exception
+                    # was never retrieved" doesn't fire when no caller awaits
+                    # (multi-turn: caller may have already moved on / GC'd).
+                    if is_multi_turn_failure:
+                        def _discard(fut: asyncio.Future[Any]) -> None:
+                            try:
+                                fut.exception()  # retrieve to silence asyncio
+                            except Exception:  # noqa: BLE001
+                                pass
+                        current_result_future.add_done_callback(_discard)
                 # Spec 016 FR-012 (US5) — legacy one-shot path: queued steerers
                 # see TaskConflictError on terminal failure since the task is done.
                 # Spec 022 FR-013 — multi-turn path: queued steerers PROMOTE
@@ -2619,16 +2629,23 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 exc_info=True,
             )
         # Spec 022 FR-015 — structured failure log/telemetry for every handler
-        # failure, independent of listener presence.
-        logger.warning(
+        # failure, independent of listener presence. Logged at ERROR per
+        # FR-015 (the chain has just lost a turn).
+        active = self._active_tasks.get(task_id)
+        input_id = None
+        if active is not None:
+            input_id = getattr(active.context, "input_id", None)
+        logger.error(
             "durable_task_handler_failure: task=%s exc_type=%s",
             task_id,
             type(exc).__name__,
             extra={
                 "event": "durable_task_handler_failure",
+                "event_name": "durable_task_handler_failure",
                 "task_id": task_id,
-                "exc_type": type(exc).__name__,
-                "exc_message": str(exc),
+                "input_id": input_id,
+                "error_type": type(exc).__name__,
+                "error_message": str(exc),
                 "primitive": "multi_turn_task",
             },
         )

@@ -1679,7 +1679,7 @@ class MultiTurnTask(Generic[Input, Output]):
         if active is not None:
             fut = getattr(active, "result_future", None)
             if fut is not None and not fut.done():
-                fut.set_exception(TaskCancelled(task_id))
+                fut.set_exception(TaskCancelled())
             # Signal the handler's cancel event so the running coroutine
             # winds down cooperatively.
             cancel_evt = getattr(active.context, "cancel", None)
@@ -1695,7 +1695,7 @@ class MultiTurnTask(Generic[Input, Output]):
         pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
         for queued_fut in pending:
             if not queued_fut.done():
-                queued_fut.set_exception(TaskCancelled(task_id))
+                queued_fut.set_exception(TaskCancelled())
 
         # 3. Force-delete the record (idempotent — swallow NotFound shapes).
         provider = getattr(mgr, "_provider", None)
