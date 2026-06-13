@@ -202,6 +202,53 @@ One commit per area + doc travel per Principle IX.
 
 **Test files**: 13 new + 2 extended (`test_entry_mode.py`, `test_contract_completeness.py`) + 1 in responses package + 3 e2e in invocations (`test_durable_research_live.py`, `test_durable_multiturn.py`, `test_durable_copilot_live.py`) + 2 structure/shippable-bar tests in invocations.
 
-**Last updated**: 2026-06-13 (initial drop alongside `plan.md`, plus FR-068b/c/d added for invocations samples migration per @RaviPidaparthi's reminder).
+**Last updated**: 2026-06-13 (Phase 0+1+2 partial + Phase 7 sample migration committed).
+
+### Implementation progress snapshot (2026-06-13)
+
+| Phase | Status | Notes |
+|---|---|---|
+| 0 (SOT + gap-list + cleanup) | ✅ 4/5 done | T-0.2 SOT rewrite incomplete — sub-agent failed silently after 66 min; needs targeted manual section-by-section edits. ~4361 line file. |
+| 1 (RED-first conformance tests) | ✅ 14/14 done | 13 new test files + meta-test extension; 110 RED tests collect, await Phase 2-7 implementation. |
+| 2 (decorator split + identifier + retry) | ✅ 6/6 done | `multi_turn_task` / `MultiTurnTask` / `TaskDeferred` / `JSONValue` / `TaskErrorDict` / `TaskExhaustedRetriesErrorDict` + module-level retry presets all live. Transitional `@task(steerable=...)` allowed with DeprecationWarning. RetryPolicy field-type FR-073 mismatch tracked as Phase 2 follow-up in gap-list.md. |
+| 3 (multi-turn raise + retry + auto-flush) | ⏳ 0/6 done | `_handle_failure` in `_manager.py` (~90 lines) needs split into `_handle_multi_turn_failure` per FR-053 7-step ordering. Multi-turn raise → `suspended` (not `completed`); queued steerers PROMOTE (not reject). HIGH-RISK refactor — touches ~30 existing tests asserting current `completed` semantics. |
+| 4 (storage / persistence) | ⏳ 0/5 done | Remove `_build_output_co_write` + all output PATCH sites in `_manager.py` (success / suspend / drain / failure paths). Remove `_OUTPUT_KEY` constant. Phase 4 reduces ~200 lines of `_manager.py`. |
+| 5 (public surface slim + exception taxonomy) | ⏳ 0/7 done | Delete `_result.py`, `_snapshot.py`. Slim `TaskRun` to FR-047 shape. Remove legacy `__all__` entries. Move `TaskNotFound` / `TaskPreconditionFailed` to `_exceptions_internal.py`. Strip `task_id` field from public exceptions. Will break ~100 existing tests that import legacy types. |
+| 6 (cancellation matrix + recovery) | ⏳ 0/8 done | FR-054-062 matrix — touches cancel/timeout paths in `_manager.py`. Queued-steerer cancel (FR-037). Inline-recovery uses persisted input (FR-064). |
+| 7 (downstream migration + docs) | ✅ 6/13 done (samples + responses hand-off) | T-7.0/7.1 stale folder removed + T-7.6 dev-guide partial done. T-7.7-7.11 sample migration committed (4 samples + structure test green). T-7.2-7.5 + T-1.13 responses-package migration hand-off to `feature/agentserver-responses-spec016` branch (file doesn't exist on this branch per commit `5c110099d6`). T-7.12 `durable-agent-demo` hand-off to `feature/agentserver-durable-agent-demo` branch. T-7.6 final guide rewrite + T-7.13 cross-area code review pending. |
+| 8 (final review + closeout) | ⏳ 0/7 done | Cross-area code review + SC-009 downstream audit + full test sweep + gap-list closeout. Blocked on Phase 3-6 completion. |
+
+**Total**: 32/73 tasks done (43%); 1 in-progress; 40 pending.
+
+**Test sweep**: 594 passed (+83 from 511 baseline), 117 failed RED, 5 skipped.
+
+**Branch commits this session**: 4 (`f32008d53f` Phase 0+1, `b46c0ed88c` Phase 2 partial, `5500481b09` LastInputIdPreconditionFailed shape, `d1cb8c5488` Phase 7 samples migration).
+
+### Remaining heavy work (genuinely multi-session)
+
+The remaining Phases 3-6 + 8 + T-0.2 + T-7.6 are substantial refactors:
+
+- **Phase 3** touches `_manager.py` `_handle_failure` (~90 lines) plus
+  callers; refactors raise semantics. Risk: ~30 existing tests regress.
+- **Phase 4** removes ~200 lines of output-write code from `_manager.py`
+  (success / suspend / drain / failure paths). Risk: ~20 existing tests
+  asserting output behavior regress.
+- **Phase 5** deletes 2 files (`_result.py`, `_snapshot.py`), slims
+  `TaskRun` (~150 lines), reshapes 9 exceptions, removes 7 legacy
+  `__all__` entries. Risk: ~100 existing tests break on imports.
+- **Phase 6** rewrites cancellation matrix in `_manager.py` (~150 lines
+  across cancel/timeout/recovery paths). Multiple subtle race
+  conditions per FR-061.
+- **T-0.2 SOT rewrite** is ~50 targeted edits across a 4361-line spec
+  document (sections §3, §16, §20, §32, §35a, §39).
+- **T-7.6 final dev-guide rewrite** per Q17 — touches `durable-task-guide.md`
+  end-to-end.
+- **Phase 8** code-review + audit + verification only after Phases 3-7
+  are GREEN.
+
+Estimated remaining effort: 30-50 hours of careful surgical work
+across multiple sessions. Each Phase 3-6 needs incremental commits to
+keep the test suite green throughout (one phase = many small commits,
+not one big bang).
 
 **Commit count estimate**: ~46 commits across Phases 0-8 (1-2 in Phase 0; 14 in Phase 1; 6 in Phase 2; 6 in Phase 3; 5 in Phase 4; 7 in Phase 5; 8 in Phase 6; 13 in Phase 7; 7 in Phase 8).
