@@ -52,25 +52,28 @@ class RetryPolicy:
     def __init__(
         self,
         *,
-        initial_delay: timedelta = timedelta(seconds=1),
+        initial_delay: timedelta | float = timedelta(seconds=1),
         backoff_coefficient: float = 2.0,
-        max_delay: timedelta = timedelta(seconds=60),
+        max_delay: timedelta | float = timedelta(seconds=60),
         max_attempts: int = 3,
         retry_on: tuple[type[Exception], ...] | None = None,
-        jitter: bool = True,
+        jitter: bool | float = True,
         _linear: bool = False,
     ) -> None:
-        if initial_delay.total_seconds() < 0:
+        # Spec 022 FR-073: accept both timedelta and float (seconds) for
+        # initial_delay / max_delay. Store as the type provided so
+        # ``policy.initial_delay == 1.0`` works for float callers and
+        # ``.total_seconds()`` works for timedelta callers.
+        def _seconds(v: timedelta | float) -> float:
+            return v.total_seconds() if isinstance(v, timedelta) else float(v)
+
+        if _seconds(initial_delay) < 0:
             raise ValueError(f"initial_delay must be >= 0, got {initial_delay}")
-        if max_attempts < 1 and not (
-            max_attempts == 1 and initial_delay == timedelta(0)
-        ):
-            pass  # allow no_retry preset
         if backoff_coefficient < 1.0:
             raise ValueError(
                 f"backoff_coefficient must be >= 1.0, got {backoff_coefficient}"
             )
-        if max_delay < initial_delay:
+        if _seconds(max_delay) < _seconds(initial_delay):
             raise ValueError(
                 f"max_delay ({max_delay}) must be >= initial_delay ({initial_delay})"
             )
@@ -101,15 +104,22 @@ class RetryPolicy:
         :return: Delay in seconds before the next attempt.
         :rtype: float
         """
-        base_seconds = self.initial_delay.total_seconds()
+        base_seconds = (
+            self.initial_delay.total_seconds()
+            if isinstance(self.initial_delay, timedelta)
+            else float(self.initial_delay)
+        )
+        max_seconds = (
+            self.max_delay.total_seconds()
+            if isinstance(self.max_delay, timedelta)
+            else float(self.max_delay)
+        )
         if self._linear:
-            # Linear: delay = initial_delay * (attempt + 1)
             raw = base_seconds * (attempt + 1)
         else:
-            # Exponential: delay = initial_delay * coefficient ^ attempt
             raw = base_seconds * (self.backoff_coefficient**attempt)
 
-        capped = min(raw, self.max_delay.total_seconds())
+        capped = min(raw, max_seconds)
 
         if self.jitter:
             capped *= random.uniform(0.75, 1.25)
@@ -167,6 +177,7 @@ class RetryPolicy:
         max_attempts: int = 3,
         initial_delay: timedelta = timedelta(seconds=1),
         max_delay: timedelta = timedelta(seconds=60),
+        backoff_coefficient: float = 2.0,
         jitter: bool = True,
     ) -> RetryPolicy:
         """Exponential backoff — the most common pattern.
@@ -179,6 +190,8 @@ class RetryPolicy:
         :paramtype initial_delay: ~datetime.timedelta
         :keyword max_delay: Upper bound.
         :paramtype max_delay: ~datetime.timedelta
+        :keyword backoff_coefficient: Multiplier applied per attempt.
+        :paramtype backoff_coefficient: float
         :keyword jitter: Add ±25% randomization.
         :paramtype jitter: bool
         :return: A configured ``RetryPolicy``.
@@ -186,7 +199,7 @@ class RetryPolicy:
         """
         return cls(
             initial_delay=initial_delay,
-            backoff_coefficient=2.0,
+            backoff_coefficient=backoff_coefficient,
             max_delay=max_delay,
             max_attempts=max_attempts,
             jitter=jitter,

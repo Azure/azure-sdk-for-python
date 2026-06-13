@@ -462,11 +462,11 @@ class Task(Generic[Input, Output]):
     async def run(
         self,
         *,
-        task_id: str,
+        task_id: str | None = None,
         input: Input,  # noqa: A002
         input_id: str | None = None,
         if_last_input_id: str | None = None,
-    ) -> TaskResult[Output]:
+    ) -> Output:
         """Run a lifecycle-aware durable task and return the result.
 
         Automatically starts, resumes, or recovers the task based on its
@@ -528,6 +528,11 @@ class Task(Generic[Input, Output]):
             last input id.
         :raises TypeError: If ``if_last_input_id`` is supplied without ``input_id``.
         """
+        # Spec 022 FR-067: one-shot Task.start/.run — task_id is OPTIONAL,
+        # auto-generated as a GUID when not supplied.
+        if task_id is None:
+            import uuid as _uuid  # pylint: disable=import-outside-toplevel
+            task_id = _uuid.uuid4().hex
         _validate_task_id(task_id)
         if if_last_input_id is not None and input_id is None:
             raise TypeError(
@@ -544,7 +549,7 @@ class Task(Generic[Input, Output]):
     async def start(
         self,
         *,
-        task_id: str,
+        task_id: str | None = None,
         input: Input,  # noqa: A002
         input_id: str | None = None,
         if_last_input_id: str | None = None,
@@ -600,6 +605,11 @@ class Task(Generic[Input, Output]):
             last input id.
         :raises TypeError: If ``if_last_input_id`` is supplied without ``input_id``.
         """
+        # Spec 022 FR-067: one-shot Task.start/.run — task_id is OPTIONAL,
+        # auto-generated as a GUID when not supplied.
+        if task_id is None:
+            import uuid as _uuid  # pylint: disable=import-outside-toplevel
+            task_id = _uuid.uuid4().hex
         _validate_task_id(task_id)
         if if_last_input_id is not None and input_id is None:
             raise TypeError(
@@ -1449,6 +1459,12 @@ def _validate_handler_signature(func: Callable[..., Any], decorator_name: str) -
             f"@{decorator_name} handler must accept a `ctx: TaskContext[Input]` "
             f"as first positional argument; got *{first.name} / **{first.name} in "
             f"{func.__qualname__!r}"
+        )
+    if first.name != "ctx":
+        # Spec 022 FR-003: first parameter MUST be named ``ctx``.
+        raise TypeError(
+            f"@{decorator_name} handler first argument must be named `ctx` "
+            f"(found {first.name!r} in {func.__qualname__!r})"
         )
     # The remaining positional/keyword args must all have defaults (the
     # framework calls handler(ctx) with no extra args).

@@ -103,9 +103,6 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "Suspended",                 # FR-019
         "TaskSnapshot",              # FR-017
         "TaskStatus",                # FR-020
-        "OutputTooLarge",            # FR-021
-        "TaskNotFound",              # FR-074
-        "TaskPreconditionFailed",    # FR-074
     }
 )
 
@@ -113,6 +110,10 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
 RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
     {
         "TaskSuspended",  # exception deleted entirely
+        # Spec 022 FR-021 / FR-074 — removed from public, kept internal-only.
+        "OutputTooLarge",
+        "TaskNotFound",
+        "TaskPreconditionFailed",
         "TaskOptions",    # demoted to internal
         "TaskInfo",       # demoted to internal
         "EtagConflict",   # advanced/internal — no public export

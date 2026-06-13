@@ -53,15 +53,12 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "TaskFailed",
         "TaskCancelled",
         "TaskDeferred",  # NEW spec 022 FR-039
-        "TaskNotFound",
         "TaskConflictError",
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
-        "TaskPreconditionFailed",
         "EntryMode",
         # Spec 018 / Spec 019 FR-D-001 — developer-facing size errors.
         "InputTooLarge",
-        "OutputTooLarge",
         # Spec 019 FR-C-002 — read-only snapshot for Task.get(task_id).
         "TaskSnapshot",
     }
@@ -75,6 +72,10 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskInfo",
         # Spec 016 FR-022: dropped from __all__ as preparatory Phase 9 work.
         "TaskTerminated",
+        # Spec 022 FR-021 / FR-074 — removed from public, internal-only.
+        "TaskNotFound",
+        "TaskPreconditionFailed",
+        "OutputTooLarge",
         # Spec 019 FR-D-002 / FR-D-003 — attachment-vocabulary errors are
         # internal implementation details (developers never name attachments).
         "AttachmentTooLarge",

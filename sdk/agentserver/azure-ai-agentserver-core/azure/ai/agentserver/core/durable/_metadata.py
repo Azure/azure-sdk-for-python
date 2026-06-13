@@ -89,18 +89,24 @@ class TaskMetadata(collections.abc.MutableMapping):
         """Return a namespace facade.
 
         ``meta()`` returns the default namespace; ``meta("custom")``
-        returns the named-namespace facade (auto-vivified). The
-        primitive does NOT enforce conventions on ``name`` — wrapper
-        layers may reject ``_*`` names (Spec 015 FR-005).
+        returns the named-namespace facade (auto-vivified). Spec 022
+        FR-044: namespace names with a leading underscore are reserved
+        for the framework and raise :class:`ValueError`.
 
         :param name: Namespace name. ``None`` returns the default
             namespace; a string returns the named namespace.
         :type name: str | None
         :return: A namespace facade.
         :rtype: TaskMetadata
+        :raises ValueError: If ``name`` starts with an underscore.
         """
         if name is None:
             return self._registry[None]
+        if name.startswith("_"):
+            raise ValueError(
+                f"Namespace names with a leading underscore are reserved for "
+                f"the framework (spec 022 FR-044): got {name!r}"
+            )
         if name in self._registry:
             return self._registry[name]
         # Auto-vivify a new namespace; share the registry and inherit
