@@ -51,7 +51,6 @@ class TestTaskDecorator:
 
         @task(
             name="full",
-            ephemeral=False,
             title="My Title",
             timeout=timedelta(minutes=5))
         async def my_task(ctx: TaskContext[dict]) -> str:
@@ -108,6 +107,7 @@ class TestTaskDecorator:
             task(**{kwarg: 1})  # type: ignore[arg-type]
 
 
+@pytest.mark.skip(reason="spec 022: Task.options() removed from public surface (use a fresh @task with the desired options)")
 class TestTaskOptionsMerge:
     """Tests for option merge via ``Task.options()``."""
 
@@ -210,6 +210,7 @@ class TestStaleTimeoutRemoved:
             async def _my_task(ctx: TaskContext[str]) -> int:
                 return 0
 
+    @pytest.mark.skip(reason="spec 022: Task.options() removed from public surface")
     def test_task_options_rejects_stale_timeout(self) -> None:
         """Task.options(stale_timeout=...) raises TypeError (kwarg removed)."""
 

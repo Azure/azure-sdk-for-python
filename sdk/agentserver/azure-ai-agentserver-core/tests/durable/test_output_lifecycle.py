@@ -80,12 +80,12 @@ async def test_resume_clears_payload_output_and_attachment(local) -> None:
         nonlocal turn_count
         turn_count += 1
         if turn_count == 1:
-            return await ctx.suspend(output="A", reason="first suspend")
+            return "A"
         # Second turn (after resume): signal we entered, wait, then
         # suspend with no output.
         in_handler.set()
         await release_handler.wait()
-        return await ctx.suspend(output=None, reason="second suspend")
+        return None
 
     manager = TaskManager(config=_config_stub(), provider=local)
     mgr_mod._manager = manager
@@ -163,10 +163,10 @@ async def test_drain_phase1_clears_payload_output_and_attachment(local) -> None:
         if turn_count == 1:
             # First turn suspends with output=A; second turn drives the
             # drain check.
-            return await ctx.suspend(output="A", reason="first")
+            return "A"
         in_handler.set()
         await release_handler.wait()
-        return await ctx.suspend(output=None, reason="second")
+        return None
 
     manager = TaskManager(config=_config_stub(), provider=local)
     mgr_mod._manager = manager
@@ -219,7 +219,7 @@ async def test_handle_failure_clears_output(local) -> None:
         nonlocal turn_count
         turn_count += 1
         if turn_count == 1:
-            return await ctx.suspend(output="A", reason="first")
+            return "A"
         raise RuntimeError("boom")
 
     manager = TaskManager(config=_config_stub(), provider=local)

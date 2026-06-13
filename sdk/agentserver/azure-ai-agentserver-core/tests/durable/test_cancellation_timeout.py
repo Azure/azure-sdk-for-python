@@ -372,8 +372,8 @@ class TestSpec016PerTurnTimeout:
 
         # Use a tiny budget (0.5s) and a backdated stamp (10s ago) so
         # remaining clamps to 0 immediately.
-        @task(name="t092_immediate_fire", ephemeral=False,
-              timeout=timedelta(milliseconds=500))
+        @multi_turn_task(name="t092_immediate_fire",
+                         timeout=timedelta(milliseconds=500))
         async def my_task(ctx: TaskContext[str]) -> str:
             observed["timeout_exceeded_at_start"] = ctx.timeout_exceeded
             observed["cancel_at_start"] = ctx.cancel.is_set()

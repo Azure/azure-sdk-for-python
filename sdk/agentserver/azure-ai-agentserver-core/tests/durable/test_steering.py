@@ -62,11 +62,11 @@ class TestSteering:
             @multi_turn_task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 # Simulate work with small delay
                 await asyncio.sleep(0.5)
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 return {"msg": ctx.input.get("msg", "?")}
 
             # Start first invocation
@@ -170,11 +170,11 @@ class TestSteering:
             async def chat(ctx: TaskContext[dict]) -> dict:
                 # Always check cancel and suspend if set
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 # Simulate work — gives time for cancel signal
                 await asyncio.sleep(0.3)
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 return {"msg": ctx.input.get("msg", "?")}
 
             run1 = await chat.start(task_id="t1", input={"msg": "A"})
@@ -212,7 +212,7 @@ class TestSteering:
             async def chat(ctx: TaskContext[dict]) -> dict:
                 entries.append((ctx.input.get("msg", "?"), ctx.cancel.is_set()))
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 return {"msg": ctx.input.get("msg", "?")}
 
             run1 = await chat.start(task_id="t1", input={"msg": "A"})
@@ -251,7 +251,7 @@ class TestSteering:
             async def chat(ctx: TaskContext[dict]) -> dict:
                 cancel_states.append(ctx.cancel.is_set())
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 return {"msg": ctx.input.get("msg", "?")}
 
             run1 = await chat.start(task_id="t1", input={"msg": "A"})
@@ -297,11 +297,11 @@ class TestSteering:
                     }
                 )
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 # Simulate work — gives time for steering signal
                 await asyncio.sleep(0.3)
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 return {"msg": ctx.input.get("msg", "?")}
 
             run1 = await chat.start(task_id="t1", input={"msg": "A"})
@@ -339,10 +339,10 @@ class TestSteering:
                 modes.append(ctx.entry_mode)
                 steered_flags.append(ctx.is_steered_turn)
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 await asyncio.sleep(0.3)
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 return {"msg": "done"}
 
             run1 = await chat.start(task_id="t1", input={"msg": "A"})
@@ -370,6 +370,7 @@ class TestSteering:
     # Options passthrough
     # ------------------------------------------------------------------
 
+    @pytest.mark.skip(reason="spec 022: Task.options() removed from public surface")
     @pytest.mark.asyncio
     async def test_steerable_via_options(self, tmp_path):
         """steerable can be set via .options()."""
@@ -381,7 +382,7 @@ class TestSteering:
             async def chat(ctx: TaskContext[dict]) -> dict:
                 await gate.wait()
                 if ctx.cancel.is_set():
-                    return await ctx.suspend(reason="steered")
+                    return None
                 return {"msg": "done"}
 
             steerable_chat = chat.options(steerable=True)
@@ -650,7 +651,7 @@ class TestSteeringRecovery:
         async def chat(ctx: TaskContext[dict]) -> dict:
             inputs_seen.append(ctx.input.get("msg", "?"))
             if ctx.cancel.is_set():
-                return await ctx.suspend(reason="steered")
+                return None
             return {"msg": ctx.input.get("msg", "?")}
 
         run2 = await chat.start(task_id="t2", input={"msg": "recover"})

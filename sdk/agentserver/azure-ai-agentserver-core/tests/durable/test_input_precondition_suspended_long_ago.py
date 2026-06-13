@@ -26,7 +26,7 @@ from azure.ai.agentserver.core.durable import (
 
 @multi_turn_task(name="us2-suspend-long-ago", steerable=True)
 async def _suspend_long_ago(ctx: TaskContext[dict]) -> dict:
-    return await ctx.suspend(reason="awaiting_next_input")
+    return None
 
 
 async def _setup_manager(tmp_path: Path):

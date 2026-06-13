@@ -130,7 +130,7 @@ class TestLifecycle:
         @multi_turn_task(title="lifecycle-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
-            return await ctx.suspend(output="waiting")
+            return "waiting"
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:

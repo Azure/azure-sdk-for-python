@@ -68,7 +68,7 @@ class TestEntryMode:
         @multi_turn_task(title="test-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
-            return await ctx.suspend(output={"partial": True})
+            return {"partial": True}
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
@@ -93,7 +93,7 @@ class TestEntryMode:
         @multi_turn_task(title="test-platform-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
-            return await ctx.suspend(output="waiting")
+            return "waiting"
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:

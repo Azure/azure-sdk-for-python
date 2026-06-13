@@ -74,7 +74,7 @@ async def test_suspend_output_always_uses_attachment(local) -> None:
     """
     @multi_turn_task(name="suspend_attach")
     async def my_task(ctx: TaskContext[str]) -> Suspended[dict]:
-        return await ctx.suspend(output={"k": "v"}, reason="tiny")
+        return {"k": "v"}
 
     manager = TaskManager(config=_config_stub(), provider=local)
     mgr_mod._manager = manager
@@ -143,8 +143,8 @@ async def test_suspend_output_none_writes_explicit_null(local) -> None:
         nonlocal turn_count
         turn_count += 1
         if turn_count == 1:
-            return await ctx.suspend(output="A", reason="first")
-        return await ctx.suspend(output=None, reason="second")
+            return "A"
+        return None
 
     manager = TaskManager(config=_config_stub(), provider=local)
     mgr_mod._manager = manager
@@ -242,7 +242,7 @@ async def test_suspend_with_oversized_output_raises_output_too_large(local) -> N
 
     @multi_turn_task(name="suspend_output_too_large")
     async def my_task(ctx: TaskContext[str]) -> Suspended[str]:
-        return await ctx.suspend(output=big_blob, reason="oversized")
+        return big_blob
 
     manager = TaskManager(config=_config_stub(), provider=local)
     mgr_mod._manager = manager

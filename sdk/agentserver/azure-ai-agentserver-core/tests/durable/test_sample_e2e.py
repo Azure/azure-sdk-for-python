@@ -164,7 +164,7 @@ class TestListE2E:
             @multi_turn_task(name="e2e_list_status")
             async def suspendable(ctx: TaskContext[Any]) -> str:
                 if ctx.entry_mode == "fresh":
-                    return await ctx.suspend(reason="waiting")
+                    return None
                 return "resumed"
 
             # Create a suspended task
@@ -284,9 +284,7 @@ class TestMultiturnSampleE2E:
                 state["history"].append({"role": "assistant", "content": reply})
                 _save(session_id, state)
 
-                return await ctx.suspend(
-                    reason="awaiting_user_input",
-                    output={"reply": reply, "turn": state["turn_count"]})
+                return {"reply": reply, "turn": state["turn_count"]}
 
             task_id = "e2e-session-001"
 
@@ -477,12 +475,10 @@ class TestLangGraphSampleE2E:
                     msgs = state.values.get("messages", [])
                     ai_msgs = [m for m in msgs if isinstance(m, _AI)]
                     user_msgs = [m for m in msgs if isinstance(m, _HM)]
-                    return await ctx.suspend(
-                        reason="awaiting_user_input",
-                        output={
-                            "reply": ai_msgs[-1].content if ai_msgs else "",
-                            "turn": len(user_msgs),
-                        })
+                    return {
+                        "reply": ai_msgs[-1].content if ai_msgs else "",
+                        "turn": len(user_msgs),
+                    }
 
                 msgs = state.values.get("messages", [])
                 user_count = len([m for m in msgs if isinstance(m, _HM)])
@@ -599,9 +595,7 @@ class TestLifecycleE2E:
                 state["history"].append({"role": "assistant", "content": reply})
                 _save(session_id, state)
 
-                return await ctx.suspend(
-                    reason="awaiting_user_input",
-                    output={"reply": reply, "turn": state["turn_count"]})
+                return {"reply": reply, "turn": state["turn_count"]}
 
             task_id = "e2e-lifecycle-001"
 
@@ -748,7 +742,7 @@ class TestInvocationStoreDurability:
                 _inv_save(inv_id, {"status": "running"})
                 output = {"reply": "hello", "turn": 1}
                 _inv_save(inv_id, {"status": "completed", "output": output})
-                return await ctx.suspend(reason="awaiting_user_input", output=output)
+                return output
 
             inv_id = f"inv-{uuid.uuid4()}"
             run = await inv_suspend_task.start(
@@ -927,7 +921,7 @@ class TestClaudeSteeringSampleE2E:
                         "reason": "steered",
                         "message_preserved": True,
                     }
-                    return await ctx.suspend(reason="steered")
+                    return None
                 # Phase 2: Stream with cancel checks (mirrors async for text in stream.text_stream)
                 reply = ""
                 was_aborted = False
@@ -949,9 +943,9 @@ class TestClaudeSteeringSampleE2E:
                 }
                 if was_aborted or ctx.cancel.is_set():
                     store[invocation_id] = {"status": "superseded", "output": output}
-                    return await ctx.suspend(reason="steered")
+                    return None
                 store[invocation_id] = {"status": "completed", "output": output}
-                return await ctx.suspend(reason="awaiting_user_input", output=output)
+                return output
 
             run = await claude_chat.start(
                 task_id="claude-s1",
@@ -994,7 +988,7 @@ class TestClaudeSteeringSampleE2E:
                         "reason": "steered",
                         "message_preserved": True,
                     }
-                    return await ctx.suspend(reason="steered")
+                    return None
                 reply = ""
                 was_aborted = False
                 async with _MockStreamCtx(
@@ -1015,9 +1009,9 @@ class TestClaudeSteeringSampleE2E:
                 }
                 if was_aborted or ctx.cancel.is_set():
                     store[invocation_id] = {"status": "superseded", "output": output}
-                    return await ctx.suspend(reason="steered")
+                    return None
                 store[invocation_id] = {"status": "completed", "output": output}
-                return await ctx.suspend(reason="awaiting_user_input", output=output)
+                return output
 
             run_a = await claude_chat.start(
                 task_id="claude-s1",
@@ -1077,7 +1071,7 @@ class TestClaudeSteeringSampleE2E:
                         "reason": "steered",
                         "message_preserved": True,
                     }
-                    return await ctx.suspend(reason="steered")
+                    return None
                 reply = ""
                 was_aborted = False
                 async with _MockStreamCtx([f"Reply to {message}"], delay=0.3) as stream:
@@ -1096,9 +1090,9 @@ class TestClaudeSteeringSampleE2E:
                 }
                 if was_aborted or ctx.cancel.is_set():
                     store[invocation_id] = {"status": "superseded", "output": output}
-                    return await ctx.suspend(reason="steered")
+                    return None
                 store[invocation_id] = {"status": "completed", "output": output}
-                return await ctx.suspend(reason="awaiting_user_input", output=output)
+                return output
 
             run_a = await claude_chat.start(
                 task_id="claude-rf",
@@ -1201,7 +1195,7 @@ class TestCopilotSteeringSampleE2E:
                         "reason": "steered",
                         "message_preserved": True,
                     }
-                    return await ctx.suspend(reason="steered")
+                    return None
 
                 # Event-based send (mirrors session.on + session.send)
                 session = _MockCopilotSession([f"Echo: {message}"])
@@ -1243,9 +1237,9 @@ class TestCopilotSteeringSampleE2E:
                 }
                 if was_aborted or ctx.cancel.is_set():
                     store[invocation_id] = {"status": "superseded", "output": output}
-                    return await ctx.suspend(reason="steered")
+                    return None
                 store[invocation_id] = {"status": "completed", "output": output}
-                return await ctx.suspend(reason="awaiting_user_input", output=output)
+                return output
 
             run = await copilot_chat.start(
                 task_id="copilot-s1",
@@ -1281,7 +1275,7 @@ class TestCopilotSteeringSampleE2E:
                         "reason": "steered",
                         "message_preserved": True,
                     }
-                    return await ctx.suspend(reason="steered")
+                    return None
 
                 session = _MockCopilotSession(["part1-", "part2-", "part3"], delay=0.15)
                 reply_parts: list[str] = []
@@ -1321,9 +1315,9 @@ class TestCopilotSteeringSampleE2E:
                 }
                 if was_aborted or ctx.cancel.is_set():
                     store[invocation_id] = {"status": "superseded", "output": output}
-                    return await ctx.suspend(reason="steered")
+                    return None
                 store[invocation_id] = {"status": "completed", "output": output}
-                return await ctx.suspend(reason="awaiting_user_input", output=output)
+                return output
 
             run_a = await copilot_chat.start(
                 task_id="copilot-s1",
@@ -1391,18 +1385,18 @@ class TestLangGraphSteeringSampleE2E:
 
                 if ctx.cancel.is_set():
                     store[invocation_id] = {"status": "cancelled", "reason": "steered"}
-                    return await ctx.suspend(reason="steered")
+                    return None
 
                 # Simulate multi-step graph processing
                 await asyncio.sleep(0.1)  # Step 1: analyze
                 if ctx.cancel.is_set():
                     store[invocation_id] = {"status": "cancelled", "reason": "steered"}
-                    return await ctx.suspend(reason="steered")
+                    return None
 
                 await asyncio.sleep(0.1)  # Step 2: generate
                 if ctx.cancel.is_set():
                     store[invocation_id] = {"status": "cancelled", "reason": "steered"}
-                    return await ctx.suspend(reason="steered")
+                    return None
 
                 reply = f"[graph] Processed: {message}"
 
@@ -1413,7 +1407,7 @@ class TestLangGraphSteeringSampleE2E:
 
                 output = {"invocation_id": invocation_id, "reply": reply}
                 store[invocation_id] = {"status": "completed", "output": output}
-                return await ctx.suspend(reason="awaiting_user_input", output=output)
+                return output
 
             run_a = await lg_session.start(
                 task_id="lg-s1",
@@ -1463,18 +1457,18 @@ class TestLangGraphSteeringSampleE2E:
 
                 if ctx.cancel.is_set():
                     store[invocation_id] = {"status": "cancelled", "reason": "steered"}
-                    return await ctx.suspend(reason="steered")
+                    return None
 
                 await asyncio.sleep(0.3)  # Simulated processing
 
                 if ctx.cancel.is_set():
                     store[invocation_id] = {"status": "cancelled", "reason": "steered"}
-                    return await ctx.suspend(reason="steered")
+                    return None
 
                 reply = f"[graph] {message} (gen={0})"
                 output = {"invocation_id": invocation_id, "reply": reply}
                 store[invocation_id] = {"status": "completed", "output": output}
-                return await ctx.suspend(reason="awaiting_user_input", output=output)
+                return output
 
             # Turn 1: normal
             run1 = await lg_session.start(
@@ -1584,7 +1578,7 @@ class TestSSEStreamingE2E:
 
                 if ctx.cancel.is_set():
                     store[invocation_id] = {"status": "cancelled", "reason": "steered"}
-                    return await ctx.suspend(reason="steered")
+                    return None
 
                 # Simulate slow generation that gets interrupted
                 reply = ""
@@ -1597,12 +1591,10 @@ class TestSSEStreamingE2E:
                             "status": "superseded",
                             "partial_reply": reply,
                         }
-                        return await ctx.suspend(reason="steered")
+                        return None
 
                 store[invocation_id] = {"status": "completed", "reply": reply}
-                return await ctx.suspend(
-                    reason="awaiting_user_input",
-                    output={"invocation_id": invocation_id, "reply": reply})
+                return {"invocation_id": invocation_id, "reply": reply}
 
             # Start turn 1
             run1 = await sse_steer.start(

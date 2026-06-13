@@ -1243,48 +1243,6 @@ class Task(Generic[Input, Output]):
         # completed (or any other terminal status)
         raise TaskConflictError(task_id, existing.status)
 
-    def options(
-        self,
-        *,
-        title: str | Callable[[Any, str], str] | None = None,
-        timeout: timedelta | None = None,
-        ephemeral: bool | None = None,
-        retry: RetryPolicy | None = None,
-        steerable: bool | None = None,
-    ) -> Task[Input, Output]:
-        """Return a new Task with merged options.
-
-        The original is unchanged.
-
-        :keyword title: Title override.
-        :paramtype title: str | Callable[[Any, str], str] | None
-        :keyword timeout: Execution timeout override.
-        :paramtype timeout: timedelta | None
-        :keyword ephemeral: Whether to delete task on terminal exit.
-        :paramtype ephemeral: bool | None
-        :keyword retry: Retry policy override.
-        :paramtype retry: RetryPolicy | None
-        :keyword steerable: Whether this task accepts steering inputs.
-        :paramtype steerable: bool | None
-        :return: A new Task with overridden options.
-        :rtype: Task[Input, Output]
-        """
-        new_opts = TaskOptions(
-            name=self._opts.name,
-            title=title if title is not None else self._opts.title,
-            tags=self._opts.tags,
-            timeout=timeout if timeout is not None else self._opts.timeout,
-            ephemeral=(ephemeral if ephemeral is not None else self._opts.ephemeral),
-            retry=retry if retry is not None else self._opts.retry,
-            steerable=(steerable if steerable is not None else self._opts.steerable),
-        )
-        return Task(
-            fn=self._fn,
-            opts=new_opts,
-            input_type=self._input_type,
-            output_type=self._output_type,
-        )
-
 
 @overload
 def task(
@@ -1452,40 +1410,25 @@ def _validate_handler_signature(func: Callable[..., Any], decorator_name: str) -
 _ALLOWED_TASK_KWARGS = frozenset({"name", "title", "timeout", "retry"})
 _ALLOWED_MULTI_TURN_TASK_KWARGS = frozenset({"name", "title", "timeout", "retry", "steerable"})
 
-# Spec 022 transition window: existing test suite + responses/invocations
-# packages use @task(steerable=True, ephemeral=False) heavily. The strict
-# allow-list will be enforced in Phase 5 (after all callers migrate to
-# @multi_turn_task). For now, we ALLOW these legacy kwargs but emit a
-# DeprecationWarning so the migration is visible.
-# NOTE: `tags` was already rejected by spec 015 cleanup; keep it as hard-reject.
-_LEGACY_TASK_KWARGS_TRANSITIONAL = frozenset({"ephemeral", "steerable"})
-
 
 def _validate_task_kwargs(**kwargs: Any) -> None:
-    """FR-051 — @task allow-list (transitional during Phase 2-5 migration)."""
-    # tags was rejected pre-spec-022; keep hard-reject behavior.
-    if "tags" in kwargs:
-        raise TypeError(
-            "@task does not accept `tags=` (retired pre-spec-022; "
-            "tags surface is not part of spec 022)"
-        )
-    unknown = set(kwargs) - _ALLOWED_TASK_KWARGS - _LEGACY_TASK_KWARGS_TRANSITIONAL
+    """@task allow-list: name / title / timeout / retry only.
+
+    Unknown kwargs raise ``TypeError`` at decoration time. ``steerable=``
+    and ``ephemeral=`` are explicitly NOT accepted — use
+    ``@multi_turn_task`` for steerable chains; one-shot tasks are always
+    ephemeral.
+    """
+    unknown = set(kwargs) - _ALLOWED_TASK_KWARGS
     if unknown:
-        raise TypeError(
-            f"@task got unexpected kwargs: {sorted(unknown)}. "
-            f"Allowed: {sorted(_ALLOWED_TASK_KWARGS)}"
-        )
-    # Soft-warn on legacy kwargs (will become hard rejection in Phase 5).
-    legacy = set(kwargs) & _LEGACY_TASK_KWARGS_TRANSITIONAL
-    if legacy:
-        import warnings
-        warnings.warn(
-            f"@task: legacy kwargs {sorted(legacy)} are deprecated in spec 022 "
-            f"and will be rejected after Phase 5 cleanup. Use @multi_turn_task "
-            f"for steerable chains; one-shot tasks are always ephemeral.",
-            DeprecationWarning,
-            stacklevel=3,
-        )
+        msg = f"@task got unexpected kwargs: {sorted(unknown)}. Allowed: {sorted(_ALLOWED_TASK_KWARGS)}."
+        if "steerable" in unknown or "ephemeral" in unknown:
+            msg += (
+                " Use @multi_turn_task for steerable chains; one-shot "
+                "@task is always ephemeral (the record is deleted on "
+                "terminal exit)."
+            )
+        raise TypeError(msg)
 
 
 def _validate_multi_turn_task_kwargs(**kwargs: Any) -> None:
@@ -1759,48 +1702,35 @@ def task(  # type: ignore[no-redef]  # noqa: F811
     retry: RetryPolicy | None = None,
     **_extra_kwargs: Any,
 ) -> Any:
-    """Decorator producing a one-shot durable task (spec 022 FR-001).
+    """Decorator producing a one-shot durable task.
 
-    One-shot tasks are always ephemeral — the record is deleted on terminal
-    exit. ``task_id`` is optional; the framework auto-generates a GUID and
-    defaults ``input_id`` to ``task_id`` (1:1 invariant per FR-004).
+    One-shot tasks are always ephemeral — the record is deleted on
+    terminal exit. ``task_id`` is optional on the resulting handle's
+    ``.start`` / ``.run`` calls; the framework auto-generates a GUID
+    and defaults ``input_id`` to ``task_id`` (1:1 invariant).
 
     :keyword name: Stable identity anchor.
-    :keyword title: Static human-readable string. Callable-factory form is
-        not supported (FR-001).
-    :keyword timeout: Cooperative timeout.
-    :keyword retry: Default retry policy.
-    :return: A :class:`Task` instance (NOT :class:`MultiTurnTask`; see FR-069
-        for the class split).
+    :keyword title: Static human-readable string.
+    :keyword timeout: Cooperative per-turn timeout.
+    :keyword retry: Retry policy (None = no retry).
+    :return: A :class:`Task` instance (NOT :class:`MultiTurnTask`;
+        the two are deliberately distinct classes).
     """
-    # FR-051 — reject unknown / unsupported kwargs at decoration time
-    # (allows legacy kwargs ephemeral/steerable/tags during Phase 5 transition;
-    # emits DeprecationWarning to make migration visible)
+    # Reject unknown / unsupported kwargs at decoration time.
+    # `steerable=` and `ephemeral=` are NOT accepted on @task;
+    # use @multi_turn_task for steerable chains.
     _validate_task_kwargs(**_extra_kwargs)
-    # FR-001 — title must be str | None (callable factory form rejected)
+    # `title` must be str | None (callable-factory form rejected).
     _validate_title(title)
 
-    # Forward any legacy transitional kwargs through to the underlying
-    # decorator (ephemeral/steerable/tags). After Phase 5 cleanup these
-    # forwards go away with the legacy wrapper.
-    legacy_kwargs: dict[str, Any] = {}
-    if "ephemeral" in _extra_kwargs:
-        legacy_kwargs["ephemeral"] = _extra_kwargs["ephemeral"]
-    else:
-        legacy_kwargs["ephemeral"] = True  # spec 022 FR-001 default
-    if "steerable" in _extra_kwargs:
-        legacy_kwargs["steerable"] = _extra_kwargs["steerable"]
-    # tags is no-op in the legacy decorator (was never a real kwarg per Q10)
-
     def _wrap(func: Callable[..., Any]) -> Task[Any, Any]:
-        # FR-003 — handler-signature validation
         _validate_handler_signature(func, "task")
         return _legacy_task(
             name=name,
             title=title,
             timeout=timeout,
             retry=retry,
-            **legacy_kwargs,
+            ephemeral=True,
         )(func)
 
     if fn is not None:

@@ -43,7 +43,7 @@ async def _fast_completing(ctx: TaskContext[dict]) -> dict:
 @multi_turn_task(name="us2-steerable-suspending", steerable=True)
 async def _steerable_suspending(ctx: TaskContext[dict]) -> dict:
     """Steerable task that suspends after first input."""
-    return await ctx.suspend(reason="waiting_for_next_input")
+    return None
 
 
 @multi_turn_task(name="us2-long-running-steerable", steerable=True)

@@ -86,7 +86,7 @@ async def test_small_input_stays_inline_in_payload(manager_local: TaskManager) -
     async def blocking(ctx: TaskContext[dict]) -> dict:
         started.set()
         await proceed.wait()
-        return await ctx.suspend(reason="done", output={"ok": True})
+        return {"ok": True}
 
     run = await blocking.start(task_id="t-small-1", input={"topic": "ice cream"})
     await asyncio.wait_for(started.wait(), timeout=2.0)
@@ -118,7 +118,7 @@ async def test_large_input_promoted_to_attachment(manager_local: TaskManager) ->
     @multi_turn_task(name="t-big-input", steerable=True)
     async def capture(ctx: TaskContext[dict]) -> dict:
         seen_input["v"] = ctx.input  # capture so test can compare
-        return await ctx.suspend(reason="probe", output={"captured": True})
+        return {"captured": True}
 
     run = await capture.start(task_id="t-big", input=big)
     res = await run.result()
@@ -151,7 +151,7 @@ async def test_large_input_writes_ref_and_attachment_atomically(
     async def blocking(ctx: TaskContext[dict]) -> dict:
         started.set()
         await proceed.wait()
-        return await ctx.suspend(reason="done", output={"ok": True})
+        return {"ok": True}
 
     run = await blocking.start(task_id="t-big-block", input=big)
     await asyncio.wait_for(started.wait(), timeout=2.0)
@@ -197,7 +197,7 @@ async def test_suspend_with_promoted_input_deletes_attachment_atomically(
 
     @multi_turn_task(name="t-suspend-clear", steerable=True)
     async def will_suspend(ctx: TaskContext[dict]) -> dict:
-        return await ctx.suspend(reason="probe")
+        return None
 
     run = await will_suspend.start(task_id="t-suspend-clear-1", input=big)
     await run.result()
@@ -238,7 +238,7 @@ async def test_recovery_surfaces_promoted_input_as_ctx_input(
     async def recover(ctx: TaskContext[dict]) -> dict:
         captured["input"] = ctx.input
         captured["entry_mode"] = ctx.entry_mode
-        return await ctx.suspend(reason="captured")
+        return None
 
     manager_local._resume_callbacks["t-recovery-capture"] = recover._fn  # type: ignore[attr-defined]
     manager_local._resume_opts["t-recovery-capture"] = recover._opts  # type: ignore[attr-defined]

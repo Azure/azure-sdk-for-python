@@ -86,7 +86,7 @@ async def test_small_steering_input_stays_inline(manager_local: TaskManager) -> 
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await proceed.wait()
-        return await ctx.suspend(reason="done", output={"ok": True})
+        return {"ok": True}
 
     # First start — initial input, runs the handler.
     run1 = await runner.start(task_id="t-steer-small-1", input={"first": True})
@@ -126,7 +126,7 @@ async def test_large_steering_input_promoted(manager_local: TaskManager) -> None
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await proceed.wait()
-        return await ctx.suspend(reason="done", output={"ok": True})
+        return {"ok": True}
 
     run1 = await runner.start(task_id="t-steer-big-1", input={"first": True})
     await asyncio.wait_for(started.wait(), timeout=2.0)
@@ -178,7 +178,7 @@ async def test_drain_does_not_renumber_existing_attachments(
         # Wait until the test signals to advance.
         await drain_signal.wait()
         drain_signal.clear()
-        return await ctx.suspend(reason="done")
+        return None
 
     run = await runner.start(task_id="t-monotonic-1", input={"initial": True})
     await asyncio.sleep(0.1)  # let initial turn enter
@@ -239,7 +239,7 @@ async def test_steering_queue_9_cap(manager_local: TaskManager) -> None:
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await block.wait()
-        return await ctx.suspend(reason="done")
+        return None
 
     run = await runner.start(task_id="t-9cap-1", input={"initial": True})
     await asyncio.wait_for(started.wait(), timeout=2.0)
@@ -279,7 +279,7 @@ async def test_drain_co_deletes_attachment(manager_local: TaskManager) -> None:
     async def runner(ctx: TaskContext[dict]) -> dict:
         await drain_signal.wait()
         drain_signal.clear()
-        return await ctx.suspend(reason="done")
+        return None
 
     run = await runner.start(task_id="t-drain-1", input={"initial": True})
     await asyncio.sleep(0.1)
@@ -395,7 +395,7 @@ async def test_steering_append_oversized_raises_input_too_large(
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await block.wait()
-        return await ctx.suspend(reason="done")
+        return None
 
     run = await runner.start(task_id="t-steer-oversize-1", input={"initial": True})
     await asyncio.wait_for(started.wait(), timeout=2.0)
@@ -426,7 +426,7 @@ async def test_drain_inline_entry_leaves_attachments_untouched(
     async def runner(ctx: TaskContext[dict]) -> dict:
         await drain_signal.wait()
         drain_signal.clear()
-        return await ctx.suspend(reason="done")
+        return None
 
     run = await runner.start(task_id="t-mixed-1", input={"initial": True})
     await asyncio.sleep(0.1)
@@ -497,7 +497,7 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(
     async def runner(ctx: TaskContext[dict]) -> dict:
         started.set()
         await block.wait()
-        return await ctx.suspend(reason="done")
+        return None
 
     # Plant: task is in_progress, queue empty, next_input_seq is 5
     # (simulating a long-running session that has steered 5 times in

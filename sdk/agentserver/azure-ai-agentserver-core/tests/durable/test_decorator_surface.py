@@ -88,7 +88,6 @@ class TestDecoratorSignatures:
         assert isinstance(fn, MultiTurnTask)
         assert not isinstance(fn, Task)
 
-    @pytest.mark.skip(reason="spec 022 Phase 5 transitional: @task(steerable=) still emits DeprecationWarning; hard-reject deferred to gap-list.md until legacy steerable tests migrate")
     def test_task_rejects_steerable_kwarg(self) -> None:
         """@task rejects steerable= at decoration time."""
         with pytest.raises(TypeError):
@@ -97,7 +96,6 @@ class TestDecoratorSignatures:
             async def fn(ctx: TaskContext[int]) -> int:
                 return ctx.input
 
-    @pytest.mark.skip(reason="spec 022 Phase 5 transitional: @task(ephemeral=) still emits DeprecationWarning; hard-reject deferred to gap-list.md until legacy ephemeral tests migrate")
     def test_task_rejects_ephemeral_kwarg(self) -> None:
         """@task rejects ephemeral= at decoration time."""
         with pytest.raises(TypeError):

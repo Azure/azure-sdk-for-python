@@ -596,7 +596,7 @@ class TestRetryAttemptDurability:
             # suspend rather than return so the drain re-enters for the
             # queued input.
             from azure.ai.agentserver.core.durable._run import Suspended  # noqa: PLC0415
-            return await ctx.suspend(reason=f"observed@{ctx.retry_attempt}")
+            return None
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:

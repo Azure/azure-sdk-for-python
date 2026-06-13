@@ -49,7 +49,7 @@ class TestGet:
 
         @multi_turn_task(title="get-test")
         async def my_task(ctx: TaskContext[str]) -> str:
-            return await ctx.suspend(output="paused")
+            return "paused"
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
@@ -85,7 +85,7 @@ class TestGet:
 
         @multi_turn_task(title="get-states")
         async def my_task(ctx: TaskContext[str]) -> str:
-            return await ctx.suspend(output="waiting")
+            return "waiting"
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:

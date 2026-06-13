@@ -52,7 +52,7 @@ async def test_suspend_clears_payload_input(tmp_path: Path) -> None:
 
         @multi_turn_task(name="suspending", steerable=True)
         async def suspending(ctx: TaskContext[dict]) -> None:
-            return await ctx.suspend(reason="testing-us4")
+            return None
 
         await suspending.start(task_id="t-input-cleared", input={"msg": "secret-user-content"})
         info = None
@@ -81,7 +81,7 @@ async def test_suspend_preserves_metadata(tmp_path: Path) -> None:
         async def with_metadata(ctx: TaskContext[dict]) -> None:
             ctx.metadata["dev_key"] = "dev_value"
             await ctx.metadata.flush()
-            return await ctx.suspend(reason="testing-us4")
+            return None
 
         await with_metadata.start(task_id="t-meta-survives", input={"msg": "hi"})
         info = None
