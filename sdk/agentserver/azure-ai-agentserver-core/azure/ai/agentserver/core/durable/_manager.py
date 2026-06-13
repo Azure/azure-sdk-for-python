@@ -1765,8 +1765,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 )  # pylint: disable=import-outside-toplevel
 
                 if isinstance(result, _ExitSentinel):
+                    # Spec 022 FR-039 / FR-058 — `ctx.exit_for_recovery()`
+                    # raises `TaskDeferred` (NOT `TaskCancelled`). The task
+                    # stays `in_progress`; the recovery scanner re-invokes
+                    # the handler in the next process lifetime.
                     from ._exceptions import (  # pylint: disable=import-outside-toplevel
                         TaskCancelled,
+                        TaskDeferred,
                     )
 
                     renewal_cancel.set()
@@ -1815,10 +1820,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     # (c) Do NOT write a terminal record — status MUST
                     #     remain 'in_progress' so the recovery scan picks
                     #     it up next process start.
-                    # (d) Signal awaiters with TaskCancelled (same shape
-                    #     as cooperative cancel).
+                    # (d) Signal awaiters with TaskDeferred per spec 022
+                    #     FR-039 / FR-058 (NOT TaskCancelled — the task
+                    #     is deferring to next lifetime, not terminating).
                     if not current_result_future.done():
-                        current_result_future.set_exception(TaskCancelled(task_id))
+                        current_result_future.set_exception(TaskDeferred())
                     # (e) Queued steerers (per FR-028): preserved in
                     #     persisted state — already untouched here, so
                     #     no action needed.
