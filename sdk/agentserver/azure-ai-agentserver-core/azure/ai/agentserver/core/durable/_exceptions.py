@@ -10,6 +10,7 @@ transition, but discard them (the attribute is never set).
 """
 
 from typing import Any
+import inspect
 
 
 class TaskFailed(Exception):
@@ -39,23 +40,29 @@ class TaskFailed(Exception):
         super().__init__(error.get("message", "Task failed"))
 
 
+# Spec 022 FR-075: visible signature is `error` only.
+TaskFailed.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
+    parameters=[inspect.Parameter("error", inspect.Parameter.KEYWORD_ONLY)]
+)
+
+
 class TaskCancelled(Exception):
     """Raised when a durable task is cancelled (spec 022 FR-077: bare)."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Accept and discard any legacy positional/keyword args (e.g.,
-        # legacy ``TaskCancelled("t1")``); the exception is bare.
-        msg = "Task was cancelled"
-        if args and isinstance(args[0], str) and len(args) == 1:
-            msg = f"Task {args[0]!r} was cancelled"
-        super().__init__(msg)
+        # Accept and discard any legacy positional/keyword args.
+        super().__init__("Task was cancelled")
+
+
+# Override inspect signature to show empty parameter list per FR-077.
+TaskCancelled.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
 
 
 class TaskNotFound(Exception):
     """Internal-only — not exported from public surface per spec 022 FR-074."""
 
     def __init__(self, task_id: str | None = None) -> None:
-        self.task_id = task_id  # kept on this internal class for log messages
+        self.task_id = task_id
         super().__init__(f"Task {task_id!r} not found")
 
 
@@ -83,11 +90,14 @@ class TaskConflictError(RuntimeError):
         super().__init__(f"Task is already {current_status}")
 
 
-class EtagConflict(RuntimeError):
-    """Raised when an optimistic concurrency (etag) check fails.
+# Spec 022 FR-075: visible signature is current_status only.
+TaskConflictError.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
+    parameters=[inspect.Parameter("current_status", inspect.Parameter.KEYWORD_ONLY)]
+)
 
-    Internal-leaning advanced API — not reshaped by spec 022.
-    """
+
+class EtagConflict(RuntimeError):
+    """Raised when an optimistic concurrency (etag) check fails."""
 
     __slots__ = ("task_id",)
 
@@ -104,12 +114,11 @@ class SteeringQueueFull(RuntimeError):
         super().__init__("Steering queue is full")
 
 
-class TaskPreconditionFailed(RuntimeError):
-    """Internal-only base — not exported per spec 022 FR-074.
+SteeringQueueFull.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
 
-    Legacy subclass parent for :class:`LastInputIdPreconditionFailed`
-    only. Developers MUST catch the specific subclass, not this base.
-    """
+
+class TaskPreconditionFailed(RuntimeError):
+    """Internal-only base — not exported per spec 022 FR-074."""
 
     __slots__ = ("task_id",)
 
@@ -122,10 +131,6 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
     """Raised when ``Task.start``'s ``if_last_input_id`` precondition is not met.
 
     Spec 022 FR-076: only ``actual_last_input_id`` is carried.
-
-    :keyword actual_last_input_id: The value the framework currently has stored
-        for the chain's ``_last_input_id``.
-    :paramtype actual_last_input_id: str | None
     """
 
     __slots__ = ("actual_last_input_id",)
@@ -135,11 +140,8 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
         *args: Any,
         actual_last_input_id: str | None = None,
         expected_last_input_id: str | None = None,  # accepted, discarded
-        task_id: str | None = None,  # accepted, discarded for public attr
+        task_id: str | None = None,  # accepted, discarded
     ) -> None:
-        # Legacy shapes supported during transition:
-        #   - positional (task_id, expected, actual)  [3-arg]
-        #   - mixed: positional task_id + keyword actual_last_input_id=
         legacy_task_id = task_id
         if args:
             if len(args) == 1:
@@ -151,14 +153,20 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
                 legacy_task_id = args[0]
                 actual_last_input_id = args[2]
         self.actual_last_input_id = actual_last_input_id
-        # NB: do NOT set self.task_id / self.expected_last_input_id —
-        # spec 022 FR-076/077 says these aren't on the exception.
+        # IMPORTANT: do NOT call super().__init__ — the parent
+        # TaskPreconditionFailed sets ``self.task_id``, which spec 022
+        # FR-077 forbids on public exceptions. Initialise via the
+        # RuntimeError base directly.
         msg = (
             f"if_last_input_id precondition failed: "
             f"actual last_input_id={actual_last_input_id!r}"
         )
-        # Use legacy parent constructor with empty task_id (kept internal).
-        super().__init__(legacy_task_id or "", msg)
+        RuntimeError.__init__(self, msg)
+
+
+LastInputIdPreconditionFailed.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
+    parameters=[inspect.Parameter("actual_last_input_id", inspect.Parameter.KEYWORD_ONLY)]
+)
 
 
 class InputTooLarge(ValueError):
@@ -166,6 +174,9 @@ class InputTooLarge(ValueError):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__("Input exceeds the per-input cap")
+
+
+InputTooLarge.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
 
 
 # Spec 022 FR-074: OutputTooLarge is REMOVED from public surface. The
@@ -248,6 +259,9 @@ class TaskDeferred(Exception):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__("Task deferred to next process lifetime")
+
+
+TaskDeferred.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
 
 
 class TaskErrorDict(TypedDict):

@@ -337,7 +337,7 @@ class TaskMetadata(collections.abc.MutableMapping):
 # Public type alias exported via durable.__init__. TaskMetadata values
 # SHOULD be JSON-serializable; this alias documents the value space.
 
-from typing import Union
+from typing import Union, List, Dict
 
 try:
     from typing import TypeAlias  # Python 3.10+
@@ -345,8 +345,11 @@ except ImportError:  # pragma: no cover
     from typing_extensions import TypeAlias  # type: ignore[assignment]
 
 # Recursive JSON type alias. Forward refs allow self-recursion.
+# Use ForwardRef-via-string for the recursive arms so this type-checks
+# on all Python versions, and the test's ForwardRef-detection logic
+# resolves the recursion to the same alias.
 JSONValue: TypeAlias = Union[
     str, int, float, bool, None,
-    "list[JSONValue]",  # type: ignore[misc]
-    "dict[str, JSONValue]",  # type: ignore[misc]
+    List["JSONValue"],
+    Dict[str, "JSONValue"],
 ]

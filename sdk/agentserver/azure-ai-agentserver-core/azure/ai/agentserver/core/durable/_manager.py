@@ -1434,6 +1434,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             entry_mode=entry_mode,
             is_steered_turn=is_steered_turn,
             pending_count_provider=self._make_pending_count_provider(task_id),
+            input_id=(task_info.payload or {}).get("_last_input_id"),
         )
 
         loop = asyncio.get_event_loop()
