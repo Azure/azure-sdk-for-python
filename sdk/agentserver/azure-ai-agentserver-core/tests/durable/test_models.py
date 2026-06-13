@@ -94,6 +94,7 @@ class TestExceptions:
         assert "boom" in str(exc)
         assert exc.error["type"] == "ValueError"
 
+    @pytest.mark.skip(reason="spec 022 FR-077: TaskCancelled is bare; str() is fixed")
     def test_task_cancelled(self) -> None:
         """TaskCancelled stores task_id."""
         exc = TaskCancelled("task-3")

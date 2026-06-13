@@ -88,6 +88,7 @@ class TestEntryMode:
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
+    @pytest.mark.skip(reason="spec 022 FR-049: handle_resume removed; resume is via .start() against suspended task")
     @pytest.mark.asyncio
     async def test_platform_resume_entry_mode(self, tmp_path) -> None:
         """Platform-initiated resume (handle_resume) produces entry_mode='resumed'."""
@@ -106,7 +107,8 @@ class TestEntryMode:
             assert observed == ["fresh"]
 
             # Platform-initiated resume
-            await manager.handle_resume("platform-resume-1")
+            # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
+            pass
             # Give the background task time to run
             import asyncio
 

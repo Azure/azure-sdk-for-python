@@ -55,6 +55,7 @@ def local(tmp_path: Path) -> LocalFileTaskProvider:
     return LocalFileTaskProvider(base_dir=tmp_path)
 
 
+@pytest.mark.skip(reason="spec 022 FR-025: payload[output] no longer written, nothing to clear")
 @pytest.mark.asyncio
 async def test_resume_clears_payload_output_and_attachment(local) -> None:
     """FR-C-004 / SC-7 — suspended→in_progress resume PATCH MUST set
@@ -133,6 +134,7 @@ async def test_resume_clears_payload_output_and_attachment(local) -> None:
         mgr_mod._manager = None
 
 
+@pytest.mark.skip(reason="spec 022 FR-025/FR-026: payload[output] no longer written, nothing to clear")
 @pytest.mark.asyncio
 async def test_drain_phase1_clears_payload_output_and_attachment(local) -> None:
     """FR-C-004 / US-C2.C2.2 — drain Phase 1 PATCH MUST co-clear the
@@ -197,6 +199,7 @@ async def test_drain_phase1_clears_payload_output_and_attachment(local) -> None:
         mgr_mod._manager = None
 
 
+@pytest.mark.skip(reason="spec 022 FR-027: payload[error] no longer written, nothing to clear")
 @pytest.mark.asyncio
 async def test_handle_failure_clears_output(local) -> None:
     """US-C2.C2.3 / C2.6 — ``_handle_failure`` terminal write MUST

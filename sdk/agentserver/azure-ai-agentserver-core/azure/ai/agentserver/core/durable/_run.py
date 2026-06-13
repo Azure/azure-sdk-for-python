@@ -24,7 +24,6 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Generic, TypeVar
 
 from ._metadata import TaskMetadata
-from ._result import TaskResult  # internal compat: futures may resolve to TaskResult during transition
 
 Output = TypeVar("Output")
 
@@ -54,9 +53,11 @@ class Suspended(Generic[Output]):
 
 
 def _unwrap_result(res: Any) -> Any:
-    """FR-052: return raw Output from internal TaskResult (transitional)."""
-    if isinstance(res, TaskResult):
-        return res.output
+    """FR-052: futures now resolve to raw Output directly.
+
+    Identity helper retained so older monkey-patches in tests that
+    pre-wrap futures still pass unchanged.
+    """
     return res
 
 

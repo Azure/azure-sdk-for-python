@@ -47,7 +47,6 @@ from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
 from ._metadata import TaskMetadata
 from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest, TaskStatus
 from ._provider import TaskProvider
-from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
 from .._version import VERSION as _CORE_VERSION
@@ -1089,34 +1088,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             input_id=ctx.input_id,
         )
 
-    async def handle_resume(self, task_id: str) -> None:
-        """Resume a suspended task.
-
-        :param task_id: The task to resume.
-        :type task_id: str
-        :raises TaskNotFound: If the task doesn't exist.
-        :raises ValueError: If the task is not suspended or no callback.
-        """
-        task_info = await self._provider_get_tracked(task_id)
-        if task_info is None:
-            raise TaskNotFound(task_id)
-
-        if task_info.status != "suspended":
-            raise ValueError(f"Task {task_id!r} is {task_info.status!r}, not 'suspended'")
-
-        # Find the resume callback by scanning registered names
-        fn = self._find_resume_callback(task_info)
-        if fn is None:
-            raise ValueError(f"No resume callback registered for task {task_id!r}")
-
-        await self._start_existing_task(
-            fn=fn,
-            fn_name=task_info.agent_name,
-            task_info=task_info,
-            entry_mode="resumed",
-        )
-
-        logger.info("Resumed task %s", task_id)
+    # Spec 022 FR-049: TaskManager.handle_resume + _resume_route are removed.
+    # Resume happens via .start()/.run() against a suspended task; the lifecycle
+    # state machine in _lifecycle_start_inner handles the resume transition.
 
     async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:  # pylint: disable=too-many-return-statements
         """Return a TaskRun handle for an active (in-progress) task.
@@ -1867,14 +1841,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                         )
                         break
                     if not current_result_future.done():
-                        current_result_future.set_result(
-                            TaskResult(
-                                task_id=task_id,
-                                output=result.output,
-                                status="suspended",
-                                suspension_reason=result.reason,
-                            )
-                        )
+                        # Spec 022 FR-052: resolve with raw output (the value
+                        # the handler emitted via ctx.suspend(output=...)).
+                        current_result_future.set_result(result.output)
 
                     # Spec 016 FR-014 (US5): after the suspend is durably
                     # persisted AND the current caller's future is resolved,
@@ -1898,13 +1867,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                                 current_result_future = active.result_future
                             continue
                 else:
-                    # Guard: task functions must return raw output, not TaskResult
-                    if isinstance(result, TaskResult):
-                        raise TypeError(
-                            "Task function returned TaskResult directly. "
-                            "Return raw output instead — the framework wraps "
-                            "it in TaskResult automatically."
-                        )
+                    # Spec 022 FR-018 / FR-052: TaskResult deleted; handler
+                    # returns raw output directly (no wrapper). No guard needed.
 
                     # Spec 016 FR-012 (US5): when the handler returns a
                     # value, the task transitions to terminal in a single
@@ -1963,13 +1927,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                             # the raw Output unwrapped; chain stays alive.
                             current_result_future.set_result(result)
                         else:
-                            current_result_future.set_result(
-                                TaskResult(
-                                    task_id=task_id,
-                                    output=result,
-                                    status="completed",
-                                )
-                            )
+                            # Spec 022 FR-052 — one-shot also returns raw Output.
+                            current_result_future.set_result(result)
                     if not is_multi_turn_success:
                         # Spec 016 FR-012: legacy one-shot path — queued
                         # steerers get TaskConflictError on terminal completion.

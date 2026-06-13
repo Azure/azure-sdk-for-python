@@ -12,13 +12,30 @@ developer surface.
 
 The translation from these internal types → developer-facing types
 is documented in ``docs/task-and-streaming-spec.md`` §39.1.
+
+Spec 022 FR-074: ``TaskNotFound`` and ``TaskPreconditionFailed``
+live here as internal-only re-exports (the classes themselves are
+defined in ``_exceptions.py`` for now, but the canonical import
+path for in-tree callers is this module).
 """
 
 from __future__ import annotations
 
 import logging
 
-from ._exceptions import TaskConflictError, TaskPreconditionFailed
+from ._exceptions import (
+    TaskConflictError,
+    TaskNotFound,
+    TaskPreconditionFailed,
+)
+
+__all__ = [
+    "_HostedConflict",
+    "_translate_hosted_conflict",
+    "TaskNotFound",
+    "TaskPreconditionFailed",
+    "TaskConflictError",
+]
 
 logger = logging.getLogger("azure.ai.agentserver.durable")
 

@@ -53,10 +53,8 @@ from ._exceptions import (
 )
 from ._metadata import JSONValue, TaskMetadata
 from ._models import TaskStatus
-from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
-from ._snapshot import TaskSnapshot
 
 # Spec 016 FR-022 + SC-014 (US6): TaskTerminated is fully removed from
 # the public surface — importing it from this package now raises
@@ -106,11 +104,7 @@ __all__ = [
     "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
     "InputTooLarge",
-    # ----- LEGACY symbols (removed from public surface in Phase 5) -----
-    # These are still importable during the transition; Phase 5 deletes
-    # them per spec 022 FR-016/017/018/019/020/021/074.
-    "TaskResult",
-    "TaskSnapshot",
+    # ----- LEGACY symbols still importable transitionally -----
     "Suspended",
     "TaskStatus",
 ]

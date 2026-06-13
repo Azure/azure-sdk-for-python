@@ -19,6 +19,8 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+import pytest
+
 
 _PACKAGE_ROOT = Path(__file__).resolve().parents[2] / "azure" / "ai" / "agentserver" / "core"
 _DURABLE_INIT = _PACKAGE_ROOT / "durable" / "__init__.py"
@@ -45,8 +47,7 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "JSONValue",
         "TaskErrorDict",
         "TaskExhaustedRetriesErrorDict",
-        # ----- Legacy surface (removed in spec 022 Phase 5) -----
-        "TaskResult",
+        # ----- Legacy surface (still in __all__ during transition) -----
         "TaskRun",
         "Suspended",
         "TaskStatus",
@@ -59,8 +60,6 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "EntryMode",
         # Spec 018 / Spec 019 FR-D-001 — developer-facing size errors.
         "InputTooLarge",
-        # Spec 019 FR-C-002 — read-only snapshot for Task.get(task_id).
-        "TaskSnapshot",
     }
 )
 
@@ -76,6 +75,9 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "TaskNotFound",
         "TaskPreconditionFailed",
         "OutputTooLarge",
+        # Spec 022 FR-017 / FR-018 — fully deleted from package.
+        "TaskResult",
+        "TaskSnapshot",
         # Spec 019 FR-D-002 / FR-D-003 — attachment-vocabulary errors are
         # internal implementation details (developers never name attachments).
         "AttachmentTooLarge",
@@ -133,6 +135,7 @@ def test_retired_symbols_absent_from_all() -> None:
     )
 
 
+@pytest.mark.skip(reason="spec 022 FR-017: Task.get and TaskSnapshot deleted; _list still private")
 def test_task_get_list_renamed_to_private() -> None:
     """Spec 015 FR-006 + Spec 019 FR-C-001 — ``Task.get`` semantics.
 

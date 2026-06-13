@@ -12,7 +12,6 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    TaskResult,
     task,
     EntryMode,
     SteeringQueueFull,
@@ -365,30 +364,11 @@ class TestSteering:
             await self._teardown_manager(manager, mgr_mod)
 
     # ------------------------------------------------------------------
-    # TaskResult.is_superseded
+    # TaskResult.is_superseded — REMOVED per spec 022 FR-018 (whole wrapper deleted)
     # ------------------------------------------------------------------
 
-    @pytest.mark.asyncio
-    async def test_task_result_is_superseded(self):
-        """Spec 016 FR-010 + SC-007 (US5): is_superseded property is
-        REMOVED entirely. Asserting absence per the strict-removal
-        contract.
-        """
-        result = TaskResult(task_id="t1", status="completed")
-        assert not hasattr(result, "is_superseded"), (
-            "Spec 016 FR-010: is_superseded property MUST NOT exist on "
-            "TaskResult. Branch on is_suspended / is_completed instead "
-            "and inspect output directly."
-        )
-
-    @pytest.mark.asyncio
-    async def test_task_result_completed_not_superseded(self):
-        """Spec 016 FR-010 (US5): TaskResult with status=completed has
-        no is_superseded attribute (property removed entirely).
-        """
-        result = TaskResult(task_id="t1", status="completed", output=42)
-        assert not hasattr(result, "is_superseded")
-        assert True  # spec 022: result is raw Output (completion implicit)
+    # Spec 022 FR-018: TaskResult class is fully deleted; tests for its
+    # legacy is_superseded property are no longer applicable.
 
     # ------------------------------------------------------------------
     # Options passthrough

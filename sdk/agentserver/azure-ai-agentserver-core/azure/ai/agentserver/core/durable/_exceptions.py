@@ -49,20 +49,14 @@ TaskFailed.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
 class TaskCancelled(Exception):
     """Raised when a durable task is cancelled (spec 022 FR-077: bare)."""
 
-    __slots__ = ("_msg",)
+    # NO __slots__ + NO instance state — spec 022 FR-077 requires no fields.
+    # __str__ is hardcoded; legacy positional task_id is accepted and discarded.
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Spec 022 FR-077 — bare exception: args MUST be () when constructed
-        # without positional args. Legacy positional task_id is preserved as
-        # a __str__ hint but NOT stored in args/__dict__.
-        super().__init__()  # always empty args
-        if args and isinstance(args[0], str) and len(args) == 1:
-            self._msg = f"Task {args[0]!r} was cancelled"
-        else:
-            self._msg = "Task was cancelled"
+        super().__init__()  # args MUST be ()
 
     def __str__(self) -> str:  # pragma: no cover -- minor str formatting
-        return getattr(self, "_msg", "Task was cancelled")
+        return "Task was cancelled"
 
 
 # Override inspect signature to show empty parameter list per FR-077.

@@ -15,7 +15,7 @@ Every FR / SC maps to a phase and a paired test per Principle XII §3.
   extend-X-vs-new-Y test-file decision per Principle XII §2. Map
   each FR to the existing test file that needs extension OR the
   new test file that needs creation, with justification.
-- [~] T-0.2 — **SOT rewrite** (`docs/task-and-streaming-spec.md`):
+- [x] T-0.2 — **SOT rewrite** (`docs/task-and-streaming-spec.md`):
   apply the Q17 cleanup list from 021 §3 — remove §26 (resume route),
   §35a (TaskSnapshot definition), `TaskResult`/`Suspended` definitions
   in §34/§35, `OutputTooLarge` from §39 error taxonomy,
@@ -140,9 +140,9 @@ One commit per area + doc travel per Principle IX.
 
 ## Phase 5 — Implementation: Public surface and exception taxonomy
 
-- [~] T-5.1 — Delete `_result.py` (no `TaskResult` / `Suspended`); delete `_snapshot.py` (no `TaskSnapshot`). Update all internal callsites in `_manager.py` to resolve futures with `Output` directly (FR-018/019). Commit.
-- [~] T-5.2 — `_run.py` slim shape (FR-047/048): 2 attributes (`task_id`, `input_id`) + 1 property (`metadata`) + 2 async methods (`result`, `cancel`) + 1 dunder (`__await__`). Remove `status`, `delete`, `refresh`, `lease_expiry_count`. Remove internal slots `_provider`, `_terminate_event`, `_terminate_reason_ref`, `_status`, `_lease_expiry_count`. Commit (turns T-1.12 GREEN).
-- [~] T-5.3 — `_exceptions.py` rewrite (FR-070-077). Bare exceptions: `TaskCancelled`, `TaskDeferred`, `SteeringQueueFull`, `InputTooLarge` (FR-077). Fielded exceptions: `TaskFailed(error)`, `TaskConflictError(current_status)`, `LastInputIdPreconditionFailed(actual_last_input_id)` (FR-076 — only `actual` field, not `expected`). Add `TaskErrorDict` + `TaskExhaustedRetriesErrorDict` TypedDicts per FR-071 (typed payload for `TaskFailed.error`). Remove `OutputTooLarge` from public exports (FR-021). Move `TaskNotFound` + `TaskPreconditionFailed` to `_exceptions_internal.py` (FR-074). `TaskFailed.__cause__ is None` invariant preserved (FR-075). `TaskCancelledError` name does not exist (FR-077). Commit (turns T-1.7 GREEN for these assertions).
+- [x] T-5.1 — Delete `_result.py` (no `TaskResult` / `Suspended`); delete `_snapshot.py` (no `TaskSnapshot`). Update all internal callsites in `_manager.py` to resolve futures with `Output` directly (FR-018/019). Commit.
+- [x] T-5.2 — `_run.py` slim shape (FR-047/048): 2 attributes (`task_id`, `input_id`) + 1 property (`metadata`) + 2 async methods (`result`, `cancel`) + 1 dunder (`__await__`). Remove `status`, `delete`, `refresh`, `lease_expiry_count`. Remove internal slots `_provider`, `_terminate_event`, `_terminate_reason_ref`, `_status`, `_lease_expiry_count`. Commit (turns T-1.12 GREEN).
+- [x] T-5.3 — `_exceptions.py` rewrite (FR-070-077). Bare exceptions: `TaskCancelled`, `TaskDeferred`, `SteeringQueueFull`, `InputTooLarge` (FR-077). Fielded exceptions: `TaskFailed(error)`, `TaskConflictError(current_status)`, `LastInputIdPreconditionFailed(actual_last_input_id)` (FR-076 — only `actual` field, not `expected`). Add `TaskErrorDict` + `TaskExhaustedRetriesErrorDict` TypedDicts per FR-071 (typed payload for `TaskFailed.error`). Remove `OutputTooLarge` from public exports (FR-021). Move `TaskNotFound` + `TaskPreconditionFailed` to `_exceptions_internal.py` (FR-074). `TaskFailed.__cause__ is None` invariant preserved (FR-075). `TaskCancelledError` name does not exist (FR-077). Commit (turns T-1.7 GREEN for these assertions).
 - [x] T-5.4 — `_metadata.py` finalize: `JSONValue` recursive type alias exported (FR-070); `TaskMetadata` public surface per FR-044 (dunders + `get` + namespace callable + `_`-prefix reserved). Commit.
 - [x] T-5.5 — `__init__.py` `__all__` rewrite: 7 public exceptions + `Task` + `MultiTurnTask` + `task` + `multi_turn_task` + `TaskRun` + `TaskContext` + `TaskMetadata` + `JSONValue` + `TaskErrorDict` + `TaskExhaustedRetriesErrorDict` + `TaskDeferred` + `RetryPolicy` + `EntryMode`. Remove all unsupported re-exports. Fix stale docstring at line 18-19 per FR-050. Commit (turns T-1.0 + T-1.7 GREEN).
 - [x] T-5.6 — Update dev-guide exception taxonomy section + TaskRun shape section + SOT spec error taxonomy §39 trim. Commit.
@@ -166,7 +166,7 @@ One commit per area + doc travel per Principle IX.
 ## Phase 7 — Downstream migration + final docs
 
 - [x] T-7.0 — **Stale `durable-agent-demo/` folder removed** from this branch's `azure-ai-agentserver-invocations/samples/`. Only `.gitignore` was tracked (everything else was gitignored: wheels, `__pycache__`, `.demo-session`). The actual demo lives on `feature/agentserver-durable-agent-demo` branch — see T-7.12 for the cross-branch hand-off tracking. To be committed as part of T-7.1 or a dedicated cleanup commit.
-- [ ] T-7.1 — Delete `_resume_route.py` (FR-049). Delete `TaskManager.handle_resume` method. Update tests that referenced them (`test_entry_mode.py:109`, `test_sample_e2e.py:337/361/529/554`). Remove SOT §26 + related conformance items. Commit (may bundle with T-7.0 stale-folder removal).
+- [x] T-7.1 — Delete `_resume_route.py` (FR-049). Delete `TaskManager.handle_resume` method. Update tests that referenced them (`test_entry_mode.py:109`, `test_sample_e2e.py:337/361/529/554`). Remove SOT §26 + related conformance items. Commit (may bundle with T-7.0 stale-folder removal).
 - [x] T-7.2 — Responses migration (FR-066/067) — **HAND-OFF (see T-1.13).** `_durable_orchestrator.py` does not exist on this branch; lives on `feature/agentserver-responses-spec016`. Migration work happens on that branch's PR.
 - [x] T-7.3 — Responses migration `ctx.suspend()` rewrites — **HAND-OFF (see T-1.13).** No `ctx.suspend(...)` call sites exist in the responses package on this branch.
 - [x] T-7.4 — Responses bookkeeping-task variant verification — **HAND-OFF (see T-1.13).** Bookkeeping body lives on the responses-spec016 branch.

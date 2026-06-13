@@ -48,7 +48,7 @@ from ._attachments import (
     _validate_attachment_count,
     _validate_attachment_size,
 )
-from ._exceptions import TaskNotFound
+from ._exceptions_internal import TaskNotFound
 from ._exceptions_internal import _HostedConflict
 from ._models import (
     TaskCreateRequest,

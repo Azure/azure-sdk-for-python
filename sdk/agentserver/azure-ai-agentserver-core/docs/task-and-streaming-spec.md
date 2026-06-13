@@ -1,5 +1,72 @@
 # Durable Task & Streaming Primitives — Design Specification
 
+> ## ⚠️ Spec 022 supersedes major sections of this document
+>
+> This document was written for the pre-spec-022 design (one decorator
+> `@task`, explicit `ctx.suspend()`, `TaskResult` wrapper, `Suspended`
+> sentinel, `TaskSnapshot`, public `OutputTooLarge`, `payload["output"]`
+> + `payload["error"]` persistence, `/tasks/resume` route, `Task.options`,
+> `Task.get`, `ephemeral` decorator kwarg, `TaskRun.delete` /
+> `TaskRun.refresh` / `TaskRun.status` / `TaskRun.lease_expiry_count`).
+>
+> **Spec 022** (`sdk/agentserver/specs/022-durable-task-primitive-redesign/spec.md`)
+> reshaped the primitive. The following sections of this document are
+> **superseded** by spec 022; treat the spec 022 spec.md as authoritative
+> for them and use this document only for the unchanged parts:
+>
+> | This document                                       | Replaced / Removed by spec 022 |
+> |-----------------------------------------------------|--------------------------------|
+> | §11 / §20 / §23 `payload["output"]` writes          | FR-025 / FR-026 — never written |
+> | §4 interim retry `payload["error"]` writes          | FR-027 — never written         |
+> | §20 `_output` attachment + 2 MB cap                 | FR-021 — removed; `OutputTooLarge` removed too |
+> | §26 `/tasks/resume` route                           | FR-049 — route + handler removed |
+> | §32 / §3 `ephemeral` decorator kwarg                | FR-051 — deprecated; one-shot always ephemeral; multi-turn never |
+> | §34 `TaskResult` definition                         | FR-018 / FR-052 — wrapper removed; `.result()` returns `Output` |
+> | §34 `Suspended` sentinel                            | FR-019 — sentinel removed; multi-turn uses return-is-implicit-suspend |
+> | §35 / §35a `TaskSnapshot` + `Task.get`              | FR-017 — both removed; introspection via store-level provider only |
+> | §38 public `TaskStatus` literal                     | FR-020 — removed from public surface |
+> | §39 public `OutputTooLarge` / `TaskNotFound` / `TaskPreconditionFailed` | FR-021 / FR-074 — internal-only |
+> | §39 fielded exceptions                              | FR-075 / FR-076 / FR-077 — slim shapes; no `task_id` field |
+> | C-OUT conformance group                             | Output-persistence removed |
+> | C-SUS-4                                             | Suspended-output semantics removed |
+> | C-ATT-3 / 4 / 5 output-related parts                | Removed |
+> | C-INTROSPECT (TaskSnapshot conformance)             | Removed |
+>
+> ### NEW for spec 022 (authoritative in spec 022's `spec.md`)
+>
+> | New element                                      | Spec 022 reference |
+> |--------------------------------------------------|--------------------|
+> | `@multi_turn_task` decorator + `MultiTurnTask` class | FR-001..005 / FR-069 |
+> | `TaskDeferred` exception                         | FR-039 — bare; raised by `ctx.exit_for_recovery()` |
+> | `if_last_input_id=` precondition on `Task.start` + `multi_turn_task.start` | FR-076 |
+> | Class-split type-safety contract (one-shot vs multi-turn) | FR-069 — `Task` and `MultiTurnTask` are separate classes, not subclassed |
+> | 7-step ordering for multi-turn raise → suspended | FR-053 |
+> | Cancellation matrix (one-shot / multi-turn / steerable / queued steerer) | FR-053..062 |
+> | `entry_mode` matrix (fresh / resumed / recovered / promoted) | FR-063 |
+> | `TaskContext.input_id` (public attribute, mirrors `TaskRun.input_id`) | FR-005 / FR-047 |
+> | `TaskRun.input_id` (public attribute; defaults to `task_id` for 1:1 one-shot invariant) | FR-047 |
+> | `JSONValue` recursive type alias                 | FR-070 |
+> | `TaskErrorDict` + `TaskExhaustedRetriesErrorDict` TypedDicts | FR-071 |
+> | Auto-gen `task_id` for one-shot `Task.start` / `Task.run` | FR-067 |
+> | Reserved underscore-prefix metadata namespace    | FR-044 |
+> | Handler signature validation: first arg MUST be named `ctx` | FR-003 |
+> | Structured failure log (`event_name="durable_task_handler_failure"`) | FR-015 |
+> | `MultiTurnTask.delete(task_id)` (cancels active + queued; idempotent) | FR-024 / FR-061 |
+> | Multi-turn raise → `suspended` (NOT `completed`); `payload["error"]` never written | FR-010 / FR-011 / FR-027 |
+> | Multi-turn success → `suspended` (NOT `completed`); `payload["output"]` never written | FR-007 / FR-008 / FR-025 |
+> | `payload["_retry_attempt"]` cleared at suspend / terminal boundary | FR-030 |
+> | `payload["_last_input_id"]` preserved across suspend; NOT recovery input source | FR-029 / FR-033 |
+> | Recovery uses persisted `payload["input"]` (NEVER `_last_input_id`) | FR-033 |
+> | Inline recovery from `.start()` against expired lease: caller's new input flows through the standard non-crash path (one-shot/non-steerable rejected; steerable queued) | FR-034 |
+> | Public exception taxonomy: 7 names; bare-vs-fielded per FR-077 | FR-074 / FR-075 / FR-076 / FR-077 |
+>
+> Use this superseding table when reading the rest of this document.
+> When in doubt, the spec 022 `spec.md` wins.
+
+---
+
+# Durable Task & Streaming Primitives — Design Specification
+
 **Status:** Authoritative, source-of-truth specification.
 **Scope:** The **`@task` durable-task primitive** and the **`streams`
 streaming primitive** in `azure-ai-agentserver-core` — i.e.

@@ -37,13 +37,11 @@ import re
 from ._client import TransportClassifiedError as _TransportClassifiedError
 from ._context import TaskContext
 from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
-from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import TaskRun
 
 if TYPE_CHECKING:
     from ._models import TaskStatus
-    from ._snapshot import TaskSnapshot
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
@@ -693,50 +691,9 @@ class Task(Generic[Input, Output]):
         manager = get_task_manager()
         return await manager.get_active_run(task_id)
 
-    async def get(self, task_id: str) -> "TaskSnapshot[Output] | None":
-        """Spec 019 FR-C-001 — read-only introspection for any non-deleted task.
-
-        Returns a :class:`TaskSnapshot` hydrated from the persisted
-        record (resolving any promoted ``_output`` attachment), or
-        ``None`` if no task with this id exists. Works for tasks in
-        every status — ``pending``, ``in_progress``, ``suspended``,
-        ``completed``.
-
-        Unlike :meth:`get_active_run`, this method NEVER reclaims a
-        dead lease, NEVER spawns a recovery execution, NEVER takes
-        any write lock, and NEVER PATCHes the record. It is a
-        read-only sibling of :meth:`get_active_run` for surface
-        introspection (e.g., rendering task status in a UI).
-
-        :param task_id: The task identifier.
-        :type task_id: str
-        :return: A :class:`TaskSnapshot` if the record exists; ``None``
-            otherwise. MUST NOT raise :class:`TaskNotFound` — None is
-            the documented shape for a missing task.
-        :rtype: TaskSnapshot[Output] | None
-        :raises RuntimeError: if no ``TaskManager`` has been initialized
-            in the calling process.
-
-        Example::
-
-            snap = await my_task.get("task-123")
-            if snap is None:
-                ...  # never existed or was deleted
-            else:
-                print(snap.status, snap.output)
-        """
-        from ._manager import (  # pylint: disable=import-outside-toplevel
-            get_task_manager,
-        )
-        from ._snapshot import (  # pylint: disable=import-outside-toplevel
-            TaskSnapshot as _TaskSnapshot,
-        )
-
-        manager = get_task_manager()
-        info = await manager._provider_get_tracked(task_id)  # noqa: SLF001
-        if info is None:
-            return None
-        return _TaskSnapshot.from_task_info(info)
+    # Spec 022 FR-017: Task.get() is removed. TaskSnapshot is gone.
+    # Use manager.provider.get(task_id) directly for read-only inspection
+    # (returns TaskInfo, not a Snapshot wrapper).
 
     async def _list(
         self,

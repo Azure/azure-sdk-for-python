@@ -130,6 +130,7 @@ async def test_complete_output_always_uses_attachment(local) -> None:
         mgr_mod._manager = None
 
 
+@pytest.mark.skip(reason="spec 022 FR-025: payload[output] no longer written")
 @pytest.mark.asyncio
 async def test_suspend_output_none_writes_explicit_null(local) -> None:
     """FR-C-007 / SC-10 / US-C4 — suspend with output=None after a

@@ -95,14 +95,9 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "JSONValue",
         "TaskErrorDict",
         "TaskExhaustedRetriesErrorDict",
-        # ----- LEGACY symbols (still in __all__ during Phase 2-5 transition;
-        # scheduled for removal in spec 022 Phase 5 per FR-016/017/018/019/
-        # 020/021/074). The contract_completeness sanity check below allows
-        # them to coexist with the new symbols during the migration window.
-        "TaskResult",                # FR-018
-        "Suspended",                 # FR-019
-        "TaskSnapshot",              # FR-017
-        "TaskStatus",                # FR-020
+        # ----- LEGACY symbols (still in __all__ during transition) -----
+        "Suspended",                 # FR-019 — kept transitionally
+        "TaskStatus",                # FR-020 — kept transitionally
     }
 )
 
@@ -114,6 +109,9 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "OutputTooLarge",
         "TaskNotFound",
         "TaskPreconditionFailed",
+        # Spec 022 FR-017 / FR-018 — fully deleted from package.
+        "TaskResult",
+        "TaskSnapshot",
         "TaskOptions",    # demoted to internal
         "TaskInfo",       # demoted to internal
         "EtagConflict",   # advanced/internal — no public export
@@ -233,22 +231,10 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     "spec019_recovery_scan_skips_foreign_typed_tasks": (
         "test_recovery_filter.py::test_recovery_does_not_pick_up_foreign_typed_task"
     ),
-    # FR-C-001..007 (Task.get + TaskSnapshot + output lifecycle)
-    "spec019_task_get_returns_snapshot": (
-        "test_task_get_api.py::test_task_get_returns_snapshot_for_each_status"
-    ),
-    "spec019_task_get_returns_none_for_missing": (
-        "test_task_get_api.py::test_task_get_returns_none_for_missing"
-    ),
-    "spec019_task_get_raises_without_manager": (
-        "test_task_get_api.py::test_task_get_raises_runtime_error_without_manager"
-    ),
-    "spec019_task_snapshot_field_exclusions": (
-        "test_task_get_api.py::test_task_snapshot_exposes_only_documented_fields"
-    ),
-    "spec019_task_snapshot_resolves_output_ref": (
-        "test_task_get_api.py::test_task_snapshot_resolves_output_ref"
-    ),
+    # FR-C-001..007 (Task.get + TaskSnapshot + output lifecycle) — REMOVED
+    # per spec 022 FR-017 / FR-021 / FR-025. The whole Task.get + TaskSnapshot
+    # surface is deleted, and output is no longer persisted in payload, so
+    # the "cleared on resume / drain / failure" contracts are vacuous.
     "spec019_output_cleared_on_resume": (
         "test_output_lifecycle.py::test_resume_clears_payload_output_and_attachment"
     ),
