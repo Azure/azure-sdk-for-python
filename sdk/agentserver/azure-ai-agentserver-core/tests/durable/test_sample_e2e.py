@@ -647,7 +647,7 @@ class TestLifecycleE2E:
                 input={"session_id": "ls1", "message": "done"},
             )
             result3 = await run3.result()
-            assert result3.output["finished"] is True
+            assert result3["finished"] is True
 
             # Verify entry modes: fresh, resumed, resumed
             assert entry_modes == ["fresh", "resumed", "resumed"]
@@ -1541,7 +1541,7 @@ class TestLangGraphSteeringSampleE2E:
 
             result3 = await asyncio.wait_for(run3.result(), timeout=5.0)
     # spec 022: result is raw output (Suspended wrapper removed)
-            assert "Turn3" in result3.output["reply"]
+            assert "Turn3" in result3["reply"]
             assert store["mt-2"]["status"] == "cancelled"
             assert store["mt-3"]["status"] == "completed"
 

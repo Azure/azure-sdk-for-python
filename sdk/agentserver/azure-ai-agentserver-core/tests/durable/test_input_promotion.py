@@ -127,7 +127,8 @@ async def test_large_input_promoted_to_attachment(manager_local: TaskManager) ->
 
     run = await capture.start(task_id="t-big", input=big)
     res = await run.result()
-    assert res.status == "suspended"
+    # spec 022: result is raw output (Suspended wrapper removed)
+    assert res == {"captured": True}
 
     # Handler MUST have received the original value (regardless of promotion).
     assert seen_input["v"] == big

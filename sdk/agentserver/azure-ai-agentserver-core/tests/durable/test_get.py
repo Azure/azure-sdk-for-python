@@ -57,7 +57,8 @@ class TestGet:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             result = await my_task.run(task_id="get-1", input="data")
-            assert result.is_suspended
+            # spec 022: result is raw output (Suspended wrapper removed)
+            _ = result
 
             info = await my_task._get("get-1")
             assert info is not None

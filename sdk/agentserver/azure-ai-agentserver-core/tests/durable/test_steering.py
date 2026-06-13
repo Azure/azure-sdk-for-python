@@ -154,10 +154,10 @@ class TestSteering:
                 await chat.start(task_id="t1", input={"msg": f"fill-{i}"})
 
             # Queue is full — should raise
-            with pytest.raises(SteeringQueueFull) as exc_info:
+            with pytest.raises(SteeringQueueFull):
                 await chat.start(task_id="t1", input={"msg": "overflow"})
 
-            assert exc_info.value.max_pending == _DEFAULT_MAX_PENDING_STEERING
+            # spec 022 FR-077: SteeringQueueFull is bare exception (no max_pending)
 
             gate.set()
             await asyncio.wait_for(run1.result(), timeout=5.0)
