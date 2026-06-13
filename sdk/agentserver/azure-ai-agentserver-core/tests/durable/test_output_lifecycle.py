@@ -27,7 +27,6 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     RetryPolicy,
-    Suspended,
     TaskContext,
     TaskFailed,
     task,

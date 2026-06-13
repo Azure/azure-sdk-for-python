@@ -1983,6 +1983,20 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     )
 
                     current_result_future.set_exception(TaskCancelled())
+                # One-shot tasks are always ephemeral: delete the persisted
+                # record so the recovery scanner doesn't re-invoke a cancelled
+                # handler. Multi-turn chains stay alive in `suspended` and
+                # are removed only via MultiTurnTask.delete; do not delete
+                # them here.
+                if opts.ephemeral:
+                    try:
+                        await self._provider.delete(task_id, force=True)
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning(
+                            "Failed to delete cancelled ephemeral task %s",
+                            task_id,
+                            exc_info=True,
+                        )
                 break  # cancellation is never retried
 
             except Exception as exc:  # pylint: disable=broad-exception-caught

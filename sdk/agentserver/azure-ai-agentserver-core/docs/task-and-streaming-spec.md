@@ -453,13 +453,12 @@ The framework persists:
 - Steering state (`pending_inputs` queue, `cancel_requested`,
   `drain_in_progress`, `active_input`, `next_input_seq`) for
   steerable tasks (§12).
-- The handler's terminal outcome: `payload["output"]` (set on
-  the framework no longer writes output into the task record's
-  payload. The handler's `return X` resolves the in-process
+- The handler's terminal outcome: a structured `error` dict on
+  failure (when persisted by the layer above the primitive),
+  `suspension_reason` on suspend. The handler's `return X` value
+  is NOT persisted in the record — it resolves the in-process
   caller's `TaskRun.result()` future and is then no longer
-  field lifecycle" for the asymmetric write-only semantics),
-  structured `error` dict on failure, `suspension_reason` on
-  suspend.
+  reachable from the persisted record.
 
 The framework does NOT persist:
 
@@ -618,27 +617,6 @@ input_id`).
 
 Implementations MUST reject `if_last_input_id` provided without
 `input_id` (`TypeError` at the call site). The pair is orthogonal:
-`input_id` alone is idempotency / chain-head tracking;
-`(input_id, if_last_input_id)` together is HTTP-`If-Match`-style
-chain extension.
-
-#### Chain identity: `input_id` and `if_last_input_id`
-
-Both `.run()` and `.start()` accept two optional keyword arguments
-that thread caller-supplied chain identity through the persisted
-record:
-
-- **`input_id`** — record-only. The framework writes
-  `payload["_last_input_id"] = input_id` after accepting the input;
-  no precondition is checked.
-- **`if_last_input_id`** — precondition. The framework requires the
-  stored `_last_input_id` to equal `if_last_input_id` (the
-  predecessor the caller claims to be extending). Mismatch raises
-  `LastInputIdPreconditionFailed` (a subclass of
-  `TaskPreconditionFailed`).
-
-Implementations MUST reject `if_last_input_id` provided without
-`input_id` (TypeError at the call site). The pair is orthogonal:
 `input_id` alone is idempotency / chain-head tracking;
 `(input_id, if_last_input_id)` together is HTTP-`If-Match`-style
 chain extension.
@@ -1234,7 +1212,6 @@ no inline shape).
 |---|---|---|
 | Function input (`payload["input"]`) | > 200 KiB serialized → ref; otherwise inline. | `_input` |
 | Each steering input (entry in `_steering["pending_inputs"]`) | > 20 KiB serialized → ref; otherwise inline. | `_steering_input_<seq>` |
-| Output (`payload["output"]`) | **ALWAYS ref** when non-null (no threshold; even a 1-byte output uses the attachment slot). When null, the slot is `null` and the attachment is deleted. | `_output` |
 
 Different rules because:
 
@@ -1243,19 +1220,18 @@ Different rules because:
 - Steering inputs may accumulate (up to 9 queued). A 20 KiB
   threshold caps the worst-case inline payload contribution from
   steering at ~180 KiB even when the queue is full.
-- **Output never consumes payload budget.** The 1 MB payload cap
-  must accommodate metadata, steering state, framework slots, etc.;
-  an output that competes with these would be evicting their budget
-  on every terminal write. The always-attachment rule eliminates
-  this entirely: output is bounded by the per-attachment 2 MB cap
-  (§23.7) and uses none of the payload budget.
+
+There is no `_output` channel and no output promotion. The
+framework does not persist handler return values; outputs resolve
+the in-process caller's `TaskRun.result()` future directly and are
+never projected onto the task record.
 
 Sizes are measured in bytes of canonical JSON
 (`sort_keys=True`, separators `(",", ":")`).
 
 Worst-case framework attachment usage:
-`_input` (1) + `_steering_input_*` (up to 9) + `_output` (1) =
-**11 of 20** per-task attachment slots. Leaves 9 slots free for
+`_input` (1) + `_steering_input_*` (up to 9) =
+**10 of 20** per-task attachment slots. Leaves 10 slots free for
 future use.
 
 #### 23.3 Wire shapes — two only
@@ -1374,14 +1350,11 @@ These transitions MUST be single PATCHes carrying BOTH `payload` and
 1. **Promote on `.start()` (fresh)**: `attachments["_input"] = <value>`
    + `payload["input"] = {ref}` (CREATE on the hosted store).
 2. **Promote on resume**: same fields, but PATCH.
-3. **Suspend** (always, regardless of whether input was promoted):
+3. **Suspend (multi-turn turn-end via `return X`)**:
    - `payload["input"] = null`
    - `payload["_steering"]["active_input"] = null`
-   - `payload["output"] = {ref to _output}` OR `null` (always
-     explicit per US-C4 — never absent)
+   - `payload["_retry_attempt"] = null` (fresh budget for the next turn)
    - `attachments["_input"] = null` (delete) IF the input was a ref
-   - `attachments["_output"] = <value>` OR `null` (delete) — always
-     synchronized with the payload slot above
 4. **Steering append (promoted)**: `payload["_steering"]["pending_inputs"]
    += [{ref}]`, `attachments["_steering_input_<seq>"] = <value>`,
    `payload["_steering"]["next_input_seq"] += 1`,
@@ -1389,20 +1362,17 @@ These transitions MUST be single PATCHes carrying BOTH `payload` and
 5. **Steering drain (promoted entry, Phase 1)**:
    `payload["_steering"]["pending_inputs"]` without the popped
    head, `attachments["_steering_input_<seq>"] = null`,
-   `payload["output"] = null` (resume-clear),
-   `attachments["_output"] = null` (delete prior output),
    plus the new turn's `_turn_started_at`.
-6. **Normal one-shot completion**: the record is deleted (one-shot is always ephemeral). Multi-turn `return X`:
-   `payload["output"] = {ref}` OR `null`, `attachments["_output"]
-   = <value>` OR `null`.
-7. **Failure**: one-shot → record deleted; multi-turn → status="suspended" with `suspension_reason="run_completion"`, no `payload["error"]` written,
-   `error = <dict>`, `payload["output"] = null`,
-   `attachments["_output"] = null` (clear stale output from a
-   prior successful attempt).
-8. **Resume (suspended → in_progress, `_start_existing_task`)**:
-   status="in_progress", `_turn_started_at` re-stamped,
-   `payload["output"] = null`, `attachments["_output"] = null`
-   (clear prior output from the suspended turn).
+6. **One-shot completion**: the record is deleted (one-shot is
+   always ephemeral).
+7. **Failure**: one-shot → record deleted; multi-turn → status="suspended"
+   with `suspension_reason="run_completion"`. No `payload["error"]`
+   is written; the per-turn failure surfaces to the caller via
+   `TaskFailed(error=...)` and via the structured log
+   `durable_task_handler_failure`.
+8. **Resume (suspended → in_progress)**: status="in_progress",
+   `_turn_started_at` re-stamped, `_retry_attempt` reset to 0.
+   New input written (inline or as ref + attachment per §23.2).
 
 Splitting any of these into multiple PATCHes opens a crash window
 where the attachment exists without its ref (or vice versa). The
@@ -1412,8 +1382,7 @@ framework treats this as a single-PATCH invariant.
 
 Attachment keys MUST match the regex `^[a-zA-Z0-9_.\-]{1,64}$` and
 MUST NOT be empty after trimming whitespace. Both providers enforce
-this on every CREATE / PATCH write. The framework's reserved keys
-(`_input`, `_steering_input_<seq>`, `_output`) all conform.
+this on every CREATE / PATCH write. The framework's reserved keys (`_input`, `_steering_input_<seq>`) all conform.
 Developer-supplied attachment keys (none exist today — attachments
 are framework-owned per §23.7) would also be validated against this
 regex if the surface is ever expanded.
@@ -2269,8 +2238,7 @@ That is the entire surface. The handle deliberately has NO
 
 **`TaskRun` is NOT an async iterable.** It does not implement
 `__aiter__` / `__anext__`; there is no `async for chunk in run`
-syntax. This is a deliberate design choice from spec 017 (unified
-streaming): incremental streaming is a peer subpackage
+syntax. Incremental streaming is a peer subpackage
 (`azure.ai.agentserver.core.streaming`, Part VI), NOT a property
 of the task handle. Producers emit to a `streams` registry id;
 consumers attach via `streams.get(id).subscribe(after=...)`.
@@ -3030,10 +2998,9 @@ The framework's most-complex decision tree. On `Task.start(task_id, input, ...)`
    For RESUME, the PATCH MUST be a single co-PATCH carrying:
      - status: 'in_progress'
      - payload['input']: new serialized input (inline or ref)
-     - payload['output']: null   (clear prior suspend output)
      - payload['_turn_started_at']: utc_now_iso()
+     - payload['_retry_attempt']: 0   (fresh retry budget for the resumed turn)
      - attachments['_input']: new value (or absent if inline)
-     - attachments['_output']: null  (delete prior output attachment)
 5. If action ∈ {CREATE, ADOPT, RESUME, RECLAIM-AND-INVOKE}:
      Spawn lease_renewal_loop, watchdog (if timeout configured), execute_task_loop.
      Return a TaskRun bound to this execution.
@@ -3045,11 +3012,10 @@ The framework's most-complex decision tree. On `Task.start(task_id, input, ...)`
 The reclaim sub-case includes input precondition validation
 (`if_last_input_id`) before the transition PATCH.
 
-The RESUME co-clear of output is what guarantees that a
-`Task.get(task_id)` taken during the resumed turn never returns
-a stale output from the suspended turn — the developer-observable
-Read-through-the-provider `TaskInfo.payload["output"]` is absent until the resumed turn produces
-a new one.
+The framework does NOT write `payload["output"]` on any
+transition. The handler's return value resolves the in-process
+caller's `TaskRun.result()` future and is never projected onto
+the chain record.
 
 ### §51. Steering append (atomic)
 
@@ -3115,10 +3081,8 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
  10. steering['drain_in_progress'] = True
  11. steering['cancel_requested']  = len(pending) > 0     # more pending => keep advisory
  12. payload['_steering']          = steering
- 13. payload['_turn_started_at']   = utc_now_iso()        # FR-023: fresh turn-start boundary
- 14. payload['output']             = null                 # clear prior turn's output
- 15. attachments_patch['_output']  = null                 # delete prior output attachment
- 16. PATCH(task_id, payload=payload, attachments=attachments_patch,
+ 13. payload['_turn_started_at']   = utc_now_iso()        # fresh turn-start boundary
+ 14. PATCH(task_id, payload=payload, attachments=attachments_patch,
         lease piggyback, if_match=etag)
 
      [NB: Phase 1 does NOT set payload['input'] or write a ref/attachment
@@ -3126,12 +3090,8 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
       Recovery from a crash BETWEEN Phase 1 and Phase 3 reads
       _steering['active_input'] as the source of truth for the input,
       via the race-recovery contract.
-      The output co-clear at steps 14-15 mirrors the suspended->in_progress
-      RESUME co-clear (§50): the next turn's snapshot must not surface
-      the previous turn's output. Always include attachments['_output'] = null
-      even when there was no prior _output attachment — the local provider
-      treats deletion of a non-existent key as a no-op, and the hosted
-      store does the same.]
+      No output co-clear is needed — the framework does not write
+      payload['output'] / _output attachments on any transition.]
 
 Phase 2 — Handler re-entry (in-memory only):
  15. Construct a fresh TaskContext with:
@@ -4109,8 +4069,7 @@ A single JSON document showing how every concept in this spec
 composes. This is a deep-research task mid-life: function input
 was promoted, three steering inputs are queued (one inline, two
 promoted), one drain has already happened so `next_input_seq` is
-ahead of the live keys, the suspended-turn output from earlier
-is persisted as the `_output` attachment, both default and named
+ahead of the live keys, both default and named
 metadata namespaces are populated, framework state slots are set.
 
 ```json
@@ -4145,12 +4104,6 @@ metadata namespaces are populated, framework state slots are set.
       }
     },
 
-    "output": {
-      "__attachment_ref__": {
-        "key":  "_output",
-        "hash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
-      }
-    },
 
     "metadata": {
       "completed_phases":  3,
@@ -4198,11 +4151,6 @@ metadata namespaces are populated, framework state slots are set.
       "depth":   "comprehensive",
       "context": "<~800 KB of caller-supplied reference material>"
     },
-    "_output": {
-      "phase":     "phase_3_summary",
-      "summary":   "Initial scan complete...",
-      "artifacts": "<~600 KB of intermediate summary>"
-    },
     "_steering_input_3": {
       "instruction": "refocus on transformer architectures",
       "context":     "<~600 KB of caller-supplied reference material>"
@@ -4231,7 +4179,6 @@ What this single document demonstrates:
 | Lease (§22) | `lease.owner`, `lease.instance_id`, `lease.generation` |
 | Framework-stamped routing (§21) | `tags._task_name`, `source.name` |
 | Input promoted to attachment (§23) | `payload.input` is a ref; `attachments._input` holds the value |
-| Output always-attachment (§20, §23.2) | `payload.output` is a ref; `attachments._output` holds the value |
 | Multiple metadata namespaces (§17) | `payload.metadata` + `payload["metadata:session"]` |
 | Steering queue with mixed shapes (§12, §23) | `_steering.pending_inputs[0]` inline; `[1]`, `[2]` refs |
 | Monotonic seq invariant (§23.5) | `next_input_seq: 5` with live keys `_3` + `_4` — one drain consumed `_0`/`_1`/`_2`, no renumbering |

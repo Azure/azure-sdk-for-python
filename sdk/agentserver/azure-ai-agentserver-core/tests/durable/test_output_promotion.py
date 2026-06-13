@@ -28,7 +28,6 @@ from pathlib import Path
 import pytest
 
 from azure.ai.agentserver.core.durable import (
-    Suspended,
     TaskContext,
     task,
     multi_turn_task)

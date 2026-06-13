@@ -61,8 +61,14 @@ from ._exceptions import (
     TaskFailed,
 )
 from ._metadata import JSONValue, TaskMetadata
-from ._retry import RetryPolicy
-from ._run import Suspended, TaskRun  # Suspended kept as internal-only; NOT in __all__
+from ._retry import (
+    RetryPolicy,
+    exponential_backoff,
+    fixed_delay,
+    linear_backoff,
+    no_retry,
+)
+from ._run import TaskRun  # Suspended kept internal-only; reach via _run module directly
 
 # Spec 016 FR-022 + SC-014 (US6): TaskTerminated is fully removed from
 # the public surface — importing it from this package now raises
@@ -104,6 +110,10 @@ __all__ = [
     "TaskRun",
     # Retry
     "RetryPolicy",
+    "exponential_backoff",
+    "fixed_delay",
+    "linear_backoff",
+    "no_retry",
     # Public exceptions
     "TaskFailed",
     "TaskCancelled",

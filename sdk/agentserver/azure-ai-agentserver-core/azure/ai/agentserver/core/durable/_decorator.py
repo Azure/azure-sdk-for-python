@@ -1497,54 +1497,76 @@ class MultiTurnTask(Generic[Input, Output]):
     def _output_type(self) -> Any:
         return self._inner._output_type  # noqa: SLF001
 
-    async def run(self, *args: Any, **kwargs: Any) -> Any:
-        """Run the chain turn — see :meth:`Task.run`.
+    @property
+    def name(self) -> str:
+        """The registered task name (proxy of the wrapped Task)."""
+        return self._inner.name
 
-        Spec 022 FR-005: multi-turn ``task_id`` is MANDATORY (no auto-gen).
+    async def run(
+        self,
+        *,
+        task_id: str,
+        input: Any,  # noqa: A002
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> Any:
+        """Run one turn on the chain identified by ``task_id``.
+
+        :keyword task_id: The chain identifier (mandatory).
+        :keyword input: The turn's input value.
+        :keyword input_id: Optional per-turn identifier; auto-generated
+            when omitted.
+        :keyword if_last_input_id: Optional ``If-Match``-style
+            precondition on the chain's last-accepted ``input_id``.
+        :return: The handler's return value for this turn.
         """
-        if "task_id" not in kwargs:
-            raise TypeError(
-                "MultiTurnTask.run() requires `task_id` (multi-turn chains "
-                "have mandatory task_id per spec 022 FR-005)"
-            )
-        return await self._inner.run(*args, **kwargs)
+        return await self._inner.run(
+            task_id=task_id,
+            input=input,
+            input_id=input_id,
+            if_last_input_id=if_last_input_id,
+        )
 
-    async def start(self, *args: Any, **kwargs: Any) -> Any:
-        """Start a chain turn — see :meth:`Task.start`.
+    async def start(
+        self,
+        *,
+        task_id: str,
+        input: Any,  # noqa: A002
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> "TaskRun[Output]":
+        """Start one turn on the chain identified by ``task_id`` and
+        return a :class:`TaskRun` handle for that turn.
 
-        Spec 022 FR-005: multi-turn ``task_id`` is MANDATORY (no auto-gen).
+        :keyword task_id: The chain identifier (mandatory).
+        :keyword input: The turn's input value.
+        :keyword input_id: Optional per-turn identifier.
+        :keyword if_last_input_id: Optional ``If-Match``-style precondition.
+        :return: A :class:`TaskRun` handle bound to the turn.
         """
-        if "task_id" not in kwargs:
-            raise TypeError(
-                "MultiTurnTask.start() requires `task_id` (multi-turn chains "
-                "have mandatory task_id per spec 022 FR-005)"
-            )
-        return await self._inner.start(*args, **kwargs)
+        return await self._inner.start(
+            task_id=task_id,
+            input=input,
+            input_id=input_id,
+            if_last_input_id=if_last_input_id,
+        )
 
-    async def get_active_run(  # noqa: D401
-        self, task_id: str, input_id: str | None = None
+    async def get_active_run(
+        self, task_id: str, input_id: str,
     ) -> "TaskRun[Output] | None":
         """Multi-turn variant of ``get_active_run`` — REQUIRES ``input_id``.
 
-        Per spec 022 FR-023, multi-turn ``get_active_run`` MUST take BOTH
-        ``task_id`` and ``input_id``. The current turn's input_id is the
-        match key; mismatch returns ``None``.
+        The current turn's input_id is the match key; mismatch returns
+        ``None``.
 
         :param task_id: The chain task_id.
         :type task_id: str
         :param input_id: The exact input_id of the currently in-flight turn.
-            MUST be supplied (signature differs from one-shot
-            :meth:`Task.get_active_run`).
         :type input_id: str
         :return: The TaskRun handle bound to the currently in-flight turn
             iff ``(task_id, input_id)`` exactly matches; ``None`` otherwise.
         :rtype: TaskRun[Output] | None
         """
-        if input_id is None:
-            raise TypeError(
-                "MultiTurnTask.get_active_run() requires both `task_id` and `input_id` "
-                "(spec 022 FR-023); use Task.get_active_run(task_id) for one-shot"
-            )
         run = await self._inner.get_active_run(task_id)
         if run is None:
             return None
@@ -1552,8 +1574,7 @@ class MultiTurnTask(Generic[Input, Output]):
             return None
         return run
 
-    @classmethod
-    async def delete(cls, task_id: str) -> None:
+    async def delete(self, task_id: str) -> None:
         """Force-delete the chain record + any queued inputs (spec 022 FR-024).
 
         Per spec 022 FR-024, removes the chain record and all queued
