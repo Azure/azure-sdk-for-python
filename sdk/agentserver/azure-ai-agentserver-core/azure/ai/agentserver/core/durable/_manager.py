@@ -1420,7 +1420,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # written by ``_execute_task_loop`` on every handler-raised exception
         # and cleared by the steering-drain path; default 0 covers fresh and
         # never-failed tasks.
-        persisted_retry_attempt = (task_info.payload or {}).get("_retry_attempt", 0)
+        persisted_retry_attempt = (task_info.payload or {}).get("_retry_attempt") or 0
 
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
@@ -2015,19 +2015,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     # counter via ``_start_existing_task`` so the durable
                     # max_attempts budget is honored across lifetimes.
                     try:
+                        # Spec 022 FR-027: NO interim error PATCH between retries.
+                        # Only the _retry_attempt counter is persisted across retries.
                         await self._provider_update_locked(
                             task_id,
                             TaskPatchRequest(
-                                error={
-                                    "type": type(exc).__name__,
-                                    "message": str(exc),
-                                    "attempt": attempt,
-                                },
                                 payload={"_retry_attempt": attempt + 1},
                             ),
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
-                        logger.debug("Failed to update error field for retry", exc_info=True)
+                        logger.debug("Failed to update _retry_attempt counter", exc_info=True)
                     await asyncio.sleep(delay)
                     attempt += 1
                     continue
