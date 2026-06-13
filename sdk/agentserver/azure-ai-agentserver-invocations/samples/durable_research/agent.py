@@ -33,11 +33,12 @@ are exactly what the recovery re-entry needs to resume mid-turn.
 Steering is transparent: a new POST while a turn is running enqueues
 the input on the framework's steering queue and sets ``ctx.cancel``.
 The handler observes the cancel at the next checkpoint, winds down
-via ``ctx.suspend(...)`` (which calls :func:`_finish_turn` to clear
-all per-turn state), and the framework re-enters the body with the
-new ``ctx.input``. Because state was cleared at suspend, the
-re-entered handler naturally starts the new topic at phase 0 — no
-``is_steered_turn`` check needed in handler code.
+via `return None` (spec 022 FR-007 — return is implicit suspend; the
+helper :func:`_finish_turn` clears all per-turn state before returning),
+and the framework re-enters the body with the new ``ctx.input``.
+Because state was cleared at suspend, the re-entered handler naturally
+starts the new topic at phase 0 — no ``is_steered_turn`` check needed
+in handler code.
 
 Input schema: ``{"topic": str, "invocation_id": str}``
 
@@ -65,7 +66,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 from .store import CheckpointStore
@@ -227,7 +228,7 @@ async def _finish_turn(stream: Any, ctx: TaskContext, inv_id: str) -> None:
     _checkpoint_store.delete(inv_id)
 
 
-@task(name="deep_research", steerable=True)
+@multi_turn_task(name="deep_research", steerable=True)
 async def deep_research(ctx: TaskContext[dict]) -> None:
     """Long-running deep-research task: crash-resilient, steerable.
 
@@ -240,10 +241,11 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
     before the crash — so the worst case is one wasted subcall (the
     one that was actively streaming when the container died).
 
-    The body returns ``None`` on normal completion (or the
-    ``Suspended`` sentinel from ``ctx.suspend(...)`` on the wind-down
-    path). Clients read progress + final content from the per-turn
-    SSE stream, not from the task's terminal output, so there is no
+    The body returns ``None`` on normal completion (and also on the
+    steered-wind-down path — spec 022 FR-007 makes ``return`` the
+    implicit-suspend signal; the chain stays alive across turns).
+    Clients read progress + final content from the per-turn SSE
+    stream, not from the task's terminal output, so there is no
     return-value payload to construct.
     """
     topic: str = ctx.input["topic"]
@@ -386,11 +388,11 @@ async def _wind_down(
     """Cooperative wind-down at a phase boundary.
 
     Tears down per-turn resources (stream close + metadata wipe +
-    checkpoint-store clear) via :func:`_finish_turn` BEFORE calling
-    ``ctx.suspend(...)`` so the SSE subscriber observes a clean
-    terminator before the framework reports the turn as suspended,
-    and so the steered re-entry (or any future ``start()``) finds
-    metadata wiped.
+    checkpoint-store clear) via :func:`_finish_turn` BEFORE the handler
+    returns. Per spec 022 FR-007 the multi-turn ``return`` is the
+    implicit-suspend signal — so the SSE subscriber observes a clean
+    terminator before the framework reports the turn as suspended, and
+    the steered re-entry (or any future ``start()``) finds metadata wiped.
     """
     if ctx.timeout_exceeded:
         cause = "timeout"
@@ -410,7 +412,10 @@ async def _wind_down(
     })
 
     await _finish_turn(stream, ctx, inv_id)
-    return await ctx.suspend()
+    # spec 022 FR-007: multi-turn `return` is the implicit-suspend signal.
+    # The chain stays alive across turns; ctx.suspend() is not part of
+    # the public surface per FR-008.
+    return None
 
 
 async def _cooldown(

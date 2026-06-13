@@ -24,7 +24,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ def _generate_reply(turn: int, last_msg: str) -> str:
     )
 
 
-@task(name="session_workflow")
+@multi_turn_task(name="session_workflow")
 async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Single durable function for the entire session.
 
@@ -115,4 +115,8 @@ async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
     await ctx.metadata.flush()
 
     # Suspend — the client will resume with the next turn.
-    return await ctx.suspend(reason="awaiting_user_input", output=output)
+    # spec 022 FR-007: multi-turn `return X` is the implicit-suspend signal.
+    # The chain stays alive across turns; ctx.suspend() is not part of
+    # the public surface per FR-008. The output value flows through
+    # `return output` to the caller's `.result()`.
+    return output

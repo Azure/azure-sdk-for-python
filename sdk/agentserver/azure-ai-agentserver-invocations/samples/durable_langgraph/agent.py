@@ -25,7 +25,7 @@ from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import Command, interrupt
 from typing_extensions import TypedDict
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 from .store import FileStore
@@ -297,7 +297,7 @@ async def _finalize_invocation(
     if state.next:
         output = _build_turn_output(state)
         invocation_store.save(invocation_id, {"status": "completed", "output": output})
-        return await ctx.suspend(reason="awaiting_user_input", output=output)
+        return output  # spec 022 FR-007: implicit suspend on return
 
     result = _build_session_output(state)
     invocation_store.save(invocation_id, {"status": "completed", "output": result})
@@ -309,7 +309,7 @@ async def _finalize_invocation(
 # ---------------------------------------------------------------------------
 
 
-@task(name="langgraph_session", steerable=True)
+@multi_turn_task(name="langgraph_session", steerable=True)
 async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Run one LangGraph conversation turn with steering support.
 
@@ -364,7 +364,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                             invocation_id,
                             {"status": "cancelled", "reason": "steered"},
                         )
-                        return await ctx.suspend(reason="steered")
+                        return None  # spec 022 FR-007: implicit suspend on return
 
                     return await _finalize_invocation(ctx, thread_config, invocation_id)
 
@@ -373,7 +373,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         invocation_store.save(
             invocation_id, {"status": "cancelled", "reason": "steered"}
         )
-        return await ctx.suspend(reason="steered")
+        return None  # spec 022 FR-007: implicit suspend on return
 
     # ── Phase 2: Invoke graph with inter-node cancellation ──────────
     state = await asyncio.to_thread(_graph.get_state, thread_config)
@@ -418,7 +418,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         invocation_store.save(
             invocation_id, {"status": "cancelled", "reason": "steered"}
         )
-        return await ctx.suspend(reason="steered")
+        return None  # spec 022 FR-007: implicit suspend on return
 
     # Normal completion
     return await _finalize_invocation(ctx, thread_config, invocation_id)

@@ -52,7 +52,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 from .store import FileStore
@@ -186,7 +186,7 @@ async def _recovered_assistant_text(session: Any) -> str:
 # --------------------------------------------------------------------------
 
 
-@task(name="copilot_session", steerable=True)
+@multi_turn_task(name="copilot_session", steerable=True)
 async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Run one Copilot conversation turn with steering + crash resilience."""
 
@@ -252,7 +252,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     "message_preserved": True,
                 },
             )
-            return await ctx.suspend(reason="steered")
+            return None  # spec 022 FR-007: implicit suspend on return
 
         # ── FR-011 gap 4 — upstream-history dedup ──────────────────
         # Send the message only if the upstream session does not already
@@ -333,7 +333,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 "output": output,
             },
         )
-        return await ctx.suspend(reason="steered")
+        return None  # spec 022 FR-007: implicit suspend on return
 
     if ctx.cancel.is_set():
         invocation_store.save(
@@ -344,10 +344,10 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 "output": output,
             },
         )
-        return await ctx.suspend(reason="steered")
+        return None  # spec 022 FR-007: implicit suspend on return
 
     invocation_store.save(invocation_id, {"status": "completed", "output": output})
-    return await ctx.suspend(reason="awaiting_user_input", output=output)
+    return output  # spec 022 FR-007: implicit suspend on return
 
 
 async def _stream_and_persist(
