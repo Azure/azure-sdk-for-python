@@ -2048,15 +2048,49 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     metadata=ctx.metadata,
                     opts=opts,
                 )
+                # Spec 022 FR-012 / FR-053 step 5 — caller's future resolution:
+                # CancelledError → bare TaskCancelled() else TaskFailed.
+                is_multi_turn_failure = getattr(opts, "_is_multi_turn", False)
                 if not current_result_future.done():
-                    current_result_future.set_exception(TaskFailed(task_id, error_dict))
-                # Spec 016 FR-012 (US5): queued steerers see TaskConflictError
-                # on terminal failure since the task is now done.
-                _resolve_queued_steerers_on_terminal(
-                    self._pending_steering_futures,
-                    task_id,
-                    current_status="failed",
-                )
+                    if isinstance(exc, asyncio.CancelledError):
+                        # Spec 022 FR-012/077 — bare TaskCancelled (no fields).
+                        current_result_future.set_exception(TaskCancelled(task_id))
+                    else:
+                        current_result_future.set_exception(TaskFailed(task_id, error_dict))
+                # Spec 016 FR-012 (US5) — legacy one-shot path: queued steerers
+                # see TaskConflictError on terminal failure since the task is done.
+                # Spec 022 FR-013 — multi-turn path: queued steerers PROMOTE
+                # (chain stays alive); do NOT reject them here.
+                if not is_multi_turn_failure:
+                    _resolve_queued_steerers_on_terminal(
+                        self._pending_steering_futures,
+                        task_id,
+                        current_status="failed",
+                    )
+                else:
+                    # Multi-turn: chain stays in suspended; try drain steering
+                    # queue per FR-013. Promoted turn dispatches with
+                    # ctx.entry_mode="resumed" per the existing _try_drain_steering
+                    # mechanics. If no queued steerers, chain remains suspended.
+                    try:
+                        new_ctx = await self._try_drain_steering(
+                            task_id=task_id,
+                            ctx=ctx,
+                            opts=opts,
+                            result_future=current_result_future,
+                        )
+                        if new_ctx is not None:
+                            # Queued head promoted; new turn dispatching.
+                            # _execute_task continues into next attempt with new ctx.
+                            ctx = new_ctx
+                            attempt = 0
+                            continue
+                    except Exception:  # noqa: BLE001
+                        logger.warning(
+                            "Failed to drain steering queue after multi-turn raise for task %s",
+                            task_id,
+                            exc_info=True,
+                        )
                 break
 
         self._active_tasks_pop(task_id)
@@ -2372,6 +2406,102 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         logger.info("Task %s completed successfully", task_id)
         return True
 
+    async def _handle_multi_turn_failure(
+        self,
+        *,
+        task_id: str,
+        exc: Exception,
+        metadata: TaskMetadata,
+        opts: TaskOptions,
+        error_dict: dict[str, Any],
+    ) -> None:
+        """Multi-turn raise handler (spec 022 FR-010/011/027/053).
+
+        Per spec 022 FR-053 7-step ordering:
+        1. (caller) Run the failure handler (this method).
+        2. Auto-flush ctx.metadata BEFORE the chain-PATCH (load-bearing per FR-045).
+        3. Clear payload["input"] and payload["_retry_attempt"].
+        4. PATCH chain record to ``suspended`` (NOT ``completed``) with
+           ``suspension_reason="run_completion"``. No ``payload["error"]``
+           is written (FR-027). ``payload["_last_input_id"]`` MUST be
+           preserved. Steering queue MUST be preserved.
+        5. (caller) Resolve current caller's .result() future per FR-012:
+           ``CancelledError`` → bare ``TaskCancelled()`` else
+           ``TaskFailed(error_dict)``.
+        6. (caller) If queued steerers exist, promote head per FR-013.
+        7. (caller) Else leave chain in ``suspended`` awaiting future
+           ``.run()`` / ``.start()``.
+
+        Steps 5/6/7 are handled by the caller (`_execute_task`) after this
+        method returns; this method owns steps 2/3/4.
+        """
+        # Step 2: auto-flush metadata BEFORE the chain-PATCH (FR-045).
+        try:
+            await metadata._flush_all()  # noqa: SLF001 — framework-internal fence
+        except Exception:  # noqa: BLE001
+            logger.warning(
+                "Failed to auto-flush metadata before multi-turn failure PATCH for task %s",
+                task_id,
+                exc_info=True,
+            )
+
+        # Step 3 + 4: PATCH to suspended (NOT completed); clear input + _retry_attempt;
+        # NO payload["error"] written; _last_input_id preserved.
+        try:
+            await self._terminal_write_locked(
+                task_id,
+                TaskPatchRequest(
+                    status="suspended",
+                    suspension_reason="run_completion",
+                    payload={
+                        "metadata": metadata.to_dict(),
+                        "input": None,            # FR-028
+                        "_retry_attempt": None,   # FR-030
+                        # NO "output" (FR-025), NO "error" (FR-027)
+                    },
+                ),
+            )
+        except TaskConflictError:
+            # 412 RE-READ decided ABANDON; propagate so the active caller
+            # receives the eviction-shape exception.
+            raise
+        except _HostedConflict as hosted_exc:
+            translated = _translate_hosted_conflict(hosted_exc, task_id=task_id)
+            if translated is None:
+                if hosted_exc._code == "lease_ownership_changed":
+                    raise TaskConflictError(task_id, "in_progress") from hosted_exc
+                raise EtagConflict(task_id) from hosted_exc
+            raise translated from hosted_exc
+        except TransportClassifiedError as transport_exc:
+            if _is_evicted(transport_exc):
+                logger.warning(
+                    "Eviction on multi-turn raise PATCH for task %s — "
+                    "signalling awaiters with TaskConflictError",
+                    task_id,
+                )
+                raise TaskConflictError(task_id, "in_progress") from transport_exc
+            raise
+        except Exception:  # noqa: BLE001
+            logger.warning(
+                "Failed to PATCH multi-turn suspended-on-raise for task %s",
+                task_id,
+                exc_info=True,
+            )
+        # Spec 022 FR-015 — structured failure log/telemetry for every handler
+        # failure, independent of listener presence.
+        logger.warning(
+            "durable_task_handler_failure: task=%s exc_type=%s",
+            task_id,
+            type(exc).__name__,
+            extra={
+                "event": "durable_task_handler_failure",
+                "task_id": task_id,
+                "exc_type": type(exc).__name__,
+                "exc_message": str(exc),
+                "primitive": "multi_turn_task",
+            },
+        )
+
     async def _handle_failure(
         self,
         *,
@@ -2381,6 +2511,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         opts: TaskOptions,
     ) -> None:
         """Handle task failure.
+
+        Spec 022 FR-010 / FR-011 / FR-053 — multi-turn handlers (decorated
+        with @multi_turn_task — TaskOptions._is_multi_turn=True) transition
+        to ``suspended`` (chain stays alive) on raise, NOT ``completed``.
+        Per FR-027 NO ``payload["error"]`` is written for multi-turn
+        failures. Per FR-028/030 ``payload["input"]`` and
+        ``payload["_retry_attempt"]`` are cleared.
+
+        Legacy one-shot (ephemeral) and non-ephemeral-non-multi-turn paths
+        keep their existing behavior during the transition window.
 
         :keyword task_id: The task identifier.
         :paramtype task_id: str
@@ -2396,6 +2536,19 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             "message": str(exc),
             "traceback": traceback.format_exc(),
         }
+
+        # Spec 022 FR-010/011/027/053 — multi-turn raise → suspended (NOT completed).
+        # Auto-flush metadata BEFORE the chain-PATCH (step 2 of FR-053).
+        is_multi_turn = getattr(opts, "_is_multi_turn", False)
+        if is_multi_turn:
+            await self._handle_multi_turn_failure(
+                task_id=task_id,
+                exc=exc,
+                metadata=metadata,
+                opts=opts,
+                error_dict=error_dict,
+            )
+            return
 
         if opts.ephemeral:
             try:

@@ -365,6 +365,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         "ephemeral",
         "retry",
         "steerable",
+        "_is_multi_turn",  # spec 022 — True when wrapped by @multi_turn_task
     )
 
     def __init__(
@@ -376,6 +377,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         ephemeral: bool = True,
         retry: RetryPolicy | None = None,
         steerable: bool = False,
+        _is_multi_turn: bool = False,
     ) -> None:
         self.name = name
         self.title = title
@@ -384,6 +386,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         self.ephemeral = ephemeral
         self.retry = retry
         self.steerable = steerable
+        self._is_multi_turn = _is_multi_turn
 
     def __repr__(self) -> str:
         return (
@@ -1700,6 +1703,7 @@ def multi_turn_task(
             ephemeral=False,  # multi-turn chains are NEVER ephemeral
             retry=retry,
             steerable=steerable,
+            _is_multi_turn=True,  # spec 022 — signals new raise/persistence semantics
         )
 
         return MultiTurnTask(

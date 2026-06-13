@@ -186,14 +186,20 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
         expected_last_input_id: str | None = None,
         task_id: str | None = None,
     ) -> None:
-        # Spec 022 FR-076 shape: (actual_last_input_id) only.
-        # Legacy shape: (task_id, expected_last_input_id, actual_last_input_id).
+        # Spec 022 FR-076 shape: keyword-only `actual_last_input_id=...`.
+        # Legacy shapes (Phase 5 will remove):
+        #   - positional (task_id, expected, actual)
+        #   - mixed: positional task_id + keyword expected_/actual_
         if args:
-            if len(args) == 1 and actual_last_input_id is None:
-                # New shape positional: LastInputIdPreconditionFailed("xx")
-                actual_last_input_id = args[0]
+            if len(args) == 1:
+                if actual_last_input_id is not None or expected_last_input_id is not None:
+                    # Mixed legacy form: LastInputIdPreconditionFailed(task_id, expected_..., actual_...)
+                    task_id = args[0]
+                else:
+                    # Spec 022 form: LastInputIdPreconditionFailed("actual_value")
+                    actual_last_input_id = args[0]
             elif len(args) == 3:
-                # Legacy shape positional: LastInputIdPreconditionFailed(task_id, expected, actual)
+                # Legacy positional form
                 import warnings
                 warnings.warn(
                     "LastInputIdPreconditionFailed(task_id, expected, actual) "
