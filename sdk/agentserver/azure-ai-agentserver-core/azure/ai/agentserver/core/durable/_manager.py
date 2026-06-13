@@ -1956,22 +1956,51 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     # return value is delivered unchanged to the current
                     # caller; the queued steerers see the "task is busy /
                     # terminal" shape per Invariant 1.
+                    is_multi_turn_success = getattr(opts, "_is_multi_turn", False)
                     if not current_result_future.done():
-                        current_result_future.set_result(
-                            TaskResult(
-                                task_id=task_id,
-                                output=result,
-                                status="completed",
+                        if is_multi_turn_success:
+                            # Spec 022 FR-007/052 — multi-turn chains return
+                            # the raw Output unwrapped; chain stays alive.
+                            current_result_future.set_result(result)
+                        else:
+                            current_result_future.set_result(
+                                TaskResult(
+                                    task_id=task_id,
+                                    output=result,
+                                    status="completed",
+                                )
                             )
+                    if not is_multi_turn_success:
+                        # Spec 016 FR-012: legacy one-shot path — queued
+                        # steerers get TaskConflictError on terminal completion.
+                        _resolve_queued_steerers_on_terminal(
+                            self._pending_steering_futures,
+                            task_id,
+                            current_status="completed",
                         )
-                    # Spec 016 FR-012: queued steerers (registered via
-                    # _register_steering_future) get TaskConflictError on
-                    # terminal completion since the task is now done.
-                    _resolve_queued_steerers_on_terminal(
-                        self._pending_steering_futures,
-                        task_id,
-                        current_status="completed",
-                    )
+                    else:
+                        # Spec 022 FR-013 — multi-turn path: try drain
+                        # promotes queued head as a new turn.
+                        try:
+                            new_ctx = await self._try_drain_steering(
+                                task_id=task_id,
+                                ctx=ctx,
+                                opts=opts,
+                                result_future=current_result_future,
+                            )
+                            if new_ctx is not None:
+                                ctx = new_ctx
+                                attempt = 0
+                                active = self._active_tasks.get(task_id)
+                                if active and active.result_future is not current_result_future:
+                                    current_result_future = active.result_future
+                                continue
+                        except Exception:  # noqa: BLE001
+                            logger.warning(
+                                "Failed to drain steering queue after multi-turn success for task %s",
+                                task_id,
+                                exc_info=True,
+                            )
                     if not completed:
                         # Etag conflict on steerable completion — but the
                         # caller's future is now resolved with the completion

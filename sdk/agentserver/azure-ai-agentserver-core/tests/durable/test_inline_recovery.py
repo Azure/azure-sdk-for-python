@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+import pytest_asyncio
 
 # Public surface — most imports will fail RED today (multi_turn_task missing).
 try:
@@ -47,9 +48,19 @@ from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvi
 pytestmark = pytest.mark.asyncio
 
 
+@pytest_asyncio.fixture(autouse=True)
+async def _auto_manager(tmp_path):
+    """Boot a fresh TaskManager for each test in this module."""
+    manager, provider = await _setup(tmp_path)
+    try:
+        yield manager, provider
+    finally:
+        await _teardown(manager)
+
+
 async def _setup(tmp_path: Path) -> tuple[Any, Any]:
     """Boot a minimal local provider + manager."""
-    from azure.ai.agentserver.core.durable._manager import TaskManager
+    from azure.ai.agentserver.core.durable._manager import TaskManager, set_task_manager
     provider = LocalFileTaskProvider(base_dir=tmp_path)
     config = type(
         "C",
@@ -60,10 +71,22 @@ async def _setup(tmp_path: Path) -> tuple[Any, Any]:
             "lease_duration_seconds": 60,
             "lease_renewal_interval_seconds": 30,
             "owner_instance_id": "inst-1",
+            "is_hosted": False,
         },
     )()
     manager = TaskManager(provider=provider, config=config)
+    set_task_manager(manager)
+    await manager.startup()
     return manager, provider
+
+
+async def _teardown(manager: Any) -> None:
+    from azure.ai.agentserver.core.durable._manager import set_task_manager
+    try:
+        await manager.shutdown()
+    except Exception:  # noqa: BLE001
+        pass
+    set_task_manager(None)
 
 
 class TestCrashRecoveryUsesPersistedInput:
@@ -177,7 +200,9 @@ class TestInlineRecoveryAlgorithm:
         await handler.start(task_id="t5", input="X")
         # New caller's input Y is queued; eventually runs after X completes.
         run_y = await handler.start(task_id="t5", input="Y")
-        await asyncio.sleep(0.2)
+        # Await Y's completion explicitly so the test doesn't depend on a
+        # background pump tick.
+        await asyncio.wait_for(run_y.result(), timeout=5.0)
         # Both X and Y eventually run; Y after X.
         assert "X" in observed_inputs
         assert "Y" in observed_inputs
