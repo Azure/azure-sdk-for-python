@@ -2094,6 +2094,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                             # _execute_task continues into next attempt with new ctx.
                             ctx = new_ctx
                             attempt = 0
+                            # Refresh current_result_future from rotated
+                            # active.result_future per FR-013 / FR-014.
+                            active = self._active_tasks.get(task_id)
+                            if active and active.result_future is not current_result_future:
+                                current_result_future = active.result_future
                             continue
                     except Exception:  # noqa: BLE001
                         logger.warning(
@@ -2298,6 +2303,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             entry_mode="resumed",
             is_steered_turn=True,
             pending_count_provider=self._make_pending_count_provider(task_id),
+            input_id=(task_info.payload or {}).get("_last_input_id"),
         )
 
         # Update active task tracking
