@@ -1397,3 +1397,386 @@ def task(
     if fn is not None:
         return _wrap(fn)
     return _wrap
+
+
+# =========================================================================
+# Spec 022 — Phase 2: class split + identifier supply + handler-sig validation
+# =========================================================================
+#
+# Per spec 022 FR-001 / FR-002 / FR-003 / FR-051 / FR-069 / FR-073.
+#
+# - `MultiTurnTask` is a DISTINCT public class from `Task` (FR-069 — not a
+#   subclass; type checker enforces "no .delete() on one-shot").
+# - `@multi_turn_task(steerable=...)` decorator returns MultiTurnTask.
+# - Both decorators validate kwargs at decoration time (FR-051) and accept
+#   only static-string `title` (FR-001 / FR-002).
+# - Handler signature validation per FR-003.
+
+
+def _validate_title(title: object) -> None:
+    """FR-001 / FR-002 — title must be `str | None`. Callable form REMOVED."""
+    if title is not None and not isinstance(title, str):
+        raise TypeError(
+            f"@task / @multi_turn_task `title=` must be `str | None`; "
+            f"callable-factory form is not supported (got {type(title).__name__}: {title!r})"
+        )
+
+
+def _validate_handler_signature(func: Callable[..., Any], decorator_name: str) -> None:
+    """FR-003 — handler must be `async def fn(ctx: TaskContext[Input]) -> Output`."""
+    if not asyncio.iscoroutinefunction(func):
+        raise TypeError(
+            f"@{decorator_name} requires an `async def` (async function) handler, "
+            f"got synchronous {func.__qualname__!r}"
+        )
+    try:
+        sig = inspect.signature(func)
+    except (ValueError, TypeError):
+        return  # builtins / C-level callables — let downstream binding catch it
+    params = list(sig.parameters.values())
+    if not params:
+        raise TypeError(
+            f"@{decorator_name} handler must accept a `ctx: TaskContext[Input]` "
+            f"first positional argument; got zero-arg signature in "
+            f"{func.__qualname__!r}"
+        )
+    first = params[0]
+    if first.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
+        raise TypeError(
+            f"@{decorator_name} handler must accept a `ctx: TaskContext[Input]` "
+            f"as first positional argument; got *{first.name} / **{first.name} in "
+            f"{func.__qualname__!r}"
+        )
+    # The remaining positional/keyword args must all have defaults (the
+    # framework calls handler(ctx) with no extra args).
+    for p in params[1:]:
+        if p.default is inspect.Parameter.empty and p.kind in (
+            inspect.Parameter.POSITIONAL_ONLY,
+            inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            inspect.Parameter.KEYWORD_ONLY,
+        ):
+            raise TypeError(
+                f"@{decorator_name} handler must accept only `ctx`; extra "
+                f"required argument {p.name!r} in {func.__qualname__!r} has no default"
+            )
+
+
+_ALLOWED_TASK_KWARGS = frozenset({"name", "title", "timeout", "retry"})
+_ALLOWED_MULTI_TURN_TASK_KWARGS = frozenset({"name", "title", "timeout", "retry", "steerable"})
+
+# Spec 022 transition window: existing test suite + responses/invocations
+# packages use @task(steerable=True, ephemeral=False) heavily. The strict
+# allow-list will be enforced in Phase 5 (after all callers migrate to
+# @multi_turn_task). For now, we ALLOW these legacy kwargs but emit a
+# DeprecationWarning so the migration is visible.
+# NOTE: `tags` was already rejected by spec 015 cleanup; keep it as hard-reject.
+_LEGACY_TASK_KWARGS_TRANSITIONAL = frozenset({"ephemeral", "steerable"})
+
+
+def _validate_task_kwargs(**kwargs: Any) -> None:
+    """FR-051 — @task allow-list (transitional during Phase 2-5 migration)."""
+    # tags was rejected pre-spec-022; keep hard-reject behavior.
+    if "tags" in kwargs:
+        raise TypeError(
+            "@task does not accept `tags=` (retired pre-spec-022; "
+            "tags surface is not part of spec 022)"
+        )
+    unknown = set(kwargs) - _ALLOWED_TASK_KWARGS - _LEGACY_TASK_KWARGS_TRANSITIONAL
+    if unknown:
+        raise TypeError(
+            f"@task got unexpected kwargs: {sorted(unknown)}. "
+            f"Allowed: {sorted(_ALLOWED_TASK_KWARGS)}"
+        )
+    # Soft-warn on legacy kwargs (will become hard rejection in Phase 5).
+    legacy = set(kwargs) & _LEGACY_TASK_KWARGS_TRANSITIONAL
+    if legacy:
+        import warnings
+        warnings.warn(
+            f"@task: legacy kwargs {sorted(legacy)} are deprecated in spec 022 "
+            f"and will be rejected after Phase 5 cleanup. Use @multi_turn_task "
+            f"for steerable chains; one-shot tasks are always ephemeral.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+
+
+def _validate_multi_turn_task_kwargs(**kwargs: Any) -> None:
+    """FR-051 — @multi_turn_task allow-list."""
+    unknown = set(kwargs) - _ALLOWED_MULTI_TURN_TASK_KWARGS
+    if unknown:
+        if "ephemeral" in unknown:
+            raise TypeError(
+                "@multi_turn_task does not accept `ephemeral=` (chains are never ephemeral)"
+            )
+        if "tags" in unknown:
+            raise TypeError(
+                "@multi_turn_task does not accept `tags=` (tags surface is not part of spec 022)"
+            )
+        raise TypeError(
+            f"@multi_turn_task got unexpected kwargs: {sorted(unknown)}. "
+            f"Allowed: {sorted(_ALLOWED_MULTI_TURN_TASK_KWARGS)}"
+        )
+
+
+class MultiTurnTask(Generic[Input, Output]):
+    """A decorated multi-turn durable task chain (spec 022 FR-002 / FR-069).
+
+    Distinct public class from :class:`Task` — NOT a subclass per FR-069.
+    The type checker enforces "no ``.delete()`` on one-shot" and
+    "multi-turn ``get_active_run`` takes both ``task_id`` AND ``input_id``"
+    statically.
+
+    Returned by the :func:`multi_turn_task` decorator.
+
+    This class wraps an internal :class:`Task` (same execution model) but
+    exposes a strictly-typed multi-turn surface. The wrapped Task carries
+    ``ephemeral=False`` so the framework knows the chain semantics.
+    """
+
+    # Internal flag — multi-turn chains never auto-delete on suspend.
+    _is_multi_turn = True
+
+    def __init__(
+        self,
+        fn: Callable[..., Any],
+        opts: TaskOptions,
+        input_type: type | None = None,
+        output_type: type | None = None,
+    ) -> None:
+        self._inner = Task(
+            fn=fn,
+            opts=opts,
+            input_type=input_type,
+            output_type=output_type,
+        )
+
+    @property
+    def _fn(self) -> Callable[..., Any]:
+        return self._inner._fn  # noqa: SLF001
+
+    @property
+    def _opts(self) -> TaskOptions:
+        return self._inner._opts  # noqa: SLF001
+
+    @property
+    def _input_type(self) -> Any:
+        return self._inner._input_type  # noqa: SLF001
+
+    @property
+    def _output_type(self) -> Any:
+        return self._inner._output_type  # noqa: SLF001
+
+    async def run(self, *args: Any, **kwargs: Any) -> Any:
+        """Run the chain turn — see :meth:`Task.run`."""
+        return await self._inner.run(*args, **kwargs)
+
+    async def start(self, *args: Any, **kwargs: Any) -> Any:
+        """Start a chain turn — see :meth:`Task.start`."""
+        return await self._inner.start(*args, **kwargs)
+
+    async def get_active_run(  # noqa: D401
+        self, task_id: str, input_id: str | None = None
+    ) -> "TaskRun[Output] | None":
+        """Multi-turn variant of ``get_active_run`` — REQUIRES ``input_id``.
+
+        Per spec 022 FR-023, multi-turn ``get_active_run`` MUST take BOTH
+        ``task_id`` and ``input_id``. The current turn's input_id is the
+        match key; mismatch returns ``None``.
+
+        :param task_id: The chain task_id.
+        :type task_id: str
+        :param input_id: The exact input_id of the currently in-flight turn.
+            MUST be supplied (signature differs from one-shot
+            :meth:`Task.get_active_run`).
+        :type input_id: str
+        :return: The TaskRun handle bound to the currently in-flight turn
+            iff ``(task_id, input_id)`` exactly matches; ``None`` otherwise.
+        :rtype: TaskRun[Output] | None
+        """
+        if input_id is None:
+            raise TypeError(
+                "MultiTurnTask.get_active_run() requires both `task_id` and `input_id` "
+                "(spec 022 FR-023); use Task.get_active_run(task_id) for one-shot"
+            )
+        run = await self._inner.get_active_run(task_id)
+        if run is None:
+            return None
+        if getattr(run, "input_id", None) != input_id:
+            return None
+        return run
+
+    @classmethod
+    async def delete(cls, task_id: str) -> None:
+        """Force-delete the chain record + any queued inputs (spec 022 FR-024).
+
+        Per spec 022 FR-024, removes the chain record and all queued
+        steerers; resolves active + queued callers' ``.result()`` futures
+        with :class:`TaskCancelled`. Idempotent.
+
+        :param task_id: The chain task_id to delete.
+        :type task_id: str
+        """
+        from ._manager import get_task_manager
+
+        mgr = get_task_manager()
+        if mgr is None:
+            raise RuntimeError(
+                "MultiTurnTask.delete() requires an initialized TaskManager"
+            )
+        try:
+            await mgr.delete_task(task_id, force=True)  # type: ignore[attr-defined]
+        except AttributeError:
+            provider = getattr(mgr, "_provider", None)
+            if provider is not None:
+                try:
+                    await provider.delete(task_id, force=True)
+                except Exception:  # noqa: BLE001
+                    pass
+
+
+@overload
+def multi_turn_task(
+    fn: Callable[[TaskContext[Input]], Awaitable[Output]],
+) -> MultiTurnTask[Input, Output]: ...
+
+
+@overload
+def multi_turn_task(
+    *,
+    name: str | None = ...,
+    title: str | None = ...,
+    timeout: timedelta | None = ...,
+    retry: RetryPolicy | None = ...,
+    steerable: bool = ...,
+) -> Callable[
+    [Callable[[TaskContext[Input]], Awaitable[Output]]],
+    MultiTurnTask[Input, Output],
+]: ...
+
+
+def multi_turn_task(
+    fn: Callable[..., Any] | None = None,
+    *,
+    name: str | None = None,
+    title: str | None = None,
+    timeout: timedelta | None = None,
+    retry: RetryPolicy | None = None,
+    steerable: bool = False,
+    **_extra_kwargs: Any,
+) -> Any:
+    """Decorator producing a multi-turn durable chain (spec 022 FR-002).
+
+    Multi-turn chains accept inputs across many turns against the same
+    ``task_id``. The handler's ``return X`` is the implicit-suspend
+    signal — there is no ``ctx.suspend()`` (per FR-008). The chain stays
+    alive across handler raises (per FR-010).
+
+    :keyword name: Stable chain-identity anchor.
+    :keyword title: Static human-readable string. Callable-factory form is
+        not supported (FR-001 / FR-002).
+    :keyword timeout: Per-turn cooperative timeout.
+    :keyword retry: Default retry policy.
+    :keyword steerable: When True, ``start()`` against an in-flight chain
+        queues the new input instead of raising ``TaskConflictError``.
+    :return: A :class:`MultiTurnTask` instance (distinct public class from
+        :class:`Task` per FR-069).
+    """
+    # FR-051 — reject unknown kwargs at decoration time
+    _validate_multi_turn_task_kwargs(**_extra_kwargs)
+    # FR-001 / FR-002 — title must be str | None
+    _validate_title(title)
+
+    def _wrap(func: Callable[..., Any]) -> MultiTurnTask[Any, Any]:
+        # FR-003 — handler-signature validation
+        _validate_handler_signature(func, "multi_turn_task")
+
+        input_type, output_type = _extract_generic_args(func)
+
+        opts = TaskOptions(
+            name=name or func.__qualname__,
+            title=title,
+            tags={},
+            timeout=timeout,
+            ephemeral=False,  # multi-turn chains are NEVER ephemeral
+            retry=retry,
+            steerable=steerable,
+        )
+
+        return MultiTurnTask(
+            fn=func,
+            opts=opts,
+            input_type=input_type,
+            output_type=output_type,
+        )
+
+    if fn is not None:
+        return _wrap(fn)
+    return _wrap
+
+
+# Re-export the `task` decorator with spec 022 validation overlay.
+# Wraps the legacy `task` so existing callers keep working while NEW callers
+# get FR-051 / FR-001 / FR-002 / FR-003 enforcement.
+_legacy_task = task
+
+
+def task(  # type: ignore[no-redef]  # noqa: F811
+    fn: Callable[..., Any] | None = None,
+    *,
+    name: str | None = None,
+    title: str | None = None,
+    timeout: timedelta | None = None,
+    retry: RetryPolicy | None = None,
+    **_extra_kwargs: Any,
+) -> Any:
+    """Decorator producing a one-shot durable task (spec 022 FR-001).
+
+    One-shot tasks are always ephemeral — the record is deleted on terminal
+    exit. ``task_id`` is optional; the framework auto-generates a GUID and
+    defaults ``input_id`` to ``task_id`` (1:1 invariant per FR-004).
+
+    :keyword name: Stable identity anchor.
+    :keyword title: Static human-readable string. Callable-factory form is
+        not supported (FR-001).
+    :keyword timeout: Cooperative timeout.
+    :keyword retry: Default retry policy.
+    :return: A :class:`Task` instance (NOT :class:`MultiTurnTask`; see FR-069
+        for the class split).
+    """
+    # FR-051 — reject unknown / unsupported kwargs at decoration time
+    # (allows legacy kwargs ephemeral/steerable/tags during Phase 5 transition;
+    # emits DeprecationWarning to make migration visible)
+    _validate_task_kwargs(**_extra_kwargs)
+    # FR-001 — title must be str | None (callable factory form rejected)
+    _validate_title(title)
+
+    # Forward any legacy transitional kwargs through to the underlying
+    # decorator (ephemeral/steerable/tags). After Phase 5 cleanup these
+    # forwards go away with the legacy wrapper.
+    legacy_kwargs: dict[str, Any] = {}
+    if "ephemeral" in _extra_kwargs:
+        legacy_kwargs["ephemeral"] = _extra_kwargs["ephemeral"]
+    else:
+        legacy_kwargs["ephemeral"] = True  # spec 022 FR-001 default
+    if "steerable" in _extra_kwargs:
+        legacy_kwargs["steerable"] = _extra_kwargs["steerable"]
+    # tags is no-op in the legacy decorator (was never a real kwarg per Q10)
+
+    def _wrap(func: Callable[..., Any]) -> Task[Any, Any]:
+        # FR-003 — handler-signature validation
+        _validate_handler_signature(func, "task")
+        return _legacy_task(
+            name=name,
+            title=title,
+            timeout=timeout,
+            retry=retry,
+            **legacy_kwargs,
+        )(func)
+
+    if fn is not None:
+        return _wrap(fn)
+    return _wrap
+
+    if fn is not None:
+        return _wrap(fn)
+    return _wrap

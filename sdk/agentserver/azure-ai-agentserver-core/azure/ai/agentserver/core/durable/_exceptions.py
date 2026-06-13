@@ -344,3 +344,69 @@ class _AttachmentLimitExceeded(ValueError):
 # aliases is safe once any out-of-tree dependents have updated.
 AttachmentTooLarge = _AttachmentTooLarge
 AttachmentLimitExceeded = _AttachmentLimitExceeded
+
+
+# =========================================================================
+# Spec 022 — additions to the exception taxonomy
+# =========================================================================
+#
+# Per spec 022 FR-039 / FR-058 / FR-070 / FR-071 / FR-077.
+# - `TaskDeferred` is a NEW exception for `ctx.exit_for_recovery()`
+#   (semantically distinct from `TaskCancelled` — task stays in_progress).
+# - `TaskErrorDict` + `TaskExhaustedRetriesErrorDict` are public TypedDicts
+#   for `TaskFailed.error`.
+
+try:
+    from typing import Literal, TypedDict
+except ImportError:  # pragma: no cover  -- Python 3.8 doesn't have TypedDict at typing
+    from typing_extensions import Literal, TypedDict  # type: ignore[assignment]
+
+
+class TaskDeferred(Exception):
+    """Raised when handler called ``ctx.exit_for_recovery()`` (spec 022 FR-039).
+
+    Semantically DISTINCT from :class:`TaskCancelled`:
+
+    - ``TaskCancelled`` means the task / turn is terminated.
+    - ``TaskDeferred`` means THIS lifetime is deferring to the next; the
+      task stays ``in_progress`` and the recovery scanner re-invokes the
+      handler in a future process lifetime.
+
+    A future caller can attach to the deferred task via
+    ``multi_turn_task.get_active_run(task_id, input_id)`` once the scanner
+    has reclaimed (the ``input_id`` remains the same — recovery uses the
+    persisted input per spec 021 Q13).
+
+    Bare exception — no fields (FR-077). Caller has ``task_id`` / ``input_id``
+    from the run handle that raised this.
+    """
+
+
+class TaskErrorDict(TypedDict):
+    """Shape of :attr:`TaskFailed.error` for a normal handler-raise failure (spec 022 FR-071).
+
+    :param type: The exception class name (e.g., ``"ValueError"``).
+    :param message: ``str(exc)``.
+    :param traceback: Formatted traceback via ``traceback.format_exc()``.
+    """
+
+    type: str
+    message: str
+    traceback: str
+
+
+class TaskExhaustedRetriesErrorDict(TypedDict):
+    """Shape of :attr:`TaskFailed.error` when the retry budget was exhausted (spec 022 FR-071).
+
+    :param type: Always ``"exhausted_retries"``.
+    :param attempts: Number of attempts made (``>= max_attempts``).
+    :param last_error: ``str(last_exc)``.
+    :param last_error_type: ``type(last_exc).__name__``.
+    :param traceback: Formatted traceback of the last attempt.
+    """
+
+    type: Literal["exhausted_retries"]
+    attempts: int
+    last_error: str
+    last_error_type: str
+    traceback: str

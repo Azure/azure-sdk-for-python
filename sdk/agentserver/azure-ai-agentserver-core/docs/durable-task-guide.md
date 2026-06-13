@@ -1214,3 +1214,54 @@ effects across a *crash*.
 - **Not a queue.** A `task_id` identifies one logical unit of work.
   If you want competing consumers off a shared queue, you want a
   different primitive.
+
+
+## Spec 022 — new primitives and types (Phase 2 partial overview)
+
+The durable-task primitive is being redesigned per
+`sdk/agentserver/specs/022-durable-task-primitive-redesign/spec.md`.
+This section is a placeholder for the full T-7.6 rewrite; the
+authoritative reference today is spec 022 itself plus Appendix A of
+spec 021.
+
+### New decorators / classes
+
+- **`@multi_turn_task(steerable=...)`** — decorator producing a
+  multi-turn durable chain. Distinct from `@task` (one-shot).
+- **`MultiTurnTask`** — distinct public class from `Task` (FR-069).
+  Type checker statically enforces "no `.delete()` on one-shot" and
+  "multi-turn `get_active_run` requires both `task_id` AND `input_id`".
+
+### New exception
+
+- **`TaskDeferred`** — bare exception (no fields) raised when handler
+  called `ctx.exit_for_recovery()`. Semantically DISTINCT from
+  `TaskCancelled` — the task stays `in_progress`; the recovery scanner
+  re-invokes the handler in the next process lifetime.
+
+### New typed-payload + value-type aliases
+
+- **`JSONValue`** — recursive `Union[str, int, float, bool, None,
+  list[JSONValue], dict[str, JSONValue]]`. The value-type for
+  `TaskMetadata` entries.
+- **`TaskErrorDict`** — TypedDict for `TaskFailed.error` on normal
+  handler raise: `{"type": str, "message": str, "traceback": str}`.
+- **`TaskExhaustedRetriesErrorDict`** — TypedDict variant when retry
+  budget was exhausted: `{"type": Literal["exhausted_retries"],
+  "attempts": int, "last_error": str, "last_error_type": str,
+  "traceback": str}`.
+
+### Transitional notes
+
+During Phase 2-5 of spec 022 implementation, both the new spec 022
+symbols and the legacy ones (`TaskResult`, `Suspended`, `TaskSnapshot`,
+`TaskStatus`, `OutputTooLarge`, `TaskNotFound`, `TaskPreconditionFailed`)
+coexist in `__all__`. The legacy symbols are scheduled for removal in
+Phase 5 per FR-016/017/018/019/020/021/074. Until then:
+
+- Use `@multi_turn_task(steerable=...)` for new multi-turn chains;
+  `@task(steerable=True, ephemeral=False)` still works but emits a
+  `DeprecationWarning`.
+- `Task.run()` / `Task.result()` return value remains
+  `TaskResult[Output]` during the transition; the FR-052 / FR-018
+  cleanup (return `Output` directly) lands in Phase 5.

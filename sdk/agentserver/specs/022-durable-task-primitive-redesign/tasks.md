@@ -35,7 +35,7 @@ Every FR / SC maps to a phase and a paired test per Principle XII §3.
   `pytest tests/durable/` on the current branch HEAD;
   record passing-count as the floor that Phase 1 RED additions add to.
   Document the baseline in `gap-list.md`. **DONE 2026-06-13: 511 passed, 5 skipped, 0 failed (test_local_provider + test_lease_renewal + test_cancellation_timeout + ... — full durable suite).**
-- [ ] T-0.5 — **Commit** (single commit):
+- [x] T-0.5 — **Commit** (single commit):
   `[agentserver] core: spec 022 — SOT update + conformance gap-list`.
 
 ---
@@ -108,11 +108,11 @@ the FR/SC behavior; tests MUST FAIL against the current branch HEAD.
 
 One commit per area + doc travel per Principle IX.
 
-- [ ] T-2.1 — `_decorator.py` split: `Task` (one-shot) + `MultiTurnTask` (multi-turn) as distinct public classes per FR-069; `@task` returns `Task[I, O]`; `@multi_turn_task(steerable=)` returns `MultiTurnTask[I, O]`. FR-051 kwarg rejection (`ephemeral=`/`steerable=` on `@task`/`tags=`). `title=` accepts only `str | None` per FR-001/002. Handler signature validation per FR-003 (sync/wrong-arg/missing-annotation → `TypeError` at decoration time). Update `__init__.py` `__all__` for the new exports. Update dev-guide decorator section. Commit (turns Phase 1 tests T-1.1 GREEN for those FRs).
+- [x] T-2.1 — `_decorator.py` split: `Task` (one-shot) + `MultiTurnTask` (multi-turn) as distinct public classes per FR-069; `@task` returns `Task[I, O]`; `@multi_turn_task(steerable=)` returns `MultiTurnTask[I, O]`. FR-051 kwarg rejection (`ephemeral=`/`steerable=` on `@task`/`tags=`). `title=` accepts only `str | None` per FR-001/002. Handler signature validation per FR-003 (sync/wrong-arg/missing-annotation → `TypeError` at decoration time). Update `__init__.py` `__all__` for the new exports. Update dev-guide decorator section. Commit (turns Phase 1 tests T-1.1 GREEN for those FRs).
 - [ ] T-2.2 — `.run()` / `.start()` identifier supply (FR-004/005) on both classes: one-shot auto-gens `task_id` + collapses `input_id=task_id`; multi-turn requires `task_id`. Both methods accept `if_last_input_id: str | None = None` kwarg. **Precondition behavior**: when `if_last_input_id` is supplied, framework compares against persisted `payload["_last_input_id"]` (FR-029); mismatch → `LastInputIdPreconditionFailed(actual_last_input_id)` (FR-076). Commit (turns T-1.2 GREEN).
-- [ ] T-2.3 — `multi_turn_task.delete(task_id)` async classmethod (FR-024) — force-delete via provider DELETE with `force=True`. Idempotent. `multi_turn_task.get_active_run(task_id, input_id)` async classmethod (FR-023) — in-process only; cross-process attach NOT supported. Commit (turns T-1.9 GREEN).
+- [x] T-2.3 — `multi_turn_task.delete(task_id)` async classmethod (FR-024) — force-delete via provider DELETE with `force=True`. Idempotent. `multi_turn_task.get_active_run(task_id, input_id)` async classmethod (FR-023) — in-process only; cross-process attach NOT supported. Commit (turns T-1.9 GREEN).
 - [ ] T-2.4 — `_options.py` cleanup: no `Task.options` classmethod (FR-006), no `ephemeral` field, tightened allow-list. Commit.
-- [ ] T-2.5 — `_retry.py` docs: confirm/document `RetryPolicy.__init__` matches FR-073 (`max_attempts`, `initial_delay`, `max_delay`, `backoff_coefficient`, `jitter`, `retry_on`); presets enumerate kwargs. No code change. Commit.
+- [x] T-2.5 — `_retry.py` docs: confirm/document `RetryPolicy.__init__` matches FR-073 (`max_attempts`, `initial_delay`, `max_delay`, `backoff_coefficient`, `jitter`, `retry_on`); presets enumerate kwargs. No code change. Commit.
 - [ ] T-2.6 — **Phase 2 code review** per Principle XIII (use `code-review` agent). SCOPE: class-split type-safety actually enforced by mypy/pyright (not just runtime); decorator allow-list covers all variants; `title=` non-string rejection at decoration time; identifier supply edge cases (auto-gen collisions, one-shot 1:1 invariant, `if_last_input_id` precondition error shape). Apply BLOCKING/HIGH findings before Phase 3 begins; log MEDIUM/LOW to `gap-list.md`.
 
 ---

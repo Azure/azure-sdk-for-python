@@ -265,3 +265,83 @@ class RetryPolicy:
             max_attempts=1,
             jitter=False,
         )
+
+
+# =========================================================================
+# Spec 022 — module-level convenience wrappers around the preset
+# classmethods (FR-073 documents these as `exponential_backoff(...)` etc.
+# with explicit kwargs).
+# =========================================================================
+
+def exponential_backoff(
+    *,
+    initial_delay: "timedelta" = timedelta(seconds=1),
+    backoff_coefficient: float = 2.0,
+    max_delay: "timedelta" = timedelta(seconds=60),
+    max_attempts: int = 5,
+    jitter: bool = True,
+) -> RetryPolicy:
+    """Module-level wrapper for :meth:`RetryPolicy.exponential_backoff`.
+
+    Spec 022 FR-073: preset factories enumerate their kwargs explicitly.
+
+    :keyword initial_delay: Initial delay before the first retry.
+    :keyword backoff_coefficient: Multiplier applied per attempt.
+    :keyword max_delay: Cap on the per-attempt delay.
+    :keyword max_attempts: Total attempts including the first try.
+    :keyword jitter: When True, add ±15% jitter per attempt.
+    :return: A configured :class:`RetryPolicy`.
+    :rtype: RetryPolicy
+    """
+    return RetryPolicy.exponential_backoff(
+        initial_delay=initial_delay,
+        backoff_coefficient=backoff_coefficient,
+        max_delay=max_delay,
+        max_attempts=max_attempts,
+        jitter=jitter,
+    )
+
+
+def fixed_delay(
+    *,
+    delay: "timedelta" = timedelta(seconds=1),
+    max_attempts: int = 5,
+) -> RetryPolicy:
+    """Module-level wrapper for :meth:`RetryPolicy.fixed_delay`.
+
+    :keyword delay: Constant delay between retries.
+    :keyword max_attempts: Total attempts including the first try.
+    :return: A configured :class:`RetryPolicy`.
+    :rtype: RetryPolicy
+    """
+    return RetryPolicy.fixed_delay(delay=delay, max_attempts=max_attempts)
+
+
+def linear_backoff(
+    *,
+    initial_delay: "timedelta" = timedelta(seconds=1),
+    max_delay: "timedelta" = timedelta(seconds=60),
+    max_attempts: int = 5,
+) -> RetryPolicy:
+    """Module-level wrapper for :meth:`RetryPolicy.linear_backoff`.
+
+    :keyword initial_delay: Delay increment per attempt.
+    :keyword max_delay: Cap on the per-attempt delay.
+    :keyword max_attempts: Total attempts including the first try.
+    :return: A configured :class:`RetryPolicy`.
+    :rtype: RetryPolicy
+    """
+    return RetryPolicy.linear_backoff(
+        initial_delay=initial_delay,
+        max_delay=max_delay,
+        max_attempts=max_attempts,
+    )
+
+
+def no_retry() -> RetryPolicy:
+    """Module-level wrapper for :meth:`RetryPolicy.no_retry`.
+
+    :return: A :class:`RetryPolicy` that never retries.
+    :rtype: RetryPolicy
+    """
+    return RetryPolicy.no_retry()

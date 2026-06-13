@@ -20,7 +20,23 @@ items + follow-up TODOs that don't block the spec's primary work.
 
 ## Findings log
 
-(populated as implementation progresses)
+### 2026-06-13 (post-Phase 2 partial)
+
+- **RetryPolicy field types** — Spec 022 FR-073 specifies
+  `initial_delay: float`, `max_delay: float`, `jitter: float`, but
+  current `_retry.py` uses `initial_delay: timedelta`, `max_delay:
+  timedelta`, `jitter: bool`. Test
+  `test_decorator_surface.py::TestRetryPolicyShape::test_RetryPolicy_field_names`
+  fails RED. Fix is Phase 2 deeper refactor (changes `RetryPolicy.__init__`
+  + all preset classmethods + all callers passing `timedelta`).
+  Tracked as Phase 2 follow-up.
+- **Handler arg-name check** — Test
+  `TestHandlerSignatureValidation::test_handler_wrong_first_arg_name_rejected`
+  expects rejection of non-`ctx` first arg name. Current
+  `_validate_handler_signature` doesn't enforce the NAME (only the
+  presence of a first arg). This is a deliberate judgment call —
+  Python convention; the framework binds positionally, not by name.
+  May tighten in Phase 2 follow-up.
 
 ## Follow-up items
 

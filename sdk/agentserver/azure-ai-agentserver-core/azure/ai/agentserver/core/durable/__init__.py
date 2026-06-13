@@ -39,7 +39,7 @@ Public API::
 """
 
 from ._context import EntryMode, TaskContext
-from ._decorator import Task, task
+from ._decorator import MultiTurnTask, Task, multi_turn_task, task
 from ._exceptions import (
     InputTooLarge,
     LastInputIdPreconditionFailed,
@@ -47,11 +47,14 @@ from ._exceptions import (
     SteeringQueueFull,
     TaskCancelled,
     TaskConflictError,
+    TaskDeferred,
+    TaskErrorDict,
+    TaskExhaustedRetriesErrorDict,
     TaskFailed,
     TaskNotFound,
     TaskPreconditionFailed,
 )
-from ._metadata import TaskMetadata
+from ._metadata import JSONValue, TaskMetadata
 from ._models import TaskStatus
 from ._result import TaskResult
 from ._retry import RetryPolicy
@@ -81,24 +84,39 @@ from ._snapshot import TaskSnapshot
 # (InputTooLarge / OutputTooLarge) based on the attachment-key prefix
 # (_attachments._remap_attachment_error).
 __all__ = [
+    # Decorators + task classes (spec 022 — class split per FR-069)
     "task",
+    "multi_turn_task",
     "Task",
-    "RetryPolicy",
+    "MultiTurnTask",
+    # Context + metadata
     "TaskContext",
     "TaskMetadata",
-    "TaskResult",
+    "EntryMode",
+    # Type aliases + TypedDicts (spec 022 FR-070 / FR-071)
+    "JSONValue",
+    "TaskErrorDict",
+    "TaskExhaustedRetriesErrorDict",
+    # TaskRun (slim shape per spec 022 FR-047 lands in Phase 5)
     "TaskRun",
-    "TaskSnapshot",
-    "Suspended",
-    "TaskStatus",
+    # Retry
+    "RetryPolicy",
+    # Public exceptions
     "TaskFailed",
     "TaskCancelled",
-    "TaskNotFound",
+    "TaskDeferred",  # NEW spec 022 FR-039
     "TaskConflictError",
     "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
-    "TaskPreconditionFailed",
-    "EntryMode",
     "InputTooLarge",
+    # ----- LEGACY symbols (removed from public surface in Phase 5) -----
+    # These are still importable during the transition; Phase 5 deletes
+    # them per spec 022 FR-016/017/018/019/020/021/074.
+    "TaskResult",
+    "TaskSnapshot",
+    "Suspended",
+    "TaskStatus",
+    "TaskNotFound",
+    "TaskPreconditionFailed",
     "OutputTooLarge",
 ]

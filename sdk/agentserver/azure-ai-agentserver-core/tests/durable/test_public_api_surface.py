@@ -33,17 +33,26 @@ _DURABLE_INIT = _PACKAGE_ROOT / "durable" / "__init__.py"
 # peer ``azure.ai.agentserver.core.streaming`` subpackage.
 EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
     {
+        # Decorators + task classes (spec 022 class split per FR-069)
         "task",
+        "multi_turn_task",  # spec 022 FR-002
         "Task",
+        "MultiTurnTask",  # spec 022 FR-069
         "RetryPolicy",
         "TaskContext",
         "TaskMetadata",
+        # Type aliases + TypedDicts (spec 022 FR-070 / FR-071)
+        "JSONValue",
+        "TaskErrorDict",
+        "TaskExhaustedRetriesErrorDict",
+        # ----- Legacy surface (removed in spec 022 Phase 5) -----
         "TaskResult",
         "TaskRun",
         "Suspended",
         "TaskStatus",
         "TaskFailed",
         "TaskCancelled",
+        "TaskDeferred",  # NEW spec 022 FR-039
         "TaskNotFound",
         "TaskConflictError",
         "LastInputIdPreconditionFailed",
