@@ -95,9 +95,6 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "JSONValue",
         "TaskErrorDict",
         "TaskExhaustedRetriesErrorDict",
-        # ----- LEGACY symbols (still in __all__ during transition) -----
-        "Suspended",                 # FR-019 — kept transitionally
-        "TaskStatus",                # FR-020 — kept transitionally
     }
 )
 
@@ -112,6 +109,11 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         # Spec 022 FR-017 / FR-018 — fully deleted from package.
         "TaskResult",
         "TaskSnapshot",
+        # Spec 022 FR-019 / FR-020 — removed from public surface
+        # (Suspended kept as internal-only shim in _run.py; TaskStatus
+        # remains in _models for internal type-annotation use).
+        "Suspended",
+        "TaskStatus",
         "TaskOptions",    # demoted to internal
         "TaskInfo",       # demoted to internal
         "EtagConflict",   # advanced/internal — no public export

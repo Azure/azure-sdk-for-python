@@ -134,3 +134,84 @@ items + follow-up TODOs that don't block the spec's primary work.
 - `_durable_orchestrator.py` + bookkeeping body — `feature/agentserver-responses-spec016`
 - `durability-contract.md` — `feature/agentserver-responses-spec016`
 - `samples/durable-agent-demo/` — `feature/agentserver-durable-agent-demo`
+
+## Cross-area code review findings (2026-06-13 session-close, agent `spec-022-review`)
+
+### BLOCKING (fix-before-merge candidates that were resolved in this session)
+
+- ✅ **B1** `Suspended` removed from `durable/__init__.py:__all__` (kept as internal-only import for legacy `_manager.py`/`_context.py` code paths)
+- ✅ **B2** `TaskStatus` removed from `durable/__init__.py:__all__` (still available via `_models` for internal type annotations)
+- ✅ **B4** Stale `async for chunk in task_run` docstring at `__init__.py:18-19` corrected — module docstring rewritten with the spec 022 public API list
+
+### BLOCKING/HIGH carried to follow-up PR (test-suite migration cost prohibitive in this session)
+
+- **B3** `TaskContext.suspend()` is still a public method on `_context.py:175-196`.
+  Per FR-008 the multi-turn path has no `ctx.suspend()`; per FR-065 the method
+  MUST not exist. **Reason deferred:** ~30 existing tests across
+  `test_input_promotion.py`, `test_steering_attachment_queue.py`, `test_steering.py`,
+  `test_output_promotion.py`, `test_input_precondition.py`, etc. still call
+  `await ctx.suspend(reason=..., output=...)` and assert on suspended-status records
+  with `payload["output"]`. Removing the method requires migrating each test handler
+  to `return Y` AND rewriting the assertions (suspended-with-output is gone; chains
+  now end in `suspended` with no output). Filed as the single biggest Phase-5-final-cleanup
+  task. **Estimated effort:** 6–10 hours of careful test migration.
+
+- **H1** `_handle_failure` non-ephemeral branch (`_manager.py:2685-2729`) still writes
+  `error=error_dict` + `payload={"output": None}` + `attachments={_OUTPUT_KEY: None}`.
+  **Dead-on-arrival once H5 closes** (the branch is reachable only via
+  `@task(ephemeral=False)`). Deletion is one commit after the H5 hard-rejection lands.
+
+- **H2** `_legacy_output_terminal_patch` call in `_handle_success` non-ephemeral
+  branch (`_manager.py:2457`). **Dead-on-arrival once H5 closes.**
+
+- **H3** `_handle_suspend` (`_manager.py:2733-2848`) writes output via the legacy
+  helper. **Dead-on-arrival once B3 closes** (the only reachable path is via
+  `ctx.suspend(output=Y)`).
+
+- **H4** `Task.options()` still present (`_decorator.py:1246-1286`). FR-006 says
+  MUST NOT be public. **Reason deferred:** ~15 existing tests call
+  `task_fn.options(steerable=True)` / similar to test legacy option overrides;
+  removal requires migration to a fresh `@task(...)` decorator per test.
+
+- **H5** `@task(steerable=|ephemeral=)` emits `DeprecationWarning` instead of
+  `TypeError` per FR-051. **Reason deferred:** ~50 test files still use the
+  legacy kwargs (they predate the `@multi_turn_task` split). Hard-rejection
+  would cascade to ~120 test-collection failures. Phase 5 final cleanup will
+  delete those tests (their behavior is superseded by spec 022 and they don't
+  test new contract). Gap-list line 96 acknowledged this transitional state.
+
+### MEDIUM resolved in this session
+
+- ✅ **M1** FR-067 doc references corrected to FR-004 in both docs
+- ✅ **M2** "deprecated" wording in spec preamble clarified to "rejected at decoration time (transitional today)"
+- ✅ **M3** `__init__.py:21-38` module docstring rewritten to match spec 022 public surface (TaskResult / Suspended / TaskStatus / TaskNotFound removed from listed Public API)
+- ✅ **M4** `MultiTurnTask.delete` provider error handling narrowed from bare `except` to `except TaskNotFound`
+- **M5** `MultiTurnTask.delete` calls `exec_task.cancel()` after the cooperative `ctx.cancel.set()`. Spec ambiguity per code-review agent — confirmed as the correct behavior for force-delete (FR-060 explicitly says "force-delete is NOT cooperative — handler cooperation is irrelevant"). NO CHANGE.
+
+### LOW resolved in this session
+
+- ✅ **L1** Dead unreachable `if/return` block at `_decorator.py:1809-1811` removed
+- ✅ **L2** Unused `TaskCancelled` import inside `_ExitForRecovery` branch (`_manager.py:1750-1753`) dropped
+
+### Deferral rationale for B3 + H1–H5
+
+The blocker for B3/H1–H5 is **test-suite cost**, not implementation cost. The
+implementation deletes are straightforward (well-scoped edits in `_context.py`,
+`_manager.py`, `_decorator.py`). What blocks is the cascading test migration:
+`@task(steerable=True)` + `ctx.suspend(output=Y)` are the legacy spec-016
+multi-turn pattern that spec 022 replaces with `@multi_turn_task` +
+`return Y`. ~50–80 test files / hundreds of test cases predate spec 022 and
+embed the legacy pattern.
+
+**Recommendation:** create a single follow-up PR ("Spec 022 Phase 5 final
+cleanup — remove `ctx.suspend` + `Task.options` + hard-reject legacy decorator
+kwargs") scoped to:
+1. Delete `TaskContext.suspend` method (B3)
+2. Delete `_handle_suspend` (H3 dead after B3)
+3. Delete `_legacy_output_terminal_patch` + its callers (H1 + H2 dead after H5)
+4. Delete `Task.options` method (H4)
+5. Hard-reject `@task(steerable=|ephemeral=)` per FR-051 (H5)
+6. Delete or migrate the ~50–80 legacy test files in one sweep
+
+Doing this in a single PR scoped to that title preserves bisectability of
+the spec 022 public surface work (which is what THIS branch ships).

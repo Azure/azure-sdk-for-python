@@ -49,8 +49,6 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "TaskExhaustedRetriesErrorDict",
         # ----- Legacy surface (still in __all__ during transition) -----
         "TaskRun",
-        "Suspended",
-        "TaskStatus",
         "TaskFailed",
         "TaskCancelled",
         "TaskDeferred",  # NEW spec 022 FR-039
@@ -78,6 +76,9 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         # Spec 022 FR-017 / FR-018 — fully deleted from package.
         "TaskResult",
         "TaskSnapshot",
+        # Spec 022 FR-019 / FR-020 — removed from public surface.
+        "Suspended",
+        "TaskStatus",
         # Spec 019 FR-D-002 / FR-D-003 — attachment-vocabulary errors are
         # internal implementation details (developers never name attachments).
         "AttachmentTooLarge",

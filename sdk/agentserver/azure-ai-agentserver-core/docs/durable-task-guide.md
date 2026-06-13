@@ -1274,7 +1274,7 @@ async def chat(ctx: TaskContext[dict]) -> dict:
 ### Identifiers (`task_id`, `input_id`)
 
 - **One-shot**: `task_id` is OPTIONAL on `Task.start` / `Task.run` —
-  auto-generated as a GUID when not supplied (FR-067). `input_id`
+  auto-generated as a GUID when not supplied (FR-004). `input_id`
   defaults to `task_id` (1:1 invariant per FR-004).
 - **Multi-turn**: `task_id` is MANDATORY (the chain identifier).
   `input_id` is per-turn — defaults to a fresh GUID per turn unless

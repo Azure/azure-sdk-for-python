@@ -2,6 +2,110 @@
 
 ## 2.0.0b6 (Unreleased)
 
+### Spec 022 — durable-task primitive redesign
+
+The durable-task primitive is reshaped on this release per spec 022
+(`sdk/agentserver/specs/022-durable-task-primitive-redesign/spec.md`).
+Highlights:
+
+- **Two decorators** — `@task` (one-shot) and `@multi_turn_task` (chain).
+  `@multi_turn_task` produces a distinct public `MultiTurnTask` class
+  (NOT a subclass per FR-069). Every `return X` is one turn (implicit
+  suspend per FR-007/008); the chain stays alive in `suspended` between
+  turns until `MultiTurnTask.delete(task_id)` removes it (FR-024).
+- **`TaskRun` slim shape** (FR-047/048) — `task_id`, `input_id`,
+  `metadata`, `result()`, `cancel()`, `__await__`. `status`, `delete`,
+  `refresh`, `lease_expiry_count` are removed.
+- **`TaskRun.result()` returns raw `Output`** (FR-052). The `TaskResult`
+  wrapper class is deleted.
+- **`TaskContext.input_id`** (FR-005/047) — per-turn id for multi-turn,
+  defaults to `task_id` for one-shot 1:1 invariant per FR-004.
+- **New `TaskDeferred` exception** (FR-039) raised by
+  `ctx.exit_for_recovery()`. Semantically distinct from `TaskCancelled`.
+- **Public exception taxonomy reshape** (FR-074..077): exceptions no
+  longer carry `task_id`. `TaskFailed(error=...)`,
+  `TaskConflictError(current_status=...)`,
+  `LastInputIdPreconditionFailed(actual_last_input_id=...)` carry only
+  their respective field. `TaskCancelled`, `TaskDeferred`,
+  `SteeringQueueFull`, `InputTooLarge` are bare.
+- **New typed-payload + value-type aliases**: `JSONValue` (recursive
+  Union for `TaskMetadata` values), `TaskErrorDict`,
+  `TaskExhaustedRetriesErrorDict` (FR-070/071).
+- **Auto-gen `task_id`** for one-shot `Task.start` / `Task.run` when
+  caller does not supply one (FR-004). Multi-turn `task_id` remains
+  mandatory.
+- **`if_last_input_id=`** precondition (FR-076) on both one-shot and
+  multi-turn `.start` / `.run`. Raises
+  `LastInputIdPreconditionFailed(actual_last_input_id=...)` on
+  mismatch.
+- **Reserved metadata namespace** (FR-044): `ctx.metadata("_X")` raises
+  `ValueError` (leading underscore reserved for the framework).
+- **Handler signature validation** (FR-003): first parameter MUST be
+  named `ctx`.
+- **Structured failure log** (FR-015) — `durable_task_handler_failure`
+  ERROR event with `task_id`/`input_id`/`error_type`/`error_message`
+  fields emitted on every handler failure.
+- **Multi-turn raise → `suspended`** (FR-010/011/053) — chain stays
+  alive; queued steerers promote per FR-013.
+- **Multi-turn success → `suspended`** (FR-007/008) — `return X` is
+  implicit suspend; chain stays alive.
+
+### Spec 022 — removed from public surface
+
+- `TaskResult` wrapper class — deleted entirely (FR-018). `await
+  run.result()` returns raw `Output`.
+- `Suspended` sentinel — removed from public surface (FR-019). Multi-turn
+  uses `return X` instead.
+- `TaskSnapshot` + `Task.get(task_id)` — both removed (FR-017). Use
+  `manager.provider.get(task_id)` directly for read-only inspection.
+- `Task.options()` — removed from public surface (FR-006).
+- Public `OutputTooLarge`, `TaskNotFound`, `TaskPreconditionFailed`,
+  `TaskStatus` — removed (FR-020/021/074). The classes remain
+  internal-only in `_exceptions.py` for framework wiring.
+- `TaskRun.delete()`, `.refresh()`, `.status`, `.lease_expiry_count` —
+  removed (FR-047/048). For chain-level delete use
+  `MultiTurnTask.delete(task_id)`.
+- `/tasks/resume` HTTP route + `TaskManager.handle_resume` (FR-049) —
+  resume happens via `.start()` / `.run()` against a suspended task.
+- `payload["output"]` / `payload["error"]` writes — never persisted
+  (FR-025/026/027). The framework no longer projects success/failure
+  state into the record's payload.
+- `ephemeral=` decorator kwarg (FR-051) — one-shot is always ephemeral;
+  multi-turn never is. Transitionally emits a `DeprecationWarning`;
+  will be hard-rejected per the Phase 5 final-cleanup follow-up PR.
+- `steerable=` on `@task` (FR-051) — same transitional warning.
+- `ctx.suspend()` — removed from the multi-turn contract (FR-008).
+  Method body remains during the transition window for legacy callers;
+  marked as a Phase 5 final-cleanup follow-up (see
+  `specs/022-durable-task-primitive-redesign/gap-list.md` §B3).
+
+### Cross-branch hand-offs
+
+The following spec 022 work lives on sibling branches and ships in
+coordinated PRs:
+
+- **`feature/agentserver-responses-spec016`** — the
+  `_durable_orchestrator.py` migration (responses package's three
+  `ctx.suspend(...)` call sites rewritten per FR-068a/b/c); the
+  `durability-contract.md` change-log entry (T-0.3 / T-8.6) closing
+  out the spec 022 amendments to the cross-package durability contract.
+- **`feature/agentserver-durable-agent-demo`** — the Azure-deployable
+  durable research agent demo migration per FR-068d / T-7.12. The demo
+  needs:
+  - `samples/durable-agent-demo/src/durable-research-agent/agent.py`:
+    `@task(name=..., steerable=True)` → `@multi_turn_task(name=...,
+    steerable=True)`; all `ctx.suspend(...)` call sites → `return X`
+    or `return None`.
+  - Rebuilt bundled wheels under `build.sh` against the merged
+    `azure-ai-agentserver-core` + `azure-ai-agentserver-invocations`
+    packages on this branch.
+  - `demo-client.sh` end-to-end verification against the migrated
+    codebase.
+
+  The demo's actual migration is OUT OF SCOPE for this branch — it
+  ships in the demo branch's own PR, gated on THIS branch merging to
+  `main` first.
+
 ### Features Added
 
 - **Public read API: `Task.get(task_id) -> TaskSnapshot | None`** —
@@ -11,6 +115,12 @@
   reclaims, never extends the lease, never PATCHes. Mirrors the
   instance-method shape of ``Task.get_active_run`` as its
   read-only sibling.
+
+  > **NOTE (spec 022):** This API is being removed per FR-017.
+  > Use ``manager.provider.get(task_id)`` for the same shape (returns
+  > ``TaskInfo`` directly). The note is preserved here for migration
+  > visibility — actual removal is reflected in the "removed from
+  > public surface" section above.
 
   New public type ``TaskSnapshot`` exposes only developer-facing
   fields (``task_id``, ``status``, ``created_at``, ``updated_at``,

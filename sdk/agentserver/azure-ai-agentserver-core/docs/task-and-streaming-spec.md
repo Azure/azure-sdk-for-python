@@ -20,7 +20,7 @@
 > | §4 interim retry `payload["error"]` writes          | FR-027 — never written         |
 > | §20 `_output` attachment + 2 MB cap                 | FR-021 — removed; `OutputTooLarge` removed too |
 > | §26 `/tasks/resume` route                           | FR-049 — route + handler removed |
-> | §32 / §3 `ephemeral` decorator kwarg                | FR-051 — deprecated; one-shot always ephemeral; multi-turn never |
+> | §32 / §3 `ephemeral` decorator kwarg                | FR-051 — rejected at decoration time (transitional DeprecationWarning today; hard-rejected per Phase 5 final cleanup) |
 > | §34 `TaskResult` definition                         | FR-018 / FR-052 — wrapper removed; `.result()` returns `Output` |
 > | §34 `Suspended` sentinel                            | FR-019 — sentinel removed; multi-turn uses return-is-implicit-suspend |
 > | §35 / §35a `TaskSnapshot` + `Task.get`              | FR-017 — both removed; introspection via store-level provider only |
@@ -47,7 +47,7 @@
 > | `TaskRun.input_id` (public attribute; defaults to `task_id` for 1:1 one-shot invariant) | FR-047 |
 > | `JSONValue` recursive type alias                 | FR-070 |
 > | `TaskErrorDict` + `TaskExhaustedRetriesErrorDict` TypedDicts | FR-071 |
-> | Auto-gen `task_id` for one-shot `Task.start` / `Task.run` | FR-067 |
+> | Auto-gen `task_id` for one-shot `Task.start` / `Task.run` | FR-004 |
 > | Reserved underscore-prefix metadata namespace    | FR-044 |
 > | Handler signature validation: first arg MUST be named `ctx` | FR-003 |
 > | Structured failure log (`event_name="durable_task_handler_failure"`) | FR-015 |

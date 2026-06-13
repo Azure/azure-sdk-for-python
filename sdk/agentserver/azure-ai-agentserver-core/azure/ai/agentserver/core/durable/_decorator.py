@@ -1296,11 +1296,9 @@ def task(
 def task(
     *,
     name: str | None = ...,
-    title: str | Callable[[Any, str], str] | None = ...,
+    title: str | None = ...,
     timeout: timedelta | None = ...,
-    ephemeral: bool = ...,
     retry: RetryPolicy | None = ...,
-    steerable: bool = ...,
 ) -> Callable[
     [Callable[[TaskContext[Input]], Awaitable[Output]]],
     Task[Input, Output],
@@ -1311,7 +1309,7 @@ def task(
     fn: Callable[..., Any] | None = None,
     *,
     name: str | None = None,
-    title: str | Callable[[Any, str], str] | None = None,
+    title: str | None = None,
     timeout: timedelta | None = None,
     ephemeral: bool = True,
     retry: RetryPolicy | None = None,
@@ -1654,14 +1652,15 @@ class MultiTurnTask(Generic[Input, Output]):
             if not queued_fut.done():
                 queued_fut.set_exception(TaskCancelled())
 
-        # 3. Force-delete the record (idempotent — swallow NotFound shapes).
+        # 3. Force-delete the record (idempotent — only swallow the
+        # "already-gone" classes per FR-024).
         provider = getattr(mgr, "_provider", None)
         if provider is not None:
+            from ._exceptions_internal import TaskNotFound  # pylint: disable=import-outside-toplevel
             try:
                 await provider.delete(task_id, force=True)
-            except Exception:  # noqa: BLE001 — idempotent
-                # Includes the "already deleted" case; the test asserts idempotency.
-                pass
+            except TaskNotFound:
+                pass  # idempotent: already gone
 
 
 @overload
@@ -1803,10 +1802,6 @@ def task(  # type: ignore[no-redef]  # noqa: F811
             retry=retry,
             **legacy_kwargs,
         )(func)
-
-    if fn is not None:
-        return _wrap(fn)
-    return _wrap
 
     if fn is not None:
         return _wrap(fn)

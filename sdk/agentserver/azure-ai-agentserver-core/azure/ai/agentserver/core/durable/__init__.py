@@ -3,37 +3,46 @@
 # ---------------------------------------------------------
 """Durable task subsystem for crash-resilient long-running agents.
 
-Provides the :func:`task` decorator and supporting types for
-building Azure AI Hosted Agents that survive container crashes,
-OOM kills, and redeployments.
+Provides the :func:`task` and :func:`multi_turn_task` decorators (spec 022)
+plus supporting types for building Azure AI Hosted Agents that survive
+container crashes, OOM kills, and redeployments.
 
-Key features:
+Key features (spec 022):
 
+- **Two decorators** — ``@task`` (one-shot, single run, ephemeral) and
+  ``@multi_turn_task`` (chain — every ``return X`` is one turn; chain
+  stays alive in ``suspended`` between turns).
 - **Lifecycle automation** — ``.run()`` and ``.start()`` automatically
   start, resume, or recover tasks based on their current state.
-- **Entry mode** — ``ctx.entry_mode`` tells the function whether it was
+- **Entry mode** — ``ctx.entry_mode`` tells the handler whether it was
   entered fresh, resumed from suspension, or recovered from a crash.
 - **RetryPolicy** — configurable retry with exponential, fixed, or linear
   backoff (see :class:`RetryPolicy` presets).
-- **Streaming** — emit incremental output via ``ctx.stream()`` and consume
-  with ``async for chunk in task_run``.
+- **Streaming** lives in :mod:`azure.ai.agentserver.core.streaming`
+  (spec 017): handlers call ``stream = await streams.get_or_create(invocation_id)``
+  to obtain a stream handle; ``TaskRun`` itself is NOT iterable.
 
 Public API::
 
     from azure.ai.agentserver.core.durable import (
         task,
+        multi_turn_task,
         Task,
+        MultiTurnTask,
         RetryPolicy,
         TaskContext,
         TaskMetadata,
-        TaskResult,
         TaskRun,
-        Suspended,
-        TaskStatus,
         TaskFailed,
         TaskCancelled,
-        TaskNotFound,
+        TaskDeferred,
         TaskConflictError,
+        LastInputIdPreconditionFailed,
+        SteeringQueueFull,
+        InputTooLarge,
+        JSONValue,
+        TaskErrorDict,
+        TaskExhaustedRetriesErrorDict,
         EntryMode,
     )
 """
@@ -52,9 +61,8 @@ from ._exceptions import (
     TaskFailed,
 )
 from ._metadata import JSONValue, TaskMetadata
-from ._models import TaskStatus
 from ._retry import RetryPolicy
-from ._run import Suspended, TaskRun
+from ._run import Suspended, TaskRun  # Suspended kept as internal-only; NOT in __all__
 
 # Spec 016 FR-022 + SC-014 (US6): TaskTerminated is fully removed from
 # the public surface — importing it from this package now raises
@@ -104,7 +112,4 @@ __all__ = [
     "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
     "InputTooLarge",
-    # ----- LEGACY symbols still importable transitionally -----
-    "Suspended",
-    "TaskStatus",
 ]

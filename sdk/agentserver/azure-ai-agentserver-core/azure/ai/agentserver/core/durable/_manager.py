@@ -1748,7 +1748,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     # stays `in_progress`; the recovery scanner re-invokes
                     # the handler in the next process lifetime.
                     from ._exceptions import (  # pylint: disable=import-outside-toplevel
-                        TaskCancelled,
                         TaskDeferred,
                     )
 
