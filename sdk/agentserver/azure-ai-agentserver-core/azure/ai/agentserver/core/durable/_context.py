@@ -94,6 +94,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
 
     __slots__ = (
         "task_id",
+        "input_id",  # spec 022 FR-005 / FR-047
         "_session_id",
         "input",
         "metadata",
@@ -129,8 +130,12 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         entry_mode: EntryMode = "fresh",
         is_steered_turn: bool = False,
         pending_count_provider: Callable[[], int] | None = None,
+        input_id: str | None = None,
     ) -> None:
         self.task_id = task_id
+        # Spec 022 FR-005 / FR-047: input_id is part of the public TaskContext
+        # surface. Defaults to task_id (one-shot 1:1 invariant).
+        self.input_id = input_id if input_id is not None else task_id
         self._session_id = session_id
         self.input = input
         self.metadata = metadata

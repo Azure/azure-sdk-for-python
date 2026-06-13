@@ -994,6 +994,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             shutdown=self._shutdown_event,
             entry_mode=entry_mode,
             pending_count_provider=self._make_pending_count_provider(task_id),
+            input_id=(initial_payload_extras or {}).get("_last_input_id"),
         )
         loop = asyncio.get_event_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
@@ -1085,6 +1086,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             terminate_event=terminate_event,
             execution_task=execution_task,
             terminate_reason_ref=terminate_reason_ref,
+            input_id=ctx.input_id,
         )
 
     async def handle_resume(self, task_id: str) -> None:
@@ -1144,6 +1146,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 cancel_event=active.context.cancel,
                 terminate_event=active.terminate_event,
                 execution_task=active.execution_task,
+                input_id=getattr(active.context, "input_id", None),
             )
 
         # Spec 016 FR-005: consult the store for tasks not active in

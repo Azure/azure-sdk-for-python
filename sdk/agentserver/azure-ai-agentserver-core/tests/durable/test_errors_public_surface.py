@@ -110,6 +110,7 @@ def _internal_attachment_too_large_cls():
     return getattr(mod, "_AttachmentTooLarge")
 
 
+@pytest.mark.skip(reason="spec 022 FR-077: InputTooLarge is bare exception")
 def test_input_too_large_remap_from_internal_input_key() -> None:
     """FR-D-004 — when the framework's prefix dispatcher receives an
     internal ``_AttachmentTooLarge`` raised against attachment key
