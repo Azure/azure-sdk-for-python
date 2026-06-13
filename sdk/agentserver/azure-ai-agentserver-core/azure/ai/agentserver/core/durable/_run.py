@@ -54,17 +54,8 @@ class Suspended(Generic[Output]):
 
 
 def _unwrap_result(res: Any) -> Any:
-    """FR-052: return raw Output from internal TaskResult (transitional).
-
-    During the transition window:
-    - status='completed': return ``res.output`` (raw Output value)
-    - status='suspended' (legacy ``ctx.suspend`` path): return the
-      TaskResult itself so legacy tests can still inspect
-      ``is_suspended`` / ``suspension_reason``.
-    """
+    """FR-052: return raw Output from internal TaskResult (transitional)."""
     if isinstance(res, TaskResult):
-        if getattr(res, "status", None) == "suspended":
-            return res
         return res.output
     return res
 

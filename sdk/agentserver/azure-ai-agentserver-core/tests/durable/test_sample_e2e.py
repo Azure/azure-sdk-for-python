@@ -174,8 +174,7 @@ class TestListE2E:
             # Create a suspended task
             handle = await suspendable.start(task_id="status-1", input=None)
             result = await handle.result()
-            assert result.is_suspended
-
+    # spec 022: result is raw output (Suspended wrapper removed)
             @task(name="e2e_list_status", ephemeral=False)
             async def completer(ctx: TaskContext[Any]) -> str:
                 return "done"
@@ -310,7 +309,7 @@ class TestMultiturnSampleE2E:
 
             # result() should return TaskResult with is_suspended
             result1 = await run1.result()
-            assert result1.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert result1["reply"] == "Reply #1: Hello"
             assert result1["turn"] == 1
 
@@ -510,7 +509,7 @@ class TestLangGraphSampleE2E:
             )
 
             result1 = await run1.result()
-            assert result1.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert result1["reply"] == "Reply #1: Hello"
             assert result1["turn"] == 1
 
@@ -628,9 +627,7 @@ class TestLifecycleE2E:
                 input={"session_id": "ls1", "message": "Hello"},
             )
             result1 = await run1.result()
-            assert result1.is_suspended
-
-            # Verify .get() returns suspended task
+    # spec 022: result is raw output (Suspended wrapper removed)
             info = await lifecycle_session._get(task_id)
             assert info is not None
             assert info.status == "suspended"
@@ -641,7 +638,7 @@ class TestLifecycleE2E:
                 input={"session_id": "ls1", "message": "Continue"},
             )
             result2 = await run2.result()
-            assert result2.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert result2["turn"] == 2
 
             # Turn 3: end session via .start()
@@ -778,9 +775,7 @@ class TestInvocationStoreDurability:
                 input={"invocation_id": inv_id},
             )
             result = await run.result()
-            assert result.is_suspended
-
-            # Invocation store was written inside the durable boundary
+    # spec 022: result is raw output (Suspended wrapper removed)
             stored = _inv_load(inv_id)
             assert stored is not None
             assert stored["status"] == "completed"
@@ -990,7 +985,7 @@ class TestClaudeSteeringSampleE2E:
                 },
             )
             result = await asyncio.wait_for(run.result(), timeout=5.0)
-            assert result.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert result["reply"] == "Echo: Hello"
             assert result["partial"] is False
             assert store["inv-1"]["status"] == "completed"
@@ -1071,10 +1066,10 @@ class TestClaudeSteeringSampleE2E:
             assert store["inv-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-            assert result_a.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
+    # spec 022: result is raw output (Suspended wrapper removed)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-            assert result_b.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert result_b["reply"] == "chunk1-chunk2-chunk3"
 
             assert store["inv-a"]["status"] == "superseded"
@@ -1291,7 +1286,7 @@ class TestCopilotSteeringSampleE2E:
                 },
             )
             result = await asyncio.wait_for(run.result(), timeout=5.0)
-            assert result.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert result["reply"] == "Echo: Explain decorators"
             assert result["partial"] is False
             assert store["inv-1"]["status"] == "completed"
@@ -1385,10 +1380,10 @@ class TestCopilotSteeringSampleE2E:
             assert store["inv-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-            assert result_a.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
+    # spec 022: result is raw output (Suspended wrapper removed)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-            assert result_b.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert result_b["reply"] == "part1-part2-part3"
 
             # A should be superseded (reply may be empty or partial — event
@@ -1477,10 +1472,10 @@ class TestLangGraphSteeringSampleE2E:
             assert store["lg-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-            assert result_a.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
+    # spec 022: result is raw output (Suspended wrapper removed)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-            assert result_b.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert result_b["reply"] == "[graph] Processed: Go to Paris"
 
             assert store["lg-a"]["status"] == "cancelled"
@@ -1523,7 +1518,7 @@ class TestLangGraphSteeringSampleE2E:
                 input={"session_id": "s1", "message": "Turn1", "invocation_id": "mt-1"},
             )
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert result1.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert store["mt-1"]["status"] == "completed"
 
             # Turn 2: resume
@@ -1542,10 +1537,10 @@ class TestLangGraphSteeringSampleE2E:
             assert store["mt-3"]["status"] == "queued"
 
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-            assert result2.is_suspended  # Spec 016 FR-013
+    # spec 022: result is raw output (Suspended wrapper removed)
 
             result3 = await asyncio.wait_for(run3.result(), timeout=5.0)
-            assert result3.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert "Turn3" in result3.output["reply"]
             assert store["mt-2"]["status"] == "cancelled"
             assert store["mt-3"]["status"] == "completed"
@@ -1670,7 +1665,7 @@ class TestSSEStreamingE2E:
 
             # Turn 1 should have been superseded
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert result1.is_suspended  # Spec 016 FR-013
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert store["inv-s1"]["status"] in ("superseded", "cancelled")
 
             # First chunk was lifecycle:running

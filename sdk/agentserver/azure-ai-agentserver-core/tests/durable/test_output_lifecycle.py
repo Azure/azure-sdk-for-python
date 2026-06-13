@@ -93,7 +93,7 @@ async def test_resume_clears_payload_output_and_attachment(local) -> None:
     try:
         # First turn: suspends with output=A.
         result1 = await my_task.run(task_id="t-resume-clear", input="x")
-        assert result1.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
         # Sanity: record has output=A persisted.
         snap_after_suspend1 = await my_task.get("t-resume-clear")
         assert snap_after_suspend1 is not None
@@ -172,7 +172,7 @@ async def test_drain_phase1_clears_payload_output_and_attachment(local) -> None:
     await manager.startup()
     try:
         first = await my_task.run(task_id="t-drain-clear", input="x")
-        assert first.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
 
         # Verify intermediate output state.
         snap1 = await my_task.get("t-drain-clear")
@@ -225,7 +225,7 @@ async def test_handle_failure_clears_output(local) -> None:
     await manager.startup()
     try:
         first = await my_task.run(task_id="t-fail-clear", input="x")
-        assert first.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
 
         with pytest.raises(TaskFailed):
             await my_task.run(task_id="t-fail-clear", input="y")

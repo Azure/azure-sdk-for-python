@@ -78,12 +78,12 @@ class TestEntryMode:
         try:
             # First call — fresh start, suspends
             result1 = await my_task.run(task_id="resume-1", input="turn-1")
-            assert result1.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert observed == [("fresh", "turn-1")]
 
             # Second call — should resume with new input
             result2 = await my_task.run(task_id="resume-1", input="turn-2")
-            assert result2.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert observed[-1] == ("resumed", "turn-2")
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -102,7 +102,7 @@ class TestEntryMode:
         try:
             # Fresh start — suspends
             result = await my_task.run(task_id="platform-resume-1", input="init")
-            assert result.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert observed == ["fresh"]
 
             # Platform-initiated resume

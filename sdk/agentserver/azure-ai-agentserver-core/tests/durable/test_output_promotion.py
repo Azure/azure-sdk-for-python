@@ -82,7 +82,7 @@ async def test_suspend_output_always_uses_attachment(local) -> None:
     await manager.startup()
     try:
         result = await my_task.run(task_id="t-tiny-suspend", input="x")
-        assert result.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
         raw = await local.get("t-tiny-suspend")
         assert raw is not None
         assert raw.payload is not None
@@ -151,12 +151,12 @@ async def test_suspend_output_none_writes_explicit_null(local) -> None:
     await manager.startup()
     try:
         r1 = await my_task.run(task_id="t-none-explicit", input="x")
-        assert r1.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
         snap1 = await my_task.get("t-none-explicit")
         assert snap1 is not None and snap1.output == "A"
 
         r2 = await my_task.run(task_id="t-none-explicit", input="y")
-        assert r2.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
         snap2 = await my_task.get("t-none-explicit")
         assert snap2 is not None
         assert snap2.output is None, (

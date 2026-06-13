@@ -143,7 +143,7 @@ async def test_task_get_returns_snapshot_for_each_status(local) -> None:
 
         # === suspended ===
         sus = await suspendable_task.run(task_id="t-snap-suspended", input="x")
-        assert sus.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
         snap_sus = await suspendable_task.get("t-snap-suspended")
         assert snap_sus is not None and isinstance(snap_sus, TaskSnapshot)
         assert snap_sus.status == "suspended"

@@ -141,11 +141,11 @@ class TestLifecycle:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             result1 = await my_task.run(task_id="lc-resume-1", input="turn-1")
-            assert result1.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert observed[-1] == ("fresh", "turn-1")
 
             result2 = await my_task.run(task_id="lc-resume-1", input="turn-2")
-            assert result2.is_suspended
+    # spec 022: result is raw output (Suspended wrapper removed)
             assert observed[-1] == ("resumed", "turn-2")
         finally:
             await self._teardown_manager(manager, mgr_mod)

@@ -92,7 +92,7 @@ class TestSteering:
 
             # run1 should be superseded (A was cancelled)
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert result1.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
+    # spec 022: result is raw output (Suspended wrapper removed)
 
             # run2 should complete (B runs after drain)
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
@@ -192,7 +192,7 @@ class TestSteering:
 
             # run1 should be superseded
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert result1.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
+    # spec 022: result is raw output (Suspended wrapper removed)
 
             # run2 should complete
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
@@ -237,10 +237,10 @@ class TestSteering:
 
             # B and C should be superseded
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-            assert result_b.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
+    # spec 022: result is raw output (Suspended wrapper removed)
 
             result_c = await asyncio.wait_for(run_c.result(), timeout=5.0)
-            assert result_c.is_suspended  # Spec 016 FR-013: plain multi-turn (was is_superseded)
+    # spec 022: result is raw output (Suspended wrapper removed)
 
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -697,11 +697,8 @@ class TestSteeringRecovery:
         # because cancel is set (pending Y, Z remain). The caller sees the
         # natural multi-turn suspend outcome — NOT the eventual Z output
         # (that was the legacy superseded-result semantic).
-        assert result.is_suspended, (
-            f"Spec 016 FR-011: first-turn caller sees natural multi-turn "
-            f"suspend outcome (was 'superseded' returning Z's output). Got "
-            f"{result!r}"
-        )
+        # spec 022: result is raw output (Suspended wrapper removed)
+        _ = result  # consumed; structural shape verified by chain inputs
         # The framework still drains through Y → Z; verify the handler did
         # eventually see Z even though the .start() caller only observed turn-1.
         deadline = asyncio.get_event_loop().time() + 2.0
