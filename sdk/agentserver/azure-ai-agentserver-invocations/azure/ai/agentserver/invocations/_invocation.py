@@ -496,7 +496,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         dispatch: Callable[[Request], Awaitable[Response]],
     ) -> Response:
         raw_invocation_id = request.path_params["invocation_id"]
-        invocation_id = _sanitize_id(raw_invocation_id, raw_invocation_id)
+        invocation_id = _sanitize_id(raw_invocation_id, str(uuid.uuid4()))
         request.state.invocation_id = invocation_id
 
         raw_session_id = request.query_params.get("agent_session_id", "")

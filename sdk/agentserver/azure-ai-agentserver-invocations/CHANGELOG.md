@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
+
+### Bugs Fixed
+
+- `GET /invocations/{id}` and `POST /invocations/{id}/cancel` no longer reflect a malformed `invocation_id` path parameter (illegal characters or longer than `_MAX_ID_LENGTH`) into the `x-agent-invocation-id` response header and the request-scoped log and span fields. The id is now validated with a generated fallback, matching the create path.
+
 ## 1.0.0b5 (2026-06-12)
 
 ### Bugs Fixed
