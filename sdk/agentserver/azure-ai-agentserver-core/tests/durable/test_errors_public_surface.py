@@ -485,7 +485,7 @@ async def test_etag_mismatch_retries_without_exposing_hosted_conflict(tmp_path) 
             return f"resumed:{ctx.input}"
 
         result = await etag_retry_task.run(task_id="hosted-etag-retry", input="new")
-        assert result.output == "resumed:new"
+        assert result == "resumed:new"
         assert provider.update_calls >= 2
     except Exception as exc:
         assert not isinstance(exc, _HostedConflict)

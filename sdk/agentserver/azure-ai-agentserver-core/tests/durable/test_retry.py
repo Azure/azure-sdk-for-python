@@ -295,7 +295,7 @@ class TestRetryIntegration:
                     task_id="retry-1",
                     input="test",
                 )
-            assert result.output == "success"
+            assert result == "success"
             assert call_log == [0, 1, 2]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -478,7 +478,7 @@ class TestRetryAttemptDurability:
                 task_id="durable-1",
                 input="ignored-by-recovery",
             )
-            assert result.output == "ok"
+            assert result == "ok"
             assert observed == [2], (
                 "FR-001 violated: handler MUST observe the persisted "
                 "retry_attempt (2) on the first invocation after recovery; "
@@ -573,7 +573,7 @@ class TestRetryAttemptDurability:
                 task_id="no-consume-1",
                 input="ignored",
             )
-            assert result.output == "done@2"
+            assert result == "done@2"
             assert observed == [2], (
                 "FR-003 violated: handler must observe persisted "
                 f"retry_attempt=2, got {observed!r}."

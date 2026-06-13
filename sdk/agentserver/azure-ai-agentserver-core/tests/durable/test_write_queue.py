@@ -105,7 +105,7 @@ async def test_concurrent_metadata_flushes_serialize(local) -> None:
         await asyncio.sleep(0.01)
         barrier.set()
         result = await run_task
-        assert result.output == "done"
+        assert result == "done"
     finally:
         await manager.shutdown()
         mgr_mod._manager = None

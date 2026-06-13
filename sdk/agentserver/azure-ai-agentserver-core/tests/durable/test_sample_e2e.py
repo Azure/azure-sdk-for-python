@@ -83,7 +83,7 @@ class TestSourceSampleE2E:
             result = await process_order.run(
                 task_id=uuid.uuid4().hex, input={"order_id": "ORD-001"}
             )
-            assert "task_id" in result.output
+            assert "task_id" in result
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
@@ -102,7 +102,7 @@ class TestSourceSampleE2E:
                 task_id=task_id,
                 input=None,
             )
-            assert result.output == "done"
+            assert result == "done"
 
             # Verify source was auto-stamped on the task record
             task_info = await manager.provider.get(task_id)
@@ -822,7 +822,7 @@ class TestInvocationStoreDurability:
                 task_id="inv-complete-001",
                 input={"invocation_id": inv_id},
             )
-            assert result.output["finished"] is True
+            assert result["finished"] is True
 
             stored = _inv_load(inv_id)
             assert stored is not None
@@ -991,8 +991,8 @@ class TestClaudeSteeringSampleE2E:
             )
             result = await asyncio.wait_for(run.result(), timeout=5.0)
             assert result.is_suspended
-            assert result.output["reply"] == "Echo: Hello"
-            assert result.output["partial"] is False
+            assert result["reply"] == "Echo: Hello"
+            assert result["partial"] is False
             assert store["inv-1"]["status"] == "completed"
             # History stored externally, not in metadata
             assert len(conv_store["s1"]) == 2  # user + assistant
@@ -1292,8 +1292,8 @@ class TestCopilotSteeringSampleE2E:
             )
             result = await asyncio.wait_for(run.result(), timeout=5.0)
             assert result.is_suspended
-            assert result.output["reply"] == "Echo: Explain decorators"
-            assert result.output["partial"] is False
+            assert result["reply"] == "Echo: Explain decorators"
+            assert result["partial"] is False
             assert store["inv-1"]["status"] == "completed"
 
         finally:
@@ -1608,7 +1608,7 @@ class TestSSEStreamingE2E:
             assert chunks[2] == {"type": "text_delta", "delta": " "}
             assert chunks[3] == {"type": "text_delta", "delta": "world"}
             assert len(chunks) == 4
-            assert result.output["reply"] == "Hello world"
+            assert result["reply"] == "Hello world"
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -1723,7 +1723,7 @@ class TestSSEStreamingE2E:
             # Store has final snapshot
             assert store["inv-snap-1"]["status"] == "completed"
             assert store["inv-snap-1"]["reply"] == "ABC"
-            assert result.output["reply"] == "ABC"
+            assert result["reply"] == "ABC"
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)

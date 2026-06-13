@@ -94,7 +94,7 @@ class TestExecutionTimeout:
             result = await run.result()
 
             assert cancel_observed.is_set()
-            assert result.output == "cooperated"
+            assert result == "cooperated"
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
@@ -110,7 +110,7 @@ class TestExecutionTimeout:
 
             run = await quick_task.start(task_id=uuid.uuid4().hex, input=None)
             result = await run.result()
-            assert result.output == "done"
+            assert result == "done"
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 

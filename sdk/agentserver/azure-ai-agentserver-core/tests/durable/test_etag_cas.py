@@ -98,7 +98,7 @@ async def test_every_patch_after_first_carries_if_match(captured_local) -> None:
     await manager.startup()
     try:
         result = await my_task.run(task_id="t-etag-1", input="hi")
-        assert result.output == "ok"
+        assert result == "ok"
     finally:
         await manager.shutdown()
         mgr_mod._manager = None
@@ -299,7 +299,7 @@ async def test_terminal_412_lease_ours_retries(conflicting_local) -> None:
         # etag and succeed.
         conflicting_local.conflict_on(update_index=0, mode="etag_only")
         result = await my_task.run(task_id="t-retry", input="x")
-        assert result.output == "succeed-on-retry"
+        assert result == "succeed-on-retry"
         # The persisted record MUST reflect the terminal write — not
         # the pre-conflict in_progress state — proving the framework
         # retried the PATCH against the new etag (FR-A-008 branch c).

@@ -59,7 +59,7 @@ class TestEntryMode:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             result = await my_task.run(task_id="fresh-1", input="hello")
-            assert result.output == "done"
+            assert result == "done"
             assert observed_modes == ["fresh"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -158,7 +158,7 @@ class TestEntryMode:
                 task_id="stale-1",
                 input="new-data",
             )
-            assert result.output == "recovered-ok"
+            assert result == "recovered-ok"
             assert observed == ["recovered"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -175,7 +175,7 @@ class TestEntryMode:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             result = await my_task.run(task_id="ignore-1", input="data")
-            assert result.output == "processed: data"
+            assert result == "processed: data"
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
@@ -305,7 +305,7 @@ class TestRecoveryRetryAttempt:
                 task_id="rec-attempt-1",
                 input="ignored",
             )
-            assert result.output == "done"
+            assert result == "done"
             assert observed == [("recovered", 3)], (
                 "FR-001 violated: recovered handler must see entry_mode="
                 "'recovered' AND retry_attempt=3 (the persisted value) on "

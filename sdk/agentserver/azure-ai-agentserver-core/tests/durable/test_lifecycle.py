@@ -93,7 +93,7 @@ class TestLifecycle:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             result = await my_task.run(task_id="lc-fresh-1", input="data")
-            assert result.output == "result"
+            assert result == "result"
             assert observed_mode == ["fresh"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -123,7 +123,7 @@ class TestLifecycle:
                 )
             )
             result = await my_task.run(task_id="lc-pending-1", input="new-data")
-            assert result.output == "started"
+            assert result == "started"
             assert observed_mode == ["fresh"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -217,7 +217,7 @@ class TestLifecycle:
                 task_id="lc-stale-1",
                 input="new",
             )
-            assert result.output == "recovered"
+            assert result == "recovered"
             assert observed_mode == ["recovered"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -265,7 +265,7 @@ class TestLifecycle:
             # Fresh start via .start()
             handle = await my_task.start(task_id="lc-start-1", input="data")
             result = await handle.result()
-            assert result.output == "started"
+            assert result == "started"
             assert observed_mode == ["fresh"]
 
             # Conflict: create in_progress task owned by another agent
@@ -303,7 +303,7 @@ class TestLifecycle:
             # Direct-await the TaskRun handle.
             handle = await my_task.start(task_id="awaitable-1", input="hello")
             result = await handle  # ← exercising __await__
-            assert result.output == "echo: hello"
+            assert result == "echo: hello"
 
             # And confirm the explicit .result() path still works identically.
             handle2 = await my_task.start(task_id="awaitable-2", input="world")
@@ -359,7 +359,7 @@ class TestLifecycle:
                 task_id="lc-timeout-1",
                 input="new",
             )
-            assert result.output == "ok"
+            assert result == "ok"
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
@@ -454,7 +454,7 @@ class TestSpec016ThreeLayerRecovery:
             run = await my_task.get_active_run("t043-orphan")
             assert run is not None
             result = await asyncio.wait_for(run.result(), timeout=5.0)
-            assert result.output == "resumed-ok"
+            assert result == "resumed-ok"
             assert observed == ["recovered"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
