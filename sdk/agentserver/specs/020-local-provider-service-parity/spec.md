@@ -91,7 +91,7 @@ Concrete changes (numbered for tracking; each MUST land with a paired test that 
 - C6. Force-expire (`lease_duration_seconds=0`) cannot be combined with a status transition.
 - C7. Force-expire requires the caller's lease params to match the current lease's owner+instance UNLESS the lease is already expired.
 - C8. On different-owner takeover when the prior lease was expired, `expiry_count` increments.
-- C9. On lease re-acquisition when the prior lease was expired, `started_at` resets to now.
+- C9. `started_at` is **immutable** after the first `in_progress` transition. Lease re-acquisition (different-owner takeover OR same-owner restart after expiry), recovery scanner takeover, and suspend/resume cycles MUST all preserve the original `started_at` value.
 - C10. Lease has `heartbeat_at` field, set on every lease write (today our `LeaseInfo` is missing it).
 
 **D. Attachments**

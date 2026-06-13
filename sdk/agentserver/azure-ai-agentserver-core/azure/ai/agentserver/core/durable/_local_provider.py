@@ -344,11 +344,9 @@ class LocalFileTaskProvider:
                 generation = current.generation + 1
                 if expired:
                     expiry_count = current.expiry_count + 1
-                    task.started_at = now
             elif expired:
                 generation = current.generation + 1
                 expiry_count = current.expiry_count + 1
-                task.started_at = now
             else:
                 _lease_held(task.id)
 

@@ -1005,7 +1005,7 @@ Field meanings beyond this table are defined in the protocol spec.
 | `etag` | string | server | every server-issued response. |
 | `created_at` | ISO-8601 string | server | `create`. |
 | `updated_at` | ISO-8601 string | server | every PATCH. |
-| `started_at` | ISO-8601 string \| null | server | first `in_progress` transition. |
+| `started_at` | ISO-8601 string \| null | server | **set once on first `in_progress` transition; never updated thereafter** (lease re-acquisition, recovery scanner takeover, and suspend/resume cycles do NOT reset). |
 | `completed_at` | ISO-8601 string \| null | server | terminal transition. |
 
 Caller-controlled fields (`tags` keys NOT starting with `_task_`,
@@ -1204,7 +1204,7 @@ behaves identically against either backing.
 | LSE-W-5 | Lease renewal (no status change, `lease_duration_seconds > 0`) is only valid when the current status is `in_progress`. Renewing on `pending` / `suspended` / `completed` is rejected. | Reject as `invalid_request` (400). |
 | LSE-W-6 | `lease_duration_seconds = 0` (force-expire) cannot be combined with a status transition in the same PATCH. | Reject as `invalid_request` (400). |
 | LSE-W-7 | Force-expire (`lease_duration_seconds = 0`) requires the caller's `(lease_owner, lease_instance_id)` to match the current lease UNLESS the lease is already expired (in which case any caller may force-expire). | Raise `_HostedConflict(_code="lease_held_by_another")` if mismatched and lease is still live. |
-| LSE-W-8 | On lease re-acquisition where the prior lease was **expired**, the provider MUST reset `started_at` to "now" (the new lifetime starts a fresh wall clock). | (Behavioral — observable through `TaskSnapshot.started_at` and `TaskRun.started_at`.) |
+| LSE-W-8 | `started_at` is **immutable** after the first `in_progress` transition. Lease re-acquisition (including expired-lease takeover by a different owner OR same-owner restart) MUST NOT update `started_at`. The original wall-clock time of the first turn-start is preserved across recovery, restarts, and suspend/resume cycles. | (Behavioral — observable through `TaskSnapshot.started_at` and `TaskRun.started_at`.) |
 | LSE-W-9 | On lease handoff to a different owner where the prior lease was **expired**, `expiry_count` MUST be incremented. Same-owner different-instance handoff before expiry does NOT bump. | (Behavioral — observable through `TaskRun.lease_expiry_count`.) |
 | LSE-W-10 | On every successful lease write (acquisition, renewal, force-expire), the provider MUST stamp the lease's `heartbeat_at` field to "now". This field exists on `LeaseInfo` so consumers and observability tooling can distinguish a fresh lease from one that simply hasn't expired yet. | (Behavioral — observable through `LeaseInfo.heartbeat_at` in `TaskInfo`. Not exposed on `TaskSnapshot` — see §35a.) |
 
@@ -1881,7 +1881,9 @@ Implementation MUST:
   EnsureLeaseMatches on `in_progress → pending`, lease renewal only
   on `in_progress`, force-expire mutual-exclusion with status
   transition, force-expire ownership check, expiry_count bump on
-  expired-takeover, started_at reset on expired-lease re-acquisition,
+  expired-takeover, **`started_at` immutability across lease
+  re-acquisition (set once on first `in_progress`; never updated by
+  expired-lease reclaim, recovery takeover, or suspend/resume)**,
   `heartbeat_at` stamp on every lease write.
 - **Enforce attachment validation (§23.9) and support the clear-all
   gesture (§23.10).**
@@ -2245,7 +2247,7 @@ completed. Same shape regardless of status.
 | `status` | `TaskStatus` literal (`pending\|in_progress\|suspended\|completed`) | The four-value stored status (§24). |
 | `created_at` | `datetime` | Server-stamped record-creation time. |
 | `updated_at` | `datetime` | Server-stamped last-PATCH time. |
-| `started_at` | `datetime \| None` | Time the first turn entered `in_progress`. `None` while still `pending`. |
+| `started_at` | `datetime \| None` | Time the first turn entered `in_progress`. Set once on the first `pending → in_progress` (or `create(status="in_progress")`) transition and **never updated thereafter** — lease re-acquisition, recovery scanner takeover, and suspend/resume cycles all preserve the original value. `None` while still `pending`. |
 | `completed_at` | `datetime \| None` | Time the record transitioned to terminal `completed`. `None` for non-terminal statuses. |
 | `output` | `O \| None` | The resolved output value. The framework reads `payload["output"]`, follows the `_output` attachment if it is a ref (§20, §23), and surfaces the typed value (`O` on success; the suspend envelope value `X` for suspended; `None` if the handler returned None or the task has not produced output). |
 | `error` | `dict \| None` | Structured error info (`{"type": ..., "message": ..., "details": ...}`) for failed terminations. `None` for non-failure status. |
@@ -3502,9 +3504,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   LSE-W-6).
 - **C-LSE-12.** Force-expire MUST verify lease ownership unless the
   lease is already expired (§22.1 LSE-W-7).
-- **C-LSE-13.** On lease re-acquisition where the prior lease was
-  expired, the provider MUST reset `started_at = now` (§22.1
-  LSE-W-8).
+- **C-LSE-13.** `started_at` MUST be set exactly once on the first `in_progress` transition and MUST NOT be updated thereafter — lease re-acquisition (different-owner takeover OR same-owner restart after expiry), recovery scanner takeover, and suspend/resume cycles MUST all preserve the original `started_at` value (§22.1 LSE-W-8).
 - **C-LSE-14.** On every successful lease write, the provider MUST
   stamp `lease.heartbeat_at = now` (§22.1 LSE-W-10). The field is
   on `LeaseInfo`; it is NOT projected onto `TaskSnapshot`.

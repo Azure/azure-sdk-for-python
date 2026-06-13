@@ -111,6 +111,9 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
     :param updated_at: ISO 8601 last-update timestamp.
     :type updated_at: str
     :param started_at: ISO 8601 timestamp of first ``in_progress`` transition.
+        Set once when the task first enters ``in_progress`` and never updated
+        thereafter — lease re-acquisition, recovery scanner takeover, and
+        suspend/resume cycles do NOT reset this timestamp.
     :type started_at: str | None
     :param completed_at: ISO 8601 timestamp of ``completed`` transition.
     :type completed_at: str | None

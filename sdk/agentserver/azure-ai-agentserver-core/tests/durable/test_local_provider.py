@@ -318,7 +318,6 @@ class TestSpec019LocalProviderExpiryCountParity:
     ) -> None:
         """FR-D-006 / SC-13 — expired lease + different instance_id =>
         expiry_count += 1."""
-        import datetime as _dt
 
         created = await provider.create(self._leased_create_request())
         assert created.lease is not None
@@ -413,6 +412,193 @@ class TestSpec019LocalProviderExpiryCountParity:
         assert after.lease.expiry_count == prior_count, (
             "handoff before lease expiry must not bump expiry_count "
             "(FR-D-006 — only real expiry-driven handoffs count)."
+        )
+
+
+# --------------------------------------------------------------------- #
+# `started_at` immutability — set once on first ``in_progress``
+# transition, never updated thereafter. Bug: ``_apply_lease_acquisition``
+# used to overwrite it on expired-lease reclaim (recovery scanner takeover
+# or same-owner restart), violating the contract documented at
+# ``TaskInfo.started_at``.
+# --------------------------------------------------------------------- #
+
+
+class TestStartedAtImmutability:
+    """``TaskInfo.started_at`` MUST be set once when the task first enters
+    ``in_progress`` and MUST NOT change after that — not on lease renewal,
+    not on lease re-acquisition after expiry, not on recovery scanner
+    takeover, not on suspend/resume cycles.
+    """
+
+    @staticmethod
+    def _leased_create_request() -> TaskCreateRequest:
+        return TaskCreateRequest(
+            agent_name="test-agent",
+            session_id="session-started-at",
+            title="started_at test",
+            status="in_progress",
+            lease_owner="owner-1",
+            lease_instance_id="inst-1",
+            lease_duration_seconds=60,
+        )
+
+    @pytest.mark.asyncio
+    async def test_started_at_set_on_create_in_progress(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """Creating a task already in ``in_progress`` with a lease sets
+        ``started_at`` to the creation timestamp."""
+        created = await provider.create(self._leased_create_request())
+        assert created.started_at is not None, (
+            "started_at must be set when a task is created in_progress"
+        )
+
+    @pytest.mark.asyncio
+    async def test_started_at_set_on_pending_to_in_progress(
+        self,
+        provider: LocalFileTaskProvider,
+        sample_create_request: TaskCreateRequest,
+    ) -> None:
+        """The first ``pending → in_progress`` PATCH stamps ``started_at``."""
+        created = await provider.create(sample_create_request)
+        assert created.started_at is None, "pending create should not set started_at"
+
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                status="in_progress",
+                lease_owner="owner-1",
+                lease_instance_id="inst-1",
+                lease_duration_seconds=60,
+            ),
+        )
+        after = await provider.get(created.id)
+        assert after is not None
+        assert after.started_at is not None, (
+            "started_at must be set on first pending→in_progress transition"
+        )
+
+    @pytest.mark.asyncio
+    async def test_started_at_unchanged_on_expired_lease_reclaim(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """Expired-lease reclaim by a different instance (recovery scanner
+        takeover) MUST NOT reset ``started_at``. Regression for the
+        ``_apply_lease_acquisition`` bug that overwrote it."""
+
+        created = await provider.create(self._leased_create_request())
+        original_started_at = created.started_at
+        assert original_started_at is not None
+
+        # Force lease expiry so the next reclaim is an expiry-driven handoff.
+        past = (
+            _dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(minutes=10)
+        ).isoformat()
+        assert created.lease is not None
+        created.lease.expires_at = past
+        provider._write_task(created)  # noqa: SLF001
+
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                lease_owner=created.lease.owner,
+                lease_instance_id="reclaimer-instance",
+                lease_duration_seconds=60,
+            ),
+        )
+
+        after = await provider.get(created.id)
+        assert after is not None
+        # Sanity check the reclaim happened: expiry_count bumped per FR-D-006.
+        assert after.lease is not None and after.lease.expiry_count == 1
+        assert after.started_at == original_started_at, (
+            f"started_at MUST be immutable on expired-lease reclaim "
+            f"(contract per TaskInfo.started_at docstring). "
+            f"Original: {original_started_at!r}, after reclaim: "
+            f"{after.started_at!r}."
+        )
+
+    @pytest.mark.asyncio
+    async def test_started_at_unchanged_on_same_owner_expired_reacquire(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        """Same owner, new instance, expired lease (process restart) MUST
+        NOT reset ``started_at``. Regression for the second buggy line in
+        ``_apply_lease_acquisition``."""
+
+        created = await provider.create(self._leased_create_request())
+        original_started_at = created.started_at
+        assert original_started_at is not None
+        assert created.lease is not None
+
+        past = (
+            _dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(minutes=10)
+        ).isoformat()
+        created.lease.expires_at = past
+        provider._write_task(created)  # noqa: SLF001
+
+        # Same owner, new instance — represents process restart.
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                lease_owner=created.lease.owner,
+                lease_instance_id="inst-2-restarted",
+                lease_duration_seconds=60,
+            ),
+        )
+
+        after = await provider.get(created.id)
+        assert after is not None
+        assert after.started_at == original_started_at, (
+            "started_at MUST be immutable on same-owner expired reacquire."
+        )
+
+    @pytest.mark.asyncio
+    async def test_started_at_unchanged_on_suspend_then_resume(
+        self,
+        provider: LocalFileTaskProvider,
+        sample_create_request: TaskCreateRequest,
+    ) -> None:
+        """A suspend → in_progress cycle (e.g., multi-turn next-turn entry)
+        MUST NOT reset ``started_at`` to the resume time."""
+        created = await provider.create(sample_create_request)
+
+        # First in_progress transition — stamps started_at.
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                status="in_progress",
+                lease_owner="owner-1",
+                lease_instance_id="inst-1",
+                lease_duration_seconds=60,
+            ),
+        )
+        after_first = await provider.get(created.id)
+        assert after_first is not None
+        original_started_at = after_first.started_at
+        assert original_started_at is not None
+
+        # Suspend.
+        await provider.update(
+            created.id,
+            TaskPatchRequest(status="suspended"),
+        )
+
+        # Resume — second in_progress entry; started_at must not change.
+        await provider.update(
+            created.id,
+            TaskPatchRequest(
+                status="in_progress",
+                lease_owner="owner-1",
+                lease_instance_id="inst-1",
+                lease_duration_seconds=60,
+            ),
+        )
+        after_resume = await provider.get(created.id)
+        assert after_resume is not None
+        assert after_resume.started_at == original_started_at, (
+            "started_at MUST be immutable across suspend/resume cycles."
         )
 
 

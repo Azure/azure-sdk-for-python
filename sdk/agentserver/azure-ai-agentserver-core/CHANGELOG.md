@@ -173,8 +173,10 @@
     lease; lease renewal only allowed on `in_progress`; force-expire
     cannot combine with status change and requires lease ownership
     unless already expired; `expiry_count` bumps on different-owner
-    takeover when the prior lease was expired; `started_at` resets
-    on re-acquisition when prior was expired; new `heartbeat_at`
+    takeover when the prior lease was expired; `started_at` is
+    **immutable** after the first `in_progress` transition (lease
+    re-acquisition, recovery scanner takeover, and suspend/resume
+    cycles MUST all preserve the original value); new `heartbeat_at`
     field stamped on every lease write.
   - Status-transition side effects: transitions to / from each state
     now clear / set the right combination of `lease`,
