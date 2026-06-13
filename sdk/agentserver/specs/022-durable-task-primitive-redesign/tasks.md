@@ -130,9 +130,9 @@ One commit per area + doc travel per Principle IX.
 
 ## Phase 4 — Implementation: Storage and persistence
 
-- [ ] T-4.1 — `_manager.py` output write removal (FR-025/026/068a): delete `_build_output_co_write` and all output write/clear sites (success / suspend / drain Phase-1 / `_handle_failure`). No output serialization or size-check anywhere. Local provider gets NO code change (manager owns output write sites per Q16). Commit.
-- [ ] T-4.2 — `_manager.py` error PATCH removal (FR-027/031): no `payload["error"]` write on terminal failure; no interim `error` PATCH between retry attempts. Commit.
-- [ ] T-4.3 — `_manager.py` input/retry-attempt clearing (FR-028/030): clear `payload["input"]` (and any input-attachment) at suspend / terminal transition ONLY (not mid-handler); clear `payload["_retry_attempt"]` at the same transition. Keep `payload["_last_input_id"]` (FR-029). Steering queue stays in `payload["_steering"]` (FR-032). Commit.
+- [x] T-4.1 — `_manager.py` output write removal (FR-025/026/068a): delete `_build_output_co_write` and all output write/clear sites (success / suspend / drain Phase-1 / `_handle_failure`). No output serialization or size-check anywhere. Local provider gets NO code change (manager owns output write sites per Q16). Commit.
+- [x] T-4.2 — `_manager.py` error PATCH removal (FR-027/031): no `payload["error"]` write on terminal failure; no interim `error` PATCH between retry attempts. Commit.
+- [x] T-4.3 — `_manager.py` input/retry-attempt clearing (FR-028/030): clear `payload["input"]` (and any input-attachment) at suspend / terminal transition ONLY (not mid-handler); clear `payload["_retry_attempt"]` at the same transition. Keep `payload["_last_input_id"]` (FR-029). Steering queue stays in `payload["_steering"]` (FR-032). Commit.
 - [ ] T-4.4 — `_models.py`: remove `_OUTPUT_KEY` + `_ERROR_KEY` payload-key constants and any helpers that read them. Update SOT spec §20 (framework-reserved payload keys). Update dev-guide payload section. Commit (turns T-1.6 GREEN).
 - [ ] T-4.5 — **Phase 4 code review** per Principle XIII. SCOPE: no remaining `payload["output"]` / `_output` / `payload["error"]` write sites (grep clean per SC-006); `payload["input"]` clearing at exactly the right transition; `_last_input_id` survives across suspend cycles (regression test); local provider tests still green (no code changed there). Apply BLOCKING/HIGH before Phase 5.
 

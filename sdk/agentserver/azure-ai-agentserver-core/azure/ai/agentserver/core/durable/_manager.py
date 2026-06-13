@@ -2321,6 +2321,73 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         )
         return new_ctx
 
+    async def _handle_multi_turn_success(
+        self,
+        *,
+        task_id: str,
+        metadata: TaskMetadata,
+        opts: TaskOptions,
+    ) -> bool:
+        """Multi-turn return handler (spec 022 FR-007/025/028).
+
+        Per spec 022:
+        - Multi-turn ``return X`` is implicit suspend. Chain transitions to
+          ``suspended`` (NOT ``completed``) so it accepts the next input.
+        - NO ``payload["output"]`` is written (FR-025).
+        - ``payload["input"]`` cleared at the transition (FR-028).
+        - ``payload["_retry_attempt"]`` cleared too (FR-030).
+        - ``payload["_last_input_id"]`` preserved (FR-029) for the
+          ``if_last_input_id`` precondition.
+        - ``suspension_reason="run_completion"`` stamped internally.
+
+        Returns True (terminal write succeeded). False is reserved for
+        the legacy etag-conflict-retry-drain pattern; the multi-turn
+        path raises TaskConflictError on 412 instead.
+        """
+        # Auto-flush metadata BEFORE the chain PATCH (FR-045).
+        try:
+            await metadata._flush_all()  # noqa: SLF001 — framework-internal fence
+        except Exception:  # noqa: BLE001
+            logger.warning(
+                "Failed to auto-flush metadata before multi-turn success PATCH for task %s",
+                task_id,
+                exc_info=True,
+            )
+
+        try:
+            await self._terminal_write_locked(
+                task_id,
+                TaskPatchRequest(
+                    status="suspended",
+                    suspension_reason="run_completion",
+                    payload={
+                        "metadata": metadata.to_dict(),
+                        "input": None,            # FR-028
+                        "_retry_attempt": None,   # FR-030
+                        # NO "output" (FR-025), NO "error" (FR-027)
+                    },
+                ),
+            )
+        except TaskConflictError:
+            raise
+        except _HostedConflict as hosted_exc:
+            translated = _translate_hosted_conflict(hosted_exc, task_id=task_id)
+            if translated is None:
+                if hosted_exc._code == "lease_ownership_changed":
+                    raise TaskConflictError(task_id, "in_progress") from hosted_exc
+                raise EtagConflict(task_id) from hosted_exc
+            raise translated from hosted_exc
+        except TransportClassifiedError as transport_exc:
+            if _is_evicted(transport_exc):
+                logger.warning(
+                    "Eviction on multi-turn return PATCH for task %s — "
+                    "signalling awaiters with TaskConflictError",
+                    task_id,
+                )
+                raise TaskConflictError(task_id, "in_progress") from transport_exc
+            raise
+        return True
+
     async def _handle_success(
         self,
         *,
@@ -2330,6 +2397,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         opts: TaskOptions,
     ) -> bool:
         """Handle successful task completion.
+
+        Spec 022 FR-007 / FR-025 / FR-028: multi-turn handlers (decorated
+        with @multi_turn_task — TaskOptions._is_multi_turn=True) treat
+        ``return X`` as the implicit-suspend signal. The framework
+        transitions the chain to ``suspended`` with
+        ``suspension_reason="run_completion"``, NO ``payload["output"]``
+        is written (FR-025), and ``payload["input"]`` is cleared (FR-028).
+        The caller's ``.result()`` future will be resolved with ``X``
+        directly by the caller path (preserving the return value).
+
+        Legacy one-shot (ephemeral) and non-ephemeral-non-multi-turn paths
+        keep their existing behavior during the transition window.
 
         :keyword task_id: The task identifier.
         :paramtype task_id: str
@@ -2343,6 +2422,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             detected (steerable tasks only — caller should re-drain).
         :rtype: bool
         """
+        # Spec 022 FR-007/025/028 — multi-turn success → suspended (NOT completed),
+        # no payload['output'] written, payload['input'] cleared.
+        is_multi_turn = getattr(opts, "_is_multi_turn", False)
+        if is_multi_turn:
+            return await self._handle_multi_turn_success(
+                task_id=task_id,
+                metadata=metadata,
+                opts=opts,
+            )
+
         if opts.ephemeral:
             # Delete immediately — no intermediate PATCH
             try:
