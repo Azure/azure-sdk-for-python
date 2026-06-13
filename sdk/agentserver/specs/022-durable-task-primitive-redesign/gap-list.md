@@ -37,6 +37,19 @@ items + follow-up TODOs that don't block the spec's primary work.
   presence of a first arg). This is a deliberate judgment call —
   Python convention; the framework binds positionally, not by name.
   May tighten in Phase 2 follow-up.
+- **LastInputIdPreconditionFailed signature** — FR-076 requires only
+  `actual_last_input_id` kwarg; current impl supports BOTH legacy
+  positional `(task_id, expected, actual)` and new keyword-only
+  `actual_last_input_id=` to maintain backward compat with existing
+  callers in `_decorator.py`. Test
+  `test_exception_taxonomy.py::TestExceptionShapes::test_LastInputIdPreconditionFailed_carries_actual_only`
+  fails RED on signature inspection (expects only one arg). Phase 5
+  cleanup will migrate the single caller in `_decorator.py:312` and
+  remove the legacy form, making the test GREEN.
+- **`Task.options()` method (T-2.4 FR-006)** — currently still
+  exists on `Task` and is used by existing tests. Removal is a Phase 5
+  cleanup task (would break tests that rely on per-call option
+  overrides). Tracked as Phase 5 follow-up.
 
 ## Follow-up items
 

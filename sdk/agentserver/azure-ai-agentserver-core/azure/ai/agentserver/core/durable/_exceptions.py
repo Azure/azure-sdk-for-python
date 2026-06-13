@@ -162,11 +162,18 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
     queue before this one's read-then-write completed, or by a programming
     error in which the caller's view of the chain is stale.
 
-    :param task_id: The task identifier.
-    :type task_id: str
-    :param expected_last_input_id: What the caller passed as ``if_last_input_id``.
-    :type expected_last_input_id: str | None
-    :param actual_last_input_id: What the framework currently has stored.
+    Spec 022 FR-076: the canonical shape carries only ``actual_last_input_id``
+    (the value persisted on the record at the time of the precondition check).
+    The caller already knows what they passed via ``if_last_input_id=`` so
+    ``expected_last_input_id`` is redundant; ``task_id`` is omitted too per
+    FR-077 (caller has it from the call site / run handle).
+
+    Backward-compatible positional / keyword construction is preserved during
+    the transition window — both shapes work; the legacy form emits a
+    DeprecationWarning.
+
+    :param actual_last_input_id: The value the framework currently has stored
+        for the chain's ``_last_input_id``.
     :type actual_last_input_id: str | None
     """
 
@@ -174,18 +181,54 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
 
     def __init__(
         self,
-        task_id: str,
-        expected_last_input_id: str | None,
-        actual_last_input_id: str | None,
+        *args: Any,
+        actual_last_input_id: str | None = None,
+        expected_last_input_id: str | None = None,
+        task_id: str | None = None,
     ) -> None:
+        # Spec 022 FR-076 shape: (actual_last_input_id) only.
+        # Legacy shape: (task_id, expected_last_input_id, actual_last_input_id).
+        if args:
+            if len(args) == 1 and actual_last_input_id is None:
+                # New shape positional: LastInputIdPreconditionFailed("xx")
+                actual_last_input_id = args[0]
+            elif len(args) == 3:
+                # Legacy shape positional: LastInputIdPreconditionFailed(task_id, expected, actual)
+                import warnings
+                warnings.warn(
+                    "LastInputIdPreconditionFailed(task_id, expected, actual) "
+                    "is deprecated per spec 022 FR-076; use the keyword-only "
+                    "actual_last_input_id= form.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
+                task_id = args[0]
+                expected_last_input_id = args[1]
+                actual_last_input_id = args[2]
+            else:
+                raise TypeError(
+                    f"LastInputIdPreconditionFailed: invalid positional args {args}; "
+                    f"use LastInputIdPreconditionFailed(actual_last_input_id=...)"
+                )
         self.expected_last_input_id = expected_last_input_id
         self.actual_last_input_id = actual_last_input_id
-        super().__init__(
-            task_id,
-            f"Task {task_id!r}: if_last_input_id precondition failed — "
-            f"expected last_input_id={expected_last_input_id!r}, "
-            f"actual={actual_last_input_id!r}",
-        )
+        # Build a message that works for both legacy and new shapes.
+        if task_id is not None:
+            msg = (
+                f"Task {task_id!r}: if_last_input_id precondition failed — "
+                f"expected last_input_id={expected_last_input_id!r}, "
+                f"actual={actual_last_input_id!r}"
+            )
+            # Legacy super-init takes task_id.
+            super().__init__(task_id, msg)
+        else:
+            msg = (
+                f"if_last_input_id precondition failed: "
+                f"actual last_input_id={actual_last_input_id!r}"
+            )
+            # New super-init: task_id-less.
+            # TaskPreconditionFailed currently requires task_id; pass empty.
+            super().__init__("", msg)
 
 
 # --- Spec 018 (task attachments) — input + attachment size/count errors ----
