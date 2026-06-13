@@ -297,8 +297,7 @@ async def _finalize_invocation(
     if state.next:
         output = _build_turn_output(state)
         invocation_store.save(invocation_id, {"status": "completed", "output": output})
-        return output  # spec 022 FR-007: implicit suspend on return
-
+        return output
     result = _build_session_output(state)
     invocation_store.save(invocation_id, {"status": "completed", "output": result})
     return result
@@ -364,8 +363,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                             invocation_id,
                             {"status": "cancelled", "reason": "steered"},
                         )
-                        return None  # spec 022 FR-007: implicit suspend on return
-
+                        return None
                     return await _finalize_invocation(ctx, thread_config, invocation_id)
 
     # ── Phase 1: Pre-entry cancel ───────────────────────────────────
@@ -373,8 +371,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         invocation_store.save(
             invocation_id, {"status": "cancelled", "reason": "steered"}
         )
-        return None  # spec 022 FR-007: implicit suspend on return
-
+        return None
     # ── Phase 2: Invoke graph with inter-node cancellation ──────────
     state = await asyncio.to_thread(_graph.get_state, thread_config)
 
@@ -418,7 +415,6 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         invocation_store.save(
             invocation_id, {"status": "cancelled", "reason": "steered"}
         )
-        return None  # spec 022 FR-007: implicit suspend on return
-
+        return None
     # Normal completion
     return await _finalize_invocation(ctx, thread_config, invocation_id)

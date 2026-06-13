@@ -33,8 +33,7 @@ are exactly what the recovery re-entry needs to resume mid-turn.
 Steering is transparent: a new POST while a turn is running enqueues
 the input on the framework's steering queue and sets ``ctx.cancel``.
 The handler observes the cancel at the next checkpoint, winds down
-via `return None` (spec 022 FR-007 — return is implicit suspend; the
-helper :func:`_finish_turn` clears all per-turn state before returning),
+via `return None` ,
 and the framework re-enters the body with the new ``ctx.input``.
 Because state was cleared at suspend, the re-entered handler naturally
 starts the new topic at phase 0 — no ``is_steered_turn`` check needed
@@ -242,7 +241,7 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
     one that was actively streaming when the container died).
 
     The body returns ``None`` on normal completion (and also on the
-    steered-wind-down path — spec 022 FR-007 makes ``return`` the
+    steered-wind-down path — bare ``return`` is the
     implicit-suspend signal; the chain stays alive across turns).
     Clients read progress + final content from the per-turn SSE
     stream, not from the task's terminal output, so there is no
@@ -389,7 +388,7 @@ async def _wind_down(
 
     Tears down per-turn resources (stream close + metadata wipe +
     checkpoint-store clear) via :func:`_finish_turn` BEFORE the handler
-    returns. Per spec 022 FR-007 the multi-turn ``return`` is the
+    returns. The multi-turn ``return`` is the
     implicit-suspend signal — so the SSE subscriber observes a clean
     terminator before the framework reports the turn as suspended, and
     the steered re-entry (or any future ``start()``) finds metadata wiped.
@@ -412,9 +411,9 @@ async def _wind_down(
     })
 
     await _finish_turn(stream, ctx, inv_id)
-    # spec 022 FR-007: multi-turn `return` is the implicit-suspend signal.
+    # multi-turn `return` is the implicit-suspend signal.
     # The chain stays alive across turns; ctx.suspend() is not part of
-    # the public surface per FR-008.
+    # the public surface.
     return None
 
 

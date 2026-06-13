@@ -93,7 +93,7 @@ async def poll_invocation(request: Request) -> Response:
     session_id: str = request.state.session_id
     task_id = f"session-{session_id}"
 
-    # Spec 022 FR-017: Task.get + TaskSnapshot removed. Use the
+    # Task.get + TaskSnapshot removed. Use the
     # provider directly for read-only inspection (returns TaskInfo).
     from azure.ai.agentserver.core.durable._manager import get_task_manager
     mgr = get_task_manager()

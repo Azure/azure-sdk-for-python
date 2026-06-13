@@ -115,8 +115,8 @@ async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
     await ctx.metadata.flush()
 
     # Suspend — the client will resume with the next turn.
-    # spec 022 FR-007: multi-turn `return X` is the implicit-suspend signal.
+    # multi-turn `return X` is the implicit-suspend signal.
     # The chain stays alive across turns; ctx.suspend() is not part of
-    # the public surface per FR-008. The output value flows through
+    # the public surface. The output value flows through
     # `return output` to the caller's `.result()`.
     return output

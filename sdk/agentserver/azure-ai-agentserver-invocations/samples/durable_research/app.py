@@ -19,7 +19,7 @@ protocol with the FULL pattern matrix:
 - ``POST /invocations/{id}/cancel`` — operator cancel of the
   per-session task (steering is automatic via re-POSTing instead).
 
-Streaming wiring (spec 017):
+Streaming wiring ():
 
 - ``streams.use_file_backed_replay(...)`` is called once at module
   import (app startup) per streaming.md §7.8. The file-backed
@@ -213,7 +213,7 @@ async def handle_get(request: Request) -> Response:
     Without the SSE accept header: returns the task's current
     snapshot from ``deep_research.get(task_id)``.
 
-    HTTP mapping (from spec 017 streaming.md §exceptions table):
+    HTTP mapping (from  streaming.md §exceptions table):
       - 404 if the invocation id was never seen
         (``EventStreamNotFoundError``).
       - 410 if the stream was destroyed via TTL eviction or explicit
@@ -252,7 +252,7 @@ async def handle_get(request: Request) -> Response:
     # JSON-snapshot path (polling clients).
     session_id: str = request.state.session_id
     task_id = f"research-{session_id}"
-    # Spec 022 FR-017: Task.get + TaskSnapshot removed. Use the
+    # Task.get + TaskSnapshot removed. Use the
     # provider directly for read-only inspection (returns TaskInfo).
     from azure.ai.agentserver.core.durable._manager import get_task_manager
     mgr = get_task_manager()
