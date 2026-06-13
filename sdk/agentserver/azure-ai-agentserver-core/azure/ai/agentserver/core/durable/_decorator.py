@@ -424,6 +424,20 @@ class Task(Generic[Input, Output]):
         self.name = opts.name
         # Register for recovery — manager picks these up at startup
         _REGISTERED_DESCRIPTORS.append((opts.name, fn, opts))
+        # Spec 022 — if a TaskManager is already initialised (decorators
+        # declared after startup, e.g. in tests), eagerly push into its
+        # resume tables so _recover_stale_tasks / get_active_run can pick
+        # up the multi-turn opts (_is_multi_turn).
+        try:
+            from ._manager import _manager as _live_manager  # pylint: disable=import-outside-toplevel
+        except ImportError:  # pragma: no cover
+            _live_manager = None  # type: ignore[assignment]
+        if _live_manager is not None:
+            try:
+                _live_manager._resume_callbacks[opts.name] = fn  # noqa: SLF001
+                _live_manager._resume_opts[opts.name] = opts  # noqa: SLF001
+            except Exception:  # noqa: BLE001
+                pass
 
     def _resolve_title(self, input_val: Input, task_id: str) -> str:
         if callable(self._opts.title):
