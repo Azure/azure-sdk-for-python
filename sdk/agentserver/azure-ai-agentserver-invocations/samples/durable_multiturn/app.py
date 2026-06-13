@@ -93,7 +93,11 @@ async def poll_invocation(request: Request) -> Response:
     session_id: str = request.state.session_id
     task_id = f"session-{session_id}"
 
-    info = await session_workflow.get(task_id)  # type: ignore[attr-defined]
+    # Spec 022 FR-017: Task.get + TaskSnapshot removed. Use the
+    # provider directly for read-only inspection (returns TaskInfo).
+    from azure.ai.agentserver.core.durable._manager import get_task_manager
+    mgr = get_task_manager()
+    info = await mgr.provider.get(task_id)
     if info is None:
         return JSONResponse({"error": "Invocation not found"}, status_code=404)
 

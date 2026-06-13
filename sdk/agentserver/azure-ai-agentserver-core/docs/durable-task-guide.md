@@ -1,5 +1,23 @@
 # Durable Tasks Developer Guide
 
+> ## ⚠️ Spec 022 supersedes earlier sections of this guide
+>
+> Sections 1–7 of this guide were written for the pre-spec-022 design
+> (single `@task` decorator, `ctx.suspend()`, `TaskResult` wrapper,
+> `Task.get()` + `TaskSnapshot`, `TaskRun.delete/refresh/status/lease_expiry_count`,
+> public `OutputTooLarge`, exception `task_id` fields, `payload["output"]`/
+> `payload["error"]` persistence, `/tasks/resume` HTTP route, `ephemeral=`
+> decorator kwarg).
+>
+> **Spec 022** redesigned the primitive. The authoritative reference is:
+>
+> - [`sdk/agentserver/specs/022-durable-task-primitive-redesign/spec.md`](../../specs/022-durable-task-primitive-redesign/spec.md)
+> - The **"Spec 022 — Authoritative reference for the redesigned primitive"**
+>   section at the bottom of THIS file.
+>
+> When the earlier sections conflict with the spec 022 reference section,
+> spec 022 wins.
+
 > The end-user-developer guide for the `@task` primitive shipped by
 > `azure-ai-agentserver-core`.
 >
@@ -1216,52 +1234,230 @@ effects across a *crash*.
   different primitive.
 
 
-## Spec 022 — new primitives and types (Phase 2 partial overview)
+## Spec 022 — Authoritative reference for the redesigned primitive
 
-The durable-task primitive is being redesigned per
+The durable-task primitive was redesigned per
 `sdk/agentserver/specs/022-durable-task-primitive-redesign/spec.md`.
-This section is a placeholder for the full T-7.6 rewrite; the
-authoritative reference today is spec 022 itself plus Appendix A of
-spec 021.
+The earlier sections of this guide were written for the pre-022 design
+(`@task` only, explicit `ctx.suspend()`, `TaskResult` wrapper,
+`Suspended` sentinel, `Task.get()` + `TaskSnapshot`, `TaskRun.delete()`,
+`TaskRun.refresh()`, `TaskRun.status`, `TaskRun.lease_expiry_count`,
+`payload["output"]` / `payload["error"]` persistence, `/tasks/resume`
+route, public `OutputTooLarge`, exception `task_id` fields, etc.).
+**Spec 022 supersedes** those parts. The spec 022 `spec.md` is the
+authoritative reference for the surface and semantics described below.
 
-### New decorators / classes
+### Two decorators (not one)
 
-- **`@multi_turn_task(steerable=...)`** — decorator producing a
-  multi-turn durable chain. Distinct from `@task` (one-shot).
-- **`MultiTurnTask`** — distinct public class from `Task` (FR-069).
-  Type checker statically enforces "no `.delete()` on one-shot" and
-  "multi-turn `get_active_run` requires both `task_id` AND `input_id`".
+```python
+from azure.ai.agentserver.core.durable import task, multi_turn_task, TaskContext
 
-### New exception
+@task                                          # one-shot — single run, returns Output
+async def summarize(ctx: TaskContext[str]) -> str:
+    return ctx.input.upper()
 
-- **`TaskDeferred`** — bare exception (no fields) raised when handler
-  called `ctx.exit_for_recovery()`. Semantically DISTINCT from
-  `TaskCancelled` — the task stays `in_progress`; the recovery scanner
-  re-invokes the handler in the next process lifetime.
+@multi_turn_task(steerable=True)               # multi-turn chain — each return is one turn
+async def chat(ctx: TaskContext[dict]) -> dict:
+    return {"reply": f"Echo: {ctx.input['msg']}",
+            "input_id": ctx.input_id}          # FR-005: per-turn id
+```
 
-### New typed-payload + value-type aliases
+- `@task` produces a `Task` instance. One-shot semantics: one run, one
+  terminal outcome (completed/failed/cancelled), record is deleted on
+  terminal (the framework is always "ephemeral" for one-shot per FR-051).
+- `@multi_turn_task` produces a **distinct** `MultiTurnTask` class
+  (NOT a subclass — FR-069). Multi-turn semantics: every `return X`
+  is an implicit suspend (FR-007/008); the chain stays alive in status
+  `suspended` until the next `.start()` / `.run()` resumes it, or
+  `MultiTurnTask.delete(task_id)` deletes it (FR-024).
 
-- **`JSONValue`** — recursive `Union[str, int, float, bool, None,
-  list[JSONValue], dict[str, JSONValue]]`. The value-type for
-  `TaskMetadata` entries.
-- **`TaskErrorDict`** — TypedDict for `TaskFailed.error` on normal
-  handler raise: `{"type": str, "message": str, "traceback": str}`.
-- **`TaskExhaustedRetriesErrorDict`** — TypedDict variant when retry
-  budget was exhausted: `{"type": Literal["exhausted_retries"],
-  "attempts": int, "last_error": str, "last_error_type": str,
-  "traceback": str}`.
+### Identifiers (`task_id`, `input_id`)
 
-### Transitional notes
+- **One-shot**: `task_id` is OPTIONAL on `Task.start` / `Task.run` —
+  auto-generated as a GUID when not supplied (FR-067). `input_id`
+  defaults to `task_id` (1:1 invariant per FR-004).
+- **Multi-turn**: `task_id` is MANDATORY (the chain identifier).
+  `input_id` is per-turn — defaults to a fresh GUID per turn unless
+  the caller supplies one (FR-005).
+- Both surfaces accept `if_last_input_id="<prev>"` for HTTP-If-Match-style
+  precondition on the input queue (FR-076).
 
-During Phase 2-5 of spec 022 implementation, both the new spec 022
-symbols and the legacy ones (`TaskResult`, `Suspended`, `TaskSnapshot`,
-`TaskStatus`, `OutputTooLarge`, `TaskNotFound`, `TaskPreconditionFailed`)
-coexist in `__all__`. The legacy symbols are scheduled for removal in
-Phase 5 per FR-016/017/018/019/020/021/074. Until then:
+### `TaskRun` slim shape (FR-047, FR-048)
 
-- Use `@multi_turn_task(steerable=...)` for new multi-turn chains;
-  `@task(steerable=True, ephemeral=False)` still works but emits a
-  `DeprecationWarning`.
-- `Task.run()` / `Task.result()` return value remains
-  `TaskResult[Output]` during the transition; the FR-052 / FR-018
-  cleanup (return `Output` directly) lands in Phase 5.
+```
+class TaskRun:
+    task_id: str
+    input_id: str
+    @property
+    def metadata(self) -> TaskMetadata
+    async def result(self) -> Output      # FR-052: raw Output, NOT a wrapper
+    async def cancel(self) -> None
+    def __await__(self) -> Output         # mirror of .result()
+```
+
+That's it. No `status`, no `delete`, no `refresh`, no `lease_expiry_count`.
+For chain-level delete, use `MultiTurnTask.delete(task_id)` (FR-024).
+For read-only inspection, use `manager.provider.get(task_id)` directly
+(returns `TaskInfo`; `Task.get` + `TaskSnapshot` were removed per FR-017).
+
+### `TaskContext` (the handler's parameter)
+
+```
+class TaskContext:
+    task_id: str
+    input_id: str          # FR-005 — per-turn id (multi-turn) or task_id (one-shot)
+    input: Input           # the value the caller passed
+    metadata: TaskMetadata
+    entry_mode: Literal["fresh", "resumed", "recovered"]
+    cancel: asyncio.Event
+    shutdown: asyncio.Event
+    retry_attempt: int     # 0-based; cross-lifetime budget per FR-030
+    is_steered_turn: bool
+    pending_input_count: int
+    cancel_requested: bool
+    timeout_exceeded: bool
+
+    async def exit_for_recovery(self): ...   # FR-039/058: raise TaskDeferred
+```
+
+**The handler's first parameter MUST be named `ctx`** (FR-003 — enforced
+at decoration time).
+
+`ctx.suspend(...)` is gone for multi-turn — use `return X` instead
+(FR-007/008). The `Suspended` sentinel was removed.
+
+### Public exception taxonomy (FR-074..077)
+
+| Exception | Shape | When |
+|-----------|-------|------|
+| `TaskFailed(error=...)` | `error: TaskErrorDict \| TaskExhaustedRetriesErrorDict` | Handler raised (one-shot terminal; multi-turn → suspended + this raised to caller) |
+| `TaskCancelled()` | bare | `ctx.cancel.set()` honored; `TaskRun.cancel()`; `MultiTurnTask.delete()` resolves active+queued with this |
+| `TaskDeferred()` | bare | Handler called `ctx.exit_for_recovery()` |
+| `TaskConflictError(current_status=...)` | `current_status: str` | Lifecycle precondition rejected (e.g., one-shot already in_progress) |
+| `LastInputIdPreconditionFailed(actual_last_input_id=...)` | `actual_last_input_id: str \| None` | `if_last_input_id` mismatch |
+| `SteeringQueueFull()` | bare | Steering queue capacity reached |
+| `InputTooLarge()` | bare | Input exceeds the per-input cap |
+
+**NONE of these carry `task_id`** per FR-077 — the caller has it from
+the run handle / call site.
+
+**Removed from public surface**: `OutputTooLarge`, `TaskNotFound`,
+`TaskPreconditionFailed`, `TaskResult`, `Suspended`, `TaskSnapshot`,
+`TaskStatus`, `Task.options`, `Task.get`, `TaskRun.delete`,
+`TaskRun.refresh`, `TaskRun.status`, `TaskRun.lease_expiry_count`,
+`ctx.suspend()` (on the multi-turn path), `ephemeral=` decorator kwarg,
+`/tasks/resume` HTTP route + `TaskManager.handle_resume`. Spec 022 spec.md
+lists each removal with the corresponding FR.
+
+### TypedDicts (FR-070, FR-071)
+
+```python
+from azure.ai.agentserver.core.durable import (
+    JSONValue,                          # recursive Union — TaskMetadata value type
+    TaskErrorDict,                      # {"type": str, "message": str, "traceback": str}
+    TaskExhaustedRetriesErrorDict,      # {"type": "exhausted_retries", "attempts": int,
+                                        #  "last_error": str, "last_error_type": str,
+                                        #  "traceback": str}
+)
+```
+
+### Retry budget
+
+```python
+from datetime import timedelta
+from azure.ai.agentserver.core.durable import RetryPolicy
+
+@multi_turn_task(
+    retry=RetryPolicy(
+        max_attempts=3,
+        initial_delay=timedelta(seconds=1),   # or just 1.0 — float seconds accepted
+        max_delay=timedelta(seconds=60),
+        backoff_coefficient=2.0,
+        jitter=True,
+    ),
+)
+async def chat(ctx): ...
+```
+
+- The retry budget is **per-turn** (multi-turn) or **per-run** (one-shot).
+- `ctx.retry_attempt` exposes the current attempt (0-based) AND survives
+  crash recovery per FR-030.
+- Each new turn starts with `retry_attempt = 0` (the persisted
+  `payload["_retry_attempt"]` is cleared at suspend boundaries per FR-030).
+- Per FR-027 no interim `payload["error"]` PATCH is written between
+  retries; the counter advances silently.
+
+### Metadata namespaces (FR-044)
+
+```python
+ctx.metadata["score"] = 42                  # default namespace
+ctx.metadata("my_ns")["k"] = "v"            # auto-vivified named namespace
+ctx.metadata("_responses")                  # ValueError — reserved for framework
+```
+
+Names starting with `_` are reserved for framework-internal use and raise
+`ValueError` at the public facade.
+
+### `MultiTurnTask.delete` (FR-024, FR-061)
+
+```python
+await chat.delete("conv-7")
+```
+
+- Idempotent (no-op if the chain is already gone).
+- Resolves any active in-process `result_future` with `TaskCancelled()`.
+- Signals `ctx.cancel` and cancels the running handler's execution
+  task (handlers awaiting on things that don't check `ctx.cancel` still
+  exit cleanly).
+- Resolves all queued steerer futures with `TaskCancelled()`.
+- Force-deletes the record.
+
+### Cancellation matrix worked example
+
+```python
+@multi_turn_task(steerable=True)
+async def chat(ctx: TaskContext[dict]) -> dict:
+    if ctx.cancel.is_set():
+        # Cooperative wind-down — return what we have, or raise.
+        return {"interrupted": True}
+    return await think(ctx.input)
+
+run = await chat.start(task_id="c1", input={"msg": "..."})
+await run.cancel()                    # caller-cancel
+await run.result()                    # raises TaskCancelled() (handler raised; chain suspended)
+```
+
+### Recovery (`entry_mode="recovered"`) uses persisted input
+
+After a crash, the framework re-invokes the handler with the
+**persisted `payload["input"]`** (FR-033) — NEVER the caller's new input.
+A new `.start(input=NEW)` against an `in_progress` record with a dead
+lease (inline recovery) flows the new input through the standard
+non-crash path:
+
+- One-shot / non-steerable multi-turn: caller's `NEW` raises
+  `TaskConflictError(current_status="in_progress")` (FR-034).
+- Steerable multi-turn: caller's `NEW` is queued; runs after the
+  recovered turn completes (FR-034).
+
+### Structured failure log (FR-015)
+
+Every handler failure emits an ERROR-level structured log:
+
+```
+event_name = "durable_task_handler_failure"
+task_id    = "<chain id>"
+input_id   = "<per-turn id>"
+error_type = "<exception class name>"
+error_message = "<str(exc)>"
+primitive  = "multi_turn_task"
+```
+
+For multi-turn, the framework also attaches a discard callback so an
+unawaited failure future does NOT log `Future exception was never retrieved`.
+
+---
+
+For anything not covered above, treat the spec 022 `spec.md` as the
+single source of truth. This guide will be expanded with deeper worked
+examples as the implementation stabilizes.

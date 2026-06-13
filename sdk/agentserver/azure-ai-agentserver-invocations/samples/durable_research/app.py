@@ -252,7 +252,11 @@ async def handle_get(request: Request) -> Response:
     # JSON-snapshot path (polling clients).
     session_id: str = request.state.session_id
     task_id = f"research-{session_id}"
-    info: Any = await deep_research.get(task_id)  # type: ignore[attr-defined]
+    # Spec 022 FR-017: Task.get + TaskSnapshot removed. Use the
+    # provider directly for read-only inspection (returns TaskInfo).
+    from azure.ai.agentserver.core.durable._manager import get_task_manager
+    mgr = get_task_manager()
+    info: Any = await mgr.provider.get(task_id)
     if info is None:
         return JSONResponse({"error": "Task not found"}, status_code=404)
     return JSONResponse(
