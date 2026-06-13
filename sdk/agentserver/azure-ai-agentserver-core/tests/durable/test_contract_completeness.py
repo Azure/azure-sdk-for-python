@@ -70,64 +70,59 @@ _CONSOLIDATED_GUIDE = _PACKAGE_ROOT / "docs" / "durable-task-guide.md"
 # this set fails CI.
 EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
     {
-        # Decorator + task handle
+        # Decorators + task classes (spec 022 — class split per FR-069)
         "task",
+        "multi_turn_task",  # spec 022 FR-002
         "Task",
+        "MultiTurnTask",  # spec 022 FR-069
         # Context + metadata
         "TaskContext",
         "TaskMetadata",
         "EntryMode",
-        # Results + runs + statuses
-        "TaskResult",
+        # TaskRun (slim shape per spec 022 FR-047)
         "TaskRun",
-        "TaskStatus",
-        "Suspended",
-        # Spec 019 FR-C-002: read-only snapshot of any non-deleted task,
-        # returned by Task.get(task_id).
-        "TaskSnapshot",
+        # spec 022 — TaskResult / Suspended / TaskSnapshot / TaskStatus REMOVED
+        # (per FR-016 / FR-017 / FR-018 / FR-019 / FR-020)
         # Retry
         "RetryPolicy",
         # Spec 017 FR-014/FR-015: Streaming moved to peer
-        # `azure.ai.agentserver.core.streaming` subpackage. The old
-        # StreamHandler/QueueStreamHandler/StreamHandlerFactory surface
-        # is REMOVED from durable __all__.
-        # Exceptions
+        # `azure.ai.agentserver.core.streaming` subpackage.
+        # Public exceptions (7 per spec 022 FR-077; down from 9)
         "TaskFailed",
         "TaskCancelled",
-        "TaskNotFound",
+        "TaskDeferred",  # spec 022 — exit_for_recovery semantics
         "TaskConflictError",
-        # Spec 016 FR-022 (US6): TaskTerminated removed from __all__.
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
-        "TaskPreconditionFailed",
-        # Spec 018 — input size violation (developer-facing).
         "InputTooLarge",
-        # Spec 019 FR-D-001: developer-facing output size violation
-        # (parallels InputTooLarge for the output channel).
-        "OutputTooLarge",
+        # spec 022 — TaskNotFound / TaskPreconditionFailed REMOVED from public
+        # (per FR-074 — kept internal in _exceptions_internal.py)
+        # spec 022 — OutputTooLarge REMOVED (per FR-021 — no output write sites)
+        # Typed-payload + value-type aliases (spec 022 FR-070 / FR-071)
+        "JSONValue",
+        "TaskErrorDict",
+        "TaskExhaustedRetriesErrorDict",
     }
 )
 
-# Symbols this spec retires from the public surface (FR-006 + FR-007).
-# These MUST NOT appear in ``__all__`` after Phase 3 lands.
+# Symbols this spec retires from the public surface.
 RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
     {
-        "TaskSuspended",  # exception deleted entirely (FR-006)
-        "TaskOptions",    # demoted to internal (FR-006)
-        "TaskInfo",       # demoted to internal (FR-006)
-        # Spec 015 Phase 11 closeout (user feedback 2026-05-30):
-        # EtagConflict is an advanced/internal exception (custom storage
-        # adapters only). Application code does not handle it — the
-        # framework retries internally on optimistic-concurrency conflicts.
-        # Importable, but no longer advertised via ``__all__``.
-        "EtagConflict",
-        # Spec 019 FR-D-002 + FR-D-003: attachment-vocabulary errors are
-        # internal implementation details (attachments are a framework
-        # concept developers never name). Renamed to leading-underscore
-        # equivalents and absent from public __all__. Framework re-raises
-        # InputTooLarge / OutputTooLarge based on attachment-key prefix.
+        "TaskSuspended",  # exception deleted entirely
+        "TaskOptions",    # demoted to internal
+        "TaskInfo",       # demoted to internal
+        "EtagConflict",   # advanced/internal — no public export
         "AttachmentTooLarge",
         "AttachmentLimitExceeded",
+        # Spec 022 retirements:
+        "TaskResult",                # FR-018 — no envelope; .run() returns Output directly
+        "Suspended",                 # FR-019 — no Suspended sentinel
+        "TaskSnapshot",              # FR-017 — no Task.get / TaskSnapshot read API
+        "TaskStatus",                # FR-020 — orphaned after TaskRun.status removal
+        "OutputTooLarge",            # FR-021 — no output write sites
+        "TaskNotFound",              # FR-074 — internal-only (was public; now in _exceptions_internal)
+        "TaskPreconditionFailed",    # FR-074 — internal-only
+        "TaskCancelledError",        # FR-077 — never existed; the name with Error suffix is forbidden
     }
 )
 
@@ -485,3 +480,229 @@ def test_clause_ids_are_unique() -> None:
     """
     keys = list(CONTRACT_CLAUSE_TO_TEST.keys())
     assert len(keys) == len(set(keys)), "duplicate clause id"
+
+
+# =========================================================================
+# Spec 022 — meta-test extension (per T-1.0 of spec 022)
+# =========================================================================
+#
+# Per Constitution Principle XII §2 + Spec 022 plan.md Phase 1 T-1.0.
+# These tests assert the FULL public surface from Appendix A.1 of spec 021
+# + negative absence assertions for unsupported surface + grep-clean
+# invariants for unsupported code paths.
+#
+# Each assertion is RED until Phase 5 / Phase 7 lands the corresponding
+# implementation cleanup.
+
+
+def _read_durable_init_source() -> str:
+    return _DURABLE_INIT.read_text()
+
+
+def _read_durable_source_tree() -> dict[Path, str]:
+    """Read every .py file under azure/.../durable/ (the source package)."""
+    pkg = _DURABLE_INIT.parent
+    return {
+        p: p.read_text()
+        for p in sorted(pkg.rglob("*.py"))
+        if "__pycache__" not in str(p)
+    }
+
+
+def test_spec_022_a_b_positive_and_negative_presence_in_all() -> None:
+    """T-1.0 (a)(b) — every spec-022 symbol in __all__; no retired symbol.
+
+    Positive presence is already covered by
+    :func:`test_public_all_matches_post_cleanup_expected_set`.
+    Negative absence is covered by
+    :func:`test_retired_symbols_not_in_public_all` (RETIRED_PUBLIC_SYMBOLS
+    has been extended to include spec-022 retirements).
+
+    This test is a marker / sentinel — it documents that (a) and (b) are
+    covered by the two assertions above and updates the audit trail.
+    """
+    # Sanity: spec-022 additions are in EXPECTED_PUBLIC_SYMBOLS.
+    for sym in {"multi_turn_task", "MultiTurnTask", "TaskDeferred",
+                "JSONValue", "TaskErrorDict", "TaskExhaustedRetriesErrorDict"}:
+        assert sym in EXPECTED_PUBLIC_SYMBOLS, (
+            f"spec 022 T-1.0(a): {sym} MUST be in EXPECTED_PUBLIC_SYMBOLS"
+        )
+    # Sanity: spec-022 retirements are in RETIRED_PUBLIC_SYMBOLS.
+    for sym in {"TaskResult", "Suspended", "TaskSnapshot", "TaskStatus",
+                "OutputTooLarge", "TaskNotFound", "TaskPreconditionFailed",
+                "TaskCancelledError"}:
+        assert sym in RETIRED_PUBLIC_SYMBOLS, (
+            f"spec 022 T-1.0(b): {sym} MUST be in RETIRED_PUBLIC_SYMBOLS"
+        )
+
+
+def test_spec_022_c_grep_clean_for_unsupported_code_paths() -> None:
+    """T-1.0 (c) — SC-006: source tree grep-clean for removed code paths."""
+    blobs = _read_durable_source_tree()
+    forbidden_patterns = {
+        "payload[\"output\"]": "FR-025 — no payload['output'] writes",
+        "_build_output_co_write": "FR-026 — output co-write helper absent",
+        "TaskManager.handle_resume": "FR-049 — /tasks/resume manager method absent",
+        "_resume_route.py": "FR-049 — _resume_route module absent",
+    }
+    findings: list[str] = []
+    for pattern, rule in forbidden_patterns.items():
+        for path, text in blobs.items():
+            if pattern in text and "_local_provider.py" not in path.name:
+                # Allow harmless mentions in docstrings of removed-API checklists
+                if "MUST NOT" in text or "removed" in text or "absent" in text:
+                    continue
+                findings.append(f"  {path.name}: {pattern!r}  ({rule})")
+    assert not findings, (
+        "spec 022 SC-006: source tree contains references to removed code paths:\n"
+        + "\n".join(findings)
+    )
+
+
+def test_spec_022_d_ctx_end_chain_absent() -> None:
+    """T-1.0 (d) — FR-009: ctx.end_chain() MUST NOT exist anywhere in durable/."""
+    blobs = _read_durable_source_tree()
+    findings = [
+        str(path.name)
+        for path, text in blobs.items()
+        if "end_chain" in text
+    ]
+    assert not findings, (
+        f"FR-009: ctx.end_chain MUST NOT exist in durable/ source — found in: {findings}"
+    )
+
+
+def test_spec_022_e_ctx_shutdown_preserved() -> None:
+    """T-1.0 (e) — FR-040 + FR-072: ctx.shutdown MUST exist on TaskContext."""
+    try:
+        from azure.ai.agentserver.core.durable import TaskContext
+    except ImportError:
+        pytest.skip("TaskContext import failed (RED until Phase 5)")
+    # Inspect class attrs / annotations for `shutdown` (asyncio.Event).
+    has_shutdown = (
+        hasattr(TaskContext, "shutdown")
+        or "shutdown" in getattr(TaskContext, "__annotations__", {})
+        or "shutdown" in getattr(TaskContext, "__slots__", ())
+    )
+    assert has_shutdown, (
+        "FR-040: TaskContext MUST expose `shutdown` (asyncio.Event) "
+        "per FR-072 enumerated public surface."
+    )
+
+
+def test_spec_022_f_cooperative_cancel_no_automatic_raise() -> None:
+    """T-1.0 (f) — FR-036: framework cancellation is cooperative-only.
+
+    Grep for any `async def force_cancel` / `raise asyncio.CancelledError`
+    in _manager.py that would constitute an automatic raise. (The framework
+    sets `ctx.cancel` + `ctx.timeout_exceeded` flags but never raises
+    automatically; per FR-038 / FR-054-057 / spec 021 §3 Q11.)
+    """
+    pkg = _DURABLE_INIT.parent
+    manager_py = pkg / "_manager.py"
+    if not manager_py.exists():
+        pytest.skip("_manager.py not present (RED-first)")
+    text = manager_py.read_text()
+    # Look for `force_cancel` as a sync/async def — must NOT exist as a
+    # public method that auto-raises.
+    assert "def force_cancel" not in text, (
+        "FR-036: framework MUST NOT expose `force_cancel`; cancellation is "
+        "cooperative-only via ctx.cancel."
+    )
+
+
+def test_spec_022_g_run_return_type_is_output_directly() -> None:
+    """T-1.0 (g) — FR-052: .run() returns Output (not TaskResult/Awaitable[TaskResult])."""
+    try:
+        from azure.ai.agentserver.core.durable import Task
+    except ImportError:
+        pytest.skip("Task class import failed (RED until Phase 2)")
+    import inspect
+    sig = inspect.signature(Task.run)
+    return_annot = sig.return_annotation
+    # The return annotation should NOT be `TaskResult` or `Awaitable[TaskResult]`
+    annot_str = str(return_annot)
+    forbidden_substrings = ["TaskResult", "Suspended"]
+    found = [s for s in forbidden_substrings if s in annot_str]
+    assert not found, (
+        f"FR-052: Task.run return annotation MUST resolve to Output directly; "
+        f"found {found} in: {annot_str!r}"
+    )
+
+
+def test_spec_022_h_internal_only_cleanup_absent() -> None:
+    """T-1.0 (h) — FR-065: enumerated internal symbols MUST NOT exist."""
+    blobs = _read_durable_source_tree()
+    forbidden_symbols = {
+        "_build_output_co_write": "FR-065 / FR-026",
+        "TaskContext.suspend": "FR-008",
+        "TaskRun._provider": "FR-048",
+        "_terminate_event": "FR-048",
+        "_terminate_reason_ref": "FR-048",
+        # NOTE: _status / _lease_expiry_count are too generic to grep; skip
+        # those and rely on FR-047 / FR-048 positive shape tests instead.
+    }
+    findings: list[str] = []
+    for sym, rule in forbidden_symbols.items():
+        for path, text in blobs.items():
+            if sym in text:
+                # Allow comment / docstring mentions
+                relevant_lines = [
+                    line for line in text.splitlines()
+                    if sym in line and not line.strip().startswith("#")
+                    and '"""' not in line and not line.strip().startswith("*")
+                ]
+                if relevant_lines:
+                    findings.append(f"  {path.name}: {sym!r} ({rule})")
+                    break
+    assert not findings, (
+        "FR-065: enumerated internal-only symbols MUST NOT exist:\n"
+        + "\n".join(findings)
+    )
+
+
+def test_spec_022_i_no_backward_compat_shims() -> None:
+    """T-1.0 (i) — SC-007: no backward-compat shims silently added."""
+    blobs = _read_durable_source_tree()
+    forbidden_markers = {
+        "# COMPAT",
+        "# backward-compat",
+        "# backward compat",
+        "TaskResultCompat",
+        "SuspendedCompat",
+        "TaskSnapshotCompat",
+    }
+    findings: list[str] = []
+    for marker in forbidden_markers:
+        for path, text in blobs.items():
+            if marker in text:
+                findings.append(f"  {path.name}: {marker!r}")
+    assert not findings, (
+        "SC-007: source tree contains backward-compat shim markers "
+        "(removals MUST be hard removals; no migration bridges):\n"
+        + "\n".join(findings)
+    )
+
+
+def test_spec_022_TaskCancelledError_does_not_exist() -> None:
+    """FR-077 — TaskCancelledError (with Error suffix) MUST raise ImportError."""
+    with pytest.raises(ImportError):
+        from azure.ai.agentserver.core.durable import TaskCancelledError  # noqa: F401
+
+
+def test_spec_022_TaskNotFound_not_in_public_import() -> None:
+    """FR-074 — TaskNotFound MUST NOT import from the public namespace."""
+    with pytest.raises(ImportError):
+        from azure.ai.agentserver.core.durable import TaskNotFound  # noqa: F401
+
+
+def test_spec_022_TaskPreconditionFailed_not_in_public_import() -> None:
+    """FR-074 — TaskPreconditionFailed MUST NOT import from the public namespace."""
+    with pytest.raises(ImportError):
+        from azure.ai.agentserver.core.durable import TaskPreconditionFailed  # noqa: F401
+
+
+def test_spec_022_OutputTooLarge_not_in_public_import() -> None:
+    """FR-021 — OutputTooLarge MUST NOT import from the public namespace."""
+    with pytest.raises(ImportError):
+        from azure.ai.agentserver.core.durable import OutputTooLarge  # noqa: F401

@@ -346,3 +346,197 @@ class TestRecoveryRetryAttempt:
             )
         finally:
             await self._teardown_manager(manager, mgr_mod)
+
+
+class TestEntryModeV2Matrix:
+    """FR-063 + SC-013 — entry_mode matrix (6 scenarios)."""
+
+    async def _setup_manager(self, tmp_path, *, startup=True):
+        from azure.ai.agentserver.core.durable._local_provider import (
+            LocalFileTaskProvider,
+        )
+        from azure.ai.agentserver.core.durable._manager import (
+            TaskManager,
+        )
+
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        if startup:
+            await manager.startup()
+        return manager, mgr_mod, provider
+
+    async def _teardown_manager(self, manager, mgr_mod):
+        await manager.shutdown()
+        mgr_mod._manager = None
+
+    def _multi_turn_task(self, *args, **kwargs):
+        from azure.ai.agentserver.core.durable import multi_turn_task
+
+        return multi_turn_task(*args, **kwargs)
+
+    async def _eventually(self, predicate, *, attempts=40):
+        import asyncio
+
+        for _ in range(attempts):
+            if predicate():
+                return
+            await asyncio.sleep(0.05)
+        assert predicate()
+
+    async def _seed_recoverable_record(self, provider, *, task_id, task_name, input_value):
+        import datetime
+
+        from azure.ai.agentserver.core.durable._lease import derive_lease_owner
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
+
+        created = await provider.create(
+            TaskCreateRequest(
+                id=task_id,
+                agent_name="test-agent",
+                session_id="test-session",
+                status="in_progress",
+                title=task_name,
+                payload={"input": input_value, "_last_input_id": "seed-input"},
+                tags={"_task_name": task_name},
+                source={"name": task_name, "type": "agentserver.task"},
+                lease_owner=derive_lease_owner("test-agent", "test-session"),
+                lease_instance_id="previous-instance",
+                lease_duration_seconds=60,
+            )
+        )
+        created.lease.expires_at = (
+            datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=10)
+        ).isoformat()
+        provider._write_task(created)  # noqa: SLF001
+
+    @pytest.mark.asyncio
+    async def test_entry_mode_fresh_one_shot(self, tmp_path) -> None:
+        observed_modes: list[str] = []
+
+        @task(title="fr063-fresh-one-shot")
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed_modes.append(ctx.entry_mode)
+            return "done"
+
+        manager, mgr_mod, _ = await self._setup_manager(tmp_path)
+        try:
+            assert await my_task.run(task_id="fr063-fresh-one-shot", input="hello") == "done"
+            assert observed_modes == ["fresh"]
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_entry_mode_fresh_multi_turn(self, tmp_path) -> None:
+        observed_modes: list[str] = []
+
+        @self._multi_turn_task(name="fr063-fresh-multi-turn")
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed_modes.append(ctx.entry_mode)
+            return "done"
+
+        manager, mgr_mod, _ = await self._setup_manager(tmp_path)
+        try:
+            assert await my_task.run(task_id="fr063-fresh-multi-turn", input="hello") == "done"
+            assert observed_modes == ["fresh"]
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_entry_mode_resumed_after_suspend(self, tmp_path) -> None:
+        observed: list[tuple[str, str]] = []
+
+        @self._multi_turn_task(name="fr063-resumed-after-suspend")
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed.append((ctx.entry_mode, ctx.input))
+            return f"done-{ctx.input}"
+
+        manager, mgr_mod, _ = await self._setup_manager(tmp_path)
+        try:
+            assert await my_task.run(task_id="fr063-resumed", input="one") == "done-one"
+            assert await my_task.run(task_id="fr063-resumed", input="two") == "done-two"
+            assert observed == [("fresh", "one"), ("resumed", "two")]
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_entry_mode_resumed_steering_promotion(self, tmp_path) -> None:
+        import asyncio
+
+        observed: list[tuple[str, str, bool]] = []
+
+        @self._multi_turn_task(name="fr063-steering-promotion", steerable=True)
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed.append((ctx.entry_mode, ctx.input, ctx.is_steered_turn))
+            if ctx.input == "one":
+                await asyncio.wait_for(ctx.cancel.wait(), timeout=1.0)
+            return f"done-{ctx.input}"
+
+        manager, mgr_mod, _ = await self._setup_manager(tmp_path)
+        try:
+            first = await my_task.start(task_id="fr063-steer", input="one", input_id="i1")
+            await asyncio.sleep(0)
+            second = await my_task.start(task_id="fr063-steer", input="two", input_id="i2")
+            assert await first.result() == "done-one"
+            assert await second.result() == "done-two"
+            assert ("resumed", "two", True) in observed
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_entry_mode_recovered_scanner_reclaim(self, tmp_path) -> None:
+        observed: list[tuple[str, str]] = []
+
+        @self._multi_turn_task(name="fr063-scanner-reclaim")
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed.append((ctx.entry_mode, ctx.input))
+            return "recovered"
+
+        manager, mgr_mod, provider = await self._setup_manager(tmp_path, startup=False)
+        await self._seed_recoverable_record(
+            provider,
+            task_id="fr063-scanner",
+            task_name="fr063-scanner-reclaim",
+            input_value="persisted",
+        )
+        try:
+            await manager.startup()
+            await self._eventually(lambda: observed)
+            assert observed == [("recovered", "persisted")]
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_entry_mode_recovered_inline_reclaim(self, tmp_path) -> None:
+        observed: list[tuple[str, str]] = []
+
+        @self._multi_turn_task(name="fr063-inline-reclaim")
+        async def my_task(ctx: TaskContext[str]) -> str:
+            observed.append((ctx.entry_mode, ctx.input))
+            return "recovered"
+
+        manager, mgr_mod, provider = await self._setup_manager(tmp_path)
+        await self._seed_recoverable_record(
+            provider,
+            task_id="fr063-inline",
+            task_name="fr063-inline-reclaim",
+            input_value="persisted",
+        )
+        try:
+            run = await my_task.start(task_id="fr063-inline", input="new-caller-input")
+            assert await run.result() == "recovered"
+            assert observed == [("recovered", "persisted")]
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
