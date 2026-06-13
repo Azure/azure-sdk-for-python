@@ -3,20 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Pure-Python unit tests for ``build_read_item_prepared``.
+"""Unit tests for ``build_read_item_prepared`` — no network, no emulator.
 
-No network, no Cosmos emulator, no Rust binding required. Pins the
-wire-prep behaviour for ``read_item`` end to end:
+These pin how a ``read_item`` call is turned into a request, end to end:
 
-* ``max_integrated_cache_staleness_in_ms=N`` (positive) translates to
-  the header ``x-ms-dedicatedgateway-max-age: N``. ``0`` is a silent
-  no-op -- no header on the wire -- because the legacy gate drops
-  falsy values.
-* ``etag`` plus ``MatchConditions.IfModified`` translates to
-  ``If-None-Match: <etag>``; ``IfNotModified`` translates to
-  ``If-Match: <etag>``.
-* ``etag`` without ``match_condition`` raises ``ValueError`` before
-  any network round trip.
+* A positive ``max_integrated_cache_staleness_in_ms=N`` becomes the
+  header ``x-ms-dedicatedgateway-max-age: N``. ``0`` sends no header at
+  all, because a falsy value is dropped (the same rule the legacy path
+  used).
+* ``etag`` with ``MatchConditions.IfModified`` becomes
+  ``If-None-Match: <etag>``; ``IfNotModified`` becomes ``If-Match: <etag>``.
+* ``etag`` without ``match_condition`` raises ``ValueError`` before any
+  network round trip.
 
 Sibling of ``tests/create_item/sync/test_request_prep_unit.py``.
 """
@@ -41,7 +39,8 @@ from azure.cosmos._helpers._request_prep import build_read_item_prepared
 
 
 def test_baseline_returns_read_item_prepared_with_no_body():
-    """L0 baseline: container-link, partition-key wire-shape, item-id slot."""
+    """Baseline: the container link, the partition-key shape, and the
+    item-id slot are all set, and a read carries no body."""
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
         item_id="order-42",
@@ -58,9 +57,9 @@ def test_baseline_returns_read_item_prepared_with_no_body():
 
 
 def test_baseline_stamps_container_rid_into_headers():
-    """``container_rid`` reaches the wire under the canonical key so the binding
-    forwards ``x-ms-cosmos-intended-collection-rid`` — the same
-    drop-and-recreate guard ``create_item`` / ``delete_item`` get."""
+    """The container rid is stamped under the key the binding turns into
+    ``x-ms-cosmos-intended-collection-rid`` — the same dropped-and-recreated
+    container guard that ``create_item`` and ``delete_item`` get."""
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -87,19 +86,18 @@ def test_cache_staleness_positive_emits_dedicated_gateway_header():
         kwargs={"max_integrated_cache_staleness_in_ms": 5000},
     )
     assert prepared.headers["x-ms-dedicatedgateway-max-age"] == "5000"
-    # Must NOT also stamp the option-key form -- the prep translates,
-    # not aliases.
+    # It must not also stamp the option-key form -- the prep translates
+    # the value, it doesn't just copy it under a new name.
     assert "maxIntegratedCacheStaleness" not in prepared.headers
 
 
 def test_cache_staleness_zero_is_silent_no_op():
     """``max_integrated_cache_staleness_in_ms=0`` must emit no header.
 
-    ``0`` is a silent no-op on the wire. The legacy gate drops the
-    value because ``0`` is falsy; the Rust prep must match. A
-    regression here would silently change behaviour for customers
-    that pass ``0`` (a common "I don't want a stale cache for this
-    call" idiom).
+    ``0`` sends nothing on the wire. A falsy value is dropped, and the
+    read prep has to match. If this regressed, behaviour would quietly
+    change for customers who pass ``0`` (a common way of saying "don't
+    serve this call from a stale cache").
     """
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
@@ -113,22 +111,21 @@ def test_cache_staleness_zero_is_silent_no_op():
 
 
 # ---------------------------------------------------------------------------
-# Access-condition translation for the read side ("Conditional read on
-# read_item"): ``etag`` + ``IfModified`` becomes ``If-None-Match``;
-# ``etag`` + ``IfNotModified`` becomes ``If-Match``.
+# Access conditions on a read: ``etag`` + ``IfModified`` becomes
+# ``If-None-Match``; ``etag`` + ``IfNotModified`` becomes ``If-Match``.
 # ---------------------------------------------------------------------------
 
 
 def test_etag_if_modified_translates_to_if_none_match():
-    """``etag=<v>`` + ``IfModified`` (cache-validation idiom) →
+    """``etag=<v>`` + ``IfModified`` (the cache-validation case) becomes
     ``If-None-Match: <v>``."""
     options = build_read_item_request_options({
         "request_options": {"partitionKey": "a"},
         "etag": "abc",
         "match_condition": MatchConditions.IfModified,
     })
-    # ``build_options`` consumed the etag+match_condition pair into
-    # the ``accessCondition`` shape ``{type: IfNoneMatch, condition: abc}``.
+    # The options build folded the etag + match_condition pair into the
+    # ``accessCondition`` shape ``{type: IfNoneMatch, condition: abc}``.
     assert options["accessCondition"] == {"type": "IfNoneMatch", "condition": "abc"}
 
     prepared = build_read_item_prepared(
@@ -136,9 +133,9 @@ def test_etag_if_modified_translates_to_if_none_match():
         item_id="x",
         partition_key_value=options["partitionKey"],
         container_rid=None,
-        # The prep reads ``accessCondition`` out of the seed and emits
-        # the wire header; the caller passes the same options dict in
-        # as the ``request_options`` seed.
+        # The prep reads ``accessCondition`` out of the seed and emits the
+        # wire header; the caller passes that same options dict back in as
+        # the ``request_options`` seed.
         kwargs={"request_options": options},
     )
     assert prepared.headers["If-None-Match"] == "abc"
@@ -146,8 +143,8 @@ def test_etag_if_modified_translates_to_if_none_match():
 
 
 def test_etag_if_not_modified_translates_to_if_match():
-    """``etag=<v>`` + ``IfNotModified`` (rare write-precondition-on-read
-    idiom) → ``If-Match: <v>``."""
+    """``etag=<v>`` + ``IfNotModified`` (a rare precondition on a read)
+    becomes ``If-Match: <v>``."""
     options = build_read_item_request_options({
         "request_options": {"partitionKey": "a"},
         "etag": "abc",
@@ -166,24 +163,24 @@ def test_etag_if_not_modified_translates_to_if_match():
 
 
 def test_etag_without_match_condition_raises_value_error_up_front():
-    """``etag`` without ``match_condition`` is an application bug and
-    the SDK refuses to guess. The error must fire before any network
-    round trip so the customer's traceback points at the call site.
+    """``etag`` without ``match_condition`` is an application bug, and the
+    SDK refuses to guess which one was meant. The error fires before any
+    network round trip, so the customer's traceback points at their own
+    call site.
     """
     with pytest.raises(ValueError, match=r"'etag' specified without 'match_condition'"):
         build_read_item_request_options({"etag": "abc"})
 
 
 # ---------------------------------------------------------------------------
-# initialHeaders flattening (parity with create / delete prep)
+# initial_headers flattening (same as create / delete prep)
 # ---------------------------------------------------------------------------
 
 
 def test_initial_headers_are_flattened_into_outer_headers():
-    """Customer ``initial_headers={'x-trace-id': 'abc'}`` must surface as a
-    bare ``x-trace-id`` entry in ``PreparedRequest.headers`` so the
-    binding's per-header pass-through forwards it verbatim — same shape
-    as create / delete prep."""
+    """A customer's ``initial_headers={'x-trace-id': 'abc'}`` must show up
+    as a plain ``x-trace-id`` entry in ``PreparedRequest.headers``, so the
+    binding forwards it as-is — the same shape create / delete prep use."""
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -192,20 +189,20 @@ def test_initial_headers_are_flattened_into_outer_headers():
         kwargs={"initial_headers": {"x-trace-id": "abc-123"}},
     )
     assert prepared.headers["x-trace-id"] == "abc-123"
-    # The grouping key itself must NOT survive as a header (it's the
-    # snake_case kwarg name, not a wire-header name).
+    # The grouping key itself must not survive as a header (it's the
+    # snake_case keyword-argument name, not a wire-header name).
     assert "initial_headers" not in prepared.headers
     assert "initialHeaders" not in prepared.headers
 
 
 # ---------------------------------------------------------------------------
-# Trigger headers / priority / throughput bucket (one row each)
+# Trigger headers / priority / throughput bucket (one each)
 # ---------------------------------------------------------------------------
 
 
 def test_post_trigger_include_lands_as_option_key():
-    """``post_trigger_include='auditRead'`` → ``postTriggerInclude`` option-key
-    in the headers map (the binding then translates to
+    """``post_trigger_include='auditRead'`` lands as the ``postTriggerInclude``
+    option key in the headers map (the binding then turns it into
     ``x-ms-documentdb-post-trigger-include``)."""
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
@@ -240,13 +237,13 @@ def test_throughput_bucket_lands_as_option_key():
 
 
 # ---------------------------------------------------------------------------
-# Timeout sentinel header (parity with create / delete prep)
+# Timeout sentinel header (same as create / delete prep)
 # ---------------------------------------------------------------------------
 
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
-    """``timeout=30`` → ``__overall_timeout_seconds: 30`` so the binding can
-    lift it into the driver's typed ``EndToEndOperationLatencyPolicy``."""
+    """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30``, a
+    sentinel header the binding lifts into the driver's own timeout setting."""
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -258,14 +255,15 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
 
 
 # ---------------------------------------------------------------------------
-# merge_read_item_explicit_kwargs — kwarg dict assembly
+# merge_read_item_explicit_kwargs — building the kwargs dict
 # ---------------------------------------------------------------------------
 
 
 def test_merge_read_item_explicit_kwargs_omits_none_entries():
-    """Only non-None explicit kwargs land in the merged dict — None means
-    'not supplied' and must not be stamped (otherwise the legacy
-    ``build_options`` would write ``priorityLevel: None`` etc.)."""
+    """Only the explicit keyword arguments that aren't None land in the
+    merged dict — None means "not supplied" and must not be stamped
+    (otherwise the options build would write ``priorityLevel: None`` and
+    so on)."""
     kwargs: dict = {}
     merge_read_item_explicit_kwargs(
         kwargs,
@@ -293,9 +291,10 @@ def test_merge_read_item_explicit_kwargs_includes_cache_staleness_when_positive(
 
 
 def test_merge_read_item_explicit_kwargs_does_not_expose_retry_write_or_no_response():
-    """Reads have no body to suppress (``no_response`` is meaningless) and
-    are idempotent (``retry_write`` is meaningless). The merge helper
-    must not even accept those parameter names."""
+    """A read has no response body to suppress (so ``no_response`` is
+    meaningless) and is already idempotent (so ``retry_write`` is
+    meaningless). The merge helper must not even accept those parameter
+    names."""
     kwargs: dict = {}
     with pytest.raises(TypeError):
         # ``retry_write`` is not a parameter on this merge function.

@@ -3,27 +3,29 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async sibling of ``azure.cosmos._helpers.item_helper.ItemHelper``.
+"""Async version of the single-item helper.
 
-Same behaviour, parameter contract, dispatch rules, and option-build
-sequence as the sync sibling. The option-build is imported from the
-shared ``_item_dispatch`` module so the two cannot drift; what remains
-here is the per-call I/O wired with ``await``.
+Same behaviour and arguments as the sync helper. The option building is
+shared with the sync side so the two cannot drift; what is here is the
+per-call work done with ``await``.
 """
 from __future__ import annotations
 
+import logging
 from typing import Any, Awaitable, Callable, Dict, Optional
 
 from ..._constants import _Constants as Constants
 from ..._helpers._item_dispatch import (
     build_create_item_request_options,
     build_delete_item_request_options,
+    build_patch_item_request_options,
     build_read_item_request_options,
     build_upsert_item_request_options,
 )
 from ..._helpers._request_prep import (
     build_create_item_prepared,
     build_delete_item_prepared,
+    build_patch_item_prepared,
     build_read_item_prepared,
     build_replace_item_prepared,
     build_upsert_item_prepared,
@@ -32,14 +34,13 @@ from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
 from .._backend.base import AsyncCosmosBackend
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class AsyncItemHelper:
-    """Async per-call helper for ``Container.create_item``,
-    ``Container.read_item``, ``Container.delete_item``, and
-    ``Container.upsert_item``.
+    """Async per-call logic for the single-item operations.
 
-    See the sync sibling ``azure.cosmos._helpers.item_helper.ItemHelper``
-    for the design rationale and the per-parameter docs.
+    See the sync helper for the full per-argument notes.
     """
 
     def __init__(
@@ -48,20 +49,16 @@ class AsyncItemHelper:
         client_connection: Any,
         ensure_container_cached: Optional[Callable[[Dict[str, Any]], Awaitable[Any]]] = None,
     ) -> None:
-        """Bind the async helper to the chosen backend and the connection.
+        """Store the backend and connection this helper will use.
 
-        :param backend: The async backend the wiring function picked
-            for this client. ``None`` is permitted only for unit tests
-            that build the helper without going through the async
-            ``CosmosClient``.
+        :param backend: The async backend for this client. ``None`` is
+            allowed only in unit tests that build the helper directly.
         :type backend: Optional[AsyncCosmosBackend]
-        :param client_connection: The async ``CosmosClientConnection``
-            from ``azure.cosmos.aio``. The helper awaits its
-            ``CreateItem`` and ``_refresh_container_properties_cache``.
+        :param client_connection: The async connection used for the cache,
+            partition-key extraction, and the fallback path.
         :type client_connection: Any
-        :param ensure_container_cached: Optional async callable the
-            container proxy passes in. See the sync sibling for the
-            full rationale.
+        :param ensure_container_cached: Optional async callable from the
+            container. See the sync helper for the details.
         :type ensure_container_cached: Optional[Callable]
         """
         self._backend = backend
@@ -73,13 +70,12 @@ class AsyncItemHelper:
         container_link: str,
         request_options: Dict[str, Any],
     ) -> Optional[str]:
-        """Async sibling of ``ItemHelper._resolve_container_rid``.
+        """Look up the container's resource id and add it to the options.
 
-        Shared by all five ops. Best-effort: on any failure returns
-        ``None`` and lets the backend run without the
-        intended-collection-rid header. On success writes the rid to
-        ``request_options`` (under ``Constants.ContainerRID``) and returns
-        it.
+        Async version of the sync method. Best-effort: if the id cannot be
+        found the request still goes out, just without the header that
+        guards against a recreated container. On success the id is stored
+        in the options and returned.
         """
         try:
             if self._ensure_container_cached is not None:
@@ -93,8 +89,19 @@ class AsyncItemHelper:
             if isinstance(rid_value, str):
                 request_options[Constants.ContainerRID] = rid_value
                 return rid_value
-        except Exception:  # pylint: disable=broad-except
-            pass
+        except (AttributeError, KeyError, TypeError) as exc:
+            # Only the stub connections used in unit tests produce these;
+            # a real connection never does. A real failure from the lookup
+            # is left to propagate so the caller sees it. Log this case so
+            # a genuine one is visible instead of quietly skipping the
+            # recreated-container guard header.
+            _LOGGER.warning(
+                "Could not resolve container rid for %r (%s: %s); proceeding "
+                "without the intended-collection-rid header.",
+                container_link,
+                type(exc).__name__,
+                exc,
+            )
         return None
 
     async def create_item(
@@ -106,12 +113,10 @@ class AsyncItemHelper:
         enable_automatic_id_generation: bool = False,
         **kwargs: Any,
     ) -> Any:
-        """Run a single async ``create_item`` call end to end."""
+        """Run one async create call."""
 
-        # Snapshot kwargs before the legacy options build pops them.
-        # See the sync sibling for the full rationale. Without this
-        # snapshot, recognised kwargs (pre_trigger_include, no_response,
-        # priority, etc.) never reach the binding.
+        # Copy the arguments first. Building the options below removes the
+        # recognized keywords, but the request still needs the full set.
         kwargs_for_rust_prep = dict(kwargs)
 
         request_options = build_create_item_request_options(
@@ -144,6 +149,7 @@ class AsyncItemHelper:
                     response_hook=kwargs.get("response_hook"),
                 )
 
+        # No backend configured: use the existing client.
         return await self.client_connection.CreateItem(
             database_or_container_link=container_link,
             document=body,
@@ -157,7 +163,7 @@ class AsyncItemHelper:
         body: Dict[str, Any],
         request_options: Dict[str, Any],
     ) -> Any:
-        """Async sibling of the sync helper's PK extraction. See sync docstring."""
+        """Find the partition-key value to send. Async version of the sync method."""
         if "partitionKey" in request_options:
             return request_options["partitionKey"]
         try:
@@ -167,7 +173,11 @@ class AsyncItemHelper:
             if isinstance(new_options, dict):
                 request_options.update(new_options)
                 return new_options.get("partitionKey", _Empty())
-        except Exception:  # pylint: disable=broad-except
+        except (AttributeError, TypeError):
+            # Only the stub connections used in unit tests reach here (no
+            # extraction method, or a stub that is not callable). A real
+            # extraction error is left to propagate so a wrong partition
+            # key fails loudly instead of writing to the wrong place.
             pass
         return _Empty()
 
@@ -179,7 +189,7 @@ class AsyncItemHelper:
         item_id: str,
         **kwargs: Any,
     ) -> Any:
-        """Async sibling of ``ItemHelper.delete_item``. See sync docstring."""
+        """Run one async delete call. See the sync method for the arguments."""
         kwargs_for_rust_prep = dict(kwargs)
         request_options = build_delete_item_request_options(kwargs)
         partition_key_value = request_options.get("partitionKey", _Empty())
@@ -196,6 +206,8 @@ class AsyncItemHelper:
             )
             backend_response = await self._backend.execute(prepared)
             if backend_response is not None:
+                # Delete has no body. Run the response hook so the caller
+                # can read the response headers, then return nothing.
                 parse_backend_response(
                     backend_response,
                     client_connection=self.client_connection,
@@ -203,6 +215,7 @@ class AsyncItemHelper:
                 )
                 return None
 
+        # No backend configured: use the existing client.
         return await self.client_connection.DeleteItem(
             document_link=document_link,
             options=request_options,
@@ -217,7 +230,7 @@ class AsyncItemHelper:
         item_id: str,
         **kwargs: Any,
     ) -> Any:
-        """Async sibling of ``ItemHelper.read_item``. See sync docstring."""
+        """Run one async read call. See the sync method for the arguments."""
         kwargs_for_rust_prep = dict(kwargs)
         request_options = build_read_item_request_options(kwargs)
         partition_key_value = request_options.get("partitionKey", _Empty())
@@ -240,6 +253,7 @@ class AsyncItemHelper:
                     response_hook=kwargs.get("response_hook"),
                 )
 
+        # No backend configured: use the existing client.
         return await self.client_connection.ReadItem(
             document_link=document_link,
             options=request_options,
@@ -253,11 +267,10 @@ class AsyncItemHelper:
         body: Dict[str, Any],
         **kwargs: Any,
     ) -> Any:
-        """Async sibling of ``ItemHelper.upsert_item``. See sync docstring.
+        """Run one async upsert call.
 
-        The async public ``upsert_item`` never exposed
-        ``populate_query_metrics``, so this helper passes ``None`` for it
-        (the sync sibling threads the deprecated sync-only flag through).
+        Async version of the sync method. The async upsert has no
+        populate_query_metrics flag, so ``None`` is passed for it.
         """
         kwargs_for_rust_prep = dict(kwargs)
 
@@ -288,6 +301,7 @@ class AsyncItemHelper:
                     response_hook=kwargs.get("response_hook"),
                 )
 
+        # No backend configured: use the existing client.
         return await self.client_connection.UpsertItem(
             database_or_container_link=container_link,
             document=body,
@@ -304,13 +318,12 @@ class AsyncItemHelper:
         body: Dict[str, Any],
         **kwargs: Any,
     ) -> Any:
-        """Async sibling of ``ItemHelper.replace_item``. See sync docstring.
+        """Run one async replace call.
 
-        The async public ``replace_item`` never exposed
-        ``populate_query_metrics``, so this helper passes ``None`` for it
-        (the sync sibling threads the deprecated sync-only flag through).
-        ``item_id`` (resolved from ``item``) is what the binding puts in the
-        wire URL, not the body's own id.
+        Async version of the sync method. The async replace has no
+        populate_query_metrics flag, so ``None`` is passed for it.
+        ``item_id`` names the document to replace, not the id inside the
+        body.
         """
         kwargs_for_rust_prep = dict(kwargs)
 
@@ -342,6 +355,7 @@ class AsyncItemHelper:
                     response_hook=kwargs.get("response_hook"),
                 )
 
+        # No backend configured: use the existing client.
         return await self.client_connection.ReplaceItem(
             document_link=document_link,
             new_document=body,
@@ -349,3 +363,60 @@ class AsyncItemHelper:
             **kwargs,
         )
 
+    async def patch_item(
+        self,
+        *,
+        container_link: str,
+        document_link: str,
+        item_id: str,
+        patch_operations: Any,
+        filter_predicate: Optional[str] = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Run one async patch call.
+
+        Async version of the sync method. A patch with a filter or an
+        etag / match-condition guard uses the existing client; a plain
+        patch uses the backend.
+        """
+        kwargs_for_rust_prep = dict(kwargs)
+
+        request_options = build_patch_item_request_options(kwargs)
+        if filter_predicate is not None:
+            request_options["filterPredicate"] = filter_predicate
+
+        partition_key_value = request_options.get("partitionKey", _Empty())
+
+        container_rid = await self._resolve_container_rid(container_link, request_options)
+
+        # Use the backend only for a plain patch. A filter or an
+        # etag / match-condition guard uses the existing client below.
+        backend_supports_patch = (
+            self._backend is not None
+            and filter_predicate is None
+            and "accessCondition" not in request_options
+        )
+        if backend_supports_patch:
+            prepared = build_patch_item_prepared(
+                container_link=container_link,
+                item_id=item_id,
+                patch_operations=patch_operations,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = await self._backend.execute(prepared)
+            if backend_response is not None:
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        # No backend configured (or a guarded patch): use the existing client.
+        return await self.client_connection.PatchItem(
+            document_link=document_link,
+            operations=patch_operations,
+            options=request_options,
+            **kwargs,
+        )

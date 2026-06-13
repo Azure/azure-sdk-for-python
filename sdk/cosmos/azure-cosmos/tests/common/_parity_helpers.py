@@ -371,8 +371,8 @@ class BackendComparison:
                 out.append("      {}".format(", ".join(sorted(unrecorded))))
             else:
                 out.append(
-                    "  - NOT YET RECORDED in docs/V5/RUST_PARITY_PUSHBACKS.md: "
-                    "(none — every header gap above is already tracked.)"
+                    "  - NEW PUSHBACK NOT NEEDED: every header gap above is "
+                    "already tracked in docs/V5/RUST_PARITY_PUSHBACKS.md."
                 )
             return "\n".join(out)
         return ("EXCEPTION DIVERGENCE: both backends raised, but the typed "

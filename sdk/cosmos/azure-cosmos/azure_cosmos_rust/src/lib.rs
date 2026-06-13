@@ -70,6 +70,17 @@
 //!         `max_integrated_cache_staleness_in_ms`) is forwarded
 //!         through `custom_headers` like any other per-request header.
 //!
+//!   * `patch_item(handle, prepared) -> (status, sub_status,
+//!                                        headers, body)`
+//!         Carries a body like the write-with-body ops, but the body is
+//!         the `PatchInstructions` payload (`{"operations": [...]}`) rather
+//!         than a document, and the URL id comes from
+//!         `PreparedRequest.item_id`. Maps to `OperationType::Patch`: the
+//!         driver reads the item, applies the ops, and writes it back with
+//!         an `If-Match`-guarded `Replace`. The Python helper only routes
+//!         the supported subset here; a `filter_predicate` or an `etag` /
+//!         `match_condition` precondition takes the legacy path instead.
+//!
 //! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
 //! driver's typed operation fields. `responsePayloadOnWriteDisabled`
 //! is lifted to the typed `OperationOptions::content_response_on_write`
@@ -131,6 +142,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(replace_item, m)?)?;
     m.add_function(wrap_pyfunction!(delete_item, m)?)?;
     m.add_function(wrap_pyfunction!(read_item, m)?)?;
+    m.add_function(wrap_pyfunction!(patch_item, m)?)?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     Ok(())
 }
@@ -476,6 +488,52 @@ fn read_item<'py>(
         "read_item",
         false,
         CosmosOperation::read_item,
+    )
+}
+
+// patch_item: write-with-operations. The body is the `PatchInstructions`
+// payload (`{"operations": [...]}`), not a document; the URL id comes from
+// PreparedRequest.item_id (like delete / read / replace). Maps to
+// OperationType::Patch: the driver reads the item, applies the ops, and
+// writes it back with an If-Match-guarded Replace. honor_content_response
+// is true, so `no_response` applies to that inner Replace.
+//
+// The Python helper only routes the supported subset here; a
+// `filter_predicate` or a caller-set precondition takes the legacy path,
+// so neither rides on this prepared request.
+#[pyfunction]
+fn patch_item<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let container_link: String = prepared.getattr("container_link")?.extract()?;
+    let body_bytes: Vec<u8> = prepared.getattr("body_bytes")?.extract()?;
+    let partition_key_header: String =
+        prepared.getattr("partition_key_header")?.extract()?;
+    let item_id: String = prepared
+        .getattr("item_id")?
+        .extract::<Option<String>>()?
+        .ok_or_else(|| {
+            PyValueError::new_err(
+                "patch_item: PreparedRequest.item_id is required (the id of the \
+                 document to patch, resolved from the `item` argument)",
+            )
+        })?;
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+    let modifiers = extract_op_modifiers(headers_dict)?;
+
+    run_item_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "patch_item",
+        true,
+        move |item_ref| CosmosOperation::patch_item(item_ref).with_body(body_bytes),
     )
 }
 

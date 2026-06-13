@@ -3,26 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Pure-Python unit tests for the ``upsert_item`` wire-prep path.
+"""Unit tests for the ``upsert_item`` request-prep path — no network, no emulator.
 
-No network, no Cosmos emulator, no Rust binding required. Pins the
-behaviour of the three pure helpers that the migrated ``upsert_item``
-adds:
+These pin the three helpers the migrated ``upsert_item`` adds:
 
-* ``build_upsert_item_prepared`` -- write-with-body like create (the id
-  rides inside the body, the body is serialised to JSON bytes), but it
-  never mints an id and it emits ``If-Match`` / ``If-None-Match`` from an
-  access condition (an upsert honours ``etag`` / ``match_condition``).
+* ``build_upsert_item_prepared`` -- carries the body like create does (the
+  id rides inside the body, which is serialised to JSON bytes), but it
+  never mints an id and it can emit ``If-Match`` / ``If-None-Match`` from
+  an access condition (an upsert honours ``etag`` / ``match_condition``).
 * ``build_upsert_item_request_options`` -- always sets
   ``disableAutomaticIdGeneration`` and honours ``etag`` /
-  ``match_condition`` (consumed into the ``accessCondition`` shape).
-* ``merge_upsert_item_explicit_kwargs`` -- the upsert kwarg set:
-  create's write-with-body kwargs (keeps ``no_response``) plus
-  ``etag`` / ``match_condition``, and *no*
+  ``match_condition`` (folded into the ``accessCondition`` shape).
+* ``merge_upsert_item_explicit_kwargs`` -- the upsert keyword set:
+  create's body-carrying keywords (it keeps ``no_response``) plus
+  ``etag`` / ``match_condition``, and no
   ``indexing_directive`` / ``enable_automatic_id_generation``.
 
 Sibling of ``tests/create_item/sync/test_request_prep_unit.py`` (the
-write-with-body shape) and
+body-carrying shape) and
 ``tests/read_item/sync/test_request_prep_read_item_unit.py`` (the
 access-condition translation).
 """
@@ -44,14 +42,14 @@ from azure.cosmos._helpers._request_prep import build_upsert_item_prepared
 
 
 # ---------------------------------------------------------------------------
-# Write-with-body baseline shape (parity with create, not with delete/read)
+# Body-carrying baseline shape (like create, not like delete / read)
 # ---------------------------------------------------------------------------
 
 
 def test_baseline_is_write_with_body_not_bodiless():
-    """An upsert carries the id inside the body, so the prep serialises
-    the body to JSON bytes and leaves ``item_id`` unset -- unlike the
-    bodiless delete / read prep."""
+    """An upsert carries the id inside the body, so the prep serialises the
+    body to JSON bytes and leaves ``item_id`` unset -- unlike the bodiless
+    delete / read prep."""
     prepared = build_upsert_item_prepared(
         container_link="dbs/d/colls/orders",
         body={"id": "order-42", "pk": "customerA", "total": 109.5},
@@ -65,9 +63,9 @@ def test_baseline_is_write_with_body_not_bodiless():
     assert prepared.body_bytes == b'{"id":"order-42","pk":"customerA","total":109.5}'
     assert prepared.partition_key_header == '["customerA"]'
     # The id rides in the body, so the dedicated id slot stays empty
-    # (a create / upsert never carry item_id; delete / read do).
+    # (create / upsert never carry item_id; delete / read do).
     assert prepared.item_id is None
-    # Drop-and-recreate guard: rid stamped under the canonical key.
+    # Dropped-and-recreated container guard: the rid is stamped under the standard key.
     assert prepared.headers[Constants.ContainerRID] == "RID=="
 
 
@@ -91,10 +89,10 @@ def test_body_bytes_round_trip_to_the_same_dict():
 
 
 def test_missing_id_is_not_minted_and_body_is_not_mutated():
-    """Unlike create with ``enable_automatic_id_generation=True``, an
-    upsert never mints an id. A body without one is serialised as-is and
-    the server rejects it -- the prep must not invent an id (which would
-    defeat the "replace if present" half of insert-or-replace)."""
+    """Unlike create with ``enable_automatic_id_generation=True``, an upsert
+    never mints an id. A body without one is serialised as-is and the
+    server rejects it -- the prep must not invent an id, which would defeat
+    the "replace if present" half of insert-or-replace."""
     body = {"pk": "customerA", "total": 109.5}
     prepared = build_upsert_item_prepared(
         container_link="dbs/d/colls/c",
@@ -108,23 +106,23 @@ def test_missing_id_is_not_minted_and_body_is_not_mutated():
 
 
 def test_options_build_always_disables_id_generation():
-    """``build_upsert_item_request_options`` hardwires
+    """``build_upsert_item_request_options`` always sets
     ``disableAutomaticIdGeneration=True`` -- the same value the legacy
-    ``upsert_item`` wrote unconditionally."""
+    ``upsert_item`` wrote every time."""
     request_options = build_upsert_item_request_options({})
     assert request_options["disableAutomaticIdGeneration"] is True
 
 
 # ---------------------------------------------------------------------------
-# Access-condition translation -- the upsert-meaningful cases.
-# ``IfMissing`` (insert-only) is the case that earns its keep on an upsert.
+# Access conditions -- the cases that matter on an upsert.
+# ``IfMissing`` (insert-only) is the one that earns its keep here.
 # ---------------------------------------------------------------------------
 
 
 def test_if_missing_translates_to_if_none_match_wildcard_insert_only():
-    """``match_condition=IfMissing`` (no etag) narrows the insert-or-replace
-    to *insert-only*: ``If-None-Match: *``. This is the canonical upsert
-    precondition (a redelivered write fails instead of overwriting)."""
+    """``match_condition=IfMissing`` (no etag) narrows insert-or-replace to
+    insert-only: ``If-None-Match: *``. This is the classic upsert
+    precondition -- a redelivered write fails instead of overwriting."""
     options = build_upsert_item_request_options({"match_condition": MatchConditions.IfMissing})
     assert options["accessCondition"] == {"type": "IfNoneMatch", "condition": "*"}
 
@@ -195,20 +193,20 @@ def test_no_access_condition_emits_no_precondition_headers():
 
 def test_etag_without_match_condition_raises_value_error_up_front():
     """``etag`` without ``match_condition`` is an application bug; the SDK
-    refuses to guess and raises before any network round trip (on the
-    caller's frame), the same gate delete / read enforce."""
+    refuses to guess and raises before any network round trip, on the
+    caller's own frame -- the same gate delete / read enforce."""
     with pytest.raises(ValueError, match=r"'etag' specified without 'match_condition'"):
         build_upsert_item_request_options({"etag": "abc"})
 
 
 # ---------------------------------------------------------------------------
-# Header-map shaping (parity with create / delete / read prep)
+# Header-map shaping (same as create / delete / read prep)
 # ---------------------------------------------------------------------------
 
 
 def test_initial_headers_are_flattened_into_outer_headers():
-    """``initial_headers={'x-trace-id': 'abc'}`` surfaces as a bare
-    ``x-trace-id`` entry so the binding forwards it verbatim."""
+    """``initial_headers={'x-trace-id': 'abc'}`` shows up as a plain
+    ``x-trace-id`` entry so the binding forwards it as-is."""
     prepared = build_upsert_item_prepared(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
@@ -222,9 +220,9 @@ def test_initial_headers_are_flattened_into_outer_headers():
 
 
 def test_trigger_priority_bucket_no_response_land_as_option_keys():
-    """The write-with-body option set reaches the headers map under the
-    internal option-key names (the binding then renders each on the
-    wire). ``no_response`` is kept on upsert (unlike delete / read)."""
+    """The body-carrying option set reaches the headers map under the
+    internal option-key names (the binding then renders each on the wire).
+    ``no_response`` is kept on upsert, unlike delete / read."""
     prepared = build_upsert_item_prepared(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
@@ -246,9 +244,9 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
 
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
-    """``timeout=30`` → ``__overall_timeout_seconds: 30`` so the binding
-    can lift it into the driver's typed timeout policy. Same mechanism
-    as create / delete / read prep."""
+    """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
+    the binding can lift it into the driver's own timeout setting -- the
+    same mechanism as create / delete / read prep."""
     prepared = build_upsert_item_prepared(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
@@ -260,8 +258,9 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
 
 
 def test_compose_consumes_recognised_kwargs():
-    """The recognised option-shortcut kwargs are popped out of the input
-    dict so the caller doesn't double-forward them to the legacy path."""
+    """The option-shortcut keyword arguments the prep recognises are removed
+    from the input dict, so the caller doesn't forward them again to the
+    legacy path."""
     kwargs = {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
     build_upsert_item_prepared(
         container_link="dbs/d/colls/c",
@@ -275,13 +274,13 @@ def test_compose_consumes_recognised_kwargs():
 
 
 # ---------------------------------------------------------------------------
-# merge_upsert_item_explicit_kwargs -- the upsert kwarg set
+# merge_upsert_item_explicit_kwargs -- the upsert keyword set
 # ---------------------------------------------------------------------------
 
 
 def test_merge_omits_none_entries():
-    """Only non-None explicit kwargs land in the merged dict -- None means
-    'not supplied' and must not be stamped."""
+    """Only the explicit keyword arguments that aren't None land in the
+    merged dict -- None means "not supplied" and must not be stamped."""
     kwargs: dict = {}
     merge_upsert_item_explicit_kwargs(
         kwargs,
@@ -302,10 +301,10 @@ def test_merge_omits_none_entries():
 
 
 def test_merge_keeps_etag_match_condition_and_no_response():
-    """Upsert is the one op that carries *both* the write-with-body
-    ``no_response`` (kept, unlike delete / read) *and* the
-    ``etag`` / ``match_condition`` precondition pair (kept, unlike
-    create which drops them)."""
+    """Upsert is the one operation that keeps both the body-carrying
+    ``no_response`` (unlike delete / read) and the
+    ``etag`` / ``match_condition`` precondition pair (unlike create, which
+    drops them)."""
     kwargs: dict = {}
     merge_upsert_item_explicit_kwargs(
         kwargs,
@@ -332,15 +331,15 @@ def test_merge_does_not_accept_create_only_kwargs():
 
 
 # ---------------------------------------------------------------------------
-# populate_query_metrics deprecation (sync-only) -- legacy parity
+# populate_query_metrics deprecation (sync-only)
 # ---------------------------------------------------------------------------
 
 
 def test_populate_query_metrics_warns_and_writes_for_any_explicit_value():
-    """The legacy ``upsert_item`` warned (and wrote the option) for any
-    explicit ``populate_query_metrics`` value, including ``False``. The
-    migrated options build preserves that exact gate so nothing
-    regresses for the deprecated flag."""
+    """The legacy ``upsert_item`` warned (and still wrote the option) for any
+    explicit ``populate_query_metrics`` value, ``False`` included. The
+    migrated options build keeps that exact behaviour so nothing regresses
+    for the deprecated flag."""
     with pytest.warns(DeprecationWarning):
         opts_true = build_upsert_item_request_options({}, populate_query_metrics=True)
     assert opts_true["populateQueryMetrics"] is True

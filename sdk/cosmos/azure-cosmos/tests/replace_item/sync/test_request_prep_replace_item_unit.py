@@ -3,29 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Pure-Python unit tests for the ``replace_item`` wire-prep path.
+"""Unit tests for the ``replace_item`` request-prep path — no network, no emulator.
 
-No network, no Cosmos emulator, no Rust binding required. Pins the
-behaviour of ``build_replace_item_prepared`` -- the overwrite-only
-write-with-body builder added for the migrated ``replace_item``.
+These pin ``build_replace_item_prepared`` -- the overwrite-only,
+body-carrying builder added for the migrated ``replace_item``.
 
-``replace_item`` shares ``_build_write_with_body_prepared`` with
-``upsert_item``: both carry the body, never mint an id, and translate
-``etag`` / ``match_condition`` into ``If-Match`` / ``If-None-Match``.
-Two things differ:
+``replace_item`` shares one builder with ``upsert_item``: both carry the
+body, never mint an id, and turn ``etag`` / ``match_condition`` into
+``If-Match`` / ``If-None-Match``. Two things differ:
 
-* the ``op`` discriminator (the backend maps it to the binding's
-  ``replace_item`` -- driver ``OperationType::Replace``, an
-  overwrite-only PUT -- vs ``upsert_item``), and
-* the ``item_id`` slot. Replace names an existing document, so the
-  caller passes the id resolved from ``item`` and the binding puts *that*
-  on the wire URL (matching the legacy ``ReplaceItem``); upsert has no
-  ``item`` argument and leaves ``item_id`` unset (the binding reads the id
-  from the body).
+* the ``op`` tag (the backend sends a replace to the binding's
+  ``replace_item``, an overwrite-only PUT, rather than to
+  ``upsert_item``), and
+* the ``item_id`` slot. A replace names an existing document, so the
+  caller passes the id resolved from ``item`` and the binding puts that
+  on the request URL (matching the legacy ``ReplaceItem``); an upsert has
+  no ``item`` argument and leaves ``item_id`` unset (the binding reads the
+  id from the body).
 
-The dominant precondition also differs: a replace's version guard is
-``IfNotModified`` + etag -> ``If-Match`` (412 on a stale etag), where
-upsert's keep-paying case is ``IfMissing`` -> ``If-None-Match: *``.
+The headline precondition differs too: a replace's version guard is
+``IfNotModified`` + etag -> ``If-Match`` (412 on a stale etag), whereas
+the upsert case that earns its keep is ``IfMissing`` -> ``If-None-Match: *``.
 
 Sibling of ``tests/upsert_item/sync/test_request_prep_upsert_item_unit.py``.
 """
@@ -51,14 +49,14 @@ from azure.cosmos._helpers._request_prep import (
 
 
 # ---------------------------------------------------------------------------
-# Write-with-body baseline shape (parity with create / upsert, not delete/read)
+# Body-carrying baseline shape (like create / upsert, not delete / read)
 # ---------------------------------------------------------------------------
 
 
 def test_baseline_is_write_with_body_with_item_id():
-    """A replace carries the new body (serialised to JSON bytes) *and* the
-    id of the document to overwrite on ``item_id`` -- the hybrid shape. The
-    op discriminator is ``OP_REPLACE_ITEM``."""
+    """A replace carries the new body (serialised to JSON bytes) and the id
+    of the document to overwrite on ``item_id`` -- both at once. The op tag
+    is ``OP_REPLACE_ITEM``."""
     prepared = build_replace_item_prepared(
         container_link="dbs/d/colls/orders",
         body={"id": "order-42", "pk": "customerA", "total": 129.0},
@@ -75,16 +73,16 @@ def test_baseline_is_write_with_body_with_item_id():
     # Unlike upsert (id from the body, item_id None), replace carries the
     # id of the document to overwrite so the binding uses it for the URL.
     assert prepared.item_id == "order-42"
-    # Drop-and-recreate guard: rid stamped under the canonical key.
+    # Dropped-and-recreated container guard: the rid is stamped under the standard key.
     assert prepared.headers[Constants.ContainerRID] == "RID=="
 
 
 def test_url_id_comes_from_item_id_not_body():
-    """The URL id is whatever ``item_id`` the caller resolved from ``item``
-    -- it is **not** re-derived from the body. This pins the parity fix:
-    the legacy ``ReplaceItem`` takes the URL id from the resolved document
-    link, so a body whose own id disagreed with ``item`` must not change
-    which document the URL targets (the server then rejects the id change).
+    """The URL id is whatever ``item_id`` the caller resolved from ``item`` --
+    it is not re-derived from the body. The legacy ``ReplaceItem`` takes the
+    URL id from the resolved document link, so a body whose own id disagrees
+    with ``item`` must not change which document the URL targets (the server
+    then rejects the id change).
     """
     prepared = build_replace_item_prepared(
         container_link="dbs/d/colls/c",
@@ -94,9 +92,9 @@ def test_url_id_comes_from_item_id_not_body():
         container_rid=None,
         kwargs={},
     )
-    # The wire URL targets "A" (the named item), while the body still
-    # carries "B" -- exactly what the legacy path puts on the wire, so the
-    # server applies the same id-immutability check.
+    # The request URL targets "A" (the named item) while the body still
+    # carries "B" -- exactly what the legacy path sends, so the server
+    # applies the same id-can't-change check.
     assert prepared.item_id == "A"
     assert json.loads(prepared.body_bytes)["id"] == "B"
 
@@ -139,7 +137,7 @@ def test_missing_body_id_is_not_minted_and_body_is_not_mutated():
 
 
 # ---------------------------------------------------------------------------
-# Access-condition translation -- the version-guarded replace is dominant
+# Access conditions -- the version-guarded replace is the main case
 # ---------------------------------------------------------------------------
 
 
@@ -168,7 +166,7 @@ def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
 def test_if_missing_translates_to_if_none_match_wildcard():
     """``match_condition=IfMissing`` (no etag) -> ``If-None-Match: *``. The
     same translation upsert uses; on a replace it is rare but must still
-    emit the wire header (the shared access-condition block)."""
+    emit the header (it goes through the shared access-condition step)."""
     options = build_upsert_item_request_options({"match_condition": MatchConditions.IfMissing})
     prepared = build_replace_item_prepared(
         container_link="dbs/d/colls/c",
@@ -210,13 +208,13 @@ def test_etag_without_match_condition_raises_value_error_up_front():
 
 
 # ---------------------------------------------------------------------------
-# Header-map shaping (parity with create / delete / read / upsert prep)
+# Header-map shaping (same as create / delete / read / upsert prep)
 # ---------------------------------------------------------------------------
 
 
 def test_initial_headers_are_flattened_into_outer_headers():
-    """``initial_headers={'x-trace-id': 'abc'}`` surfaces as a bare
-    ``x-trace-id`` entry so the binding forwards it verbatim."""
+    """``initial_headers={'x-trace-id': 'abc'}`` shows up as a plain
+    ``x-trace-id`` entry so the binding forwards it as-is."""
     prepared = build_replace_item_prepared(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
@@ -231,9 +229,9 @@ def test_initial_headers_are_flattened_into_outer_headers():
 
 
 def test_trigger_priority_bucket_no_response_land_as_option_keys():
-    """The write-with-body option set reaches the headers map under the
-    internal option-key names. ``no_response`` is kept on replace (a
-    replace returns a body, unlike delete / read)."""
+    """The body-carrying option set reaches the headers map under the
+    internal option-key names. ``no_response`` is kept on replace (a replace
+    returns a body, unlike delete / read)."""
     prepared = build_replace_item_prepared(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
@@ -256,9 +254,9 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
 
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
-    """``timeout=30`` -> ``__overall_timeout_seconds: 30`` so the binding
-    can lift it into the driver's typed timeout policy. Same mechanism as
-    every other migrated op."""
+    """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
+    the binding can lift it into the driver's own timeout setting -- the
+    same mechanism as every other migrated operation."""
     prepared = build_replace_item_prepared(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
@@ -271,8 +269,9 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
 
 
 def test_compose_consumes_recognised_kwargs():
-    """The recognised option-shortcut kwargs are popped out of the input
-    dict so the caller doesn't double-forward them to the legacy path."""
+    """The option-shortcut keyword arguments the prep recognises are removed
+    from the input dict, so the caller doesn't forward them again to the
+    legacy path."""
     kwargs = {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
     build_replace_item_prepared(
         container_link="dbs/d/colls/c",
@@ -293,11 +292,11 @@ def test_compose_consumes_recognised_kwargs():
 
 def test_replace_and_upsert_prep_differ_only_by_op_and_item_id():
     """``build_replace_item_prepared`` and ``build_upsert_item_prepared``
-    delegate to one ``_build_write_with_body_prepared``, so for the same
-    inputs every wire field must be identical except the ``op``
-    discriminator and the ``item_id`` slot (replace names a target; upsert
-    derives the id from the body). This pins the de-duplication: a future
-    change to one prep cannot silently diverge the wire bytes of the other.
+    both delegate to one shared builder, so for the same inputs every field
+    on the wire must be identical except the ``op`` tag and the ``item_id``
+    slot (replace names a target; upsert takes the id from the body). This
+    keeps the two from drifting: a future change to one builder can't quietly
+    change the bytes the other sends.
     """
     shared = dict(
         container_link="dbs/d/colls/orders",
@@ -317,7 +316,7 @@ def test_replace_and_upsert_prep_differ_only_by_op_and_item_id():
     # read out of the body.
     assert replace_prepared.item_id == "order-42"
     assert upsert_prepared.item_id is None
-    # Every wire field is byte-identical.
+    # Every field on the wire is byte-identical.
     assert replace_prepared.container_link == upsert_prepared.container_link
     assert replace_prepared.body_bytes == upsert_prepared.body_bytes
     assert replace_prepared.partition_key_header == upsert_prepared.partition_key_header

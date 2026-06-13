@@ -3,32 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Per-client helper that runs every ``Container.create_item`` /
-``Container.read_item`` / ``Container.delete_item`` /
-``Container.upsert_item`` call.
+"""Runs each single-item container operation: create, read, delete,
+upsert, replace, patch.
 
-``ItemHelper`` is where backend dispatch and the request-prep logic
-(previously inlined in the container methods) live. The container
-methods just stamp their explicit kwargs into ``kwargs`` and hand off
-to one ``ItemHelper.create_item`` / ``ItemHelper.read_item`` /
-``ItemHelper.delete_item`` / ``ItemHelper.upsert_item`` call.
-
-Flow (same shape for all three ops):
-
-1. Build the legacy-shape ``request_options`` via the matching
-   ``build_*_request_options`` helper.
-2. Look up (or refresh) the container's ``_rid`` from the
-   container-properties cache.
-3. If a backend (today: ``RustBackend``) is wired, build a
-   ``PreparedRequest``, call ``backend.execute``, parse the returned
-   ``BackendResponse`` into a ``CosmosDict`` (raising the typed
-   exception for non-2xx).
-4. When no backend is wired, fall through to the legacy
-   ``client_connection.CreateItem`` / ``.ReadItem`` / ``.DeleteItem``
-   path.
+A container method gathers its arguments and calls the matching method
+here. Each method builds the request options, looks up the container's
+resource id, then either sends the request through the configured backend
+and reads the reply, or calls the existing client when no backend is set.
 """
 from __future__ import annotations
 
+import logging
 from typing import Any, Callable, Dict, Optional
 
 from .._backend.base import CosmosBackend
@@ -37,25 +22,28 @@ from ..partition_key import _Empty
 from ._item_dispatch import (
     build_create_item_request_options,
     build_delete_item_request_options,
+    build_patch_item_request_options,
     build_read_item_request_options,
     build_upsert_item_request_options,
 )
 from ._request_prep import (
     build_create_item_prepared,
     build_delete_item_prepared,
+    build_patch_item_prepared,
     build_read_item_prepared,
     build_replace_item_prepared,
     build_upsert_item_prepared,
 )
 from ._response_parse import parse_backend_response
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class ItemHelper:
-    """Per-call request-prep + dispatch for ``create_item``,
-    ``read_item``, and ``delete_item``.
+    """Per-call logic for the single-item operations.
 
-    Cheap to construct (only holds references). One instance per
-    container-method invocation today.
+    Cheap to construct -- it only holds references. One instance is made
+    per container call.
     """
 
     def __init__(
@@ -64,18 +52,16 @@ class ItemHelper:
         client_connection: Any,
         ensure_container_cached: Optional[Callable[[Dict[str, Any]], Any]] = None,
     ) -> None:
-        """Bind the helper to the chosen backend and the client connection.
+        """Store the backend and connection this helper will use.
 
-        :param backend: The backend wired for this client, or ``None``
-            for the legacy / bare-mock case.
+        :param backend: The backend for this client, or ``None`` to use
+            the existing client path.
         :type backend: Optional[CosmosBackend]
-        :param client_connection: The ``CosmosClientConnection`` (or
-            async sibling) used for the cache, PK extraction, and
-            legacy fall-through.
+        :param client_connection: The connection used for the cache,
+            partition-key extraction, and the fallback path.
         :type client_connection: Any
-        :param ensure_container_cached: Optional callable supplied by
-            the container proxy to perform the cache-populate step
-            under the container's lock with proper option forwarding.
+        :param ensure_container_cached: Optional callable from the
+            container that fills the cache under the container's lock.
         :type ensure_container_cached: Optional[Callable]
         """
         self._backend = backend
@@ -87,14 +73,12 @@ class ItemHelper:
         container_link: str,
         request_options: Dict[str, Any],
     ) -> Optional[str]:
-        """Look up the container ``_rid`` and stamp it into request_options.
+        """Look up the container's resource id and add it to the options.
 
-        Shared by all five ops. Best-effort: bare-mock connections in unit
-        tests may not produce a real rid, so on any failure we return
-        ``None`` and let the backend run without the
-        intended-collection-rid header. On success the rid is written to
-        ``request_options`` (under ``Constants.ContainerRID``) and returned
-        for the prepared-request build.
+        Shared by every operation. Best-effort: if the id cannot be found
+        the request still goes out, just without the header that guards
+        against a recreated container. On success the id is stored in the
+        options and returned.
         """
         try:
             if self._ensure_container_cached is not None:
@@ -108,8 +92,19 @@ class ItemHelper:
             if isinstance(rid_value, str):
                 request_options[Constants.ContainerRID] = rid_value
                 return rid_value
-        except Exception:  # pylint: disable=broad-except
-            pass
+        except (AttributeError, KeyError, TypeError) as exc:
+            # Only the stub connections used in unit tests produce these;
+            # a real connection never does. A real failure from the lookup
+            # is left to propagate so the caller sees it. Log this case so
+            # a genuine one is visible instead of quietly skipping the
+            # recreated-container guard header.
+            _LOGGER.warning(
+                "Could not resolve container rid for %r (%s: %s); proceeding "
+                "without the intended-collection-rid header.",
+                container_link,
+                type(exc).__name__,
+                exc,
+            )
         return None
 
     def create_item(
@@ -122,11 +117,10 @@ class ItemHelper:
         enable_automatic_id_generation: bool = False,
         **kwargs: Any,
     ) -> Any:
-        """Run a single ``create_item`` call end to end."""
+        """Run one create call."""
 
-        # Snapshot kwargs before the legacy options build pops them.
-        # The rust prep still needs the originals to populate the
-        # PreparedRequest.headers map.
+        # Copy the arguments first. Building the options below removes the
+        # recognized keywords, but the request still needs the full set.
         kwargs_for_rust_prep = dict(kwargs)
 
         request_options = build_create_item_request_options(
@@ -159,7 +153,7 @@ class ItemHelper:
                     response_hook=kwargs.get("response_hook"),
                 )
 
-        # Fall-through: legacy path.
+        # No backend configured: use the existing client.
         return self.client_connection.CreateItem(
             database_or_container_link=container_link,
             document=body,
@@ -173,14 +167,12 @@ class ItemHelper:
         body: Dict[str, Any],
         request_options: Dict[str, Any],
     ) -> Any:
-        """Pull the partition-key value to put on the wire.
+        """Find the partition-key value to send.
 
-        Precedence (matches the legacy private path):
-
-        1. ``request_options["partitionKey"]`` if the caller set it.
-        2. Extracted from ``body`` using the container's PK definition.
-        3. ``_Empty()`` fallback for bare-mock connections that have
-           no PK-extraction method.
+        Order of preference: the value the caller already set, then the
+        value taken from the body, then an empty placeholder when the
+        connection cannot extract one (the stub connections used in unit
+        tests).
         """
         if "partitionKey" in request_options:
             return request_options["partitionKey"]
@@ -191,7 +183,11 @@ class ItemHelper:
             if isinstance(new_options, dict):
                 request_options.update(new_options)
                 return new_options.get("partitionKey", _Empty())
-        except Exception:  # pylint: disable=broad-except
+        except (AttributeError, TypeError):
+            # Only the stub connections used in unit tests reach here (no
+            # extraction method, or a stub that is not callable). A real
+            # extraction error is left to propagate so a wrong partition
+            # key fails loudly instead of writing to the wrong place.
             pass
         return _Empty()
 
@@ -203,25 +199,21 @@ class ItemHelper:
         item_id: str,
         **kwargs: Any,
     ) -> Any:
-        """Run a single ``delete_item`` call end to end.
+        """Run one delete call.
 
-        :param container_link: Container self-link.
-        :param document_link: The ``dbs/.../docs/<id-or-rid>`` link the
-            legacy ``DeleteItem`` consumes. Built by the caller.
-        :param item_id: The document id the binding writes onto
-            ``PreparedRequest.item_id``.
-        :param kwargs: Caller's remaining kwargs. The caller has
-            already stamped ``partitionKey`` into ``request_options``.
+        :param container_link: The container link.
+        :param document_link: The document link the fallback path uses,
+            built by the caller.
+        :param item_id: The document id sent on the request.
+        :param kwargs: The caller's remaining arguments. The partition key
+            is already in the options.
         """
-        # Snapshot kwargs before the legacy options build pops them.
-        # The rust prep still needs the originals to populate the
-        # PreparedRequest.headers map.
+        # Copy the arguments first (see create for why).
         kwargs_for_rust_prep = dict(kwargs)
 
         request_options = build_delete_item_request_options(kwargs)
 
-        # The caller stamped the PK into request_options before
-        # getting here, so the rust prep can use it directly.
+        # The caller already put the partition key in the options.
         partition_key_value = request_options.get("partitionKey", _Empty())
 
         container_rid = self._resolve_container_rid(container_link, request_options)
@@ -236,10 +228,8 @@ class ItemHelper:
             )
             backend_response = self._backend.execute(prepared)
             if backend_response is not None:
-                # Delete returns 204 with an empty body. Invoke the
-                # response_hook so callers can observe response
-                # headers; return None because the public delete_item
-                # is typed -> None.
+                # Delete has no body. Run the response hook so the caller
+                # can read the response headers, then return nothing.
                 parse_backend_response(
                     backend_response,
                     client_connection=self.client_connection,
@@ -247,7 +237,7 @@ class ItemHelper:
                 )
                 return None
 
-        # Fall-through: legacy path.
+        # No backend configured: use the existing client.
         return self.client_connection.DeleteItem(
             document_link=document_link,
             options=request_options,
@@ -262,35 +252,26 @@ class ItemHelper:
         item_id: str,
         **kwargs: Any,
     ) -> Any:
-        """Run a single ``read_item`` call end to end.
+        """Run one read call.
 
-        Same shape as ``delete_item`` (kwarg snapshot, legacy options
-        build, container-rid cache lookup, backend dispatch with legacy
-        fall-through). Returns the ``CosmosDict`` the response parser
-        produces: a body for 200, an empty dict for 304 (a conditional
-        ``If-None-Match`` read whose etag matched).
+        Same shape as delete. Returns the item for a 200, or an empty
+        result for a 304 (a conditional read whose version matched).
 
-        :param container_link: Container self-link.
-        :param document_link: The ``dbs/.../docs/<id-or-rid>`` link the
-            legacy ``ReadItem`` consumes. Built by the caller.
-        :param item_id: The document id the binding writes onto
-            ``PreparedRequest.item_id``.
-        :param kwargs: Caller's remaining kwargs. The caller has
-            already stamped ``partitionKey`` into ``request_options``.
+        :param container_link: The container link.
+        :param document_link: The document link the fallback path uses,
+            built by the caller.
+        :param item_id: The document id sent on the request.
+        :param kwargs: The caller's remaining arguments. The partition key
+            is already in the options.
         """
-        # Snapshot kwargs before the legacy options build pops them.
-        # The rust prep still needs the originals to populate the
-        # PreparedRequest.headers map.
+        # Copy the arguments first (see create for why).
         kwargs_for_rust_prep = dict(kwargs)
 
-        # build_read_item_request_options runs the legacy match-headers
-        # check; that is where ValueError("'etag' specified without
-        # 'match_condition'.") (and the inverse) fires, on the
-        # caller's frame, before any network call.
+        # Building the options also checks the etag / match-condition pair
+        # and raises on the caller before any network call.
         request_options = build_read_item_request_options(kwargs)
 
-        # The caller stamped the PK into request_options before
-        # getting here.
+        # The caller already put the partition key in the options.
         partition_key_value = request_options.get("partitionKey", _Empty())
 
         container_rid = self._resolve_container_rid(container_link, request_options)
@@ -305,16 +286,16 @@ class ItemHelper:
             )
             backend_response = self._backend.execute(prepared)
             if backend_response is not None:
-                # 200 returns the parsed body; 304 returns an empty
-                # CosmosDict with response headers carrying the current
-                # etag. The parser fires response_hook once on either.
+                # A 200 returns the item; a 304 returns an empty result
+                # that still carries the current version. The response
+                # hook runs once either way.
                 return parse_backend_response(
                     backend_response,
                     client_connection=self.client_connection,
                     response_hook=kwargs.get("response_hook"),
                 )
 
-        # Fall-through: legacy path.
+        # No backend configured: use the existing client.
         return self.client_connection.ReadItem(
             document_link=document_link,
             options=request_options,
@@ -329,27 +310,13 @@ class ItemHelper:
         populate_query_metrics: Optional[bool] = None,
         **kwargs: Any,
     ) -> Any:
-        """Run a single ``upsert_item`` call end to end.
+        """Run one upsert call.
 
-        Write-with-body like ``create_item`` -- the partition key is
-        extracted from the body and the body is serialised to JSON --
-        but with two upsert differences: it honours ``etag`` /
-        ``match_condition`` (passed through to the prep as an access
-        condition, the same wire headers ``delete_item`` emits) and it
-        never mints an id. The legacy build sets
-        ``disableAutomaticIdGeneration`` so the fall-through path matches.
-
-        The rust backend dispatches this op to the binding's
-        ``upsert_item`` entry point (an existing item is replaced rather
-        than rejected as a duplicate), so a wired backend returns a
-        ``BackendResponse`` that is parsed into a ``CosmosDict``. When no
-        backend is wired (the core-python client) ``execute`` returns
-        ``None`` and the call falls through to the legacy ``UpsertItem``
-        below.
+        Like create, the partition key comes from the body and the body is
+        sent as-is, but an upsert never generates an id and it honors the
+        etag / match-condition pair.
         """
-        # Snapshot kwargs before the legacy options build pops them. The
-        # rust prep still needs the originals to populate the
-        # PreparedRequest.headers map.
+        # Copy the arguments first (see create for why).
         kwargs_for_rust_prep = dict(kwargs)
 
         request_options = build_upsert_item_request_options(
@@ -379,7 +346,7 @@ class ItemHelper:
                     response_hook=kwargs.get("response_hook"),
                 )
 
-        # Fall-through: legacy path.
+        # No backend configured: use the existing client.
         return self.client_connection.UpsertItem(
             database_or_container_link=container_link,
             document=body,
@@ -397,41 +364,21 @@ class ItemHelper:
         populate_query_metrics: Optional[bool] = None,
         **kwargs: Any,
     ) -> Any:
-        """Run a single ``replace_item`` call end to end.
+        """Run one replace call.
 
-        Overwrite-only write-with-body. Like ``upsert_item`` the partition
-        key is extracted from the body, the body is serialised to JSON, no
-        id is minted, and ``etag`` / ``match_condition`` become an
-        ``If-Match`` / ``If-None-Match`` precondition (the version-guarded
-        replace is the dominant case). The options build is byte-identical
-        to upsert's, so ``build_upsert_item_request_options`` is reused
-        rather than duplicated -- it sets ``disableAutomaticIdGeneration``
-        and threads the deprecated ``populate_query_metrics`` flag, so the
-        fall-through path matches the legacy ``replace_item`` exactly.
+        Like upsert, but it overwrites an existing document. ``item_id``
+        (taken from the caller's ``item``) names the document to replace,
+        not the id inside the body.
 
-        Unlike upsert, replace names an existing document. ``item_id`` (the
-        id resolved from the ``item`` argument) is what the binding puts in
-        the wire URL -- not the body's own id -- matching the legacy
-        ``ReplaceItem``. The rust backend dispatches this op to the binding's
-        ``replace_item`` entry point (driver ``OperationType::Replace``, an
-        overwrite-only PUT). When no backend is wired (the core-python
-        client) ``execute`` returns ``None`` and the call falls through to
-        the legacy ``ReplaceItem`` below.
-
-        :param container_link: Container self-link.
-        :param document_link: The ``dbs/.../docs/<id-or-rid>`` link the
-            legacy ``ReplaceItem`` consumes. Built by the caller from the
-            ``item`` argument (an id string or a document dict).
-        :param item_id: The id of the document to overwrite, resolved from
-            ``item``. Carried on the prepared request for the binding's URL.
+        :param container_link: The container link.
+        :param document_link: The document link the fallback path uses,
+            built by the caller.
+        :param item_id: The id of the document to overwrite.
         :param body: The replacement document.
-        :param populate_query_metrics: Deprecated sync-only flag; the
-            reused options build warns and writes it. The async sibling
-            passes ``None``.
+        :param populate_query_metrics: Deprecated flag kept for the sync
+            method; the async method passes ``None``.
         """
-        # Snapshot kwargs before the legacy options build pops them. The
-        # rust prep still needs the originals to populate the
-        # PreparedRequest.headers map.
+        # Copy the arguments first (see create for why).
         kwargs_for_rust_prep = dict(kwargs)
 
         request_options = build_upsert_item_request_options(
@@ -462,10 +409,83 @@ class ItemHelper:
                     response_hook=kwargs.get("response_hook"),
                 )
 
-        # Fall-through: legacy path.
+        # No backend configured: use the existing client.
         return self.client_connection.ReplaceItem(
             document_link=document_link,
             new_document=body,
+            options=request_options,
+            **kwargs,
+        )
+
+    def patch_item(
+        self,
+        *,
+        container_link: str,
+        document_link: str,
+        item_id: str,
+        patch_operations: Any,
+        filter_predicate: Optional[str] = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Run one patch call.
+
+        The backend is used only for a plain patch. A patch with a filter
+        or an etag / match-condition guard uses the existing client
+        instead, which is the only path that applies them.
+
+        :param container_link: The container link.
+        :param document_link: The document link the fallback path uses,
+            built by the caller.
+        :param item_id: The id of the document to patch.
+        :param patch_operations: The list of patch operations.
+        :param filter_predicate: Optional filter; when set, forces the
+            existing-client path.
+        :param kwargs: The caller's remaining arguments.
+        """
+        # Copy the arguments first (see create for why).
+        kwargs_for_rust_prep = dict(kwargs)
+
+        # Building the options also checks the etag / match-condition pair
+        # (raising on the caller before any network call) and records a
+        # valid pair so the check below can see it.
+        request_options = build_patch_item_request_options(kwargs)
+        if filter_predicate is not None:
+            request_options["filterPredicate"] = filter_predicate
+
+        # The caller already put the partition key in the options.
+        partition_key_value = request_options.get("partitionKey", _Empty())
+
+        container_rid = self._resolve_container_rid(container_link, request_options)
+
+        # Use the backend only for a plain patch. A filter or an
+        # etag / match-condition guard uses the existing client below.
+        backend_supports_patch = (
+            self._backend is not None
+            and filter_predicate is None
+            and "accessCondition" not in request_options
+        )
+        if backend_supports_patch:
+            prepared = build_patch_item_prepared(
+                container_link=container_link,
+                item_id=item_id,
+                patch_operations=patch_operations,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                kwargs=kwargs_for_rust_prep,
+            )
+            backend_response = self._backend.execute(prepared)
+            if backend_response is not None:
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        # Existing client. This path also applies the filter and the
+        # etag / match-condition guard.
+        return self.client_connection.PatchItem(
+            document_link=document_link,
+            operations=patch_operations,
             options=request_options,
             **kwargs,
         )

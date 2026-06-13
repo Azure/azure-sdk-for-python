@@ -162,8 +162,8 @@ def test_L0_baseline_body_and_pk_only(container_for):
 # L1 — body / partition-key shape variants
 # ---------------------------------------------------------------------------
 
-# The binding accepts ``[{}]`` and maps it to the typed undefined
-# partition-key value end-to-end; this test pins that round-trip.
+# The binding accepts ``[{}]`` and treats it as the undefined
+# partition-key value end to end; this test pins that round-trip.
 def test_L1_pk_undefined(container_for):
     """L1: body missing the declared PK path -- wire bytes must be ``[{}]``."""
     body = {"id": uuid.uuid4().hex, "n": 1}
@@ -172,12 +172,11 @@ def test_L1_pk_undefined(container_for):
 
 
 def test_L1_pk_explicit_none(container_for):
-    """L1: explicit ``pk: None`` -- wire bytes must be ``[null]``.
+    """L1: explicit ``pk: None`` -- the bytes on the wire must be ``[null]``.
 
-    Python's PK serializer maps ``None -> [null]`` (see ``_pk_wire.py``)
-    and the rust binding accepts JSON ``null`` as a valid PK value
-    (see ``azure_cosmos_rust/src/lib.rs``), so this case is supported
-    end-to-end on both backends. (The partitionless ``[]`` case is a
+    Python serialises ``None`` as ``[null]`` and the rust binding accepts
+    JSON ``null`` as a valid partition-key value, so this case works on
+    both backends end to end. (The partitionless ``[]`` case is a
     separate, still-rejected shape -- see the partitionless-rejection
     test at the bottom of the file.)
     """
@@ -211,40 +210,29 @@ def test_L2_indexing_directive(container_for):
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
 def test_L2_intended_collection_rid_present_on_wire(container_for):
-    """L2: assert ``x-ms-cosmos-intended-collection-rid`` is sent on the REQUEST.
+    """L2: check that ``x-ms-cosmos-intended-collection-rid`` is sent on the request.
 
-    The intended-collection-rid header is a *request-side* safety net
-    for container-recreate detection (see
-    ``azure/cosmos/_helpers/_container_rid.py``). The service does not
-    echo it back, so validating it on the response is the wrong
-    channel — we have to look at the outgoing request.
+    That header is a request-side safety net for detecting a container
+    that was dropped and recreated. The service doesn't echo it back, so
+    we can't check the response — we have to look at the outgoing request.
 
-    Both backends are observed by temporarily swapping in a recording
-    wrapper around the function that actually sees the fully-built
-    request, so the two paths use the same symmetric capture pattern:
+    Both backends are watched the same way: a recording wrapper is
+    temporarily put around the place that sees the fully-built request.
 
-      * **core-python** — wrap
-        ``CosmosClientConnection._CosmosClientConnection__Post`` (the
-        name-mangled ``__Post`` method) so it records ``req_headers``
-        before delegating to the original implementation. The intended-rid
-        header is already populated by the time ``__Post`` runs.
-        (Note: the previous revision of this test tried to use the
-        azure-core ``per_call_policies`` kwarg on the ``CosmosClient``
-        constructor for this, but ``CosmosClient`` doesn't intercept
-        that kwarg — it leaks through to the bottom-of-stack
-        ``Session.request`` and raises ``TypeError``. Wrapping the
-        helper-level method directly is the correct symmetric approach.)
-      * **rust** — wrap ``RustBackend.execute`` the same way to capture
-        the ``PreparedRequest`` the helper hands the binding. The
-        intended rid is carried under the ``containerRID`` option-key;
-        the binding's lib.rs header loop translates that key to the
-        ``x-ms-cosmos-intended-collection-rid`` wire header before
-        handing the call to the driver. The Rust-side wire mapping
-        itself is exercised by the binding's own unit tests and the
-        service-side acceptance suite.
+      * core-python — wrap the ``__Post`` method so it records the
+        headers before passing the request on. The intended-rid header is
+        already filled in by the time ``__Post`` runs. (An earlier version
+        tried the azure-core ``per_call_policies`` constructor keyword,
+        but ``CosmosClient`` doesn't accept it, so wrapping the method
+        directly is the right approach.)
+      * rust — wrap ``RustBackend.execute`` the same way to capture the
+        ``PreparedRequest`` the helper hands to the binding. The rid
+        rides under the ``containerRID`` option key, and the binding
+        turns that into the ``x-ms-cosmos-intended-collection-rid``
+        header before calling the driver.
 
-    Both wrappers are installed inside a ``try``/``finally`` so the
-    originals are always restored, regardless of test outcome.
+    Both wrappers are installed inside a ``try`` / ``finally`` so the
+    originals are always restored, whatever the test outcome.
     """
 
     intended_rid_header = "x-ms-cosmos-intended-collection-rid"
@@ -457,20 +445,16 @@ def test_L3_availability_strategy(container_for):
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only routing knob).")
 def test_L3_excluded_locations(container_for):
-    """L3: L0 + ``excluded_locations=['East US']`` (Python-only routing override).
+    """L3: L0 + ``excluded_locations=['East US']`` (a Python-only routing override).
 
-    Binding now translates this kwarg into the driver's typed
-    ``OperationOptions::excluded_regions`` field (see
-    ``azure_cosmos_rust/src/lib.rs`` -- the ``excludedlocations`` arm
-    builds an ``ExcludedRegions`` from the supplied region names via
-    ``Region::from`` and attaches it through
-    ``OperationOptionsBuilder::with_excluded_regions``). The skip is
-    kept *only* because the parity assertion is hard to make
-    end-to-end against a single-region test account: ``["East US"]``
-    on a westus2-only account exercises no routing decision the
-    legacy path would diff against. Remove this skip once the parity
-    harness gains a multi-region fixture (or a fault-injection
-    transport that can observe the request-time region choice).
+    The binding passes this keyword to the driver as an excluded-regions
+    setting (the mapping lives in ``azure_cosmos_rust/src/lib.rs``). The
+    test is skipped only because the parity check is hard to make
+    end-to-end against a single-region test account: ``["East US"]`` on a
+    westus2-only account changes no routing decision the legacy path
+    would diff against. Remove this skip once the parity harness gains a
+    multi-region fixture (or a fault-injection transport that can observe
+    which region a request actually chose).
     """
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, level="L3",
@@ -481,14 +465,11 @@ def test_L3_excluded_locations(container_for):
 def test_L3_timeout(container_for):
     """L3: L0 + ``timeout=30`` (overall request timeout).
 
-    Both backends now honour this kwarg: legacy via the azure-core
-    pipeline's per-call timeout policy, Rust via the binding lifting
-    the value into the driver's typed
-    ``EndToEndOperationLatencyPolicy`` (see lib.rs --
-    ``__overall_timeout_seconds`` arm; ``_helpers/_request_prep.py``
-    stamps the sentinel header). Sub-second values are clamped by
-    the driver to its 1 s floor; the parity harness uses 30 s, well
-    above that floor.
+    Both backends honour this keyword now: core-python through
+    azure-core's per-call timeout, rust by handing the value to the
+    driver's own timeout setting (the prep stamps a sentinel header the
+    binding reads). The driver clamps sub-second values to its 1 s floor;
+    the parity harness uses 30 s, well above it.
     """
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, level="L3",
@@ -658,47 +639,44 @@ def test_L5_match_condition_deprecated_and_ignored(container_for):
 
 
 # ---------------------------------------------------------------------------
-# L1 (gap) -- partitionless container / NonePartitionKey on the wire.
+# L1 (gap) -- a partitionless container, where the partition key goes on
+# the wire as ``"[]"``.
 #
-# ``_pk_wire.serialize_partition_key_to_wire`` maps
-# ``_Empty()`` / ``NonePartitionKeyValue`` to the JSON literal ``"[]"``.
-# Both legacy v4.x and the helper layer treat this as the wire shape
-# for a partitionless container's create_item. The Rust binding's
-# ``parse_partition_key_header`` (azure_cosmos_rust/src/lib.rs)
-# explicitly rejects ``"[]"`` because the underlying driver currently
-# overloads ``PartitionKey::EMPTY`` to mean "cross-partition query":
-# emitting it would set the ``x-ms-documentdb-query-enablecrosspartition``
-# header instead of ``x-ms-documentdb-partitionkey: []`` and silently
-# route the write to the wrong code path. Until the driver splits the
-# two concepts, the binding must keep failing fast.
+# Python serialises the partitionless / "none" partition key as the JSON
+# literal ``"[]"``, and both v4.x and the helper layer use that shape for
+# a partitionless container's create_item. The rust binding rejects
+# ``"[]"`` on purpose, because the driver currently reuses the empty
+# partition key to mean "cross-partition query": sending it would set the
+# cross-partition query header instead of the partition-key header and
+# quietly send the write down the wrong path. Until the driver separates
+# the two meanings, the binding has to keep failing fast.
 #
-# This test pins both halves of that contract end-to-end on the rust
-# path so the gap is *exercised in CI* rather than only described in
-# comments. It is intentionally binding-scoped (no live partitionless
-# container required from the fixture) -- the moment the binding stops
-# raising on ``"[]"`` (because the driver gap closed), this test will
-# fail loudly and force a follow-up to either:
-#   (a) flip it into a full live parity test against a partitionless
-#       container fixture, or
-#   (b) delete it together with the binding's rejection branch.
+# This test pins both halves of that contract on the rust path so the gap
+# is exercised in CI, not just described in a comment. It is deliberately
+# scoped to the binding (no live partitionless container needed) -- the
+# moment the binding stops raising on ``"[]"`` (because the driver gap
+# closed), this test fails loudly and forces a follow-up to either:
+#   (a) turn it into a full live parity test against a partitionless
+#       container, or
+#   (b) delete it along with the binding's rejection branch.
 # ---------------------------------------------------------------------------
 
 def test_L1_partitionless_container_rejected_by_rust_binding():
-    """L1 gap: ``partition_key_header == "[]"`` is rejected by the binding.
+    """L1 gap: the binding rejects ``partition_key_header == "[]"``.
 
     Build a ``PreparedRequest`` whose ``partition_key_header`` is the
-    NonePartitionKey wire shape and hand it directly to ``RustBackend.execute``.
-    The binding must raise ``ValueError`` with a message that names the
-    partitionless-container limitation in plain English, so an engineer
-    chasing a flaky partitionless write knows exactly what they hit and
-    which backend to use as a workaround.
+    partitionless wire shape and hand it straight to
+    ``RustBackend.execute``. The binding must raise ``ValueError`` with a
+    message that names the partitionless-container limitation in plain
+    English, so an engineer chasing a failing partitionless write knows
+    what they hit and which backend to use instead.
     """
 
-    # The endpoint / key are only needed to build the driver handle on
-    # the first call. The request itself fails *before* any network IO
-    # because parse_partition_key_header rejects the wire shape during
-    # PreparedRequest validation. We still need a backend instance to
-    # exercise the rejection through the public dispatch surface.
+    # The endpoint / key are only needed to build the driver handle on the
+    # first call. The request itself fails before any network IO because
+    # the binding rejects the partition-key shape while validating the
+    # PreparedRequest. We still need a backend instance to drive the
+    # rejection through the public dispatch path.
     endpoint = os.environ.get("ACCOUNT_URI")
     master_key = os.environ.get("ACCOUNT_KEY")
     if not endpoint or not master_key:
@@ -714,16 +692,15 @@ def test_L1_partitionless_container_rejected_by_rust_binding():
         op=OP_CREATE_ITEM,
         container_link="dbs/parity_db/colls/does_not_matter",
         body_bytes=json.dumps(body).encode("utf-8"),
-        partition_key_header="[]",  # the NonePartitionKey wire shape
+        partition_key_header="[]",  # the partitionless wire shape
         headers={},
     )
 
-    # The binding wraps every internal error as ``RuntimeError`` /
-    # ``ValueError`` from PyO3. The rejection comes from
-    # ``parse_partition_key_header`` (PyValueError on the Rust side ->
-    # ``ValueError`` on the Python side). ``pytest.raises`` matches the
-    # exception class plus a regex against the message so a future
-    # rewording of the error has to be a deliberate test update.
+    # The binding surfaces internal errors as ``RuntimeError`` /
+    # ``ValueError``. This rejection comes back as a ``ValueError`` on the
+    # Python side. ``pytest.raises`` matches the exception class plus a
+    # regex on the message, so rewording the error has to be a deliberate
+    # test update.
     with pytest.raises((ValueError, RuntimeError)) as excinfo:
         backend.execute(prepared)
 

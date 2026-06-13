@@ -10,11 +10,11 @@ The graduated structure (L0..L5) and the verdict grammar match that
 file so a contributor reading one in-process parity test recognises
 the shape of every other one.
 
-This file is a CI gate, not an audit-doc source. Each test runs both
-backends inside one pytest process via ``BackendComparison`` and
-asserts on the diff. A failure prints the full ``PARITY CALL:`` block
-to the CI log so the contributor sees the evidence directly. The
-per-operation audit doc (the rolling, human-readable artefact) is
+This file is a CI gate, not the source for the audit doc. Each test
+runs both backends inside one pytest process via ``BackendComparison``
+and asserts on the diff. A failure prints the full ``PARITY CALL:``
+block to the CI log so the contributor sees the evidence directly. The
+per-operation audit doc (the rolling, human-readable summary) is
 produced separately by the legacy-folder workflow's reporter script.
 
 What this file pins for ``read_item``:
@@ -254,10 +254,9 @@ def test_L2_post_trigger_include(container_for):
 def test_L2_session_token(container_for):
     """L2: L0 + ``session_token=<token>``.
 
-    Reads admit the legacy ``_is_session_token_request`` gate; the
-    known rust-side session-token pushback is on *writes*, not reads.
-    Both backends forward the token verbatim; the wire-level outcome
-    must match.
+    Reads pass the session-token check; the known rust-side limitation
+    with session tokens is on writes, not reads. Both backends forward
+    the token as-is, and the outcome on the wire must match.
     """
     _run_read(container_for, level="L2",
               summary="L0 + session_token",
@@ -304,10 +303,9 @@ def test_L3_max_cache_staleness_positive(container_for):
 def test_L3_max_cache_staleness_zero_is_silent_no_op(container_for):
     """L3: ``max_integrated_cache_staleness_in_ms=0`` is a silent no-op.
 
-    The header MUST NOT be emitted on either backend (legacy
-    ``_base.GetHeaders`` gates on truthiness; the Rust prep does the
-    same). The call must succeed normally as if the kwarg had not been
-    passed.
+    The header must not be emitted on either backend (a falsy value is
+    dropped on both paths). The call must succeed as if the keyword had
+    not been passed.
     """
     _run_read(container_for, level="L3",
               summary="L0 + max_integrated_cache_staleness_in_ms=0",
@@ -369,18 +367,14 @@ def test_L3_availability_strategy(container_for):
 def test_L3_excluded_locations(container_for):
     """L3: L0 + ``excluded_locations=['East US']``.
 
-    Binding translates this kwarg into the driver's typed
-    ``OperationOptions::excluded_regions`` field (see
-    ``azure_cosmos_rust/src/lib.rs`` -- the ``excludedlocations`` arm
-    builds an ``ExcludedRegions`` from the supplied region names via
-    ``Region::from`` and attaches it through
-    ``OperationOptionsBuilder::with_excluded_regions``). The skip is
-    kept *only* because the parity assertion is hard to make
-    end-to-end against a single-region test account: ``["East US"]``
-    on a westus2-only account exercises no routing decision the
-    legacy path would diff against. Remove this skip once the parity
-    harness gains a multi-region fixture (or a fault-injection
-    transport that can observe the request-time region choice).
+    The binding passes this keyword to the driver as an excluded-regions
+    setting (the mapping lives in ``azure_cosmos_rust/src/lib.rs``). The
+    test is skipped only because the parity check is hard to make
+    end-to-end against a single-region test account: ``["East US"]`` on a
+    westus2-only account changes no routing decision the legacy path
+    would diff against. Remove this skip once the parity harness gains a
+    multi-region fixture (or a fault-injection transport that can observe
+    which region a request actually chose).
     """
     _run_read(container_for, level="L3",
               summary="L0 + excluded_locations",
@@ -521,25 +515,23 @@ def test_L4_conditional_etag_if_not_modified_match_returns_200_body(container_fo
 
 
 def test_L4_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(container_for):
-    """L4: stale ``etag`` + ``IfNotModified`` on a READ — pin the actual
-    behavior (no parity divergence) rather than the aspirational doc.
+    """L4: stale ``etag`` + ``IfNotModified`` on a read — pin what actually
+    happens, not what the design doc hoped for.
 
-    The conditional-read documentation claims ``IfNotModified`` on a
-    read should stamp ``If-Match: <etag>`` and produce
-    ``412 CosmosAccessConditionFailedError`` on mismatch. In practice,
-    hitting this against a live Cosmos account on the current rust
-    driver + legacy core-python both surface ``200 + current body``
-    instead of ``412`` — the Cosmos service does not enforce
-    ``If-Match`` on a ``GET /docs/<id>`` round trip. (The same is NOT
-    true on ``delete_item`` where ``IfNotModified`` IS enforced and
-    surfaces 412 — see ``test_delete_item_parity::test_L5_stale_etag_if_not_modified_raises_412``.)
+    The design doc says ``IfNotModified`` on a read should send
+    ``If-Match: <etag>`` and return ``412 CosmosAccessConditionFailedError``
+    on a mismatch. In practice, against a live Cosmos account, both the
+    rust driver and core-python return ``200 + the current body`` instead
+    of ``412`` — the service does not enforce ``If-Match`` on a
+    ``GET /docs/<id>``. (Delete is different: there ``IfNotModified`` IS
+    enforced and returns 412 — see
+    ``test_delete_item_parity::test_L5_stale_etag_if_not_modified_raises_412``.)
 
-    Until either (a) the doc is corrected to reflect "read-side
-    ``IfNotModified`` is a no-op on the wire", or (b) the SDK starts
-    emitting ``If-Match`` on reads in a way the service honors, this
-    test pins only what is observable: both backends must *behave the
-    same way*. A future regression where one backend started raising
-    while the other did not would surface here as a
+    Until either the doc is corrected to say "``IfNotModified`` on a read
+    does nothing on the wire", or the SDK starts sending ``If-Match`` on
+    reads in a way the service honours, this test pins only what we can
+    observe: both backends must behave the same way. If one backend later
+    started raising while the other didn't, it would show up here as a
     ``FUNCTIONAL DIVERGENCE`` verdict from ``assert_parity``.
     """
     def _do(client):
@@ -585,14 +577,14 @@ def test_L4_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(c
 # ---------------------------------------------------------------------------
 
 def test_L5_etag_without_match_condition_raises_value_error_up_front(container_for):
-    """L5: ``etag=`` without ``match_condition=`` raises ``ValueError`` BEFORE
+    """L5: ``etag=`` without ``match_condition=`` raises ``ValueError`` before
     any network call.
 
-    This is the same gate ``_base._get_match_headers`` applies on every
-    op: the SDK refuses to guess what the customer meant. Both backends
-    must raise the same ``ValueError`` with the same wording from the
-    public method's call frame (it fires inside ``build_options``,
-    before backend dispatch).
+    This is the same gate every operation applies: the SDK refuses to
+    guess what the customer meant. Both backends must raise the same
+    ``ValueError`` with the same wording, on the public method's own call
+    frame (it fires while the options are being built, before either
+    backend is chosen).
     """
     def _do(client):
         cont = client.get_database_client("parity_db").get_container_client(container_for.id)

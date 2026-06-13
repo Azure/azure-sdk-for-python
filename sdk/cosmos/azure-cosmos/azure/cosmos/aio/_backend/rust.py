@@ -3,16 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async Rust backend.
+"""Async backend that sends operations to the compiled Rust module.
 
-This is the only async-side module allowed to import the compiled PyO3
-module ``azure.cosmos._rust``; an import-guard unit test enforces that
-rule across the package.
-
-The PyO3 module may not be present in every checkout. The import is
-guarded with ``try / except ImportError`` so this file still loads;
-operations then raise ``NotImplementedError`` pointing at the build
-step.
+This is one of only two modules allowed to import ``azure.cosmos._rust``
+(a unit test enforces that). The compiled module is not present until it
+has been built, so the import is guarded; until then, operations raise
+``NotImplementedError`` pointing at the build step.
 """
 from __future__ import annotations
 
@@ -23,6 +19,7 @@ from typing import Any, Optional
 from azure.cosmos._backend.base import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
+    OP_PATCH_ITEM,
     OP_READ_ITEM,
     OP_REPLACE_ITEM,
     OP_UPSERT_ITEM,
@@ -34,7 +31,7 @@ from .base import AsyncCosmosBackend, BackendResponse, PreparedRequest
 
 _LOGGER = logging.getLogger(__name__)
 
-# Set once at import time under the GIL; read-only afterwards.
+# Imported once when this module loads; not changed afterwards.
 _rust_module: Optional[Any] = None
 try:
     from azure.cosmos import _rust  # type: ignore[attr-defined]
@@ -42,21 +39,17 @@ try:
 except ImportError:
     _LOGGER.debug(
         "_rust module not available; AsyncRustBackend operations "
-        "will raise NotImplementedError until the PyO3 wrapper is built."
+        "will raise NotImplementedError until the Rust module is built."
     )
 
 
 class AsyncRustBackend(AsyncCosmosBackend):
-    """Routes async Cosmos operations through the in-tree Rust driver.
+    """Sends async operations to the Rust driver.
 
-    The binding is synchronous from Python's perspective (it blocks
-    until the driver finishes, even though internally it runs on a
-    Tokio runtime). To keep that blocking off the asyncio event loop,
-    every operation runs via ``loop.run_in_executor`` on the default
-    thread-pool.
-
-    ``execute`` dispatches on ``prepared.op``. When the compiled module
-    is absent, operations raise ``NotImplementedError``.
+    The Rust call blocks until it finishes, so each operation runs on a
+    worker thread to keep the event loop free. Each operation is routed by
+    its kind; when the compiled module is missing, every operation raises
+    ``NotImplementedError``.
     """
 
     name = BACKEND_NAME_RUST
@@ -65,21 +58,46 @@ class AsyncRustBackend(AsyncCosmosBackend):
         self._endpoint = endpoint
         self._master_key = master_key
         self._handle: Optional[str] = None
+        # An asyncio lock is tied to the event loop it is first used on,
+        # so the lock is created later, on the running loop, instead of
+        # here where there may be no loop yet.
+        self._handle_lock: Optional[asyncio.Lock] = None
+        self._handle_lock_loop: Optional[asyncio.AbstractEventLoop] = None
+
+    def _handle_lock_for_loop(self) -> asyncio.Lock:
+        """Return a lock tied to the running event loop.
+
+        An asyncio lock is tied to the first loop that uses it, so a
+        single lock made in the constructor would break if this backend
+        were ever used from a second loop. Making it on the running loop,
+        and keyed by that loop, avoids that.
+        """
+        loop = asyncio.get_running_loop()
+        if self._handle_lock is None or self._handle_lock_loop is not loop:
+            self._handle_lock = asyncio.Lock()
+            self._handle_lock_loop = loop
+        return self._handle_lock
 
     async def _ensure_handle(self) -> str:
-        if self._handle is not None:
-            return self._handle
+        # If the handle is already built, return it without locking.
+        handle = self._handle
+        if handle is not None:
+            return handle
         if _rust_module is None:
             raise NotImplementedError(
                 "AsyncRustBackend: the compiled azure.cosmos._rust "
                 "module is not present in this environment. Build it "
                 "with `maturin develop` from the repo root."
             )
-        loop = asyncio.get_running_loop()
-        self._handle = await loop.run_in_executor(
-            None, _rust_module.init_client, self._endpoint, self._master_key
-        )
-        return self._handle
+        # Build it once. The lock, with a second check inside, keeps
+        # concurrent first callers from each building one.
+        async with self._handle_lock_for_loop():
+            if self._handle is None:
+                loop = asyncio.get_running_loop()
+                self._handle = await loop.run_in_executor(
+                    None, _rust_module.init_client, self._endpoint, self._master_key
+                )
+            return self._handle
 
     async def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
         if prepared is None:
@@ -114,6 +132,10 @@ class AsyncRustBackend(AsyncCosmosBackend):
             status_code, sub_status, headers, body = await loop.run_in_executor(
                 None, _rust_module.read_item, handle, prepared
             )
+        elif prepared.op == OP_PATCH_ITEM:
+            status_code, sub_status, headers, body = await loop.run_in_executor(
+                None, _rust_module.patch_item, handle, prepared
+            )
         else:
             raise NotImplementedError(
                 "AsyncRustBackend.execute does not yet support op={!r}.".format(prepared.op)
@@ -126,4 +148,3 @@ class AsyncRustBackend(AsyncCosmosBackend):
             body=bytes(body) if body else b"",
             diagnostics=None,
         )
-

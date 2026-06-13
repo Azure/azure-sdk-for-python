@@ -277,6 +277,21 @@ def _aio_replace_item_target() -> Tuple[Any, str, str]:
 _register_op("replace_item", sync=_sync_replace_item_target, aio=_aio_replace_item_target)
 
 
+# patch_item -----------------------------------------------------------------
+
+def _sync_patch_item_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "patch_item"
+
+
+def _aio_patch_item_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "patch_item"
+
+
+_register_op("patch_item", sync=_sync_patch_item_target, aio=_aio_patch_item_target)
+
+
 # ---------------------------------------------------------------------------
 # Capture state (per pytest session)
 # ---------------------------------------------------------------------------

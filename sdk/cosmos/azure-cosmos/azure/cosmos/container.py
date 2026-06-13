@@ -43,6 +43,7 @@ from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._helpers._item_dispatch import (
     merge_create_item_explicit_kwargs,
     merge_delete_item_explicit_kwargs,
+    merge_patch_item_explicit_kwargs,
     merge_read_item_explicit_kwargs,
     merge_upsert_item_explicit_kwargs,
     pick_backend,
@@ -311,12 +312,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        # Compute the partition-key wire shape and the document link
-        # here; the helper does not see the container proxy's private
-        # methods.
-        kwargs["request_options"] = {
-            "partitionKey": self._set_partition_key(partition_key),
-        }
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         item_id = item if isinstance(item, str) else item["id"]
 
         return ItemHelper(
@@ -1548,42 +1547,41 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if priority is not None:
-            kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if filter_predicate is not None:
-            request_options["filterPredicate"] = filter_predicate
+        # Stamp the explicit kwargs into kwargs, then hand off to the helper.
+        merge_patch_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            etag=etag,
+            match_condition=match_condition,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        item_link = self._get_document_link(item)
-        result = self.client_connection.PatchItem(
-            document_link=item_link,
-            operations=patch_operations,
-            options=request_options, **kwargs)
-        return result
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        document_link = self._get_document_link(item)
+        item_id = item if isinstance(item, str) else item["id"]
+
+        return ItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).patch_item(
+            container_link=self.container_link,
+            document_link=document_link,
+            item_id=item_id,
+            patch_operations=patch_operations,
+            filter_predicate=filter_predicate,
+            **kwargs,
+        )
 
     @distributed_trace
     def execute_item_batch(
@@ -1760,12 +1758,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        # Compute the partition-key wire shape and the document link
-        # here; the helper does not see the container proxy's private
-        # methods.
-        kwargs["request_options"] = {
-            "partitionKey": self._set_partition_key(partition_key),
-        }
+        # Put the partition key in the options, keeping any options the
+        # caller already passed.
+        request_options = kwargs.setdefault("request_options", {})
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
         document_link = self._get_document_link(item)
         item_id = item if isinstance(item, str) else item["id"]
 

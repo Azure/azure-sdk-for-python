@@ -3,26 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for the asynchronous ``AsyncItemHelper.create_item`` — no network, no Cosmos emulator.
+"""Fast, in-process tests for the async create helper (no network, no emulator).
 
-What this file covers
----------------------
-``AsyncItemHelper`` mirrors the contract of the synchronous
-``ItemHelper`` (see
-``tests/create_item/sync/test_item_helper_unit.py`` for the full
-description of what the helper class does on every call).
-
-This file covers only the two awaitable touchpoints the async
-sibling adds:
-
-1. ``CreateItem`` itself is awaited on the fall-through path.
-2. ``_refresh_container_properties_cache`` is awaited on a
-   cache-miss.
-
-Everything else (option translation, container-rid stamping,
-prepared-request handoff to the backend, user-agent stamping) is
-identical between the two helpers and is exercised in the sync
-tests, so we don't duplicate it here.
+The async helper does the same work as the sync one, which is covered in
+``tests/create_item/sync/test_item_helper_unit.py``. These two tests check
+only the parts that are awaited on the async side: the call to the
+existing client, and the cache refresh when the container is not cached
+yet.
 """
 import asyncio
 import unittest
@@ -33,14 +20,11 @@ from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 
 
 def _async_fall_through_backend(name):
-    """Build an async backend mock whose ``execute`` returns ``None``.
+    """Build a fake async backend that does nothing and returns ``None``.
 
-    ``None`` is the "fall through to legacy ``CreateItem``" contract
-    the helper honors when a backend's ``execute`` produces nothing.
-    Today no production backend uses this, but the contract is
-    useful in tests that want to assert what the helper forwards to
-    ``CreateItem`` without the helper's parse-side branch running on
-    a junk ``BackendResponse``.
+    Returning ``None`` tells the helper to use the existing client
+    instead. These tests use it to check what the helper passes to that
+    client.
     """
     backend = MagicMock()
     backend.name = name
@@ -49,16 +33,16 @@ def _async_fall_through_backend(name):
 
 
 class TestAsyncItemHelper(unittest.TestCase):
-    """``AsyncItemHelper`` mirrors the sync helper's contract with ``await`` in the right places.
+    """Checks the two steps the async create helper awaits.
 
-    The two tests below cover the two awaitable touchpoints the
-    async path adds compared to the sync helper: awaiting
-    ``CreateItem`` itself on the fall-through path, and awaiting
-    ``_refresh_container_properties_cache`` on a cache miss.
+    When no backend handles the call, the helper awaits the existing
+    client; and when the container is not cached yet, it awaits the cache
+    refresh first.
     """
 
     def test_async_dispatch_falls_through_to_create_item(self):
-        """Async fall-through: ``CreateItem`` is awaited (the fall-through path is reached and produces the helper's return value)."""
+        """When the backend does nothing, the helper calls the existing
+        client and returns its result."""
         cc = MagicMock()
         cc._container_properties_cache = {"dbs/db/colls/c": {"_rid": "rid"}}
         cc._AddPartitionKey = AsyncMock(
@@ -79,7 +63,8 @@ class TestAsyncItemHelper(unittest.TestCase):
         cc.CreateItem.assert_awaited_once()
 
     def test_async_cache_miss_awaits_refresh(self):
-        """Async cache miss: ``_refresh_container_properties_cache`` is awaited and the refreshed rid is stamped."""
+        """When the container is not cached yet, the helper refreshes the
+        cache and then uses the freshly fetched resource id."""
         cc = MagicMock()
         cache = {}
 

@@ -7,9 +7,9 @@
 
 Cosmos SDK methods accept a long list of customer-facing keyword
 arguments (``pre_trigger_include=``, ``priority=``, ``no_response=``,
-``session_token=``, …). The request-byte protocol does not use those names —
-it expects a separate "options" dictionary keyed by the internal
-strings the service understands (``"preTriggerInclude"``,
+``session_token=``, …). The protocol that builds the request does not use
+those names — it expects a separate "options" dictionary keyed by the
+internal strings the service understands (``"preTriggerInclude"``,
 ``"priorityLevel"``, ``"responsePayloadOnWriteDisabled"``,
 ``"sessionToken"``, …).
 
@@ -20,9 +20,9 @@ The translation table lives in this one helper, ``_helpers/_options.py``:
   kwargs out of the dict, translates them to internal keys, and
   returns a fresh options dict.
 
-These two pieces are the seam between customer-facing names and the
-byte shape. If they ever drift, the rust path can quietly emit
-different request headers than the core-python path, and customer
+These two pieces are the seam between the customer-facing names and the
+shape that goes on the wire. If they ever drift, the rust path can quietly
+emit different request headers than the core-python path, and customer
 options get silently dropped on one of the two backends. This file
 covers that exact contract:
 

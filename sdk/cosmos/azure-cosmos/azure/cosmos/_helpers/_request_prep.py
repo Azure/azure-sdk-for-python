@@ -47,14 +47,21 @@ The public builders:
   ``OP_REPLACE_ITEM`` discriminator (the backend maps it to the binding's
   ``replace_item`` entry point, driver ``OperationType::Replace``). Both
   share ``_build_write_with_body_prepared``.
+- ``build_patch_item_prepared`` — names an existing document like
+  delete / read (id on ``PreparedRequest.item_id``, partition key from
+  the caller's argument) but carries a body: the patch-operations
+  payload. It emits no ``If-Match`` header and serialises no filter
+  condition; the helper routes a conditional or guarded patch to the
+  legacy path instead.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Mapping, Optional, Tuple
 
 from .._backend.base import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
+    OP_PATCH_ITEM,
     OP_READ_ITEM,
     OP_REPLACE_ITEM,
     OP_UPSERT_ITEM,
@@ -67,6 +74,107 @@ from ._body_wire import serialize_body_to_bytes
 from ._container_rid import stamp_container_rid
 from ._options import compose_options_from_kwargs
 from ._pk_wire import serialize_partition_key_to_wire
+
+
+# Internal option-keys whose value may arrive as a *sequence* of names.
+# The legacy ``_base.GetHeaders`` path comma-joins such a sequence into the
+# single string the service expects (``"t1,t2"``); the Rust binding, by
+# contrast, stringifies a non-``str`` value with Python ``str()``, which
+# would put a list's ``repr`` (``"['t1', 't2']"``) on the wire. Normalising
+# here keeps the wire bytes byte-identical to v4 for every operation.
+_SEQUENCE_VALUED_OPTION_KEYS = frozenset({"preTriggerInclude", "postTriggerInclude"})
+
+# Internal option-keys the legacy ``_base.GetHeaders`` path emits only when the
+# value is *truthy* -- a ``0`` / ``None`` / ``""`` value omits the header
+# entirely (``indexingDirective``: GetHeaders L287; ``throughputBucket``:
+# GetHeaders L416). ``indexing_directive=IndexingDirective.Default`` is ``0``
+# and ``throughput_bucket=0`` is not a real bucket, so both must ship no header
+# to match v4. (``maxIntegratedCacheStaleness`` is also truthy-gated but keeps
+# its own wire-name branch in ``flatten_options_to_headers``.)
+_TRUTHY_GATED_OPTION_KEYS = frozenset({"indexingDirective", "throughputBucket"})
+
+
+def _normalize_option_value(option_key: str, value: Any) -> Any:
+    """Return the wire-ready value for one option-key / value pair.
+
+    Comma-joins a list/tuple trigger-include into the single string the
+    service expects (matching ``_base.GetHeaders``); a trigger-include that
+    is already a plain string, and every non-trigger option, passes through
+    unchanged.
+
+    :param option_key: The internal (camelCase) option-key being written.
+    :type option_key: str
+    :param value: The value the customer supplied for it.
+    :type value: Any
+    :returns: The value to place in the wire-headers map.
+    :rtype: Any
+    """
+    if option_key in _SEQUENCE_VALUED_OPTION_KEYS and isinstance(value, (list, tuple)):
+        return ",".join(str(component) for component in value)
+    return value
+
+
+def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
+    """Build the ``PreparedRequest.headers`` map from an internal options dict.
+
+    Single source of truth for the options -> wire-headers step shared by
+    every point operation, so the six cannot drift on the bytes they emit.
+    It mirrors the value handling of the legacy ``_base.GetHeaders`` path:
+
+    - ``initialHeaders`` is flattened so each inner header rides as its own
+      entry (the binding forwards ``x-ms-...`` / ``prefer`` / ``if-*`` verbatim).
+    - ``accessCondition`` -- the ``{"type", "condition"}`` shape built from
+      ``etag`` / ``match_condition`` -- becomes an ``If-Match`` /
+      ``If-None-Match`` header (the rust path does not run the legacy header
+      step that would otherwise emit it). A no-op when the key is absent, so
+      operations that never carry it (create / patch) are unaffected.
+    - ``maxIntegratedCacheStaleness`` becomes ``x-ms-dedicatedgateway-max-age``,
+      emitted **only when truthy** -- ``0`` is a documented no-op, matching
+      the legacy ``GetHeaders`` gate.
+    - ``preTriggerInclude`` / ``postTriggerInclude`` supplied as a list/tuple
+      of trigger ids are comma-joined (see ``_normalize_option_value``).
+    - ``indexingDirective`` / ``throughputBucket`` are emitted **only when
+      truthy** -- ``indexing_directive=Default(0)`` and ``throughput_bucket=0``
+      ship no header, matching the legacy ``GetHeaders`` truthy gate.
+    - every other option-key is copied through unchanged.
+
+    Does **not** stamp the container rid or the overall-timeout sentinel:
+    those are not options-dict entries and are written by the caller after
+    this returns.
+
+    :param options: The internal options dict (camelCase option-keys).
+    :type options: Mapping[str, Any]
+    :returns: A fresh wire-headers map.
+    :rtype: Dict[str, Any]
+    """
+    headers: Dict[str, Any] = {}
+    for option_key, option_value in options.items():
+        if option_key == "initialHeaders" and isinstance(option_value, dict):
+            for inner_name, inner_value in option_value.items():
+                headers[inner_name] = inner_value
+            continue
+        if option_key == "accessCondition" and isinstance(option_value, dict):
+            condition = option_value.get("condition")
+            cond_type = option_value.get("type")
+            if isinstance(condition, str) and cond_type == "IfMatch":
+                headers["If-Match"] = condition
+            elif isinstance(condition, str) and cond_type == "IfNoneMatch":
+                headers["If-None-Match"] = condition
+            continue
+        if option_key == "maxIntegratedCacheStaleness":
+            # Emit only when truthy. ``0`` is a documented no-op and must
+            # NOT produce ``x-ms-dedicatedgateway-max-age: 0``; None / missing
+            # also skip.
+            if option_value:
+                headers[HttpHeaders.DedicatedGatewayCacheStaleness] = str(option_value)
+            continue
+        if option_key in _TRUTHY_GATED_OPTION_KEYS and not option_value:
+            # A falsy value (0 / None / "") omits the header, matching the
+            # legacy GetHeaders truthy gate -- e.g. indexing_directive=
+            # Default(0) and throughput_bucket=0 ship no header.
+            continue
+        headers[option_key] = _normalize_option_value(option_key, option_value)
+    return headers
 
 
 def build_create_item_prepared(
@@ -138,17 +246,10 @@ def build_create_item_prepared(
     partition_key_header = serialize_partition_key_to_wire(partition_key_value)
     body_bytes = serialize_body_to_bytes(body)
 
-    # Headers map: every option-key except ``initialHeaders``, which is
-    # flattened so the Rust binding's per-header pass-through receives
-    # each inner ``x-ms-…`` directly. Customer-set entries override
-    # helper-written entries (matches legacy precedence).
-    headers: Dict[str, str] = {}
-    for option_key, option_value in options.items():
-        if option_key == "initialHeaders" and isinstance(option_value, dict):
-            for inner_name, inner_value in option_value.items():
-                headers[inner_name] = inner_value
-            continue
-        headers[option_key] = option_value
+    # Build the wire-headers map from the options dict. Shared across all
+    # point operations via ``flatten_options_to_headers`` (it also
+    # comma-joins list-valued trigger includes the way the legacy path does).
+    headers: Dict[str, Any] = flatten_options_to_headers(options)
     if container_rid is not None:
         # Keep an explicit copy under the canonical key so a backend
         # that bypasses ``options`` still sees the rid.
@@ -222,29 +323,11 @@ def build_delete_item_prepared(
 
     partition_key_header = serialize_partition_key_to_wire(partition_key_value)
 
-    # Headers map: every option-key except ``initialHeaders``, which is
-    # flattened so the binding's per-header pass-through receives each
-    # inner ``x-ms-…`` directly. Customer-set entries override
-    # helper-written entries (matches legacy precedence).
-    headers: Dict[str, str] = {}
-    for option_key, option_value in options.items():
-        if option_key == "initialHeaders" and isinstance(option_value, dict):
-            for inner_name, inner_value in option_value.items():
-                headers[inner_name] = inner_value
-            continue
-        # accessCondition is the internal shape the legacy options
-        # build produces from etag + match_condition. Translate it to
-        # the wire header here because the rust path does not run the
-        # legacy header step that would normally emit it.
-        if option_key == "accessCondition" and isinstance(option_value, dict):
-            condition = option_value.get("condition")
-            cond_type = option_value.get("type")
-            if isinstance(condition, str) and cond_type == "IfMatch":
-                headers["If-Match"] = condition
-            elif isinstance(condition, str) and cond_type == "IfNoneMatch":
-                headers["If-None-Match"] = condition
-            continue
-        headers[option_key] = option_value
+    # Build the wire-headers map from the options dict (shared across all
+    # point operations -- see ``flatten_options_to_headers``). The
+    # accessCondition -> If-Match / If-None-Match translation and the
+    # trigger-include comma-join both live there.
+    headers: Dict[str, Any] = flatten_options_to_headers(options)
     if container_rid is not None:
         headers[Constants.ContainerRID] = container_rid
 
@@ -316,37 +399,13 @@ def build_read_item_prepared(
 
     partition_key_header = serialize_partition_key_to_wire(partition_key_value)
 
-    # Headers map: every option-key except three special-cased ones:
-    #   * initialHeaders is flattened so each inner x-ms-... rides as
-    #     its own header instead of as a nested dict.
-    #   * accessCondition becomes If-Match / If-None-Match.
-    #   * maxIntegratedCacheStaleness becomes
-    #     x-ms-dedicatedgateway-max-age (truthy-only).
-    headers: Dict[str, str] = {}
-    for option_key, option_value in options.items():
-        if option_key == "initialHeaders" and isinstance(option_value, dict):
-            for inner_name, inner_value in option_value.items():
-                headers[inner_name] = inner_value
-            continue
-        # Access-condition shape, same as delete. On read the common
-        # case is If-None-Match (cache validation, success returns
-        # 304); If-Match is the rare write-style precondition.
-        if option_key == "accessCondition" and isinstance(option_value, dict):
-            condition = option_value.get("condition")
-            cond_type = option_value.get("type")
-            if isinstance(condition, str) and cond_type == "IfMatch":
-                headers["If-Match"] = condition
-            elif isinstance(condition, str) and cond_type == "IfNoneMatch":
-                headers["If-None-Match"] = condition
-            continue
-        # Dedicated-gateway max-age: emit only when truthy. Zero is a
-        # documented no-op and must NOT produce
-        # x-ms-dedicatedgateway-max-age: 0. None / missing also skip.
-        if option_key == "maxIntegratedCacheStaleness":
-            if option_value:
-                headers[HttpHeaders.DedicatedGatewayCacheStaleness] = str(option_value)
-            continue
-        headers[option_key] = option_value
+    # Build the wire-headers map from the options dict (shared across all
+    # point operations -- see ``flatten_options_to_headers``). That helper
+    # owns the three read-relevant special cases: initialHeaders flatten,
+    # accessCondition -> If-Match / If-None-Match, and
+    # maxIntegratedCacheStaleness -> x-ms-dedicatedgateway-max-age
+    # (truthy-only; ``0`` ships no header).
+    headers: Dict[str, Any] = flatten_options_to_headers(options)
     if container_rid is not None:
         headers[Constants.ContainerRID] = container_rid
 
@@ -465,27 +524,11 @@ def _build_write_with_body_prepared(
     partition_key_header = serialize_partition_key_to_wire(partition_key_value)
     body_bytes = serialize_body_to_bytes(body)
 
-    # Headers map: every option-key except two special-cased ones:
-    #   * initialHeaders is flattened so each inner x-ms-... rides as its
-    #     own header (the binding's per-header pass-through).
-    #   * accessCondition becomes If-Match / If-None-Match (same block as
-    #     delete / read). Customer-set entries override helper-written
-    #     entries (matches legacy precedence).
-    headers: Dict[str, str] = {}
-    for option_key, option_value in options.items():
-        if option_key == "initialHeaders" and isinstance(option_value, dict):
-            for inner_name, inner_value in option_value.items():
-                headers[inner_name] = inner_value
-            continue
-        if option_key == "accessCondition" and isinstance(option_value, dict):
-            condition = option_value.get("condition")
-            cond_type = option_value.get("type")
-            if isinstance(condition, str) and cond_type == "IfMatch":
-                headers["If-Match"] = condition
-            elif isinstance(condition, str) and cond_type == "IfNoneMatch":
-                headers["If-None-Match"] = condition
-            continue
-        headers[option_key] = option_value
+    # Build the wire-headers map from the options dict (shared across all
+    # point operations -- see ``flatten_options_to_headers``). That helper
+    # flattens initialHeaders and translates accessCondition ->
+    # If-Match / If-None-Match (same block delete / read use).
+    headers: Dict[str, Any] = flatten_options_to_headers(options)
     if container_rid is not None:
         headers[Constants.ContainerRID] = container_rid
 
@@ -585,6 +628,112 @@ def build_replace_item_prepared(
         access_condition=access_condition,
         item_id=item_id,
         kwargs=kwargs,
+    )
+
+
+# The public patch vocabulary spells increment ``incr``; the driver spells
+# it ``increment``. Map only this op; every other op-code (add / set /
+# replace / remove / move) is identical on both sides.
+_PATCH_OP_INCREMENT_PUBLIC = "incr"
+_PATCH_OP_INCREMENT_DRIVER = "increment"
+
+
+def build_patch_operations_payload(patch_operations: Any) -> Dict[str, Any]:
+    """Build the driver's ``PatchInstructions`` body from ``patch_operations``.
+
+    Returns ``{"operations": [...]}``. The one op-code that differs between
+    the public and driver spellings (``incr`` vs ``increment``) is
+    translated via a shallow copy, so the caller's list is not mutated.
+
+    :param patch_operations: The public list of patch-operation dicts.
+    :type patch_operations: Any
+    :returns: The ``{"operations": [...]}`` payload dict.
+    :rtype: Dict[str, Any]
+    """
+    translated = []
+    for operation in patch_operations:
+        if isinstance(operation, dict) and operation.get("op") == _PATCH_OP_INCREMENT_PUBLIC:
+            operation = {**operation, "op": _PATCH_OP_INCREMENT_DRIVER}
+        translated.append(operation)
+    return {"operations": translated}
+
+
+def build_patch_item_prepared(
+    *,
+    container_link: str,
+    item_id: str,
+    patch_operations: Any,
+    partition_key_value: Any,
+    container_rid: Optional[str],
+    kwargs: Optional[Dict[str, Any]] = None,
+) -> PreparedRequest:
+    """Build a ``PreparedRequest`` for a single ``patch_item`` call.
+
+    Names an existing document like delete / read (id on
+    ``PreparedRequest.item_id``, partition key from the caller's argument)
+    but carries a body: the patch-operations payload built by
+    ``build_patch_operations_payload``. Pure -- the caller has already done
+    any cache and partition-key lookups.
+
+    Only unconditional, unguarded patches reach this builder, so it emits no
+    ``If-Match`` header and serialises no filter condition; the helper routes
+    the rest to the legacy path.
+
+    :param container_link: Container self-link, e.g.
+        ``"dbs/{db}/colls/{coll}"``.
+    :type container_link: str
+    :param item_id: The id of the document to patch. The binding carries it
+        on ``PreparedRequest.item_id``.
+    :type item_id: str
+    :param patch_operations: The public list of patch-operation dicts.
+    :type patch_operations: Any
+    :param partition_key_value: PK value the caller supplied via
+        ``Container._set_partition_key``. Accepted shapes are documented on
+        ``serialize_partition_key_to_wire``.
+    :type partition_key_value: Any
+    :param container_rid: The container's resource id, or ``None`` to skip
+        rid stamping.
+    :type container_rid: Optional[str]
+    :param kwargs: Remaining customer kwargs. **Mutated** -- recognised
+        option-shortcut keys are popped via ``compose_options_from_kwargs``.
+    :type kwargs: Optional[Dict[str, Any]]
+    :returns: The prepared request.
+    :rtype: PreparedRequest
+    """
+    # Translate kwarg shortcuts to internal option keys.
+    options = compose_options_from_kwargs(kwargs if kwargs is not None else {})
+
+    if container_rid is not None:
+        stamp_container_rid(
+            options,
+            container_link,
+            get_rid=lambda _link: container_rid,
+        )
+
+    partition_key_header = serialize_partition_key_to_wire(partition_key_value)
+    body_bytes = serialize_body_to_bytes(build_patch_operations_payload(patch_operations))
+
+    # Build the wire-headers map from the options dict (shared across all
+    # point operations -- see ``flatten_options_to_headers``). Patch never
+    # carries an ``accessCondition`` (a guarded patch takes the legacy
+    # path), so that branch of the helper is a no-op here.
+    headers: Dict[str, Any] = flatten_options_to_headers(options)
+    if container_rid is not None:
+        headers[Constants.ContainerRID] = container_rid
+
+    # timeout (seconds) rides under a dedicated header, same as the other ops.
+    if kwargs is not None and "timeout" in kwargs:
+        timeout_value = kwargs.get("timeout")
+        if timeout_value is not None:
+            headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout_value
+
+    return PreparedRequest(
+        op=OP_PATCH_ITEM,
+        container_link=container_link,
+        body_bytes=body_bytes,
+        partition_key_header=partition_key_header,
+        headers=headers,
+        item_id=item_id,
     )
 
 

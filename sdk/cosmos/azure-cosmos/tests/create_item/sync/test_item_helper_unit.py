@@ -1,35 +1,20 @@
- # -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for the synchronous ``ItemHelper.create_item`` — no network, no Cosmos emulator.
+"""Fast, in-process tests for the sync create helper (no network, no emulator).
 
-What this file covers
----------------------
-``ItemHelper`` is the layer that sits between the customer-facing
-``Container.create_item`` and the backend that actually talks to
-Cosmos. For every call it has to:
+The create helper sits between the public create call and the backend. On
+each call it finds the container's resource id, builds the request, and
+then either lets the backend handle it or, when no backend is set, calls
+the existing client. These tests check each of those steps on its own.
 
-1. Look up (or refresh) the container's *rid* from the cache.
-2. Build a ``PreparedRequest`` (op tag, container link, body bytes,
-   partition-key header, request options).
-3. Hand that ``PreparedRequest`` to the wired backend's ``execute``.
-4. Either parse the ``BackendResponse`` it gets back into a
-   ``CosmosDict``, **or** — if the backend signals "I did nothing"
-   by returning ``None`` — fall through to the legacy
-   ``client_connection.CreateItem`` path with the right option-dict
-   shape (``disableAutomaticIdGeneration``, ``indexingDirective``,
-   ``Constants.ContainerRID``, …).
-
-These tests cover every one of those steps in isolation. Backend
-*selection* itself (rust vs core-python) is covered end-to-end by
-``tests/common/test_backend_wiring_unit.py``; this file does not
-duplicate that.
-
-The async sibling (``AsyncItemHelper.create_item``) lives in
-``tests/create_item/aio/test_item_helper_async_unit.py``.
+The async version is covered in
+``tests/create_item/aio/test_item_helper_async_unit.py``. Which backend a
+client uses is covered in ``tests/common/test_backend_wiring_unit.py``.
 """
+import logging
 import unittest
 from unittest.mock import MagicMock
 
@@ -43,13 +28,11 @@ from azure.cosmos._helpers.item_helper import ItemHelper
 # ---------------------------------------------------------------------------
 
 def _make_cc_with_cache_hit(rid="rid-cached"):
-    """Build a mock ``client_connection`` with the container's rid pre-cached.
+    """Build a fake connection with the container's resource id already cached.
 
-    Avoids the ``_refresh_container_properties_cache`` branch in the
-    helper, so each test can stay focused on whatever it cares about.
-    The connection's ``_AddPartitionKey`` is wired to return the
-    options dict unchanged with a stub partition key — enough for the
-    helper to build a ``PreparedRequest`` without exploding.
+    This skips the cache-refresh step so each test can focus on what it
+    checks. The fake also returns a stub partition key so the helper can
+    build a request without failing.
     """
     cc = MagicMock()
     cc._container_properties_cache = {"dbs/db/colls/c": {"_rid": rid}}
@@ -63,15 +46,11 @@ def _make_cc_with_cache_hit(rid="rid-cached"):
 
 
 def _fall_through_backend(name):
-    """Build a backend mock whose ``execute`` returns ``None``.
+    """Build a fake backend that does nothing and returns ``None``.
 
-    ``None`` is the "fall through to legacy ``CreateItem``" contract
-    the helper honors when a backend's ``execute`` produces nothing.
-    Today no production backend uses this — the "core-python"
-    selection is encoded as ``self._backend is None`` — but the
-    contract is useful in tests that want to assert what the helper
-    forwards to ``CreateItem`` without the helper's parse-side branch
-    running on a junk ``BackendResponse``.
+    Returning ``None`` tells the helper to use the existing client
+    instead. These tests use it to check what the helper passes to that
+    client.
     """
     backend = MagicMock()
     backend.name = name
@@ -80,27 +59,21 @@ def _fall_through_backend(name):
 
 
 # ---------------------------------------------------------------------------
-# Sync helper — fall-through path (backend.execute returns None)
+# When no backend handles the call, the helper uses the existing client
 # ---------------------------------------------------------------------------
 
 class TestItemHelperFallThrough(unittest.TestCase):
-    """When ``backend.execute`` returns ``None`` the helper runs the legacy ``CreateItem``.
+    """When the backend does nothing, the helper calls the existing client.
 
-    These tests cover the exact shape of the call the helper makes
-    into ``client_connection.CreateItem`` on the fall-through path:
-    prepared-request handoff to the backend, the
-    three option mappings (``disableAutomaticIdGeneration``,
-    ``indexingDirective``), container-rid stamping (cache hit and
-    cache miss).
+    These tests check the call the helper makes: the request it builds,
+    the id-generation and indexing options, and the container resource id
+    (both when it is already cached and when it has to be refreshed).
     """
 
     def test_backend_execute_offered_a_prepared_request(self):
-        """Even on the fall-through path the helper hands the backend a real ``PreparedRequest``.
-
-        That's the contract that lets a wired adapter slot in without
-        changing the call site: the helper always builds and offers
-        the prepared request, regardless of whether the backend
-        chooses to act on it.
+        """The helper builds a request and offers it to the backend, even
+        when the backend does nothing with it. This checks the request
+        carries the right operation, container, and body.
         """
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
@@ -118,7 +91,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         self.assertEqual(prepared.body_bytes, b'{"id":"x"}')
 
     def test_disable_automatic_id_generation_lands_in_options(self):
-        """``enable_automatic_id_generation=False`` → ``options["disableAutomaticIdGeneration"]`` is True."""
+        """Turning off automatic id generation sets the matching option."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
@@ -131,7 +104,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         self.assertTrue(options["disableAutomaticIdGeneration"])
 
     def test_enable_automatic_id_generation_inverts_disable_flag(self):
-        """``enable_automatic_id_generation=True`` → ``options["disableAutomaticIdGeneration"]`` is False."""
+        """Turning on automatic id generation clears the matching option."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
@@ -144,7 +117,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         self.assertFalse(options["disableAutomaticIdGeneration"])
 
     def test_indexing_directive_lands_when_supplied(self):
-        """``indexing_directive=N`` → ``options["indexingDirective"] == N``."""
+        """The indexing directive value is passed through to the options."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
@@ -157,7 +130,8 @@ class TestItemHelperFallThrough(unittest.TestCase):
         self.assertEqual(options["indexingDirective"], 1)
 
     def test_container_rid_stamped_from_cache(self):
-        """Cache hit: the cached ``_rid`` is stamped under ``Constants.ContainerRID`` in the options."""
+        """When the container is already cached, its resource id is added
+        to the options."""
         cc = _make_cc_with_cache_hit(rid="rid-from-cache")
         cc.CreateItem = MagicMock(return_value="ok")
 
@@ -169,7 +143,8 @@ class TestItemHelperFallThrough(unittest.TestCase):
         self.assertEqual(options[Constants.ContainerRID], "rid-from-cache")
 
     def test_cache_miss_triggers_refresh(self):
-        """Cache miss: the helper calls ``_refresh_container_properties_cache`` and stamps the refreshed rid."""
+        """When the container is not cached, the helper refreshes the cache
+        and then uses the freshly fetched resource id."""
         cc = MagicMock()
         cache = {}
 
@@ -193,20 +168,19 @@ class TestItemHelperFallThrough(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# Sync helper — wired-backend path (real BackendResponse from execute)
+# When the backend handles the call, the existing client is not used
 # ---------------------------------------------------------------------------
 
 class TestItemHelperConfiguredBackend(unittest.TestCase):
-    """When ``backend.execute`` returns a real ``BackendResponse`` the legacy path is bypassed.
+    """When the backend handles the call, the existing client is not used.
 
-    The helper hands the response to ``parse_backend_response`` and
-    surfaces a ``CosmosDict``. ``client_connection.CreateItem`` must
-    not be called — this is the production-path contract for the
-    Rust backend.
+    The helper turns the backend's response into the dict the caller
+    expects and does not call the existing client.
     """
 
     def test_real_backend_response_parsed_into_cosmos_dict(self):
-        """A 201 ``BackendResponse`` from the backend → ``CosmosDict`` to the customer; legacy ``CreateItem`` is not invoked."""
+        """A successful backend response is returned to the caller as a
+        dict; the existing client is not called."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(side_effect=AssertionError("legacy must not run"))
 
@@ -227,9 +201,39 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
 
         backend.execute.assert_called_once()
         cc.CreateItem.assert_not_called()
-        # CosmosDict subclasses dict — key lookup works the v4 way.
+        # The result is a dict, so the caller reads fields by key.
         self.assertEqual(result["id"], "x")
         self.assertEqual(result["_etag"], '"v1"')
+
+
+class TestItemHelperRidResolutionLogging(unittest.TestCase):
+    """When the container resource id can't be found, the helper logs it.
+
+    A real connection should always find the id. If it can't, the request
+    still goes out, but without the header that guards against a recreated
+    container. The helper logs a warning so this is not silent.
+    """
+
+    def test_unresolvable_rid_logs_warning_and_returns_none(self):
+        """A missing resource id is logged and the helper returns nothing."""
+        cc = MagicMock()
+        cc._container_properties_cache = {}  # empty: the container is not here
+        # The refresh does not add it, so the later lookup fails -- the
+        # case a real connection would only hit on a genuine problem.
+        cc._refresh_container_properties_cache = MagicMock()
+
+        helper = ItemHelper(None, cc)
+
+        with self.assertLogs(
+            "azure.cosmos._helpers.item_helper", level=logging.WARNING
+        ) as captured:
+            rid = helper._resolve_container_rid("dbs/db/colls/c", {})
+
+        self.assertIsNone(rid)
+        self.assertTrue(
+            any("intended-collection-rid" in line for line in captured.output),
+            captured.output,
+        )
 
 
 if __name__ == "__main__":

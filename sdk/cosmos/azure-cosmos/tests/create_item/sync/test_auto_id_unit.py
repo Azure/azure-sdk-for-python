@@ -183,7 +183,7 @@ class TestParityWithLegacyGenerator(unittest.TestCase):
 
     @staticmethod
     def _legacy_mint_if_needed(document, generate):
-        """Inline reproduction of the legacy mint branch, kept byte-for-byte."""
+        """Inline reproduction of the legacy mint branch, kept identical to the original."""
         if not document.get("id") and generate:
             document["id"] = GenerateGuidId()
             return document["id"]

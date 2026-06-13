@@ -11,11 +11,11 @@ FUNCTIONAL PARITY, HEADER GAP / FUNCTIONAL DIVERGENCE / EXCEPTION
 DIVERGENCE) match that file so a contributor reading one in-process
 parity test recognises the shape of every other one.
 
-This file is a CI gate, not an audit-doc source. Each test runs both
-backends inside one pytest process via ``BackendComparison`` and
-asserts on the diff. A failure prints the full ``PARITY CALL:`` block
-to the CI log so the contributor sees the evidence directly. The
-per-operation audit doc (the rolling, human-readable artefact) is
+This file is a CI gate, not the source for the audit doc. Each test
+runs both backends inside one pytest process via ``BackendComparison``
+and asserts on the diff. A failure prints the full ``PARITY CALL:``
+block to the CI log so the contributor sees the evidence directly. The
+per-operation audit doc (the rolling, human-readable summary) is
 produced separately by the legacy-folder workflow's reporter script.
 
 What this file pins for ``delete_item``:
@@ -41,8 +41,8 @@ What this file pins for ``delete_item``:
   * Missing id => ``CosmosResourceNotFoundError`` (HTTP 404) on both
     backends.
   * Stale etag + ``MatchConditions.IfNotModified`` => HTTP 412 on both
-    backends. This is THE delete-vs-create delta the doc calls out: on
-    delete, ``etag`` + ``match_condition`` are the optimistic-concurrency
+    backends. This is the main delete-vs-create difference: on delete,
+    ``etag`` + ``match_condition`` are the optimistic-concurrency
     primitive (on create they are inert and warn).
   * ``populate_query_metrics=True`` => ``DeprecationWarning`` is emitted
     AND the ``x-ms-documentdb-populatequerymetrics`` header is NOT sent
@@ -268,10 +268,10 @@ def test_L2_throughput_bucket(container_for):
 def test_L3_timeout(container_for):
     """L3: L0 + ``timeout=30`` (overall request timeout).
 
-    Both backends honour the kwarg today (legacy via azure-core's per-call
-    timeout policy, rust via the binding lifting it into the driver's
-    typed ``EndToEndOperationLatencyPolicy``). 30 s is well above the
-    driver's 1 s sub-second-clamp floor so the test is deterministic.
+    Both backends honour the keyword today: core-python through
+    azure-core's per-call timeout, rust by handing the value to the
+    driver's own timeout setting. 30 s is well above the driver's 1 s
+    floor, so the test is deterministic.
     """
     _run_delete(container_for, level="L3",
                 summary="L0 + timeout=30",
@@ -301,13 +301,9 @@ def test_L3_availability_strategy(container_for):
 def test_L3_excluded_locations(container_for):
     """L3: L0 + ``excluded_locations=['East US']``.
 
-    Binding translates this kwarg into the driver's typed
-    ``OperationOptions::excluded_regions`` field (see
-    ``azure_cosmos_rust/src/lib.rs`` -- the ``excludedlocations`` arm
-    builds an ``ExcludedRegions`` from the supplied region names via
-    ``Region::from`` and attaches it through
-    ``OperationOptionsBuilder::with_excluded_regions``). The skip is
-    kept *only* because the parity assertion is hard to make
+    The binding passes this keyword to the driver as an excluded-regions
+    setting (the mapping lives in ``azure_cosmos_rust/src/lib.rs``). The
+    test is skipped only because the parity check is hard to make
     end-to-end against a single-region test account.
     """
     _run_delete(container_for, level="L3",
@@ -408,7 +404,7 @@ def test_L5_missing_id_raises_typed_not_found(container_for):
 def test_L5_stale_etag_if_not_modified_raises_412(container_for):
     """L5: stale ``etag`` + ``MatchConditions.IfNotModified`` => HTTP 412.
 
-    This is the delete-vs-create delta: on ``delete_item`` the
+    This is the delete-vs-create difference: on ``delete_item`` the
     ``etag``+``match_condition`` pair is the optimistic-concurrency
     primitive (on ``create_item`` it is inert and warns). The
     contract:
