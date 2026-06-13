@@ -68,6 +68,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
 
     __slots__ = (
         "task_id",
+        "input_id",  # spec 022 FR-047 — public read-only attribute
         "_provider",
         "_result_future",
         "_metadata",
@@ -94,8 +95,14 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         terminate_reason_ref: list[str | None] | None = None,
         lease_expiry_count: int = 0,
         cancel_ctx_ref: Any = None,
+        input_id: str | None = None,
     ) -> None:
         self.task_id = task_id
+        # Spec 022 FR-047 — `input_id` is a public read-only attribute on
+        # TaskRun. For one-shot tasks it defaults to ``task_id`` (1:1 invariant
+        # per FR-004); for multi-turn tasks the framework auto-generates a
+        # separate GUID per turn (per FR-005) and sets it here.
+        self.input_id: str = input_id if input_id is not None else task_id
         self._provider = provider
         self._result_future = result_future
         self._metadata = metadata or TaskMetadata()
