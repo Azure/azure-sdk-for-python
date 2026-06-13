@@ -182,7 +182,7 @@ class TestLifecycle:
             )
             with pytest.raises(TaskConflictError) as exc_info:
                 await my_task.run(task_id="lc-conflict-1", input="data")
-            assert exc_info.value.task_id == "lc-conflict-1"
+    # spec 022 FR-077: exception.task_id removed
             assert exc_info.value.current_status == "in_progress"
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -308,7 +308,7 @@ class TestLifecycle:
             # And confirm the explicit .result() path still works identically.
             handle2 = await my_task.start(task_id="awaitable-2", input="world")
             result_via_method = await handle2.result()
-            assert result_via_method.output == "echo: world"
+            assert result_via_method == "echo: world"
         finally:
             await self._teardown_manager(manager, mgr_mod)
 

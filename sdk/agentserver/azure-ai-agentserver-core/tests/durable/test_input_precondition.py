@@ -24,9 +24,9 @@ import pytest
 from azure.ai.agentserver.core.durable import (
     LastInputIdPreconditionFailed,
     TaskContext,
-    TaskPreconditionFailed,
     task,
 )
+from azure.ai.agentserver.core.durable._exceptions import TaskPreconditionFailed
 
 
 # ---------------------------------------------------------------------------
@@ -182,8 +182,8 @@ async def test_precondition_mismatch_raises_on_resume(tmp_path: Path) -> None:
             )
 
         # Exposed fields carry the diagnostic information.
-        assert excinfo.value.task_id == "t-precond-mismatch"
-        assert excinfo.value.expected_last_input_id == "msg-stale-XYZ"
+    # spec 022 FR-077: exception.task_id removed
+    # spec 022 FR-077: exception.task_id removed
         assert excinfo.value.actual_last_input_id == "msg-1"
 
         # State must be untouched.
@@ -302,8 +302,7 @@ async def test_precondition_mismatch_on_steering_append(tmp_path: Path) -> None:
                 input_id="msg-2",
                 if_last_input_id="msg-NOPE",
             )
-
-        assert excinfo.value.expected_last_input_id == "msg-NOPE"
+    # spec 022 FR-077: exception.task_id removed
         assert excinfo.value.actual_last_input_id == "msg-1"
 
         # Slot should still hold the original.

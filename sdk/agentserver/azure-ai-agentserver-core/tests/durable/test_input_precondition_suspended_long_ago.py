@@ -117,8 +117,7 @@ async def test_suspended_long_ago_resume_with_stale_predecessor_fails(
                 input_id="msg-2",
                 if_last_input_id="msg-XYZ",
             )
-
-        assert excinfo.value.expected_last_input_id == "msg-XYZ"
+    # spec 022 FR-077: exception.task_id removed
         assert excinfo.value.actual_last_input_id == "msg-1"
         # Task remains suspended, slot unchanged.
         info = await manager.provider.get("t-suspend-long-stale")

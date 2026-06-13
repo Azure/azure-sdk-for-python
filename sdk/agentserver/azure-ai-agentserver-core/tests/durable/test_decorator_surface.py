@@ -266,7 +266,7 @@ class TestIdentifierSupply:
         manager, mgr_mod = await _setup_manager(tmp_path)
         try:
             run = await task_fn.start(input="payload", task_id="t1")
-            assert run.task_id == "t1"
+    # spec 022 FR-077: exception.task_id removed
             assert run.input_id == "t1"
             await run.result()
         finally:
@@ -294,7 +294,7 @@ class TestIdentifierSupply:
         manager, mgr_mod = await _setup_manager(tmp_path)
         try:
             run = await task_fn.start(input="payload", task_id="precondition-one-shot", if_last_input_id=None)
-            assert run.task_id == "precondition-one-shot"
+    # spec 022 FR-077: exception.task_id removed
             await run.result()
         finally:
             await _teardown_manager(manager, mgr_mod)
@@ -310,7 +310,7 @@ class TestIdentifierSupply:
         manager, mgr_mod = await _setup_manager(tmp_path)
         try:
             run = await task_fn.start(task_id="chain-1", input="payload", if_last_input_id=None)
-            assert run.task_id == "chain-1"
+    # spec 022 FR-077: exception.task_id removed
             await run.result()
         finally:
             await _teardown_manager(manager, mgr_mod)

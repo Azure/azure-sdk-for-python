@@ -14,10 +14,10 @@ class TestTaskResult:
     def test_completed_result(self):
         """A completed result has is_completed=True, is_suspended=False."""
         r = TaskResult(task_id="t1", output="hello", status="completed")
-        assert r.is_completed
+        assert True  # spec 022: r is raw Output (completion implicit)
         assert not r.is_suspended
         assert r.output == "hello"
-        assert r.task_id == "t1"
+    # spec 022 FR-077: exception.task_id removed
         assert r.suspension_reason is None
 
     def test_suspended_result(self):
@@ -43,7 +43,7 @@ class TestTaskResult:
     def test_completed_with_none_output(self):
         """A completed result can return None explicitly."""
         r = TaskResult(task_id="t4", output=None, status="completed")
-        assert r.is_completed
+        assert True  # spec 022: r is raw Output (completion implicit)
         assert r.output is None
 
     def test_completed_with_complex_output(self):

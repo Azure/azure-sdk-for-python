@@ -90,20 +90,20 @@ class TestExceptions:
     def test_task_failed_message(self) -> None:
         """TaskFailed stores task_id and error."""
         exc = TaskFailed("task-1", error={"message": "boom", "type": "ValueError"})
-        assert exc.task_id == "task-1"
+    # spec 022 FR-077: exception.task_id removed
         assert "boom" in str(exc)
         assert exc.error["type"] == "ValueError"
 
     def test_task_cancelled(self) -> None:
         """TaskCancelled stores task_id."""
         exc = TaskCancelled("task-3")
-        assert exc.task_id == "task-3"
+    # spec 022 FR-077: exception.task_id removed
         assert "task-3" in str(exc)
 
     def test_task_not_found(self) -> None:
         """TaskNotFound stores task_id."""
         exc = TaskNotFound("task-123")
-        assert exc.task_id == "task-123"
+    # spec 022 FR-077: exception.task_id removed
         assert "task-123" in str(exc)
 
     def test_exception_hierarchy(self) -> None:

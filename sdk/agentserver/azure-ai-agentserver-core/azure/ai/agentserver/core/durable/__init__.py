@@ -43,7 +43,6 @@ from ._decorator import MultiTurnTask, Task, multi_turn_task, task
 from ._exceptions import (
     InputTooLarge,
     LastInputIdPreconditionFailed,
-    OutputTooLarge,
     SteeringQueueFull,
     TaskCancelled,
     TaskConflictError,
@@ -51,8 +50,6 @@ from ._exceptions import (
     TaskErrorDict,
     TaskExhaustedRetriesErrorDict,
     TaskFailed,
-    TaskNotFound,
-    TaskPreconditionFailed,
 )
 from ._metadata import JSONValue, TaskMetadata
 from ._models import TaskStatus
@@ -116,7 +113,4 @@ __all__ = [
     "TaskSnapshot",
     "Suspended",
     "TaskStatus",
-    "TaskNotFound",
-    "TaskPreconditionFailed",
-    "OutputTooLarge",
 ]

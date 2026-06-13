@@ -193,7 +193,7 @@ async def test_output_over_cap_raises_output_too_large_pre_patch(local) -> None:
     landed in the store (record stays in_progress with the prior
     lease).
     """
-    from azure.ai.agentserver.core.durable import OutputTooLarge
+    from azure.ai.agentserver.core.durable._exceptions import OutputTooLarge
 
     # ~3 MB of JSON-serializable data.
     big_blob = "X" * (3 * 1024 * 1024)
@@ -208,7 +208,7 @@ async def test_output_over_cap_raises_output_too_large_pre_patch(local) -> None:
     try:
         with pytest.raises(OutputTooLarge) as excinfo:
             await my_task.run(task_id="t-too-big", input="x")
-        assert excinfo.value.task_id == "t-too-big"
+    # spec 022 FR-077: exception.task_id removed
         assert excinfo.value.size_bytes > 2 * 1024 * 1024
         # No _output attachment should have landed.
         raw = await local.get("t-too-big")
@@ -236,7 +236,7 @@ async def test_suspend_with_oversized_output_raises_output_too_large(local) -> N
     wrapped in ``TaskFailed`` — a developer-facing regression of the
     spec contract.
     """
-    from azure.ai.agentserver.core.durable import OutputTooLarge
+    from azure.ai.agentserver.core.durable._exceptions import OutputTooLarge
 
     big_blob = "Y" * (3 * 1024 * 1024)
 
@@ -250,7 +250,7 @@ async def test_suspend_with_oversized_output_raises_output_too_large(local) -> N
     try:
         with pytest.raises(OutputTooLarge) as excinfo:
             await my_task.run(task_id="t-suspend-too-big", input="x")
-        assert excinfo.value.task_id == "t-suspend-too-big"
+    # spec 022 FR-077: exception.task_id removed
         assert excinfo.value.size_bytes > 2 * 1024 * 1024
         # No _output attachment should have landed.
         raw = await local.get("t-suspend-too-big")

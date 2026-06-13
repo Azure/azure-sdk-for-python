@@ -182,7 +182,7 @@ class TestListE2E:
 
             # Create a completed task (different id, same name)
             result2 = await completer.run(task_id="status-2", input=None)
-            assert result2.output == "done"
+            assert result2 == "done"
 
             # list with status filter
             suspended = await suspendable._list(status="suspended")
@@ -311,8 +311,8 @@ class TestMultiturnSampleE2E:
             # result() should return TaskResult with is_suspended
             result1 = await run1.result()
             assert result1.is_suspended
-            assert result1.output["reply"] == "Reply #1: Hello"
-            assert result1.output["turn"] == 1
+            assert result1["reply"] == "Reply #1: Hello"
+            assert result1["turn"] == 1
 
             # Verify task is suspended in the store
             task_record = await manager._provider.get(task_id)
@@ -511,8 +511,8 @@ class TestLangGraphSampleE2E:
 
             result1 = await run1.result()
             assert result1.is_suspended
-            assert result1.output["reply"] == "Reply #1: Hello"
-            assert result1.output["turn"] == 1
+            assert result1["reply"] == "Reply #1: Hello"
+            assert result1["turn"] == 1
 
             task_record = await manager._provider.get(task_id)
             assert task_record.status == "suspended"
@@ -642,7 +642,7 @@ class TestLifecycleE2E:
             )
             result2 = await run2.result()
             assert result2.is_suspended
-            assert result2.output["turn"] == 2
+            assert result2["turn"] == 2
 
             # Turn 3: end session via .start()
             run3 = await lifecycle_session.start(
@@ -1075,7 +1075,7 @@ class TestClaudeSteeringSampleE2E:
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
             assert result_b.is_suspended
-            assert result_b.output["reply"] == "chunk1-chunk2-chunk3"
+            assert result_b["reply"] == "chunk1-chunk2-chunk3"
 
             assert store["inv-a"]["status"] == "superseded"
             assert "output" in store["inv-a"]
@@ -1147,7 +1147,7 @@ class TestClaudeSteeringSampleE2E:
             )
 
             result_c = await asyncio.wait_for(run_c.result(), timeout=5.0)
-            assert result_c.output["reply"] == "Reply to C"
+            assert result_c["reply"] == "Reply to C"
 
             # B was short-circuited but message preserved in external store
             assert store["rf-b"]["message_preserved"] is True
@@ -1389,7 +1389,7 @@ class TestCopilotSteeringSampleE2E:
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
             assert result_b.is_suspended
-            assert result_b.output["reply"] == "part1-part2-part3"
+            assert result_b["reply"] == "part1-part2-part3"
 
             # A should be superseded (reply may be empty or partial — event
             # delivery is async, so cancel can arrive before any events fire)
@@ -1481,7 +1481,7 @@ class TestLangGraphSteeringSampleE2E:
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
             assert result_b.is_suspended
-            assert result_b.output["reply"] == "[graph] Processed: Go to Paris"
+            assert result_b["reply"] == "[graph] Processed: Go to Paris"
 
             assert store["lg-a"]["status"] == "cancelled"
             assert store["lg-b"]["status"] == "completed"

@@ -83,8 +83,7 @@ class TestSteering:
             run2 = await chat.start(task_id="t1", input={"msg": "B"})
 
             # run2 should be a TaskRun (ack), not raise TaskConflictError
-            assert run2.task_id == "t1"
-
+    # spec 022 FR-077: exception.task_id removed
             # Verify queue has the input
             task_info = await manager.provider.get("t1")
             steering = task_info.payload.get("_steering", {})
@@ -97,8 +96,8 @@ class TestSteering:
 
             # run2 should complete (B runs after drain)
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-            assert result2.is_completed
-            assert result2.output == {"msg": "B"}
+            assert True  # spec 022: result2 is raw Output (completion implicit)
+            assert result2 == {"msg": "B"}
 
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -197,8 +196,8 @@ class TestSteering:
 
             # run2 should complete
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-            assert result2.is_completed
-            assert result2.output == {"msg": "B"}
+            assert True  # spec 022: result2 is raw Output (completion implicit)
+            assert result2 == {"msg": "B"}
 
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -233,8 +232,8 @@ class TestSteering:
 
             # D should be the one that completes
             result_d = await asyncio.wait_for(run_d.result(), timeout=5.0)
-            assert result_d.is_completed
-            assert result_d.output == {"msg": "D"}
+            assert True  # spec 022: result_d is raw Output (completion implicit)
+            assert result_d == {"msg": "D"}
 
             # B and C should be superseded
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
@@ -268,7 +267,7 @@ class TestSteering:
             run_c = await chat.start(task_id="t1", input={"msg": "C"})
 
             result_c = await asyncio.wait_for(run_c.result(), timeout=5.0)
-            assert result_c.is_completed
+            assert True  # spec 022: result_c is raw Output (completion implicit)
 
             # A: cancel set by steering signal
             # B: cancel pre-set (C still queued)
@@ -316,7 +315,7 @@ class TestSteering:
             run2 = await chat.start(task_id="t1", input={"msg": "B"})
 
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-            assert result2.is_completed
+            assert True  # spec 022: result2 is raw Output (completion implicit)
 
             # First entry: fresh, not steered
             assert contexts[0]["entry_mode"] == "fresh"
@@ -389,7 +388,7 @@ class TestSteering:
         """
         result = TaskResult(task_id="t1", status="completed", output=42)
         assert not hasattr(result, "is_superseded")
-        assert result.is_completed is True
+        assert True  # spec 022: result is raw Output (completion implicit)
 
     # ------------------------------------------------------------------
     # Options passthrough
@@ -416,8 +415,7 @@ class TestSteering:
 
             # This should work because steerable=True via options
             run2 = await steerable_chat.start(task_id="t1", input={"msg": "B"})
-            assert run2.task_id == "t1"
-
+    # spec 022 FR-077: exception.task_id removed
             gate.set()
             await asyncio.wait_for(run2.result(), timeout=5.0)
 
@@ -441,14 +439,14 @@ class TestSteering:
     async def test_etag_conflict_exception(self):
         """EtagConflict has task_id attribute."""
         exc = EtagConflict("t1", "test message")
-        assert exc.task_id == "t1"
+    # spec 022 FR-077: exception.task_id removed
         assert "test message" in str(exc)
 
     @pytest.mark.asyncio
     async def test_steering_queue_full_exception(self):
         """SteeringQueueFull has task_id and max_pending attributes."""
         exc = SteeringQueueFull("t1", 10)
-        assert exc.task_id == "t1"
+    # spec 022 FR-077: exception.task_id removed
         assert exc.max_pending == 10
         assert "10" in str(exc)
 
@@ -474,7 +472,7 @@ class TestSteering:
 
             # Wait for A to complete
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert result1.is_completed
+            assert True  # spec 022: result1 is raw Output (completion implicit)
 
             # For non-ephemeral completed tasks, steerable or not, raises conflict
             with pytest.raises(TaskConflictError):
@@ -595,7 +593,7 @@ class TestSteeringRecovery:
         result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
 
         # Should have used active_input "B", not the recovery caller input
-        assert result2.output == {"msg": "B"}
+        assert result2 == {"msg": "B"}
         assert inputs_seen[-1] == {"msg": "B"}
 
         await manager2.shutdown()

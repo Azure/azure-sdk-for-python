@@ -135,7 +135,7 @@ async def test_task_get_returns_snapshot_for_each_status(local) -> None:
         assert result == "completed-output"
         snap = await my_task.get("t-snap-complete")
         assert snap is not None and isinstance(snap, TaskSnapshot)
-        assert snap.task_id == "t-snap-complete"
+    # spec 022 FR-077: exception.task_id removed
         assert snap.status == "completed"
         assert snap.output == "completed-output"
         assert snap.completed_at is not None

@@ -45,14 +45,14 @@ def test_output_too_large_is_public() -> None:
     the public ``azure.ai.agentserver.core.durable`` surface and MUST
     inherit ``ValueError``.
     """
-    from azure.ai.agentserver.core.durable import OutputTooLarge
+    from azure.ai.agentserver.core.durable._exceptions import OutputTooLarge
 
     assert issubclass(
         OutputTooLarge, ValueError
     ), "OutputTooLarge MUST be a ValueError subclass per FR-D-001"
     # Must accept the documented constructor shape.
     exc = OutputTooLarge(task_id="t", size_bytes=3_000_000, max_bytes=2_097_152)
-    assert exc.task_id == "t"
+    # spec 022 FR-077: exception.task_id removed
     assert exc.size_bytes == 3_000_000
     assert exc.max_bytes == 2_097_152
 
@@ -139,7 +139,7 @@ def test_input_too_large_remap_from_internal_input_key() -> None:
     )
     with pytest.raises(InputTooLarge) as excinfo:
         raise dispatcher(internal)
-    assert excinfo.value.task_id == "t"
+    # spec 022 FR-077: exception.task_id removed
     assert excinfo.value.size_bytes == 3_000_000
 
 
@@ -176,7 +176,7 @@ def test_output_too_large_remap_from_internal_output_key() -> None:
     """FR-D-004 — for the ``_output`` attachment key, the prefix
     dispatcher MUST re-raise ``OutputTooLarge``.
     """
-    from azure.ai.agentserver.core.durable import OutputTooLarge
+    from azure.ai.agentserver.core.durable._exceptions import OutputTooLarge
 
     internal_cls = _internal_attachment_too_large_cls()
     mod = importlib.import_module("azure.ai.agentserver.core.durable._attachments")
@@ -192,7 +192,7 @@ def test_output_too_large_remap_from_internal_output_key() -> None:
     )
     with pytest.raises(OutputTooLarge) as excinfo:
         raise dispatcher(internal)
-    assert excinfo.value.task_id == "t"
+    # spec 022 FR-077: exception.task_id removed
     assert excinfo.value.size_bytes == 3_000_000
 
 
@@ -220,6 +220,7 @@ def test_hosted_conflict_is_not_public() -> None:
     ), "_HostedConflict must not appear in __all__."
 
 
+@pytest.mark.skip(reason="Spec 022 Q9/Q17: TaskRun.delete() removed. Use multi_turn_task.delete(task_id) instead.")
 @pytest.mark.asyncio
 async def test_task_run_delete_translates_hosted_conflict() -> None:
     """TaskRun.delete surfaces public TaskConflictError, not _HostedConflict."""
@@ -241,7 +242,7 @@ async def test_task_run_delete_translates_hosted_conflict() -> None:
 
     with pytest.raises(TaskConflictError) as exc_info:
         await run.delete()
-    assert exc_info.value.task_id == "t-delete"
+    # spec 022 FR-077: exception.task_id removed
 
 
 def test_no_service_code_strings_as_public_type_names() -> None:
@@ -430,7 +431,7 @@ async def test_task_already_exists_observes_status_for_public_conflict(
 
         with pytest.raises(TaskConflictError) as excinfo:
             await create_race_task.run(task_id="hosted-create-race", input="new")
-        assert excinfo.value.task_id == "hosted-create-race"
+    # spec 022 FR-077: exception.task_id removed
         assert excinfo.value.current_status == "completed"
     finally:
         await _teardown_translation_manager(manager, mgr_mod)
@@ -459,7 +460,7 @@ async def test_invalid_request_translates_to_task_precondition_failed(tmp_path) 
             await invalid_request_task.run(
                 task_id="hosted-invalid-request", input="new"
             )
-        assert excinfo.value.task_id == "hosted-invalid-request"
+    # spec 022 FR-077: exception.task_id removed
         assert "lease rule failed" in str(excinfo.value)
         assert not isinstance(excinfo.value, _HostedConflict)
     finally:

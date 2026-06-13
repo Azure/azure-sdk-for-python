@@ -17,6 +17,7 @@ from typing import Any
 import pytest
 
 from azure.ai.agentserver.core.durable import (
+    TaskDeferred,
     TaskContext,
     task,
 )
@@ -250,7 +251,7 @@ class TestExitForRecovery:
             await asyncio.sleep(0.05)
             shutdown_triggered.set()
 
-            with pytest.raises(TaskCancelled):
+            with pytest.raises(TaskDeferred):
                 await asyncio.wait_for(run.result(), timeout=2.0)
 
             # Stored status MUST remain in_progress per FR-027(c).
@@ -527,7 +528,7 @@ class TestSpec016ExitForRecoveryExtended:
             run = await handler.start(task_id="t094b-rec", input="x")
             await asyncio.sleep(0.05)
             triggered.set()
-            with pytest.raises(TaskCancelled):
+            with pytest.raises(TaskDeferred):
                 await asyncio.wait_for(run.result(), timeout=2.0)
             # Verify the task is preserved as in_progress with our owner.
             info = await provider.get("t094b-rec")
@@ -614,7 +615,7 @@ class TestSpec016ExitForRecoveryExtended:
 
             # Trigger shutdown — handler calls exit_for_recovery.
             gate.set()
-            with pytest.raises(TaskCancelled):
+            with pytest.raises(TaskDeferred):
                 await asyncio.wait_for(run1.result(), timeout=2.0)
 
             # FR-028: pending_inputs MUST be preserved in the persisted

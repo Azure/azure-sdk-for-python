@@ -303,7 +303,7 @@ async def test_split_brain_handler_executes_exactly_once(
     await manager_a.startup()
     try:
         result_a = await my_task.run(task_id="split-brain", input="A")
-        assert result_a.output == "executed-1"
+        assert result_a == "executed-1"
     finally:
         await manager_a.shutdown()
 

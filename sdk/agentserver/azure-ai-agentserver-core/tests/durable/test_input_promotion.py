@@ -191,7 +191,7 @@ async def test_oversized_input_raises_input_too_large(
 
     with pytest.raises(InputTooLarge) as excinfo:
         await never_runs.start(task_id="t-oversize-1", input=too_big)
-    assert excinfo.value.task_id == "t-oversize-1"
+    # spec 022 FR-077: exception.task_id removed
 
 
 @pytest.mark.asyncio

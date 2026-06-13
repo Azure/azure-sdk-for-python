@@ -192,7 +192,7 @@ def test_resolve_raises_inputtoolarge_when_over_cap():
             key_for_attachment="_input",
             task_id="t-huge",
         )
-    assert excinfo.value.task_id == "t-huge"
+    # spec 022 FR-077: exception.task_id removed
     assert excinfo.value.max_bytes == _MAX_ATTACHMENT_SIZE_BYTES
     assert excinfo.value.size_bytes > _MAX_ATTACHMENT_SIZE_BYTES
 
@@ -244,7 +244,7 @@ def test_validate_attachment_size_raises_over_cap():
     huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 5)
     with pytest.raises(AttachmentTooLarge) as excinfo:
         _validate_attachment_size("task-x", "att-k", huge)
-    assert excinfo.value.task_id == "task-x"
+    # spec 022 FR-077: exception.task_id removed
     assert excinfo.value.attachment_key == "att-k"
 
 
@@ -259,7 +259,7 @@ def test_validate_attachment_count_at_cap_passes():
 def test_validate_attachment_count_over_cap_raises():
     with pytest.raises(AttachmentLimitExceeded) as excinfo:
         _validate_attachment_count("t-y", current_count=20, additions=1)
-    assert excinfo.value.task_id == "t-y"
+    # spec 022 FR-077: exception.task_id removed
     assert excinfo.value.current_count == 20
     assert excinfo.value.max_count == _MAX_ATTACHMENTS
 

@@ -256,7 +256,7 @@ async def test_steering_queue_9_cap(manager_local: TaskManager) -> None:
     # 10th raises.
     with pytest.raises(SteeringQueueFull) as excinfo:
         await runner.start(task_id="t-9cap-1", input={"steer": 999})
-    assert excinfo.value.task_id == "t-9cap-1"
+    # spec 022 FR-077: exception.task_id removed
     assert excinfo.value.max_pending == _STEERING_QUEUE_CAP
 
     block.set()
@@ -413,7 +413,7 @@ async def test_steering_append_oversized_raises_input_too_large(
     huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 200)
     with pytest.raises(InputTooLarge) as excinfo:
         await runner.start(task_id="t-steer-oversize-1", input=huge)
-    assert excinfo.value.task_id == "t-steer-oversize-1"
+    # spec 022 FR-077: exception.task_id removed
 
     block.set()
     await run.cancel()
