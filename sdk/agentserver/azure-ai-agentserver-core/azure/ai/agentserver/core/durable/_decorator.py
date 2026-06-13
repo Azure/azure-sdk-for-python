@@ -1646,27 +1646,51 @@ class MultiTurnTask(Generic[Input, Output]):
 
         Per spec 022 FR-024, removes the chain record and all queued
         steerers; resolves active + queued callers' ``.result()`` futures
-        with :class:`TaskCancelled`. Idempotent.
+        with :class:`TaskCancelled`. Idempotent (no-op when the chain is
+        already gone).
 
         :param task_id: The chain task_id to delete.
         :type task_id: str
         """
-        from ._manager import get_task_manager
+        from ._manager import get_task_manager  # pylint: disable=import-outside-toplevel
+        from ._exceptions import TaskCancelled  # pylint: disable=import-outside-toplevel
 
-        mgr = get_task_manager()
-        if mgr is None:
-            raise RuntimeError(
-                "MultiTurnTask.delete() requires an initialized TaskManager"
-            )
         try:
-            await mgr.delete_task(task_id, force=True)  # type: ignore[attr-defined]
-        except AttributeError:
-            provider = getattr(mgr, "_provider", None)
-            if provider is not None:
-                try:
-                    await provider.delete(task_id, force=True)
-                except Exception:  # noqa: BLE001
-                    pass
+            mgr = get_task_manager()
+        except RuntimeError:
+            return  # no manager -> nothing to delete
+
+        # 1. Resolve any active in-process caller's future with TaskCancelled.
+        active = getattr(mgr, "_active_tasks", {}).get(task_id)
+        if active is not None:
+            fut = getattr(active, "result_future", None)
+            if fut is not None and not fut.done():
+                fut.set_exception(TaskCancelled(task_id))
+            # Signal the handler's cancel event so the running coroutine
+            # winds down cooperatively.
+            cancel_evt = getattr(active.context, "cancel", None)
+            if cancel_evt is not None:
+                cancel_evt.set()
+            # Force-cancel the running execution_task so handlers blocked
+            # on awaits that don't check ctx.cancel still exit.
+            exec_task = getattr(active, "execution_task", None)
+            if exec_task is not None and not exec_task.done():
+                exec_task.cancel()
+
+        # 2. Resolve all queued steerer futures with TaskCancelled.
+        pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
+        for queued_fut in pending:
+            if not queued_fut.done():
+                queued_fut.set_exception(TaskCancelled(task_id))
+
+        # 3. Force-delete the record (idempotent — swallow NotFound shapes).
+        provider = getattr(mgr, "_provider", None)
+        if provider is not None:
+            try:
+                await provider.delete(task_id, force=True)
+            except Exception:  # noqa: BLE001 — idempotent
+                # Includes the "already deleted" case; the test asserts idempotency.
+                pass
 
 
 @overload
