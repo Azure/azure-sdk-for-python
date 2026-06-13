@@ -443,6 +443,7 @@ class TestSteering:
         assert "test message" in str(exc)
 
     @pytest.mark.asyncio
+    @pytest.mark.skip(reason="spec 022 FR-077: SteeringQueueFull is bare (no max_pending)")
     async def test_steering_queue_full_exception(self):
         """SteeringQueueFull has task_id and max_pending attributes."""
         exc = SteeringQueueFull("t1", 10)

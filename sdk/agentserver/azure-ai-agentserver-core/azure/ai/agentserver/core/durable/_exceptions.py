@@ -51,7 +51,13 @@ class TaskCancelled(Exception):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         # Accept and discard any legacy positional/keyword args.
-        super().__init__("Task was cancelled")
+        # Include the task_id (if provided as first positional) in the
+        # message string for log/repr purposes only — it is NOT set on
+        # the exception as an attribute (per FR-077).
+        if args and isinstance(args[0], str):
+            super().__init__(f"Task {args[0]!r} was cancelled")
+        else:
+            super().__init__("Task was cancelled")
 
 
 # Override inspect signature to show empty parameter list per FR-077.

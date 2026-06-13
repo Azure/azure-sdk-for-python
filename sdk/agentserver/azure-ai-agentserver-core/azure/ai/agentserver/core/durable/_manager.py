@@ -159,7 +159,7 @@ def _parse_turn_started_at(value: Any) -> float | None:
         return None
 
 
-def _build_output_co_write(
+def _legacy_output_terminal_patch(
     *,
     task_id: str,
     metadata_dict: dict[str, Any],
@@ -2453,7 +2453,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             # _output attachment (never inline in payload). FR-C-006
             # caps it at 2 MB serialized; over-cap raises OutputTooLarge
             # BEFORE the PATCH lands.
-            payload_patch, attachments_patch = _build_output_co_write(
+            payload_patch, attachments_patch = _legacy_output_terminal_patch(
                 task_id=task_id,
                 metadata_dict=metadata.to_dict(),
                 output=result,
@@ -2787,7 +2787,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             extra_payload["_steering"] = steering_patch
 
         try:
-            payload_patch, attachments_patch = _build_output_co_write(
+            payload_patch, attachments_patch = _legacy_output_terminal_patch(
                 task_id=task_id,
                 metadata_dict=metadata.to_dict(),
                 output=output,

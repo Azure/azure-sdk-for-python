@@ -1586,11 +1586,27 @@ class MultiTurnTask(Generic[Input, Output]):
         return self._inner._output_type  # noqa: SLF001
 
     async def run(self, *args: Any, **kwargs: Any) -> Any:
-        """Run the chain turn — see :meth:`Task.run`."""
+        """Run the chain turn — see :meth:`Task.run`.
+
+        Spec 022 FR-005: multi-turn ``task_id`` is MANDATORY (no auto-gen).
+        """
+        if "task_id" not in kwargs:
+            raise TypeError(
+                "MultiTurnTask.run() requires `task_id` (multi-turn chains "
+                "have mandatory task_id per spec 022 FR-005)"
+            )
         return await self._inner.run(*args, **kwargs)
 
     async def start(self, *args: Any, **kwargs: Any) -> Any:
-        """Start a chain turn — see :meth:`Task.start`."""
+        """Start a chain turn — see :meth:`Task.start`.
+
+        Spec 022 FR-005: multi-turn ``task_id`` is MANDATORY (no auto-gen).
+        """
+        if "task_id" not in kwargs:
+            raise TypeError(
+                "MultiTurnTask.start() requires `task_id` (multi-turn chains "
+                "have mandatory task_id per spec 022 FR-005)"
+            )
         return await self._inner.start(*args, **kwargs)
 
     async def get_active_run(  # noqa: D401
