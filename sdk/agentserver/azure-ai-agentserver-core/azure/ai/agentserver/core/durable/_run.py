@@ -28,30 +28,6 @@ from ._metadata import TaskMetadata
 Output = TypeVar("Output")
 
 
-class Suspended(Generic[Output]):
-    """Internal-only transitional sentinel.
-
-    No longer part of the public surface — kept only so legacy internal
-    code paths in ``_manager.py`` and ``_context.py`` can continue to
-    operate during the deprecation window. New code MUST NOT import
-    ``Suspended`` from the public ``azure.ai.agentserver.core.durable``
-    surface.
-    """
-
-    __slots__ = ("reason", "output")
-
-    def __init__(
-        self,
-        reason: str | None = None,
-        output: Output | None = None,
-    ) -> None:
-        self.reason = reason
-        self.output = output
-
-    def __repr__(self) -> str:
-        return f"Suspended(reason={self.reason!r})"
-
-
 def _unwrap_result(res: Any) -> Any:
     """: futures now resolve to raw Output directly.
 
@@ -89,6 +65,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         "_cancel_event",
         "_cancel_ctx_ref",
         "_execution_task",
+        "_queued_cancel_callback",
     )
 
     def __init__(
@@ -106,6 +83,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         lease_expiry_count: int = 0,  # noqa: ARG002 — accepted but ignored (Phase 5)
         cancel_ctx_ref: Any = None,
         input_id: str | None = None,
+        queued_cancel_callback: Any = None,
     ) -> None:
         self.task_id = task_id
         #   — `input_id` is a public read-only attribute on
@@ -121,6 +99,13 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         # TaskRun.cancel() can set ctx.cancel_requested = True before
         # setting ctx.cancel.
         self._cancel_ctx_ref: Any = cancel_ctx_ref
+        # Optional callback installed by the framework when this handle
+        # represents a queued (not-yet-promoted) steering input.
+        # ``cancel()`` invokes the callback instead of the in-process
+        # cancel signal — the callback removes the queued slot from
+        # ``_steering.pending_inputs`` and resolves the future with
+        # ``TaskCancelled``.
+        self._queued_cancel_callback: Any = queued_cancel_callback
 
     @property
     def metadata(self) -> TaskMetadata:
@@ -157,7 +142,15 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
 
                 The handler should check ``ctx.cancel.is_set()`` (and optionally
                 branch on which cause boolean is set) to wind down cleanly.
+
+        For a queued (not-yet-promoted) steering input, ``cancel()``
+        removes the queued slot from the chain's pending-inputs queue
+        and resolves :meth:`result` with ``TaskCancelled``. The active
+        turn (if any) is not affected.
         """
+        if self._queued_cancel_callback is not None:
+            await self._queued_cancel_callback()
+            return
         ctx = self._cancel_ctx_ref
         if ctx is not None:
             ctx.cancel_requested = True

@@ -62,7 +62,7 @@ from ._exceptions import (
 )
 from ._metadata import JSONValue, TaskMetadata
 from ._retry import RetryPolicy
-from ._run import TaskRun  # Suspended kept internal-only; reach via _run module directly
+from ._run import TaskRun
 
 # Streaming lives in `azure.ai.agentserver.core.streaming` as a peer
 # subpackage with a registry-based lifecycle model. The durable task

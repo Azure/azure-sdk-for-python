@@ -172,23 +172,6 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
             return 0
 
-    async def _suspend_internal(
-        self,
-        *,
-        reason: str | None = None,
-        output: Any | None = None,
-    ) -> Any:
-        """Internal-only suspend sentinel.
-
-        NOT on the public surface — handlers end a turn with bare
-        ``return X`` (multi-turn = implicit suspend; one-shot = terminal
-        completion). This method survives as a framework-internal helper
-        for the manager's drain / recovery scaffolding.
-        """
-        from ._run import Suspended  # pylint: disable=import-outside-toplevel
-
-        return Suspended(reason=reason, output=output)
-
     async def exit_for_recovery(self) -> Any:
         """: graceful-shutdown shape.
 

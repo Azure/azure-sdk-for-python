@@ -382,30 +382,6 @@ class TestTaskMetadataNamedNamespaces:
         assert "shared_name" not in meta("a")
         assert meta("b")["shared_name"] == "from_b"
 
-    @pytest.mark.skip(reason=": underscore namespaces now reserved (was: not enforced)")
-    def test_underscore_namespace_not_enforced_by_primitive(self) -> None:
-        """The CORE primitive accepts `_*` namespace names without raising.
-
-        , ``_`` prefix is a convention for framework layers
-                (e.g., responses-layer ``_responses``). Enforcement (raising
-                ``ValueError`` on ``_*`` names) is wrapper-only — primitive
-                consumers (invocations sample developers) must be able to use
-                any name they like without the core layer rejecting it.
-        """
-        meta = TaskMetadata()
-        # Must NOT raise
-        ns_underscore = meta("_responses")
-        ns_double = meta("__internal__")
-        ns_normal = meta("regular")
-
-        ns_underscore["a"] = 1
-        ns_double["b"] = 2
-        ns_normal["c"] = 3
-
-        assert ns_underscore["a"] == 1
-        assert ns_double["b"] == 2
-        assert ns_normal["c"] == 3
-
     def test_metadata_module_has_no_autoflush_symbols(self) -> None:
         """Source-scan: ``start_auto_flush`` / ``stop_auto_flush`` etc. are gone.
 
@@ -421,25 +397,6 @@ class TestTaskMetadataNamedNamespaces:
         forbidden = ("start_auto_flush", "stop_auto_flush", "_auto_flush_loop", "_flush_task", "_flush_interval")
         offenders = [name for name in forbidden if name in source]
         assert not offenders, f"_metadata.py must not mention retired auto-flush symbols: " f"{offenders}"
-
-    @pytest.mark.skip(reason=": uses _responses internally")
-    def test_default_namespace_has_no_framework_keys(self) -> None:
-        """Default namespace must not carry `_framework`-style keys.
-
-        : framework-internal scopes live in NAMED
-                namespaces (e.g., ``meta("_responses")``) or top-level payload
-                slots (``payload["_last_input_id"]``). The default namespace
-                is owned by the application/handler — there should never be a
-                ``_framework`` (or similar) leaking into ``meta.keys()``.
-        """
-        meta = TaskMetadata()
-        # Default is empty on fresh construction
-        assert list(meta.keys()) == []
-        # After framework use of a NAMED namespace, default still empty
-        meta("_responses")["resp_id"] = "abc"
-        meta("a")["x"] = 1
-        forbidden_in_default = [k for k in meta.keys() if k.startswith("_framework")]
-        assert forbidden_in_default == []
 
 
 class TestTaskMetadataRecoveryDurability:

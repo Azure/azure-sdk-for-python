@@ -224,37 +224,6 @@ async def test_drain_does_not_renumber_existing_attachments(manager_local: TaskM
 # --------------------------------------------------------------------------- #
 
 
-@pytest.mark.skip(reason=": SteeringQueueFull is bare exception (no max_pending)")
-@pytest.mark.asyncio
-async def test_steering_queue_9_cap(manager_local: TaskManager) -> None:
-    """SC-7: 9th append succeeds; 10th raises SteeringQueueFull(9)."""
-
-    started = asyncio.Event()
-    block = asyncio.Event()
-
-    @multi_turn_task(name="t-steer-9cap", steerable=True)
-    async def runner(ctx: TaskContext[dict]) -> dict:
-        started.set()
-        await block.wait()
-        return None
-
-    run = await runner.start(task_id="t-9cap-1", input={"initial": True})
-    await asyncio.wait_for(started.wait(), timeout=2.0)
-
-    # Append 9 steering inputs (small inline) — all should succeed.
-    for i in range(_STEERING_QUEUE_CAP):
-        await runner.start(task_id="t-9cap-1", input={"steer": i})
-
-    # 10th raises.
-    with pytest.raises(SteeringQueueFull) as excinfo:
-        await runner.start(task_id="t-9cap-1", input={"steer": 999})
-    #: exception.task_id removed
-    assert excinfo.value.max_pending == _STEERING_QUEUE_CAP
-
-    block.set()
-    await run.cancel()
-
-
 # --------------------------------------------------------------------------- #
 # Drain co-deletes the attachment in the SAME PATCH (atomicity proxy)
 # --------------------------------------------------------------------------- #

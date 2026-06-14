@@ -84,22 +84,13 @@ def test_drain_does_not_read_payload_input() -> None:
 # ============================================================================
 # T-026: recovery preserves input (spec scenarios 6, 7)
 # ============================================================================
-
-
-def test_handle_suspend_only_fires_on_suspend_not_recovery() -> None:
-    """Source-level assertion: the input-clearing path is gated by suspend
-    transition. Recovery (entry_mode="recovered") follows a different code
-    path that doesn't touch ``_handle_suspend``.
-    """
-    import inspect
-
-    from azure.ai.agentserver.core.durable._manager import TaskManager
-
-    src = inspect.getsource(TaskManager._handle_suspend)
-    # Only fires on the suspended transition — the patch carries
-    # status="suspended" explicitly.
-    assert 'status="suspended"' in src
-    assert "_clear_consumed_inputs" not in src or 'payload_patch["input"] = None' in src
+# (test_handle_suspend_only_fires_on_suspend_not_recovery removed: the
+# legacy ``_handle_suspend`` scaffolding has been deleted from
+# ``_manager.py``. The end-of-turn suspend transition is now handled by
+# ``_handle_multi_turn_success`` / ``_handle_multi_turn_failure``, which
+# only run on the multi-turn return-X / raise paths; recovery enters
+# ``_execute_task`` with ``entry_mode == "recovered"`` and never touches
+# the suspend handler.)
 
 
 # ============================================================================

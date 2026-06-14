@@ -139,8 +139,8 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     "public_api_surface_exact_match": ("test_public_api_surface.py::test_public_all_matches_expected_set"),
     #  — retired symbols NOT in __all__
     "retired_symbols_absent_from_public_all": ("test_public_api_surface.py::test_retired_symbols_absent_from_all"),
-    #  — Task.get / Task.list renamed to _get / _list
-    "task_get_list_renamed_to_private": ("test_public_api_surface.py::test_task_get_list_renamed_to_private"),
+    # (Task.get / Task.list rename to _get / _list — vacuous post-spec-022;
+    # Task.get and TaskSnapshot are removed entirely.)
     #  /  — @task rejects retired decorator args
     "task_decorator_rejects_retired_args": ("test_decorator.py::test_task_decorator_rejects_retired_args"),
     #  — TaskContext.run_attempt renamed to retry_attempt
@@ -159,10 +159,9 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     "task_metadata_flush_per_namespace_only": ("test_metadata.py::test_flush_per_namespace_only"),
     #  — default-namespace convenience accessor
     "task_metadata_default_namespace_callable_and_dict": ("test_metadata.py::test_default_namespace_callable_and_dict"),
-    #  — primitive does NOT enforce underscore convention
-    "task_metadata_underscore_not_enforced_by_primitive": (
-        "test_metadata.py::test_underscore_namespace_not_enforced_by_primitive"
-    ),
+    # (Underscore-namespace not-enforced-by-primitive contract is vacuous
+    # post-redesign — primitive now reserves leading underscore and
+    # raises ValueError; covered by test_metadata::test_named_namespace.)
     # ---  — Task & Streams Reconciliation ----------------------
     #  (etag CAS, write queue, dynamic lease, per-op 412 policy)
     "task_streams_etag_cas_every_patch": ("test_etag_cas.py::test_every_patch_after_first_carries_if_match"),
@@ -207,9 +206,10 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     "task_streams_attachment_limit_exceeded_internal": (
         "test_errors_public_surface.py::test_attachment_limit_exceeded_not_public"
     ),
-    "task_streams_input_attachment_error_remapped_to_input_too_large": (
-        "test_errors_public_surface.py::test_input_too_large_remap_from_internal_input_key"
-    ),
+    # (The pre-redesign "input attachment error remapped to InputTooLarge"
+    # via the internal `_input` key is vacuous post-redesign — InputTooLarge
+    # is now bare and the remap-from-_input path is covered by the
+    # steering-key variant below as the canonical case.)
     "task_streams_steering_attachment_error_remapped_to_input_too_large": (
         "test_errors_public_surface.py::test_input_too_large_remap_from_steering_key"
     ),

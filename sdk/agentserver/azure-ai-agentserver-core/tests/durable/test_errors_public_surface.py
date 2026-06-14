@@ -102,38 +102,6 @@ def _internal_attachment_too_large_cls():
     return getattr(mod, "_AttachmentTooLarge")
 
 
-@pytest.mark.skip(reason=": InputTooLarge is bare exception")
-def test_input_too_large_remap_from_internal_input_key() -> None:
-    """— when the framework's prefix dispatcher receives an
-    internal ``_AttachmentTooLarge`` raised against attachment key
-    ``_input``, it MUST re-raise the developer-facing ``InputTooLarge``.
-
-    Implementation detail: the dispatcher is exposed as a module-level
-    helper (``_attachments_error_to_developer_facing`` or equivalent
-    name); tests look it up by either name.
-    """
-    from azure.ai.agentserver.core.durable import InputTooLarge
-
-    internal_cls = _internal_attachment_too_large_cls()
-    mod = importlib.import_module("azure.ai.agentserver.core.durable._attachments")
-    dispatcher = (
-        getattr(mod, "_remap_attachment_error", None)
-        or getattr(mod, "_attachments_error_to_developer_facing", None)
-        or getattr(mod, "_remap_attachment_too_large", None)
-    )
-    assert dispatcher is not None, (
-        "no prefix dispatcher helper found in _attachments.py; "
-        " requires a single module-level helper that maps "
-        "internal _AttachmentTooLarge to the developer-facing error."
-    )
-
-    internal = internal_cls(task_id="t", attachment_key="_input", size_bytes=3_000_000, max_bytes=2_097_152)
-    with pytest.raises(InputTooLarge) as excinfo:
-        raise dispatcher(internal)
-    #: exception.task_id removed
-    assert excinfo.value.size_bytes == 3_000_000
-
-
 def test_input_too_large_remap_from_steering_key() -> None:
     """/ SC-9b — when the framework receives the internal
     ``_AttachmentTooLarge`` for a ``_steering_input_<seq>`` key, it
@@ -199,26 +167,6 @@ def test_hosted_conflict_is_not_public() -> None:
         "_HostedConflict is internal; it MUST NOT be exported via the " "public `durable` namespace."
     )
     assert "_HostedConflict" not in getattr(pub, "__all__", []), "_HostedConflict must not appear in __all__."
-
-
-@pytest.mark.skip(reason=" Q9/Q17: TaskRun.delete removed. Use multi_turn_task.delete(task_id) instead.")
-@pytest.mark.asyncio
-async def test_task_run_delete_translates_hosted_conflict() -> None:
-    """TaskRun.delete surfaces public TaskConflictError, not _HostedConflict."""
-    from azure.ai.agentserver.core.durable import TaskConflictError
-    from azure.ai.agentserver.core.durable._exceptions_internal import _HostedConflict
-    from azure.ai.agentserver.core.durable._run import TaskRun
-
-    class _Provider:
-        async def delete(self, task_id: str, *, force: bool = False, cascade: bool = False) -> None:
-            raise _HostedConflict(_code="task_immutable", status_code=409, message="completed", task_id=task_id)
-
-    result_future: asyncio.Future[Any] = asyncio.get_running_loop().create_future()
-    run = TaskRun("t-delete", provider=_Provider(), result_future=result_future)  # type: ignore[arg-type]
-
-    with pytest.raises(TaskConflictError) as exc_info:
-        await run.delete()
-    #: exception.task_id removed
 
 
 def test_no_service_code_strings_as_public_type_names() -> None:

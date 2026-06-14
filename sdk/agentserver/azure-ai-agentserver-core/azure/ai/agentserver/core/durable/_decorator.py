@@ -170,54 +170,6 @@ def _deserialize_input(value: Any, input_type: type[Any]) -> Any:
     return value
 
 
-def _in_progress_was_abandoned_legacy(task_updated_at: str, threshold: float) -> bool:
-    """Transitional helper for the Phase-4 cohort of.
-
-    Replaces the public ``_is_stale`` helper that was removed by
-    (/ T031). This intentionally non-stale-named function
-    holds the in-process recovery decision until Phase 6 of
-    lands the proper  /  lease-based reclaim path
-    (``_lease_is_dead`` + ``_reclaim_one``) that supersedes this entire
-    code path.
-
-    The function MUST NOT be imported from outside ``_decorator.py`` —
-    it is a transitional implementation detail with a planned
-    deprecation in the same PR (Phase 6 of).
-
-    :param task_updated_at: ISO 8601 timestamp of the task's last update.
-    :type task_updated_at: str
-    :param threshold: Internal threshold seconds (currently fixed; see
-        ``_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS``).
-    :type threshold: float
-    :returns: True if the framework should treat the in-progress record
-        as abandoned by a previous lifetime and recover it.
-    :rtype: bool
-    """
-    if not task_updated_at:
-        return False
-    from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
-
-    updated = datetime.fromisoformat(task_updated_at)
-    now = datetime.now(timezone.utc)
-    if updated.tzinfo is None:
-        updated = updated.replace(tzinfo=timezone.utc)
-    return (now - updated).total_seconds() > threshold
-
-
-#  transitional internal constant.
-#
-# Replaces the per-task ``stale_timeout`` developer-facing knob that
-# was removed in Phase 4 of  (, T028-T032). Tests that
-# previously passed ``stale_timeout=0.1`` to deterministically trigger
-# the recovered code path now monkeypatch this module-level constant
-# instead. Phase 6 of  (, T053-T058) replaces both this
-# constant AND the entire ``_in_progress_was_abandoned_legacy`` code
-# path with the proper  /  framework-managed reclaim
-# (``_reclaim_one`` + ``_lease_is_dead``) — at which point this
-# constant becomes dead code and is removed.
-_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS: float = 300.0
-
-
 #   — framework-reserved payload slot for the
 # input-precondition primitive. Storage layout: top-level
 # ``payload["_last_input_id"]: str`` (the ``_`` prefix is the framework-
@@ -886,6 +838,8 @@ class Task(Generic[Input, Output]):
         manager: Any,
         task_id: str,
         future: Any,
+        input_id: str | None = None,
+        input_val: Any = None,
     ) -> TaskRun[Output]:
         """Create a TaskRun for a queued steering input.
 
@@ -895,13 +849,29 @@ class Task(Generic[Input, Output]):
         :type task_id: str
         :param future: Future that will resolve with the next-turn outcome.
         :type future: Any
+        :param input_id: The input_id stamped on the queued input (if any).
+        :type input_id: str | None
+        :param input_val: The raw queued input value (used to identify the
+            slot when ``cancel()`` is invoked on the returned handle).
+        :type input_val: Any
         :return: A :class:`TaskRun` whose result resolves with the queued turn.
         :rtype: TaskRun[Output]
         """
+
+        async def _queued_cancel_cb() -> None:
+            await manager._cancel_queued_steering_input(  # pylint: disable=protected-access
+                task_id=task_id,
+                future=future,
+                input_id=input_id,
+                input_val=input_val,
+            )
+
         return TaskRun(
             task_id=task_id,
             provider=manager.provider,
             result_future=future,
+            input_id=input_id,
+            queued_cancel_callback=_queued_cancel_cb,
         )
 
     async def _lifecycle_start(  # pylint: disable=too-many-locals
@@ -1239,7 +1209,7 @@ class Task(Generic[Input, Output]):
                 # pylint: enable=protected-access
                 if active:
                     active.context.cancel.set()
-                return self._create_steering_ack_run(manager, task_id, ack_future)
+                return self._create_steering_ack_run(manager, task_id, ack_future, input_id=input_id, input_val=input)
             raise TaskConflictError(task_id, "in_progress")
 
         # completed (or any other terminal status)
@@ -1272,8 +1242,14 @@ def task(
     title: str | None = None,
     timeout: timedelta | None = None,
     retry: RetryPolicy | None = None,
+    **_extra_kwargs: Any,
 ) -> Any:
-    """Turn an async function into a crash-resilient durable task.
+    """Turn an async function into a crash-resilient one-shot durable task.
+
+    One-shot tasks are always ephemeral — the persisted record is
+    deleted on terminal exit. ``task_id`` is optional on the resulting
+    handle's ``.start`` / ``.run`` calls; the framework auto-generates
+    a GUID and defaults ``input_id`` to ``task_id`` (1:1 invariant).
 
     Can be used with or without arguments::
 
@@ -1290,7 +1266,7 @@ def task(
         explicit name for production tasks — if you rename the function later,
         existing in-flight tasks are still recovered correctly because the
         framework matches on this name, not the Python function name.
-    :keyword title: Human-readable title (string or callable).
+    :keyword title: Static human-readable string.
     :keyword timeout: Per-turn, wall-clock, durable, cooperative-only
         execution budget. When the budget elapses for the current turn,
         ``ctx.timeout_exceeded`` is set then ``ctx.cancel`` is set; the
@@ -1304,17 +1280,20 @@ def task(
     :rtype: Any
 
     .. note::
-       ``@task`` is always one-shot and always ephemeral — the persisted
-       record is deleted on terminal exit. Use ``@multi_turn_task`` for
-       steerable chains; passing ``ephemeral=`` or ``steerable=`` to
-       ``@task`` raises ``TypeError`` at decoration time.
+       Use ``@multi_turn_task`` for steerable chains. Passing
+       ``ephemeral=`` or ``steerable=`` to ``@task`` raises
+       ``TypeError`` at decoration time.
     """
+    # Reject unknown / unsupported kwargs at decoration time.
+    # ``steerable=`` and ``ephemeral=`` are NOT accepted on @task; use
+    # @multi_turn_task for steerable chains.
+    _validate_task_kwargs(**_extra_kwargs)
+    _validate_title(title)
 
-    def _wrap(
-        func: Callable[..., Any],
-    ) -> Task[Any, Any]:
+    def _wrap(func: Callable[..., Any]) -> Task[Any, Any]:
         if not asyncio.iscoroutinefunction(func):
-            raise TypeError(f"@task requires an async function, " f"got {func.__qualname__!r}")
+            raise TypeError(f"@task requires an async def function (an async function), " f"got {func.__qualname__!r}")
+        _validate_handler_signature(func, "task")
 
         input_type, output_type = _extract_generic_args(func)
 
@@ -1328,13 +1307,12 @@ def task(
             steerable=False,
         )
 
-        result = Task(
+        return Task(
             fn=func,
             opts=opts,
             input_type=input_type,
             output_type=output_type,
         )
-        return result
 
     if fn is not None:
         return _wrap(fn)
@@ -1703,56 +1681,6 @@ def multi_turn_task(
             input_type=input_type,
             output_type=output_type,
         )
-
-    if fn is not None:
-        return _wrap(fn)
-    return _wrap
-
-
-# Re-export the `task` decorator with  validation overlay.
-# Wraps the legacy `task` so existing callers keep working while NEW callers
-# get  /  /  /  enforcement.
-_legacy_task = task
-
-
-def task(  # type: ignore[no-redef]  # noqa: F811
-    fn: Callable[..., Any] | None = None,
-    *,
-    name: str | None = None,
-    title: str | None = None,
-    timeout: timedelta | None = None,
-    retry: RetryPolicy | None = None,
-    **_extra_kwargs: Any,
-) -> Any:
-    """Decorator producing a one-shot durable task.
-
-    One-shot tasks are always ephemeral — the record is deleted on
-    terminal exit. ``task_id`` is optional on the resulting handle's
-    ``.start`` / ``.run`` calls; the framework auto-generates a GUID
-    and defaults ``input_id`` to ``task_id`` (1:1 invariant).
-
-    :keyword name: Stable identity anchor.
-    :keyword title: Static human-readable string.
-    :keyword timeout: Cooperative per-turn timeout.
-    :keyword retry: Retry policy (None = no retry).
-    :return: A :class:`Task` instance (NOT :class:`MultiTurnTask`;
-        the two are deliberately distinct classes).
-    """
-    # Reject unknown / unsupported kwargs at decoration time.
-    # `steerable=` and `ephemeral=` are NOT accepted on @task;
-    # use @multi_turn_task for steerable chains.
-    _validate_task_kwargs(**_extra_kwargs)
-    # `title` must be str | None (callable-factory form rejected).
-    _validate_title(title)
-
-    def _wrap(func: Callable[..., Any]) -> Task[Any, Any]:
-        _validate_handler_signature(func, "task")
-        return _legacy_task(
-            name=name,
-            title=title,
-            timeout=timeout,
-            retry=retry,
-        )(func)
 
     if fn is not None:
         return _wrap(fn)

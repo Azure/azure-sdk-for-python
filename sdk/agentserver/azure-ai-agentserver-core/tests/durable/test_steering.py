@@ -369,35 +369,6 @@ class TestSteering:
     # Options passthrough
     # ------------------------------------------------------------------
 
-    @pytest.mark.skip(reason=": Task.options removed from public surface")
-    @pytest.mark.asyncio
-    async def test_steerable_via_options(self, tmp_path):
-        """steerable can be set via .options()."""
-        manager, mgr_mod = await self._setup_manager(tmp_path)
-        try:
-            gate = asyncio.Event()
-
-            @task(name="chat")
-            async def chat(ctx: TaskContext[dict]) -> dict:
-                await gate.wait()
-                if ctx.cancel.is_set():
-                    return None
-                return {"msg": "done"}
-
-            steerable_chat = chat.options(steerable=True)
-
-            run1 = await steerable_chat.start(task_id="t1", input={"msg": "A"})
-            await asyncio.sleep(0.05)
-
-            # This should work because steerable=True via options
-            run2 = await steerable_chat.start(task_id="t1", input={"msg": "B"})
-            #: exception.task_id removed
-            gate.set()
-            await asyncio.wait_for(run2.result(), timeout=5.0)
-
-        finally:
-            await self._teardown_manager(manager, mgr_mod)
-
     # ------------------------------------------------------------------
     # TaskOptions validation
     # ------------------------------------------------------------------
@@ -417,15 +388,6 @@ class TestSteering:
         exc = EtagConflict("t1", "test message")
         #: exception.task_id removed
         assert "test message" in str(exc)
-
-    @pytest.mark.asyncio
-    @pytest.mark.skip(reason=": SteeringQueueFull is bare (no max_pending)")
-    async def test_steering_queue_full_exception(self):
-        """SteeringQueueFull has task_id and max_pending attributes."""
-        exc = SteeringQueueFull("t1", 10)
-        #: exception.task_id removed
-        assert exc.max_pending == 10
-        assert "10" in str(exc)
 
     # ------------------------------------------------------------------
     # Steering with function that completes (not suspends)
@@ -467,15 +429,8 @@ class TestSteeringRecovery:
         mgr_mod._manager = None
 
     @pytest.mark.asyncio
-    async def test_recovery_with_drain_in_progress(self, tmp_path, monkeypatch):
+    async def test_recovery_with_drain_in_progress(self, tmp_path):
         """Recovery after crash mid-drain uses active_input from steering state."""
-        #  transitional: force immediate recovery via the legacy
-        # threshold constant. Phase 6 of  replaces this with
-        # lease-based reclaim.
-        import azure.ai.agentserver.core.durable._decorator as _dec
-
-        monkeypatch.setattr(_dec, "_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS", 0.0)
-
         from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
         from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod
@@ -544,110 +499,6 @@ class TestSteeringRecovery:
         # Should have used active_input "B", not the recovery caller input
         assert result2 == {"msg": "B"}
         assert inputs_seen[-1] == {"msg": "B"}
-
-        await manager2.shutdown()
-        mgr_mod._manager = None
-
-    @pytest.mark.asyncio
-    @pytest.mark.skip(
-        reason=": behaviorally the recovered turn 1 caller now "
-        "sees the natural suspend outcome (not the eventual Z output). The "
-        "framework drain still processes Y→Z but timing-dependent on the "
-        "test setup; full coverage of recovered-mid-drain semantics moves "
-        "to the Phase 8 conformance-SOT deliverable."
-    )
-    async def test_recovery_with_pending_inputs(self, tmp_path, monkeypatch):
-        """Recovery with pending inputs drains them after function completes."""
-        #  transitional: force immediate recovery via the legacy
-        # threshold constant. Phase 6 of  replaces this with
-        # lease-based reclaim.
-        import azure.ai.agentserver.core.durable._decorator as _dec
-
-        monkeypatch.setattr(_dec, "_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS", 0.0)
-
-        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
-        from azure.ai.agentserver.core.durable._manager import TaskManager
-        from azure.ai.agentserver.core.durable._models import TaskPatchRequest
-        import azure.ai.agentserver.core.durable._manager as mgr_mod
-
-        provider = LocalFileTaskProvider(Path(str(tmp_path)))
-        config = type(
-            "C",
-            (),
-            {
-                "agent_name": "test-agent",
-                "session_id": "test-session",
-                "agent_version": "1.0.0",
-                "is_hosted": False,
-            },
-        )()
-
-        # Phase 1: Create a task normally, then simulate crash with pending
-        manager = TaskManager(config=config, provider=provider)
-        mgr_mod._manager = manager
-        await manager.startup()
-
-        @multi_turn_task(name="chat", steerable=True)
-        async def chat_setup(ctx: TaskContext[dict]) -> dict:
-            # Long sleep — we'll kill the manager before it completes
-            await asyncio.sleep(10)
-            return {"msg": "never"}
-
-        run1 = await chat_setup.start(task_id="t2", input={"msg": "X"})
-        await asyncio.sleep(0.1)  # let it start
-
-        # Force shutdown (simulates crash)
-        await manager.shutdown()
-        mgr_mod._manager = None
-
-        # Patch the task to simulate crash-with-pending state
-        await provider.update(
-            "t2",
-            TaskPatchRequest(
-                status="in_progress",
-                payload={
-                    "input": {"msg": "X"},
-                    "_steering": {
-                        "generation": 0,
-                        "active_input": {"msg": "X"},
-                        "pending_inputs": [{"msg": "Y"}, {"msg": "Z"}],
-                        "cancel_requested": True,
-                        "drain_in_progress": False,
-                    },
-                },
-            ),
-        )
-
-        # Phase 2: New manager recovers the task
-        manager2 = TaskManager(config=config, provider=provider)
-        mgr_mod._manager = manager2
-        await manager2.startup()
-
-        inputs_seen: list[str] = []
-
-        @multi_turn_task(name="chat", steerable=True)
-        async def chat(ctx: TaskContext[dict]) -> dict:
-            inputs_seen.append(ctx.input.get("msg", "?"))
-            if ctx.cancel.is_set():
-                return None
-            return {"msg": ctx.input.get("msg", "?")}
-
-        run2 = await chat.start(task_id="t2", input={"msg": "recover"})
-        result = await asyncio.wait_for(run2.result(), timeout=5.0)
-
-        #   (Subscriber): the.start caller is the first-turn caller.
-        # The recovered handler runs with input X (pending[0]) and suspends
-        # because cancel is set (pending Y, Z remain). The caller sees the
-        # natural multi-turn suspend outcome — NOT the eventual Z output
-        # (that was the legacy superseded-result semantic).
-        #: result is raw output (Suspended wrapper removed)
-        _ = result  # consumed; structural shape verified by chain inputs
-        # The framework still drains through Y → Z; verify the handler did
-        # eventually see Z even though the .start() caller only observed turn-1.
-        deadline = asyncio.get_event_loop().time() + 2.0
-        while "Z" not in inputs_seen and asyncio.get_event_loop().time() < deadline:
-            await asyncio.sleep(0.05)
-        assert "Z" in inputs_seen, f"Recovery should drain through X → Y → Z; observed {inputs_seen}"
 
         await manager2.shutdown()
         mgr_mod._manager = None

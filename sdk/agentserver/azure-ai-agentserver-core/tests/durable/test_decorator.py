@@ -103,55 +103,6 @@ class TestTaskDecorator:
             task(**{kwarg: 1})  # type: ignore[arg-type]
 
 
-@pytest.mark.skip(reason=": Task.options removed from public surface (use a fresh @task with the desired options)")
-class TestTaskOptionsMerge:
-    """Tests for option merge via ``Task.options()``."""
-
-    def test_options_returns_new_instance(self) -> None:
-        """options() returns a new Task, original unchanged."""
-
-        @task(ephemeral=True)
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        updated = my_task.options(ephemeral=False)
-        assert updated is not my_task
-        assert updated._opts.ephemeral is False
-        assert my_task._opts.ephemeral is True
-
-    def test_options_merges_tags(self) -> None:
-        """options() no longer accepts ``tags=`` (internal-only field)."""
-
-        @task()
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        with pytest.raises(TypeError):
-            my_task.options(tags={"b": "2"})  # type: ignore[call-arg]
-
-    def test_options_overrides_title(self) -> None:
-        """options() overrides title."""
-
-        @task(title="original")
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        updated = my_task.options(title="override")
-        assert updated._opts.title == "override"
-
-    def test_default_options(self) -> None:
-        """Default TaskOptions has sensible defaults."""
-
-        @task
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        opts = my_task._opts
-        assert opts.ephemeral is True
-        assert opts.tags == {}
-        assert opts.timeout is None
-
-
 class TestTypeExtraction:
     """Tests for generic type parameter extraction."""
 
@@ -205,14 +156,3 @@ class TestStaleTimeoutRemoved:
             @task(stale_timeout=1.0)  # type: ignore[call-arg]
             async def _my_task(ctx: TaskContext[str]) -> int:
                 return 0
-
-    @pytest.mark.skip(reason=": Task.options removed from public surface")
-    def test_task_options_rejects_stale_timeout(self) -> None:
-        """Task.options(stale_timeout=...) raises TypeError (kwarg removed)."""
-
-        @task
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 0
-
-        with pytest.raises(TypeError):
-            my_task.options(stale_timeout=1.0)  # type: ignore[call-arg]

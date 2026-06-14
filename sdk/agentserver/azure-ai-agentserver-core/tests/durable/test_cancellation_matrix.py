@@ -244,10 +244,6 @@ class TestRunCancelMultiTurn:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod, store_dir)
 
-    @pytest.mark.skip(
-        reason="Steerable multi-turn cancel + queued-promotion timing path "
-        "needs re-validation post-redesign; track as separate impl follow-up."
-    )
     @pytest.mark.asyncio
     async def test_queued_steerer_promotes_after_cancelled_turn(self):
         manager, mgr_mod, store_dir = await _ManagerFixture.setup()
@@ -377,11 +373,6 @@ class TestTimeoutMultiTurn:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod, store_dir)
 
-    @pytest.mark.skip(
-        reason="Per-turn watchdog rearm on steering drain has a known gap "
-        "called out in the SOT spec (§52 watchdog scope); track as separate "
-        "impl follow-up."
-    )
     @pytest.mark.asyncio
     async def test_watchdog_rearmed_on_steering_drain(self):
         manager, mgr_mod, store_dir = await _ManagerFixture.setup()
@@ -492,12 +483,45 @@ class TestLeaseExpiryCrash:
             task_id = _unique("one_shot")
             run = await crashy.start(task_id=task_id, input="persisted", input_id="persisted")
             await asyncio.wait_for(first_entered.wait(), timeout=2.0)
-            active = manager._active_tasks[task_id]  # noqa: SLF001
+
+            # Simulate an OS-level crash by silently abandoning the
+            # in-process bookkeeping WITHOUT giving the handler's cancel
+            # handler a chance to transition the chain to suspended.
+            # A real crash (OOM kill / SIGKILL) leaves the durable
+            # record as "in_progress" with our lease still in place —
+            # which is exactly the state we need the new lifetime to
+            # recover from.
+            #
+            # The asyncio CancelledError path would normally transition
+            # the chain to suspended (chains stay alive across cancel),
+            # so we cannot use ``execution_task.cancel()`` here; we
+            # instead detach the bookkeeping and rewrite the record
+            # back to its pre-cancel "in_progress" shape.
+            active = manager._active_tasks.pop(task_id)  # noqa: SLF001
             active.renewal_cancel.set()
+            active.execution_task._log_destroy_pending = False  # type: ignore[attr-defined]
             active.execution_task.cancel()
-            with suppress(asyncio.CancelledError):
+            with suppress(asyncio.CancelledError, BaseException):
                 await active.execution_task
-            manager._active_tasks.clear()  # noqa: SLF001
+            # The cancel handler ran and transitioned the chain to
+            # suspended; rewrite the record back to in_progress with
+            # the persisted input to recreate the crashed-mid-handler
+            # shape that recovery is designed to pick up.
+            from azure.ai.agentserver.core.durable._models import TaskPatchRequest
+
+            await manager.provider.update(
+                task_id,
+                TaskPatchRequest(
+                    status="in_progress",
+                    payload={
+                        "input": "persisted",
+                        "_last_input_id": "persisted",
+                    },
+                    lease_owner=manager._lease_owner,  # noqa: SLF001
+                    lease_instance_id=manager._instance_id,  # noqa: SLF001
+                    lease_duration_seconds=60,
+                ),
+            )
             await _force_expire_lease(manager, task_id)
 
             from azure.ai.agentserver.core.durable._manager import TaskManager
@@ -614,14 +638,12 @@ class TestDeleteVsPromotionRace:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod, store_dir)
 
-    @pytest.mark.skip(
-        reason="Delete-vs-promotion CAS race needs re-validation post-redesign; " "track as separate impl follow-up."
-    )
     @pytest.mark.asyncio
     async def test_delete_before_promotion_cas_queued_head_never_runs(self):
         manager, mgr_mod, store_dir = await _ManagerFixture.setup()
         try:
             TaskCancelled = _public_exception("TaskCancelled")
+            active_entered = asyncio.Event()
             release_active = asyncio.Event()
             seen: list[str] = []
 
@@ -629,12 +651,14 @@ class TestDeleteVsPromotionRace:
             async def race(ctx: TaskContext[str]) -> str:
                 seen.append(ctx.input)
                 if ctx.input == "active":
+                    active_entered.set()
                     await release_active.wait()
                     return "active-complete"
                 return "queued-ran"
 
             task_id = _unique("multi")
             active = await race.start(task_id=task_id, input="active", input_id="i1")
+            await asyncio.wait_for(active_entered.wait(), timeout=2.0)
             queued = await race.start(task_id=task_id, input="queued", input_id="i2")
             await _delete_chain(race, task_id)
             release_active.set()
@@ -650,10 +674,6 @@ class TestDeleteVsPromotionRace:
 class TestQueuedSteererCancel:
     """— TaskRun.cancel on a handle bound to queued (not-yet-promoted) steerer."""
 
-    @pytest.mark.skip(
-        reason="Queued-steerer-cancel removes-from-queue path needs "
-        "re-validation post-redesign; track as separate impl follow-up."
-    )
     @pytest.mark.asyncio
     async def test_queued_cancel_removes_from_queue(self):
         manager, mgr_mod, store_dir = await _ManagerFixture.setup()

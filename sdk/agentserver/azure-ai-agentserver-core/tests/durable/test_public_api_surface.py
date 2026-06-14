@@ -136,36 +136,6 @@ def test_retired_symbols_absent_from_all() -> None:
     )
 
 
-@pytest.mark.skip(reason=": Task.get and TaskSnapshot deleted; _list still private")
-def test_task_get_list_renamed_to_private() -> None:
-    """+   — ``Task.get`` semantics.
-
-     demoted the previous ``Task.get`` (which returned a
-    raw ``TaskInfo``) to ``Task._get`` because the public-surface
-    contract was about leaking the storage-layer record type.
-
-      RE-INTRODUCES ``Task.get`` as a public method,
-    but with a different return type — :class:`TaskSnapshot` — that
-    deliberately excludes the framework-internal fields the legacy
-    ``Task.get`` exposed. The internal ``Task._get`` is retained for
-    callers that still want the raw record.
-
-    This test asserts both coexist: public ``Task.get`` returns
-    ``TaskSnapshot``; internal ``Task._get`` returns
-    ``TaskInfo`` (rename).
-    """
-    from azure.ai.agentserver.core.durable import Task
-
-    assert hasattr(Task, "get") and callable(Task.get), (
-        "  — Task.get is a public method returning " "TaskSnapshot. It must exist and be callable."
-    )
-    assert hasattr(Task, "_get") and callable(Task._get), "Task._get (internal  rename) must remain callable."
-    assert not hasattr(Task, "list") or not callable(getattr(Task, "list", None)), (
-        "Task.list must be renamed to Task._list in. " "Public-surface listing should go through manager.list_tasks()."
-    )
-    assert hasattr(Task, "_list") and callable(Task._list), "Task._list (internal rename) must remain callable."
-
-
 # --------------------------------------------------------------------- #
 #  — T017: HostedTaskProvider.__init__ credential typing
 # --------------------------------------------------------------------- #

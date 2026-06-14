@@ -85,35 +85,6 @@ class TestEntryMode:
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
-    @pytest.mark.skip(reason=": handle_resume removed; resume is via.start against suspended task")
-    @pytest.mark.asyncio
-    async def test_platform_resume_entry_mode(self, tmp_path) -> None:
-        """Platform-initiated resume (handle_resume) produces entry_mode='resumed'."""
-        observed: list[str] = []
-
-        @multi_turn_task(title="test-platform-resume")
-        async def my_task(ctx: TaskContext[str]) -> str:
-            observed.append(ctx.entry_mode)
-            return "waiting"
-
-        manager, mgr_mod = await self._setup_manager(tmp_path)
-        try:
-            # Fresh start — suspends
-            result = await my_task.run(task_id="platform-resume-1", input="init")
-            #: result is raw output (Suspended wrapper removed)
-            assert observed == ["fresh"]
-
-            # Platform-initiated resume
-            #: manager.handle_resume removed; resume is via.start/.run against suspended task
-            pass
-            # Give the background task time to run
-            import asyncio
-
-            await asyncio.sleep(0.2)
-            assert "resumed" in observed
-        finally:
-            await self._teardown_manager(manager, mgr_mod)
-
     @pytest.mark.asyncio
     async def test_recovered_entry_mode(self, tmp_path) -> None:
         """Calling .run() on a stale in_progress task produces entry_mode='recovered'."""
@@ -487,9 +458,6 @@ class TestEntryModeV2Matrix:
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
-    @pytest.mark.skip(
-        reason="Recovery-input precedence behavior is being reconsidered; tracking via the impl spec follow-up."
-    )
     @pytest.mark.asyncio
     async def test_entry_mode_recovered_inline_reclaim(self, tmp_path) -> None:
         observed: list[tuple[str, str]] = []

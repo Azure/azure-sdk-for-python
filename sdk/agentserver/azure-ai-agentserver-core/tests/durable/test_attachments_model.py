@@ -163,18 +163,6 @@ def test_resolve_steering_threshold_boundary():
     assert _ref_key(value_over) == "_steering_input_1"
 
 
-@pytest.mark.skip(reason=": InputTooLarge is bare exception (no size_bytes/max_bytes)")
-def test_resolve_raises_inputtoolarge_when_over_cap():
-    huge = "y" * (_MAX_ATTACHMENT_SIZE_BYTES + 10)
-    with pytest.raises(InputTooLarge) as excinfo:
-        _resolve_input_storage(
-            huge, threshold_bytes=_INPUT_THRESHOLD_BYTES, key_for_attachment="_input", task_id="t-huge"
-        )
-    #: exception.task_id removed
-    assert excinfo.value.max_bytes == _MAX_ATTACHMENT_SIZE_BYTES
-    assert excinfo.value.size_bytes > _MAX_ATTACHMENT_SIZE_BYTES
-
-
 # --------------------------------------------------------------------------- #
 # read_input_value
 # --------------------------------------------------------------------------- #
