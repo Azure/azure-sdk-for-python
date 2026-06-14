@@ -107,8 +107,6 @@ with (
     while time.monotonic() < deadline:
         runs = list(project_client.beta.routines.list_runs(routine_name, limit=20, order="desc"))
         for run in runs:
-            if run.id is None:
-                continue
             if seen_phases.get(run.id) == run.phase:
                 continue
             seen_phases[run.id] = run.phase  # type: ignore[assignment]

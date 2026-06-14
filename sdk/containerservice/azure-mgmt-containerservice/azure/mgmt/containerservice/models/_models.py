@@ -885,7 +885,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      exactly equal to it. If orchestratorVersion is <major.minor>, this field will contain the full
      <major.minor.patch> version being used.
     :vartype current_orchestrator_version: str
-    :ivar node_image_version: The version of node image.
+    :ivar node_image_version: The version of the node image. Setting this value triggers an
+     agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
     :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
      Rolling. Known values are: "Rolling" and "BlueGreen".
@@ -1146,7 +1147,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     node_image_version: Optional[str] = rest_field(
         name="nodeImageVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The version of node image."""
+    """The version of the node image. Setting this value triggers an agentPool rollback. Only values
+     from ``recentlyUsedVersions`` are allowed."""
     upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = rest_field(
         name="upgradeStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2100,6 +2102,94 @@ class AzureKeyVaultKms(_Model):
         super().__init__(*args, **kwargs)
 
 
+class BastionProfile(_Model):
+    """Profile to enable managed Azure Bastion or reference to an existing Bastion for the managed
+    cluster. See `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more
+    details.
+
+    :ivar enabled: Indicates whether managed bastion is enabled.
+    :vartype enabled: bool
+    :ivar bastion_id: The resource ID of the managed bastion associated with the managed cluster.
+    :vartype bastion_id: str
+    :ivar sku: The SKU of the managed bastion.
+
+     Only Standard and Premium SKUs are supported.
+     SKU downgrading is not allowed. To downgrade SKU, please disable then re-enable the managed
+     bastion with new SKU.
+
+     See `https://aka.ms/aks/BastionSKUs <https://aka.ms/aks/BastionSKUs>`_ for more details. Known
+     values are: "Standard" and "Premium".
+    :vartype sku: str or ~azure.mgmt.containerservice.models.BastionSku
+    :ivar scale_units: The scale units of the managed bastion. Default value is 2.
+    :vartype scale_units: int
+    :ivar public_ip_address_id: The resource ID of the public IP address associated with the
+     managed bastion.
+
+     When provided during creation, the managed bastion will reference this existing public IP
+     address instead of creating a new one.
+     The referenced public IP address must be in the same subscription and region as the managed
+     cluster.
+
+     When not provided during creation, AKS will automatically create a new public IP address.
+
+     This field cannot be updated. To change IP address after creation, please disable and re-enable
+     the managed bastion with the new public IP address.
+    :vartype public_ip_address_id: str
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether managed bastion is enabled."""
+    bastion_id: Optional[str] = rest_field(name="bastionId", visibility=["read"])
+    """The resource ID of the managed bastion associated with the managed cluster."""
+    sku: Optional[Union[str, "_models.BastionSku"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SKU of the managed bastion.
+     
+     Only Standard and Premium SKUs are supported.
+     SKU downgrading is not allowed. To downgrade SKU, please disable then re-enable the managed
+     bastion with new SKU.
+     
+     See `https://aka.ms/aks/BastionSKUs <https://aka.ms/aks/BastionSKUs>`_ for more details. Known
+     values are: \"Standard\" and \"Premium\"."""
+    scale_units: Optional[int] = rest_field(
+        name="scaleUnits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scale units of the managed bastion. Default value is 2."""
+    public_ip_address_id: Optional[str] = rest_field(name="publicIpAddressId", visibility=["read", "create"])
+    """The resource ID of the public IP address associated with the managed bastion.
+     
+     When provided during creation, the managed bastion will reference this existing public IP
+     address instead of creating a new one.
+     The referenced public IP address must be in the same subscription and region as the managed
+     cluster.
+     
+     When not provided during creation, AKS will automatically create a new public IP address.
+     
+     This field cannot be updated. To change IP address after creation, please disable and re-enable
+     the managed bastion with the new public IP address."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        sku: Optional[Union[str, "_models.BastionSku"]] = None,
+        scale_units: Optional[int] = None,
+        public_ip_address_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ClusterUpgradeSettings(_Model):
     """Settings for upgrading a cluster.
 
@@ -2354,6 +2444,9 @@ class ContainerServiceNetworkProfile(_Model):
     :ivar load_balancer_profile: Profile of the cluster load balancer.
     :vartype load_balancer_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterLoadBalancerProfile
+    :ivar bastion_profile: Profile of the Bastion Host associated with the managed cluster. See
+     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details.
+    :vartype bastion_profile: ~azure.mgmt.containerservice.models.BastionProfile
     :ivar nat_gateway_profile: Profile of the cluster NAT gateway.
     :vartype nat_gateway_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterNATGatewayProfile
@@ -2446,6 +2539,11 @@ class ContainerServiceNetworkProfile(_Model):
         name="loadBalancerProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Profile of the cluster load balancer."""
+    bastion_profile: Optional["_models.BastionProfile"] = rest_field(
+        name="bastionProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Profile of the Bastion Host associated with the managed cluster. See
+     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details."""
     nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = rest_field(
         name="natGatewayProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2504,6 +2602,7 @@ class ContainerServiceNetworkProfile(_Model):
         outbound_type: Optional[Union[str, "_models.OutboundType"]] = None,
         load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = None,
         load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = None,
+        bastion_profile: Optional["_models.BastionProfile"] = None,
         nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = None,
         static_egress_gateway_profile: Optional["_models.ManagedClusterStaticEgressGatewayProfile"] = None,
         pod_cidrs: Optional[list[str]] = None,
@@ -5798,6 +5897,147 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
+class MaintenanceWindowResource(TrackedResource):
+    """A maintenance window is a resource-group-scoped resource that defines a reusable maintenance
+    schedule which can be linked to maintenance configurations on one or more managed clusters. For
+    more information, see `https://aka.ms/aks/maintenance-windows
+    <https://aka.ms/aks/maintenance-windows>`_.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of a maintenance window.
+    :vartype properties: ~azure.mgmt.containerservice.models.MaintenanceWindowResourceProperties
+    """
+
+    properties: Optional["_models.MaintenanceWindowResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of a maintenance window."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.MaintenanceWindowResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceWindowResourceProperties(_Model):
+    """Properties of a maintenance window. For more information, see
+    `https://aka.ms/aks/maintenance-windows <https://aka.ms/aks/maintenance-windows>`_.
+
+    :ivar provisioning_state: The provisioning state of the maintenance window. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar schedule: Recurrence schedule for the maintenance window. One and only one of the
+     schedule types should be specified: 'daily', 'weekly', 'absoluteMonthly', or 'relativeMonthly'.
+     Required.
+    :vartype schedule: ~azure.mgmt.containerservice.models.Schedule
+    :ivar start_date: The date the maintenance window activates. If the current date is before this
+     date, the maintenance window is inactive and will not be used. If not specified, the
+     maintenance window will be active right away.
+    :vartype start_date: ~datetime.date
+    :ivar start_time: The start time of the maintenance window. Accepted values are from '00:00' to
+     '23:59'. 'utcOffset' applies to this field. For example: '02:00' with 'utcOffset: +02:00' means
+     UTC time '00:00'. Required.
+    :vartype start_time: str
+    :ivar duration_hours: Length of the maintenance window in hours. Required.
+    :vartype duration_hours: int
+    :ivar utc_offset: The UTC offset in format +/-HH:mm. For example, '+05:30' for IST and '-07:00'
+     for PST. If not specified, the default is '+00:00'. Note: this is a static offset and does not
+     adjust for Daylight Saving Time. Customers in DST-observing regions should pick the offset that
+     matches their preferred wall-clock time year-round; the maintenance window will shift by one
+     hour relative to local time when DST starts or ends.
+    :vartype utc_offset: str
+    :ivar not_allowed_dates: Date ranges during which maintenance is not allowed. 'utcOffset'
+     applies to these dates. For example, with 'utcOffset: +02:00' and a date span of '2026-12-23'
+     to '2027-01-03', maintenance will be blocked from '2026-12-22 22:00' to '2027-01-03 22:00' in
+     UTC time.
+    :vartype not_allowed_dates: list[~azure.mgmt.containerservice.models.DateSpan]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the maintenance window. Known values are: \"Succeeded\", \"Failed\",
+     and \"Canceled\"."""
+    schedule: "_models.Schedule" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Recurrence schedule for the maintenance window. One and only one of the schedule types should
+     be specified: 'daily', 'weekly', 'absoluteMonthly', or 'relativeMonthly'. Required."""
+    start_date: Optional[datetime.date] = rest_field(
+        name="startDate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The date the maintenance window activates. If the current date is before this date, the
+     maintenance window is inactive and will not be used. If not specified, the maintenance window
+     will be active right away."""
+    start_time: str = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
+    """The start time of the maintenance window. Accepted values are from '00:00' to '23:59'.
+     'utcOffset' applies to this field. For example: '02:00' with 'utcOffset: +02:00' means UTC time
+     '00:00'. Required."""
+    duration_hours: int = rest_field(name="durationHours", visibility=["read", "create", "update", "delete", "query"])
+    """Length of the maintenance window in hours. Required."""
+    utc_offset: Optional[str] = rest_field(name="utcOffset", visibility=["read", "create", "update", "delete", "query"])
+    """The UTC offset in format +/-HH:mm. For example, '+05:30' for IST and '-07:00' for PST. If not
+     specified, the default is '+00:00'. Note: this is a static offset and does not adjust for
+     Daylight Saving Time. Customers in DST-observing regions should pick the offset that matches
+     their preferred wall-clock time year-round; the maintenance window will shift by one hour
+     relative to local time when DST starts or ends."""
+    not_allowed_dates: Optional[list["_models.DateSpan"]] = rest_field(
+        name="notAllowedDates", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Date ranges during which maintenance is not allowed. 'utcOffset' applies to these dates. For
+     example, with 'utcOffset: +02:00' and a date span of '2026-12-23' to '2027-01-03', maintenance
+     will be blocked from '2026-12-22 22:00' to '2027-01-03 22:00' in UTC time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        schedule: "_models.Schedule",
+        start_time: str,
+        duration_hours: int,
+        start_date: Optional[datetime.date] = None,
+        utc_offset: Optional[str] = None,
+        not_allowed_dates: Optional[list["_models.DateSpan"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedCluster(TrackedResource):
     """Managed cluster.
 
@@ -6307,7 +6547,8 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      exactly equal to it. If orchestratorVersion is <major.minor>, this field will contain the full
      <major.minor.patch> version being used.
     :vartype current_orchestrator_version: str
-    :ivar node_image_version: The version of node image.
+    :ivar node_image_version: The version of the node image. Setting this value triggers an
+     agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
     :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
      Rolling. Known values are: "Rolling" and "BlueGreen".
@@ -6568,7 +6809,8 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     node_image_version: Optional[str] = rest_field(
         name="nodeImageVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The version of node image."""
+    """The version of the node image. Setting this value triggers an agentPool rollback. Only values
+     from ``recentlyUsedVersions`` are allowed."""
     upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = rest_field(
         name="upgradeStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6933,7 +7175,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      exactly equal to it. If orchestratorVersion is <major.minor>, this field will contain the full
      <major.minor.patch> version being used.
     :vartype current_orchestrator_version: str
-    :ivar node_image_version: The version of node image.
+    :ivar node_image_version: The version of the node image. Setting this value triggers an
+     agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
     :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
      Rolling. Known values are: "Rolling" and "BlueGreen".

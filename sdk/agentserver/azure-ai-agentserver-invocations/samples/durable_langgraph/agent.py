@@ -25,7 +25,7 @@ from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import Command, interrupt
 from typing_extensions import TypedDict
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 from .store import FileStore
@@ -84,10 +84,7 @@ def generate_response(state: ConversationState) -> dict[str, Any]:
     last_msg = user_messages[-1].content if user_messages else ""
 
     if turn == 1:
-        reply = (
-            f"Thanks for reaching out! You said: '{last_msg}'. "
-            "I'd love to help — could you share more details?"
-        )
+        reply = f"Thanks for reaching out! You said: '{last_msg}'. " "I'd love to help — could you share more details?"
     elif turn == 2:
         reply = (
             f"Great context: '{last_msg}'. Building on our earlier "
@@ -96,8 +93,7 @@ def generate_response(state: ConversationState) -> dict[str, Any]:
         )
     else:
         reply = (
-            f"Turn {turn}: incorporating '{last_msg}' — I now have "
-            f"context from {turn} turns. How shall we proceed?"
+            f"Turn {turn}: incorporating '{last_msg}' — I now have " f"context from {turn} turns. How shall we proceed?"
         )
 
     return {"messages": [AIMessage(content=reply)]}
@@ -297,8 +293,7 @@ async def _finalize_invocation(
     if state.next:
         output = _build_turn_output(state)
         invocation_store.save(invocation_id, {"status": "completed", "output": output})
-        return await ctx.suspend(reason="awaiting_user_input", output=output)
-
+        return output
     result = _build_session_output(state)
     invocation_store.save(invocation_id, {"status": "completed", "output": result})
     return result
@@ -309,7 +304,7 @@ async def _finalize_invocation(
 # ---------------------------------------------------------------------------
 
 
-@task(name="langgraph_session", steerable=True)
+@multi_turn_task(name="langgraph_session", steerable=True)
 async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Run one LangGraph conversation turn with steering support.
 
@@ -364,17 +359,13 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                             invocation_id,
                             {"status": "cancelled", "reason": "steered"},
                         )
-                        return await ctx.suspend(reason="steered")
-
+                        return None
                     return await _finalize_invocation(ctx, thread_config, invocation_id)
 
     # ── Phase 1: Pre-entry cancel ───────────────────────────────────
     if ctx.cancel.is_set():
-        invocation_store.save(
-            invocation_id, {"status": "cancelled", "reason": "steered"}
-        )
-        return await ctx.suspend(reason="steered")
-
+        invocation_store.save(invocation_id, {"status": "cancelled", "reason": "steered"})
+        return None
     # ── Phase 2: Invoke graph with inter-node cancellation ──────────
     state = await asyncio.to_thread(_graph.get_state, thread_config)
 
@@ -415,10 +406,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
 
     # ── Phase 3: Post-completion cancel check ───────────────────────
     if not completed or ctx.cancel.is_set():
-        invocation_store.save(
-            invocation_id, {"status": "cancelled", "reason": "steered"}
-        )
-        return await ctx.suspend(reason="steered")
-
+        invocation_store.save(invocation_id, {"status": "cancelled", "reason": "steered"})
+        return None
     # Normal completion
     return await _finalize_invocation(ctx, thread_config, invocation_id)

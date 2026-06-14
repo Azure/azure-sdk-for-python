@@ -47,9 +47,7 @@ class CheckpointStore:
     def put(self, key: str, value: str) -> None:
         """Atomically write *value* — temp file + rename."""
         target = self._path(key)
-        fd, tmp = tempfile.mkstemp(
-            dir=str(self._base), prefix=f"{key}_", suffix=".tmp"
-        )
+        fd, tmp = tempfile.mkstemp(dir=str(self._base), prefix=f"{key}_", suffix=".tmp")
         try:
             with open(fd, "w", encoding="utf-8") as fh:
                 json.dump(value, fh)

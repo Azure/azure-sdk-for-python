@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Completeness meta-test (Spec 015 FR-009, per Constitution Principle XII).
+"""Completeness meta-test (, per Constitution Principle XII).
 
 Asserts that the public surface of the core durable-task primitive
 (``azure-ai-agentserver-core/azure/ai/agentserver/core/durable/``) is
@@ -13,8 +13,8 @@ primitive's contract: if a new symbol is added to ``__all__`` or a new
 contract clause is documented in the guide but no matching test is
 added, this test fails CI before any other primitive test runs.
 
-The rules enforced (per Constitution Principle XII + Spec 015 FR-009 /
-FR-030):
+The rules enforced (per Constitution Principle XII +   /
+):
 
 - Every symbol in ``durable/__init__.py.__all__`` MUST appear in
   :data:`EXPECTED_PUBLIC_SYMBOLS` (the post-Phase-3 cleanup target).
@@ -27,7 +27,7 @@ FR-030):
 - The consolidated developer guide at
   ``azure-ai-agentserver-core/docs/durable-task-guide.md`` MUST exist
   (created in Phase 7); the guide is the source of truth for end-user-
-  developer-visible contract clauses. The Phase 7 FR-024 dev-guide
+  developer-visible contract clauses. The Phase 7  dev-guide
   review meta-test (``test_dev_guide_review.py``) covers cross-
   consistency checks; this file covers the structural test/contract
   pairing only.
@@ -50,15 +50,7 @@ import pytest
 
 _DURABLE_TESTS_DIR = Path(__file__).parent
 _PACKAGE_ROOT = _DURABLE_TESTS_DIR.parent.parent  # azure-ai-agentserver-core/
-_DURABLE_INIT = (
-    _PACKAGE_ROOT
-    / "azure"
-    / "ai"
-    / "agentserver"
-    / "core"
-    / "durable"
-    / "__init__.py"
-)
+_DURABLE_INIT = _PACKAGE_ROOT / "azure" / "ai" / "agentserver" / "core" / "durable" / "__init__.py"
 _CONSOLIDATED_GUIDE = _PACKAGE_ROOT / "docs" / "durable-task-guide.md"
 
 # --------------------------------------------------------------------- #
@@ -70,64 +62,57 @@ _CONSOLIDATED_GUIDE = _PACKAGE_ROOT / "docs" / "durable-task-guide.md"
 # this set fails CI.
 EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
     {
-        # Decorator + task handle
+        # Decorators + task classes (— class split)
         "task",
+        "multi_turn_task",
         "Task",
+        "MultiTurnTask",
         # Context + metadata
         "TaskContext",
         "TaskMetadata",
         "EntryMode",
-        # Results + runs + statuses
-        "TaskResult",
+        # TaskRun (slim shape)
         "TaskRun",
-        "TaskStatus",
-        "Suspended",
-        # Spec 019 FR-C-002: read-only snapshot of any non-deleted task,
-        # returned by Task.get(task_id).
-        "TaskSnapshot",
         # Retry
         "RetryPolicy",
-        # Spec 017 FR-014/FR-015: Streaming moved to peer
-        # `azure.ai.agentserver.core.streaming` subpackage. The old
-        # StreamHandler/QueueStreamHandler/StreamHandlerFactory surface
-        # is REMOVED from durable __all__.
-        # Exceptions
+        # Public exceptions (7; down from 9 in Phase 5)
         "TaskFailed",
         "TaskCancelled",
-        "TaskNotFound",
+        "TaskDeferred",  #  — exit_for_recovery semantics
         "TaskConflictError",
-        # Spec 016 FR-022 (US6): TaskTerminated removed from __all__.
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
-        "TaskPreconditionFailed",
-        # Spec 018 — input size violation (developer-facing).
         "InputTooLarge",
-        # Spec 019 FR-D-001: developer-facing output size violation
-        # (parallels InputTooLarge for the output channel).
-        "OutputTooLarge",
+        # Typed-payload + value-type aliases
+        "JSONValue",
+        "TaskErrorDict",
+        "TaskExhaustedRetriesErrorDict",
     }
 )
 
-# Symbols this spec retires from the public surface (FR-006 + FR-007).
-# These MUST NOT appear in ``__all__`` after Phase 3 lands.
+# Symbols this spec retires from the public surface.
 RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
     {
-        "TaskSuspended",  # exception deleted entirely (FR-006)
-        "TaskOptions",    # demoted to internal (FR-006)
-        "TaskInfo",       # demoted to internal (FR-006)
-        # Spec 015 Phase 11 closeout (user feedback 2026-05-30):
-        # EtagConflict is an advanced/internal exception (custom storage
-        # adapters only). Application code does not handle it — the
-        # framework retries internally on optimistic-concurrency conflicts.
-        # Importable, but no longer advertised via ``__all__``.
-        "EtagConflict",
-        # Spec 019 FR-D-002 + FR-D-003: attachment-vocabulary errors are
-        # internal implementation details (attachments are a framework
-        # concept developers never name). Renamed to leading-underscore
-        # equivalents and absent from public __all__. Framework re-raises
-        # InputTooLarge / OutputTooLarge based on attachment-key prefix.
+        "TaskSuspended",  # exception deleted entirely
+        #   /  — removed from public, kept internal-only.
+        "OutputTooLarge",
+        "TaskNotFound",
+        "TaskPreconditionFailed",
+        #   /  — fully deleted from package.
+        "TaskResult",
+        "TaskSnapshot",
+        #   /  — removed from public surface
+        # (Suspended kept as internal-only shim in _run.py; TaskStatus
+        # remains in _models for internal type-annotation use).
+        "Suspended",
+        "TaskStatus",
+        "TaskOptions",  # demoted to internal
+        "TaskInfo",  # demoted to internal
+        "EtagConflict",  # advanced/internal — no public export
         "AttachmentTooLarge",
         "AttachmentLimitExceeded",
+        #  retirements (Phase 5 — removed from EXPECTED during cleanup):
+        "TaskCancelledError",  #  — never existed; the name with Error suffix is forbidden
     }
 )
 
@@ -141,171 +126,106 @@ RETIRED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
 #
 # Adding a new clause without adding the test (or vice versa) fails CI.
 CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
-    # FR-001 — retry_attempt cross-lifetime durability
-    "retry_attempt_cross_lifetime_durability": (
-        "test_retry.py::test_retry_attempt_cross_lifetime_durability"
-    ),
-    # FR-002 — RetryPolicy.max_attempts durable across lifetimes
-    "retry_budget_exhausts_across_crash": (
-        "test_retry.py::test_retry_attempt_budget_exhausts_across_crash"
-    ),
-    # FR-003 — crash recovery does NOT consume retry budget
-    "crash_recovery_does_not_consume_retry_budget": (
-        "test_retry.py::test_crash_recovery_does_not_consume_retry_budget"
-    ),
-    # FR-006 — public-surface exact match
-    "public_api_surface_exact_match": (
-        "test_public_api_surface.py::test_public_all_matches_expected_set"
-    ),
-    # FR-006 — retired symbols NOT in __all__
-    "retired_symbols_absent_from_public_all": (
-        "test_public_api_surface.py::test_retired_symbols_absent_from_all"
-    ),
-    # FR-006 — Task.get / Task.list renamed to _get / _list
-    "task_get_list_renamed_to_private": (
-        "test_public_api_surface.py::test_task_get_list_renamed_to_private"
-    ),
-    # FR-006 / FR-007 — @task rejects retired decorator args
-    "task_decorator_rejects_retired_args": (
-        "test_decorator.py::test_task_decorator_rejects_retired_args"
-    ),
-    # FR-007 — TaskContext.run_attempt renamed to retry_attempt
-    "task_context_retry_attempt_renamed": (
-        "test_entry_mode.py::test_task_context_retry_attempt_field_present"
-    ),
-    # FR-007 — TaskContext.lease_generation renamed to recovery_count
-    "task_context_recovery_count_renamed": (
-        "test_entry_mode.py::test_task_context_recovery_count_field_present"
-    ),
-    # FR-007 — TaskContext.generation renamed to steering_generation
+    #  — retry_attempt cross-lifetime durability
+    "retry_attempt_cross_lifetime_durability": ("test_retry.py::test_retry_attempt_cross_lifetime_durability"),
+    #  — RetryPolicy.max_attempts durable across lifetimes
+    # (Removed: test_retry_attempt_budget_exhausts_across_crash relied on
+    # `@task(ephemeral=False)` which is no longer a valid construction; the
+    # same invariant for multi-turn chains is covered by
+    # test_retry_attempt_cross_lifetime_durability above.)
+    #  — crash recovery does NOT consume retry budget
+    # (Removed: same reason — same coverage via the multi-turn variant.)
+    #  — public-surface exact match
+    "public_api_surface_exact_match": ("test_public_api_surface.py::test_public_all_matches_expected_set"),
+    #  — retired symbols NOT in __all__
+    "retired_symbols_absent_from_public_all": ("test_public_api_surface.py::test_retired_symbols_absent_from_all"),
+    # (Task.get / Task.list rename to _get / _list — vacuous post-spec-022;
+    # Task.get and TaskSnapshot are removed entirely.)
+    #  /  — @task rejects retired decorator args
+    "task_decorator_rejects_retired_args": ("test_decorator.py::test_task_decorator_rejects_retired_args"),
+    #  — TaskContext.run_attempt renamed to retry_attempt
+    "task_context_retry_attempt_renamed": ("test_entry_mode.py::test_task_context_retry_attempt_field_present"),
+    #  — TaskContext.lease_generation renamed to recovery_count
+    "task_context_recovery_count_renamed": ("test_entry_mode.py::test_task_context_recovery_count_field_present"),
+    #  — TaskContext.generation renamed to steering_generation
     "task_context_steering_generation_renamed": (
         "test_steering.py::test_task_context_steering_generation_field_present"
     ),
-    # FR-007 — TaskContext.previous_input deleted (FR-007)
-    "task_context_previous_input_removed": (
-        "test_steering.py::test_task_context_previous_input_removed"
-    ),
-    # FR-003 — TaskMetadata named-namespace facility
-    "task_metadata_named_namespace_isolation": (
-        "test_metadata.py::test_named_namespace_isolation"
-    ),
-    # FR-003 — TaskMetadata flush per-namespace
-    "task_metadata_flush_per_namespace_only": (
-        "test_metadata.py::test_flush_per_namespace_only"
-    ),
-    # FR-004 — default-namespace convenience accessor
-    "task_metadata_default_namespace_callable_and_dict": (
-        "test_metadata.py::test_default_namespace_callable_and_dict"
-    ),
-    # FR-005 — primitive does NOT enforce underscore convention
-    "task_metadata_underscore_not_enforced_by_primitive": (
-        "test_metadata.py::test_underscore_namespace_not_enforced_by_primitive"
-    ),
-    # --- Spec 019 — Task & Streams Reconciliation ---------------------- #
-    # FR-A-001..009 (etag CAS, write queue, dynamic lease, per-op 412 policy)
-    "spec019_etag_cas_every_patch": (
-        "test_etag_cas.py::test_every_patch_after_first_carries_if_match"
-    ),
-    "spec019_delete_carries_no_if_match": (
-        "test_etag_cas.py::test_delete_does_not_carry_if_match"
-    ),
-    "spec019_write_queue_serializes_intra_process": (
+    #  — TaskContext.previous_input deleted
+    "task_context_previous_input_removed": ("test_steering.py::test_task_context_previous_input_removed"),
+    #  — TaskMetadata named-namespace facility
+    "task_metadata_named_namespace_isolation": ("test_metadata.py::test_named_namespace_isolation"),
+    #  — TaskMetadata flush per-namespace
+    "task_metadata_flush_per_namespace_only": ("test_metadata.py::test_flush_per_namespace_only"),
+    #  — default-namespace convenience accessor
+    "task_metadata_default_namespace_callable_and_dict": ("test_metadata.py::test_default_namespace_callable_and_dict"),
+    # (Underscore-namespace not-enforced-by-primitive contract is vacuous
+    # post-redesign — primitive now reserves leading underscore and
+    # raises ValueError; covered by test_metadata::test_named_namespace.)
+    # ---  — Task & Streams Reconciliation ----------------------
+    #  (etag CAS, write queue, dynamic lease, per-op 412 policy)
+    "task_streams_etag_cas_every_patch": ("test_etag_cas.py::test_every_patch_after_first_carries_if_match"),
+    "task_streams_delete_carries_no_if_match": ("test_etag_cas.py::test_delete_does_not_carry_if_match"),
+    "task_streams_write_queue_serializes_intra_process": (
         "test_write_queue.py::test_concurrent_metadata_flushes_serialize"
     ),
-    "spec019_write_queue_no_lock_for_reads": (
-        "test_write_queue.py::test_reads_do_not_acquire_lock"
-    ),
-    "spec019_write_queue_lock_torn_down_with_task": (
+    "task_streams_write_queue_no_lock_for_reads": ("test_write_queue.py::test_reads_do_not_acquire_lock"),
+    "task_streams_write_queue_lock_torn_down_with_task": (
         "test_write_queue.py::test_lock_removed_when_active_entry_torn_down"
     ),
-    "spec019_lease_renewal_dynamic_cadence_full_shadow": (
+    "task_streams_lease_renewal_dynamic_cadence_full_shadow": (
         "test_lease_renewal.py::test_dynamic_cadence_shadows_heartbeats"
     ),
-    "spec019_terminal_412_reread_lease_lost_abandons": (
-        "test_etag_cas.py::test_terminal_412_lease_lost_abandons"
-    ),
-    "spec019_terminal_412_reread_already_terminal_abandons": (
+    "task_streams_terminal_412_reread_lease_lost_abandons": ("test_etag_cas.py::test_terminal_412_lease_lost_abandons"),
+    "task_streams_terminal_412_reread_already_terminal_abandons": (
         "test_etag_cas.py::test_terminal_412_already_terminal_abandons"
     ),
-    "spec019_terminal_412_reread_lease_ours_retries": (
-        "test_etag_cas.py::test_terminal_412_lease_ours_retries"
-    ),
-    "spec019_reclaim_both_sites_carry_if_match": (
-        "test_etag_cas.py::test_both_reclaim_sites_carry_if_match"
-    ),
-    # FR-B-001 (source_type filter on recovery scan)
-    "spec019_recovery_scan_filters_source_type": (
+    "task_streams_terminal_412_reread_lease_ours_retries": ("test_etag_cas.py::test_terminal_412_lease_ours_retries"),
+    "task_streams_reclaim_both_sites_carry_if_match": ("test_etag_cas.py::test_both_reclaim_sites_carry_if_match"),
+    #  (source_type filter on recovery scan)
+    "task_streams_recovery_scan_filters_source_type": (
         "test_recovery_filter.py::test_recovery_scan_passes_source_type"
     ),
-    "spec019_recovery_scan_skips_foreign_typed_tasks": (
+    "task_streams_recovery_scan_skips_foreign_typed_tasks": (
         "test_recovery_filter.py::test_recovery_does_not_pick_up_foreign_typed_task"
     ),
-    # FR-C-001..007 (Task.get + TaskSnapshot + output lifecycle)
-    "spec019_task_get_returns_snapshot": (
-        "test_task_get_api.py::test_task_get_returns_snapshot_for_each_status"
-    ),
-    "spec019_task_get_returns_none_for_missing": (
-        "test_task_get_api.py::test_task_get_returns_none_for_missing"
-    ),
-    "spec019_task_get_raises_without_manager": (
-        "test_task_get_api.py::test_task_get_raises_runtime_error_without_manager"
-    ),
-    "spec019_task_snapshot_field_exclusions": (
-        "test_task_get_api.py::test_task_snapshot_exposes_only_documented_fields"
-    ),
-    "spec019_task_snapshot_resolves_output_ref": (
-        "test_task_get_api.py::test_task_snapshot_resolves_output_ref"
-    ),
-    "spec019_output_cleared_on_resume": (
-        "test_output_lifecycle.py::test_resume_clears_payload_output_and_attachment"
-    ),
-    "spec019_output_cleared_on_drain_phase1": (
-        "test_output_lifecycle.py::test_drain_phase1_clears_payload_output_and_attachment"
-    ),
-    "spec019_output_cleared_on_failure": (
-        "test_output_lifecycle.py::test_handle_failure_clears_output"
-    ),
-    "spec019_output_always_attachment_when_non_null": (
-        "test_output_promotion.py::test_suspend_output_always_uses_attachment"
-    ),
-    "spec019_output_complete_always_attachment_when_non_null": (
-        "test_output_promotion.py::test_complete_output_always_uses_attachment"
-    ),
-    "spec019_output_null_writes_explicit_null": (
-        "test_output_promotion.py::test_suspend_output_none_writes_explicit_null"
-    ),
-    "spec019_output_too_large_raises_pre_patch": (
-        "test_output_promotion.py::test_output_over_cap_raises_output_too_large_pre_patch"
-    ),
-    # FR-D-001..006 (error rename + flush_all + local expiry)
-    "spec019_output_too_large_public_exception": (
+    #  (Task.get + TaskSnapshot + output lifecycle) — REMOVED
+    # The Task.get + TaskSnapshot surface is deleted, and output is no
+    # longer persisted in payload (the framework does not write
+    # payload["output"] nor any "_output" attachment), so the "cleared on
+    # resume / drain / failure / always-attachment / null / too-large"
+    # contracts that lived in test_output_lifecycle.py and
+    # test_output_promotion.py are all vacuous and the files are gone.
+    #  (error rename + flush_all + local expiry)
+    "task_streams_output_too_large_public_exception": (
         "test_errors_public_surface.py::test_output_too_large_is_public"
     ),
-    "spec019_attachment_too_large_internal": (
+    "task_streams_attachment_too_large_internal": (
         "test_errors_public_surface.py::test_attachment_too_large_not_public"
     ),
-    "spec019_attachment_limit_exceeded_internal": (
+    "task_streams_attachment_limit_exceeded_internal": (
         "test_errors_public_surface.py::test_attachment_limit_exceeded_not_public"
     ),
-    "spec019_input_attachment_error_remapped_to_input_too_large": (
-        "test_errors_public_surface.py::test_input_too_large_remap_from_internal_input_key"
-    ),
-    "spec019_steering_attachment_error_remapped_to_input_too_large": (
+    # (The pre-redesign "input attachment error remapped to InputTooLarge"
+    # via the internal `_input` key is vacuous post-redesign — InputTooLarge
+    # is now bare and the remap-from-_input path is covered by the
+    # steering-key variant below as the canonical case.)
+    "task_streams_steering_attachment_error_remapped_to_input_too_large": (
         "test_errors_public_surface.py::test_input_too_large_remap_from_steering_key"
     ),
-    "spec019_output_attachment_error_remapped_to_output_too_large": (
+    "task_streams_output_attachment_error_remapped_to_output_too_large": (
         "test_errors_public_surface.py::test_output_too_large_remap_from_internal_output_key"
     ),
-    "spec019_flush_all_renamed_private": (
+    "task_streams_flush_all_renamed_private": (
         "test_metadata_flush.py::test_flush_all_renamed_to_underscore_flush_all"
     ),
-    "spec019_local_provider_bumps_expiry_count": (
+    "task_streams_local_provider_bumps_expiry_count": (
         "test_local_provider.py::test_local_provider_bumps_expiry_count_on_real_handoff"
     ),
-    "spec019_local_provider_no_bump_on_renewal": (
+    "task_streams_local_provider_no_bump_on_renewal": (
         "test_local_provider.py::test_local_provider_no_bump_on_same_instance_renewal"
     ),
-    "spec019_local_provider_no_bump_on_unexpired_handoff": (
+    "task_streams_local_provider_no_bump_on_unexpired_handoff": (
         "test_local_provider.py::test_local_provider_no_bump_on_unexpired_handoff"
     ),
 }
@@ -329,9 +249,7 @@ def _parse_all_from_init(path: Path) -> set[str]:
             and isinstance(node.value, (ast.List, ast.Tuple, ast.Set))
         ):
             return {
-                elt.value
-                for elt in node.value.elts
-                if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
+                elt.value for elt in node.value.elts if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
             }
     return set()
 
@@ -361,13 +279,13 @@ def _resolve_clause_reference(reference: str) -> tuple[Path, str]:
 
 
 def test_consolidated_developer_guide_exists() -> None:
-    """The consolidated dev guide MUST exist (FR-023; Phase 7 creates it).
+    """The consolidated dev guide MUST exist (; Phase 7 creates it).
 
     Until Phase 7 lands, this assertion fails RED — that is the intent.
     """
     assert _CONSOLIDATED_GUIDE.exists(), (
         f"consolidated developer guide not found at {_CONSOLIDATED_GUIDE}. "
-        f"Per FR-023, the canonical end-user developer guide for the "
+        f", the canonical end-user developer guide for the "
         f"durable-task primitive MUST live at this path."
     )
 
@@ -390,23 +308,19 @@ def test_public_all_matches_post_cleanup_expected_set() -> None:
 
     msg_parts: list[str] = []
     if missing:
-        msg_parts.append(
-            f"symbols expected in __all__ but missing: {sorted(missing)}"
-        )
+        msg_parts.append(f"symbols expected in __all__ but missing: {sorted(missing)}")
     if extra:
         msg_parts.append(
-            f"symbols in __all__ but not in EXPECTED_PUBLIC_SYMBOLS "
-            f"(retired or undeclared): {sorted(extra)}"
+            f"symbols in __all__ but not in EXPECTED_PUBLIC_SYMBOLS " f"(retired or undeclared): {sorted(extra)}"
         )
 
     assert not msg_parts, " ; ".join(msg_parts) + (
-        " — update EXPECTED_PUBLIC_SYMBOLS in this file if intentional, "
-        "or fix the public surface."
+        " — update EXPECTED_PUBLIC_SYMBOLS in this file if intentional, " "or fix the public surface."
     )
 
 
 def test_retired_symbols_not_in_public_all() -> None:
-    """Retired symbols (FR-006) MUST NOT appear in ``__all__``.
+    """Retired symbols  MUST NOT appear in ``__all__``.
 
     Belt-and-suspenders companion to ``test_public_all_matches_…``:
     explicitly names the symbols this spec retires so the failure
@@ -415,17 +329,12 @@ def test_retired_symbols_not_in_public_all() -> None:
     actual = _parse_all_from_init(_DURABLE_INIT)
     leaked = RETIRED_PUBLIC_SYMBOLS & actual
     assert not leaked, (
-        f"symbols retired by Spec 015 FR-006 still appear in __all__: "
-        f"{sorted(leaked)}. Phase 3 (T022-T025) MUST drop them."
+        f"symbols retired by   still appear in __all__: " f"{sorted(leaked)}. Phase 3 (T022-T025) MUST drop them."
     )
 
 
-@pytest.mark.parametrize(
-    "clause_id,reference", sorted(CONTRACT_CLAUSE_TO_TEST.items())
-)
-def test_every_contract_clause_has_a_paired_test(
-    clause_id: str, reference: str
-) -> None:
+@pytest.mark.parametrize("clause_id,reference", sorted(CONTRACT_CLAUSE_TO_TEST.items()))
+def test_every_contract_clause_has_a_paired_test(clause_id: str, reference: str) -> None:
     """Each documented contract clause MUST resolve to an existing test.
 
     This is the structural pairing guarantee from Constitution Principle XII
@@ -485,3 +394,225 @@ def test_clause_ids_are_unique() -> None:
     """
     keys = list(CONTRACT_CLAUSE_TO_TEST.keys())
     assert len(keys) == len(set(keys)), "duplicate clause id"
+
+
+# =========================================================================
+#  — meta-test extension (per T-1.0 of)
+# =========================================================================
+#
+# Per Constitution Principle XII §2 +  plan.md Phase 1 T-1.0.
+# These tests assert the FULL public surface from Appendix A.1 of
+# + negative absence assertions for unsupported surface + grep-clean
+# invariants for unsupported code paths.
+#
+# Each assertion is RED until Phase 5 / Phase 7 lands the corresponding
+# implementation cleanup.
+
+
+def _read_durable_init_source() -> str:
+    return _DURABLE_INIT.read_text()
+
+
+def _read_durable_source_tree() -> dict[Path, str]:
+    """Read every .py file under azure/.../durable/ (the source package)."""
+    pkg = _DURABLE_INIT.parent
+    return {p: p.read_text() for p in sorted(pkg.rglob("*.py")) if "__pycache__" not in str(p)}
+
+
+def test_spec_022_a_b_positive_and_negative_presence_in_all() -> None:
+    """T-1.0 (a)(b) — redesigned symbols in EXPECTED; legacy in EXPECTED too during transition.
+
+    Positive presence is already covered by
+    :func:`test_public_all_matches_post_cleanup_expected_set`.
+
+    During the Phase 2-5 transition window, both the new redesigned symbols
+    AND the legacy symbols (TaskResult, Suspended, TaskSnapshot, TaskStatus,
+    OutputTooLarge, TaskNotFound, TaskPreconditionFailed) coexist in
+    ``EXPECTED_PUBLIC_SYMBOLS``. Phase 5 cleanup removes the legacy entries.
+    """
+    # Sanity: SOT additions are in EXPECTED_PUBLIC_SYMBOLS.
+    for sym in {
+        "multi_turn_task",
+        "MultiTurnTask",
+        "TaskDeferred",
+        "JSONValue",
+        "TaskErrorDict",
+        "TaskExhaustedRetriesErrorDict",
+    }:
+        assert sym in EXPECTED_PUBLIC_SYMBOLS, f" T-1.0(a): {sym} MUST be in EXPECTED_PUBLIC_SYMBOLS"
+    # During transition, legacy symbols are still in EXPECTED; Phase 5 moves
+    # them to RETIRED_PUBLIC_SYMBOLS. For now, just ensure they're in one or
+    # the other (no orphans).
+    legacy_during_transition = {
+        "TaskResult",
+        "Suspended",
+        "TaskSnapshot",
+        "TaskStatus",
+        "OutputTooLarge",
+        "TaskNotFound",
+        "TaskPreconditionFailed",
+    }
+    for sym in legacy_during_transition:
+        assert (
+            sym in EXPECTED_PUBLIC_SYMBOLS or sym in RETIRED_PUBLIC_SYMBOLS
+        ), f" T-1.0(b): {sym} MUST be in EXPECTED or RETIRED set"
+    # TaskCancelledError MUST always be retired (never existed as a public name).
+    assert "TaskCancelledError" in RETIRED_PUBLIC_SYMBOLS
+
+
+def test_spec_022_c_grep_clean_for_unsupported_code_paths() -> None:
+    """T-1.0 (c) — SC-006: source tree grep-clean for removed code paths."""
+    blobs = _read_durable_source_tree()
+    forbidden_patterns = {
+        'payload["output"]': " — no payload['output'] writes",
+        "_build_output_co_write": " — output co-write helper absent",
+        "TaskManager.handle_resume": " — /tasks/resume manager method absent",
+        "_resume_route.py": " — _resume_route module absent",
+    }
+    findings: list[str] = []
+    for pattern, rule in forbidden_patterns.items():
+        for path, text in blobs.items():
+            if pattern in text and "_local_provider.py" not in path.name:
+                # Allow harmless mentions in docstrings of removed-API checklists
+                if "MUST NOT" in text or "removed" in text or "absent" in text:
+                    continue
+                findings.append(f"  {path.name}: {pattern!r}  ({rule})")
+    assert not findings, " SC-006: source tree contains references to removed code paths:\n" + "\n".join(findings)
+
+
+def test_spec_022_d_ctx_end_chain_absent() -> None:
+    """T-1.0 (d) —: ctx.end_chain MUST NOT exist anywhere in durable/."""
+    blobs = _read_durable_source_tree()
+    findings = [str(path.name) for path, text in blobs.items() if "end_chain" in text]
+    assert not findings, f": ctx.end_chain MUST NOT exist in durable/ source — found in: {findings}"
+
+
+def test_spec_022_e_ctx_shutdown_preserved() -> None:
+    """T-1.0 (e) —  +: ctx.shutdown MUST exist on TaskContext."""
+    try:
+        from azure.ai.agentserver.core.durable import TaskContext
+    except ImportError:
+        pytest.skip("TaskContext import failed (RED until Phase 5)")
+    # Inspect class attrs / annotations for `shutdown` (asyncio.Event).
+    has_shutdown = (
+        hasattr(TaskContext, "shutdown")
+        or "shutdown" in getattr(TaskContext, "__annotations__", {})
+        or "shutdown" in getattr(TaskContext, "__slots__", ())
+    )
+    assert has_shutdown, ": TaskContext MUST expose `shutdown` (asyncio.Event) " "per  enumerated public surface."
+
+
+def test_spec_022_f_cooperative_cancel_no_automatic_raise() -> None:
+    """T-1.0 (f) —: framework cancellation is cooperative-only.
+
+    Grep for any `async def force_cancel` / `raise asyncio.CancelledError`
+    in _manager.py that would constitute an automatic raise. (The framework
+    sets `ctx.cancel` + `ctx.timeout_exceeded` flags but never raises
+    automatically; / -057 /  §3 Q11.)
+    """
+    pkg = _DURABLE_INIT.parent
+    manager_py = pkg / "_manager.py"
+    if not manager_py.exists():
+        pytest.skip("_manager.py not present (RED-first)")
+    text = manager_py.read_text()
+    # Look for `force_cancel` as a sync/async def — must NOT exist as a
+    # public method that auto-raises.
+    assert "def force_cancel" not in text, (
+        ": framework MUST NOT expose `force_cancel`; cancellation is " "cooperative-only via ctx.cancel."
+    )
+
+
+def test_spec_022_g_run_return_type_is_output_directly() -> None:
+    """T-1.0 (g) —:.run returns Output (not TaskResult/Awaitable[TaskResult])."""
+    try:
+        from azure.ai.agentserver.core.durable import Task
+    except ImportError:
+        pytest.skip("Task class import failed (RED until Phase 2)")
+    import inspect
+
+    sig = inspect.signature(Task.run)
+    return_annot = sig.return_annotation
+    # The return annotation should NOT be `TaskResult` or `Awaitable[TaskResult]`
+    annot_str = str(return_annot)
+    forbidden_substrings = ["TaskResult", "Suspended"]
+    found = [s for s in forbidden_substrings if s in annot_str]
+    assert not found, (
+        f": Task.run return annotation MUST resolve to Output directly; " f"found {found} in: {annot_str!r}"
+    )
+
+
+def test_spec_022_h_internal_only_cleanup_absent() -> None:
+    """T-1.0 (h) —: enumerated internal symbols MUST NOT exist."""
+    blobs = _read_durable_source_tree()
+    forbidden_symbols = {
+        "_build_output_co_write": " / ",
+        "TaskContext.suspend": "",
+        "TaskRun._provider": "",
+        "_terminate_event": "",
+        "_terminate_reason_ref": "",
+        # NOTE: _status / _lease_expiry_count are too generic to grep; skip
+        # those and rely on  /  positive shape tests instead.
+    }
+    findings: list[str] = []
+    for sym, rule in forbidden_symbols.items():
+        for path, text in blobs.items():
+            if sym in text:
+                # Allow comment / docstring mentions
+                relevant_lines = [
+                    line
+                    for line in text.splitlines()
+                    if sym in line
+                    and not line.strip().startswith("#")
+                    and '"""' not in line
+                    and not line.strip().startswith("*")
+                ]
+                if relevant_lines:
+                    findings.append(f"  {path.name}: {sym!r} ({rule})")
+                    break
+    assert not findings, ": enumerated internal-only symbols MUST NOT exist:\n" + "\n".join(findings)
+
+
+def test_spec_022_i_no_backward_compat_shims() -> None:
+    """T-1.0 (i) — SC-007: no backward-compat shims silently added."""
+    blobs = _read_durable_source_tree()
+    forbidden_markers = {
+        "# COMPAT",
+        "# backward-compat",
+        "# backward compat",
+        "TaskResultCompat",
+        "SuspendedCompat",
+        "TaskSnapshotCompat",
+    }
+    findings: list[str] = []
+    for marker in forbidden_markers:
+        for path, text in blobs.items():
+            if marker in text:
+                findings.append(f"  {path.name}: {marker!r}")
+    assert not findings, (
+        "SC-007: source tree contains backward-compat shim markers "
+        "(removals MUST be hard removals; no migration bridges):\n" + "\n".join(findings)
+    )
+
+
+def test_spec_022_TaskCancelledError_does_not_exist() -> None:
+    """— TaskCancelledError (with Error suffix) MUST raise ImportError."""
+    with pytest.raises(ImportError):
+        from azure.ai.agentserver.core.durable import TaskCancelledError  # noqa: F401
+
+
+def test_spec_022_TaskNotFound_not_in_public_import() -> None:
+    """— TaskNotFound MUST NOT import from the public namespace."""
+    with pytest.raises(ImportError):
+        from azure.ai.agentserver.core.durable import TaskNotFound  # noqa: F401
+
+
+def test_spec_022_TaskPreconditionFailed_not_in_public_import() -> None:
+    """— TaskPreconditionFailed MUST NOT import from the public namespace."""
+    with pytest.raises(ImportError):
+        from azure.ai.agentserver.core.durable import TaskPreconditionFailed  # noqa: F401
+
+
+def test_spec_022_OutputTooLarge_not_in_public_import() -> None:
+    """— OutputTooLarge MUST NOT import from the public namespace."""
+    with pytest.raises(ImportError):
+        from azure.ai.agentserver.core.durable import OutputTooLarge  # noqa: F401

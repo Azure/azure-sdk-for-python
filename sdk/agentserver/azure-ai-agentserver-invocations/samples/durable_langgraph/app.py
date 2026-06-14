@@ -98,8 +98,7 @@ async def _sse_from_stream(
         yield f"event: done\ndata: {json.dumps(done_data)}\n\n".encode()
     except EventStreamNotFoundError:
         yield (
-            f"event: superseded\n"
-            f"data: {json.dumps({'type': 'superseded', 'invocation_id': invocation_id})}\n\n"
+            f"event: superseded\n" f"data: {json.dumps({'type': 'superseded', 'invocation_id': invocation_id})}\n\n"
         ).encode()
     except Exception as exc:  # pylint: disable=broad-except
         error_data = {

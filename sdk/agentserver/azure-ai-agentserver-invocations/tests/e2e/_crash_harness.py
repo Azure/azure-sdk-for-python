@@ -8,7 +8,7 @@ the subprocess against ``LocalDurableProvider`` + ``FileResponseStore`` + the fi
 streams registry backing against a common ``tmp_path`` so durable state
 survives the kill.
 
-POSIX-only (uses ``os.kill(pid, SIGKILL)``). See spec 013 §Q1 for the
+POSIX-only (uses ``os.kill(pid, SIGKILL)``). See  §Q1 for the
 crash-injection mechanism decision.
 
 Usage in a test:
@@ -187,9 +187,7 @@ class CrashHarness:
         # root that contains the importable ``tests`` package.
         _pkg_root = str(Path(__file__).resolve().parent.parent.parent)
         _existing_pp = env.get("PYTHONPATH", "")
-        env["PYTHONPATH"] = (
-            f"{_pkg_root}{os.pathsep}{_existing_pp}" if _existing_pp else _pkg_root
-        )
+        env["PYTHONPATH"] = f"{_pkg_root}{os.pathsep}{_existing_pp}" if _existing_pp else _pkg_root
         env.update(self._env_extras)
         return env
 
@@ -243,10 +241,7 @@ class CrashHarness:
                         tail = self._subprocess_log_paths[-1].read_bytes()[-4096:]
                     except OSError:
                         pass
-                raise RuntimeError(
-                    "CrashHarness subprocess exited during startup. "
-                    f"log_tail={tail!r}"
-                )
+                raise RuntimeError("CrashHarness subprocess exited during startup. " f"log_tail={tail!r}")
             try:
                 async with httpx.AsyncClient(timeout=1.0) as probe:
                     response = await probe.get(f"{self.base_url}/health/live")
@@ -360,7 +355,7 @@ class CrashHarness:
                 await self._client.aclose()
                 self._client = None
             return self._process.returncode
-        # (Spec 014) SIGTERM the subprocess BEFORE closing the client so
+        #  SIGTERM the subprocess BEFORE closing the client so
         # the server sees the shutdown signal (and stamps SHUTTING_DOWN
         # on in-flight foreground responses) BEFORE Hypercorn closes the
         # client connection and the disconnect-poll loop stamps

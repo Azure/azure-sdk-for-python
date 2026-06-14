@@ -164,7 +164,7 @@ async def sse_endpoint(request):
     return StreamingResponse(body(), media_type="text/event-stream")
 ```
 
-Spec 019 FR-E-001/-002 collapsed the prior `EventStreamGoneError`
+The streaming contract collapsed the prior `EventStreamGoneError`
 (`410 Gone`) and `EventStreamNotFoundError` (`404 Not Found`) into
 a single error type wire-mapped to `404`. Every "this id is not
 currently a live stream" condition raises `EventStreamNotFoundError`.

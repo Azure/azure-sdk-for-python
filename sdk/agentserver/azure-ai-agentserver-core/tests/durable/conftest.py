@@ -3,16 +3,16 @@
 # ---------------------------------------------------------
 """Shared test fixtures for the durable-task test suite.
 
-Per spec 016 (Durable-task primitive contract hardening), this module
+Per  (Durable-task primitive contract hardening), this module
 hosts two reusable fixtures:
 
 1. **``binding_mismatch_provider``** — a :class:`TaskProvider`-conforming
    stub that wraps an in-memory delegate and selectively raises a
    ``TransportClassifiedError(classification="evicted")`` on configured
    write operations (the same exception type the real
-   :class:`HostedTaskProvider` would raise after the FR-006 classifier
+:class:`HostedTaskProvider` would raise after the  classifier
    maps an HTTP 409 / ``{"error": {"code": "binding_mismatch"}}``
-   response). Used by ``test_split_brain_eviction.py`` (US2) and the
+   response). Used by ``test_split_brain_eviction.py``  and the
    SC-006 ``(scheduling primitive × steerable × lease state)``
    parametrized sweep cells. The unified exception type lets the
    framework's local-cleanup sequence run identically against the stub
@@ -24,13 +24,13 @@ hosts two reusable fixtures:
    fake that supports canned response sequences, captures sent
    requests for inspection, and provides a gzip-encoding helper for
    round-trip body tests. Used by ``test_hosted_provider_transport.py``
-   (US9) to verify the ``azure.core.AsyncPipelineClient`` policy chain
+    to verify the ``azure.core.AsyncPipelineClient`` policy chain
    behavior end-to-end without a network.
 
    Reference: spec.md §Conformance Test Map row 14.
 
 Both fixtures are documented inline at point of use; their public
-signatures are stable for the duration of spec 016 implementation.
+signatures are stable for the duration of  implementation.
 """
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ from azure.ai.agentserver.core.durable._client import TransportClassifiedError
 
 
 # --------------------------------------------------------------------- #
-# Fixture 1 — binding_mismatch provider stub (US2 / SC-002 / SC-006)
+# Fixture 1 — binding_mismatch provider stub (/ SC-002 / SC-006)
 # --------------------------------------------------------------------- #
 
 
@@ -53,7 +53,7 @@ from azure.ai.agentserver.core.durable._client import TransportClassifiedError
 class _BindingMismatchRejection(Exception):
     """Sentinel exception the stub raises in place of a real HTTP 409.
 
-    Attributes mirror what the FR-006 classifier would extract from the
+    Attributes mirror what the  classifier would extract from the
     real HTTP response:
 
     - ``status_code``: always 409 for this rejection.
@@ -123,9 +123,9 @@ class BindingMismatchProvider:
     def _maybe_reject(self, op: str, task_id: str) -> None:
         if task_id in self._reject[op] or "*" in self._reject[op]:
             # Raise the SAME typed exception the real HostedTaskProvider
-            # would raise after the FR-006 classifier maps an HTTP 409 /
+            # would raise after the  classifier maps an HTTP 409 /
             # binding_mismatch response. Using the unified type means the
-            # framework's local-cleanup sequence (FR-007) runs identically
+            # framework's local-cleanup sequence  runs identically
             # against the stub and the real wire path.
             raise TransportClassifiedError(
                 status=409,
@@ -179,7 +179,7 @@ def binding_mismatch_provider_factory() -> Callable[[Any], BindingMismatchProvid
 
 
 # --------------------------------------------------------------------- #
-# Spec 019 — CapturingProvider for etag CAS / write queue tests
+#  — CapturingProvider for etag CAS / write queue tests
 # --------------------------------------------------------------------- #
 
 
@@ -188,9 +188,9 @@ class CapturingProvider:
 
     Wraps a delegate provider, forwards all calls, and records each
     ``update()`` call's ``(task_id, patch)`` for assertion. Used by
-    spec 019 Area A tests to verify etag plumbing (``if_match`` carried
+     Area A tests to verify etag plumbing (``if_match`` carried
     on every PATCH after the first) and to count PATCHes for the
-    dynamic-cadence lease-renewal shadow check (FR-A-005, SC-3).
+    dynamic-cadence lease-renewal shadow check (, SC-3).
 
     The spy is transparent: no error injection (use
     :class:`BindingMismatchProvider` for that). Read calls are NOT
@@ -214,9 +214,7 @@ class CapturingProvider:
         return await self._delegate.get(task_id)
 
     async def update(self, task_id: str, patch: Any) -> Any:
-        self.update_calls.append(
-            (task_id, patch, getattr(patch, "if_match", None))
-        )
+        self.update_calls.append((task_id, patch, getattr(patch, "if_match", None)))
         return await self._delegate.update(task_id, patch)
 
     async def delete(self, task_id: str, *, force: bool = False, cascade: bool = False) -> None:
@@ -235,7 +233,7 @@ def capturing_provider_factory() -> Callable[[Any], CapturingProvider]:
 
 
 # --------------------------------------------------------------------- #
-# Spec 019 — Conflicting412Provider for terminal-write three-branch tests
+#  — Conflicting412Provider for terminal-write three-branch tests
 # --------------------------------------------------------------------- #
 
 
@@ -251,7 +249,7 @@ class Conflicting412Provider:
     mutate the underlying record (via the delegate) to simulate a
     concurrent cross-process writer landing changes between our
     pre-PATCH read and our PATCH (e.g., another worker reclaiming the
-    lease). This is what drives FR-A-008 terminal-write three-branch
+    lease). This is what drives  terminal-write three-branch
     test cases:
 
     - lease-lost branch: mutate to a different ``lease_instance_id``
@@ -323,7 +321,7 @@ class Conflicting412Provider:
         else:
             await self._delegate.update(
                 task_id,
-                TaskPatchRequest(tags={"_spec019_harmless": "x"}),
+                TaskPatchRequest(tags={"_task_streams_harmless": "x"}),
             )
         raise self._EtagConflict(task_id, message="injected by Conflicting412Provider")
 
@@ -341,7 +339,7 @@ def conflicting_412_provider_factory() -> Callable[[Any], Conflicting412Provider
 
 
 # --------------------------------------------------------------------- #
-# Fixture 2 — fake AsyncHttpTransport (US9 / SC-016 / SC-017)
+# Fixture 2 — fake AsyncHttpTransport (/ SC-016 / SC-017)
 # --------------------------------------------------------------------- #
 
 
@@ -410,24 +408,24 @@ class CapturedRequest:
 class FakeAsyncHttpTransport:
     """An :class:`azure.core.pipeline.transport.AsyncHttpTransport`-compatible fake.
 
-    Configure with a sequence of :class:`FakeResponse` instances; the
-    transport pops one per request. If the sequence is exhausted and
-    no fallback is configured, ``IndexError`` is raised — tests
-    explicitly assert their expected request count.
+        Configure with a sequence of :class:`FakeResponse` instances; the
+        transport pops one per request. If the sequence is exhausted and
+        no fallback is configured, ``IndexError`` is raised — tests
+        explicitly assert their expected request count.
 
-    All sent requests are captured in :attr:`requests` (a list of
-    :class:`CapturedRequest`) for after-the-fact assertions on headers,
-    URLs, and bodies.
+        All sent requests are captured in :attr:`requests` (a list of
+        :class:`CapturedRequest`) for after-the-fact assertions on headers,
+        URLs, and bodies.
 
-    The fake intentionally implements only the surface area the
-    :class:`azure.core.pipeline.AsyncPipeline` actually exercises: an
-    async ``send`` returning an object with ``http_response`` (and the
-    nested ``status_code`` / ``headers`` / ``body`` properties), plus
-    ``open()`` / ``close()`` / ``__aenter__`` / ``__aexit__``. The
-    consumer pipeline must NOT include ``ContentDecodePolicy`` for the
-    gzip-round-trip assertions to mean what we want them to mean (per
-    spec 016 FR-030, the policy chain explicitly excludes
-    ``ContentDecodePolicy``).
+        The fake intentionally implements only the surface area the
+        :class:`azure.core.pipeline.AsyncPipeline` actually exercises: an
+        async ``send`` returning an object with ``http_response`` (and the
+        nested ``status_code`` / ``headers`` / ``body`` properties), plus
+        ``open()`` / ``close()`` / ``__aenter__`` / ``__aexit__``. The
+        consumer pipeline must NOT include ``ContentDecodePolicy`` for the
+        gzip-round-trip assertions to mean what we want them to mean (per
+    , the policy chain explicitly excludes
+        ``ContentDecodePolicy``).
     """
 
     def __init__(self, responses: Sequence[FakeResponse] = ()) -> None:
@@ -475,6 +473,14 @@ class FakeAsyncHttpTransport:
             )
         response_data = self._responses.pop(0)
         body = getattr(request, "body", None) or getattr(request, "data", None)
+        if body is None:
+            body = getattr(request, "content", None)
+            if callable(body):
+                body = body()
+        if body is None:
+            body = getattr(request, "_data", None) or getattr(request, "_body", None)
+        if isinstance(body, str):
+            body = body.encode("utf-8")
         if body is not None and not isinstance(body, (bytes, bytearray)):
             try:
                 body = bytes(body)

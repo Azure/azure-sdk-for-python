@@ -24,7 +24,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 
 logger = logging.getLogger(__name__)
 
@@ -33,22 +33,16 @@ def _generate_reply(turn: int, last_msg: str) -> str:
     """Placeholder for an LLM call.  Replace with your model of choice."""
 
     if turn == 1:
-        return (
-            f"Thanks for reaching out! You said: '{last_msg}'. "
-            "Could you share more details so I can help?"
-        )
+        return f"Thanks for reaching out! You said: '{last_msg}'. " "Could you share more details so I can help?"
     if turn == 2:
         return (
             f"Great, noted: '{last_msg}'. Based on our conversation "
             "so far, here are some initial thoughts. What else?"
         )
-    return (
-        f"Turn {turn}: incorporating '{last_msg}' — "
-        f"I now have context from {turn} turns of conversation."
-    )
+    return f"Turn {turn}: incorporating '{last_msg}' — " f"I now have context from {turn} turns of conversation."
 
 
-@task(name="session_workflow")
+@multi_turn_task(name="session_workflow")
 async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Single durable function for the entire session.
 
@@ -81,10 +75,7 @@ async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
 
     # Handle explicit session end
     if message.strip().lower() == "done":
-        summary = (
-            f"Session complete after {turn_count} turns. "
-            f"Total messages exchanged: {len(history)}."
-        )
+        summary = f"Session complete after {turn_count} turns. " f"Total messages exchanged: {len(history)}."
         # Clear the session history so a future session_id reuse starts clean.
         session["history"] = []
         session["turn_count"] = 0
@@ -115,4 +106,8 @@ async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
     await ctx.metadata.flush()
 
     # Suspend — the client will resume with the next turn.
-    return await ctx.suspend(reason="awaiting_user_input", output=output)
+    # multi-turn `return X` is the implicit-suspend signal.
+    # The chain stays alive across turns; ctx.suspend() is not part of
+    # the public surface. The output value flows through
+    # `return output` to the caller's `.result()`.
+    return output

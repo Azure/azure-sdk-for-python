@@ -18,7 +18,9 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
     config.addinivalue_line("markers", "slow: tests that send large payloads or otherwise take noticeable time in CI")
-    config.addinivalue_line("markers", "live: tests that require live external services (Azure OpenAI, github-copilot-sdk, etc.)")
+    config.addinivalue_line(
+        "markers", "live: tests that require live external services (Azure OpenAI, github-copilot-sdk, etc.)"
+    )
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -43,6 +45,7 @@ def _prevent_distro_setup(request):
 # ---------------------------------------------------------------------------
 # E2E tracing fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture()
 def appinsights_connection_string():
@@ -261,8 +264,10 @@ def _make_failing_ws_app(**kwargs: Any) -> InvocationAgentServerHost:
 def _records_with_ws_extras(records):
     """Filter log records that carry the close-event ``ws.*`` extras."""
     return [
-        r for r in records
-        if hasattr(r, "azure.ai.agentserver.invocations_ws.session_id") and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
+        r
+        for r in records
+        if hasattr(r, "azure.ai.agentserver.invocations_ws.session_id")
+        and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
     ]
 
 

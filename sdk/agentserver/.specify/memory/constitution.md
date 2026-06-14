@@ -189,9 +189,9 @@ Every spec that touches developer-facing samples MUST include a "Docs ↔ Sample
 
 ### X. Durability Contract Conformance (NON-NEGOTIABLE)
 
-The durability behavior of `azure-ai-agentserver-responses` is specified in [`sdk/agentserver/specs/durability-contract.md`](../../specs/durability-contract.md). Every row of its matrix has an observable contract; every contract MUST be backed by a behavioral test that exercises it end-to-end through real signals.
+The durability behavior of `azure-ai-agentserver-responses` is specified in the source-of-truth durability contract. Every row of its matrix has an observable contract; every contract MUST be backed by a behavioral test that exercises it end-to-end through real signals.
 
-**Why this principle exists**: prior to Spec 014, the framework's documented durability matrix diverged silently from its implementation for three rows. Five overlapping failure modes (see [`sdk/agentserver/specs/014-durable-streaming-recovery/post-mortem.md`](../../specs/014-durable-streaming-recovery/post-mortem.md)) let those divergences ship: tests asserted helper behavior instead of contract behavior, crash-injection tests were deferred and never picked up, helpers were built without wiring, no single spec validated the matrix as an end-to-end seam, and no structural guard required matrix-coverage. This principle is the structural guard.
+**Why this principle exists**: the framework's documented durability matrix once diverged silently from its implementation for three rows. Five overlapping failure modes let those divergences ship: tests asserted helper behavior instead of contract behavior, crash-injection tests were deferred and never picked up, helpers were built without wiring, no single contract validated the matrix as an end-to-end seam, and no structural guard required matrix coverage. This principle is the structural guard.
 
 **The rule:**
 
@@ -217,13 +217,13 @@ The durability behavior of `azure-ai-agentserver-responses` is specified in [`sd
 - [ ] Did those tests land RED before the implementation commit (verifiable from git history)?
 - [ ] Did the dev guide / handler guide need updates? Are they in this PR?
 
-This principle is referenced by `durability-contract.md` §Test discipline; the two stay in sync via cross-reference. Spec 014's FR-007 through FR-013 implement the structural pieces (test suite + meta-test + Constitution principle + spec template gate).
+This principle is referenced by `durability-contract.md` §Test discipline; the two stay in sync via cross-reference. The durability test suite, meta-test, Constitution principle, and template gate implement the structural pieces.
 
 ### XI. Contract-Surface Test Depth (NON-NEGOTIABLE)
 
 Conformance tests MUST verify the row's full contract surface, not just terminal status. Shape-only assertions (e.g. `response.status == "completed"`) are necessary but not sufficient; they pass whenever any code path reaches a terminal of the right type and miss content-level drift entirely.
 
-**Why this principle exists**: Spec 014 Phase 9 surfaced a real bug (the streaming-recovery-continuity gap, fix `1e69dba385`) that slipped through Principle X's structural gate. Every (row × path) cell had a paired test, all GREEN, but the tests asserted only on `terminal["status"]`. The bug — that pre-crash SSE events were being erased by the recovered handler's terminal-time `save_stream_events` — was invisible because:
+**Why this principle exists**: a streaming-recovery-continuity bug (fix `1e69dba385`) slipped through Principle X's structural gate. Every (row × path) cell had a paired test, all GREEN, but the tests asserted only on `terminal["status"]`. The bug — that pre-crash SSE events were being erased by the recovered handler's terminal-time `save_stream_events` — was invisible because:
 
 - The conformance handler emitted a single `"ok"` delta. Pre-crash content and recovered content were byte-identical, so cross-attempt drift was indistinguishable.
 - The tests asked "did recovery happen?" (yes, `status="completed"`) but never asked "did the persisted stream contain the right events in the right order?".
@@ -251,13 +251,13 @@ Principle X (every cell has a paired test) was satisfied. Principle XI is the de
 3. Add or extend tests with the depth assertions the clause requires.
 4. Land all three (contract + matrix + tests) in a single PR.
 
-This principle was added by Spec 014 Phase 9 follow-up (T-175). The reflection that motivated it is in `~/.copilot/session-state/.../files/conformance_gap_analysis.md` and summarised in `specs/014-durable-streaming-recovery/post-mortem.md` § Phase 9 reflection on conformance test depth.
+This principle was added as a follow-up to the conformance-depth reflection. The reflection that motivated it is in `~/.copilot/session-state/.../files/conformance_gap_analysis.md` and summarized in the source-of-truth contract discussion of conformance test depth.
 
 ### XII. Core-Primitive TDD Discipline (NON-NEGOTIABLE)
 
 The public surface of the core durable-task primitive (`azure-ai-agentserver-core/azure/ai/agentserver/core/durable/`) is consumed by every higher layer (invocations samples, responses framework, future end-user durable handlers). Drift between the primitive's documented contract and its actual behavior cascades silently into all consumers. This principle is the test-first gate against that drift.
 
-**Why this principle exists**: Principle X locks the responses-layer durability matrix against drift. The core primitive has the same shape of problem one layer down — its `TaskContext` fields, decorator arguments, exception types, and metadata namespaces are a public contract whose drift produces silent miscompiles in consumer code. Spec 015 surfaced concrete examples: `run_attempt` semantics ambiguous between in-process retries and durable failure-retry budget; `previous_input` shipped without being populated; `TaskSuspended` exported but unused; `_FilteredMetadata` filtering the wrong direction. None of these were caught by the existing suite because the suite asserted helper behavior, not the primitive's contract surface. This principle is the structural fix.
+**Why this principle exists**: Principle X locks the responses-layer durability matrix against drift. The core primitive has the same shape of problem one layer down — its `TaskContext` fields, decorator arguments, exception types, and metadata namespaces are a public contract whose drift produces silent miscompiles in consumer code. Prior hardening surfaced concrete examples: `run_attempt` semantics ambiguous between in-process retries and durable failure-retry budget; `previous_input` shipped without being populated; `TaskSuspended` exported but unused; `_FilteredMetadata` filtering the wrong direction. None of these were caught by the existing suite because the suite asserted helper behavior, not the primitive's contract surface. This principle is the structural fix.
 
 **The rule:**
 
@@ -271,7 +271,7 @@ The public surface of the core durable-task primitive (`azure-ai-agentserver-cor
 
 3. **Any spec or pull request that affects the public surface of the core durable-task primitive** (decorator signature, `TaskContext` fields, exception types, metadata namespaces, retry policy) **MUST land its conformance tests RED before the implementation commit goes green.** The reviewer verifies test-first ordering from the commit history.
 
-4. **The non-duplication rule (FR-030 in Spec 015 and successors):** when an existing test in `tests/durable/` already covers the surface area being changed, the new conformance must EXTEND the existing test file rather than creating a parallel test file. A new test file is justified only when no existing home exists for the contract surface; the justification MUST be recorded in the spec's conformance gap-list document.
+4. **The non-duplication rule:** when an existing test in `tests/durable/` already covers the surface area being changed, the new conformance must EXTEND the existing test file rather than creating a parallel test file. A new test file is justified only when no existing home exists for the contract surface; the justification MUST be recorded in the conformance tracking document.
 
 5. **Synthetic-bypass shortcuts are explicitly disallowed for conformance tests:**
    - MUST NOT monkey-patch `TaskContext` fields to simulate values that the runtime would produce.
@@ -285,20 +285,20 @@ The public surface of the core durable-task primitive (`azure-ai-agentserver-cor
 - [ ] Which public symbols (decorator args, `TaskContext` fields, exception types, metadata namespaces) does this change affect?
 - [ ] Are the conformance tests for those symbols in the PR?
 - [ ] Did those tests land RED before the implementation commit (verifiable from git history)?
-- [ ] Was an existing test file extended (per non-duplication rule), or is the new file's justification recorded in the spec's gap-list?
+- [ ] Was an existing test file extended (per non-duplication rule), or is the new file's justification recorded in the conformance tracking document?
 - [ ] Did the consolidated dev guide need updates? Are they in this PR?
 
-This principle is the core-layer mirror of Principle X. The two stay in sync via cross-reference. Spec 015's FR-009 (conformance gap-list), FR-030 (non-duplication test discipline), and FR-033 (this Constitution amendment) implement the structural pieces.
+This principle is the core-layer mirror of Principle X. The two stay in sync via cross-reference. The conformance tracking, non-duplication test discipline, and Constitution amendment implement the structural pieces.
 
 ### XIII. Continuous Code Review Discipline (NON-NEGOTIABLE)
 
 Multi-phase implementations land hacks. Each phase, working in isolation, will accept a workaround that LOOKS LOCAL but degrades the overall code shape — a premature abstraction the next phase has to fight, an under-design that propagates scaffolding forward, a silent drift from the spec's design invariants that no per-phase reviewer would catch. This principle is the structural guard: code review is a sequencing fence, not an end-of-PR check.
 
-**Why this principle exists**: spec 016 (Durable-task primitive contract hardening) surfaced this risk during its `/speckit.tasks` phase. The implementation has 9 user stories landing in 12 phases on one cohesive PR; the user observed that without continuous review, each phase would "just focus on solving its own problem" while collectively shipping a degraded surface. The fix — interleaved per-phase, cross-phase, and final reviews via the `code-review` agent — must apply to every multi-phase spec, not just spec 016. This principle is that generalization.
+**Why this principle exists**: durable-task primitive contract hardening surfaced this risk during task planning. The implementation had multiple user stories landing across many phases on one cohesive PR; the user observed that without continuous review, each phase would "just focus on solving its own problem" while collectively shipping a degraded surface. The fix — interleaved per-phase, cross-phase, and final reviews via the `code-review` agent — must apply to every multi-phase contract change. This principle is that generalization.
 
 **The rule:**
 
-1. **Every spec with three or more implementation phases (or three or more user stories) MUST include code review tasks in its `tasks.md`.** The review tasks are sequencing fences interleaved with implementation, not a single end-of-PR step.
+1. **Every spec with three or more implementation phases (or three or more user stories) MUST include code review tasks in its task list.** The review tasks are sequencing fences interleaved with implementation, not a single end-of-PR step.
 
 2. **The review structure MUST include:**
    - **Per-phase reviews** at the end of each implementation phase or user-story phase. Scope: catches phase-local quality issues (FR coverage, RED-first commit ordering, no hacks, no scope creep, no shape-only test assertions, dev-guide alignment for that phase's contracts).
@@ -307,7 +307,7 @@ Multi-phase implementations land hacks. Each phase, working in isolation, will a
 
 3. **Each review task dispatches the `code-review` agent (or equivalent) with a precise SCOPE statement tailored to the phase.** Generic "review this code" prompts are insufficient. The scope statement MUST name: (a) the specific FRs / SCs the phase implements; (b) the specific files and commits in the phase's diff; (c) the specific quality risks the phase is most likely to introduce; (d) the cross-phase coupling concerns the next phase will inherit; (e) constitution principles whose violation would be a BLOCKING finding.
 
-4. **Review tasks are blocking GATES.** A phase's review task MUST complete before the next phase begins. BLOCKING and HIGH findings MUST be addressed before the gate clears. MEDIUM and LOW findings MUST be logged to the spec's conformance-gap-list (or equivalent tracking artifact) for the final-review sweep to verify they're either resolved or explicitly accepted with reviewer sign-off.
+4. **Review tasks are blocking GATES.** A phase's review task MUST complete before the next phase begins. BLOCKING and HIGH findings MUST be addressed before the gate clears. MEDIUM and LOW findings MUST be logged to the conformance tracking artifact for the final-review sweep to verify they're either resolved or explicitly accepted with reviewer sign-off.
 
 5. **The `/speckit.tasks` template generates the review tasks automatically.** When the spec has three or more phases or stories, the tasks template MUST emit a "Continuous Code Review" phase as the last phase (with per-phase, cross-phase, and final review tasks), AND each Checkpoint marker in the intervening phases MUST be annotated with a `→ Run TXXX before moving to Phase Y` arrow pointing at its gating review task. The `/speckit.plan` template MUST include a "Code Review Cadence" subsection under the Constitution Check that names which review tasks the implementation will produce.
 
@@ -318,16 +318,16 @@ Multi-phase implementations land hacks. Each phase, working in isolation, will a
 - **Premature abstraction**: a Phase A factory that the Phase B consumer doesn't actually need, a generic interface that papers over a single-concrete-use.
 - **Under-design**: a Phase A seam that Phase B has to monkey-patch around because the original shape doesn't fit, an internal data-format choice that propagates into every later-phase test as a workaround.
 - **Documentation drift**: a public-surface change without a corresponding dev guide update, a CHANGELOG entry that misrepresents the change, a docstring that contradicts the spec's contract claim.
-- **Pre-existing test deletion**: a pre-existing test that exercised the surface this phase is changing was DELETED instead of PORTED per the spec's "Hardening pre-existing tests" subsection (deletion is allowed only with gap-list justification).
+- **Pre-existing test deletion**: a pre-existing test that exercised the surface this phase is changing was DELETED instead of PORTED per the spec's "Hardening pre-existing tests" subsection (deletion is allowed only with SOT conformance list justification).
 - **RED-first violation**: an implementation commit precedes its paired conformance-test commit in git history (Constitution Principle XII §3 violation).
 
 **Reviewer checklist for PRs touching multi-phase spec implementations:**
 
-- [ ] Does the spec's `tasks.md` include a "Continuous Code Review" phase with per-phase, cross-phase, and final reviews?
+- [ ] Does the task list include a "Continuous Code Review" phase with per-phase, cross-phase, and final reviews?
 - [ ] Did each per-phase review run at its Checkpoint and complete (with BLOCKING / HIGH findings addressed) before the next phase began?
 - [ ] Did the cross-phase seam reviews run at the architectural boundaries the plan identified?
 - [ ] Did the final holistic review verify all cross-cutting properties (spec coverage, public surface match, documentation truth, plan-phase-decision resolution, constitution exit checklists, no regression, commit-history RED-first, lint/type/build clean)?
-- [ ] Were MEDIUM / LOW findings either resolved or accepted with reviewer sign-off in the conformance-gap-list?
+- [ ] Were MEDIUM / LOW findings either resolved or accepted with reviewer sign-off in the conformance tracking artifact?
 
 This principle is referenced by `.specify/templates/plan-template.md` (Constitution Check gate for the Code Review Cadence subsection) and `.specify/templates/tasks-template.md` (auto-generated Phase N: Continuous Code Review section when the spec has ≥3 phases/stories). The two stay in sync via cross-reference.
 

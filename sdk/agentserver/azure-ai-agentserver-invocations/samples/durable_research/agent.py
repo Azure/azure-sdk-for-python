@@ -33,11 +33,11 @@ are exactly what the recovery re-entry needs to resume mid-turn.
 Steering is transparent: a new POST while a turn is running enqueues
 the input on the framework's steering queue and sets ``ctx.cancel``.
 The handler observes the cancel at the next checkpoint, winds down
-via ``ctx.suspend(...)`` (which calls :func:`_finish_turn` to clear
-all per-turn state), and the framework re-enters the body with the
-new ``ctx.input``. Because state was cleared at suspend, the
-re-entered handler naturally starts the new topic at phase 0 — no
-``is_steered_turn`` check needed in handler code.
+via `return None` ,
+and the framework re-enters the body with the new ``ctx.input``.
+Because state was cleared at suspend, the re-entered handler naturally
+starts the new topic at phase 0 — no ``is_steered_turn`` check needed
+in handler code.
 
 Input schema: ``{"topic": str, "invocation_id": str}``
 
@@ -65,7 +65,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 from .store import CheckpointStore
@@ -106,9 +106,7 @@ def _get_client() -> Any:
     if _openai_client is not None:
         return _openai_client
     if not _endpoint:
-        raise EnvironmentError(
-            "FOUNDRY_PROJECT_ENDPOINT is required to run the deep-research sample."
-        )
+        raise EnvironmentError("FOUNDRY_PROJECT_ENDPOINT is required to run the deep-research sample.")
     from azure.ai.projects.aio import (  # pylint: disable=import-outside-toplevel
         AIProjectClient,
     )
@@ -125,11 +123,13 @@ def _get_client() -> Any:
         from azure.identity.aio import (  # pylint: disable=import-outside-toplevel
             AzureCliCredential,
         )
+
         credential: Any = AzureCliCredential()
     else:
         from azure.identity.aio import (  # pylint: disable=import-outside-toplevel
             DefaultAzureCredential,
         )
+
         credential = DefaultAzureCredential()
 
     project = AIProjectClient(endpoint=_endpoint, credential=credential)
@@ -164,26 +164,32 @@ PHASE_TITLES = [
 ]
 
 _SUB_CALL_ROLES = [
-    ("research",
-     "Conduct an in-depth investigation of the assigned aspect. Include "
-     "specific findings, examples, and references where you can. Aim for "
-     "substantive, multi-paragraph content."),
-    ("critique",
-     "Critically evaluate the research above. Identify weak claims, gaps, "
-     "competing interpretations, and quality concerns. Be specific."),
-    ("refine",
-     "Revise the original research, incorporating the critique. Strengthen "
-     "weak claims, address gaps, and clarify uncertainty. Produce a "
-     "tightened, more rigorous version."),
-    ("synthesize",
-     "Distill the refined material into 2-3 paragraphs of key takeaways "
-     "suitable for someone briefing a decision-maker on this phase."),
+    (
+        "research",
+        "Conduct an in-depth investigation of the assigned aspect. Include "
+        "specific findings, examples, and references where you can. Aim for "
+        "substantive, multi-paragraph content.",
+    ),
+    (
+        "critique",
+        "Critically evaluate the research above. Identify weak claims, gaps, "
+        "competing interpretations, and quality concerns. Be specific.",
+    ),
+    (
+        "refine",
+        "Revise the original research, incorporating the critique. Strengthen "
+        "weak claims, address gaps, and clarify uncertainty. Produce a "
+        "tightened, more rigorous version.",
+    ),
+    (
+        "synthesize",
+        "Distill the refined material into 2-3 paragraphs of key takeaways "
+        "suitable for someone briefing a decision-maker on this phase.",
+    ),
 ]
 
 NUM_PHASES = max(1, int(os.environ.get("NUM_PHASES", str(len(PHASE_TITLES)))))
-CALLS_PER_PHASE = max(
-    1, min(len(_SUB_CALL_ROLES), int(os.environ.get("CALLS_PER_PHASE", "4")))
-)
+CALLS_PER_PHASE = max(1, min(len(_SUB_CALL_ROLES), int(os.environ.get("CALLS_PER_PHASE", "4"))))
 TARGET_OUTPUT_TOKENS = int(os.environ.get("TARGET_OUTPUT_TOKENS", "1500"))
 INTRA_PHASE_COOLDOWN_SEC = float(os.environ.get("INTRA_PHASE_COOLDOWN_SEC", "10"))
 INTER_PHASE_COOLDOWN_SEC = float(os.environ.get("INTER_PHASE_COOLDOWN_SEC", "20"))
@@ -227,7 +233,7 @@ async def _finish_turn(stream: Any, ctx: TaskContext, inv_id: str) -> None:
     _checkpoint_store.delete(inv_id)
 
 
-@task(name="deep_research", steerable=True)
+@multi_turn_task(name="deep_research", steerable=True)
 async def deep_research(ctx: TaskContext[dict]) -> None:
     """Long-running deep-research task: crash-resilient, steerable.
 
@@ -240,10 +246,11 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
     before the crash — so the worst case is one wasted subcall (the
     one that was actively streaming when the container died).
 
-    The body returns ``None`` on normal completion (or the
-    ``Suspended`` sentinel from ``ctx.suspend(...)`` on the wind-down
-    path). Clients read progress + final content from the per-turn
-    SSE stream, not from the task's terminal output, so there is no
+    The body returns ``None`` on normal completion (and also on the
+    steered-wind-down path — bare ``return`` is the
+    implicit-suspend signal; the chain stays alive across turns).
+    Clients read progress + final content from the per-turn SSE
+    stream, not from the task's terminal output, so there is no
     return-value payload to construct.
     """
     topic: str = ctx.input["topic"]
@@ -262,104 +269,154 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
 
     await _emit_run_start(emit, ctx, topic=topic)
 
-    completed: int = ctx.metadata.get("completed_phases", 0)
+    try:
+        completed: int = ctx.metadata.get("completed_phases", 0)
 
-    if ctx.entry_mode == "recovered" and completed > 0:
-        await emit({
-            "type": "recovered",
-            "completed_phases": completed,
-            "total_phases": NUM_PHASES,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-        })
-
-    for phase_idx in range(completed, NUM_PHASES):
-        if ctx.cancel.is_set():
-            return await _wind_down(emit, stream, ctx, inv_id, phase_idx)
-
-        phase_started_mono = time.monotonic()
-        title = _phase_title(phase_idx)
-
-        await emit({
-            "type": "phase_start",
-            "phase": phase_idx + 1,
-            "total": NUM_PHASES,
-            "title": title,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-        })
-
-        await _run_phase(emit, ctx, inv_id, phase_idx, topic, title)
-
-        # --- PHASE-COMPLETE CHECKPOINT ---
-        ctx.metadata["completed_phases"] = phase_idx + 1
-        ctx.metadata["in_progress_phase"] = None
-        ctx.metadata["completed_subcalls"] = 0
-        _checkpoint_store.delete(inv_id)
-        await ctx.metadata.flush()
-
-        phase_duration = round(time.monotonic() - phase_started_mono, 1)
-        await emit({
-            "type": "phase_end",
-            "phase": phase_idx + 1,
-            "total": NUM_PHASES,
-            "title": title,
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-            "duration_sec": phase_duration,
-        })
-
-        if ctx.cancel.is_set():
-            return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
-
-        if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
-            await _cooldown(
-                emit, ctx, INTER_PHASE_COOLDOWN_SEC,
-                stage="inter_phase",
-                phase=phase_idx + 2,
-                total=NUM_PHASES,
+        if ctx.entry_mode == "recovered" and completed > 0:
+            await emit(
+                {
+                    "type": "recovered",
+                    "completed_phases": completed,
+                    "total_phases": NUM_PHASES,
+                    "server_time_utc": _now_iso(),
+                    "server_uptime_sec": _server_uptime_sec(),
+                }
             )
+
+        for phase_idx in range(completed, NUM_PHASES):
+            if ctx.cancel.is_set():
+                return await _wind_down(emit, stream, ctx, inv_id, phase_idx)
+
+            phase_started_mono = time.monotonic()
+            title = _phase_title(phase_idx)
+
+            await emit(
+                {
+                    "type": "phase_start",
+                    "phase": phase_idx + 1,
+                    "total": NUM_PHASES,
+                    "title": title,
+                    "server_time_utc": _now_iso(),
+                    "server_uptime_sec": _server_uptime_sec(),
+                }
+            )
+
+            await _run_phase(emit, ctx, inv_id, phase_idx, topic, title)
+
+            # --- PHASE-COMPLETE CHECKPOINT ---
+            ctx.metadata["completed_phases"] = phase_idx + 1
+            ctx.metadata["in_progress_phase"] = None
+            ctx.metadata["completed_subcalls"] = 0
+            _checkpoint_store.delete(inv_id)
+            await ctx.metadata.flush()
+
+            phase_duration = round(time.monotonic() - phase_started_mono, 1)
+            await emit(
+                {
+                    "type": "phase_end",
+                    "phase": phase_idx + 1,
+                    "total": NUM_PHASES,
+                    "title": title,
+                    "server_time_utc": _now_iso(),
+                    "server_uptime_sec": _server_uptime_sec(),
+                    "duration_sec": phase_duration,
+                }
+            )
+
             if ctx.cancel.is_set():
                 return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
 
-    await emit({
-        "type": "run_complete",
-        "server_time_utc": _now_iso(),
-        "server_uptime_sec": _server_uptime_sec(),
-        "phases_completed": NUM_PHASES,
-    })
-    # Normal completion: close stream + wipe watermarks + clear
-    # checkpoint entry. Skipped on crash (the handler exits via an
-    # exception and the orchestrator's leave_stream_open_for_recovery
-    # path keeps the stream open for the next-lifetime recovery).
-    await _finish_turn(stream, ctx, inv_id)
+            if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
+                await _cooldown(
+                    emit,
+                    ctx,
+                    INTER_PHASE_COOLDOWN_SEC,
+                    stage="inter_phase",
+                    phase=phase_idx + 2,
+                    total=NUM_PHASES,
+                )
+                if ctx.cancel.is_set():
+                    return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
+
+        await emit(
+            {
+                "type": "run_complete",
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+                "phases_completed": NUM_PHASES,
+            }
+        )
+        # Normal completion: close stream + wipe watermarks + clear
+        # checkpoint entry. Skipped on crash (the handler exits via an
+        # exception and the orchestrator's leave_stream_open_for_recovery
+        # path keeps the stream open for the next-lifetime recovery).
+        await _finish_turn(stream, ctx, inv_id)
+    except Exception as exc:  # pylint: disable=broad-except
+        # Logical-failure path: a downstream call (e.g. the LLM) raised.
+        # Emit a terminal SSE frame so subscribers fast-fail instead of
+        # hanging on the open stream, then close the stream and re-raise
+        # so the framework records the task as failed.
+        #
+        # We catch ``Exception`` (not ``BaseException``) so cooperative
+        # cancellation (``asyncio.CancelledError``) and process death
+        # (SIGKILL, where the handler doesn't run at all) still flow
+        # through their normal paths — the orchestrator's
+        # ``leave_stream_open_for_recovery`` contract still holds for
+        # true crashes.
+        logger.exception("deep_research task failed; emitting terminal SSE frame")
+        try:
+            await emit(
+                {
+                    "type": "run_failed",
+                    "error": {
+                        "type": type(exc).__name__,
+                        "message": str(exc)[:2000],
+                    },
+                    "server_time_utc": _now_iso(),
+                    "server_uptime_sec": _server_uptime_sec(),
+                }
+            )
+            await _finish_turn(stream, ctx, inv_id)
+        except Exception:  # pylint: disable=broad-except
+            # If terminal-frame emission itself fails (e.g. stream is
+            # already gone) we still want to surface the original task
+            # failure rather than swallow it.
+            logger.exception("failed to emit terminal run_failed frame")
+        raise
 
 
 # --- Helpers ---------------------------------------------------------------
 
+
 async def _emit_run_start(emit: EmitFn, ctx: TaskContext, *, topic: str) -> None:
-    await emit({
-        "type": "run_start",
-        "topic": topic,
-        "entry_mode": ctx.entry_mode,
-        "total_phases": NUM_PHASES,
-        "calls_per_phase": CALLS_PER_PHASE,
-        "server_time_utc": _now_iso(),
-        "server_uptime_sec": _server_uptime_sec(),
-    })
+    await emit(
+        {
+            "type": "run_start",
+            "topic": topic,
+            "entry_mode": ctx.entry_mode,
+            "total_phases": NUM_PHASES,
+            "calls_per_phase": CALLS_PER_PHASE,
+            "server_time_utc": _now_iso(),
+            "server_uptime_sec": _server_uptime_sec(),
+        }
+    )
 
 
 async def _wind_down(
-    emit: EmitFn, stream, ctx: TaskContext, inv_id: str, completed_phases: int,
+    emit: EmitFn,
+    stream,
+    ctx: TaskContext,
+    inv_id: str,
+    completed_phases: int,
 ):
     """Cooperative wind-down at a phase boundary.
 
     Tears down per-turn resources (stream close + metadata wipe +
-    checkpoint-store clear) via :func:`_finish_turn` BEFORE calling
-    ``ctx.suspend(...)`` so the SSE subscriber observes a clean
-    terminator before the framework reports the turn as suspended,
-    and so the steered re-entry (or any future ``start()``) finds
-    metadata wiped.
+    checkpoint-store clear) via :func:`_finish_turn` BEFORE the handler
+    returns. The multi-turn ``return`` is the
+    implicit-suspend signal — so the SSE subscriber observes a clean
+    terminator before the framework reports the turn as suspended, and
+    the steered re-entry (or any future ``start()``) finds metadata wiped.
     """
     if ctx.timeout_exceeded:
         cause = "timeout"
@@ -368,18 +425,23 @@ async def _wind_down(
     else:
         cause = "steering"
 
-    await emit({
-        "type": "winding_down",
-        "cause": cause,
-        "completed_phases": completed_phases,
-        "total_phases": NUM_PHASES,
-        "pending_steering_inputs": ctx.pending_input_count,
-        "server_time_utc": _now_iso(),
-        "server_uptime_sec": _server_uptime_sec(),
-    })
+    await emit(
+        {
+            "type": "winding_down",
+            "cause": cause,
+            "completed_phases": completed_phases,
+            "total_phases": NUM_PHASES,
+            "pending_steering_inputs": ctx.pending_input_count,
+            "server_time_utc": _now_iso(),
+            "server_uptime_sec": _server_uptime_sec(),
+        }
+    )
 
     await _finish_turn(stream, ctx, inv_id)
-    return await ctx.suspend()
+    # multi-turn `return` is the implicit-suspend signal.
+    # The chain stays alive across turns; ctx.suspend() is not part of
+    # the public surface.
+    return None
 
 
 async def _cooldown(
@@ -447,36 +509,40 @@ async def _run_phase(
         instructions = (
             "You are a research analyst working on the topic: '" + topic + "'.\n"
             "Current phase: '" + phase_title + "'.\n"
-            "Your role in this sub-step: " + role_name + ".\n\n"
-            + role_prompt
+            "Your role in this sub-step: " + role_name + ".\n\n" + role_prompt
         )
         if current_text:
             user_input = (
-                "Topic: " + topic + "\nPhase: " + phase_title + "\n\n"
-                "Previous sub-step output:\n" + current_text
+                "Topic: " + topic + "\nPhase: " + phase_title + "\n\n" "Previous sub-step output:\n" + current_text
             )
         else:
             user_input = "Topic: " + topic + "\nPhase: " + phase_title
 
-        await emit({
-            "type": "subcall_start",
-            "role": role_name,
-            "index": sub_idx + 1,
-            "of": CALLS_PER_PHASE,
-            "server_time_utc": _now_iso(),
-        })
-
-        sub_text = await _stream_llm(
-            emit, instructions=instructions, user_input=user_input,
+        await emit(
+            {
+                "type": "subcall_start",
+                "role": role_name,
+                "index": sub_idx + 1,
+                "of": CALLS_PER_PHASE,
+                "server_time_utc": _now_iso(),
+            }
         )
 
-        await emit({
-            "type": "subcall_end",
-            "role": role_name,
-            "index": sub_idx + 1,
-            "of": CALLS_PER_PHASE,
-            "server_time_utc": _now_iso(),
-        })
+        sub_text = await _stream_llm(
+            emit,
+            instructions=instructions,
+            user_input=user_input,
+        )
+
+        await emit(
+            {
+                "type": "subcall_end",
+                "role": role_name,
+                "index": sub_idx + 1,
+                "of": CALLS_PER_PHASE,
+                "server_time_utc": _now_iso(),
+            }
+        )
 
         current_text = sub_text
 
@@ -486,7 +552,9 @@ async def _run_phase(
 
         if sub_idx + 1 < CALLS_PER_PHASE and INTRA_PHASE_COOLDOWN_SEC > 0:
             await _cooldown(
-                emit, ctx, INTRA_PHASE_COOLDOWN_SEC,
+                emit,
+                ctx,
+                INTRA_PHASE_COOLDOWN_SEC,
                 stage="intra_phase",
                 phase=phase_idx + 1,
                 total=NUM_PHASES,

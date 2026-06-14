@@ -16,7 +16,7 @@ The registry is the lifecycle owner for the three SDK-bundled
 backings. Third-party :class:`EventStream` impls do NOT plug into
 this registry — they ship their own peer registry.
 
-Spec 019 FR-E-001/-002: ``get(id)`` raises
+: ``get(id)`` raises
 :class:`EventStreamNotFoundError` for ANY id that is not currently
 a live stream — never registered, explicitly :meth:`delete`d, or
 close-clock TTL elapsed. The registry retains tombstones for
@@ -66,7 +66,7 @@ class _StreamsRegistry:
         # Global lock guarding _slots + _id_locks structural mutations.
         self._struct_lock = asyncio.Lock()
         # Factory closure — set by use_* configurators. Default:
-        # use_in_memory_live() per rule 37a (also FR-013a).
+        # use_in_memory_live per rule 37a (also).
         self._factory: Callable[[str], EventStream] = lambda _id: BroadcastEventStream()
 
     # ----- Configurators (sync) -----
@@ -92,9 +92,7 @@ class _StreamsRegistry:
         subscribers see the full retained history. Pass ``cursor_fn``
         to enable cursored re-subscription via ``subscribe(after=...)``.
         """
-        self._factory = lambda _id: ReplayEventStream(
-            cursor_fn=cursor_fn, ttl_seconds=ttl_seconds
-        )
+        self._factory = lambda _id: ReplayEventStream(cursor_fn=cursor_fn, ttl_seconds=ttl_seconds)
 
     def use_file_backed_replay(
         self,
@@ -135,20 +133,20 @@ class _StreamsRegistry:
     async def get(self, id: str) -> EventStream:
         """Look up the existing instance for ``id``.
 
-        Spec 019 FR-E-001/-002 — every "id is not currently a live
+          — every "id is not currently a live
         stream" condition raises :class:`EventStreamNotFoundError`:
 
         - Unregistered id (never seen).
         - Explicitly :meth:`delete`d id (tombstoned).
         - Closed stream whose close-clock TTL deadline has elapsed
-          (auto-tombstoned per FR-E-005).
+          (auto-tombstoned).
         """
         slot = self._slots.get(id, None)
         if slot is None:
             raise EventStreamNotFoundError(id)
         if slot is _TOMBSTONE:
             raise EventStreamNotFoundError(id)
-        # Spec 019 FR-E-005 — opportunistic close-clock check.
+        #   — opportunistic close-clock check.
         # If the stream's internal _maybe_auto_transition_to_gone
         # would fire, install the registry tombstone now and raise
         # NotFound. This makes the registry-level auto-tombstone
@@ -158,14 +156,12 @@ class _StreamsRegistry:
             raise EventStreamNotFoundError(id)
         return slot  # type: ignore[return-value]
 
-    async def _tombstone_if_close_clock_elapsed(
-        self, id: str, slot: Any
-    ) -> bool:
+    async def _tombstone_if_close_clock_elapsed(self, id: str, slot: Any) -> bool:
         """If the stream's close-clock TTL elapsed, run its
         ``_on_delete`` cleanup hook and install the registry
         tombstone. Returns True iff the tombstone was installed.
 
-        Spec 019 FR-E-005 / FR-E-009 — file-backed cleanup happens
+          /  — file-backed cleanup happens
         BEFORE the registry tombstone install per C-STR-FBR-4.
         """
         maybe_check = getattr(slot, "_maybe_auto_transition_to_gone", None)
@@ -221,7 +217,7 @@ class _StreamsRegistry:
 
         Cleans up backing resources (e.g. file handles for the
         file-backed replay backing) before installing the tombstone
-        per FR-E-009 / C-STR-FBR-4.
+        / C-STR-FBR-4.
         """
         slot = self._slots.get(id, None)
         if slot is None:
@@ -240,7 +236,7 @@ class _StreamsRegistry:
         self._slots[id] = _TOMBSTONE
 
 
-# Module-level singleton — THE public registry per FR-013.
+# Module-level singleton — THE public registry.
 streams = _StreamsRegistry()
 
 

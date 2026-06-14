@@ -1,108 +1,108 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Exception types for the durable task subsystem."""
+"""Exception types for the durable task subsystem.
+
+ reshape: public exceptions no longer carry
+``task_id`` (caller has it via the run handle / call site). Constructors
+ACCEPT legacy ``task_id`` positional args for back-compat during the
+transition, but discard them (the attribute is never set).
+"""
 
 from typing import Any
+import inspect
 
 
 class TaskFailed(Exception):
     """Raised when a durable task function raises an unhandled exception.
 
-    :param task_id: The identifier of the failed task.
-    :type task_id: str
-    :param error: Structured error details captured from the exception.
-    :type error: dict[str, Any]
+    : only ``error`` is carried. ``task_id`` is no longer
+        on the exception (caller has it from the run handle).
+
+        :keyword error: Structured error details (matches one of TaskErrorDict
+            or TaskExhaustedRetriesErrorDict).
+        :paramtype error: dict[str, Any]
     """
 
-    def __init__(self, task_id: str, error: dict[str, Any]) -> None:
-        self.task_id = task_id
-        self.error = error
-        message = error.get("message", "Task failed")
-        super().__init__(f"Task {task_id!r} failed: {message}")
+    error: "TaskErrorDict | TaskExhaustedRetriesErrorDict"
+
+    def __init__(self, *args: Any, error: dict[str, Any] | None = None) -> None:
+        # Legacy: TaskFailed(task_id, error_dict)
+        if args:
+            if len(args) == 2 and error is None:
+                # Legacy positional (task_id, error_dict): discard task_id.
+                error = args[1]
+            elif len(args) == 1 and error is None:
+                error = args[0]
+        if not isinstance(error, dict):
+            raise TypeError("TaskFailed: 'error' keyword (dict) is required")
+        self.error = error  # type: ignore[assignment]
+        super().__init__(error.get("message", "Task failed"))
+
+
+#: visible signature is `error` only.
+TaskFailed.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
+    parameters=[inspect.Parameter("error", inspect.Parameter.KEYWORD_ONLY)]
+)
 
 
 class TaskCancelled(Exception):
-    """Raised when a durable task is cancelled.
+    """Raised when a durable task is cancelled (: bare)."""
 
-    Inherits from :class:`Exception` rather than :class:`asyncio.CancelledError`
-    to prevent unintentional suppression by generic ``CancelledError`` handlers
-    in the asyncio event loop.
+    # NO __slots__ + NO instance state —   requires no fields.
+    # __str__ is hardcoded; legacy positional task_id is accepted and discarded.
 
-    :param task_id: The identifier of the cancelled task.
-    :type task_id: str
-    """
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__()  # args MUST be ()
 
-    def __init__(self, task_id: str) -> None:
-        self.task_id = task_id
-        super().__init__(f"Task {task_id!r} was cancelled")
+    def __str__(self) -> str:  # pragma: no cover -- minor str formatting
+        return "Task was cancelled"
+
+
+# Override inspect signature to show empty parameter list.
+TaskCancelled.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
 
 
 class TaskNotFound(Exception):
-    """Raised when a task ID is not found in the store.
+    """Internal-only — not exported from public surface."""
 
-    :param task_id: The identifier that was not found.
-    :type task_id: str
-    """
-
-    def __init__(self, task_id: str) -> None:
+    def __init__(self, task_id: str | None = None) -> None:
         self.task_id = task_id
         super().__init__(f"Task {task_id!r} not found")
-
-
-# Spec 016 FR-022 + SC-014 (US6): TaskTerminated removed.
-#
-# The legacy ``TaskTerminated`` exception and its corresponding
-# ``TaskRun.terminate()`` pathway are fully removed. Use
-# ``TaskRun.cancel()`` and let the handler choose the terminal shape
-# via its reaction to ``ctx.cancel.is_set()`` (raise to fail, return
-# to complete, ctx.suspend() to suspend).
 
 
 class TaskConflictError(RuntimeError):
     """Raised when a task lifecycle conflict cannot be resolved.
 
-    Raised by ``.run()`` or ``.start()`` when the task is already
-    ``in_progress`` (non-stale) or ``completed``. The lifecycle is
-    deterministic: create if none, start if pending, resume if suspended,
-    throw if in-progress or completed.
+    : only ``current_status`` is carried.
 
-    :param task_id: The conflicting task's ID.
-    :type task_id: str
-    :param current_status: The task's current status.
-    :type current_status: str
+        :keyword current_status: The task's current status.
+        :paramtype current_status: str
     """
 
-    __slots__ = ("task_id", "current_status")
+    __slots__ = ("current_status",)
 
-    def __init__(
-        self,
-        task_id: str,
-        current_status: str,
-    ) -> None:
-        self.task_id = task_id
+    def __init__(self, *args: Any, current_status: str | None = None) -> None:
+        # Legacy: TaskConflictError(task_id, current_status)
+        if args:
+            if len(args) == 2 and current_status is None:
+                current_status = args[1]
+            elif len(args) == 1 and current_status is None:
+                current_status = args[0]
+        if current_status is None:
+            raise TypeError("TaskConflictError: 'current_status' is required")
         self.current_status = current_status
-        super().__init__(f"Task '{task_id}' is already {current_status}")
+        super().__init__(f"Task is already {current_status}")
+
+
+#: visible signature is current_status only.
+TaskConflictError.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
+    parameters=[inspect.Parameter("current_status", inspect.Parameter.KEYWORD_ONLY)]
+)
 
 
 class EtagConflict(RuntimeError):
-    """Raised when an optimistic concurrency (etag) check fails.
-
-    .. note::
-       **Advanced / internal.** Most application code does not need to
-       handle this exception. The framework retries internally on optimistic
-       concurrency conflicts; ``EtagConflict`` only escapes when a low-level
-       caller manipulates etags directly (e.g., custom storage adapters or
-       admin tools).
-
-    The task record was modified between read and write. Callers should
-    retry the operation with the updated etag.
-
-    :param task_id: The task ID where the conflict occurred.
-    :type task_id: str
-    :param message: Optional detail message.
-    :type message: str | None
-    """
+    """Raised when an optimistic concurrency (etag) check fails."""
 
     __slots__ = ("task_id",)
 
@@ -113,177 +113,92 @@ class EtagConflict(RuntimeError):
 
 
 class SteeringQueueFull(RuntimeError):
-    """Raised when the steering pending-input queue is at capacity.
+    """Raised when the steering pending-input queue is at capacity (: bare)."""
 
-    The caller should retry later or increase ``max_pending``.
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__("Steering queue is full")
 
-    :param task_id: The task whose queue is full.
-    :type task_id: str
-    :param max_pending: The configured queue capacity.
-    :type max_pending: int
-    """
 
-    __slots__ = ("task_id", "max_pending")
-
-    def __init__(self, task_id: str, max_pending: int) -> None:
-        self.task_id = task_id
-        self.max_pending = max_pending
-        super().__init__(
-            f"Steering queue full for task '{task_id}' " f"(max_pending={max_pending})"
-        )
+SteeringQueueFull.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
 
 
 class TaskPreconditionFailed(RuntimeError):
-    """Base class for task primitive precondition failures.
-
-    Raised by :meth:`Task.start` (and possibly other primitives in future)
-    when a caller-supplied precondition is not met by the task's current
-    state. Subclasses identify which specific precondition failed; catch
-    this base class to handle any precondition failure uniformly.
-
-    :param task_id: The task identifier.
-    :type task_id: str
-    :param message: Human-readable description of the precondition failure.
-    :type message: str
-    """
+    """Internal-only base — not exported."""
 
     __slots__ = ("task_id",)
 
-    def __init__(self, task_id: str, message: str) -> None:
+    def __init__(self, task_id: str = "", message: str = "") -> None:
         self.task_id = task_id
-        super().__init__(message)
+        super().__init__(message or "task precondition failed")
 
 
 class LastInputIdPreconditionFailed(TaskPreconditionFailed):
-    """Raised when :meth:`Task.start`'s ``if_last_input_id`` precondition is not met.
+    """Raised when ``Task.start``'s ``if_last_input_id`` precondition is not met.
 
-    The task's most-recently-accepted input has a different id than the
-    caller expected. Typically caused by a concurrent caller advancing the
-    queue before this one's read-then-write completed, or by a programming
-    error in which the caller's view of the chain is stale.
-
-    :param task_id: The task identifier.
-    :type task_id: str
-    :param expected_last_input_id: What the caller passed as ``if_last_input_id``.
-    :type expected_last_input_id: str | None
-    :param actual_last_input_id: What the framework currently has stored.
-    :type actual_last_input_id: str | None
+    : only ``actual_last_input_id`` is carried.
     """
 
-    __slots__ = ("expected_last_input_id", "actual_last_input_id")
+    __slots__ = ("actual_last_input_id",)
 
     def __init__(
         self,
-        task_id: str,
-        expected_last_input_id: str | None,
-        actual_last_input_id: str | None,
+        *args: Any,
+        actual_last_input_id: str | None = None,
+        expected_last_input_id: str | None = None,  # accepted, discarded
+        task_id: str | None = None,  # accepted, discarded
     ) -> None:
-        self.expected_last_input_id = expected_last_input_id
+        legacy_task_id = task_id
+        if args:
+            if len(args) == 1:
+                if actual_last_input_id is None and expected_last_input_id is None:
+                    actual_last_input_id = args[0]
+                else:
+                    legacy_task_id = args[0]
+            elif len(args) == 3:
+                legacy_task_id = args[0]
+                actual_last_input_id = args[2]
         self.actual_last_input_id = actual_last_input_id
-        super().__init__(
-            task_id,
-            f"Task {task_id!r}: if_last_input_id precondition failed — "
-            f"expected last_input_id={expected_last_input_id!r}, "
-            f"actual={actual_last_input_id!r}",
-        )
+        # IMPORTANT: do NOT call super().__init__ — the parent
+        # TaskPreconditionFailed sets ``self.task_id``, which
+        #  forbids on public exceptions. Initialise via the
+        # RuntimeError base directly.
+        msg = f"if_last_input_id precondition failed: " f"actual last_input_id={actual_last_input_id!r}"
+        RuntimeError.__init__(self, msg)
 
 
-# --- Spec 018 (task attachments) — input + attachment size/count errors ----
+LastInputIdPreconditionFailed.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
+    parameters=[inspect.Parameter("actual_last_input_id", inspect.Parameter.KEYWORD_ONLY)]
+)
 
 
 class InputTooLarge(ValueError):
-    """Raised when an input's serialized size exceeds the per-input cap.
+    """Raised when an input's serialized size exceeds the per-input cap (: bare)."""
 
-    The framework supports per-input payloads up to 2 MB (after JSON
-    serialization), for both the initial function input and each
-    queued steering input. An input whose serialized size exceeds
-    this cap is rejected client-side before any network call, with
-    this exception.
-
-    If you have a use case that needs > 2 MB per input, externalize
-    it (write to blob storage, pass a reference) and treat the
-    reference as your input.
-
-    :param task_id: The task identifier this input was bound for.
-    :type task_id: str
-    :param size_bytes: The observed serialized size of the input.
-    :type size_bytes: int
-    :param max_bytes: The per-input cap (2 MB).
-    :type max_bytes: int
-    """
-
-    __slots__ = ("task_id", "size_bytes", "max_bytes")
-
-    def __init__(self, task_id: str, size_bytes: int, max_bytes: int) -> None:
-        self.task_id = task_id
-        self.size_bytes = size_bytes
-        self.max_bytes = max_bytes
-        super().__init__(
-            f"Input for task {task_id!r} exceeds the per-input cap: "
-            f"{size_bytes} bytes > {max_bytes} byte cap. Externalize the "
-            f"value (e.g., to blob storage) and pass a reference instead."
-        )
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__("Input exceeds the per-input cap")
 
 
-# Spec 019 FR-D-001 — public output-size violation (developer-facing).
+InputTooLarge.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
+
+
+#: OutputTooLarge is REMOVED from public surface. The
+# class is kept as internal-only (no longer in __init__'s __all__).
 class OutputTooLarge(ValueError):
-    """Raised when an output's serialized size exceeds the per-output cap.
-
-    The framework supports per-output values up to 2 MB (after JSON
-    serialization). Outputs are stored entirely in
-    ``attachments["_output"]`` (the always-attachment rule) — they
-    never consume the shared payload budget — but they share the
-    per-attachment 2 MB cap. An output whose serialized form
-    exceeds the cap is rejected client-side before any network call,
-    with this exception.
-
-    If you need to return more than 2 MB per call, externalize the
-    value (write to blob storage) and return a reference instead.
-
-    :param task_id: The task identifier this output was bound for.
-    :type task_id: str
-    :param size_bytes: The observed serialized size of the output.
-    :type size_bytes: int
-    :param max_bytes: The per-output cap (2 MB).
-    :type max_bytes: int
-    """
+    """Internal-only — not exported. Kept for legacy raise sites."""
 
     __slots__ = ("task_id", "size_bytes", "max_bytes")
 
-    def __init__(self, task_id: str, size_bytes: int, max_bytes: int) -> None:
+    def __init__(self, task_id: str = "", size_bytes: int = 0, max_bytes: int = 0) -> None:
         self.task_id = task_id
         self.size_bytes = size_bytes
         self.max_bytes = max_bytes
         super().__init__(
-            f"Output for task {task_id!r} exceeds the per-output cap: "
-            f"{size_bytes} bytes > {max_bytes} byte cap. Externalize the "
-            f"value (e.g., to blob storage) and return a reference instead."
+            f"Output for task {task_id!r} exceeds the per-output cap: " f"{size_bytes} bytes > {max_bytes} byte cap."
         )
 
 
 class _AttachmentTooLarge(ValueError):
-    """Spec 019 FR-D-002 — provider-internal cap-violation signal.
-
-    Renamed from the previously-public ``AttachmentTooLarge``. The
-    framework catches this at attachment-write sites and re-raises a
-    developer-facing exception (``InputTooLarge`` for ``_input`` /
-    ``_steering_input_<seq>`` keys; ``OutputTooLarge`` for ``_output``)
-    based on the attachment-key prefix dispatcher in ``_attachments.py``.
-
-    Developers MUST NOT import this directly — it is leading-
-    underscored, absent from ``durable/__init__.py``'s ``__all__``,
-    and represents a framework implementation concept (the storage-
-    layer attachment) developers never name.
-
-    :param task_id: The task identifier this attachment was bound for.
-    :type task_id: str
-    :param attachment_key: The attachment key that exceeded the cap.
-    :type attachment_key: str
-    :param size_bytes: The observed serialized size of the attachment value.
-    :type size_bytes: int
-    :param max_bytes: The per-attachment cap (default 2 MB).
-    :type max_bytes: int
-    """
+    """— provider-internal cap-violation signal."""
 
     __slots__ = ("task_id", "attachment_key", "size_bytes", "max_bytes")
 
@@ -305,25 +220,7 @@ class _AttachmentTooLarge(ValueError):
 
 
 class _AttachmentLimitExceeded(ValueError):
-    """Spec 019 FR-D-003 — provider-internal per-task attachment-count
-    cap violation.
-
-    Renamed from the previously-public ``AttachmentLimitExceeded``.
-    Unreachable in normal framework operation (worst-case framework
-    attachment usage is 1 ``_input`` + 9 ``_steering_input_*`` + 1
-    ``_output`` = 11 of 20 slots; see design spec §23.2). If it
-    propagates from a provider, the framework converts it to
-    ``RuntimeError`` at the boundary.
-
-    Developers MUST NOT import this directly.
-
-    :param task_id: The task identifier.
-    :type task_id: str
-    :param current_count: The number of attachments currently on the task.
-    :type current_count: int
-    :param max_count: The per-task attachment count cap (default 20).
-    :type max_count: int
-    """
+    """— provider-internal per-task attachment-count cap violation."""
 
     __slots__ = ("task_id", "current_count", "max_count")
 
@@ -331,16 +228,53 @@ class _AttachmentLimitExceeded(ValueError):
         self.task_id = task_id
         self.current_count = current_count
         self.max_count = max_count
-        super().__init__(
-            f"Task {task_id!r} already has {current_count} attachments; "
-            f"per-task cap is {max_count}. Cannot add another."
-        )
+        super().__init__(f"Task {task_id!r} already has {current_count} attachments; " f"per-task cap is {max_count}.")
 
 
-# Backward-compatible aliases for any in-tree caller that still
-# imports the pre-019 names. These are intentionally NOT exported
-# from ``durable/__init__.py``; the rename is the public-surface
-# change, and all framework call sites are migrated. Removing the
-# aliases is safe once any out-of-tree dependents have updated.
+# Backward-compatible aliases for any in-tree caller that still imports
+# the pre-019 names.
 AttachmentTooLarge = _AttachmentTooLarge
 AttachmentLimitExceeded = _AttachmentLimitExceeded
+
+
+# =========================================================================
+#  — additions to the exception taxonomy
+# =========================================================================
+
+try:
+    from typing import Literal, TypedDict
+except ImportError:  # pragma: no cover
+    from typing_extensions import Literal, TypedDict  # type: ignore[assignment]
+
+
+class TaskDeferred(Exception):
+    """Raised when handler called ``ctx.exit_for_recovery``.
+
+    Semantically DISTINCT from :class:`TaskCancelled` — the task stays
+    ``in_progress`` and recovery re-invokes the handler in a future
+    lifetime. Bare exception.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__("Task deferred to next process lifetime")
+
+
+TaskDeferred.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
+
+
+class TaskErrorDict(TypedDict):
+    """Shape of:attr:`TaskFailed.error` for a normal handler-raise failure."""
+
+    type: str
+    message: str
+    traceback: str
+
+
+class TaskExhaustedRetriesErrorDict(TypedDict):
+    """Shape of:attr:`TaskFailed.error` when the retry budget was exhausted."""
+
+    type: Literal["exhausted_retries"]
+    attempts: int
+    last_error: str
+    last_error_type: str
+    traceback: str

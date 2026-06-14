@@ -12,12 +12,12 @@ import logging
 import re
 import threading
 import uuid
-from collections.abc import Awaitable, Callable  # pylint: disable=import-error
+from collections.abc import AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
-from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 from starlette.requests import Request
-from starlette.responses import JSONResponse, Response
+from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
@@ -83,6 +83,7 @@ def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
             detail = detail[: MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
         return _ERROR_SOURCE_PLATFORM, detail
     return _ERROR_SOURCE_UPSTREAM, None
+
 
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
 _MAX_ID_LENGTH = 256
@@ -243,9 +244,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     # Handler decorators
     # ------------------------------------------------------------------
 
-    def invoke_handler(
-        self, fn: Callable[[Request], Awaitable[Response]]
-    ) -> Callable[[Request], Awaitable[Response]]:
+    def invoke_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]:
         """Register a function as the invoke handler.
 
         Usage::
@@ -313,15 +312,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     async def _dispatch_invoke(self, request: Request) -> Response:
         if self._invoke_fn is not None:
             return await self._invoke_fn(request)
-        raise NotImplementedError(
-            "No invoke handler registered. Use the @invocations.invoke_handler decorator."
-        )
+        raise NotImplementedError("No invoke handler registered. Use the @invocations.invoke_handler decorator.")
 
     async def _dispatch_get_invocation(self, request: Request) -> Response:
         if self._get_invocation_fn is not None:
             return await self._get_invocation_fn(request)
         return create_error_response(
-            "not_found", "get_invocation not implemented",
+            "not_found",
+            "get_invocation not implemented",
             status_code=404,
             headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
         )
@@ -330,7 +328,8 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         if self._cancel_invocation_fn is not None:
             return await self._cancel_invocation_fn(request)
         return create_error_response(
-            "not_found", "cancel_invocation not implemented",
+            "not_found",
+            "cancel_invocation not implemented",
             status_code=404,
             headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
         )
@@ -351,11 +350,59 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         spec = self.get_openapi_spec()
         if spec is None:
             return create_error_response(
-                "not_found", "No OpenAPI spec registered",
+                "not_found",
+                "No OpenAPI spec registered",
                 status_code=404,
                 headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
             )
         return JSONResponse(spec)
+
+    def _wrap_streaming_response(
+        self,
+        response: StreamingResponse,
+        invocation_id: str,
+        session_id: str,
+    ) -> StreamingResponse:
+        """Wrap streaming body iteration with invocation logging/tracing context.
+
+        :param response: Streaming response to wrap.
+        :type response: StreamingResponse
+        :param invocation_id: Invocation identifier to stamp in context/logging.
+        :type invocation_id: str
+        :param session_id: Session identifier to stamp in context/logging.
+        :type session_id: str
+        :return: The response with a wrapped body_iterator.
+        :rtype: StreamingResponse
+        """
+        original_iterator = response.body_iterator
+
+        async def _wrapped_body() -> AsyncIterator[Any]:
+            # Re-establish the invocation context for the streaming task.
+            stream_inv_token = _invocation_id_var.set(invocation_id)
+            stream_session_token = _session_id_var.set(session_id)
+            try:
+                async for chunk in original_iterator:
+                    yield chunk
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "Error processing invocation %s: %s",
+                    invocation_id,
+                    exc,
+                    exc_info=True,
+                )
+                # Record the exception on the current span.
+                span = trace.get_current_span()
+                if span and span.is_recording():
+                    span.set_status(trace.StatusCode.ERROR, str(exc))
+                    span.set_attribute("error.type", type(exc).__name__)
+                    span.record_exception(exc)
+                raise
+            finally:
+                _invocation_id_var.reset(stream_inv_token)
+                _session_id_var.reset(stream_session_token)
+
+        response.body_iterator = _wrapped_body()
+        return response
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:
         generated_id = str(uuid.uuid4())
@@ -364,11 +411,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         request.state.invocation_id = invocation_id
 
         # Session ID: query param overrides env var / generated UUID
-        raw_session_id = (
-            request.query_params.get("agent_session_id")
-            or self.config.session_id
-            or ""
-        )
+        raw_session_id = request.query_params.get("agent_session_id") or self.config.session_id or ""
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
 
@@ -381,10 +424,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # Add protocol-specific baggage entries for this invocation.
         ctx = _otel_context.get_current()
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
+            "azure.ai.agentserver.invocation_id",
+            invocation_id,
+            context=ctx,
         )
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", session_id, context=ctx,
+            "azure.ai.agentserver.session_id",
+            session_id,
+            context=ctx,
         )
         baggage_token = _otel_context.attach(ctx)
 
@@ -427,12 +474,20 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 ),
             )
         finally:
+            # Always reset the request-scope tokens and detach baggage from the
+            # calling context here. The streaming wrapper separately resets the
+            # tokens it sets for stream iteration.
             _invocation_id_var.reset(inv_token)
             _session_id_var.reset(session_token)
             try:
                 _otel_context.detach(baggage_token)
             except ValueError:
                 pass
+
+        # Wrap streaming response body so exceptions during iteration are
+        # recorded on the current trace span and logged as invocation errors.
+        if isinstance(response, StreamingResponse):
+            response = self._wrap_streaming_response(response, invocation_id, session_id)
 
         return response
 
@@ -474,11 +529,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             _session_id_var.reset(session_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
-        return await self._traced_invocation_endpoint(
-            request, "get_invocation", self._dispatch_get_invocation
-        )
+        return await self._traced_invocation_endpoint(request, "get_invocation", self._dispatch_get_invocation)
 
     async def _cancel_invocation_endpoint(self, request: Request) -> Response:
-        return await self._traced_invocation_endpoint(
-            request, "cancel_invocation", self._dispatch_cancel_invocation
-        )
+        return await self._traced_invocation_endpoint(request, "cancel_invocation", self._dispatch_cancel_invocation)

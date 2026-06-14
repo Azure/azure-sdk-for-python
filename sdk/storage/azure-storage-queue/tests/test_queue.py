@@ -1492,7 +1492,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
         token = token_credential.get_token("https://storage.azure.com/.default")
-        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        decoded = jwt.decode(token.token, options={"verify_signature": False})  # pylint: disable=no-member
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = qsc.get_user_delegation_key(

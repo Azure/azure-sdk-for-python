@@ -1,8 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Spec 019 Area D — ``TaskMetadata.flush_all`` becomes internal
-(FR-D-005, SC-12).
+""" Area D — ``TaskMetadata.flush_all`` becomes internal
+(, SC-12).
 
 Verifies that ``TaskMetadata.flush_all`` is renamed
 ``_flush_all`` — the leading underscore is the Python convention
@@ -20,7 +20,7 @@ import pytest
 
 
 def test_flush_all_renamed_to_underscore_flush_all() -> None:
-    """FR-D-005 / SC-12 — ``TaskMetadata.flush_all`` MUST be absent;
+    """/ SC-12 — ``TaskMetadata.flush_all`` MUST be absent;
     the rename target ``_flush_all`` MUST exist and remain async.
 
     The leading underscore signals "framework-internal" — direct
@@ -30,16 +30,13 @@ def test_flush_all_renamed_to_underscore_flush_all() -> None:
     from azure.ai.agentserver.core.durable import TaskMetadata
 
     assert not hasattr(TaskMetadata, "flush_all"), (
-        "TaskMetadata.flush_all must be removed (FR-D-005); the "
-        "rename target is the leading-underscore _flush_all."
+        "TaskMetadata.flush_all must be removed; the " "rename target is the leading-underscore _flush_all."
     )
     assert hasattr(TaskMetadata, "_flush_all"), (
-        "TaskMetadata._flush_all (the framework-internal lifecycle "
-        "helper) MUST exist (FR-D-005)."
+        "TaskMetadata._flush_all (the framework-internal lifecycle " "helper) MUST exist."
     )
     import inspect
 
     assert inspect.iscoroutinefunction(TaskMetadata._flush_all), (
-        "_flush_all MUST remain a coroutine function "
-        "(its semantics are unchanged from the public flush_all)."
+        "_flush_all MUST remain a coroutine function " "(its semantics are unchanged from the public flush_all)."
     )

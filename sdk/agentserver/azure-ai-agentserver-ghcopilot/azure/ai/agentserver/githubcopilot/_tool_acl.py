@@ -139,8 +139,7 @@ class ToolAcl:
             import yaml  # type: ignore
         except ImportError as exc:
             raise ImportError(
-                "PyYAML is required to load a tool ACL file.  "
-                "Install it with: pip install PyYAML"
+                "PyYAML is required to load a tool ACL file.  " "Install it with: pip install PyYAML"
             ) from exc
 
         p = Path(path)
@@ -181,13 +180,9 @@ class ToolAcl:
         text = _describe(req)
         for idx, rule in enumerate(self._rules):
             if rule.matches(req):
-                logger.debug(
-                    f"ACL rule #{idx + 1} ({rule.action}) matched {kind!r}: {text}"
-                )
+                logger.debug(f"ACL rule #{idx + 1} ({rule.action}) matched {kind!r}: {text}")
                 return rule.action
-        logger.debug(
-            f"ACL default ({self._default}) applied to {kind!r}: {text}"
-        )
+        logger.debug(f"ACL default ({self._default}) applied to {kind!r}: {text}")
         return self._default
 
     def is_allowed(self, req: Dict[str, Any]) -> bool:
@@ -209,9 +204,7 @@ class ToolAcl:
 
         raw_default = data.get("default_action", "deny")
         if raw_default not in ("allow", "deny"):
-            raise ValueError(
-                f"default_action must be 'allow' or 'deny', got {raw_default!r} in {source}"
-            )
+            raise ValueError(f"default_action must be 'allow' or 'deny', got {raw_default!r} in {source}")
         default_action: _Action = raw_default  # type: ignore[assignment]
 
         rules: List[_Rule] = []
@@ -221,9 +214,7 @@ class ToolAcl:
             kind = entry.get("kind")  # None means "any kind"
             raw_action = entry.get("action", "deny")
             if raw_action not in ("allow", "deny"):
-                raise ValueError(
-                    f"Rule #{i} action must be 'allow' or 'deny', got {raw_action!r} in {source}"
-                )
+                raise ValueError(f"Rule #{i} action must be 'allow' or 'deny', got {raw_action!r} in {source}")
             action: _Action = raw_action  # type: ignore[assignment]
             when_raw = entry.get("when", {}) or {}
             when: Dict[str, re.Pattern] = {}
@@ -231,23 +222,15 @@ class ToolAcl:
                 try:
                     when[field] = re.compile(pattern)
                 except re.error as exc:
-                    raise ValueError(
-                        f"Rule #{i} when.{field} contains an invalid regex {pattern!r}: {exc}"
-                    ) from exc
+                    raise ValueError(f"Rule #{i} when.{field} contains an invalid regex {pattern!r}: {exc}") from exc
             rules.append(_Rule(kind=kind, action=action, when=when))
 
         n = len(rules)
-        logger.info(
-            f"Loaded tool ACL from {source}: {n} rule{'s' if n != 1 else ''}, "
-            f"default={default_action!r}"
-        )
+        logger.info(f"Loaded tool ACL from {source}: {n} rule{'s' if n != 1 else ''}, " f"default={default_action!r}")
         return cls(rules=rules, default_action=default_action, source=source)
 
     def __repr__(self) -> str:
-        return (
-            f"ToolAcl(rules={len(self._rules)}, default={self._default!r}, "
-            f"source={self._source!r})"
-        )
+        return f"ToolAcl(rules={len(self._rules)}, default={self._default!r}, " f"source={self._source!r})"
 
 
 # ---------------------------------------------------------------------------

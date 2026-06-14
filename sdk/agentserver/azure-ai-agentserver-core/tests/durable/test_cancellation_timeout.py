@@ -1,4 +1,4 @@
-"""Tests for cancellation and timeout features (spec 005).
+"""Tests for cancellation and timeout features.
 
 Covers:
 - Execution timeout (cooperative cancel → hard cancel)
@@ -16,12 +16,9 @@ from typing import Any
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    TaskContext,
-    task,
-)
+from azure.ai.agentserver.core.durable import TaskDeferred, TaskContext, task, multi_turn_task
 
-# Spec 016 FR-022 + SC-014 (US6): TaskTerminated is REMOVED — importing
+#   + SC-014: TaskTerminated is REMOVED — importing
 # it from the public package now raises ImportError (verified by
 # test_task_terminated_removed_from_durable_package below). The legacy
 # import line that used to live here is intentionally absent.
@@ -33,12 +30,8 @@ class _ManagerFixture:
 
     @staticmethod
     async def setup(tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -79,10 +72,7 @@ class TestExecutionTimeout:
         try:
             cancel_observed = asyncio.Event()
 
-            @task(
-                name="timeout_coop",
-                timeout=timedelta(seconds=0.2),
-            )
+            @task(name="timeout_coop", timeout=timedelta(seconds=0.2))
             async def slow_task(ctx: TaskContext[Any]) -> str:
                 # Wait until cooperative cancel fires
                 while not ctx.cancel.is_set():
@@ -94,7 +84,7 @@ class TestExecutionTimeout:
             result = await run.result()
 
             assert cancel_observed.is_set()
-            assert result.output == "cooperated"
+            assert result == "cooperated"
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
@@ -110,7 +100,7 @@ class TestExecutionTimeout:
 
             run = await quick_task.start(task_id=uuid.uuid4().hex, input=None)
             result = await run.result()
-            assert result.output == "done"
+            assert result == "done"
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
@@ -121,7 +111,7 @@ class TestExecutionTimeout:
 
 
 class TestTerminate:
-    """Spec 016 FR-022 (US6): TaskRun.terminate() and TaskTerminated
+    """: TaskRun.terminate and TaskTerminated
     are removed from the public surface. The cancel-cause boolean
     flow + handler-chosen terminal shape replaces them.
 
@@ -136,10 +126,10 @@ class TestTerminate:
     async def test_cancel_vs_terminate_distinction(self, tmp_path):
         """Cooperative cancel (ctx.cancel) raises TaskCancelled.
 
-        Spec 016 FR-022: terminate is removed; cooperative cancel via
-        TaskRun.cancel() is the SINGLE 'stop this task' pathway. The
-        handler chooses the terminal shape (here, raises
-        asyncio.CancelledError which the framework maps to TaskCancelled).
+        : terminate is removed; cooperative cancel via
+                TaskRun.cancel() is the SINGLE 'stop this task' pathway. The
+                handler chooses the terminal shape (here, raises
+                asyncio.CancelledError which the framework maps to TaskCancelled).
         """
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
@@ -163,28 +153,25 @@ class TestTerminate:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
     def test_terminate_method_removed_from_taskrun(self) -> None:
-        """Spec 016 FR-022 (US6): TaskRun.terminate is gone."""
+        """: TaskRun.terminate is gone."""
         from azure.ai.agentserver.core.durable._run import TaskRun
 
         assert not hasattr(TaskRun, "terminate"), (
-            "Spec 016 FR-022: TaskRun.terminate() MUST be removed. "
+            ": TaskRun.terminate MUST be removed. "
             "Use TaskRun.cancel() and let the handler choose the "
             "terminal shape via its reaction to ctx.cancel.is_set()."
         )
 
     def test_task_terminated_removed_from_durable_all(self) -> None:
-        """Spec 016 FR-022 + SC-014 (US6): importing TaskTerminated from
+        """+ SC-014: importing TaskTerminated from
         the public durable package raises ImportError (strict removal,
         not just __all__ absence).
         """
         import importlib
 
-        durable_mod = importlib.import_module(
-            "azure.ai.agentserver.core.durable"
-        )
+        durable_mod = importlib.import_module("azure.ai.agentserver.core.durable")
         assert not hasattr(durable_mod, "TaskTerminated"), (
-            "Spec 016 SC-014: TaskTerminated MUST NOT be importable "
-            "from azure.ai.agentserver.core.durable."
+            " SC-014: TaskTerminated MUST NOT be importable " "from azure.ai.agentserver.core.durable."
         )
         with pytest.raises(ImportError):
             # Explicit import binding — must raise ImportError per SC-014.
@@ -192,7 +179,7 @@ class TestTerminate:
 
 
 class TestExitForRecovery:
-    """Spec 016 US8 / FR-027 / FR-028 / SC-015.
+    """/  /  / SC-015.
 
     ctx.exit_for_recovery() is the prescribed shutdown shape:
     - Callable only when ctx.shutdown.is_set() (else RuntimeError).
@@ -203,12 +190,12 @@ class TestExitForRecovery:
 
     @pytest.mark.asyncio
     async def test_exit_for_recovery_raises_outside_shutdown(self, tmp_path):
-        """T094 (c) / FR-027: misuse outside shutdown raises RuntimeError."""
+        """T094 (c) /: misuse outside shutdown raises RuntimeError."""
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
             from azure.ai.agentserver.core.durable._exceptions import TaskFailed
 
-            @task(name="exit_misuse", ephemeral=False)
+            @multi_turn_task(name="exit_misuse")
             async def misuse(ctx: TaskContext[str]) -> str:
                 # ctx.shutdown is NOT set — calling exit_for_recovery
                 # must raise RuntimeError immediately.
@@ -227,7 +214,7 @@ class TestExitForRecovery:
 
     @pytest.mark.asyncio
     async def test_exit_for_recovery_preserves_in_progress(self, tmp_path):
-        """T094 (a) / FR-027 / SC-015: handler calls exit_for_recovery
+        """T094 (a) /  / SC-015: handler calls exit_for_recovery
         during shutdown. Stored status MUST remain in_progress; result
         future receives TaskCancelled."""
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
@@ -236,7 +223,7 @@ class TestExitForRecovery:
 
             shutdown_triggered = asyncio.Event()
 
-            @task(name="exit_shutdown", ephemeral=False)
+            @multi_turn_task(name="exit_shutdown")
             async def shutdown_aware(ctx: TaskContext[str]) -> str:
                 # Wait for the test to signal "shutdown is happening".
                 await shutdown_triggered.wait()
@@ -250,38 +237,32 @@ class TestExitForRecovery:
             await asyncio.sleep(0.05)
             shutdown_triggered.set()
 
-            with pytest.raises(TaskCancelled):
+            with pytest.raises(TaskDeferred):
                 await asyncio.wait_for(run.result(), timeout=2.0)
 
-            # Stored status MUST remain in_progress per FR-027(c).
+            # Stored status MUST remain in_progress per (c).
             info = await manager.provider.get(task_id)
             assert info is not None
-            assert info.status == "in_progress", (
-                f"Spec 016 FR-027(c): status MUST remain in_progress; "
-                f"got {info.status!r}"
-            )
+            assert info.status == "in_progress", f" (c): status MUST remain in_progress; " f"got {info.status!r}"
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
     def test_exit_for_recovery_signature(self) -> None:
-        """T095 / SC-015 / FR-027: inspect.signature contains only self."""
+        """T095 / SC-015 /: inspect.signature contains only self."""
         import inspect
 
         sig = inspect.signature(TaskContext.exit_for_recovery)
         params = list(sig.parameters)
-        assert params == ["self"], (
-            f"Spec 016 FR-027: exit_for_recovery MUST take no parameters "
-            f"other than self. Got {params}"
-        )
+        assert params == ["self"], f": exit_for_recovery MUST take no parameters " f"other than self. Got {params}"
 
 
 # --------------------------------------------------------------------- #
-# Spec 016 US7 — per-turn durable timeout (T086 / T087 / T088)
+#   — per-turn durable timeout (T086 / T087 / T088)
 # --------------------------------------------------------------------- #
 
 
-class TestSpec016PerTurnTimeout:
-    """Spec 016 FR-023..FR-026 / SC-012 / SC-013 (US7).
+class TestRecoveryPerTurnTimeout:
+    """.. / SC-012 / SC-013.
 
     @task(timeout=...) is per-turn, wall-clock, durable across crashes
     within a turn, and cooperative-only:
@@ -296,12 +277,12 @@ class TestSpec016PerTurnTimeout:
 
     @pytest.mark.asyncio
     async def test_fresh_turn_writes_turn_started_at(self, tmp_path):
-        """T086(a) / FR-023: fresh entry writes _turn_started_at to the
+        """T086(a) /: fresh entry writes _turn_started_at to the
         persisted record so the recovered watchdog can read it."""
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @task(name="t086_fresh", ephemeral=False)
+            @multi_turn_task(name="t086_fresh")
             async def my_task(ctx: TaskContext[str]) -> str:
                 return "done"
 
@@ -312,7 +293,7 @@ class TestSpec016PerTurnTimeout:
             assert info is not None
             assert info.payload is not None
             assert "_turn_started_at" in info.payload, (
-                f"Spec 016 FR-023: fresh-entry create MUST write "
+                f": fresh-entry create MUST write "
                 f"_turn_started_at to payload. Got payload keys: "
                 f"{list(info.payload)}"
             )
@@ -321,13 +302,13 @@ class TestSpec016PerTurnTimeout:
 
     @pytest.mark.asyncio
     async def test_recovery_preserves_turn_started_at(self, tmp_path):
-        """T086(c) / FR-023: recovery does NOT re-stamp the timestamp."""
+        """T086(c) /: recovery does NOT re-stamp the timestamp."""
         from azure.ai.agentserver.core.durable._models import TaskCreateRequest
         from azure.ai.agentserver.core.durable._manager import _utc_now_iso
 
         original_stamp = "2026-06-01T00:00:00.000000Z"
 
-        @task(name="t086_recover", ephemeral=False)
+        @multi_turn_task(name="t086_recover")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "recovered"
 
@@ -352,9 +333,9 @@ class TestSpec016PerTurnTimeout:
             info = await manager.provider.get("t086-recover-1")
             assert info is not None
             assert info.payload is not None
-            # Recovery MUST preserve the original timestamp (FR-023).
+            # Recovery MUST preserve the original timestamp.
             assert info.payload.get("_turn_started_at") == original_stamp, (
-                f"Spec 016 FR-023: recovery MUST NOT re-stamp "
+                f": recovery MUST NOT re-stamp "
                 f"_turn_started_at. Expected {original_stamp!r}, "
                 f"got {info.payload.get('_turn_started_at')!r}"
             )
@@ -362,10 +343,8 @@ class TestSpec016PerTurnTimeout:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
     @pytest.mark.asyncio
-    async def test_recovered_watchdog_remaining_zero_fires_immediately(
-        self, tmp_path
-    ):
-        """T086(d) + T092 / FR-025: when recovered watchdog computes
+    async def test_recovered_watchdog_remaining_zero_fires_immediately(self, tmp_path):
+        """T086(d) + T092 /: when recovered watchdog computes
         remaining == 0 (turn-start timestamp older than the budget),
         ctx.timeout_exceeded MUST be True from the handler's first
         checkpoint and ctx.cancel pre-set."""
@@ -376,8 +355,7 @@ class TestSpec016PerTurnTimeout:
 
         # Use a tiny budget (0.5s) and a backdated stamp (10s ago) so
         # remaining clamps to 0 immediately.
-        @task(name="t092_immediate_fire", ephemeral=False,
-              timeout=timedelta(milliseconds=500))
+        @multi_turn_task(name="t092_immediate_fire", timeout=timedelta(milliseconds=500))
         async def my_task(ctx: TaskContext[str]) -> str:
             observed["timeout_exceeded_at_start"] = ctx.timeout_exceeded
             observed["cancel_at_start"] = ctx.cancel.is_set()
@@ -398,21 +376,20 @@ class TestSpec016PerTurnTimeout:
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="previous-inst",
                     lease_duration_seconds=60,
-                    source={"name": "t092_immediate_fire",
-                            "type": "agentserver.task"},
+                    source={"name": "t092_immediate_fire", "type": "agentserver.task"},
                 )
             )
             await my_task.run(task_id="t092-fire", input="ignored")
-            # Per FR-025: recovered watchdog with remaining==0 pre-sets
+            #: recovered watchdog with remaining==0 pre-sets
             # both the cause boolean and the cancel event BEFORE the
             # handler's first await.
             assert observed["timeout_exceeded_at_start"] is True, (
-                "Spec 016 FR-025: recovered watchdog with remaining==0 "
+                ": recovered watchdog with remaining==0 "
                 "MUST pre-set ctx.timeout_exceeded=True before the "
                 "handler's first checkpoint."
             )
             assert observed["cancel_at_start"] is True, (
-                "Spec 016 FR-025: recovered watchdog with remaining==0 "
+                ": recovered watchdog with remaining==0 "
                 "MUST pre-set ctx.cancel before the handler's first "
                 "checkpoint."
             )
@@ -420,14 +397,12 @@ class TestSpec016PerTurnTimeout:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
     def test_clock_skew_clamping_via_compute_remaining(self):
-        """T087 / SC-013 / FR-023: remaining is clamped to
+        """T087 / SC-013 /: remaining is clamped to
         [0, timeout_seconds] in both directions. Direct unit test of
         the clamp computation since simulating clock skew end-to-end
         requires injecting time, which adds fragility.
         """
-        from azure.ai.agentserver.core.durable._manager import (
-            _parse_turn_started_at,
-        )
+        from azure.ai.agentserver.core.durable._manager import _parse_turn_started_at
         import time
 
         # Forward jump: turn_started_at is way in the past → elapsed
@@ -436,29 +411,24 @@ class TestSpec016PerTurnTimeout:
         assert backwards_ts is not None
         elapsed_huge = time.time() - backwards_ts
         timeout_seconds = 30.0
-        remaining_forward = max(
-            0.0, min(timeout_seconds - elapsed_huge, timeout_seconds)
-        )
+        remaining_forward = max(0.0, min(timeout_seconds - elapsed_huge, timeout_seconds))
         assert remaining_forward == 0.0, (
-            "Spec 016 FR-023 forward-skew clamp: remaining MUST be 0 "
-            f"when elapsed >> timeout. Got {remaining_forward}"
+            "  forward-skew clamp: remaining MUST be 0 " f"when elapsed >> timeout. Got {remaining_forward}"
         )
 
         # Backward jump: turn_started_at is in the future → elapsed
         # negative → remaining clamps to timeout_seconds.
         future_ts = time.time() + 10_000_000  # ~ year in the future
         elapsed_negative = time.time() - future_ts  # ~ -10M (negative)
-        remaining_backward = max(
-            0.0, min(timeout_seconds - elapsed_negative, timeout_seconds)
-        )
+        remaining_backward = max(0.0, min(timeout_seconds - elapsed_negative, timeout_seconds))
         assert remaining_backward == timeout_seconds, (
-            "Spec 016 FR-023 backward-skew clamp: remaining MUST cap "
+            "  backward-skew clamp: remaining MUST cap "
             "at timeout_seconds when the elapsed time is negative "
             f"(clock skew). Got {remaining_backward}"
         )
 
     def test_watchdog_docstring_cooperative_only(self):
-        """T088 / FR-026: the watchdog docstring MUST NOT contain the
+        """T088 /: the watchdog docstring MUST NOT contain the
         legacy 'lease will eventually expire' claim AND MUST document
         the cooperative-only semantic."""
         import inspect
@@ -466,39 +436,36 @@ class TestSpec016PerTurnTimeout:
 
         src = inspect.getsource(TaskManager._timeout_watchdog)
         assert "lease will eventually expire" not in src, (
-            "Spec 016 FR-026: the legacy 'lease will eventually expire' "
+            ": the legacy 'lease will eventually expire' "
             "docstring claim MUST be removed (the watchdog never "
             "expires the lease)."
         )
         assert "Cooperative-only" in src or "cooperative-only" in src, (
-            "Spec 016 FR-026: the docstring MUST document the "
-            "cooperative-only semantic explicitly."
+            ": the docstring MUST document the " "cooperative-only semantic explicitly."
         )
 
 
-class TestSpec016ExitForRecoveryExtended:
-    """Spec 016 US8 (FR-027 b / FR-028) — coverage for the recovery
+class TestRecoveryExitForRecoveryExtended:
+    """(b /) — coverage for the recovery
     re-entry and queued-input preservation paths that the basic
     TestExitForRecovery class doesn't cover (T094(b), T096).
     """
 
     @pytest.mark.asyncio
     async def test_exit_for_recovery_recovered_handler_reentry(self, tmp_path):
-        """T094(b) / FR-027(b) / SC-015: after exit_for_recovery, a
+        """T094(b) / (b) / SC-015: after exit_for_recovery, a
         fresh process (simulated by re-creating the manager) recovers
         the task; handler re-enters with entry_mode='recovered'.
         """
         from azure.ai.agentserver.core.durable._exceptions import TaskCancelled
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
         from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod_local
 
         observed: list[str] = []
         triggered = asyncio.Event()
 
-        @task(name="t094b_recover", ephemeral=False)
+        @multi_turn_task(name="t094b_recover")
         async def handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             if ctx.entry_mode == "recovered":
@@ -527,7 +494,7 @@ class TestSpec016ExitForRecoveryExtended:
             run = await handler.start(task_id="t094b-rec", input="x")
             await asyncio.sleep(0.05)
             triggered.set()
-            with pytest.raises(TaskCancelled):
+            with pytest.raises(TaskDeferred):
                 await asyncio.wait_for(run.result(), timeout=2.0)
             # Verify the task is preserved as in_progress with our owner.
             info = await provider.get("t094b-rec")
@@ -544,6 +511,7 @@ class TestSpec016ExitForRecoveryExtended:
         # what happens because derive_lease_owner is deterministic for
         # the same agent+session).
         from azure.ai.agentserver.core.durable._models import TaskPatchRequest
+
         # Stamp the record with the same lease_owner the new manager
         # will derive so the startup scan finds it.
         new_manager = TaskManager(config=config, provider=provider)
@@ -561,12 +529,10 @@ class TestSpec016ExitForRecoveryExtended:
         try:
             # Wait briefly for the recovery to take effect.
             deadline = asyncio.get_event_loop().time() + 2.0
-            while "recovered" not in observed and (
-                asyncio.get_event_loop().time() < deadline
-            ):
+            while "recovered" not in observed and (asyncio.get_event_loop().time() < deadline):
                 await asyncio.sleep(0.05)
             assert "recovered" in observed, (
-                "Spec 016 FR-027(b) / SC-015: a fresh TaskManager MUST "
+                " (b) / SC-015: a fresh TaskManager MUST "
                 "re-enter the handler with entry_mode='recovered' after "
                 "exit_for_recovery left the record in_progress."
             )
@@ -575,10 +541,8 @@ class TestSpec016ExitForRecoveryExtended:
             mgr_mod_local._manager = None
 
     @pytest.mark.asyncio
-    async def test_exit_for_recovery_preserves_queued_steering_inputs(
-        self, tmp_path
-    ):
-        """T096 / FR-028: queued steering inputs at the time
+    async def test_exit_for_recovery_preserves_queued_steering_inputs(self, tmp_path):
+        """T096 /: queued steering inputs at the time
         exit_for_recovery() is called MUST be preserved in the
         persisted state — the framework does NOT drain them during
         shutdown."""
@@ -586,7 +550,7 @@ class TestSpec016ExitForRecoveryExtended:
 
         gate = asyncio.Event()
 
-        @task(name="t096_preserve_queue", steerable=True, ephemeral=False)
+        @multi_turn_task(name="t096_preserve_queue", steerable=True)
         async def handler(ctx: TaskContext[dict]) -> dict:
             # Wait for the test to queue a steering input + signal.
             await gate.wait()
@@ -608,23 +572,22 @@ class TestSpec016ExitForRecoveryExtended:
             steering_before = (info_before.payload or {}).get("_steering", {})
             pending_before = steering_before.get("pending_inputs", [])
             assert len(pending_before) >= 1, (
-                f"Test setup: queued steering input should be in "
-                f"pending_inputs. Got {pending_before}"
+                f"Test setup: queued steering input should be in " f"pending_inputs. Got {pending_before}"
             )
 
             # Trigger shutdown — handler calls exit_for_recovery.
             gate.set()
-            with pytest.raises(TaskCancelled):
+            with pytest.raises(TaskDeferred):
                 await asyncio.wait_for(run1.result(), timeout=2.0)
 
-            # FR-028: pending_inputs MUST be preserved in the persisted
+            #: pending_inputs MUST be preserved in the persisted
             # state across exit_for_recovery — NOT drained.
             info_after = await manager.provider.get("t096-preserve")
             assert info_after is not None
             steering_after = (info_after.payload or {}).get("_steering", {})
             pending_after = steering_after.get("pending_inputs", [])
             assert len(pending_after) >= 1, (
-                f"Spec 016 FR-028: exit_for_recovery MUST preserve "
+                f": exit_for_recovery MUST preserve "
                 f"queued steering inputs (NOT drain them during "
                 f"shutdown). Pending before={len(pending_before)}, "
                 f"after={len(pending_after)}; got {pending_after}"

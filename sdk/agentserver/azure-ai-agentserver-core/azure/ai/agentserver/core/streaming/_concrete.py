@@ -60,26 +60,26 @@ self._state when it sees the sentinel.
 class _BaseEventStream:
     """Shared state machine + subscriber fan-out for bundled impls.
 
-    Concrete subclasses override ``emit`` / ``close`` / ``subscribe``
-    / ``last_cursor`` and the private ``_on_delete`` cleanup hook.
+        Concrete subclasses override ``emit`` / ``close`` / ``subscribe``
+        / ``last_cursor`` and the private ``_on_delete`` cleanup hook.
 
-    Spec 019 state model (post FR-E-001 / FR-E-003): per-instance
-    states are exactly ``ACTIVE`` and ``CLOSED``. The ``GONE`` value
-    is retained as an internal flag the registry sets when it
-    tombstones the id — operations on a stale instance reference
-    after registry tombstone raise :class:`EventStreamNotFoundError`
-    (FR-E-002). Per-instance: ``construction → ACTIVE``,
-    ``close() from ACTIVE → CLOSED``, ``close()`` from ``CLOSED`` /
-    tombstoned → no-op (idempotent).
+         state model (post  /): per-instance
+        states are exactly ``ACTIVE`` and ``CLOSED``. The ``GONE`` value
+        is retained as an internal flag the registry sets when it
+        tombstones the id — operations on a stale instance reference
+        after registry tombstone raise :class:`EventStreamNotFoundError`
+    . Per-instance: ``construction → ACTIVE``,
+        ``close() from ACTIVE → CLOSED``, ``close()`` from ``CLOSED`` /
+        tombstoned → no-op (idempotent).
 
-    Spec 019 close-clock TTL tombstone (FR-E-005): replay backings
-    with ``ttl_seconds`` configured record ``_close_time`` when
-    transitioning to ``CLOSED``. From that moment the SEMANTIC
-    tombstone deadline is ``close_time + ttl_seconds`` — operations
-    after the deadline raise :class:`EventStreamNotFoundError`.
-    Replaces the legacy "buffer empty + had emit" rule, which was
-    observer-driven and required a ``total_emit_count > 0`` carve-
-    out for never-emitted closed streams.
+         close-clock TTL tombstone: replay backings
+        with ``ttl_seconds`` configured record ``_close_time`` when
+        transitioning to ``CLOSED``. From that moment the SEMANTIC
+        tombstone deadline is ``close_time + ttl_seconds`` — operations
+        after the deadline raise :class:`EventStreamNotFoundError`.
+        Replaces the legacy "buffer empty + had emit" rule, which was
+        observer-driven and required a ``total_emit_count > 0`` carve-
+        out for never-emitted closed streams.
     """
 
     _STATE_ACTIVE = "ACTIVE"
@@ -93,7 +93,7 @@ class _BaseEventStream:
         self._state: str = self._STATE_ACTIVE
         self._subscriber_queues: list[asyncio.Queue[Any]] = []
         self._lock = asyncio.Lock()
-        # Spec 019 FR-E-005 — wall-clock time the stream transitioned
+        #   — wall-clock time the stream transitioned
         # to CLOSED; used by replay backings to compute the close-clock
         # tombstone deadline (close_time + ttl_seconds).
         self._close_time: Optional[float] = None
@@ -130,7 +130,7 @@ class _BaseEventStream:
 class BroadcastEventStream(_BaseEventStream):
     """Multicast + no buffer + live-only.
 
-    See ``streaming.md`` §5.1 + FR-008. Subscribers see only events
+    See ``streaming.md`` §5.1 +. Subscribers see only events
     emitted **after** they attach. Constant memory overhead — only
     the currently-attached subscriber list is retained.
 
@@ -187,7 +187,7 @@ class _BroadcastIterator:
     def __aiter__(self) -> "_BroadcastIterator":
         # Attach at __aiter__ so the subscriber is registered before
         # the first __anext__ returns (rule for "attach" definition,
-        # FR-003 / streaming.md §4.3). Skip if pre-terminated (stream
+        #  / streaming.md §4.3). Skip if pre-terminated (stream
         # was already CLOSED at subscribe() time).
         if self._queue is None and not self._terminated:
             q: asyncio.Queue[Any] = asyncio.Queue()
@@ -244,7 +244,7 @@ class _BufferedEvent:
 class ReplayEventStream(_BaseEventStream):
     """In-memory replay + optional cursor + optional per-event TTL.
 
-    See ``streaming.md`` §5.2 + FR-009. Multi-subscriber. Buffers
+    See ``streaming.md`` §5.2 +. Multi-subscriber. Buffers
     every emit in memory subject to per-event TTL eviction. Supports
     ``subscribe(after=...)`` iff ``cursor_fn`` is supplied.
     """
@@ -281,7 +281,7 @@ class ReplayEventStream(_BaseEventStream):
             del self._buffer[:i]
 
     def _maybe_auto_transition_to_gone(self) -> None:
-        """Spec 019 FR-E-005 / C-STR-TTL-2 — close-clock auto-tombstone.
+        """/ C-STR-TTL-2 — close-clock auto-tombstone.
 
         When the stream is ``CLOSED`` AND ``ttl_seconds`` is configured
         AND ``now >= close_time + ttl_seconds``, transition to GONE.
@@ -362,9 +362,7 @@ class _ReplayIterator:
     subscriber queue.
     """
 
-    def __init__(
-        self, owner: ReplayEventStream, *, after: Optional[int] = None
-    ) -> None:
+    def __init__(self, owner: ReplayEventStream, *, after: Optional[int] = None) -> None:
         self._owner = owner
         self._after = after
         self._queue: Optional[asyncio.Queue[Any]] = None
@@ -402,7 +400,7 @@ class _ReplayIterator:
         if self._terminated:
             raise StopAsyncIteration
         # Check if owner has transitioned to GONE via registry-delete
-        # (immediate cutoff per FR-012a)
+        # (immediate cutoff)
         if self._owner._state == self._owner._STATE_GONE:
             self._terminated = True
             if self._queue is not None:
@@ -461,7 +459,7 @@ default; documented in Phase 1 PR per T028."""
 class FileBackedReplayEventStream(_BaseEventStream):
     """File-backed multicast + replay + cursor + per-event TTL.
 
-    See ``streaming.md`` §5.3 + FR-010 + rules 26-32. Persists every
+    See ``streaming.md`` §5.3 +  + rules 26-32. Persists every
     emit to ``path`` before fan-out (persist-before-publish).
     Rehydrates from disk on construction. Single-writer-per-path
     enforced via ``fcntl.flock``.
@@ -496,22 +494,18 @@ class FileBackedReplayEventStream(_BaseEventStream):
             except BlockingIOError as exc:
                 self._file.close()
                 raise RuntimeError(
-                    f"FileBackedReplayEventStream: another process holds the "
-                    f"lock on {self._path}"
+                    f"FileBackedReplayEventStream: another process holds the " f"lock on {self._path}"
                 ) from exc
         else:
             # Windows fallback: best-effort lock-file approach.
             lock_path = self._path.with_suffix(self._path.suffix + ".lock")
             try:
-                self._lock_fd = os.open(
-                    lock_path, os.O_CREAT | os.O_EXCL | os.O_RDWR
-                )
+                self._lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
                 self._lock_path = lock_path
             except FileExistsError as exc:
                 self._file.close()
                 raise RuntimeError(
-                    f"FileBackedReplayEventStream: another process holds the "
-                    f"lock-file on {self._path}"
+                    f"FileBackedReplayEventStream: another process holds the " f"lock-file on {self._path}"
                 ) from exc
 
         # Rehydrate from disk if file already had content (rule 28).
@@ -532,7 +526,8 @@ class FileBackedReplayEventStream(_BaseEventStream):
         record = json.loads(line.decode("utf-8"))
         if self._deserializer is not None and "payload" in record:
             record["payload"] = self._deserializer(
-                record["payload"].encode("utf-8") if isinstance(record["payload"], str)
+                record["payload"].encode("utf-8")
+                if isinstance(record["payload"], str)
                 else json.dumps(record["payload"]).encode("utf-8")
             )
         return record
@@ -562,22 +557,19 @@ class FileBackedReplayEventStream(_BaseEventStream):
                 # Mid-file malformed — RuntimeError at construction (rule 29).
                 self._cleanup_locks()
                 raise RuntimeError(
-                    f"FileBackedReplayEventStream: malformed record at "
-                    f"line {idx} of {self._path}"
+                    f"FileBackedReplayEventStream: malformed record at " f"line {idx} of {self._path}"
                 ) from exc
             if "emit_time" not in rec:
                 self._cleanup_locks()
                 raise RuntimeError(
-                    f"FileBackedReplayEventStream: record at line {idx} of "
-                    f"{self._path} missing 'emit_time' field"
+                    f"FileBackedReplayEventStream: record at line {idx} of " f"{self._path} missing 'emit_time' field"
                 )
             if rec.get(_TERMINAL_MARKER):
                 if had_terminal:
                     # Multiple terminals or terminal-not-at-EOF — malformed.
                     self._cleanup_locks()
                     raise RuntimeError(
-                        f"FileBackedReplayEventStream: terminal marker not "
-                        f"at end-of-file in {self._path}"
+                        f"FileBackedReplayEventStream: terminal marker not " f"at end-of-file in {self._path}"
                     )
                 had_terminal = True
                 terminal_seen_at = idx
@@ -586,8 +578,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
                 # Records after terminal marker — malformed.
                 self._cleanup_locks()
                 raise RuntimeError(
-                    f"FileBackedReplayEventStream: record at line {idx} of "
-                    f"{self._path} follows terminal marker"
+                    f"FileBackedReplayEventStream: record at line {idx} of " f"{self._path} follows terminal marker"
                 )
             records.append(rec)
         # Load into buffer, applying per-event TTL.
@@ -602,7 +593,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
         self._evict_expired()
         if had_terminal:
             self._state = self._STATE_CLOSED
-            # Spec 019 FR-E-005 — close-clock is anchored at the
+            #   — close-clock is anchored at the
             # terminal record's emit_time (the moment the prior
             # process actually closed the stream). On rehydration we
             # honor that wall-clock anchor so a process restart
@@ -666,7 +657,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
                 pass
 
     def _maybe_auto_transition_to_gone(self) -> None:
-        """Spec 019 FR-E-005 — close-clock auto-tombstone.
+        """— close-clock auto-tombstone.
 
         Same rule as ReplayEventStream: CLOSED + ttl_seconds
         configured + ``now >= close_time + ttl_seconds`` → GONE.

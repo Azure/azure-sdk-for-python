@@ -31,7 +31,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_10_01_preview.models import JobType as RestJobType_20241001Preview
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import JobType as RestJobType_20241001Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,

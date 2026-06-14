@@ -9,7 +9,7 @@ primitive's named-namespace metadata feature with an in-process
 
 This file is *not* a live test: it imports the sample's task directly
 and drives it through three turns + a recovery boundary in the same
-process. It exercises the FR-013 / FR-014 contract for the sample
+process. It exercises the  /  contract for the sample
 (the structure test in ``test_durable_samples_structure.py`` proves
 the files exist; this file proves the task actually works).
 
@@ -38,6 +38,7 @@ os.environ.pop("FOUNDRY_HOSTING_ENVIRONMENT", None)
 async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """A real TaskManager backed by ``LocalFileTaskProvider`` at tmp_path."""
     import asyncio  # noqa: WPS433
+
     tasks_dir = tmp_path / "tasks"
     tasks_dir.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("AGENTSERVER_DURABLE_TASKS_PATH", str(tasks_dir))
@@ -97,7 +98,7 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
         },
     )
     result1 = await run1.result()
-    assert result1.output["turn"] == 1
+    assert result1["turn"] == 1
 
     run2 = await session_workflow.start(
         task_id=task_id,
@@ -108,9 +109,9 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
         },
     )
     result2 = await run2.result()
-    assert result2.output["turn"] == 2
+    assert result2["turn"] == 2
 
-    info = await session_workflow._get(task_id)  # type: ignore[attr-defined]
+    info = await task_manager.provider.get(task_id)
     assert info is not None
     session = info.payload.get("metadata:session", {})
     history = session.get("history", [])
@@ -148,10 +149,10 @@ async def test_session_workflow_done_clears_history(
         },
     )
     result2 = await run2.result()
-    assert result2.output.get("finished") is True
-    assert "Session complete" in result2.output["reply"]
+    assert result2.get("finished") is True
+    assert "Session complete" in result2["reply"]
 
-    info = await session_workflow._get(task_id)  # type: ignore[attr-defined]
+    info = await task_manager.provider.get(task_id)
     # After a completed (non-suspended) return, the task record may
     # either be retained with status="completed" or already reaped —
     # both are valid for this sample. If retained, the session
@@ -181,7 +182,7 @@ async def test_invocation_status_persisted_to_default_namespace(
     )
     await run.result()
 
-    info = await session_workflow._get(task_id)  # type: ignore[attr-defined]
+    info = await task_manager.provider.get(task_id)
     if info is not None:
         payload = info.payload
         default_ns = payload.get("metadata", {})

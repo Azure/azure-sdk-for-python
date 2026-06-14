@@ -1,6 +1,85 @@
 # Release History
 
-## 2.0.0b6 (Unreleased)
+## 2.0.0b7 (Unreleased)
+
+### Durable-task primitive redesign
+
+The durable-task primitive is reshaped on this release. The
+authoritative behavior contract lives at
+[`docs/task-and-streaming-spec.md`](docs/task-and-streaming-spec.md).
+Highlights:
+
+- **Two decorators** — `@task` (one-shot) and `@multi_turn_task` (chain).
+  `@multi_turn_task` produces a distinct public `MultiTurnTask` class
+  (not a subclass of `Task`). Every `return X` is one turn (implicit
+  suspend); the chain stays alive in `suspended` between
+  turns until `MultiTurnTask.delete(task_id)` removes it.
+- **`TaskRun` slim shape**  — `task_id`, `input_id`,
+  `metadata`, `result()`, `cancel()`, `__await__`. `status`, `delete`,
+  `refresh`, `lease_expiry_count` are removed.
+- **`TaskRun.result` returns raw `Output`**. The `TaskResult`
+  wrapper class is deleted.
+- **`TaskContext.input_id`**  — per-turn id for multi-turn,
+  defaults to `task_id` for one-shot 1:1 invariant.
+- **New `TaskDeferred` exception**  raised by
+  `ctx.exit_for_recovery()`. Semantically distinct from `TaskCancelled`.
+- **Public exception taxonomy reshape**: exceptions no
+  longer carry `task_id`. `TaskFailed(error=...)`,
+  `TaskConflictError(current_status=...)`,
+  `LastInputIdPreconditionFailed(actual_last_input_id=...)` carry only
+  their respective field. `TaskCancelled`, `TaskDeferred`,
+  `SteeringQueueFull`, `InputTooLarge` are bare.
+- **New typed-payload + value-type aliases**: `JSONValue` (recursive
+  Union for `TaskMetadata` values), `TaskErrorDict`,
+  `TaskExhaustedRetriesErrorDict`.
+- **Auto-gen `task_id`** for one-shot `Task.start` / `Task.run` when
+  caller does not supply one. Multi-turn `task_id` remains
+  mandatory.
+- **`if_last_input_id=`** precondition  on both one-shot and
+  multi-turn `.start` / `.run`. Raises
+  `LastInputIdPreconditionFailed(actual_last_input_id=...)` on
+  mismatch.
+- **Reserved metadata namespace**: `ctx.metadata("_X")` raises
+  `ValueError` (leading underscore reserved for the framework).
+- **Handler signature validation**: first parameter MUST be
+  named `ctx`.
+- **Structured failure log**  — `durable_task_handler_failure`
+  ERROR event with `task_id`/`input_id`/`error_type`/`error_message`
+  fields emitted on every handler failure.
+- **Multi-turn raise → `suspended`**  — chain stays
+  alive; queued steerers promote.
+- **Multi-turn success → `suspended`**  — `return X` is
+  implicit suspend; chain stays alive.
+
+### Removed from public surface
+
+- `TaskResult` wrapper class — deleted entirely. `await
+  run.result()` returns raw `Output`.
+- `Suspended` sentinel — removed from public surface. Multi-turn
+  uses `return X` instead.
+- `TaskSnapshot` + `Task.get(task_id)` — both removed. Use
+  `manager.provider.get(task_id)` directly for read-only inspection.
+- `Task.options` — removed from public surface.
+- Public `OutputTooLarge`, `TaskNotFound`, `TaskPreconditionFailed`,
+  `TaskStatus` — removed. The classes remain
+  internal-only in `_exceptions.py` for framework wiring.
+- `TaskRun.delete()`, `.refresh()`, `.status`, `.lease_expiry_count` —
+  removed. For chain-level delete use
+  `MultiTurnTask.delete(task_id)`.
+- `/tasks/resume` HTTP route + `TaskManager.handle_resume` —
+  resume happens via `.start()` / `.run()` against a suspended task.
+- `payload["output"]` / `payload["error"]` writes — never persisted.
+  The framework no longer projects success/failure
+  state into the record's payload.
+- `ephemeral=` decorator kwarg — one-shot is always ephemeral;
+  multi-turn never is. Transitionally emits a `DeprecationWarning`;
+  will be hard-rejected per the Phase 5 final-cleanup follow-up PR.
+- `steerable=` on `@task` — same transitional warning.
+- `ctx.suspend` — removed from the multi-turn contract.
+  Method body remains during the transition window for legacy callers;
+  marked as a Phase 5 final-cleanup follow-up (see
+  the SOT spec §B3).
+
 
 ### Features Added
 
@@ -63,7 +142,7 @@
 ### Breaking Changes
 
 - **`EventStreamGoneError` removed** from
-  `azure.ai.agentserver.core.streaming`. Spec 019 FR-E-001/-002
+  `azure.ai.agentserver.core.streaming`.
   collapsed the previously-distinct `Gone` (registered then
   destroyed) and `NotFound` (never registered) error types into a
   single `EventStreamNotFoundError`. Every "this id is not
@@ -75,7 +154,7 @@
   the registry's internal tombstone bookkeeping.
 
 - **Replay-backing tombstone is now time-deterministic, not
-  buffer-state-driven.** Spec 019 FR-E-005 replaces the previous
+  buffer-state-driven.**   replaces the previous
   "Closed + buffer empty + had emit" auto-transition with a
   close-clock model: when a replay backing (`ReplayEventStream`
   or `FileBackedReplayEventStream` configured with `ttl_seconds`)
@@ -120,7 +199,7 @@
 
   Public surface = 5 exports: `streams`, `EventStream`,
   `EventStreamError`, `EventStreamClosedError`,
-  `EventStreamNotFoundError`. (Spec 019 FR-E-001 removed
+  `EventStreamNotFoundError`. (removed
   `EventStreamGoneError`; see Breaking Changes above.) The three
   SDK-bundled backings are selected at app startup via the
   registry's `use_in_memory_live()` /
@@ -145,10 +224,87 @@
 
 ### Other Changes
 
+- **Local file provider parity with the hosted task service.**
+  The local file-backed task provider used in dev mode now enforces
+  the same validation, state machine, lease semantics, attachment
+  rules, and list-filter surface as the hosted task service. This
+  closes silent "works locally, fails in service" divergences:
+
+  - Field validation: task id regex (`^[a-zA-Z0-9_-]{1,128}$`),
+    required `agent_name` / `session_id` / `title` on create, tag key
+    regex (`^[a-zA-Z0-9_.\-]{1,64}$`) + max 16 entries + max 256 char
+    values, payload ≤ 1 MB, error ≤ 64 KB, source ≤ 4 KB,
+    suspension_reason ≤ 256 chars, `source.type` required when source
+    supplied, `"failed"` status rejected, `"done"` legacy alias
+    normalized to `"completed"`, attachment key regex.
+  - State machine: full `pending` ⇄ `in_progress` ⇄ `suspended` →
+    `completed` transition matrix enforcement; terminal-task
+    immutability (PATCH on `completed` rejected except no-op
+    `completed → completed`); immutable fields on PATCH (`id`,
+    `agent_name`, `session_id`, `title`, `description`, `source`);
+    `suspension_reason` only allowed with `status=suspended`; DELETE
+    on non-terminal task without `force=true` rejected; DELETE honors
+    `If-Match`.
+  - Lease: duration must be 0 (force-expire) or 10..3600;
+    `(lease_owner, lease_instance_id, lease_duration_seconds)` are
+    all-or-nothing; different-owner takeover when the existing lease
+    is live is rejected; `in_progress → pending` requires matching
+    lease; lease renewal only allowed on `in_progress`; force-expire
+    cannot combine with status change and requires lease ownership
+    unless already expired; `expiry_count` bumps on different-owner
+    takeover when the prior lease was expired; `started_at` is
+    **immutable** after the first `in_progress` transition (lease
+    re-acquisition, recovery scanner takeover, and suspend/resume
+    cycles MUST all preserve the original value); new `heartbeat_at`
+    field stamped on every lease write.
+  - Status-transition side effects: transitions to / from each state
+    now clear / set the right combination of `lease`,
+    `suspension_reason`, `started_at`, `completed_at`.
+  - PATCH semantics: `payload` patch branches on type (object →
+    shallow merge, non-object → full replace; previously assumed dict).
+  - Attachments: per-key null-as-delete (existing) plus new
+    top-level clear-all gesture via `TaskPatchRequest.clear_attachments`
+    flag (mirrors the service's `attachments: null` wire form).
+  - List filters: `has_error`, `lease_expired`, `omit_attachment_values`
+    added; pagination via `after` cursor + `limit` (default 20, max
+    100); `order` accepts `"asc"` / `"desc"` by `created_at`;
+    `before` parameter rejected (forward-only cursor pagination);
+    status filter normalizes `"done"` → `"completed"`; `agent_name`
+    and `session_id` are now optional (workspace-wide listing).
+
+- **Hosted provider distinguishes service error codes internally
+.** The hosted task service now returns distinct error
+  codes (`task_immutable`, `invalid_state_transition`,
+  `lease_held_by_another`, `task_already_exists`,
+  `lease_ownership_changed`, `etag_mismatch`, `invalid_request`).
+  The framework's response classifier now dispatches on these so
+  retry-able codes (`etag_mismatch`, `lease_ownership_changed`)
+  are retried transparently, while terminal conflicts surface as
+  the appropriate developer-facing `TaskConflictError` /
+  `TaskPreconditionFailed`. **No new developer-visible exception
+  types** — internal dispatch is fully absorbed inside the
+  framework. Existing `except TaskConflictError:` callers keep
+  working unchanged.
+
 - The hosted task-store transport is now built on
   `azure.core.AsyncPipelineClient` instead of `httpx` / `aiohttp`;
   neither `httpx` nor `aiohttp` is a production dependency of this
   package anymore.
+
+- **Removed the `samples/` directory.** The standalone in-process
+  samples (`durable_retry`, `durable_streaming`, `selfhosted_invocation`)
+  have been deleted. End-to-end usage of the `@task` and streaming
+  primitives is demonstrated in the runnable HTTP-host samples shipped
+  with `azure-ai-agentserver-invocations` and
+  `azure-ai-agentserver-responses`, which match how the primitives
+  are actually consumed in production.
+
+## 2.0.0b6 (2026-06-12)
+
+### Bugs Fixed
+
+- Populated agent metadata when operation IDs are zeroed so agent metadata remains available for telemetry and downstream processing.
+- Suppressed noisy observability/exporter INFO logs by default in tracing setup while preserving DEBUG visibility when explicitly enabled.
 
 ## 2.0.0b5 (2026-05-25)
 

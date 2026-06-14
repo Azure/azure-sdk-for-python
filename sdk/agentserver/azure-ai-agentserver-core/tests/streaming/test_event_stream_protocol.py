@@ -5,9 +5,9 @@
 
 Asserts contract that applies to ALL bundled impls — Protocol
 shape, state-model rules, atomic emit+close, subscribe-not-a-
-coroutine, FR-006 exception hierarchy.
+coroutine,  exception hierarchy.
 
-See ``streaming.md`` §13 rules 1-21 + spec.md FR-002 through FR-007.
+See ``streaming.md`` §13 rules 1-21 + spec.md  through.
 """
 
 from __future__ import annotations
@@ -37,32 +37,25 @@ pytestmark = pytest.mark.asyncio(loop_scope="function")
 
 
 # ----------------------------------------------------------------
-# Protocol shape (FR-002 / streaming.md §4.3 + rule 16)
+# Protocol shape (/ streaming.md §4.3 + rule 16)
 # ----------------------------------------------------------------
 
 
 class TestProtocolShape:
     def test_has_exactly_four_data_flow_methods(self) -> None:
-        """FR-002 — Protocol has exactly emit/close/subscribe/last_cursor.
+        """— Protocol has exactly emit/close/subscribe/last_cursor.
         No `delete` method (registry-owned destruction)."""
         # Protocol attributes accessible via __annotations__ or members
-        members = {
-            name
-            for name in dir(EventStream)
-            if not name.startswith("_")
-        }
+        members = {name for name in dir(EventStream) if not name.startswith("_")}
         assert "emit" in members
         assert "close" in members
         assert "subscribe" in members
         assert "last_cursor" in members
         # Most importantly: no destructive method on the Protocol
         assert "delete" not in members, (
-            "Protocol MUST NOT have delete() — destruction is registry-owned "
-            "per FR-002 / streaming.md §4.3"
+            "Protocol MUST NOT have delete() — destruction is registry-owned " "/ streaming.md §4.3"
         )
-        assert "release" not in members, (
-            "Protocol MUST NOT have release() — destruction is registry-owned"
-        )
+        assert "release" not in members, "Protocol MUST NOT have release() — destruction is registry-owned"
 
     def test_subscribe_is_not_a_coroutine(self) -> None:
         """Rule 16 — `subscribe()` returns AsyncIterator directly,
@@ -70,15 +63,12 @@ class TestProtocolShape:
         # Check the protocol declares subscribe as a regular def
         # (returning AsyncIterator), not async def
         subscribe = EventStream.subscribe
-        assert not inspect.iscoroutinefunction(subscribe), (
-            "subscribe() MUST NOT be `async def` per rule 16 / FR-003"
-        )
+        assert not inspect.iscoroutinefunction(subscribe), "subscribe MUST NOT be `async def` per rule 16 / "
         # Check on a concrete impl too
         s = BroadcastEventStream()
         it = s.subscribe()
         assert not asyncio.iscoroutine(it), (
-            "subscribe() return value must NOT be a coroutine — "
-            "must be an AsyncIterator directly per rule 16"
+            "subscribe() return value must NOT be a coroutine — " "must be an AsyncIterator directly per rule 16"
         )
         assert hasattr(it, "__aiter__"), "return must implement async iteration"
 
@@ -148,7 +138,7 @@ class TestStateModel:
 
 
 # ----------------------------------------------------------------
-# Atomic emit+close (rule 14 / FR-004)
+# Atomic emit+close (rule 14 /)
 # ----------------------------------------------------------------
 
 
@@ -168,8 +158,7 @@ class TestAtomicEmitClose:
         await s.emit({"final": True}, close=True)
         await task
         assert results == [{"final": True}], (
-            "subscriber attached before emit(close=True) MUST see the payload "
-            "+ then terminate (rule 14)"
+            "subscriber attached before emit(close=True) MUST see the payload " "+ then terminate (rule 14)"
         )
 
     async def test_subscriber_attached_after_emit_sees_neither(self) -> None:
@@ -181,10 +170,7 @@ class TestAtomicEmitClose:
         results = []
         async for ev in s.subscribe():
             results.append(ev)
-        assert results == [], (
-            "subscriber attached after emit(close=True) on Broadcast MUST see "
-            "nothing"
-        )
+        assert results == [], "subscriber attached after emit(close=True) on Broadcast MUST see " "nothing"
 
 
 # ----------------------------------------------------------------
@@ -213,13 +199,12 @@ class TestExceptionHierarchyAndCleanup:
         # We assert by checking the internal subscriber list (test-only
         # white-box assertion)
         assert len(s._subscriber_queues) == 0, (
-            "Disconnected subscriber MUST be removed within one event-loop "
-            "tick per rule 15"
+            "Disconnected subscriber MUST be removed within one event-loop " "tick per rule 15"
         )
 
 
 # ----------------------------------------------------------------
-# cursor_fn semantics (rules 17-19 / FR-011*)
+# cursor_fn semantics (rules 17-19 / *)
 # ----------------------------------------------------------------
 
 
@@ -235,7 +220,7 @@ class TestCursorFnSemantics:
         assert hasattr(it, "__aiter__"), "iterator should be returned, not raised"
 
     async def test_after_silently_ignored_on_broadcast_always(self) -> None:
-        """BroadcastEventStream NEVER honours `after` per FR-008/FR-011a."""
+        """BroadcastEventStream NEVER honours `after` /."""
         s = BroadcastEventStream()
         it = s.subscribe(after=99)
         assert hasattr(it, "__aiter__")
@@ -260,8 +245,7 @@ class TestCursorFnSemantics:
         await s.emit({"n": 200}, close=True)
         await task
         assert results == [{"n": 101}, {"n": 200}], (
-            f"after=100 past latest (buffered=1) MUST wait for live events > 100; "
-            f"got {results}"
+            f"after=100 past latest (buffered=1) MUST wait for live events > 100; " f"got {results}"
         )
 
     async def test_after_past_latest_on_closed_replay_returns_empty(self) -> None:
@@ -274,19 +258,17 @@ class TestCursorFnSemantics:
         results = []
         async for ev in s.subscribe(after=100):
             results.append(ev)
-        assert results == [], (
-            "after=100 past latest on CLOSED MUST return empty iterator"
-        )
+        assert results == [], "after=100 past latest on CLOSED MUST return empty iterator"
 
 
 # ----------------------------------------------------------------
-# Concurrent task safety (FR-012b)
+# Concurrent task safety
 # ----------------------------------------------------------------
 
 
 class TestConcurrentSafety:
     async def test_concurrent_emit_subscribe_on_replay(self) -> None:
-        """FR-012b — N concurrent tasks interleaving emit/subscribe/close
+        """— N concurrent tasks interleaving emit/subscribe/close
         against the same instance must not race or lose events."""
         s = ReplayEventStream(cursor_fn=lambda e: e["n"], ttl_seconds=10)
 
@@ -313,6 +295,4 @@ class TestConcurrentSafety:
         # All 5 subscribers should have seen the same set of events
         for idx, seen in all_results:
             # Order preserved, all values present
-            assert seen == list(range(20)), (
-                f"subscriber {idx} saw {seen}; expected 0..19 in order"
-            )
+            assert seen == list(range(20)), f"subscriber {idx} saw {seen}; expected 0..19 in order"

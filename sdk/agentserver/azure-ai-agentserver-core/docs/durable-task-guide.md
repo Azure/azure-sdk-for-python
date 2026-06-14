@@ -1,1216 +1,868 @@
-# Durable Tasks Developer Guide
+# Durable Tasks — Developer Guide
 
-> The end-user-developer guide for the `@task` primitive shipped by
-> `azure-ai-agentserver-core`.
->
-> Audience: developers building agents that run on the agentserver
-> hosting platform (or any host that backs the durable-task primitive)
-> and want their work to survive container crashes, OOM kills, and
-> redeployments without hand-rolling lifecycle plumbing.
+This is the developer guide for `azure.ai.agentserver.core.durable` —
+the durable-task primitive that turns an `async def` function into a
+crash-resilient unit of agent work.
+
+If your agent needs to survive container crashes, OOM kills, or
+redeployments without losing its place, you want this. If your turn
+of work could plausibly outlive the request that started it (long
+LLM calls, multi-step tool chains, multi-message conversations), you
+want this.
 
 ---
 
 ## 1. Why
 
-Agent workloads run for minutes to hours — multi-step reasoning, tool
-loops, batch processing, multi-turn conversations with human-in-the-loop
-pauses. The sandbox hosting that work can crash, be OOM-killed,
-redeployed, or idle-deactivated at any time — and most failure modes
-are unannounced.
+There is **one primitive in two flavours**:
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  Agent starts a 45-minute research task...              │
-│                                                         │
-│  ██████████████░░░░░░░░░░░░░░░░  35% complete           │
-│                     ▲                                   │
-│                     │  💥 Crash / OOM / redeploy        │
-│                                                         │
-│  Without @task: progress lost. User must restart.       │
-│  With    @task: handler is re-invoked, metadata intact. │
-└─────────────────────────────────────────────────────────┘
-```
+- **`@task`** — *one-shot*. A single durable run of a function.
+  Returns its `Output`, then the record is gone. Use for "do this
+  one thing durably".
 
-Most agent frameworks already provide durability for state *between*
-turns (LangGraph checkpointers, Semantic Kernel, Temporal, etc.). What
-**none** of them solve is the **entrypoint**:
+- **`@multi_turn_task`** — *chain*. A series of turns sharing a
+  conversation identity (a `task_id`). Each `return X` is one turn;
+  the chain stays alive in between turns and can accept more inputs.
+  Use for chat sessions, agents that work across multiple user
+  messages, durable orchestrations.
 
-- Who calls the framework when the sandbox starts back up after a crash?
-- Who knows there *was* a crash?
-- Who tells the platform a unit of work is still in flight so the
-  sandbox doesn't get killed?
+Both run the same way under the hood: lease-based crash recovery, a
+single typed input per turn, a `TaskContext` handle, optional retry,
+optional steering (for `multi_turn_task`).
 
-That is the gap `@task` closes. It wraps a durable boundary around
-your agent function — a unit of work the platform can see, restart,
-and resume — so whatever framework is underneath has somewhere
-to plug in.
+What this primitive solves:
 
-### Two camps, one decorator
+- **Crash survival.** If the process dies mid-call, the next
+  process picks up the same task with the same input and runs the
+  handler again (or, for a chain in `suspended`, the next caller
+  resumes the chain).
+- **Identity.** A `task_id` is the durable name of the work. Two
+  callers naming the same `task_id` don't double-execute — they
+  attach to the same run.
+- **Typed inputs and outputs.** Generic in `Input` and `Output`;
+  the framework persists the input and surfaces the output through
+  a typed handle.
+- **Cooperative cancellation.** The caller can ask the handler to
+  stop; the handler decides how to wind down.
+- **Lightweight, small surface.** A few decorators, a few classes,
+  a handful of exceptions.
 
-| Camp | Examples | What `@task` adds |
-|------|----------|-------------------|
-| **Externally stateful** — framework owns durability | Temporal, Durable Functions, Orleans | Platform visibility: lifecycle tracking, liveness signal, status reporting on top of the framework's own durability |
-| **Locally stateful** — container holds state | LangGraph (SQLite checkpointer), Claude SDK tool loops, hand-written agents | A crash-safe entry point: framework-managed liveness, plus run / resume / progress / suspend primitives the developer would otherwise hand-roll |
+What this primitive deliberately does **not** do:
 
-`@task` is **not** a replacement for Temporal or Durable Functions —
-it is the thin durable wrapper around the platform↔code boundary. It
-does not make your function deterministic or replayable. It turns
-`run(input) → output` into a unit of work that survives a container
-crash, a deployment, or an idle-deactivation — with hooks for
-progress, suspension, cancellation, and steering that compose with
-whatever framework you use underneath.
+- Deterministic replay. The handler is re-invoked from the top on
+  recovery; effects are your responsibility (use `ctx.metadata`
+  watermarks for at-most-once patterns — see §6).
+- Workflow orchestration (fan-out / fan-in / child workflows). If
+  you want Temporal-style orchestration, use Temporal; you can
+  still wrap durable tasks inside it.
+- A bulk data store. `ctx.metadata` is small and JSON-only;
+  conversation history and big blobs belong in your own storage.
+- A queue. One `task_id` is one logical job — not a competing-consumer
+  pull queue.
 
 ---
 
-## 2. Mental Model
-
-The primitive enforces exactly one invariant: **for a given `task_id`,
-at most one handler runs at a time.** Everything else falls out of that.
-
-### Four states
+## 2. Mental model
 
 ```
-         ┌──── pending ────┐
-   .start/.run             │
-        └──────────────────┤
-                           ▼
-                     in_progress  ◄── re-acquired ──┐
-                       │   │                         │
-                       │   │  process crashes        │ (a new lifetime
-                       │   │  (handler torn down     │  picks the task
-                       │   ▼   mid-execution)        │  back up)
-                       │   └─────────────────────────┘
-                       │
-                       │   handler returns or
-                       │   raises an exception
-                       ▼
-                  ┌────┴────┐
-                  │         │
-              completed   suspended
-                            │
-                            └── .start/.run → re-entered → in_progress
+┌─────────────────────────────────────────────────────────────────┐
+│                         Your code                               │
+│                                                                 │
+│  @task                              @multi_turn_task            │
+│  async def summarize(ctx):          async def chat(ctx):        │
+│      return work(ctx.input)             return reply(ctx.input) │
+│                                                                 │
+│  await summarize.run(input=X)       await chat.run(             │
+│                                         task_id="c1", input=X)  │
+└─────────────────────────────────────────────────────────────────┘
+                              ▲
+                              │   (your async caller)
+                              │
+┌─────────────────────────────────────────────────────────────────┐
+│                      Durable task framework                     │
+│                                                                 │
+│   - persists input + metadata + lease                           │
+│   - invokes your handler with TaskContext                       │
+│   - watches for crashes, reclaims abandoned leases              │
+│   - delivers output via TaskRun.result() / await run            │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│           Task store (hosted or local file-backed)              │
+│                                                                 │
+│   PATCH-with-ETag store of task records:                        │
+│     id, status, lease_owner, payload, attachments, etag         │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-| State | Meaning |
-|-------|---------|
-| `pending` | Created, not yet picked up by a handler. |
-| `in_progress` | A handler is currently executing this task. |
-| `suspended` | Handler called `ctx.suspend(...)` and returned. Awaiting `.run()` / `.start()` with new input. |
-| `completed` | Terminal. The handler is finished and will not run again. Success, failure, or cancellation is communicated through `.run()` / `.result()` — either as the return value, or as one of `TaskFailed` / `TaskCancelled` (see §4). |
+### One-shot vs multi-turn — at a glance
 
-Each time your handler is invoked, `ctx.entry_mode` tells you which
-scenario you're in:
-
-| Current state | Entry mode | What it means for your code |
-|---------------|------------|------------------------------|
-| No task / `pending` | `"fresh"` | First invocation. No prior state. |
-| `suspended` | `"resumed"` | Caller provided new input; resume from there. |
-| `in_progress` (previous lifetime torn down) | `"recovered"` | Previous lifetime crashed; you are the new lifetime. |
-| `in_progress` (steerable, mid-flight) | `"resumed"` (with `ctx.is_steered_turn=True`) | Another input was queued; this is the next-turn re-entry. |
-
-You read `ctx.entry_mode` (an `EntryMode` literal) once at the top of
-your handler and branch on it.
-
-### What's automatic, what's on you
-
-- **Automatic**: `ctx.metadata`, the current input, and the
-  `ctx.retry_attempt` / `ctx.recovery_count` counters are all
-  persisted for you across crashes and resumes.
-- **You persist**: anything else you need to recover across crashes
-  — through whatever your underlying framework already provides
-  (LangGraph SqliteSaver, your own DB, etc.). The primitive does
-  not impose a checkpoint schema. `ctx.metadata` is a small-watermark
-  store, not a bulk-data store.
-
-### Input and output size limits
-
-| Limit | Value | Raised as |
-|---|---|---|
-| Per-input maximum size | **2 MB** (after JSON serialization) — applies to both the function input and each steering input | `InputTooLarge` from `Task.start(...)`, pre-network |
-| Per-output maximum size | **2 MB** (after JSON serialization) — applies to both `return` values and `ctx.suspend(output=...)` | `OutputTooLarge` from `Task.run(...)` / handler completion / `ctx.suspend(...)`, pre-network |
-| Maximum queued steering inputs | **9** concurrent | `SteeringQueueFull` from `Task.start(...)` |
-
-These limits apply to any value you pass as the `input` argument to
-`Task.start(...)` and to any value your handler returns or passes as
-`ctx.suspend(output=...)`. The framework handles persistence transparently —
-you don't need to do anything special to use the full 2 MB ceiling for
-inputs or outputs, whether the value is small or large.
-
-If you have a use case that genuinely needs > 2 MB per input or per
-output, externalize it (write to blob storage, pass a reference) and
-treat the reference as your value.
+|                          | `@task` (one-shot) | `@multi_turn_task` (chain) |
+|--------------------------|--------------------|-----------------------------|
+| Lifetime                 | One run            | Multiple turns, chain stays alive between turns |
+| `task_id` on `.start`    | Optional (auto-gen GUID) | Mandatory |
+| `input_id`               | Defaults to `task_id` (1:1) | Per turn (auto-gen GUID per turn) |
+| Terminal status          | `completed` / `failed` / `cancelled` → record deleted | `suspended` between turns; deleted only via `.delete(task_id)` |
+| `.delete(task_id)`       | Not available (auto-cleans on terminal) | Available — chain-level delete |
+| Handler `return X`       | Finishes the run; `await run.result()` resolves to `X` | Finishes the **turn**; chain goes to `suspended`; caller receives `X` |
+| Steering queue           | n/a                | `steerable=True` opt-in    |
+| Concurrent `.start` on same `task_id` while in-flight | `TaskConflictError` | If `steerable=True`: queued; else `TaskConflictError` |
 
 ---
 
-## 3. Hello World
+## 3. Hello world
 
-A complete durable task in fewer than 15 lines:
+### One-shot
 
 ```python
+import asyncio
 from azure.ai.agentserver.core.durable import task, TaskContext
 
-@task(name="greet")
-async def greet(ctx: TaskContext[str]) -> str:
-    return f"Hello, {ctx.input}!"
+@task(name="summarize")
+async def summarize(ctx: TaskContext[str]) -> str:
+    # ctx.input is typed as str; the framework persisted it before invoking us.
+    return ctx.input.upper()
 
-# Run it — lifecycle-aware: creates if new, recovers if a prior
-# lifetime crashed, raises TaskConflictError if another non-steerable
-# lifetime is already active (or the task has already completed).
-result = await greet.run(task_id="greet-alice", input="Alice")
-print(result.output)  # "Hello, Alice!"
+async def main():
+    # Lifecycle-aware: creates fresh, attaches to in-flight, recovers a
+    # crashed prior lifetime — all automatic. task_id is optional.
+    output: str = await summarize.run(input="hello")
+    print(output)  # 'HELLO'
+
+asyncio.run(main())
 ```
 
-The decorator transforms your function into a `Task` (importable as
-`Task`) with `.run()`, `.start()`, and a small handle returned by
-`.start()` (`TaskRun`). Your function takes exactly one parameter — a
-`TaskContext`.
+### Multi-turn chain
 
-If the container crashes mid-execution, your function is re-invoked
-automatically on restart with `ctx.entry_mode == "recovered"` and
-the same input — no caller action required.
+```python
+import asyncio
+from azure.ai.agentserver.core.durable import multi_turn_task, TaskContext
 
-Calling `.run()` against a `task_id` that has already completed, or
-one currently running on another lifetime (for a non-steerable
-task), raises `TaskConflictError` — your call is rejected, not
-silently duplicated.
+@multi_turn_task(name="chat")
+async def chat(ctx: TaskContext[dict]) -> dict:
+    return {"reply": f"Echo: {ctx.input['msg']}",
+            "input_id": ctx.input_id}
+
+async def main():
+    # Turn 1 — fresh chain.
+    r1 = await chat.run(task_id="conv-7", input={"msg": "hi"})
+    print(r1)  # {"reply": "Echo: hi", "input_id": "<turn-1-guid>"}
+
+    # Turn 2 — same task_id resumes the persisted chain; same handler
+    # is invoked with the new ctx.input.
+    r2 = await chat.run(task_id="conv-7", input={"msg": "what's up?"})
+    print(r2)  # {"reply": "Echo: what's up?", "input_id": "<turn-2-guid>"}
+
+asyncio.run(main())
+```
 
 ---
 
 ## 4. Concepts
 
-This section names the things you will encounter at runtime and links
-each to the API symbol that exposes it. The exhaustive method-by-method
-table lives in **§5 Reference** below.
+### 4.1 Identifiers
 
-### Entry mode (`EntryMode`)
+- **`task_id`** — the durable name of the work.
+  - One-shot: optional; the framework generates a GUID when omitted.
+    Two callers passing the same `task_id` for a one-shot **converge**
+    (the second caller either attaches to the first's in-flight run
+    or sees `TaskConflictError` if it has already terminated).
+  - Multi-turn: mandatory; identifies the chain.
 
-`ctx.entry_mode` is the load-bearing signal. Branch on it at the top of
-your handler:
+- **`input_id`** — the durable name of one input within the chain.
+  - One-shot: defaults to `task_id` (one run, one input — the 1:1
+    invariant).
+  - Multi-turn: per turn; the framework generates a GUID per turn
+    unless the caller supplies one (callers managing their own per-
+    message ids — e.g. chat clients — pass them through).
 
-```python
-if ctx.entry_mode == "fresh":
-    ...
-elif ctx.entry_mode == "recovered":
-    # We came back after a crash — check your watermark.
-    ...
-elif ctx.entry_mode == "resumed":
-    # ctx.input is the new input that triggered the resume.
-    ...
-```
+- **`if_last_input_id="<prev>"`** — an optional precondition on
+  `.start` / `.run`. The framework verifies that the chain's
+  currently-stored last-accepted `input_id` equals `<prev>` before
+  accepting the new input. If a concurrent caller advanced the
+  chain first, the call raises `LastInputIdPreconditionFailed`.
+  Use this when your caller is reasoning about message ordering
+  (HTTP `If-Match`-style optimistic concurrency on the input
+  queue).
 
-### Retry semantics (`ctx.retry_attempt`, `RetryPolicy`)
+### 4.2 Entry mode
 
-`ctx.retry_attempt` is the **cross-lifetime** failure-retry counter.
+The handler can branch on `ctx.entry_mode`:
 
-- Increments **only** when the handler raises a retryable failure.
-- **Crash recovery does NOT consume the budget.** A lifetime that dies
-  before the handler raises does not advance `retry_attempt`.
-- Resets to 0 on successful completion and on steering drain.
-- The counter is the same across crashes — a handler in lifetime *N*
-  sees the value the previous lifetime left it at.
-
-The budget itself lives on `RetryPolicy.max_attempts`. Once
-`retry_attempt >= max_attempts`, your handler is no longer
-re-invoked, and the awaiting `.run()` / `.result()` raises
-`TaskFailed` with the last captured error.
-
-```python
-from azure.ai.agentserver.core.durable import task, RetryPolicy, TaskContext
-
-@task(name="flaky", retry=RetryPolicy(max_attempts=5))
-async def flaky(ctx: TaskContext[str]) -> str:
-    ...
-```
-
-### Metadata as a callable namespace facade
-
-`ctx.metadata` (`TaskMetadata`) is the small persistent-state surface
-your handler owns. It is a **callable namespace facade**:
-
-- `ctx.metadata["key"] = value` — read/write the **default** namespace.
-- `ctx.metadata("session")["upstream_id"] = sid` — read/write a
-  **named** sibling namespace.
-
-Each namespace is independent: a write to one does not dirty the
-other; `flush()` on one persists only that namespace. Your writes
-are also persisted automatically at every lifecycle boundary — task
-start, return from `ctx.suspend(...)`, handler return, or unhandled
-raise — so anything you forgot to `flush()` still survives a graceful
-boundary. Use explicit `flush()` only as a fence for at-most-once
-side effects across a *crash*.
-
-Names and keys starting with `_` are **reserved** — don't use them.
-
-### Suspend, resume, and multi-turn workflows (`Suspended`)
-
-A handler that runs to completion is **one-shot**. A handler that
-*suspends* enters a different mode: it persists its state, returns
-control to the caller, and waits for the next input to bring it back
-to life. This is the engine behind every multi-turn agent workflow —
-chat sessions, approval flows, human-in-the-loop pipelines,
-long-running orchestrations that wake up on external events.
+| Value         | Means                                                      |
+|---------------|------------------------------------------------------------|
+| `"fresh"`     | First invocation for this `(task_id, input_id)`            |
+| `"resumed"`   | This is a subsequent turn of an existing chain (multi-turn)|
+| `"recovered"` | A previous lifetime ran this same `(task_id, input_id)` and didn't finish (lease was abandoned); the framework is re-invoking with the persisted input |
 
 ```python
-@task(name="approval_flow")
-async def approval_flow(ctx: TaskContext[dict]) -> dict:
-    if ctx.entry_mode == "fresh":
-        proposal = await draft_proposal(ctx.input)
-        ctx.metadata["proposal"] = proposal
-        await ctx.metadata.flush()
-        return await ctx.suspend(output={"awaiting": "approval", "proposal": proposal})
-
-    # entry_mode == "resumed": ctx.input is the approver's verdict.
-    if ctx.input["approved"]:
-        return {"status": "shipped", "proposal": ctx.metadata["proposal"]}
-    return {"status": "rejected", "proposal": ctx.metadata["proposal"]}
-```
-
-How it works for you:
-
-1. **`await ctx.suspend(output=...)`** ends this turn. Your caller's
-   `.run()` / `.start()` resolves immediately with `output` wrapped
-   in a `Suspended` envelope.
-2. **The next `.run(task_id=..., input=...)` or
-   `.start(task_id=..., input=...)`** brings your handler back. You
-   re-enter with `ctx.entry_mode == "resumed"`, `ctx.input` set to
-   the new input, and `ctx.metadata` exactly as you left it.
-3. **State lives in `ctx.metadata`** (see the metadata-namespace
-   section above), not in handler-local variables, because those are
-   gone the moment the handler returns. Whatever you want to see on
-   the next turn must be flushed before you `return await ctx.suspend(...)`.
-
-Multi-turn workflows are just this same suspend/resume cycle applied
-repeatedly to the same `task_id` — see Pattern C in §6 for the
-end-to-end chat-loop example.
-
-### Steering: queueing a new input on a steerable task (`steerable`)
-
-`@task(steerable=True)` upgrades a task from "one input at a time" to
-"the caller can queue a new input while the handler is mid-flight".
-This is the model that lets a chat user say *"actually, ignore that
-and search for X instead"* mid-stream and get a coherent answer to
-the new question.
-
-#### What `.start()` does on an in-flight steerable task
-
-Non-steerable (`steerable=False`, default):
-
-- `.start(task_id=existing_in_progress, input=...)` → `TaskConflictError`.
-  One input at a time, no exceptions.
-
-Steerable (`steerable=True`):
-
-- `.start(task_id=existing_in_progress, input=...)` →
-  1. **The new input is queued** at the tail of an internal
-     pending-inputs FIFO.
-  2. **The cancel signal is raised** on the currently-executing turn
-     (`ctx.cancel.is_set()` becomes True for the handler that's
-     running right now). The framework also flips
-     `ctx.pending_input_count` from `0` to `1` (or whatever the live
-     backlog is); a handler can read this live mid-flight to make
-     "should I bail?" decisions.
-  3. **A new `TaskRun` handle is returned** to the caller. Its
-     `.result()` resolves with **whatever the next turn emits** —
-     it is treated as the steerer of that next turn.
-- If the steering queue is at its internal bound, `.start()` raises
-  `SteeringQueueFull` instead of queuing.
-
-**Steering is plain multi-turn.** The mental model is "the second
-`.start()` queues a new input, then the framework drives the next
-turn of the handler the same way a normal `.run()` after
-`ctx.suspend()` would." The first turn's caller observes whatever
-that turn produced (return, suspend, or raise); the steerer
-observes the next turn's outcome.
-
-#### What the first turn's caller sees
-
-When the first turn ends, its `TaskResult` is whatever the handler
-chose, with no special steering-specific shape:
-
-| Handler ends turn 1 with... | First caller's `TaskResult` |
-|---|---|
-| `return await ctx.suspend(output=X)` | `TaskResult(status="suspended", output=X, suspension_reason=R)` — identical to plain multi-turn. The framework then re-enters for the queued steering input. |
-| `return value` | `TaskResult(status="completed", output=value)`. The handler chose to finish; the task is terminal; the queued steerer's `.result()` resolves with `TaskConflictError(current_status="completed")` instead. |
-| `raise SomeError` | `.result()` raises the appropriate typed exception. The task is terminal; the queued steerer's `.result()` resolves with `TaskConflictError(current_status="failed")` instead. |
-
-Each caller sees the outcome of the turn they kicked off — the
-first caller gets turn 1's output, the steerer gets turn 2's.
-
-#### Cooperative cancellation: the handler is in charge
-
-`ctx.cancel` is **advisory**. The framework signals it when a
-steering input arrives (alongside `ctx.pending_input_count > 0`),
-but it does not preempt your handler — your handler decides what to
-do about it. There are three legitimate strategies, and the choice
-belongs to the handler author:
-
-- **A — Yield immediately.** Check `ctx.cancel.is_set()` (or
-  `ctx.pending_input_count > 0`) at the next boundary and
-  `return await ctx.suspend(output=...)` right away. Lowest
-  user-visible latency to the new turn; throws away whatever
-  partial work was in flight. Use this when the in-flight work is
-  cheap to re-derive or strictly stale.
-
-- **B — Wind down to a safe checkpoint, then suspend.** Finish the
-  current tool call / token batch / loop iteration, persist a
-  durable checkpoint via `ctx.metadata`, *then*
-  `return await ctx.suspend(output=...)`. Costs one extra checkpoint
-  of latency but keeps your invariants clean. Use this when the
-  in-flight work has external side effects that need a clean cut
-  point.
-
-- **C — Ignore cancel and finish.** Don't read `ctx.cancel` at all;
-  let the handler run to its normal `return value`. The task ends;
-  the queued steerer's `.result()` raises `TaskConflictError`. Use
-  this when the current input must complete atomically (e.g., a
-  financial transaction, a multi-step tool sequence that cannot
-  leave the world half-done).
-
-#### Example: cooperative suspend (strategy A)
-
-```python
-@task(name="chat", steerable=True)
-async def chat(ctx: TaskContext[dict]) -> dict:
-    history = ctx.metadata.get("history", [])
-    history.append({"role": "user", "content": ctx.input["message"]})
-
-    reply_chunks: list[str] = []
-    async for chunk in llm_stream(history):
-        if ctx.cancel.is_set():
-            # Strategy A: bow out immediately.
-            history.append({"role": "assistant", "content": "".join(reply_chunks), "partial": True})
-            ctx.metadata["history"] = history
-            return await ctx.suspend(output={"interrupted": True})
-        reply_chunks.append(chunk)
-
-    reply = "".join(reply_chunks)
-    history.append({"role": "assistant", "content": reply})
-    return await ctx.suspend(output={"reply": reply})
-```
-
-(Explicit `ctx.metadata.flush()` isn't required at the suspend
-boundary — your metadata is automatically persisted whenever a turn
-ends. See §4 Metadata.)
-
-Your handler is then re-invoked for the next queued input with
-`entry_mode="resumed"` and `ctx.is_steered_turn=True`.
-
-#### Steering observability: `is_steered_turn`, `pending_input_count`
-
-On a steering-driven re-entry, your `TaskContext` exposes two
-read-only fields:
-
-- **`ctx.is_steered_turn: bool`** — `True` when this handler
-  invocation was triggered by a queued steering input being
-  processed. Every other entry path (fresh, normal resume, recovery)
-  yields `False`. Orthogonal to `entry_mode`:
-  `(entry_mode="recovered", is_steered_turn=True)` is legal if a
-  previous process crashed while it was processing a steered turn.
-- **`ctx.pending_input_count: int`** — live count of queued steering
-  inputs (reflects current backlog, including inputs queued
-  mid-handler). Reads as `0` for non-steerable tasks. Use this to
-  decide "I'm three turns behind, I should short-circuit even
-  harder".
-
-#### Rapid-fire short-circuit
-
-If three steering inputs land while the first turn is still
-draining (`[B, C, D]` queued), the framework drives each turn in
-order — but if a turn observes `ctx.pending_input_count > 1` it can
-choose to suspend immediately (strategy A) and let the framework
-drive past stale work toward the freshest input. This keeps the
-user-visible latency to the most recent input close to "one handler
-run", not "N handler runs serialized".
-
-#### Composing multi-turn + steering
-
-A task can be both **steerable** AND **multi-turn**. Steering IS
-plain multi-turn: every turn's `.suspend()` checkpoint is the
-boundary at which the next queued steering input (if any) drives
-the next turn. The two are not orthogonal modes — they are the
-same mechanism. Pattern F in §6 shows the unified shape.
-
-### Cancellation: independent cause booleans (`timeout_exceeded`, `cancel_requested`, `pending_input_count`)
-
-`ctx.cancel` is a bare `asyncio.Event` — observe it with
-`ctx.cancel.is_set()` or `await ctx.cancel.wait()`. The framework
-sets it from multiple causes; a handler observing the bare event
-does NOT know **why** it was set. Three independent cause booleans
-on `TaskContext` answer that question:
-
-- **`ctx.timeout_exceeded: bool`** — `True` once the per-turn
-  timeout watchdog has fired for this turn (see Timeout subsection
-  below).
-- **`ctx.cancel_requested: bool`** — `True` once `TaskRun.cancel()`
-  was invoked against this run from external caller code.
-- **`ctx.pending_input_count: int`** — live count of queued steering
-  inputs (reflects current backlog).
-
-**Causes accumulate.** Multiple cause booleans can be `True`
-simultaneously (e.g., a steering input arrived AND the timeout
-fired AND an external `.cancel()` was issued). They are flipped
-to `True` when their cause fires and are **NEVER reset**.
-
-**Ordering guarantee.** Whenever you observe `ctx.cancel.is_set() == True`,
-at least one of these cause booleans is also already `True` — you
-can safely branch on cause.
-
-```python
-@task(name="cancellable", timeout=timedelta(seconds=60))
-async def cancellable(ctx: TaskContext[str]) -> str:
-    while not ctx.cancel.is_set():
-        await do_a_unit_of_work(ctx.input)
-
-    # Branch on cause:
-    if ctx.timeout_exceeded:
-        return "(timed out — partial result)"
-    if ctx.cancel_requested:
-        # Operator pulled the plug — raise so the caller sees TaskCancelled.
-        raise asyncio.CancelledError()
-    if ctx.pending_input_count > 0:
-        # A steering input is queued — suspend so the next turn picks it up.
-        return await ctx.suspend(output="(pre-empted)")
-    # No known cause — shouldn't happen, but fail loud.
-    raise RuntimeError("ctx.cancel set with no recognised cause")
-```
-
-### Timeout: cooperative-only, per-turn, wall-clock, durable
-
-`@task(timeout=...)` is **cooperative-only**: when the budget elapses,
-`ctx.timeout_exceeded` is set and `ctx.cancel` fires. Your handler
-keeps running until it observes the signal and winds down — nothing
-preempts it.
-
-The budget is **per-turn** and **wall-clock**:
-
-- Each handler turn (fresh entry, suspended-to-resume, steering drain
-  re-entry) gets a fresh budget.
-- The budget continues across crashes — if it has already elapsed by
-  the time your recovered handler enters, `ctx.cancel` fires
-  immediately.
-
-Worked example — cooperative cancel via timeout:
-
-```python
-@task(name="long_op", timeout=timedelta(seconds=30))
-async def long_op(ctx: TaskContext[str]) -> str:
-    while not ctx.cancel.is_set():
-        await do_unit()
-    if ctx.timeout_exceeded:
-        return "(timed out)"
-    raise asyncio.CancelledError()
-```
-
-### Shutdown: `ctx.exit_for_recovery()`
-
-When the container is shutting down (`ctx.shutdown.is_set()`), a
-handler that is mid-turn and cannot finish cleanly should call
-`ctx.exit_for_recovery()` instead of returning a value, calling
-`ctx.suspend()`, or raising. Calling this:
-
-- persists your metadata,
-- leaves the task in `in_progress` so the next process picks it up
-  where you left off (it is **not** transitioned to `suspended`),
-- resolves the in-process caller's `.result()` with `TaskCancelled`,
-- keeps any queued steering inputs in place — they're still queued
-  when the new process resumes.
-
-On next startup, your handler is re-entered with
-`ctx.entry_mode == "recovered"`.
-
-```python
-@task(name="long_chat", steerable=True)
-async def long_chat(ctx: TaskContext[dict]) -> dict:
-    history = ctx.metadata.get("history", [])
-    history.append({"role": "user", "content": ctx.input["message"]})
-
-    if ctx.shutdown.is_set():
-        # Container is going down. Don't try to finish or suspend.
-        # Save what we have and ask the framework to resurrect on next start.
-        ctx.metadata["history"] = history
-        return await ctx.exit_for_recovery()
-
-    reply = await llm_call(history)
-    history.append({"role": "assistant", "content": reply})
-    ctx.metadata["history"] = history
-    return await ctx.suspend(output={"reply": reply})
-```
-
-**Contrast against alternatives:**
-
-| Shape | When to use | Stored outcome | Caller observes |
-|---|---|---|---|
-| `await ctx.exit_for_recovery()` | Container is shutting down AND you want this turn re-entered later | `in_progress` (preserved across shutdown) | `TaskCancelled` raised |
-| `await ctx.suspend(output=X)` | Handler reached a clean checkpoint AND wants to expose `X` to the caller | `suspended` (caller must `.run()` again to advance) | `TaskResult(status="suspended", output=X)` |
-| `raise asyncio.CancelledError()` | Handler decided to abort but the task is conceptually done | `completed` (terminal) | `TaskCancelled` raised |
-
-Calling `ctx.exit_for_recovery()` when `ctx.shutdown.is_set() == False`
-raises `RuntimeError` at the call site and the task ends in `failed`.
-
-### Streaming (see [`docs/streaming-guide.md`](./streaming-guide.md))
-
-Streaming is a separate primitive — handlers opt in by emitting
-to the process-level `streams` registry. There is no streaming kwarg
-on `@task`.
-
-```python
-from azure.ai.agentserver.core.streaming import streams
-
-# Once at app startup:
-streams.use_in_memory_replay(ttl_seconds=600)
-
-@task(name="search")
-async def search(ctx: TaskContext) -> str:
-    inv_id = ctx.input["invocation_id"]          # per-turn stream id
-    stream = await streams.get_or_create(inv_id)
-    await stream.emit({"event": "progress", "step": "fetch"})
-    ...
-    await stream.close()
-    return result
-```
-
-Consumers (typically the HTTP layer) attach **before** starting the task:
-
-```python
-stream = await streams.get_or_create(invocation_id)
-run = await search.start(task_id=..., input={"invocation_id": invocation_id, ...})
-async for ev in stream.subscribe(after=0):
+@multi_turn_task(name="checkpointer")
+async def step(ctx: TaskContext[dict]) -> dict:
+    if ctx.entry_mode == "recovered":
+        # Skip any work we already wrote to ctx.metadata; pick up where we left off.
+        last_done = ctx.metadata.get("last_done_step")
     ...
 ```
 
-See [`streaming-guide.md`](./streaming-guide.md)
-for the registry API, backings (`use_in_memory_live` /
-`use_in_memory_replay` / `use_file_backed_replay`), per-turn id
-convention, exception/wire mapping, and the third-party-impl peer-
-registry pattern.
+### 4.3 Inputs and outputs
 
-### Results and runs (`TaskResult`, `TaskRun`, `TaskStatus`)
+The handler signature is `async def fn(ctx: TaskContext[Input]) -> Output`.
+The framework infers `Input` and `Output` from the annotation; the
+typing flows through `task_id.run(input=X) -> Output`.
 
-- `Task.run()` returns a `TaskResult[Output]` once the task reaches a
-  terminal-for-this-caller state. `TaskResult` carries:
-  - `result.output` — your handler's return value, or the snapshot
-    passed to `ctx.suspend(output=...)`.
-  - `result.status: Literal["completed", "suspended"]` — what *kind*
-    of outcome this is, with the corresponding convenience properties
-    `result.is_completed` and `result.is_suspended`. Note: this is a
-    **different literal** from the four-state `TaskStatus`; it's
-    specifically the caller-observable outcome.
-  - `result.suspension_reason: str | None` — populated only on the
-    `"suspended"` branch when the handler returned via
-    `ctx.suspend(reason=...)`.
-- Steering does NOT introduce a third status value. The first turn's
-  caller observes the natural multi-turn outcome (`"suspended"` if
-  the handler called `ctx.suspend(...)`, `"completed"` if it
-  returned, or a typed exception if it raised). The steerer's
-  `.result()` resolves with the next turn's outcome — or raises
-  `TaskConflictError(current_status=...)` if the handler ended the
-  task instead of suspending. See §4 Steering for the full mechanic.
-- `Task.start()` returns a `TaskRun[Output]` handle you can poll,
-  stream, or `await run.result()`-on. `TaskRun.cancel()` sets the
-  cancel signal (along with `ctx.cancel_requested = True`); the
-  handler chooses the terminal shape via its reaction to
-  `ctx.cancel.is_set()`.
+- **Inputs are persisted before the handler runs.** That is the
+  guarantee crash recovery rests on: a recovered handler is invoked
+  with the same `ctx.input` it would have seen in the lost lifetime.
+- **Outputs are not persisted.** When the handler returns, the
+  value resolves the caller's `await run.result()` — that is the
+  only place it appears. There is no `payload["output"]` and no
+  output attachment to inspect later. If you want to keep a
+  per-turn artifact across crashes, write it through your handler
+  (LangGraph checkpoint, your own DB, etc.) before you return.
+- **Per-input size limit** ≈ 2 MB (after JSON serialization).
+  Larger inputs raise `InputTooLarge` at the caller before any
+  network round-trip. Externalize (blob store + reference) for
+  bigger payloads.
 
-### Input-acceptance preconditions (`LastInputIdPreconditionFailed`, `TaskPreconditionFailed`)
+### 4.4 The handler's context (`TaskContext`)
 
-The `input_id` and `if_last_input_id` kwargs on `.start()` / `.run()`
-are **orthogonal**:
+```python
+class TaskContext:
+    input: Input                   # the value the caller passed
+    task_id: str
+    input_id: str                  # per-turn id
+    entry_mode: Literal["fresh", "resumed", "recovered"]
+    metadata: TaskMetadata         # callable namespace facade (see §4.5)
+    retry_attempt: int             # 0 on the first try
+    is_steered_turn: bool          # True iff this turn was promoted from the queue
+    pending_input_count: int       # how many newer turns are queued
 
-- `input_id` (alone) — **idempotency / chain-head tracking**. Records
-  the input as the chain head on the task's persisted state.
-  Always succeeds; no precondition is
-  checked. Use this when chain ordering is enforced by another
-  mechanism (e.g. `task_id` collapse + `TaskConflictError` /
-  steering-queue sequencing for conversation-grouped multi-turn).
-- `if_last_input_id` (paired with `input_id`) — **chain-extension
-  precondition**. The framework only accepts the new input if the
-  previously-recorded `input_id` equals `if_last_input_id` (the
-  predecessor the caller claims to be extending). Mismatch raises
-  `LastInputIdPreconditionFailed` (a subclass of
-  `TaskPreconditionFailed`). Use this when callers explicitly thread
-  predecessor identity through every turn (e.g. OpenAI Responses
-  API's `previous_response_id`-style chaining).
+    # Cancellation signals — all cooperative.
+    cancel: asyncio.Event          # any-cause cancel
+    cancel_requested: bool         # cause: TaskRun.cancel() was called
+    timeout_exceeded: bool         # cause: per-task timeout fired
+    shutdown: asyncio.Event        # container is shutting down
 
-It is **not** valid to pass `if_last_input_id` without `input_id` —
-that raises `TypeError` at the call site.
+    async def exit_for_recovery(self) -> None: ...
+```
 
-### Steering-queue backpressure (`SteeringQueueFull`)
+The first parameter MUST be named `ctx`. The framework binds
+positionally, but it validates the name at decoration time so the
+guide examples and your code stay consistent.
 
-Steerable tasks have a bounded steering input queue; once full,
-new `.start()` calls raise `SteeringQueueFull`.
+### 4.5 Metadata
 
-### Unsuccessful outcomes (`TaskFailed`, `TaskCancelled`)
+`ctx.metadata` is a **callable namespace facade**: small key-value
+state that survives crashes and is visible across turns of a chain.
+Values must be JSON-serializable (the framework exposes the
+`JSONValue` type alias).
 
-When a task ends without producing a normal return value, the
-*stored* task status is still `completed` — the task is finished
-either way — but `.run()` / `.result()` raises one of two typed
-exceptions so the caller can branch on **why** it ended:
+```python
+@multi_turn_task(name="agent")
+async def agent(ctx: TaskContext[dict]) -> dict:
+    # Default namespace.
+    ctx.metadata["score"] = 42
+    # Named namespace — auto-vivified.
+    ctx.metadata("billing")["tokens_in"] = 130
+    return {"ok": True}
+```
 
-- `TaskFailed` — the handler raised an unhandled exception. Carries
-  a structured `error` dict (`type`, `message`, optional `cause`).
-- `TaskCancelled` — the handler ended via the cooperative-cancel path
-  (typically by raising `asyncio.CancelledError` after observing
-  `ctx.cancel.is_set()`, or via `ctx.exit_for_recovery()` — see §4
-  Shutdown).
+Names starting with `_` are reserved for the framework and raise
+`ValueError` at write time. Use `ctx.metadata.flush()` if you need
+an explicit at-most-once fence before a side effect.
 
-In addition, `TaskNotFound` is raised by `handle.result()` (and by
-`.start()` when resuming) if the referenced `task_id` has been
-deleted out from under the caller. Catch `TaskConflictError`
-whenever a task is busy or unavailable; `.current_status` tells you
-which case:
+### 4.6 The result handle (`TaskRun`)
 
-| Scenario | What raises `TaskConflictError` | `current_status` |
-|---|---|---|
-| `.run()` / `.start()` against an in-progress non-steerable task | scheduling primitive | `"in_progress"` |
-| Steerer's `.result()` after the handler returns or raises (terminal-with-queued-steerer) | resolved future | `"completed"` / `"failed"` / `"cancelled"` depending on terminal kind |
-| `.run()` / `.start()` against an already-terminal task | scheduling primitive | the terminal status |
+`.start(...)` returns a `TaskRun[Output]`:
 
-You do **not** need to catch any of these inside your handler —
-they exist for the *caller's* error-handling code. Your handler
-just `return`s, raises, or `await`s `ctx.suspend(...)`.
+```python
+class TaskRun(Generic[Output]):
+    task_id: str
+    input_id: str
+    metadata: TaskMetadata                # live ref while the run is in-flight
+
+    async def result(self) -> Output: ...
+    async def cancel(self) -> None: ...
+    def __await__(self) -> Output: ...    # so `output = await run` works
+```
+
+That is the entire `TaskRun` surface. The framework intentionally
+does **not** expose `.delete`, `.refresh`, `.status`, or
+`.lease_expiry_count` on the handle — for chain-level deletion use
+`MultiTurnTask.delete(task_id)`, and for status inspection consult
+the store directly via the task manager.
+
+### 4.7 Steering (multi-turn only)
+
+Pass `steerable=True` to `@multi_turn_task` to opt into the steering
+queue. With steering on, a `.start` against an in-flight chain
+**queues** the new input rather than raising — the framework
+delivers it as the next turn after the current turn ends.
+
+```python
+@multi_turn_task(name="conv", steerable=True)
+async def conv(ctx: TaskContext[dict]) -> dict:
+    return await llm(ctx.input)
+
+# Mid-conversation steering: user changes their mind 50 ms into turn 1.
+r1 = asyncio.create_task(conv.start(task_id="c1", input={"msg": "Plan a trip to Rome"}))
+await asyncio.sleep(0.05)
+r2 = asyncio.create_task(conv.start(task_id="c1", input={"msg": "Actually, Paris"}))
+# r1 resolves with turn 1's outcome; r2 resolves with turn 2's outcome.
+```
+
+The handler observes `ctx.cancel.is_set()` during turn 1 if there's
+something queued — it can wind down early and let the queued turn
+take over (see §6 "interruptible turns").
+
+### 4.8 Retry
+
+Per-turn (multi-turn) or per-run (one-shot). Configure via the
+decorator:
+
+```python
+from datetime import timedelta
+from azure.ai.agentserver.core.durable import RetryPolicy
+
+@task(
+    name="fetch",
+    retry=RetryPolicy(
+        max_attempts=3,
+        initial_delay=timedelta(seconds=1),
+        max_delay=timedelta(seconds=10),
+        backoff_coefficient=2.0,
+        jitter=True,
+    ),
+)
+async def fetch(ctx: TaskContext[str]) -> bytes: ...
+```
+
+`ctx.retry_attempt` (0-based) is exposed if your handler wants to
+branch. The retry counter resets at every new turn boundary
+(multi-turn) so a new turn starts with a fresh budget.
+
+When the budget is exhausted, the caller sees
+`TaskFailed(error=TaskExhaustedRetriesErrorDict(...))` (vs the
+normal `TaskFailed(error=TaskErrorDict(...))` for a non-retryable
+raise).
+
+`ctx.retry_attempt` is persisted: **crash recovery does NOT consume
+retry budget**. If attempt 2 of 3 crashes mid-flight, the recovered
+handler sees `ctx.retry_attempt == 2` and still has its third
+attempt available — the recovery is not counted as an extra retry.
+
+### 4.9 Cancellation
+
+Cancellation is **cooperative**. The framework never force-stops a
+running handler. The handler observes `ctx.cancel` (an
+`asyncio.Event`) and chooses how to wind down:
+
+- Raise `asyncio.CancelledError` → caller sees `TaskCancelled`.
+- `return X` → caller sees `X` (treated as a normal completion;
+  for multi-turn that's an implicit suspend of the chain).
+- Call `await ctx.exit_for_recovery()` (only valid when
+  `ctx.shutdown` is set) → caller sees `TaskDeferred`; the task
+  stays `in_progress`; the recovery scanner re-invokes the
+  handler in a future process lifetime.
+
+When the handler sees `ctx.cancel.is_set()`, it can branch on
+the cause via the cause-discriminator booleans:
+
+| Trigger                              | `ctx.cancel_requested` | `ctx.timeout_exceeded` | `ctx.shutdown.is_set()` |
+|--------------------------------------|------------------------|------------------------|-------------------------|
+| `await run.cancel()` (caller-cancel) | `True`                 | `False`                | `False`                 |
+| Per-turn `timeout=` watchdog fires   | `False`                | `True`                 | `False`                 |
+| Container graceful shutdown          | `False`                | `False`                | `True`                  |
+
+`ctx.is_steered_turn` and `ctx.pending_input_count` round out the
+steering-observability surface: a steerable handler that sees
+`ctx.cancel.is_set()` AND `ctx.pending_input_count > 0` knows the
+cancel was triggered by a newer turn being queued behind it and
+can choose to wind down early so the next turn gets the lane.
+
+### 4.10 Timeout
+
+Each task can specify a `timeout` on its decorator. The watchdog
+is **per-turn**, **wall-clock**, and **durable**:
+
+- **Per-turn** — the budget resets at every turn boundary
+  (multi-turn) or at the start of each fresh run (one-shot). It is
+  NOT a per-invocation budget; if a recovered handler is re-invoked
+  with the same `ctx.input` after a crash, the timeout starts from
+  the persisted turn-start timestamp — not from the new lifetime's
+  re-invocation.
+- **Wall-clock** — the watchdog uses the persisted turn-start
+  timestamp (UTC) and "now" wall-clock. It survives crashes: a
+  recovered handler that started its turn one minute before a
+  process death and has a 90-second budget gets ~30 seconds before
+  the watchdog fires.
+- **Durable** — the persisted turn-start timestamp means the
+  watchdog's view of "time elapsed" is the same across crashes,
+  so a long-running turn cannot game the budget by triggering
+  recovery to reset its clock.
+
+When the watchdog fires it sets `ctx.cancel` and flips
+`ctx.timeout_exceeded`. The handler decides what to do (see §4.9).
+
+### 4.11 Shutdown
+
+Container shutdown sets `ctx.shutdown` (an `asyncio.Event`) AND
+`ctx.cancel`. The intended handler response is to call
+`await ctx.exit_for_recovery()`, which:
+
+1. Releases the lease without writing a terminal status.
+2. Raises `TaskDeferred` to the caller of `.result()`.
+3. Leaves the task `in_progress` so the next process lifetime's
+   recovery scanner picks it up and re-invokes the handler with
+   the persisted `ctx.input`.
+
+`exit_for_recovery()` is only meaningful during shutdown; calling
+it outside that context is a programming error.
+
+### 4.12 Multi-turn chain deletion
+
+```python
+await chat.delete("conv-7")
+```
+
+Force-removes the chain: cancels any in-flight turn, resolves all
+queued steerer callers with `TaskCancelled`, and deletes the
+record. Idempotent (no-op if the chain is already gone).
 
 ---
 
 ## 5. Reference
 
-### `@task(name=..., ...)` (the decorator)
-
-Wraps an `async def f(ctx: TaskContext[T]) -> R` function and returns
-a `Task[T, R]`. The `name` argument is the routing key the framework
-uses to discover the handler on recovery. Use a stable string —
-changing it strands existing tasks.
-
-| Keyword                  | Type                                      | Default | Description |
-|--------------------------|-------------------------------------------|---------|-------------|
-| `name`                   | `str`                                     | `fn.__qualname__` | Stable identity for recovery routing. Always set this explicitly for production tasks. |
-| `title`                  | `str \| Callable[[T, str], str] \| None`  | `None`  | Human-readable title (template or callable). |
-| `timeout`                | `timedelta \| None`                       | `None`  | Execution timeout. When elapsed, `ctx.cancel` is set cooperatively. |
-| `ephemeral`              | `bool`                                    | `True`  | Delete the persisted record on terminal exit. |
-| `retry`                  | `RetryPolicy \| None`                     | `None`  | Retry policy for handler-raised exceptions. Recovery-safe (applied on every entry, including post-crash). |
-| `steerable`              | `bool`                                    | `False` | Allow `.start()` on an `in_progress` task to queue a steering input instead of raising. |
-
-All decorator options are recovery-safe: the framework only knows
-about the registered decorator after a crash, so anything that needs
-to survive recovery must be configured here. Use `Task.options(...)`
-to derive a variant with overrides without redefining the function.
-
-### `Task` (the handle)
-
-The decorated function exposes two keyword-only entry points:
+### 5.1 Decorators
 
 ```python
-async def run(
-    *, task_id: str, input: T,
-    input_id: str | None = None,
-    if_last_input_id: str | None = None,
-) -> TaskResult[R]
-
-async def start(
-    *, task_id: str, input: T,
-    input_id: str | None = None,
-    if_last_input_id: str | None = None,
-) -> TaskRun[R]
-```
-
-`.run()` blocks until the task reaches a terminal state and returns a
-`TaskResult`. `.start()` returns immediately with a `TaskRun` handle
-you can stream from or `await handle.result()` on. Both accept the
-same `input_id` / `if_last_input_id` sequential-input preconditions
-(see §4).
-
-Configure `title` / `retry` / `steerable` / `ephemeral` / `timeout`
-once on `@task(...)` (or use `Task.options(...)` for a derived
-`Task`). There is no per-call override — these settings need to
-survive crash recovery, and only the decorator-time values do.
-
-#### Read-only introspection: `Task.get(task_id) -> TaskSnapshot | None`
-
-Use `Task.get(task_id)` to read the current state of a task — its
-status, output, error, timestamps, suspension reason, and metadata.
-Returns `None` if no task with that id exists. Safe to call from
-a UI or polling loop, and works for tasks in any status (pending,
-in_progress, suspended, completed) so you can render a task's
-outcome without checking whether it's still running first.
-
-```python
-snap = await my_task.get("task-123")
-if snap is None:
-    print("never existed (or was deleted)")
-else:
-    print(snap.status, snap.output, snap.error)
-```
-
-`TaskSnapshot` fields:
-
-| Field | Type | Description |
-|---|---|---|
-| `task_id` | `str` | The task id. |
-| `status` | `TaskStatus` | `"pending"` / `"in_progress"` / `"suspended"` / `"completed"`. |
-| `created_at` | `datetime` | When the task was created. |
-| `updated_at` | `datetime` | Last state change. |
-| `started_at` | `datetime \| None` | First entry into `in_progress`; `None` while still `pending`. |
-| `completed_at` | `datetime \| None` | When the task reached `completed`; `None` otherwise. |
-| `output` | `Any` | Handler's return value, or the value passed to `ctx.suspend(output=...)`. `None` for failed / cancelled tasks and for tasks not yet past their first terminal turn. |
-| `error` | `dict \| None` | Structured error info (`type`, `message`, optional `cause`) for failed terminations. |
-| `suspension_reason` | `str \| None` | The `reason=` argument from the most recent `ctx.suspend()`. |
-| `metadata` | `dict[str, Any]` | Your default-namespace metadata. |
-| `lease_expiry_count` | `int` | Ownership-churn counter useful for dashboards (see `TaskRun.lease_expiry_count`). |
-
-Re-call `Task.get` to refresh.
-
-### `TaskContext`
-
-The single argument your handler receives. Properties:
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `input` | `T` | The typed input value. |
-| `entry_mode` | `EntryMode` | `"fresh"` / `"recovered"` / `"resumed"`. |
-| `task_id` | `str` | Task identity. |
-| `metadata` | `TaskMetadata` | Callable namespace facade (see §4). |
-| `cancel` | `asyncio.Event` | Set when cancellation is requested for any reason (timeout, external `.cancel()`, or steering input). Read with `ctx.cancel.is_set()` / `await ctx.cancel.wait()`. |
-| `timeout_exceeded` | `bool` | `True` once the per-turn timeout has elapsed. Read as `ctx.timeout_exceeded`. When you observe `ctx.cancel.is_set() == True`, this and the other cause booleans are already up-to-date so you can branch on cause. Never reset within a turn. |
-| `cancel_requested` | `bool` | `True` once `TaskRun.cancel()` was invoked against this run. Read as `ctx.cancel_requested`. Never reset. |
-| `pending_input_count` | `int` | Live count of queued steering inputs — read as `ctx.pending_input_count`. Reflects current backlog, including inputs queued mid-handler. Reads as `0` for non-steerable tasks. |
-| `is_steered_turn` | `bool` | `True` when this handler invocation was triggered by a queued steering input being processed. Read as `ctx.is_steered_turn`. Every other entry path (fresh, normal resume, recovery) yields `False`. Orthogonal to `entry_mode`: `(entry_mode="recovered", is_steered_turn=True)` is legal if a previous process crashed while it was processing a steered turn. |
-| `shutdown` | `asyncio.Event` | Set when the container is shutting down. Precondition for calling `ctx.exit_for_recovery()`. |
-| `retry_attempt` | `int` | Cross-lifetime retry counter (see §4). |
-| `recovery_count` | `int` | Increments each time the task is re-acquired by a new lifetime (after a crash). |
-
-Methods:
-
-- `await ctx.suspend(output=...)` — park the task in `suspended`.
-- `await ctx.exit_for_recovery()` — graceful-shutdown shape. See §4 Shutdown.
-
-All `ctx` fields are read-only.
-
-### `TaskMetadata`
-
-The persistent state surface returned by `ctx.metadata` and
-`ctx.metadata(name)`. Dict-like (`__getitem__` / `__setitem__` /
-`__contains__` / `__iter__` / `.get()` / `.to_dict()`) plus:
-
-- `metadata.flush()` — force-persist any pending writes for this
-  namespace. Returns when the write is durably committed.
-- `metadata.increment(key)` — atomic numeric increment.
-- `metadata.append(key, value)` — append to a list-valued key.
-
-### `EntryMode`
-
-A `Literal["fresh", "recovered", "resumed"]` you import for type
-hints:
-
-```python
-from azure.ai.agentserver.core.durable import EntryMode
-def on_entry(mode: EntryMode) -> None: ...
-```
-
-### `TaskResult` / `TaskRun` / `TaskStatus`
-
-There are **two separate literals** in play here — pick the right
-one for the question you're asking:
-
-- **`TaskStatus = Literal["pending", "in_progress", "suspended",
-  "completed"]`** — the *stored lifecycle state* on the task record.
-  Four values only. Unsuccessful terminations (failure / cancel) are
-  still `"completed"` from the store's perspective; the *cause* is
-  surfaced through the typed exceptions in §4.
-- **`TaskResult.status = Literal["completed", "suspended"]`** —
-  the *caller-observable outcome* of a single `.run()` / `.result()`
-  call. Two values:
-  - `"completed"` — handler returned normally; `result.output` is
-    the return value.
-  - `"suspended"` — handler called `ctx.suspend(output=...)`;
-    `result.output` is the suspend envelope; `result.suspension_reason`
-    is the optional reason passed in.
-
-`TaskResult` exposes `is_completed` and `is_suspended` boolean
-properties — preferred over string compares.
-
-Steering does NOT introduce a third status value. Steering is plain
-multi-turn (see §4 Steering): the first turn's caller observes the
-natural multi-turn outcome (`"suspended"` if the handler called
-`ctx.suspend(...)`, `"completed"` if it returned, or the typed
-exception if it raised), and the steerer's `.result()` resolves with
-the next turn's outcome (or raises `TaskConflictError` if the
-handler ended the task before draining).
-
-`TaskRun` is the handle returned by `Task.start()`. Useful members:
-
-- `await run.result()` — block until terminal-for-this-caller; same
-  `TaskResult` semantics as above.
-- `await run.cancel()` — signal cancellation; sets
-  `ctx.cancel_requested = True` and then `ctx.cancel`. The handler
-  decides the terminal shape (returns normally, suspends, or raises).
-- `run.status`, `run.metadata`, `run.lease_expiry_count` — last-known
-  values; call `await run.refresh()` to re-fetch from the store.
-
-To consume incremental events from a task, use the streaming
-subpackage — `streams.get(id).subscribe(after=...)`. See the
-[streaming guide](./streaming-guide.md).
-
-### `Suspended`
-
-The suspended-state envelope your handler returns via
-`return await ctx.suspend(...)`. The framework also surfaces it on
-the consumer side as `TaskResult.suspended` when a `.run()` call
-returns from a suspension. Carries the optional `output` snapshot
-the handler passed to `ctx.suspend(...)`.
-
-### `RetryPolicy`
-
-```python
-RetryPolicy(
+def task(
     *,
-    initial_delay: timedelta = timedelta(seconds=1),
-    backoff_coefficient: float = 2.0,
-    max_delay: timedelta = timedelta(seconds=60),
-    max_attempts: int = 3,
-    retry_on: tuple[type[Exception], ...] | None = None,
-    jitter: bool = True,
-)
+    name: str,                          # required — used for registration / recovery
+    title: str | None = None,           # static label for telemetry
+    timeout: timedelta | None = None,   # cooperative watchdog
+    retry: RetryPolicy | None = None,   # None = no retry
+) -> Callable[[Handler], Task[Input, Output]]: ...
+
+def multi_turn_task(
+    *,
+    name: str,
+    title: str | None = None,
+    timeout: timedelta | None = None,
+    retry: RetryPolicy | None = None,
+    steerable: bool = False,
+) -> Callable[[Handler], MultiTurnTask[Input, Output]]: ...
 ```
 
-`max_attempts` is the total failure-retry budget across all
-lifetimes for the task; crash recovery does NOT consume it.
-`retry_on=None` retries every exception; pass a tuple to scope
-retries to specific types.
+Each decorator produces a **distinct class** (`Task` vs
+`MultiTurnTask`) — the type checker enforces "no `.delete()` on
+one-shot" and "multi-turn `get_active_run` takes `(task_id,
+input_id)`" statically.
 
-### Streaming
+### 5.2 `Task` (one-shot)
 
-Streaming has moved out of `@task` into a separate process-level
-primitive — `azure.ai.agentserver.core.streaming.streams`. See §4
-("Streaming") for the in-line example and
-[`streaming-guide.md`](./streaming-guide.md)
-for the full developer guide.
+```python
+class Task(Generic[Input, Output]):
+    name: str
 
-### Exceptions
+    async def run(
+        self, *,
+        input: Input,
+        task_id: str | None = None,
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> Output: ...
 
-These are the exceptions developers actually catch. All others surfaced
-by the package are either internal-only or wrap one of these.
+    async def start(
+        self, *,
+        input: Input,
+        task_id: str | None = None,
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> TaskRun[Output]: ...
 
-| Exception | Raised by | When |
-|-----------|-----------|------|
-| `TaskFailed` | `.run()` / `.result()` | Handler raised an unhandled exception. `.error` carries the structured cause. |
-| `TaskCancelled` | `.run()` / `.result()` | Handler ended via the cooperative-cancel path (e.g., re-raised `asyncio.CancelledError` after observing `ctx.cancel.is_set()`) OR via `ctx.exit_for_recovery()`. |
-| `TaskNotFound` | `handle.result()` / `.start()` | Referenced `task_id` has been deleted between calls. |
-| `TaskConflictError` | `.run()` / `.start()` / `handle.result()` (steerer) | Raised whenever a task is busy or unavailable. `.current_status` carries which case (`in_progress`, `completed`, `failed`, `cancelled`). |
-| `LastInputIdPreconditionFailed` | `.start(if_last_input_id=...)` | Sequential-input precondition not satisfied (subclass of `TaskPreconditionFailed`). |
-| `TaskPreconditionFailed` | `.start(...)` | Base for input-acceptance precondition failures. |
-| `SteeringQueueFull` | `.start(...)` on steerable task | Steerable task's input queue is full. |
+    async def get_active_run(self, task_id: str) -> TaskRun[Output] | None: ...
+```
+
+### 5.3 `MultiTurnTask`
+
+```python
+class MultiTurnTask(Generic[Input, Output]):
+    name: str
+
+    async def run(
+        self, *,
+        task_id: str,
+        input: Input,
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> Output: ...
+
+    async def start(
+        self, *,
+        task_id: str,
+        input: Input,
+        input_id: str | None = None,
+        if_last_input_id: str | None = None,
+    ) -> TaskRun[Output]: ...
+
+    async def get_active_run(
+        self, task_id: str, input_id: str,
+    ) -> TaskRun[Output] | None: ...
+
+    async def delete(self, task_id: str) -> None: ...
+```
+
+### 5.4 `TaskRun[Output]`
+
+```python
+class TaskRun(Generic[Output]):
+    task_id: str
+    input_id: str
+    metadata: TaskMetadata
+
+    async def result(self) -> Output: ...
+    async def cancel(self) -> None: ...
+    def __await__(self) -> Generator[Any, None, Output]: ...
+```
+
+### 5.5 `TaskContext[Input]`
+
+```python
+class TaskContext(Generic[Input]):
+    # Identifiers (read-only).
+    input: Input
+    task_id: str
+    input_id: str
+    entry_mode: EntryMode             # "fresh" | "resumed" | "recovered"
+    retry_attempt: int                # 0 on the first try; survives crash recovery
+
+    # Steering observability (multi-turn).
+    is_steered_turn: bool             # True iff this turn was promoted from the queue
+    pending_input_count: int          # how many newer turns are queued behind this one
+
+    # Cancellation — all cooperative.
+    cancel: asyncio.Event             # any-cause cancel
+    cancel_requested: bool            # cause: TaskRun.cancel() was called
+    timeout_exceeded: bool            # cause: per-turn timeout watchdog fired
+    shutdown: asyncio.Event           # container is shutting down
+
+    # Cross-turn / cross-attempt state.
+    metadata: TaskMetadata
+
+    # Control.
+    async def exit_for_recovery(self) -> None: ...
+```
+
+The handler's first parameter MUST be named `ctx`. The framework
+binds positionally, but it validates the name at decoration time
+so the guide examples and your handler stay consistent.
+
+Read-only enumeration:
+
+- `ctx.input`, `ctx.task_id`, `ctx.input_id`, `ctx.entry_mode`,
+  `ctx.retry_attempt`
+- `ctx.is_steered_turn`, `ctx.pending_input_count`
+- `ctx.cancel`, `ctx.cancel_requested`, `ctx.timeout_exceeded`,
+  `ctx.shutdown`
+- `ctx.metadata`
+- `ctx.exit_for_recovery()`
+
+### 5.6 Exceptions
+
+Public exception taxonomy. Each carries only **new** information the
+caller doesn't already have (the caller already has `task_id` /
+`input_id` from the call site or `TaskRun`).
+
+| Exception | Shape | When it is raised |
+|-----------|-------|-------------------|
+| `TaskFailed` | `error: TaskErrorDict \| TaskExhaustedRetriesErrorDict` | Handler raised; caller of `.result()` / `.run()` sees this. |
+| `TaskCancelled` | bare | Cooperative cancel honoured (handler raised `CancelledError`); per-task timeout watchdog honoured; `MultiTurnTask.delete()` invalidating an in-flight run; queued steerer cancelled before promotion. |
+| `TaskDeferred` | bare | Handler called `ctx.exit_for_recovery()` — the task continues durably; the recovery scanner re-invokes in a future lifetime. |
+| `TaskConflictError` | `current_status: str` | `.start` / `.run` against an in-flight or terminal task that can't accept the call (one-shot in-progress / completed; multi-turn non-steerable in-progress). |
+| `LastInputIdPreconditionFailed` | `actual_last_input_id: str \| None` | `if_last_input_id=` precondition didn't match. |
+| `SteeringQueueFull` | bare | Steering queue at capacity (multi-turn `steerable=True` only). |
+| `InputTooLarge` | bare | Input value exceeds the per-input cap. |
+
+`TaskFailed.error` is one of two `TypedDict`s:
+
+```python
+class TaskErrorDict(TypedDict):
+    type: str            # exception class name, e.g. "ValueError"
+    message: str         # str(exc)
+    traceback: str       # traceback.format_exc()
+
+class TaskExhaustedRetriesErrorDict(TypedDict):
+    type: Literal["exhausted_retries"]
+    attempts: int        # number of attempts made (>= max_attempts)
+    last_error: str
+    last_error_type: str
+    traceback: str
+```
+
+### 5.7 `RetryPolicy`
+
+```python
+class RetryPolicy:
+    initial_delay: timedelta
+    backoff_coefficient: float
+    max_delay: timedelta
+    max_attempts: int
+    retry_on: tuple[type[BaseException], ...] | None
+    jitter: bool
+
+    def __init__(
+        self, *,
+        initial_delay: timedelta = timedelta(seconds=1),
+        backoff_coefficient: float = 2.0,
+        max_delay: timedelta = timedelta(seconds=60),
+        max_attempts: int = 3,
+        retry_on: tuple[type[BaseException], ...] | None = None,
+        jitter: bool = True,
+    ) -> None: ...
+```
+
+Presets: `exponential_backoff(...)`, `fixed_delay(delay, ...)`,
+`linear_backoff(...)`, `no_retry()`.
+
+### 5.8 `TaskMetadata` and `JSONValue`
+
+```python
+JSONValue = Union[
+    str, int, float, bool, None,
+    list[JSONValue],
+    dict[str, JSONValue],
+]
+
+class TaskMetadata:
+    def __getitem__(self, key: str) -> JSONValue: ...
+    def __setitem__(self, key: str, value: JSONValue) -> None: ...
+    def __delitem__(self, key: str) -> None: ...
+    def __contains__(self, key: str) -> bool: ...
+    def __iter__(self) -> Iterator[str]: ...
+    def get(self, key: str, default: JSONValue = None) -> JSONValue: ...
+    def __call__(self, namespace: str) -> TaskMetadata: ...   # sibling ns
+    async def flush(self) -> None: ...                        # at-most-once fence
+```
+
+### 5.9 `EntryMode`
+
+```python
+EntryMode = Literal["fresh", "resumed", "recovered"]
+```
 
 ---
 
 ## 6. Patterns
 
-The following patterns are the small set of idioms most agent code
-ends up using. Each is **complete** — copy, change the name, and
-ship.
+### 6.1 Multi-turn agent (the common case)
 
-### Pattern A — At-most-once side effect across recovery
+```python
+@multi_turn_task(name="session_agent")
+async def session_agent(ctx: TaskContext[dict]) -> dict:
+    # ctx.entry_mode is "fresh" on the first turn, "resumed" on
+    # subsequent turns of this conversation.
+    history = ctx.metadata.get("history", [])
+    user_msg = ctx.input["message"]
+    history.append({"role": "user", "content": user_msg})
+
+    reply = await llm.chat(history)
+
+    history.append({"role": "assistant", "content": reply})
+    ctx.metadata["history"] = history
+    return {"reply": reply, "turn": ctx.metadata.get("turn", 0) + 1}
+
+# Turn 1.
+r1 = await session_agent.run(task_id="conv-A", input={"message": "hi"})
+
+# Turn 2 — same task_id resumes the chain; history is preserved.
+r2 = await session_agent.run(task_id="conv-A", input={"message": "what time is it?"})
+```
+
+### 6.2 At-most-once side effects across crashes
 
 ```python
 @task(name="charge_card")
-async def charge_card(ctx: TaskContext[dict]) -> dict:
-    if ctx.metadata.get("charge_id") is None:
-        # Pre-issue dedup token, fence it durably BEFORE the side effect.
-        token = uuid.uuid4().hex
-        ctx.metadata["charge_id"] = token
-        await ctx.metadata.flush()
-        await stripe.charge(amount=ctx.input["amount"], idempotency_key=token)
-    return {"charged": ctx.metadata["charge_id"]}
-```
+async def charge_card(ctx: TaskContext[dict]) -> str:
+    # Survive recovery: if we already charged in a prior lifetime,
+    # don't double-charge.
+    if ctx.metadata.get("charge_done"):
+        return ctx.metadata["charge_receipt"]
 
-If the lifetime dies between the `flush()` and the `stripe.charge`
-call, the next lifetime sees `charge_id` already set and retries the
-*charge* call (Stripe's idempotency_key dedups the duplicate).
-
-### Pattern B — Resumable iteration with a watermark
-
-```python
-@task(name="bulk_index")
-async def bulk_index(ctx: TaskContext[list[str]]) -> dict:
-    items = ctx.input
-    start = ctx.metadata.get("index", 0)
-    for i in range(start, len(items)):
-        await index_one(items[i])
-        ctx.metadata["index"] = i + 1
-    return {"indexed": len(items)}
-```
-
-On crash, the recovered lifetime picks up at the last persisted
-watermark. The framework snapshots metadata at lifecycle boundaries
-(see §4); for crash safety mid-loop, add
-`await ctx.metadata.flush()` after each write.
-
-### Pattern C — Multi-turn conversation via suspend/resume
-
-```python
-@task(name="chat_session")
-async def chat_session(ctx: TaskContext[dict]) -> dict:
-    if ctx.entry_mode == "fresh":
-        history: list[dict] = []
-    else:
-        history = ctx.metadata.get("history", [])
-
-    history.append({"role": "user", "content": ctx.input["message"]})
-
-    reply = await llm(history)
-    history.append({"role": "assistant", "content": reply})
-
-    ctx.metadata["history"] = history
-    ctx.metadata["turn_count"] = ctx.metadata.get("turn_count", 0) + 1
+    # Reserve a dedup token before the side effect, flush, then act.
+    ctx.metadata["pending_charge_token"] = generate_uuid()
     await ctx.metadata.flush()
 
-    return await ctx.suspend(output={"reply": reply, "turn": ctx.metadata["turn_count"]})
+    receipt = await payment_gateway.charge(
+        ctx.input["card"],
+        ctx.input["amount"],
+        idempotency_key=ctx.metadata["pending_charge_token"],
+    )
+
+    ctx.metadata["charge_done"] = True
+    ctx.metadata["charge_receipt"] = receipt
+    return receipt
 ```
 
-Caller (one session, many turns, same `task_id`):
+### 6.3 Steering — interruptible long turn
 
 ```python
-session = f"chat:{user_id}:{conversation_id}"
-
-# Turn 1.
-r1 = await chat_session.run(task_id=session, input={"message": "Hello!"})
-print(r1.output["reply"])      # is_suspended is True; we'll come back.
-
-# Turn 2 — same task_id resumes the persisted history.
-r2 = await chat_session.run(task_id=session, input={"message": "What did I just say?"})
-print(r2.output["reply"])      # The LLM sees turn 1 in history.
-```
-
-Why this works:
-
-- **State survives in `ctx.metadata`**, not in handler locals. The
-  handler exits between turns; only metadata is persisted.
-- **The same `task_id` is the conversation's identity.** Pick a
-  stable key (user + conversation id, in this example) so subsequent
-  `.run()` calls land on the same task.
-- **`entry_mode == "fresh"` branches initialization** from resumption.
-  Turn 1 sees `"fresh"`; every subsequent turn sees `"resumed"`.
-- **`await ctx.metadata.flush()` before `ctx.suspend()`** ensures the
-  history is durably persisted before the caller is told the turn is
-  done. The framework also persists at the suspend boundary, but an
-  explicit pre-suspend flush is cheap insurance for partial-write
-  scenarios.
-
-### Pattern D — Per-namespace metadata to keep concerns isolated
-
-```python
-@task(name="orchestrator")
-async def orchestrator(ctx: TaskContext[dict]) -> dict:
-    # Default namespace: caller-facing checkpoints.
-    ctx.metadata["progress_pct"] = 0
-    # Sibling namespace: tool-call dedup tokens.
-    tools = ctx.metadata("tool_calls")
-    for tool in plan:
-        if tools.get(tool.id) is None:
-            tools[tool.id] = await invoke_tool(tool)
-            await tools.flush()
-    ctx.metadata["progress_pct"] = 100
-    return ctx.metadata("tool_calls").to_dict()
-```
-
-### Pattern E — Streaming partial results to a UI
-
-```python
-from azure.ai.agentserver.core.streaming import streams
-
-# Once at app startup:
-streams.use_in_memory_replay(ttl_seconds=600)
-
-@task(name="research")
-async def research(ctx: TaskContext[dict]) -> str:
-    inv_id = ctx.input["invocation_id"]
-    stream = await streams.get_or_create(inv_id)
-    try:
-        sources = await search(ctx.input["query"])
-        for s in sources:
-            await stream.emit({"event": "source", "url": s.url})
-        result = await synthesize(sources)
-        await stream.emit({"event": "result", "text": result})
-        return result
-    finally:
-        await stream.close()
-```
-
-Consumer (HTTP layer attaches **before** starting the task):
-
-```python
-stream = await streams.get_or_create(invocation_id)
-run = await research.start(
-    task_id="r-1",
-    input={"invocation_id": invocation_id, "query": "LLM observability"},
-)
-async for ev in stream.subscribe(after=0):
-    ui.push(ev)
-final = await run.result()
-```
-
-See [`streaming-guide.md`](./streaming-guide.md)
-for backings, per-turn id convention, and exception/wire mapping.
-
-### Pattern F — Steerable chat: queueing new inputs mid-flight
-
-```python
-@task(name="steerable_chat", steerable=True)
-async def steerable_chat(ctx: TaskContext[dict]) -> dict:
-    history = ctx.metadata.get("history", []) if ctx.entry_mode != "fresh" else []
-    history.append({"role": "user", "content": ctx.input["message"]})
-
-    if ctx.is_steered_turn and ctx.pending_input_count > 0:
-        # Multiple inputs already queued behind us — fast-suspend so
-        # the framework can drain to the freshest input without doing
-        # work for stale ones.
-        ctx.metadata["history"] = history
-        return await ctx.suspend(output={"skipped_early": True})
-
-    reply_buf: list[str] = []
-    async for chunk in llm_stream(history):
+@multi_turn_task(name="thinker", steerable=True)
+async def thinker(ctx: TaskContext[dict]) -> dict:
+    partial = []
+    async for chunk in slow_llm_stream(ctx.input):
         if ctx.cancel.is_set():
-            # A new turn arrived. Stash the partial and yield.
-            history.append({
-                "role": "assistant",
-                "content": "".join(reply_buf),
-                "partial": True,
-            })
-            ctx.metadata["history"] = history
-            return await ctx.suspend(output={"interrupted": True})
-        reply_buf.append(chunk)
-
-    reply = "".join(reply_buf)
-    history.append({"role": "assistant", "content": reply})
-    ctx.metadata["history"] = history
-    return await ctx.suspend(output={"reply": reply})
-```
-
-Caller side, showing the plain-multi-turn semantics:
-
-```python
-session = f"chat:{user_id}:{conversation_id}"
+            # User changed their mind — surface what we have and bow out.
+            return {"interrupted": True, "partial": "".join(partial)}
+        partial.append(chunk)
+    return {"reply": "".join(partial)}
 
 # Turn 1 starts a slow generation.
-run1 = await steerable_chat.start(task_id=session, input={"message": "Tell me a long story."})
-
-# 50ms later, user changes their mind.
-run2 = await steerable_chat.start(task_id=session, input={"message": "Actually, what's 2 + 2?"})
-
-# First caller's run resolves with turn 1's natural outcome.
-# Strategy A handler suspends on ctx.cancel.is_set() → status="suspended"
-# with the handler's `output={"interrupted": True}` delivered unconditionally.
-r1 = await run1.result()
-assert r1.is_suspended
-assert r1.output == {"interrupted": True}
-
-# Steering caller's run resolves with turn 2's outcome.
-r2 = await run2.result()
-assert r2.is_suspended          # the steerable handler ends each turn via ctx.suspend(...)
-print(r2.output["reply"])       # "4"
+r1 = asyncio.create_task(thinker.start(task_id="t1", input={"msg": "long question"}))
+# 50 ms later the user pivots.
+await asyncio.sleep(0.05)
+r2 = asyncio.create_task(thinker.start(task_id="t1", input={"msg": "shorter question"}))
+# r1.result() resolves with {"interrupted": True, ...}; r2 with the answer.
 ```
 
-What this pattern covers that Pattern C doesn't:
+### 6.4 Graceful shutdown — `exit_for_recovery`
 
-- **`steerable=True`** turns `.start()`-on-`in_progress` from
-  `TaskConflictError` into "queue + cancel".
-- **`ctx.cancel.is_set()`** is the in-handler signal to wind down
-  cleanly. Suspending with a partial output is the canonical shape.
-- **`ctx.is_steered_turn` + `ctx.pending_input_count`** let a handler
-  short-circuit when it's already multiple turns behind.
-- **Plain multi-turn semantics**: each caller sees the outcome of
-  the turn they kicked off — turn 1's caller gets turn 1's output,
-  turn 2's caller gets turn 2's.
-- **Backpressure**: if a misbehaving client floods `.start()`, the
-  bounded steering queue raises `SteeringQueueFull` to the caller —
-  the handler never sees runaway memory growth.
+```python
+@multi_turn_task(name="long_runner")
+async def long_runner(ctx: TaskContext[dict]) -> dict:
+    for step in plan(ctx.input):
+        if ctx.shutdown.is_set():
+            # Container is going down; defer to the next lifetime.
+            await ctx.exit_for_recovery()      # raises TaskDeferred upstream
+        await do(step)
+    return {"done": True}
+```
+
+The caller awaiting `await run.result()` sees `TaskDeferred`. The
+task record stays `in_progress`; the next lifetime's recovery
+scanner re-invokes the handler with the same `ctx.input` and
+`entry_mode="recovered"`.
+
+### 6.5 Late-join an in-flight run
+
+```python
+# Caller A launched the work…
+run_a = await chat.start(task_id="conv-9", input_id="i1", input={"msg": "hi"})
+
+# … but caller B (different coroutine / different request) wants to
+# attach to the same in-flight turn:
+run_b = await chat.get_active_run("conv-9", "i1")
+if run_b is not None:
+    output = await run_b              # same Output that A sees
+```
+
+`get_active_run` returns `None` when the chain isn't in-flight for
+that exact `(task_id, input_id)` — no retrospective attach to a
+terminated turn.
+
+### 6.6 Optimistic concurrency on the input queue
+
+```python
+prev_input_id = "msg-7"   # what the caller thinks the chain last accepted
+
+try:
+    await chat.run(
+        task_id="conv-2",
+        input_id="msg-8",
+        input={"msg": "next"},
+        if_last_input_id=prev_input_id,
+    )
+except LastInputIdPreconditionFailed as exc:
+    # Concurrent caller advanced the chain to exc.actual_last_input_id;
+    # re-fetch UI state and try again.
+    ...
+```
 
 ---
 
-## 7. Operational / Testing
+## 7. Operational notes
 
-### Local development
-
-Durable storage is **zero-configuration**. When you run the agent on
-your laptop, durable task state lives in a file under the project's
-working directory so you can `cat` it while debugging. When the same
-agent runs in the hosted platform, state lives in the platform's
-task-storage service. Your handler code does not change between the
-two.
-
-### Testing a recovery path
-
-You don't need a crashed process to exercise the `"recovered"` entry
-mode. In a unit test, invoke the handler once with a `task_id`, let
-it write a watermark, and tear the first invocation down before it
-completes. Then invoke it again with the **same** `task_id` — the
-second invocation will see `ctx.entry_mode == "recovered"` and the
-persisted `ctx.metadata` / counters from the first run.
-
-Recovery is automatic. When a previous process abandoned an
-`in_progress` task (crash, OOM, redeploy), the next process re-enters
-your handler with `ctx.entry_mode == "recovered"` — nothing to
-configure.
-
-```python
-@task(name="resumable")
-async def resumable(ctx: TaskContext[int]) -> int:
-    if ctx.entry_mode == "fresh":
-        ctx.metadata["seen"] = ctx.input
-        raise SystemExit("simulate a crash")  # tear lifetime 1 down
-    assert ctx.entry_mode == "recovered"
-    return ctx.metadata["seen"]
-
-# Lifetime 1: writes watermark, then dies.
-with pytest.raises(SystemExit):
-    await resumable.run(task_id="t-1", input=42)
-# Lifetime 2: framework detects the abandoned task on next entry →
-#             "recovered" entry mode.
-result = await resumable.run(task_id="t-1", input=42)
-assert result.output == 42
-```
-
-### What's persisted automatically
-
-| Boundary | What is persisted |
-|----------|-------------------|
-| `start` | Input, initial counters, namespace snapshot. |
-| `suspend` | `Suspended` envelope, namespace snapshot, queued inputs (steerable). |
-| Handler returns or raises | Terminal status (`completed`), final namespace snapshot, output (or structured error). |
-| Steering drain re-entry | New turn-start timestamp; namespace snapshot. |
-| `ctx.exit_for_recovery()` | Namespace snapshot; status preserved as `in_progress`; ownership released for the next process. |
-| `flush()` (handler-initiated) | The addressed namespace only, atomically. |
-
-Your metadata is persisted automatically whenever a turn ends —
-whether through `ctx.suspend(...)`, a normal return, an unhandled
-raise, cooperative cancel, or `ctx.exit_for_recovery()`. Use explicit
-`ctx.metadata.flush()` only as a fence before at-most-once side
-effects across a *crash*.
-
-### Operational counters
-
-- `recovery_count` — how many times this task has been re-acquired by
-  a new lifetime. Useful as a recovery-loop health signal.
-- `retry_attempt` — how many handler-raised retryable failures have
-  occurred. Bounded by `RetryPolicy.max_attempts`.
+- **Heartbeats / lease.** The framework holds a lease on the
+  task record while the handler runs and renews it automatically.
+  If the process dies, the lease expires and the recovery scanner
+  reclaims the record on a future process startup.
+- **Recovery is from the persisted input.** A recovered handler is
+  invoked with the same `ctx.input` the lost lifetime saw — not
+  with any new input the caller may now be passing. (A caller's
+  new `.start` against an in-flight record with an expired lease
+  follows the normal lifecycle: rejected for one-shot /
+  non-steerable, queued for `steerable=True` multi-turn.)
+- **Structured failure logs.** Every handler raise emits an
+  ERROR-level event named `durable_task_handler_failure` with
+  `task_id`, `input_id`, `error_type`, `error_message` fields —
+  visible in your observability pipeline whether or not your caller
+  awaited the failed `.result()`.
+- **Storage backends.** The same primitive runs against the hosted
+  task store and against a local file-backed store for development
+  and tests.
+- **Streaming** is a separate primitive in
+  `azure.ai.agentserver.core.streaming` — `await streams.get_or_create(invocation_id)`
+  gives the handler a stream handle. `TaskRun` itself is not
+  iterable.
 
 ---
 
 ## 8. What This Is NOT
 
-- **Not a deterministic-replay framework.** `@task` does not record
-  every effect so you can replay them on recovery. The handler is
-  re-invoked from the top with whatever state survived; the durable
-  bits are `ctx.input`, `ctx.metadata`, and the counters. Determinism
-  is your handler's responsibility (the at-most-once pattern in §6 is
-  the standard workaround).
-- **Not a workflow engine.** If you want fan-out / fan-in,
-  child-workflow orchestration, signals, timers as first-class
-  primitives, use Temporal / Durable Functions. `@task` is the thin
-  durable boundary around a single agent function — use it inside
-  those engines if you want, but it is not a replacement for them.
-- **Not a bulk data store.** `ctx.metadata` is intentionally small.
-  Persist conversation history, LLM outputs, and large checkpoints
-  through your underlying framework (LangGraph SqliteSaver, your own
-  DB, etc.). Use metadata only for small watermarks and dedup tokens.
-- **Not a queue.** A `task_id` identifies one logical unit of work.
-  If you want competing consumers off a shared queue, you want a
+- **Not a deterministic-replay framework.** The handler is re-invoked
+  from the top on recovery; the framework does not record and
+  replay every effect. Determinism across re-invocations is the
+  handler's responsibility — use `ctx.metadata` watermarks for
+  at-most-once patterns (see §6.2).
+- **Not a workflow engine.** No fan-out / fan-in, no child-workflow
+  orchestration, no first-class signals or timers. If you need
+  those, use Temporal / Durable Functions and wrap durable tasks
+  inside them.
+- **Not a bulk data store.** `ctx.metadata` is intentionally small
+  and JSON-only. Persist conversation history, LLM outputs, and
+  big checkpoints through your own storage (LangGraph SqliteSaver,
+  your own DB). Use metadata only for small watermarks and dedup
+  tokens.
+- **Not a queue.** A `task_id` identifies one logical unit of
+  work. If you want competing consumers off a shared queue, use a
   different primitive.
+
+---
+
+## Quick FAQ
+
+**Q. How do I do "fire and forget"?**
+A. `await task_fn.start(input=...)` — the call returns a `TaskRun`
+handle as soon as the work is registered. You can drop the handle
+and the task runs durably; the next caller can attach via
+`get_active_run(task_id)` if they care about the outcome.
+
+**Q. Can two callers run the same `task_id` concurrently?**
+A. No — `task_id` is the identity. The second caller either attaches
+to the first's in-flight run (one-shot via the lifecycle merge),
+gets queued (multi-turn `steerable=True`), or sees `TaskConflictError`.
+
+**Q. Does the framework retry by default?**
+A. No. Pass `retry=RetryPolicy(...)` to opt in.
+
+**Q. Can I store conversation history in `ctx.metadata`?**
+A. Small histories fit, but `metadata` is intentionally small and
+JSON-only. Use a dedicated checkpointer (LangGraph SqliteSaver,
+your own DB, etc.) for large multi-turn state, and keep `metadata`
+to small watermarks and dedup tokens.
+
+**Q. What if my handler ignores `ctx.cancel`?**
+A. Cooperative cancel is a request; nothing forces the handler to
+stop. If your handler must be interruptible, check
+`ctx.cancel.is_set()` in your loop. `MultiTurnTask.delete(task_id)`
+is the only call that force-cancels: it sets the cancel event AND
+hard-cancels the underlying asyncio task so a non-cooperating
+handler still exits.
+
+**Q. How do I inspect a task's persisted state from outside the handler?**
+A. Consult the task manager's provider directly:
+`await manager.provider.get(task_id)` returns a `TaskInfo` snapshot.
+The decorator's public surface intentionally doesn't expose a
+`.get()` method — read paths go through the provider so the public
+decorator surface stays small and write-shaped.

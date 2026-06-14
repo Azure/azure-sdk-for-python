@@ -7,10 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable._models import (
-    TaskCreateRequest,
-    TaskInfo,
-)
+from azure.ai.agentserver.core.durable._models import TaskCreateRequest, TaskInfo
 
 
 class TestTaskInfoSource:
@@ -22,16 +19,12 @@ class TestTaskInfoSource:
 
     def test_set_at_construction(self):
         src = {"type": "user", "origin": "cli"}
-        info = TaskInfo(
-            id="t1", agent_name="a", session_id="s", status="pending", source=src
-        )
+        info = TaskInfo(id="t1", agent_name="a", session_id="s", status="pending", source=src)
         assert info.source == src
 
     def test_to_dict_includes_source(self):
         src = {"type": "api", "request_id": "r1"}
-        info = TaskInfo(
-            id="t1", agent_name="a", session_id="s", status="pending", source=src
-        )
+        info = TaskInfo(id="t1", agent_name="a", session_id="s", status="pending", source=src)
         d = info.to_dict()
         assert d["source"] == src
 
@@ -58,9 +51,7 @@ class TestTaskInfoSource:
 
     def test_round_trip(self):
         src = {"origin": "test", "nested": {"a": 1}}
-        info = TaskInfo(
-            id="t1", agent_name="a", session_id="s", status="pending", source=src
-        )
+        info = TaskInfo(id="t1", agent_name="a", session_id="s", status="pending", source=src)
         restored = TaskInfo.from_dict(info.to_dict())
         assert restored.source == src
 
@@ -83,17 +74,11 @@ class TestSourceLocalProvider:
 
     @pytest.mark.asyncio
     async def test_source_persisted_and_retrieved(self, tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
         src = {"type": "test", "run_id": "abc123"}
-        req = TaskCreateRequest(
-            agent_name="agent",
-            session_id="test-session",
-            source=src,
-        )
+        req = TaskCreateRequest(agent_name="agent", session_id="test-session", title="source test", source=src)
         created = await provider.create(req)
         assert created.source == src
 
@@ -104,12 +89,10 @@ class TestSourceLocalProvider:
 
     @pytest.mark.asyncio
     async def test_source_none_not_persisted(self, tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
-        req = TaskCreateRequest(agent_name="agent", session_id="test-session")
+        req = TaskCreateRequest(agent_name="agent", session_id="test-session", title="source test")
         created = await provider.create(req)
         assert created.source is None
 
@@ -120,16 +103,12 @@ class TestSourceLocalProvider:
     @pytest.mark.asyncio
     async def test_source_immutable_after_create(self, tmp_path):
         """Source must not be changeable via PATCH — TaskPatchRequest has no source field."""
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
         from azure.ai.agentserver.core.durable._models import TaskPatchRequest
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
         req = TaskCreateRequest(
-            agent_name="agent",
-            session_id="test-session",
-            source={"type": "original"},
+            agent_name="agent", session_id="test-session", title="source test", source={"type": "original"}
         )
         created = await provider.create(req)
 

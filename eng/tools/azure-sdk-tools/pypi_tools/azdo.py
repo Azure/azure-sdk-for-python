@@ -62,9 +62,15 @@ class AzureArtifactsClient:
     via Azure DevOps Artifacts REST API.
     """
 
-    def __init__(self, cfg: AzureArtifactsFeedConfig, base_url: str = "https://feeds.dev.azure.com"):
+    def __init__(
+        self,
+        cfg: AzureArtifactsFeedConfig,
+        base_url: str = "https://feeds.dev.azure.com",
+        pkgs_base_url: str = "https://pkgs.dev.azure.com",
+    ):
         self._cfg = cfg
         self._base_url = base_url.rstrip("/")
+        self._pkgs_base_url = pkgs_base_url.rstrip("/")
         self._http = PoolManager(
             retries=Retry(total=3, raise_on_status=True),
             ca_certs=os.getenv("REQUESTS_CA_BUNDLE", None),
@@ -151,7 +157,77 @@ class AzureArtifactsClient:
             try:
                 out.append(parse(raw))
             except InvalidVersion:
-                logging.warning("Invalid version %r for package %s (feed=%s)", raw, package_name, self._cfg.feed)
+                logging.warning(
+                    "Invalid version %r for package %s (feed=%s)",
+                    raw,
+                    package_name,
+                    self._cfg.feed,
+                )
 
         out.sort()
         return out
+
+    def _head_ok(self, url: str) -> bool:
+        """Return True if a HEAD request to *url* resolves successfully (2xx)."""
+        headers = self._auth_header()
+        try:
+            r = self._http.request("HEAD", url, headers=headers, redirect=True)
+        except Exception as ex:  # pylint: disable=broad-except
+            logging.debug("HEAD request failed for %s: %s", url, ex)
+            return False
+        return 200 <= r.status < 300
+
+    def _sdist_filename_candidates(self, package_name: str, version: str) -> List[str]:
+        """Candidate sdist filenames for *package_name*==*version*.
+
+        Sdist filenames vary by build tooling: legacy hyphenated form
+        (``azure-core-1.0.0.tar.gz``) vs PEP 625 underscore form
+        (``azure_core-1.0.0.tar.gz``), and ``.tar.gz`` vs ``.zip``.
+        """
+        hyphen = re.sub(r"[-_.]+", "-", package_name)
+        underscore = re.sub(r"[-_.]+", "_", package_name)
+        # Preserve insertion order while de-duplicating (e.g. single-token names).
+        stems = list(dict.fromkeys([hyphen, underscore, package_name]))
+        return [f"{stem}-{version}{ext}" for stem in stems for ext in (".tar.gz", ".zip")]
+
+    def get_download_uri(self, package_name: str, version: str) -> Optional[str]:
+        """Resolve the sdist download URI for *package_name*==*version*.
+
+        Builds the Azure Artifacts PyPI download URL and probes candidate sdist
+        filenames with HEAD requests, returning the first that resolves.
+        Requesting this URL triggers an upstream pull, so versions that are not
+        yet present in the feed's stale PEP 503 Simple index are still served.
+        """
+        download_base = (
+            f"{self._pkgs_base_url}/{self._path_prefix()}"
+            f"/_packaging/{self._cfg.feed}/pypi/download/{package_name}/{version}"
+        )
+        for filename in self._sdist_filename_candidates(package_name, version):
+            url = f"{download_base}/{filename}"
+            if self._head_ok(url):
+                logging.info("Resolved download URI for %s==%s: %s", package_name, version, url)
+                return url
+        logging.warning("Could not resolve a download URI for %s==%s", package_name, version)
+        return None
+
+    def get_latest_download_uri(
+        self, package_name: str, allow_prerelease: bool = False
+    ) -> "tuple[Optional[str], Optional[str]]":
+        """Return ``(version_str, sdist_download_uri)`` for the latest version.
+
+        Version discovery uses the Feed REST API, which reflects the feed's
+        current view (the PEP 503 Simple index only serves stale, locally-cached
+        versions). The download URI is resolved against ``pkgs.dev.azure.com``.
+        """
+        versions = self.get_ordered_versions(package_name)
+        if not versions:
+            return None, None
+
+        if allow_prerelease:
+            latest = versions[-1]
+        else:
+            stable = [v for v in versions if not v.is_prerelease]
+            latest = stable[-1] if stable else versions[-1]
+
+        version_str = str(latest)
+        return version_str, self.get_download_uri(package_name, version_str)

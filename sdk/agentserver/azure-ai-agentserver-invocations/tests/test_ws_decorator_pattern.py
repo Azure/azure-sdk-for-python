@@ -17,11 +17,13 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 # Decorator validation
 # ---------------------------------------------------------------------------
 
+
 def test_ws_handler_rejects_sync_function():
     """``@app.ws_handler`` must be applied to ``async def`` callables."""
     app = InvocationAgentServerHost()
 
     with pytest.raises(TypeError, match="async function"):
+
         @app.ws_handler  # type: ignore[arg-type]
         def sync_handler(websocket):  # noqa: ARG001
             pass
@@ -42,6 +44,7 @@ def test_ws_handler_returns_function_unchanged():
 # ---------------------------------------------------------------------------
 # Decorator state — slot storage / defaults / re-registration
 # ---------------------------------------------------------------------------
+
 
 def test_ws_handler_stores_function():
     """``@app.ws_handler`` stores the registered function on the host."""
@@ -71,6 +74,7 @@ def test_ws_handler_last_registration_wins(caplog):
         return
 
     with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
+
         @app.ws_handler
         async def second(websocket: WebSocket) -> None:  # noqa: ARG001
             return
@@ -84,6 +88,7 @@ def test_ws_handler_rejects_zero_arg_coroutine():
     app = InvocationAgentServerHost()
 
     with pytest.raises(TypeError, match="single positional argument"):
+
         @app.ws_handler
         async def bad() -> None:  # type: ignore[misc]
             return
@@ -94,6 +99,7 @@ def test_ws_handler_rejects_two_required_arg_coroutine():
     app = InvocationAgentServerHost()
 
     with pytest.raises(TypeError, match="single positional argument"):
+
         @app.ws_handler
         async def bad(websocket: WebSocket, extra: int) -> None:  # noqa: ARG001
             return
@@ -102,6 +108,7 @@ def test_ws_handler_rejects_two_required_arg_coroutine():
 # ---------------------------------------------------------------------------
 # Missing handler behaviour (parity with test_missing_invoke_handler_returns_501)
 # ---------------------------------------------------------------------------
+
 
 def test_ws_with_no_handler_registered_rejects_upgrade():
     """If no @ws_handler is registered the route is absent and the upgrade is rejected."""

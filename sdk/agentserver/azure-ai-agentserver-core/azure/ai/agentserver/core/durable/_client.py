@@ -9,14 +9,14 @@ chain. Bearer tokens are obtained lazily by ``AsyncBearerTokenCredentialPolicy``
 call-site code never assembles ``Authorization`` headers directly.
 
 **`ContentDecodePolicy` is intentionally excluded** from the policy
-chain (spec 016 FR-030). The responses-storage gzip lesson: that policy
+chain. The responses-storage gzip lesson: that policy
 eagerly deserializes every body as JSON in middleware and crashes on
 gzip / non-UTF-8 / gateway-HTML payloads before call-site code can
 handle the response. Body parsing here happens at the call site with
-defensive error handling (FR-033).
+defensive error handling.
 
 Every store-write call site funnels through :func:`_classify_store_write_error`
-(spec 016 FR-006 / FR-032) so the manager can react uniformly to
+ so the manager can react uniformly to
 transient / evicted / conflict / permanent outcomes without re-deriving
 the classification per-site.
 """
@@ -48,7 +48,8 @@ from ._attachments import (
     _validate_attachment_count,
     _validate_attachment_size,
 )
-from ._exceptions import TaskNotFound
+from ._exceptions_internal import TaskNotFound
+from ._exceptions_internal import _HostedConflict
 from ._models import (
     TaskCreateRequest,
     TaskInfo,
@@ -66,7 +67,7 @@ _BODY_PREFIX_LIMIT = 256  # truncation length for classified error bodies
 
 
 # --------------------------------------------------------------------- #
-# Classifier (spec 016 FR-006)
+# Classifier
 # --------------------------------------------------------------------- #
 
 
@@ -78,7 +79,7 @@ class TransportClassifiedError(Exception):
 
     Carries enough metadata for operator triage without exposing
     bearer tokens or full response bodies. ``classification`` carries
-    the FR-006 outcome label so callers can branch consistently.
+    the  outcome label so callers can branch consistently.
     """
 
     def __init__(
@@ -100,7 +101,7 @@ class TransportClassifiedError(Exception):
 def _classify_store_write_error(  # pylint: disable=too-many-return-statements
     status_code: int, body: bytes | None
 ) -> ClassifiedOutcome:
-    """Classify a non-success task-store response per spec 016 FR-006.
+    """Classify a non-success task-store response.
 
     Returns one of ``"transient"`` (retry), ``"evicted"`` (orphan-sandbox
     eviction; local cleanup sequence), ``"conflict"`` (etag mismatch or
@@ -179,7 +180,7 @@ def _maybe_decompress(body: bytes | None, headers: Any) -> bytes | None:
     """Decompress ``body`` if the response declares ``Content-Encoding: gzip``.
 
     Since ``ContentDecodePolicy`` is intentionally absent from the
-    pipeline (FR-030), each call site is responsible for honoring
+    pipeline, each call site is responsible for honoring
     ``Content-Encoding``. Returns ``body`` unchanged for other encodings
     so the caller's defensive JSON-parse can produce a useful error.
 
@@ -215,19 +216,19 @@ def _parse_json_body(
 ) -> Any:
     """Defensively decode a JSON body from the response.
 
-    Spec 016 FR-033: catches ``UnicodeDecodeError``, ``json.JSONDecodeError``,
-    ``azure.core.exceptions.DecodeError`` and raises
-    :class:`TransportClassifiedError` carrying the classification, the
-    request id (if any), and a truncated body prefix.
+    : catches ``UnicodeDecodeError``, ``json.JSONDecodeError``,
+        ``azure.core.exceptions.DecodeError`` and raises
+        :class:`TransportClassifiedError` carrying the classification, the
+        request id (if any), and a truncated body prefix.
 
-    :param response: The pipeline response object.
-    :type response: Any
-    :keyword method: HTTP method of the originating request (for error context).
-    :paramtype method: str
-    :keyword url: Request URL (for error context).
-    :paramtype url: str
-    :return: The parsed JSON value on success.
-    :rtype: Any
+        :param response: The pipeline response object.
+        :type response: Any
+        :keyword method: HTTP method of the originating request (for error context).
+        :paramtype method: str
+        :keyword url: Request URL (for error context).
+        :paramtype url: str
+        :return: The parsed JSON value on success.
+        :rtype: Any
     """
     status = getattr(response, "status_code", 0)
     headers = getattr(response, "headers", {}) or {}
@@ -237,10 +238,7 @@ def _parse_json_body(
         raise TransportClassifiedError(
             status=status,
             classification=_classify_store_write_error(status, None),
-            message=(
-                f"task-store {method} {url}: failed to read response body: "
-                f"{type(exc).__name__}: {exc}"
-            ),
+            message=(f"task-store {method} {url}: failed to read response body: " f"{type(exc).__name__}: {exc}"),
             request_id=str(headers.get("x-ms-request-id", "") or "") or None,
         ) from exc
     body = _maybe_decompress(raw, headers)
@@ -272,6 +270,68 @@ def _parse_json_body(
         ) from exc
 
 
+def _raise_hosted_conflict_for_response(response: Any) -> None:
+    """SOT §39.1 — translate service error codes to ``_HostedConflict``.
+
+    The hosted task service emits distinct ``code`` strings inside its JSON
+    error envelope for each failure cause (``task_immutable``,
+    ``invalid_state_transition``, ``lease_held_by_another``,
+    ``task_already_exists``, ``lease_ownership_changed``,
+    ``etag_mismatch``, ``invalid_request``). The framework's lifecycle
+    code dispatches on these to choose recovery action (retry vs
+    translate to a public exception vs log-as-bug).
+
+    This function raises ``_HostedConflict(_code=<code>, status_code=<wire status>)``
+    when the response body carries a recognized service code. Otherwise it
+    returns silently so the caller can fall through to the generic
+    ``_classify_store_write_error`` path (transient / evicted / conflict /
+    permanent).
+
+    :param response: The pipeline response object.
+    :type response: Any
+    """
+    status = getattr(response, "status_code", 0)
+    headers = getattr(response, "headers", {}) or {}
+    try:
+        raw = response.body()
+    except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
+        raw = None
+    body = _maybe_decompress(raw, headers) if raw else None
+    if not body:
+        return
+    try:
+        payload = json.loads(body)
+    except (ValueError, TypeError, UnicodeDecodeError):
+        return
+    if not isinstance(payload, dict):
+        return
+    err = payload.get("error")
+    if not isinstance(err, dict):
+        return
+    code = err.get("code")
+    if code not in _SPEC_020_SERVICE_CODES:
+        return
+    message = err.get("message") if isinstance(err.get("message"), str) else None
+    raise _HostedConflict(
+        _code=code,
+        status_code=int(status),
+        message=message,
+    )
+
+
+_SPEC_020_SERVICE_CODES = frozenset(
+    {
+        "task_immutable",
+        "invalid_state_transition",
+        "lease_held_by_another",
+        "task_already_exists",
+        "lease_ownership_changed",
+        "etag_mismatch",
+        "invalid_request",
+    }
+)
+
+
 def _raise_classified(
     response: Any,
     *,
@@ -281,8 +341,12 @@ def _raise_classified(
     """Inspect a response and raise :class:`TransportClassifiedError`.
 
     Replaces the legacy ``response.raise_for_status()`` call sites
-    (spec 016 FR-032) so every non-success response funnels through
-    the FR-006 classifier and carries the canonical outcome label.
+     so every non-success response funnels through
+    the  classifier and carries the canonical outcome label.
+
+     additionally checks for the service's distinct error
+    codes before the generic classification — when one matches, an
+    internal ``_HostedConflict`` is raised instead (see §39.1).
 
     :param response: The pipeline response object.
     :type response: Any
@@ -291,6 +355,11 @@ def _raise_classified(
     :keyword url: Request URL (for error context).
     :paramtype url: str
     """
+    #: check for service-coded errors first. If matched,
+    # _HostedConflict is raised and we never reach the generic
+    # classifier below.
+    _raise_hosted_conflict_for_response(response)
+
     status = getattr(response, "status_code", 0)
     headers = getattr(response, "headers", {}) or {}
     try:
@@ -302,9 +371,7 @@ def _raise_classified(
     raise TransportClassifiedError(
         status=status,
         classification=classification,
-        message=(
-            f"task-store {method} {url}: classified={classification} status={status}"
-        ),
+        message=(f"task-store {method} {url}: classified={classification} status={status}"),
         request_id=str(headers.get("x-ms-request-id", "") or "") or None,
         body_prefix=_body_prefix(body),
     )
@@ -318,7 +385,7 @@ def _raise_classified(
 def _build_default_policies(
     credential: AsyncTokenCredential,
 ) -> list[Any]:
-    """Construct the canonical policy chain per spec 016 FR-030.
+    """Construct the canonical policy chain.
 
     Order: RequestIdPolicy, HeadersPolicy, UserAgentPolicy,
     AsyncRetryPolicy (retry on 5xx / 408 / 429 only — NEVER on 409),
@@ -338,7 +405,7 @@ def _build_default_policies(
         HeadersPolicy(base_headers={"Foundry-Features": "Routines=V1Preview"}),
         UserAgentPolicy(base_user_agent=_USER_AGENT),
         # Retry on 5xx and the standard transient HTTP statuses; 409
-        # is explicitly NOT in retry_on_status_codes (FR-030) because
+        # is explicitly NOT in retry_on_status_codes  because
         # 409 carries application semantics (conflict / binding_mismatch)
         # that retry would silently mask.
         AsyncRetryPolicy(
@@ -356,7 +423,7 @@ class HostedTaskProvider:
     """HTTP-backed provider for the Foundry Task Storage API.
 
     Built on :class:`azure.core.AsyncPipelineClient` with the standard
-    policy chain (spec 016 FR-029..FR-034). ``ContentDecodePolicy`` is
+    policy chain. ``ContentDecodePolicy`` is
     explicitly excluded; body parsing happens at the call site with
     defensive error handling.
 
@@ -367,7 +434,7 @@ class HostedTaskProvider:
         :class:`azure.identity.aio.DefaultAzureCredential`).
     :type credential: AsyncTokenCredential
     :keyword transport: Optional :class:`AsyncHttpTransport` override
-        (used by tests for fake-transport injection per spec 016
+        (used by tests for fake-transport injection per
         Conformance Test Map row 14).
     :paramtype transport: AsyncHttpTransport | None
     """
@@ -411,7 +478,9 @@ class HostedTaskProvider:
         :return: The wire HTTP response.
         :rtype: Any
         """
-        pipeline_response = await self._client._pipeline.run(request)  # pylint: disable=protected-access  # noqa: SLF001
+        pipeline_response = await self._client._pipeline.run(
+            request
+        )  # pylint: disable=protected-access  # noqa: SLF001
         return pipeline_response.http_response
 
     async def create(self, request: TaskCreateRequest) -> TaskInfo:
@@ -449,7 +518,7 @@ class HostedTaskProvider:
         if request.source is not None:
             body["source"] = request.source
         if request.attachments is not None:
-            # Spec 018 — enforce per-attachment 2 MB and per-task 20-entry
+            #  — enforce per-attachment 2 MB and per-task 20-entry
             # caps client-side before the HTTP call. Create cannot
             # delete anything (no null values meaningful here), so
             # count is the number of entries.
@@ -471,7 +540,7 @@ class HostedTaskProvider:
             "POST",
             self._base_url,
             params=params,
-            json=body,
+            content=json.dumps(body),
             headers={"Content-Type": "application/json"},
         )
         response = await self._send(http_request)
@@ -530,8 +599,17 @@ class HostedTaskProvider:
             body["error"] = patch.error
         if patch.suspension_reason is not None:
             body["suspension_reason"] = patch.suspension_reason
+        if getattr(patch, "clear_attachments", False) and patch.attachments is not None:
+            raise _HostedConflict(
+                _code="invalid_request",
+                status_code=400,
+                message="clear_attachments cannot be combined with attachments patch.",
+                task_id=task_id,
+            )
+        if getattr(patch, "clear_attachments", False):
+            body["attachments"] = None
         if patch.attachments is not None:
-            # Spec 018 — enforce per-attachment 2 MB cap on every
+            #  — enforce per-attachment 2 MB cap on every
             # non-null value in the patch. (We don't enforce the
             # per-task 20-entry cap here because we don't have the
             # current attachment count without a GET; callers that
@@ -562,7 +640,7 @@ class HostedTaskProvider:
             "PATCH",
             url,
             params=params,
-            json=body,
+            content=json.dumps(body),
             headers=headers,
         )
         response = await self._send(http_request)
@@ -609,12 +687,19 @@ class HostedTaskProvider:
     async def list(
         self,
         *,
-        agent_name: str,
-        session_id: str,
-        status: TaskStatus | None = None,
+        agent_name: str | None = None,
+        session_id: str | None = None,
+        status: TaskStatus | str | None = None,
         lease_owner: str | None = None,
         tag: dict[str, str] | None = None,
         source_type: str | None = None,
+        has_error: bool | None = None,
+        lease_expired: bool | None = None,
+        limit: int | None = None,
+        after: str | None = None,
+        before: str | None = None,
+        order: str | None = None,
+        omit_attachment_values: bool = False,
     ) -> list[TaskInfo]:
         """List tasks via GET /tasks with automatic cursor pagination.
 
@@ -637,10 +722,12 @@ class HostedTaskProvider:
         """
         params: dict[str, str] = {
             "api-version": _API_VERSION,
-            "agent_name": agent_name,
-            "session_id": session_id,
-            "limit": "100",
+            "limit": str(limit if limit is not None else 100),
         }
+        if agent_name is not None:
+            params["agent_name"] = agent_name
+        if session_id is not None:
+            params["session_id"] = session_id
         if status is not None:
             params["status"] = status
         if lease_owner is not None:
@@ -650,6 +737,18 @@ class HostedTaskProvider:
                 params[f"tag.{key}"] = value
         if source_type is not None:
             params["source_type"] = source_type
+        if has_error is not None:
+            params["has_error"] = str(has_error).lower()
+        if lease_expired is not None:
+            params["lease_expired"] = str(lease_expired).lower()
+        if after is not None:
+            params["after"] = after
+        if before is not None:
+            params["before"] = before
+        if order is not None:
+            params["order"] = order
+        if omit_attachment_values:
+            params["omit_attachment_values"] = "true"
 
         all_tasks: list[TaskInfo] = []
         while True:

@@ -377,9 +377,9 @@ class TestCrossModeConsistency:
 
         for event in lifecycle_events:
             resp_payload = event["data"].get("response", event["data"])
-            assert resp_payload.get("agent_session_id") == session_id, (
-                f"Missing/wrong agent_session_id on {event['type']}"
-            )
+            assert (
+                resp_payload.get("agent_session_id") == session_id
+            ), f"Missing/wrong agent_session_id on {event['type']}"
 
     def test_session_id_consistent_between_create_and_get(self) -> None:
         """B39: session ID on POST matches session ID on subsequent GET."""
@@ -438,9 +438,9 @@ class TestCrossModeConsistency:
         for event in replay_events:
             if event["type"] in lifecycle_types:
                 resp_payload = event["data"].get("response", event["data"])
-                assert resp_payload.get("agent_session_id") == session_id, (
-                    f"SSE replay {event['type']} missing agent_session_id"
-                )
+                assert (
+                    resp_payload.get("agent_session_id") == session_id
+                ), f"SSE replay {event['type']} missing agent_session_id"
 
 
 # ════════════════════════════════════════════════════════════
