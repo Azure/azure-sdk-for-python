@@ -113,9 +113,7 @@ async def test_history_item_ids_round_trip(tmp_path: Path) -> None:
     """history_item_ids passed to create_response are retrievable via get_history_item_ids."""
     store = FileResponseStore(storage_dir=tmp_path)
     response = _make_response("resp_with_history")
-    await store.create_response(
-        response, input_items=None, history_item_ids=["item_a", "item_b", "item_c"]
-    )
+    await store.create_response(response, input_items=None, history_item_ids=["item_a", "item_b", "item_c"])
     ids = await store.get_history_item_ids("resp_with_history", conversation_id=None, limit=10)
     assert ids == ["item_a", "item_b", "item_c"]
 

@@ -83,9 +83,7 @@ async def _post_until_first_delta(client: httpx.AsyncClient) -> str:
     return response_id
 
 
-async def _full_stream(
-    client: httpx.AsyncClient, response_id: str
-) -> list[dict]:
+async def _full_stream(client: httpx.AsyncClient, response_id: str) -> list[dict]:
     timeout = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=10.0)
     events: list[dict] = []
     async with client.stream(
@@ -146,35 +144,26 @@ async def test_chain_id_stable_across_recovery(
         await harness.kill()
         await harness.restart()
 
-        terminal = await poll_until_terminal(
-            harness.client, response_id, timeout_seconds=30.0
-        )
+        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=30.0)
         assert terminal["status"] == "completed", terminal
 
         events = await _full_stream(harness.client, response_id)
 
         # There should be TWO output_text.done events (one per lifetime),
         # each carrying a chain= segment. They MUST be identical.
-        done_events = [
-            e for e in events if e.get("type") == "response.output_text.done"
-        ]
+        done_events = [e for e in events if e.get("type") == "response.output_text.done"]
         # Edge case: pre-crash lifetime may not have reached output_text.done
         # if SIGKILL landed before its post-sleep phase. In that case we
         # still have lifetime 1's done event; the assertion degenerates to
         # "chain id present + matches response_id" rather than "matches
         # lifetime 0's value".
-        assert done_events, (
-            "No response.output_text.done in replay. Event types: "
-            f"{[e.get('type') for e in events]}"
-        )
+        assert done_events, "No response.output_text.done in replay. Event types: " f"{[e.get('type') for e in events]}"
 
         chain_ids = []
         for d in done_events:
             text = d.get("text", "")
             chain = _extract_chain_id(text)
-            assert chain is not None, (
-                f"Final text missing chain= segment: {text!r}"
-            )
+            assert chain is not None, f"Final text missing chain= segment: {text!r}"
             chain_ids.append(chain)
 
         # Stability across attempts (when we have multiple done events).

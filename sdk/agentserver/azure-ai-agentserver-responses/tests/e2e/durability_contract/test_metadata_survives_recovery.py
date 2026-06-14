@@ -87,9 +87,7 @@ async def _post_and_wait_for_first_delta(
     return response_id
 
 
-async def _get_full_stream(
-    client: httpx.AsyncClient, response_id: str
-) -> list[dict]:
+async def _get_full_stream(client: httpx.AsyncClient, response_id: str) -> list[dict]:
     timeout = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=10.0)
     events: list[dict] = []
     async with client.stream(
@@ -145,9 +143,7 @@ async def test_metadata_visited_marker_survives_recovery(
         await harness.kill()
         await harness.restart()
 
-        terminal = await poll_until_terminal(
-            harness.client, response_id, timeout_seconds=30.0
-        )
+        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=30.0)
         assert terminal["status"] == "completed", terminal
 
         events = await _get_full_stream(harness.client, response_id)
@@ -155,17 +151,11 @@ async def test_metadata_visited_marker_survives_recovery(
         # Find the recovered handler's output_text.done — its final text
         # carries the ``visited=[…]`` segment. We want the LAST one in the
         # stream (the recovered lifetime's terminal text).
-        done_events = [
-            e for e in events if e.get("type") == "response.output_text.done"
-        ]
-        assert done_events, (
-            "No response.output_text.done in replay. Event types: "
-            f"{[e.get('type') for e in events]}"
-        )
+        done_events = [e for e in events if e.get("type") == "response.output_text.done"]
+        assert done_events, "No response.output_text.done in replay. Event types: " f"{[e.get('type') for e in events]}"
         final_text = done_events[-1].get("text", "")
         assert "visited=" in final_text, (
-            "Recovered handler's final text must include the visited list. "
-            f"Got: {final_text!r}"
+            "Recovered handler's final text must include the visited list. " f"Got: {final_text!r}"
         )
         # Parse the visited segment.
         visited_seg = next(

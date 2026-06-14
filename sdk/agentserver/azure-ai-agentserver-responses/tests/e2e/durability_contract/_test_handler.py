@@ -217,11 +217,7 @@ async def handle_create(
     # (the framework's snapshot extraction uses delta accumulation, not
     # the emit_text_done payload), then emit text_done with the same
     # value so the wire's done event also carries the composite.
-    visited_now = (
-        list(durability.metadata.get(WATERMARK_METADATA_KEY, []))
-        if _EMIT_WATERMARK
-        else None
-    )
+    visited_now = list(durability.metadata.get(WATERMARK_METADATA_KEY, [])) if _EMIT_WATERMARK else None
     final = final_text(
         lifetime=lifetime,
         pre_count=_PRE_SLEEP_DELTAS,

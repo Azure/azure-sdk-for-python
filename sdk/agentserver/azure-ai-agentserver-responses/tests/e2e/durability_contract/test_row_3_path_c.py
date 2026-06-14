@@ -51,9 +51,7 @@ async def test_row_3_path_c(
     await harness.start()
     bg_task = None
     try:
-        response_id, bg_task = await post_foreground_and_discover_id(
-            harness.client, tmp_path, stream=stream
-        )
+        response_id, bg_task = await post_foreground_and_discover_id(harness.client, tmp_path, stream=stream)
         await asyncio.sleep(0.5)
         await harness.kill()
         await harness.restart()

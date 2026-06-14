@@ -118,18 +118,13 @@ async def test_row_1_path_a_polled_response_output_reflects_fresh_handler(
     await harness.start()
     try:
         response_id = await _post_bg_polled(harness.client)
-        terminal = await poll_until_terminal(
-            harness.client, response_id, timeout_seconds=15.0
-        )
+        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=15.0)
         assert terminal["status"] == "completed", terminal
         text = _final_text_from_snapshot(terminal)
-        assert text.startswith("L0_done"), (
-            f"Fresh handler must produce L0_done… final text. Got: {text!r}"
-        )
+        assert text.startswith("L0_done"), f"Fresh handler must produce L0_done… final text. Got: {text!r}"
         # And the chain id segment must equal the response id.
         assert f"chain={response_id}" in text, (
-            f"chain= segment in final text must equal response_id={response_id}. "
-            f"Got: {text!r}"
+            f"chain= segment in final text must equal response_id={response_id}. " f"Got: {text!r}"
         )
     finally:
         await harness.close()
@@ -158,9 +153,7 @@ async def test_row_1_path_c_polled_response_output_reflects_recovered_handler(
         await harness.kill()
         await harness.restart()
 
-        terminal = await poll_until_terminal(
-            harness.client, response_id, timeout_seconds=30.0
-        )
+        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=30.0)
         assert terminal["status"] == "completed", terminal
         text = _final_text_from_snapshot(terminal)
         # With pre_sleep_deltas=1, the snapshot text accumulates the
@@ -197,14 +190,10 @@ async def test_row_2_path_a_polled_response_output_reflects_fresh_handler(
     await harness.start()
     try:
         response_id = await _post_bg_polled(harness.client)
-        terminal = await poll_until_terminal(
-            harness.client, response_id, timeout_seconds=15.0
-        )
+        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=15.0)
         assert terminal["status"] == "completed", terminal
         text = _final_text_from_snapshot(terminal)
-        assert text.startswith("L0_done"), (
-            f"Row 2 fresh handler must produce L0_done… final text. Got: {text!r}"
-        )
+        assert text.startswith("L0_done"), f"Row 2 fresh handler must produce L0_done… final text. Got: {text!r}"
     finally:
         await harness.close()
 
@@ -237,8 +226,7 @@ async def test_row_3_path_a_foreground_response_output_reflects_fresh_handler(
         assert snapshot["status"] == "completed", snapshot
         text = _final_text_from_snapshot(snapshot)
         assert text.startswith("L0_done"), (
-            f"Row 3 foreground handler must produce L0_done… final text. "
-            f"Got: {text!r}"
+            f"Row 3 foreground handler must produce L0_done… final text. " f"Got: {text!r}"
         )
     finally:
         await harness.close()

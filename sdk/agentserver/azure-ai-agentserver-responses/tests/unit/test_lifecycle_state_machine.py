@@ -40,11 +40,7 @@ def test_lifecycle_state_machine__second_terminal_is_silently_ignored() -> None:
         ],
     )
     # First terminal wins; subsequent terminal events were silently dropped.
-    terminal_types = [
-        e.get("type")
-        for e in normalized
-        if e.get("type") in {"response.completed", "response.failed"}
-    ]
+    terminal_types = [e.get("type") for e in normalized if e.get("type") in {"response.completed", "response.failed"}]
     assert terminal_types == ["response.completed"]
 
 

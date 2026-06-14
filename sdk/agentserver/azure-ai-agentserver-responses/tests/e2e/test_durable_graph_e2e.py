@@ -32,9 +32,7 @@ def _make_graph_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(
-        request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-    ):
+    async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         durability = context.durability
         completed = durability.metadata.get("completed_nodes", [])

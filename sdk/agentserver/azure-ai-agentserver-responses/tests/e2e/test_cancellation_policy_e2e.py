@@ -37,7 +37,6 @@ from azure.ai.agentserver.responses import (
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-
 # ---------------------------------------------------------------------------
 # Minimal async ASGI client (same pattern as contract tests)
 # ---------------------------------------------------------------------------
@@ -179,9 +178,7 @@ class TestSteeringCancellation:
 
         def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
-                stream = ResponseEventStream(
-                    response_id=context.response_id, model=getattr(request, "model", None)
-                )
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
@@ -225,9 +222,9 @@ class TestSteeringCancellation:
         terminal = terminal_events[0]
         assert terminal["type"] == "response.failed"
         # Status MUST be 'failed', NOT 'cancelled'
-        assert terminal["data"]["response"]["status"] == "failed", (
-            "Steered cancellation must produce 'failed', never 'cancelled'"
-        )
+        assert (
+            terminal["data"]["response"]["status"] == "failed"
+        ), "Steered cancellation must produce 'failed', never 'cancelled'"
 
     @pytest.mark.asyncio
     async def test_steered_handler_terminal_wins(self) -> None:
@@ -242,9 +239,7 @@ class TestSteeringCancellation:
 
         def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
-                stream = ResponseEventStream(
-                    response_id=context.response_id, model=getattr(request, "model", None)
-                )
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
@@ -303,9 +298,7 @@ class TestShutdownNeverCancelled:
 
         def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
-                stream = ResponseEventStream(
-                    response_id=context.response_id, model=getattr(request, "model", None)
-                )
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
@@ -350,9 +343,7 @@ class TestShutdownNeverCancelled:
         terminal = terminal_events[0]
         assert terminal["type"] == "response.failed"
         # Status must be 'failed', NEVER 'cancelled'
-        assert terminal["data"]["response"]["status"] == "failed", (
-            "Shutdown must produce 'failed', never 'cancelled'"
-        )
+        assert terminal["data"]["response"]["status"] == "failed", "Shutdown must produce 'failed', never 'cancelled'"
 
 
 # ---------------------------------------------------------------------------
@@ -370,9 +361,7 @@ class TestClientExplicitCancellation:
 
         def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
-                stream = ResponseEventStream(
-                    response_id=context.response_id, model=getattr(request, "model", None)
-                )
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
@@ -426,9 +415,7 @@ class TestClientExplicitCancellation:
 
         def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
-                stream = ResponseEventStream(
-                    response_id=context.response_id, model=getattr(request, "model", None)
-                )
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
@@ -468,9 +455,7 @@ class TestClientExplicitCancellation:
         # Stored state is cancelled regardless of handler output
         get_resp = await client.get(f"/responses/{response_id}")
         assert get_resp.status_code == 200
-        assert get_resp.json()["status"] == "cancelled", (
-            "Client cancel always wins over handler terminal"
-        )
+        assert get_resp.json()["status"] == "cancelled", "Client cancel always wins over handler terminal"
 
 
 # ---------------------------------------------------------------------------
@@ -487,9 +472,7 @@ class TestIncompleteNeverFramework:
 
         def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
-                stream = ResponseEventStream(
-                    response_id=context.response_id, model=getattr(request, "model", None)
-                )
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 yield stream.emit_incomplete(reason="max_output_tokens")

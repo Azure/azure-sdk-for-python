@@ -23,7 +23,6 @@ from azure.ai.agentserver.core.streaming import (
     streams,
 )
 
-
 # ---------------------------------------------------------------------------
 # Per-test isolation: snapshot/restore the registry's private slots so tests
 # can't see each other's streams or configurator.

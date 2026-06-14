@@ -23,7 +23,6 @@ from azure.ai.agentserver.responses.store._foundry_errors import FoundryResource
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 
-
 # ─── Helpers / handlers ──────────────────────────────────────
 
 

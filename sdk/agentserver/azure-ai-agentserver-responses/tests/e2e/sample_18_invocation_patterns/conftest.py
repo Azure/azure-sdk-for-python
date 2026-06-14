@@ -41,7 +41,6 @@ import pytest
 
 from tests.e2e._crash_harness import CrashHarness
 
-
 # ── Timing constants ────────────────────────────────────────────────────
 
 # Path-A grace: wide enough that Copilot's natural call completes before
@@ -65,10 +64,7 @@ TERMINAL_POLL_BUDGET_S: float = 120.0
 # lands during the upstream call rather than after the handler has
 # already finished. "Write three sentences" / "explain in a paragraph"
 # style prompts are the safe default.
-SLOW_PROMPT: str = (
-    "Write three short sentences about the colour blue. "
-    "Take your time and be descriptive."
-)
+SLOW_PROMPT: str = "Write three short sentences about the colour blue. " "Take your time and be descriptive."
 
 # A quick prompt for Path-A tests where we want the natural completion
 # to land inside the long grace window.
@@ -95,17 +91,11 @@ copilot = pytest.importorskip(
 @pytest.fixture
 def sample18_module() -> str:
     """Absolute path to the sample 18 module (subprocess target)."""
-    return str(
-        Path(__file__).parent.parent.parent.parent
-        / "samples"
-        / "sample_18_durable_copilot.py"
-    )
+    return str(Path(__file__).parent.parent.parent.parent / "samples" / "sample_18_durable_copilot.py")
 
 
 @pytest.fixture
-def make_harness(
-    tmp_path: Path, sample18_module: str
-) -> Callable[..., CrashHarness]:
+def make_harness(tmp_path: Path, sample18_module: str) -> Callable[..., CrashHarness]:
     """Factory for constructing a ``CrashHarness`` rooted at sample 18.
 
     Sample 18 is intentionally fixed at ``durable_background=True`` +
@@ -139,9 +129,7 @@ def make_harness(
         env = {
             "COPILOT_MODEL": copilot_model,
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(shutdown_grace_seconds),
-            "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS": str(
-                shutdown_grace_seconds
-            ),
+            "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS": str(shutdown_grace_seconds),
             "LOGLEVEL": os.environ.get("LOGLEVEL", "WARNING"),
         }
         return CrashHarness(

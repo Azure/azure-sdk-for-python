@@ -18,7 +18,6 @@ fails. A test that only checks ``status == "completed"`` cannot tell.
 
 from __future__ import annotations
 
-
 # Phases of the handler's emission cycle. ``pre`` is before the
 # interruptible sleep (so events can land on the wire before a Path B
 # or Path C SIGKILL); ``post`` is after the sleep (the natural-

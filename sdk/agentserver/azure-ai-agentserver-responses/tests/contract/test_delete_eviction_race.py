@@ -30,7 +30,6 @@ from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvide
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 from tests._helpers import poll_until
 
-
 # ─── Handler ──────────────────────────────────────────────
 
 

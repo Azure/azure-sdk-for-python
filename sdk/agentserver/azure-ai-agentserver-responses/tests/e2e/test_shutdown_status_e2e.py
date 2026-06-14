@@ -31,7 +31,6 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -161,7 +160,6 @@ async def test_shutdown_durable_background_not_marked_failed() -> None:
             pass
 
 
-
 # ---------------------------------------------------------------------------
 # Test 3: durable_background=False, store=True → marked failed
 #
@@ -238,9 +236,9 @@ async def test_shutdown_non_durable_server_marks_stored_background_failed() -> N
                     mid_status = mid_resp.json()["status"]
                     # With correct impl: during grace period, still in_progress
                     # (not prematurely marked failed)
-                    assert mid_status == "in_progress", (
-                        f"During grace period should still be in_progress, got: {mid_status}"
-                    )
+                    assert (
+                        mid_status == "in_progress"
+                    ), f"During grace period should still be in_progress, got: {mid_status}"
             except httpx.ConnectError:
                 pass
 
@@ -324,9 +322,9 @@ async def test_shutdown_grace_period_allows_completion() -> None:
                 get_resp = await client.get(f"/responses/{response_id}")
                 assert get_resp.status_code == 200
                 status = get_resp.json()["status"]
-                assert status == "completed", (
-                    f"Handler that completes within grace period should be 'completed', got: {status}"
-                )
+                assert (
+                    status == "completed"
+                ), f"Handler that completes within grace period should be 'completed', got: {status}"
             except httpx.ConnectError:
                 # Server closed listener during shutdown — acceptable if
                 # handler already completed (no crash = success).
@@ -420,9 +418,9 @@ async def test_shutdown_durable_responsive_handler_stays_in_progress() -> None:
                 get_resp = await client.get(f"/responses/{response_id}")
                 assert get_resp.status_code == 200
                 status = get_resp.json()["status"]
-                assert status != "failed", (
-                    f"Durable handler returning without terminal must not be 'failed', got: {status}"
-                )
+                assert (
+                    status != "failed"
+                ), f"Durable handler returning without terminal must not be 'failed', got: {status}"
             except httpx.ConnectError:
                 # Server closed during shutdown — acceptable.
                 # The key assertion is that we got here without ValueError
@@ -524,9 +522,7 @@ async def test_client_cancel_marks_cancelled() -> None:
             get_resp = await client.get(f"/responses/{response_id}")
             assert get_resp.status_code == 200
             status = get_resp.json()["status"]
-            assert status == "cancelled", (
-                f"B17/B11: CLIENT_CANCELLED should produce 'cancelled', got: {status}"
-            )
+            assert status == "cancelled", f"B17/B11: CLIENT_CANCELLED should produce 'cancelled', got: {status}"
 
     finally:
         shutdown_event.set()
@@ -612,9 +608,9 @@ async def test_shutdown_store_false_sync_returns_failed() -> None:
             resp = await asyncio.wait_for(req_task, timeout=5.0)
             assert resp.status_code == 200, f"Expected 200, got {resp.status_code}"
             body = resp.json()
-            assert body["status"] == "failed", (
-                f"store=false sync on shutdown should return status='failed', got: {body['status']}"
-            )
+            assert (
+                body["status"] == "failed"
+            ), f"store=false sync on shutdown should return status='failed', got: {body['status']}"
 
     finally:
         shutdown_event.set()
@@ -693,7 +689,7 @@ async def test_shutdown_store_false_stream_returns_failed_event() -> None:
                     nonlocal got_failed
                     async for line in resp.aiter_lines():
                         if line.startswith("event:"):
-                            event_type = line[len("event:"):].strip()
+                            event_type = line[len("event:") :].strip()
                             events_received.append(event_type)
                             if event_type == "response.failed":
                                 got_failed = True
@@ -712,9 +708,7 @@ async def test_shutdown_store_false_stream_returns_failed_event() -> None:
                 # Should receive response.failed within timeout
                 await asyncio.wait_for(read_task, timeout=5.0)
 
-                assert got_failed, (
-                    f"Expected response.failed event in stream, got events: {events_received}"
-                )
+                assert got_failed, f"Expected response.failed event in stream, got events: {events_received}"
 
     finally:
         shutdown_event.set()

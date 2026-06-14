@@ -32,9 +32,7 @@ def _make_foreground_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(
-        request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-    ):
+    async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         yield stream.emit_created()
         yield stream.emit_in_progress()
@@ -93,15 +91,11 @@ class TestDurableNonBackgroundE2E:
         app = ResponsesAgentServerHost(options=options)
 
         @app.response_handler
-        async def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
+        async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
             return TextResponse(context, request, text="Foreground done")
 
         client = TestClient(app)
-        resp = client.post(
-            "/responses", json={"model": "t", "input": "hi", "store": True}
-        )
+        resp = client.post("/responses", json={"model": "t", "input": "hi", "store": True})
         assert resp.status_code == 200
         data = resp.json()
         assert data["status"] == "completed"

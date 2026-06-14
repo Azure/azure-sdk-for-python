@@ -97,9 +97,7 @@ async def _post_until_first_delta(client: httpx.AsyncClient) -> str:
     return response_id
 
 
-async def _full_stream(
-    client: httpx.AsyncClient, response_id: str
-) -> list[dict]:
+async def _full_stream(client: httpx.AsyncClient, response_id: str) -> list[dict]:
     timeout = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=10.0)
     events: list[dict] = []
     async with client.stream(
@@ -152,9 +150,7 @@ async def test_output_item_slot_reused_by_recovered_handler(
         await harness.kill()
         await harness.restart()
 
-        terminal = await poll_until_terminal(
-            harness.client, response_id, timeout_seconds=30.0
-        )
+        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=30.0)
         assert terminal["status"] == "completed", terminal
 
         events = await _full_stream(harness.client, response_id)
@@ -164,8 +160,7 @@ async def test_output_item_slot_reused_by_recovered_handler(
         item_added_at_0 = [
             (e.get("sequence_number"), e)
             for e in events
-            if e.get("type") == "response.output_item.added"
-            and e.get("output_index") == 0
+            if e.get("type") == "response.output_item.added" and e.get("output_index") == 0
         ]
         assert len(item_added_at_0) >= 2, (
             "Expected TWO response.output_item.added events at output_index=0 "
@@ -178,8 +173,7 @@ async def test_output_item_slot_reused_by_recovered_handler(
         seqs = [seq for seq, _ in item_added_at_0]
         for a, b in zip(seqs, seqs[1:]):
             assert isinstance(a, int) and isinstance(b, int) and b > a, (
-                f"output_item.added events must be strictly monotonic in seq. "
-                f"Got: {seqs}"
+                f"output_item.added events must be strictly monotonic in seq. " f"Got: {seqs}"
             )
 
         # Between the two item.added events, there MUST be at least one
@@ -198,8 +192,7 @@ async def test_output_item_slot_reused_by_recovered_handler(
             "response.in_progress reset event (seq strictly between the "
             "two added events). Got events:\n"
             + "\n".join(
-                f"  seq={e.get('sequence_number')} type={e.get('type')} "
-                f"output_index={e.get('output_index')}"
+                f"  seq={e.get('sequence_number')} type={e.get('type')} " f"output_index={e.get('output_index')}"
                 for e in events
             )
         )
@@ -209,9 +202,7 @@ async def test_output_item_slot_reused_by_recovered_handler(
         # snapshot is in the terminal event's ``response.output``.
         completed = [e for e in events if e.get("type") == "response.completed"][-1]
         resp_output = (completed.get("response") or {}).get("output") or []
-        assert resp_output, (
-            f"response.completed has empty output: {completed!r}"
-        )
+        assert resp_output, f"response.completed has empty output: {completed!r}"
         # The output item carries the assembled text. For sample 18 style
         # handlers, the text is in output[0]["content"][0]["text"]. The
         # conformance handler emits this as the recovered handler's

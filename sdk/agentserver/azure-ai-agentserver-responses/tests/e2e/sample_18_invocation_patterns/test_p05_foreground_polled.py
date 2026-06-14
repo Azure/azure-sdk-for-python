@@ -38,7 +38,6 @@ from tests.e2e.sample_18_invocation_patterns.conftest import (
     poll_until_terminal,
 )
 
-
 pytestmark = pytest.mark.live
 
 
@@ -53,9 +52,7 @@ async def test_p05_path_a_natural_completion(
     await harness.start()
     try:
         body = payload("say hi briefly", background=False, store=True, stream=False)
-        r = await harness.client.post(
-            "/responses", json=body, timeout=TERMINAL_POLL_BUDGET_S
-        )
+        r = await harness.client.post("/responses", json=body, timeout=TERMINAL_POLL_BUDGET_S)
         assert r.status_code == 200, r.text
         snapshot = r.json()
         assert snapshot["status"] == "completed", snapshot
@@ -78,9 +75,7 @@ async def test_p05_path_b_graceful_marks_failed(
         nonlocal response_id
         body = payload(SLOW_PROMPT, background=False, store=True, stream=False)
         try:
-            r = await harness.client.post(
-                "/responses", json=body, timeout=SHORT_GRACE_S + 5.0
-            )
+            r = await harness.client.post("/responses", json=body, timeout=SHORT_GRACE_S + 5.0)
             if r.status_code == 200:
                 snapshot = r.json()
                 response_id = snapshot.get("id")
@@ -137,9 +132,7 @@ async def test_p05_path_c_sigkill_marks_failed(
         nonlocal response_id
         body = payload(SLOW_PROMPT, background=False, store=True, stream=False)
         try:
-            r = await harness.client.post(
-                "/responses", json=body, timeout=10.0
-            )
+            r = await harness.client.post("/responses", json=body, timeout=10.0)
             if r.status_code == 200:
                 snapshot = r.json()
                 response_id = snapshot.get("id")

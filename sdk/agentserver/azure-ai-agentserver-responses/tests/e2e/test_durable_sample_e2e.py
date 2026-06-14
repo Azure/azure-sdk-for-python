@@ -33,7 +33,6 @@ from azure.ai.agentserver.responses import (
     TextResponse,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -46,9 +45,7 @@ def _collect_sse(response) -> list[dict[str, Any]]:
     for line in response.iter_lines():
         if not line:
             if current_type:
-                events.append(
-                    {"type": current_type, "data": json.loads(current_data) if current_data else {}}
-                )
+                events.append({"type": current_type, "data": json.loads(current_data) if current_data else {}})
             current_type = current_data = None
             continue
         if line.startswith("event:"):
@@ -376,7 +373,9 @@ class TestSample20DurableSteering:
         app_local = ResponsesAgentServerHost(options=options)
 
         @app_local.response_handler
-        async def shutdown_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+        async def shutdown_handler(
+            request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+        ):
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             input_text = await context.get_input_text()
 

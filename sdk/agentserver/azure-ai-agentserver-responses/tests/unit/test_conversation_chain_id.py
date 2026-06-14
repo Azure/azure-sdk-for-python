@@ -76,12 +76,8 @@ def test_chain_id_stable_across_turns() -> None:
 def test_chain_id_stable_across_turns_with_conversation_id() -> None:
     """With explicit conversation_id, every turn shares the same id."""
     turn1 = _make_context(response_id="resp-A", conversation_id="conv-1")
-    turn2 = _make_context(
-        response_id="resp-B", previous_response_id="resp-A", conversation_id="conv-1"
-    )
-    turn3 = _make_context(
-        response_id="resp-C", previous_response_id="resp-B", conversation_id="conv-1"
-    )
+    turn2 = _make_context(response_id="resp-B", previous_response_id="resp-A", conversation_id="conv-1")
+    turn3 = _make_context(response_id="resp-C", previous_response_id="resp-B", conversation_id="conv-1")
     assert turn1.conversation_chain_id == turn2.conversation_chain_id == turn3.conversation_chain_id
     assert turn1.conversation_chain_id == "conv-1"
 

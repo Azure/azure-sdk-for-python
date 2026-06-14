@@ -233,8 +233,7 @@ class TestSample17NeverForks:
 
         src = inspect.getsource(mod)
         assert "fork_session" not in src, (
-            "sample_17 must not use fork_session — forking abandons in-flight "
-            "session state and defeats durability"
+            "sample_17 must not use fork_session — forking abandons in-flight " "session state and defeats durability"
         )
 
 
@@ -262,8 +261,7 @@ class TestSample17NoWatermarkOrFlush:
 
         src = inspect.getsource(mod)
         assert ".metadata.flush(" not in src, (
-            "sample_17 must not depend on metadata flush ordering; the "
-            "upstream session is the source of truth"
+            "sample_17 must not depend on metadata flush ordering; the " "upstream session is the source of truth"
         )
 
 

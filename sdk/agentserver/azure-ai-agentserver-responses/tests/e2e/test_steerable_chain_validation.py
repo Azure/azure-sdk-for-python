@@ -62,9 +62,7 @@ class TestSteerableChainValidationWireFormat:
     def test_stale_predecessor_returns_409_with_documented_body(self) -> None:
         """When framework raises LastInputIdPreconditionFailed, endpoint returns 409 with the documented body."""
 
-        def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
+        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
             return TextResponse(context, request, text="OK")
 
         client = _make_steerable_app(handler)
@@ -116,5 +114,3 @@ class TestSteerableChainValidationWireFormat:
         # The message communicates that forks are not supported.
         msg = err["message"].lower()
         assert "fork" in msg or "not support" in msg or "most recent" in msg
-
-

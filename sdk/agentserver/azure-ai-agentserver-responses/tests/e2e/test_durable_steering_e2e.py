@@ -67,9 +67,7 @@ class TestSteerableConversationBaseline:
     def test_single_turn_completes_normally(self) -> None:
         """A single POST to a steerable app completes as normal."""
 
-        def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
+        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
             return TextResponse(context, request, text="Turn 1 complete")
 
         client = _make_steerable_app(handler)
@@ -82,9 +80,7 @@ class TestSteerableConversationBaseline:
         """Handler can see steerable is enabled via context."""
         captured: dict[str, Any] = {}
 
-        def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
+        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
             captured["response_id"] = context.response_id
             return TextResponse(context, request, text="Done")
 
@@ -100,9 +96,7 @@ class TestSteerableConversationConflict:
     def test_non_steerable_parallel_forks_succeed(self) -> None:
         """Non-steerable: parallel forks (distinct task IDs) all succeed."""
 
-        def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
+        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
             return TextResponse(context, request, text="Fork response")
 
         options = ResponsesServerOptions(
@@ -133,9 +127,7 @@ class TestAcceptanceHookE2E:
     def test_custom_acceptance_hook_registered(self) -> None:
         """Custom acceptance hook is accessible on the app."""
 
-        def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
+        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
             return TextResponse(context, request, text="Done")
 
         def my_acceptor(request, context):

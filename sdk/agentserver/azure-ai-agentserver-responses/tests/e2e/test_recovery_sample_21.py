@@ -88,9 +88,7 @@ def _event_type(e: Any) -> str | None:
 def _make_state_stub(ai_messages: list[str]) -> MagicMock:
     """Build a fake graph state with the given AI messages."""
     state = MagicMock()
-    state.values = {
-        "messages": [AIMessage(content=text) for text in ai_messages]
-    }
+    state.values = {"messages": [AIMessage(content=text) for text in ai_messages]}
     state.config = {"configurable": {"checkpoint_id": "cp_test", "thread_id": "thr_test"}}
     state.next = ()
     return state
@@ -124,9 +122,7 @@ class TestSample21Recovery:
                 events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
         # Verify the recovery in_progress carried the prior AI message.
-        in_progress = next(
-            e for e in events if _event_type(e) == "response.in_progress"
-        )
+        in_progress = next(e for e in events if _event_type(e) == "response.in_progress")
         payload = getattr(in_progress, "response", None) or in_progress.get("response")
         output = payload.get("output") if isinstance(payload, dict) else payload.output
         assert len(output) == 1, "resumption response must contain the prior AI message"

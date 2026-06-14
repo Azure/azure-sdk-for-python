@@ -36,7 +36,6 @@ from azure.ai.agentserver.responses._durability_context import (
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-
 # ---------------------------------------------------------------------------
 # Test scaffolding
 # ---------------------------------------------------------------------------
@@ -141,24 +140,20 @@ class TestSample19RecoveryAfterAnalyze:
         ]
         assert in_progress_events, "expected at least one response.in_progress"
         first_in_progress = in_progress_events[0]
-        response_payload = (
-            getattr(first_in_progress, "response", None) or first_in_progress.get("response")
-        )
+        response_payload = getattr(first_in_progress, "response", None) or first_in_progress.get("response")
         # The resumption response carried in in_progress includes the prior
         # analyze item — this is the snapshot reset point for reconnecting
         # clients (Spec 012 FR-004 / FR-016).
         seeded_output = (
             response_payload.get("output") if isinstance(response_payload, dict) else response_payload.output
         )
-        assert seeded_output and len(seeded_output) == 1, (
-            f"resumption response must contain the 1 prior phase item; got {seeded_output}"
-        )
+        assert (
+            seeded_output and len(seeded_output) == 1
+        ), f"resumption response must contain the 1 prior phase item; got {seeded_output}"
 
         # Only 2 new phases run on this attempt.
         added_count = sum(
-            1
-            for e in events
-            if (getattr(e, "type", None) or e.get("type")) == "response.output_item.added"
+            1 for e in events if (getattr(e, "type", None) or e.get("type")) == "response.output_item.added"
         )
         assert added_count == 2, f"expected 2 new items on recovery; got {added_count}"
 
@@ -189,21 +184,15 @@ class TestSample19RecoveryAfterGenerate:
 
         # Resumption response carries 2 prior items.
         first_in_progress = next(
-            e
-            for e in events
-            if (getattr(e, "type", None) or e.get("type")) == "response.in_progress"
+            e for e in events if (getattr(e, "type", None) or e.get("type")) == "response.in_progress"
         )
-        payload = (
-            getattr(first_in_progress, "response", None) or first_in_progress.get("response")
-        )
+        payload = getattr(first_in_progress, "response", None) or first_in_progress.get("response")
         seeded_output = payload.get("output") if isinstance(payload, dict) else payload.output
         assert len(seeded_output) == 2
 
         # Only 1 new phase runs.
         added_count = sum(
-            1
-            for e in events
-            if (getattr(e, "type", None) or e.get("type")) == "response.output_item.added"
+            1 for e in events if (getattr(e, "type", None) or e.get("type")) == "response.output_item.added"
         )
         assert added_count == 1
 

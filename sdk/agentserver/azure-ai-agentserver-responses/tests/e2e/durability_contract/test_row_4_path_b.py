@@ -61,15 +61,11 @@ async def test_row_4_path_b(
         async def _fire() -> None:
             try:
                 if stream:
-                    async with harness.client.stream(
-                        "POST", "/responses", json=body, timeout=15.0
-                    ) as resp:
+                    async with harness.client.stream("POST", "/responses", json=body, timeout=15.0) as resp:
                         async for _ in resp.aiter_lines():
                             pass
                 else:
-                    await harness.client.post(
-                        "/responses", json=body, timeout=15.0
-                    )
+                    await harness.client.post("/responses", json=body, timeout=15.0)
             except Exception:  # pylint: disable=broad-exception-caught
                 # Connection severed by SIGTERM is expected.
                 pass

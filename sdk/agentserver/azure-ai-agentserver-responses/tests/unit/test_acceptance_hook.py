@@ -36,9 +36,7 @@ class TestAcceptanceHookRegistration:
         app = ResponsesAgentServerHost(options=options)
 
         @app.response_acceptor
-        def my_acceptor(
-            request: CreateResponse, context: ResponseContext
-        ) -> dict[str, Any]:
+        def my_acceptor(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
             return {"status": "queued", "id": context.response_id}
 
         assert app._acceptance_hook is not None
@@ -94,9 +92,7 @@ class TestCustomAcceptanceHook:
 
         captured: dict[str, Any] = {}
 
-        def my_hook(
-            request: CreateResponse, context: ResponseContext
-        ) -> dict[str, Any]:
+        def my_hook(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
             captured["request"] = request
             captured["context"] = context
             return {"status": "queued", "id": context.response_id, "custom": True}
@@ -127,9 +123,7 @@ class TestCustomAcceptanceHook:
         )
         from unittest.mock import MagicMock
 
-        def bad_hook(
-            request: CreateResponse, context: ResponseContext
-        ) -> dict[str, Any]:
+        def bad_hook(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
             raise RuntimeError("Hook failed")
 
         mock_request = MagicMock(spec=CreateResponse)

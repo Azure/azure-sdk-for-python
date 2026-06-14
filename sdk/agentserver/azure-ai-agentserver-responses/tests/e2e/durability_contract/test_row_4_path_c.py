@@ -63,15 +63,11 @@ async def test_row_4_path_c(
         async def _fire() -> None:
             try:
                 if stream:
-                    async with harness.client.stream(
-                        "POST", "/responses", json=body, timeout=15.0
-                    ) as resp:
+                    async with harness.client.stream("POST", "/responses", json=body, timeout=15.0) as resp:
                         async for _ in resp.aiter_lines():
                             pass
                 else:
-                    await harness.client.post(
-                        "/responses", json=body, timeout=15.0
-                    )
+                    await harness.client.post("/responses", json=body, timeout=15.0)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass
 
@@ -85,8 +81,7 @@ async def test_row_4_path_c(
         if resp_dir.exists():
             files = list(resp_dir.glob("*.json"))
             assert not files, (
-                f"Row 4 Path C: store=false should leave no response files, "
-                f"found: {[f.name for f in files]}"
+                f"Row 4 Path C: store=false should leave no response files, " f"found: {[f.name for f in files]}"
             )
 
         # (b) No leftover durable task record.

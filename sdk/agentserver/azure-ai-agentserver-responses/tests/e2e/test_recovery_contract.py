@@ -38,7 +38,6 @@ from azure.ai.agentserver.responses._durability_context import DurabilityContext
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-
 # ---------------------------------------------------------------------------
 # Minimal async ASGI client (copied pattern from test_cancellation_policy_e2e.py)
 # ---------------------------------------------------------------------------
@@ -86,9 +85,7 @@ class _AsyncAsgiClient:
             "root_path": "",
         }
 
-    async def request(
-        self, method: str, path: str, *, json_body: dict[str, Any] | None = None
-    ) -> _AsgiResponse:
+    async def request(self, method: str, path: str, *, json_body: dict[str, Any] | None = None) -> _AsgiResponse:
         body = _json.dumps(json_body).encode() if json_body else b""
         scope = self._build_scope(method, path, body)
         status_code: int | None = None
@@ -119,9 +116,7 @@ class _AsyncAsgiClient:
 
         await self._app(scope, receive, send)
         assert status_code is not None
-        return _AsgiResponse(
-            status_code=status_code, body=b"".join(body_parts), headers=response_headers
-        )
+        return _AsgiResponse(status_code=status_code, body=b"".join(body_parts), headers=response_headers)
 
     async def post(self, path: str, *, json_body: dict[str, Any] | None = None) -> _AsgiResponse:
         return await self.request("POST", path, json_body=json_body)
@@ -167,9 +162,7 @@ def _build_resumption_response(
     )
 
 
-def _make_durability_context(
-    *, entry_mode: str = "fresh", retry_attempt: int = 0
-) -> DurabilityContext:
+def _make_durability_context(*, entry_mode: str = "fresh", retry_attempt: int = 0) -> DurabilityContext:
     """Synthesize a DurabilityContext for test handlers."""
 
     return DurabilityContext(
@@ -370,9 +363,7 @@ class TestDuplicateCreatedIdempotent:
         try:
             validator.validate_next({"type": "response.created", "response": {}})
         except ValueError as e:
-            pytest.fail(
-                f"Duplicate response.created raised: {e}. FR-005 not yet implemented."
-            )
+            pytest.fail(f"Duplicate response.created raised: {e}. FR-005 not yet implemented.")
 
 
 # ---------------------------------------------------------------------------
@@ -392,17 +383,11 @@ class TestDuplicateTerminalIdempotent:
         validator = EventStreamValidator()
         validator.validate_next({"type": "response.created", "response": {}})
         validator.validate_next({"type": "response.in_progress", "response": {}})
-        validator.validate_next(
-            {"type": "response.completed", "response": {"status": "completed"}}
-        )
+        validator.validate_next({"type": "response.completed", "response": {"status": "completed"}})
         try:
-            validator.validate_next(
-                {"type": "response.completed", "response": {"status": "completed"}}
-            )
+            validator.validate_next({"type": "response.completed", "response": {"status": "completed"}})
         except ValueError as e:
-            pytest.fail(
-                f"Duplicate response.completed raised: {e}. FR-006 not yet implemented."
-            )
+            pytest.fail(f"Duplicate response.completed raised: {e}. FR-006 not yet implemented.")
 
 
 # ---------------------------------------------------------------------------
@@ -429,9 +414,7 @@ class TestRecoveryAwareHandlerProducesCleanFinalResponse:
                 attempts[0] += 1
                 if attempts[0] == 1:
                     # First attempt: emit some events, then "crash".
-                    stream = ResponseEventStream(
-                        response_id=context.response_id, request=request
-                    )
+                    stream = ResponseEventStream(response_id=context.response_id, request=request)
                     yield stream.emit_created()
                     yield stream.emit_in_progress()
                     msg = stream.add_output_item_message()
@@ -446,9 +429,7 @@ class TestRecoveryAwareHandlerProducesCleanFinalResponse:
                     model=getattr(request, "model", "test"),
                     output=[],  # resumption excludes the in-flight item
                 )
-                stream = ResponseEventStream(
-                    response_id=context.response_id, response=resumption
-                )
+                stream = ResponseEventStream(response_id=context.response_id, response=resumption)
                 yield stream.emit_created()
                 yield stream.emit_in_progress()  # reset point
                 msg = stream.add_output_item_message()
@@ -498,9 +479,7 @@ class TestRecoveryAwareHandlerProducesCleanFinalResponse:
         # Pin: the persisted response after the recovered attempt MUST contain
         # only the resumption response's items (no leaked "Half-finis" from
         # the crashed attempt). FR-004 enforces this via snapshot-reset.
-        completed = next(
-            (e for e in events if e["type"] == "response.completed"), None
-        )
+        completed = next((e for e in events if e["type"] == "response.completed"), None)
         assert completed is not None, "No response.completed in stream"
         output = completed["data"].get("response", {}).get("output", [])
         # Reconstruct: there should be exactly one message item with the

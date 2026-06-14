@@ -404,16 +404,14 @@ class TestPrimitiveSelectionMatrix:
             default_fetch_history_count=100,
         )
         orch = DurableResponseOrchestrator(
-            create_fn=AsyncMock(), provider=MagicMock(), options=opts,
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=opts,
         )
 
         # Both primitives must exist (precondition for the matrix).
-        assert hasattr(orch, "_one_shot_task_fn"), (
-            f"{case_id}: orchestrator must register a one-shot primitive."
-        )
-        assert hasattr(orch, "_multi_turn_task_fn"), (
-            f"{case_id}: orchestrator must register a multi-turn primitive."
-        )
+        assert hasattr(orch, "_one_shot_task_fn"), f"{case_id}: orchestrator must register a one-shot primitive."
+        assert hasattr(orch, "_multi_turn_task_fn"), f"{case_id}: orchestrator must register a multi-turn primitive."
 
         ctx_params = {
             "response_id": "resp_test",
@@ -443,51 +441,45 @@ class TestOrchestratorConstructionValidation:
         deployment that mis-imports the core wheel fails fast at
         server startup instead of per-request.
         """
-        opts = MagicMock(
-            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
-        )
+        opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
         orch = DurableResponseOrchestrator(
-            create_fn=AsyncMock(), provider=MagicMock(), options=opts,
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=opts,
         )
 
         # Both registrations are present.
-        assert hasattr(orch, "_one_shot_task_fn"), (
-            "Construction must register the one-shot primitive."
-        )
-        assert hasattr(orch, "_multi_turn_task_fn"), (
-            "Construction must register the multi-turn primitive."
-        )
+        assert hasattr(orch, "_one_shot_task_fn"), "Construction must register the one-shot primitive."
+        assert hasattr(orch, "_multi_turn_task_fn"), "Construction must register the multi-turn primitive."
 
         # Names are distinct and well-formed.
         one_shot_name = orch._one_shot_task_fn._opts.name
         multi_turn_name = orch._multi_turn_task_fn._opts.name
         assert one_shot_name != multi_turn_name, (
-            f"Primitives must have distinct registration names "
-            f"(both got {one_shot_name!r})."
+            f"Primitives must have distinct registration names " f"(both got {one_shot_name!r})."
         )
-        assert "one_shot" in one_shot_name or "oneshot" in one_shot_name, (
-            f"One-shot primitive name should reflect its kind (got {one_shot_name!r})."
-        )
-        assert "multi_turn" in multi_turn_name or "multiturn" in multi_turn_name, (
-            f"Multi-turn primitive name should reflect its kind (got {multi_turn_name!r})."
-        )
+        assert (
+            "one_shot" in one_shot_name or "oneshot" in one_shot_name
+        ), f"One-shot primitive name should reflect its kind (got {one_shot_name!r})."
+        assert (
+            "multi_turn" in multi_turn_name or "multiturn" in multi_turn_name
+        ), f"Multi-turn primitive name should reflect its kind (got {multi_turn_name!r})."
 
         # The multi-turn primitive's steerable flag MUST match the
         # deployment's steerable_conversations option (per SOT §6.6).
         assert orch._multi_turn_task_fn._opts.steerable is False, (
-            "Multi-turn primitive's steerable flag must match "
-            "options.steerable_conversations."
+            "Multi-turn primitive's steerable flag must match " "options.steerable_conversations."
         )
 
     def test_orchestrator_multi_turn_steerable_flag_propagated(self) -> None:
         """With ``steerable_conversations=True``, the multi-turn primitive
         is registered with ``steerable=True``."""
-        opts = MagicMock(
-            steerable_conversations=True, max_pending=10, default_fetch_history_count=100
-        )
+        opts = MagicMock(steerable_conversations=True, max_pending=10, default_fetch_history_count=100)
         orch = DurableResponseOrchestrator(
-            create_fn=AsyncMock(), provider=MagicMock(), options=opts,
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=opts,
         )
-        assert orch._multi_turn_task_fn._opts.steerable is True, (
-            "Steerable flag must propagate from options to multi-turn primitive."
-        )
+        assert (
+            orch._multi_turn_task_fn._opts.steerable is True
+        ), "Steerable flag must propagate from options to multi-turn primitive."

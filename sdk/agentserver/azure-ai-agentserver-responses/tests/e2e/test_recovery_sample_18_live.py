@@ -38,14 +38,11 @@ import pytest
 
 from tests.e2e._crash_harness import CrashHarness
 
-
 pytestmark = pytest.mark.live
 
 
 _MODEL = os.environ.get("COPILOT_MODEL", "gpt-5-mini")
-_SAMPLE_MODULE = (
-    Path(__file__).parent.parent.parent / "samples" / "sample_18_durable_copilot.py"
-)
+_SAMPLE_MODULE = Path(__file__).parent.parent.parent / "samples" / "sample_18_durable_copilot.py"
 
 
 def _payload(input_text: str, **overrides) -> dict:
@@ -100,6 +97,7 @@ async def test_sample18_lifecycle(tmp_path: Path) -> None:
                 if last.get("status") in ("completed", "failed", "cancelled"):
                     break
             import asyncio  # pylint: disable=import-outside-toplevel
+
             await asyncio.sleep(0.5)
 
         # Even if Copilot is slow or errors, the framework should land
@@ -130,6 +128,7 @@ async def test_full_crash_then_recovery_round_trip(tmp_path: Path) -> None:
 
         # Give Copilot a beat to actually start emitting.
         import asyncio  # pylint: disable=import-outside-toplevel
+
         await asyncio.sleep(1.5)
 
         # Kill the subprocess mid-flight (SIGKILL via process group).
@@ -166,10 +165,7 @@ async def test_full_crash_then_recovery_round_trip(tmp_path: Path) -> None:
         matching = list(resp_dir.glob(f"{response_id}*.json")) if resp_dir.exists() else []
         # Allow 1 (object only) or 2 (object + .items dir's json — only the
         # response object itself matters for uniqueness).
-        response_objs = [
-            p for p in matching
-            if p.name == f"{response_id}.json"
-        ]
+        response_objs = [p for p in matching if p.name == f"{response_id}.json"]
         assert len(response_objs) <= 1, response_objs
     finally:
         await harness.close()
@@ -201,6 +197,7 @@ async def test_window2_crash_orphan_create(tmp_path: Path) -> None:
 
         # Poll for terminal.
         import asyncio  # pylint: disable=import-outside-toplevel
+
         deadline = time.time() + 90.0
         last = {}
         while time.time() < deadline:
@@ -238,6 +235,7 @@ async def test_steered_turn_2_after_crash(tmp_path: Path) -> None:
         resp1_id = r1.json()["id"]
 
         import asyncio  # pylint: disable=import-outside-toplevel
+
         await asyncio.sleep(1.0)
         await harness.kill()
         await harness.restart()
@@ -285,6 +283,7 @@ async def test_client_cancel_returns_cancelled(tmp_path: Path) -> None:
 
         # Brief in-flight, then explicit cancel.
         import asyncio  # pylint: disable=import-outside-toplevel
+
         await asyncio.sleep(1.0)
 
         cancel = await harness.client.post(f"/responses/{response_id}/cancel")

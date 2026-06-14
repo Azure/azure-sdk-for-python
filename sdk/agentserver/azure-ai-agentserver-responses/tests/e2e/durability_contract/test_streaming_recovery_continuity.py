@@ -68,7 +68,6 @@ from tests.e2e.durability_contract.conftest import (
     poll_until_terminal,
 )
 
-
 _PRE_DELTAS = 3
 
 
@@ -117,9 +116,7 @@ async def _post_and_read_until_pre_deltas(
     return response_id, delta_count
 
 
-async def _get_full_stream(
-    client: httpx.AsyncClient, response_id: str
-) -> list[dict]:
+async def _get_full_stream(client: httpx.AsyncClient, response_id: str) -> list[dict]:
     """GET ?stream=true&starting_after=0 and collect all events to terminal."""
     events: list[dict] = []
     timeout = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=10.0)
@@ -168,9 +165,7 @@ async def test_pre_crash_deltas_survive_recovery(
     )
     await harness.start()
     try:
-        response_id, delta_count = await _post_and_read_until_pre_deltas(
-            harness.client, expected_deltas=_PRE_DELTAS
-        )
+        response_id, delta_count = await _post_and_read_until_pre_deltas(harness.client, expected_deltas=_PRE_DELTAS)
         assert response_id, "never captured response id"
         assert delta_count >= _PRE_DELTAS, (
             f"only saw {delta_count}/{_PRE_DELTAS} pre-crash deltas before "
@@ -186,18 +181,14 @@ async def test_pre_crash_deltas_survive_recovery(
         await harness.restart()
 
         # Wait for the recovered handler to reach terminal.
-        terminal = await poll_until_terminal(
-            harness.client, response_id, timeout_seconds=30.0
-        )
+        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=30.0)
         assert terminal["status"] == "completed", terminal
 
         # Now read the full persisted event stream and assert continuity.
         events = await _get_full_stream(harness.client, response_id)
 
         # Find the deltas with our pre-crash content (lifetime 0 pre-sleep).
-        pre_crash_delta_contents = {
-            delta_content(0, PHASE_PRE, i) for i in range(_PRE_DELTAS)
-        }
+        pre_crash_delta_contents = {delta_content(0, PHASE_PRE, i) for i in range(_PRE_DELTAS)}
         seen_pre_crash = []
         for ev in events:
             if ev.get("type") == "response.output_text.delta":
@@ -215,9 +206,9 @@ async def test_pre_crash_deltas_survive_recovery(
         # Sequence numbers must be strictly monotonically increasing across
         # the assembled (pre-crash + recovered) stream.
         seq_numbers = [e.get("sequence_number") for e in events]
-        assert all(isinstance(s, int) for s in seq_numbers), (
-            f"All events must have integer sequence_number; got {seq_numbers}"
-        )
+        assert all(
+            isinstance(s, int) for s in seq_numbers
+        ), f"All events must have integer sequence_number; got {seq_numbers}"
         for prev, curr in zip(seq_numbers, seq_numbers[1:]):
             assert curr > prev, (
                 f"Sequence numbers must be strictly monotonically increasing "
@@ -231,16 +222,12 @@ async def test_pre_crash_deltas_survive_recovery(
         post_recovery_in_progress = [
             e
             for e in events
-            if e.get("type") == "response.in_progress"
-            and (e.get("sequence_number") or -1) > max_pre_crash_seq
+            if e.get("type") == "response.in_progress" and (e.get("sequence_number") or -1) > max_pre_crash_seq
         ]
         assert post_recovery_in_progress, (
             "Recovered handler must emit at least one response.in_progress "
             "reset event with seq > the last pre-crash event. Full stream:\n"
-            + "\n".join(
-                f"  seq={e.get('sequence_number')} type={e.get('type')}"
-                for e in events
-            )
+            + "\n".join(f"  seq={e.get('sequence_number')} type={e.get('type')}" for e in events)
         )
 
         # Recovered deltas (lifetime 1) must also be present with seq > max
@@ -248,8 +235,7 @@ async def test_pre_crash_deltas_survive_recovery(
         recovered_deltas = [
             (e.get("sequence_number"), e.get("delta", ""))
             for e in events
-            if e.get("type") == "response.output_text.delta"
-            and (e.get("delta") or "").startswith("L1_")
+            if e.get("type") == "response.output_text.delta" and (e.get("delta") or "").startswith("L1_")
         ]
         assert recovered_deltas, (
             "Recovered handler must emit at least one L1_ delta (its own "
@@ -257,9 +243,9 @@ async def test_pre_crash_deltas_survive_recovery(
             f"{[e.get('type') for e in events]}"
         )
         for seq, _ in recovered_deltas:
-            assert isinstance(seq, int) and seq > max_pre_crash_seq, (
-                f"Recovered delta seq must be > {max_pre_crash_seq}, got {seq}"
-            )
+            assert (
+                isinstance(seq, int) and seq > max_pre_crash_seq
+            ), f"Recovered delta seq must be > {max_pre_crash_seq}, got {seq}"
 
         # Final assertion: the response.completed terminal must also have
         # seq > max_pre_crash_seq (otherwise we'd be looking at a leftover

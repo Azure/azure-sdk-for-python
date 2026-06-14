@@ -25,15 +25,11 @@ from azure.ai.agentserver.responses import (
 
 
 def _make_session_app() -> TestClient:
-    options = ResponsesServerOptions(
-        durable_background=True, steerable_conversations=True
-    )
+    options = ResponsesServerOptions(durable_background=True, steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(
-        request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-    ):
+    async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
         input_text = await context.get_input_text()
         durability = context.durability
         session_id = durability.metadata.get("session_id", "new-session")

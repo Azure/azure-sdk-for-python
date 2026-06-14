@@ -32,7 +32,6 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
 )
 
-
 # ---------------------------------------------------------------------------
 # Per-test fixture: snapshot/restore the registry's private state so the
 # bootstrap calls below do not leak across tests.

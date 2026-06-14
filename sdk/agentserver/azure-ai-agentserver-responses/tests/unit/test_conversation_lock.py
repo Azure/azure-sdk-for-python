@@ -59,9 +59,7 @@ class TestConflictHandling:
         steering" case is handled inside the framework's
         ``MultiTurnTask(steerable=True).start()`` without raising TCE.
         """
-        opts = MagicMock(
-            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
-        )
+        opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
@@ -71,9 +69,7 @@ class TestConflictHandling:
         # Force dispatch to the multi-turn primitive (so the test exercises
         # the shared-task_id conflict path) by passing conversation_id.
         orch._multi_turn_task_fn = MagicMock()
-        orch._multi_turn_task_fn.start = AsyncMock(
-            side_effect=TaskConflictError("task-123", "in_progress")
-        )
+        orch._multi_turn_task_fn.start = AsyncMock(side_effect=TaskConflictError("task-123", "in_progress"))
 
         record = MagicMock()
         ctx_params = {
@@ -107,9 +103,7 @@ class TestConflictHandling:
         request usually prevent it) also propagates TaskConflictError so
         the endpoint handler can return HTTP 409 rather than silently
         falling back."""
-        opts = MagicMock(
-            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
-        )
+        opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
@@ -117,9 +111,7 @@ class TestConflictHandling:
         )
 
         orch._one_shot_task_fn = MagicMock()
-        orch._one_shot_task_fn.start = AsyncMock(
-            side_effect=TaskConflictError("task-dup", "in_progress")
-        )
+        orch._one_shot_task_fn.start = AsyncMock(side_effect=TaskConflictError("task-dup", "in_progress"))
 
         record = MagicMock()
         ctx_params = {
@@ -248,9 +240,7 @@ class TestRow5SequentialTurnsExtendChain:
         - Turn 2 must NOT raise ``TaskConflictError`` against a
           ``suspended`` chain.
         """
-        opts = MagicMock(
-            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
-        )
+        opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
         # Orchestrator that has both primitives wired up. ``_pick_primitive``
         # MUST return the multi-turn primitive when ``conversation_id`` is
         # present, regardless of ``steerable_conversations``.
@@ -262,12 +252,10 @@ class TestRow5SequentialTurnsExtendChain:
 
         # Post-Phase-2 the orchestrator carries two task fns.
         assert hasattr(orch, "_multi_turn_task_fn"), (
-            "Post-spec-023: orchestrator must register a multi-turn primitive "
-            "for chain semantics (Row 5 fix)."
+            "Post-spec-023: orchestrator must register a multi-turn primitive " "for chain semantics (Row 5 fix)."
         )
         assert hasattr(orch, "_one_shot_task_fn"), (
-            "Post-spec-023: orchestrator must also register a one-shot primitive "
-            "for non-chain requests."
+            "Post-spec-023: orchestrator must also register a one-shot primitive " "for non-chain requests."
         )
 
         ctx_params = {
@@ -321,9 +309,7 @@ class TestRow5SequentialTurnsExtendChain:
         and the orchestrator does NOT silently fall back to a one-shot
         primitive.
         """
-        opts = MagicMock(
-            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
-        )
+        opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
@@ -333,9 +319,7 @@ class TestRow5SequentialTurnsExtendChain:
         # Wire up the multi-turn primitive to raise TaskConflictError
         # against an ``in_progress`` status (the legitimate concurrent-overlap case).
         orch._multi_turn_task_fn = MagicMock()
-        orch._multi_turn_task_fn.start = AsyncMock(
-            side_effect=TaskConflictError("durable-resp-row5", "in_progress")
-        )
+        orch._multi_turn_task_fn.start = AsyncMock(side_effect=TaskConflictError("durable-resp-row5", "in_progress"))
 
         record = MagicMock()
         ctx_params = {
@@ -349,6 +333,6 @@ class TestRow5SequentialTurnsExtendChain:
         with pytest.raises(TaskConflictError) as excinfo:
             await orch.start_durable(record=record, ctx_params=ctx_params)
         # Depth: status is in_progress (not completed) — the actual concurrent-lock case.
-        assert excinfo.value.current_status == "in_progress", (
-            f"Concurrent overlap MUST be in_progress (not {excinfo.value.current_status!r})."
-        )
+        assert (
+            excinfo.value.current_status == "in_progress"
+        ), f"Concurrent overlap MUST be in_progress (not {excinfo.value.current_status!r})."

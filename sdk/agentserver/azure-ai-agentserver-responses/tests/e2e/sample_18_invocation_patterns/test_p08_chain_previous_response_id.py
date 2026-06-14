@@ -37,7 +37,6 @@ from tests.e2e.sample_18_invocation_patterns.conftest import (
     post_and_get_response_id,
 )
 
-
 pytestmark = pytest.mark.live
 
 

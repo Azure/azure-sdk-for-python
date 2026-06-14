@@ -140,11 +140,7 @@ def _make_session_stub_classes(
         async def send(self, prompt: str) -> None:
             send_calls.append(prompt)
             for handler in self._handlers:
-                handler(
-                    _Event(
-                        AssistantMessageData(content=reply_text, message_id="m1")
-                    )
-                )
+                handler(_Event(AssistantMessageData(content=reply_text, message_id="m1")))
                 handler(_Event(SessionIdleData()))
 
         async def abort(self) -> None:
@@ -161,9 +157,7 @@ def _make_session_stub_classes(
             create_calls.append(kwargs)
             return _StubSession(**kwargs)
 
-        async def resume_session(
-            self, session_id: str, **kwargs: Any
-        ) -> _StubSession:
+        async def resume_session(self, session_id: str, **kwargs: Any) -> _StubSession:
             resume_calls.append({"session_id": session_id, **kwargs})
             return _StubSession(session_id=session_id, **kwargs)
 
@@ -229,9 +223,7 @@ class TestSample18RecoveryUsesResumeSession:
 
         # History already has our input — recovery skips send.
         history = [_make_user_event("test prompt")]
-        stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes(
-            history_events=history
-        )
+        stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes(history_events=history)
         with patch.object(mod, "CopilotClient", stub_client):
             response_id = IdGenerator.new_response_id()
             ctx = _make_context(
@@ -260,9 +252,7 @@ class TestSample18RecoveryWithMissingInput:
             _make_user_event("prior question"),
             _make_assistant_event("prior reply"),
         ]
-        stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes(
-            history_events=history
-        )
+        stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes(history_events=history)
         with patch.object(mod, "CopilotClient", stub_client):
             ctx = _make_context(
                 response_id=IdGenerator.new_response_id(),
@@ -285,18 +275,14 @@ class TestSample18LiveDeltas:
         the end)."""
         from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
 
-        stub_client, send_calls, _create_calls, _resume_calls = _make_session_stub_classes(
-            reply_text="hello world"
-        )
+        stub_client, send_calls, _create_calls, _resume_calls = _make_session_stub_classes(reply_text="hello world")
         with patch.object(mod, "CopilotClient", stub_client):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
             events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
         assert send_calls == ["test prompt"]
         # The delta event carries the reply text exactly once.
-        delta_events = [
-            e for e in events if _event_type(e) == "response.output_text.delta"
-        ]
+        delta_events = [e for e in events if _event_type(e) == "response.output_text.delta"]
         assert delta_events, "expected at least one output_text.delta event"
         deltas = [getattr(e, "delta", None) or e.get("delta") for e in delta_events]
         assert "hello world" in "".join(d for d in deltas if d)
@@ -331,9 +317,7 @@ class TestSample18LiveDeltas:
         # No re-send because upstream already has our user message.
         assert send_calls == []
         # The accumulated assistant text was replayed as a single delta.
-        delta_events = [
-            e for e in events if _event_type(e) == "response.output_text.delta"
-        ]
+        delta_events = [e for e in events if _event_type(e) == "response.output_text.delta"]
         assert delta_events, "expected at least one output_text.delta on recovery"
         deltas = [getattr(e, "delta", None) or e.get("delta") for e in delta_events]
         joined = "".join(d for d in deltas if d)
@@ -361,9 +345,7 @@ class TestSample18LiveDeltas:
 
         assert len(resume_calls) == 1
         assert send_calls == []
-        delta_events = [
-            e for e in events if _event_type(e) == "response.output_text.delta"
-        ]
+        delta_events = [e for e in events if _event_type(e) == "response.output_text.delta"]
         # No replay text, no live deltas (stub has no new events to deliver
         # because we didn't call send).
         deltas = [getattr(e, "delta", None) or e.get("delta") for e in delta_events]
@@ -377,8 +359,7 @@ class TestSample18LiveDeltas:
 
         src = inspect.getsource(mod.handler)
         assert "asyncio.Queue" in src, (
-            "handler should drive live deltas through asyncio.Queue, not a "
-            "batched list emitted after idle"
+            "handler should drive live deltas through asyncio.Queue, not a " "batched list emitted after idle"
         )
         # And no leftover batched-accumulation pattern from the prior design.
         assert "reply_parts" not in src, (
@@ -417,8 +398,7 @@ class TestSample18NoWatermarkOrFlush:
 
         src = inspect.getsource(mod)
         assert ".metadata.flush(" not in src, (
-            "sample_18 must not depend on metadata flush ordering; the "
-            "upstream session is the source of truth"
+            "sample_18 must not depend on metadata flush ordering; the " "upstream session is the source of truth"
         )
 
 

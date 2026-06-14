@@ -1674,16 +1674,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         for record in records:
             if record.status not in {"queued", "in_progress"}:
                 continue
-            is_durable_background = (
-                is_durable_server and record.mode_flags.store and record.mode_flags.background
-            )
+            is_durable_background = is_durable_server and record.mode_flags.store and record.mode_flags.background
             if is_durable_background:
                 # Leave in current state — will be re-entered on restart.
                 continue
             # Non-durable or foreground: best-effort mark failed.
-            failed_payload = build_failed_response(
-                record.response_id, record.agent_reference, record.model
-            )
+            failed_payload = build_failed_response(record.response_id, record.agent_reference, record.model)
             record.set_response_snapshot(failed_payload)
             record.transition_to("failed")
 
@@ -1695,10 +1691,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # store-disabled / ephemeral row 4 case has no store to persist
             # to). Best-effort — log warning on failure rather than blocking
             # shutdown.
-            if (
-                record.mode_flags.store
-                and self._provider is not None
-            ):
+            if record.mode_flags.store and self._provider is not None:
                 try:
                     from ..models._generated import (  # pylint: disable=import-outside-toplevel
                         ResponseObject,
@@ -1707,13 +1700,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     isolation = None
                     if record.response_context is not None:
                         isolation = getattr(record.response_context, "isolation", None)
-                    await self._provider.update_response(
-                        ResponseObject(failed_payload), isolation=isolation
-                    )
+                    await self._provider.update_response(ResponseObject(failed_payload), isolation=isolation)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     logger.warning(
-                        "Failed to persist Path-B failed terminal for %s during "
-                        "shutdown: %s",
+                        "Failed to persist Path-B failed terminal for %s during " "shutdown: %s",
                         record.response_id,
                         exc,
                     )

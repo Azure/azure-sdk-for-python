@@ -42,7 +42,6 @@ from tests.e2e.sample_18_invocation_patterns.conftest import (
     reconnect_stream_and_collect_events,
 )
 
-
 pytestmark = pytest.mark.live
 
 
@@ -83,9 +82,7 @@ async def test_p06_path_a_natural_completion(
             timeout_seconds=TERMINAL_POLL_BUDGET_S,
         )
         terminal_event = _terminal_in(events)
-        assert terminal_event is not None, (
-            f"No terminal in live stream events: {[e.get('type') for e in events]}"
-        )
+        assert terminal_event is not None, f"No terminal in live stream events: {[e.get('type') for e in events]}"
         assert terminal_event.get("type") == "response.completed", terminal_event
         # GET retrieval after natural completion should also see completed.
         terminal = await poll_until_terminal(
@@ -129,6 +126,7 @@ async def test_p06_path_b_graceful_marks_failed(
                 # SIGTERM. The helper captures it from the first
                 # response.created event.
                 import json as _json
+
                 body = {
                     "model": "copilot",
                     "input": SLOW_PROMPT,
@@ -219,6 +217,7 @@ async def test_p06_path_c_sigkill_marks_failed(
         async def _consume() -> None:
             try:
                 import json as _json
+
                 body = {
                     "model": "copilot",
                     "input": SLOW_PROMPT,

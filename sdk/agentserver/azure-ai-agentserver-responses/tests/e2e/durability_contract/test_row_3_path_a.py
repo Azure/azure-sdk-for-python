@@ -41,11 +41,10 @@ async def test_row_3_path_a(make_harness: Callable[..., CrashHarness], stream: b
         if stream:
             # Streamed foreground — read until terminal event.
             import json
+
             terminal_seen = False
             terminal_type = ""
-            async with harness.client.stream(
-                "POST", "/responses", json=body, timeout=15.0
-            ) as resp:
+            async with harness.client.stream("POST", "/responses", json=body, timeout=15.0) as resp:
                 assert resp.status_code == 200, await resp.aread()
                 async for line in resp.aiter_lines():
                     if not line.startswith("data:"):

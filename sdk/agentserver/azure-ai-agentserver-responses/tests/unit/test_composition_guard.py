@@ -137,4 +137,3 @@ def test_durable_background_true_with_env_store_paths_does_not_raise(
     finally:
         os.environ.pop("AGENTSERVER_RESPONSE_STORE_PATH", None)
         os.environ.pop("AGENTSERVER_STREAM_STORE_PATH", None)
-

@@ -19,7 +19,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-
 Disposition = Literal["re-invoke", "mark-failed", "no-recovery"]
 TerminationPath = Literal["a", "b", "c"]
 
@@ -142,9 +141,7 @@ def _parse_matrix_table(section: str) -> list[ContractRow]:
             )
         )
     if not rows:
-        raise ValueError(
-            "Failed to parse any rows from § The matrix in durability-contract.md."
-        )
+        raise ValueError("Failed to parse any rows from § The matrix in durability-contract.md.")
     return rows
 
 

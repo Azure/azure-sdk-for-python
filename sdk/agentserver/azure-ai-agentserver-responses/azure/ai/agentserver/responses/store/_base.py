@@ -63,9 +63,7 @@ class ResponseProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def get_response(
-        self, response_id: str, *, isolation: IsolationContext | None = None
-    ) -> ResponseObject:
+    async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
         """Load one response envelope by ID.
 
         :param response_id: The unique identifier of the response to retrieve.
@@ -78,9 +76,7 @@ class ResponseProviderProtocol(Protocol):
         """
         ...
 
-    async def update_response(
-        self, response: ResponseObject, *, isolation: IsolationContext | None = None
-    ) -> None:
+    async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
         """Persist an updated response envelope.
 
         :param response: The response envelope with updated fields to persist.
@@ -90,9 +86,7 @@ class ResponseProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def delete_response(
-        self, response_id: str, *, isolation: IsolationContext | None = None
-    ) -> None:
+    async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
         """Delete a response envelope by ID.
 
         :param response_id: The unique identifier of the response to delete.
@@ -168,4 +162,3 @@ class ResponseProviderProtocol(Protocol):
         :rtype: list[str]
         """
         ...
-

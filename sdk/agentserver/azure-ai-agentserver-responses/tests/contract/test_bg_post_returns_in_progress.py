@@ -26,7 +26,6 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 
-
 # ─── Handlers ─────────────────────────────────────────────
 
 

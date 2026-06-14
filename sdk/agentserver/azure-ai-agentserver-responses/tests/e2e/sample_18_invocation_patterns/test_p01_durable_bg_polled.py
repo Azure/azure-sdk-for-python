@@ -37,7 +37,6 @@ from tests.e2e.sample_18_invocation_patterns.conftest import (
     poll_until_terminal,
 )
 
-
 pytestmark = pytest.mark.live
 
 

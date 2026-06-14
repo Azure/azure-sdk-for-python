@@ -41,7 +41,6 @@ from tests.e2e.sample_18_invocation_patterns.conftest import (
     reconnect_stream_and_collect_events,
 )
 
-
 pytestmark = pytest.mark.live
 
 
@@ -174,8 +173,7 @@ async def test_p02_path_c_sigkill_recovery_with_reconnect(
         )
         in_progress = [e for e in events if e.get("type") == "response.in_progress"]
         assert in_progress, (
-            "Replay must include at least one response.in_progress event. "
-            f"Events: {[e.get('type') for e in events]}"
+            "Replay must include at least one response.in_progress event. " f"Events: {[e.get('type') for e in events]}"
         )
         term = _terminal_in(events)
         assert term is not None and term.get("type") == "response.completed", term

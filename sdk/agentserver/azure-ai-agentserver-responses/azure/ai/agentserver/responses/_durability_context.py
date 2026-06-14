@@ -86,9 +86,7 @@ class _DeveloperMetadataFacade(MutableMapping[str, Any]):
         if name is None:
             return self
         if not isinstance(name, str):
-            raise TypeError(
-                f"namespace name must be a str, got {type(name).__name__}"
-            )
+            raise TypeError(f"namespace name must be a str, got {type(name).__name__}")
         if name.startswith("_"):
             raise ValueError(
                 f"named namespace {name!r} starts with '_', which is "
@@ -161,9 +159,7 @@ class DurabilityContext:
         self._was_steered = was_steered
         self._pending_inputs = pending_inputs
         self._metadata = (
-            metadata
-            if isinstance(metadata, _DeveloperMetadataFacade)
-            else _DeveloperMetadataFacade(metadata)
+            metadata if isinstance(metadata, _DeveloperMetadataFacade) else _DeveloperMetadataFacade(metadata)
         )
 
     @property

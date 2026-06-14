@@ -36,7 +36,6 @@ import pytest
 
 from tests.e2e._crash_harness import CrashHarness
 
-
 # ── Timing constants ─────────────────────────────────────────────────
 
 # How long the test handler sleeps (interruptibly). Path A sets grace
@@ -99,9 +98,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
             "CONFORMANCE_STORE_DISABLED": "true" if store_disabled else "false",
             "CONFORMANCE_HANDLER_SLEEP_MS": str(handler_sleep_ms),
             "CONFORMANCE_PRE_SLEEP_DELTAS": str(pre_sleep_deltas),
-            "CONFORMANCE_EMIT_METADATA_WATERMARK": (
-                "true" if emit_metadata_watermark else "false"
-            ),
+            "CONFORMANCE_EMIT_METADATA_WATERMARK": ("true" if emit_metadata_watermark else "false"),
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(shutdown_grace_seconds),
             # Force Hypercorn to cancel in-flight connections after the
             # responses-layer grace so foreground responses (Row 3) get
@@ -153,8 +150,7 @@ async def poll_until_terminal(
                 return last
         await asyncio.sleep(0.1)
     raise TimeoutError(
-        f"Response {response_id} did not reach terminal within "
-        f"{timeout_seconds}s. Last seen: {last}"
+        f"Response {response_id} did not reach terminal within " f"{timeout_seconds}s. Last seen: {last}"
     )
 
 
@@ -199,6 +195,7 @@ async def post_and_get_response_id(
 
     # Streaming POST — parse the first response.created event for the id.
     import json
+
     async with client.stream("POST", "/responses", json=body) as resp:
         if resp.status_code != 200:
             text = (await resp.aread()).decode("utf-8", errors="replace")
@@ -219,9 +216,7 @@ async def post_and_get_response_id(
                 rid = payload.get("response", {}).get("id")
                 if rid:
                     return rid
-    raise RuntimeError(
-        "POST /responses streamed without yielding a response.created event"
-    )
+    raise RuntimeError("POST /responses streamed without yielding a response.created event")
 
 
 async def post_stream_to_terminal(
@@ -270,9 +265,7 @@ async def post_stream_to_terminal(
     response_id: str | None = None
     events: list[dict[str, Any]] = []
 
-    async with client.stream(
-        "POST", "/responses", json=body, timeout=timeout_seconds
-    ) as resp:
+    async with client.stream("POST", "/responses", json=body, timeout=timeout_seconds) as resp:
         if resp.status_code != 200:
             text = (await resp.aread()).decode("utf-8", errors="replace")
             raise httpx.HTTPStatusError(
@@ -300,9 +293,7 @@ async def post_stream_to_terminal(
             ):
                 break
     if response_id is None:
-        raise RuntimeError(
-            "POST /responses streamed without yielding a response.created event"
-        )
+        raise RuntimeError("POST /responses streamed without yielding a response.created event")
     return response_id, events
 
 
@@ -326,6 +317,7 @@ async def reconnect_stream_and_collect_events(
     reset event on recovery before continuation.
     """
     import json
+
     params: dict[str, Any] = {"stream": "true"}
     if starting_after is not None:
         params["starting_after"] = str(starting_after)
@@ -339,8 +331,7 @@ async def reconnect_stream_and_collect_events(
         if resp.status_code != 200:
             text = (await resp.aread()).decode("utf-8", errors="replace")
             raise httpx.HTTPStatusError(
-                f"GET /responses/{response_id}?stream=true returned "
-                f"{resp.status_code}: {text}",
+                f"GET /responses/{response_id}?stream=true returned " f"{resp.status_code}: {text}",
                 request=resp.request,
                 response=resp,
             )
@@ -409,11 +400,7 @@ async def post_foreground_and_discover_id(
                     if resp.status_code != 200:
                         text = (await resp.aread()).decode("utf-8", errors="replace")
                         if not ready.done():
-                            ready.set_exception(
-                                RuntimeError(
-                                    f"POST failed {resp.status_code}: {text}"
-                                )
-                            )
+                            ready.set_exception(RuntimeError(f"POST failed {resp.status_code}: {text}"))
                         return
                     async for line in resp.aiter_lines():
                         if not line.startswith("data:"):
@@ -438,9 +425,7 @@ async def post_foreground_and_discover_id(
             response_id = await asyncio.wait_for(ready, timeout=5.0)
         except (TimeoutError, asyncio.TimeoutError) as exc:
             task.cancel()
-            raise RuntimeError(
-                "Foreground+stream POST did not emit response.created within 5s"
-            ) from exc
+            raise RuntimeError("Foreground+stream POST did not emit response.created within 5s") from exc
         return response_id, task
 
     # Non-streaming foreground — pre-allocate the id and pass it in the body

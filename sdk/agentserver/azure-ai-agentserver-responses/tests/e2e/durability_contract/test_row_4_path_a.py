@@ -59,9 +59,7 @@ async def test_row_4_path_a(
         }
         if stream:
             terminal_seen = False
-            async with harness.client.stream(
-                "POST", "/responses", json=body, timeout=15.0
-            ) as resp:
+            async with harness.client.stream("POST", "/responses", json=body, timeout=15.0) as resp:
                 assert resp.status_code == 200, await resp.aread()
                 async for line in resp.aiter_lines():
                     if not line.startswith("data:"):

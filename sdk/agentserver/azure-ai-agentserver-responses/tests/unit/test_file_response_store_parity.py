@@ -24,7 +24,6 @@ from azure.ai.agentserver.responses.store._base import ResponseAlreadyExistsErro
 from azure.ai.agentserver.responses.store._file import FileResponseStore
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -198,9 +197,7 @@ async def test_get_input_items_cursor_paging(tmp_path: Path) -> None:
         listed = await provider.get_input_items("r1", limit=3, ascending=True)
         assert [it["id"] for it in listed] == ["i0", "i1", "i2"]
         # After cursor.
-        after_listed = await provider.get_input_items(
-            "r1", limit=3, ascending=True, after="i1"
-        )
+        after_listed = await provider.get_input_items("r1", limit=3, ascending=True, after="i1")
         assert [it["id"] for it in after_listed] == ["i2", "i3", "i4"]
 
 
@@ -351,9 +348,7 @@ async def test_update_refreshes_output_index(tmp_path: Path) -> None:
         provider = factory()
         await provider.create_response(_response("r1"), None, None)
         # Update with output items present.
-        await provider.update_response(
-            _response("r1", output=[_output_item("out1")])
-        )
+        await provider.update_response(_response("r1", output=[_output_item("out1")]))
         ids = await provider.get_history_item_ids("r1", None, limit=10)
         assert "out1" in ids
         got = await provider.get_items(["out1"])

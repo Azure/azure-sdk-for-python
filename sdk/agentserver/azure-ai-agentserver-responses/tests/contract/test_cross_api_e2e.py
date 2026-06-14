@@ -696,13 +696,12 @@ class TestC2StreamStored:
                 f"per B17, got {get_resp.status_code}: {get_resp.text}"
             )
             body = get_resp.json()
-            assert body.get("status") == "cancelled", (
-                f"Expected status=cancelled per B11/B17, got {body.get('status')}: {body}"
-            )
+            assert (
+                body.get("status") == "cancelled"
+            ), f"Expected status=cancelled per B11/B17, got {body.get('status')}: {body}"
             # B11 point 2: cancelled response has empty output[].
             assert body.get("output") == [], (
-                f"Expected empty output[] per B11 cancellation rules, got "
-                f"{body.get('output')}: {body}"
+                f"Expected empty output[] per B11 cancellation rules, got " f"{body.get('output')}: {body}"
             )
 
 

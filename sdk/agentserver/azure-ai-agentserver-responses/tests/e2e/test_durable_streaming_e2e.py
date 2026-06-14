@@ -27,15 +27,11 @@ from azure.ai.agentserver.responses import (
 
 
 def _make_streaming_app() -> TestClient:
-    options = ResponsesServerOptions(
-        durable_background=True, steerable_conversations=True
-    )
+    options = ResponsesServerOptions(durable_background=True, steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(
-        request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-    ):
+    async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         yield stream.emit_created()
         yield stream.emit_in_progress()

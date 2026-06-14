@@ -123,8 +123,7 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
 
     if runtime_options.durable_background:
         stream_dir = Path(
-            os.environ.get("AGENTSERVER_STREAM_STORE_PATH")
-            or str(Path(tempfile.gettempdir()) / "agentserver_streams")
+            os.environ.get("AGENTSERVER_STREAM_STORE_PATH") or str(Path(tempfile.gettempdir()) / "agentserver_streams")
         )
         streams.use_file_backed_replay(
             storage_dir=stream_dir,
@@ -203,9 +202,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         # assembled lazily by _build_server_version() (joining all
         # registered segments) and is also used as the Foundry storage
         # User-Agent via callback so both headers are always identical.
-        _responses_version = build_server_version(
-            "azure-ai-agentserver-responses", _RESPONSES_VERSION
-        )
+        _responses_version = build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION)
 
         # Resolve AgentConfig — used for Foundry auto-activation and
         # merging platform env-vars (SSE keep-alive) into runtime options.
@@ -219,13 +216,8 @@ class ResponsesAgentServerHost(AgentServerHost):
         # explicitly set one via the options constructor.  AgentConfig
         # defaults to 0 (disabled) per spec; a positive value means the
         # platform env var SSE_KEEPALIVE_INTERVAL was explicitly set.
-        if (
-            runtime_options.sse_keep_alive_interval_seconds is None
-            and config.sse_keepalive_interval > 0
-        ):
-            runtime_options.sse_keep_alive_interval_seconds = (
-                config.sse_keepalive_interval
-            )
+        if runtime_options.sse_keep_alive_interval_seconds is None and config.sse_keepalive_interval > 0:
+            runtime_options.sse_keep_alive_interval_seconds = config.sse_keepalive_interval
 
         # SSE-specific headers (x-platform-server is handled by hosting middleware)
         sse_headers: dict[str, str] = {
@@ -242,13 +234,9 @@ class ResponsesAgentServerHost(AgentServerHost):
                 try:
                     from azure.identity.aio import DefaultAzureCredential
                 except ImportError:
-                    logger.warning(
-                        "azure-identity not installed; Foundry auto-activation disabled"
-                    )
+                    logger.warning("azure-identity not installed; Foundry auto-activation disabled")
                 else:
-                    settings = FoundryStorageSettings.from_endpoint(
-                        config.project_endpoint
-                    )
+                    settings = FoundryStorageSettings.from_endpoint(config.project_endpoint)
                     store = FoundryStorageProvider(
                         DefaultAzureCredential(),
                         settings,
@@ -273,9 +261,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
                 store = FileResponseStore(storage_dir=_Path(_resp_store_path))
 
-        resolved_provider: ResponseProviderProtocol = (
-            store if store is not None else InMemoryResponseProvider()
-        )
+        resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
 
         # Composition guard: when ``durable_background=True`` AND the
         # caller EXPLICITLY supplied a non-persistent ``store=`` argument,
@@ -287,11 +273,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         # in-process tests and local development that don't need cross-
         # process recovery. The streams registry configuration below
         # provides crash-recoverable replay storage independently.
-        if (
-            runtime_options.durable_background
-            and store is not None
-            and isinstance(store, InMemoryResponseProvider)
-        ):
+        if runtime_options.durable_background and store is not None and isinstance(store, InMemoryResponseProvider):
             raise ValueError(
                 "ResponsesAgentServerHost refused to start: "
                 "``durable_background=True`` was configured with an "
@@ -512,15 +494,11 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if self._create_fn is None:
-            raise NotImplementedError(
-                "No create handler registered. Use the @app.response_handler decorator."
-            )
+            raise NotImplementedError("No create handler registered. Use the @app.response_handler decorator.")
         result = self._create_fn(request, context, cancellation_signal)
         return self._normalize_handler_result(result)
 
-    def _normalize_handler_result(
-        self, result: Any
-    ) -> AsyncIterator[ResponseStreamEvent]:
+    def _normalize_handler_result(self, result: Any) -> AsyncIterator[ResponseStreamEvent]:
         """Convert a handler result into an AsyncIterator.
 
         Supports sync generators, async generators, coroutines (async def

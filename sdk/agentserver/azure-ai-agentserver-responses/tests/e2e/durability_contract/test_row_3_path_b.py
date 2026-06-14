@@ -51,9 +51,7 @@ async def test_row_3_path_b(
     await harness.start()
     bg_task = None
     try:
-        response_id, bg_task = await post_foreground_and_discover_id(
-            harness.client, tmp_path, stream=stream
-        )
+        response_id, bg_task = await post_foreground_and_discover_id(harness.client, tmp_path, stream=stream)
         # Give the handler a tick to be mid-sleep, then SIGTERM-short-grace.
         await asyncio.sleep(0.3)
         await harness.terminate(wait_seconds=SHORT_GRACE_S + 5.0)

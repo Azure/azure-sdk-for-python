@@ -268,13 +268,9 @@ class FileResponseStore(ResponseProviderProtocol):
 
             conversation_id = get_conversation_id(response)
             if conversation_id is not None:
-                self._add_response_to_conversation_unlocked(
-                    conversation_id, response_id
-                )
+                self._add_response_to_conversation_unlocked(conversation_id, response_id)
 
-    async def get_response(
-        self, response_id: str, *, isolation: IsolationContext | None = None
-    ) -> ResponseObject:
+    async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The response identifier.
@@ -295,9 +291,7 @@ class FileResponseStore(ResponseProviderProtocol):
                 raise KeyError(f"response '{response_id}' not found")
             return _dict_to_response(deepcopy(data))
 
-    async def update_response(
-        self, response: ResponseObject, *, isolation: IsolationContext | None = None
-    ) -> None:
+    async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
         """Update a stored response envelope.
 
         Output items present on the updated response are persisted to the
@@ -326,9 +320,7 @@ class FileResponseStore(ResponseProviderProtocol):
             output_ids = self._store_output_items_unlocked(response)
             self._update_indexes_unlocked(response_id, output_item_ids=output_ids)
 
-    async def delete_response(
-        self, response_id: str, *, isolation: IsolationContext | None = None
-    ) -> None:
+    async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
         """Soft-delete a stored response envelope by identifier.
 
         Writes a deleted marker file so that subsequent
@@ -488,9 +480,7 @@ class FileResponseStore(ResponseProviderProtocol):
         async with self._lock:
             resolved: list[str] = []
 
-            if previous_response_id is not None and not self._deleted_marker(
-                previous_response_id
-            ).exists():
+            if previous_response_id is not None and not self._deleted_marker(previous_response_id).exists():
                 indexes = _read_json_or_none(self._indexes_path(previous_response_id))
                 if indexes is not None:
                     resolved.extend(indexes.get("history_item_ids") or [])
@@ -517,9 +507,7 @@ class FileResponseStore(ResponseProviderProtocol):
     # Internal helpers (must be called with self._lock held)
     # ------------------------------------------------------------------
 
-    def _store_items_unlocked(
-        self, response_id: str, items: Iterable[Any]
-    ) -> list[str]:
+    def _store_items_unlocked(self, response_id: str, items: Iterable[Any]) -> list[str]:
         """Persist items to per-response and global indices.
 
         :param response_id: The owning response identifier.
@@ -542,9 +530,7 @@ class FileResponseStore(ResponseProviderProtocol):
             stored_ids.append(iid)
         return stored_ids
 
-    def _store_output_items_unlocked(
-        self, response: ResponseObject
-    ) -> list[str]:
+    def _store_output_items_unlocked(self, response: ResponseObject) -> list[str]:
         """Extract output items from a response and persist them.
 
         Mirrors :meth:`InMemoryResponseProvider._store_output_items_unlocked`.
@@ -559,10 +545,7 @@ class FileResponseStore(ResponseProviderProtocol):
             output = response.get("output")
         if not output:
             return []
-        response_id = str(
-            getattr(response, "id", None)
-            or (response.get("id") if isinstance(response, dict) else "")
-        )
+        response_id = str(getattr(response, "id", None) or (response.get("id") if isinstance(response, dict) else ""))
         return self._store_items_unlocked(response_id, output)
 
     def _update_indexes_unlocked(
@@ -592,9 +575,7 @@ class FileResponseStore(ResponseProviderProtocol):
             current["history_item_ids"] = history_item_ids
         _atomic_write_json(path, current)
 
-    def _add_response_to_conversation_unlocked(
-        self, conversation_id: str, response_id: str
-    ) -> None:
+    def _add_response_to_conversation_unlocked(self, conversation_id: str, response_id: str) -> None:
         """Append ``response_id`` to the conversation's response list.
 
         Idempotent: appending the same id twice is a no-op.

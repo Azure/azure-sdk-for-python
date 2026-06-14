@@ -103,12 +103,8 @@ class TestStreamRecoveryBaseline:
     def test_stream_completes_with_all_events(self) -> None:
         """Full stream delivers created → in_progress → content → completed."""
 
-        async def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
-            stream = ResponseEventStream(
-                response_id=context.response_id, request=request
-            )
+        async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+            stream = ResponseEventStream(response_id=context.response_id, request=request)
             yield stream.emit_created()
             yield stream.emit_in_progress()
             for event in stream.output_item_message("Hello stream!"):
@@ -128,12 +124,8 @@ class TestStreamRecoveryBaseline:
     def test_stream_events_have_sequence_numbers(self) -> None:
         """Each SSE event has a monotonically increasing sequence_number."""
 
-        async def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
-            stream = ResponseEventStream(
-                response_id=context.response_id, request=request
-            )
+        async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+            stream = ResponseEventStream(response_id=context.response_id, request=request)
             yield stream.emit_created()
             yield stream.emit_in_progress()
             for event in stream.output_item_message("Test"):
@@ -145,11 +137,7 @@ class TestStreamRecoveryBaseline:
             events = _collect_stream_events(resp)
 
         # Verify sequence numbers exist and are ordered
-        seq_numbers = [
-            e["data"].get("sequence_number")
-            for e in events
-            if "sequence_number" in e.get("data", {})
-        ]
+        seq_numbers = [e["data"].get("sequence_number") for e in events if "sequence_number" in e.get("data", {})]
         # At minimum, response.created should have sequence_number in data
         # (Actual SSE format may vary — we just verify the stream delivered events)
         assert len(events) > 0
@@ -161,12 +149,8 @@ class TestStreamRecoveryResume:
     def test_get_stored_response_with_stream(self) -> None:
         """After POST completes, GET with stream=true replays stored events."""
 
-        async def handler(
-            request: CreateResponse, context: ResponseContext, cancel: asyncio.Event
-        ):
-            stream = ResponseEventStream(
-                response_id=context.response_id, request=request
-            )
+        async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+            stream = ResponseEventStream(response_id=context.response_id, request=request)
             yield stream.emit_created()
             yield stream.emit_in_progress()
             for event in stream.output_item_message("Replay me"):
@@ -196,8 +180,6 @@ class TestStreamRecoveryResume:
         assert get_resp.status_code == 200
         data = get_resp.json()
         assert data["status"] == "completed"
-
-
 
 
 class TestFileBackedStreamsRegistry:

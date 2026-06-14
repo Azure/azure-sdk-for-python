@@ -22,9 +22,7 @@ import pytest
 
 from tests.e2e._crash_harness import CrashHarness
 
-
-_ECHO_SERVER_SOURCE = textwrap.dedent(
-    """
+_ECHO_SERVER_SOURCE = textwrap.dedent("""
     \"\"\"Minimal echo HTTP server used by crash-harness self-tests.\"\"\"
     import os
     import sys
@@ -54,8 +52,7 @@ _ECHO_SERVER_SOURCE = textwrap.dedent(
 
     if __name__ == "__main__":
         main()
-    """
-).lstrip()
+    """).lstrip()
 
 
 @pytest.fixture()
@@ -72,9 +69,7 @@ pytestmark = pytest.mark.skipif(
 
 
 @pytest.mark.asyncio
-async def test_harness_starts_and_responds_to_health_probe(
-    tmp_path: Path, echo_server_path: Path
-) -> None:
+async def test_harness_starts_and_responds_to_health_probe(tmp_path: Path, echo_server_path: Path) -> None:
     """Spawn the harness, hit /health/live via the client, observe 200."""
     harness = CrashHarness(sample_module=echo_server_path, tmp_path=tmp_path)
     await harness.start()
@@ -87,9 +82,7 @@ async def test_harness_starts_and_responds_to_health_probe(
 
 
 @pytest.mark.asyncio
-async def test_harness_kill_terminates_subprocess(
-    tmp_path: Path, echo_server_path: Path
-) -> None:
+async def test_harness_kill_terminates_subprocess(tmp_path: Path, echo_server_path: Path) -> None:
     """After kill(), the subprocess pid is gone and client is closed."""
     harness = CrashHarness(sample_module=echo_server_path, tmp_path=tmp_path)
     await harness.start()
@@ -100,9 +93,7 @@ async def test_harness_kill_terminates_subprocess(
 
 
 @pytest.mark.asyncio
-async def test_harness_kill_then_restart_round_trip(
-    tmp_path: Path, echo_server_path: Path
-) -> None:
+async def test_harness_kill_then_restart_round_trip(tmp_path: Path, echo_server_path: Path) -> None:
     """Kill + restart yields a fresh subprocess responding to the same port."""
     harness = CrashHarness(sample_module=echo_server_path, tmp_path=tmp_path)
     await harness.start()
@@ -121,9 +112,7 @@ async def test_harness_kill_then_restart_round_trip(
 
 
 @pytest.mark.asyncio
-async def test_harness_durable_storage_dirs_persist(
-    tmp_path: Path, echo_server_path: Path
-) -> None:
+async def test_harness_durable_storage_dirs_persist(tmp_path: Path, echo_server_path: Path) -> None:
     """tmp_path subdirectories survive kill + restart."""
     harness = CrashHarness(sample_module=echo_server_path, tmp_path=tmp_path)
     await harness.start()
@@ -143,9 +132,7 @@ async def test_harness_durable_storage_dirs_persist(
 
 
 @pytest.mark.asyncio
-async def test_harness_close_is_idempotent(
-    tmp_path: Path, echo_server_path: Path
-) -> None:
+async def test_harness_close_is_idempotent(tmp_path: Path, echo_server_path: Path) -> None:
     """close() can be called multiple times without raising."""
     harness = CrashHarness(sample_module=echo_server_path, tmp_path=tmp_path)
     await harness.start()

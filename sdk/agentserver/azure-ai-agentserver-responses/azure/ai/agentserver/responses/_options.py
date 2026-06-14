@@ -39,10 +39,7 @@ class ResponsesServerOptions:
             default_model = normalized_model or None
         self.default_model = default_model
 
-        if (
-            sse_keep_alive_interval_seconds is not None
-            and sse_keep_alive_interval_seconds <= 0
-        ):
+        if sse_keep_alive_interval_seconds is not None and sse_keep_alive_interval_seconds <= 0:
             raise ValueError("sse_keep_alive_interval_seconds must be > 0 when set")
         self.sse_keep_alive_interval_seconds = sse_keep_alive_interval_seconds
 
@@ -59,13 +56,11 @@ class ResponsesServerOptions:
         # Durability options (developer-controlled, baked into container image)
         if steerable_conversations and store_disabled:
             raise ValueError(
-                "steerable_conversations=True requires store to be enabled "
-                "(store_disabled must be False)"
+                "steerable_conversations=True requires store to be enabled " "(store_disabled must be False)"
             )
         if steerable_conversations and not durable_background:
             raise ValueError(
-                "steerable_conversations=True requires durable_background=True "
-                "for background responses"
+                "steerable_conversations=True requires durable_background=True " "for background responses"
             )
         if max_pending <= 0:
             raise ValueError("max_pending must be > 0")
@@ -77,9 +72,7 @@ class ResponsesServerOptions:
         self.replay_event_ttl_seconds = replay_event_ttl_seconds
 
     @classmethod
-    def from_env(
-        cls, environ: Mapping[str, str] | None = None
-    ) -> "ResponsesServerOptions":
+    def from_env(cls, environ: Mapping[str, str] | None = None) -> "ResponsesServerOptions":
         """Create options from environment variables.
 
         :param environ: Optional mapping of environment variables. Defaults to ``os.environ``.

@@ -310,5 +310,3 @@ class TestStreamSurvivesTerminalState:
                 assert replay.status_code == 200
                 events = _collect_sse_events(replay)
             assert len(events) >= 2
-
-

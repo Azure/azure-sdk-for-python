@@ -230,9 +230,7 @@ def _reconstruct_from_params(
         input_items=record.input_items,
         previous_response_id=record.previous_response_id,
         conversation_id=record.conversation_id,
-        history_limit=int(
-            params.get("history_limit", runtime_options.default_fetch_history_count)
-        ),
+        history_limit=int(params.get("history_limit", runtime_options.default_fetch_history_count)),
         # Client headers / query params are not preserved across recovery
         # — they were specific to the original HTTP request and are not
         # meaningful for the recovered handler.
@@ -246,6 +244,8 @@ def _reconstruct_from_params(
     )
     record.response_context = context
     return record, context
+
+
 _RESP_RESPONSE_ID = "response_id"
 _RESP_LAST_SEQ = "last_sequence_number"
 _RESP_BACKGROUND = "background"
@@ -514,9 +514,7 @@ class DurableResponseOrchestrator:
         # next-lifetime recovery can dispatch correctly without needing to
         # reconstruct the routing decisions from input params.
         if _RESP_DISPOSITION not in responses_ns:
-            responses_ns[_RESP_DISPOSITION] = params.get(
-                "disposition", DISPOSITION_REINVOKE
-            )
+            responses_ns[_RESP_DISPOSITION] = params.get("disposition", DISPOSITION_REINVOKE)
             # Force-flush so the disposition is durable BEFORE the body
             # could be killed — without an explicit flush the recovered
             # task would default to ``re-invoke`` and skip the mark-failed
@@ -721,11 +719,7 @@ class DurableResponseOrchestrator:
             # mid-handler with grace exhausted) silently loses the
             # response because the one-shot ephemeral record is deleted
             # on cancel.
-            if (
-                ctx.shutdown.is_set()
-                and record is not None
-                and record.status in {"queued", "in_progress"}
-            ):
+            if ctx.shutdown.is_set() and record is not None and record.status in {"queued", "in_progress"}:
                 logger.info(
                     "Response %s handler returned during shutdown without "
                     "terminal; calling ctx.exit_for_recovery() so task stays "
@@ -986,16 +980,11 @@ class DurableResponseOrchestrator:
         # happened after terminal persistence, and overwriting would corrupt
         # the result.
         try:
-            existing = await self._provider.get_response(
-                response_id, isolation=isolation
-            )
+            existing = await self._provider.get_response(response_id, isolation=isolation)
             existing_status = getattr(existing, "status", None) or (
                 existing.get("status") if isinstance(existing, dict) else None
             )
-            if (
-                isinstance(existing_status, str)
-                and existing_status in _TERMINAL_STATUSES
-            ):
+            if isinstance(existing_status, str) and existing_status in _TERMINAL_STATUSES:
                 logger.info(
                     "_persist_crash_failed: response %s already terminal "
                     "(status=%s) — skipping overwrite (race avoidance)",
@@ -1018,9 +1007,7 @@ class DurableResponseOrchestrator:
         )
 
         try:
-            await self._provider.update_response(
-                ResponseObject(failed_response), isolation=isolation
-            )
+            await self._provider.update_response(ResponseObject(failed_response), isolation=isolation)
         except KeyError:
             # Response was never persisted at response.created — try
             # create instead so the failed terminal still lands.

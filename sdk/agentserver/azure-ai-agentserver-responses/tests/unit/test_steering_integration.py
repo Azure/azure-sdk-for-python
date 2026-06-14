@@ -107,9 +107,7 @@ class TestSteeringConfiguration:
 
     def test_steerable_requires_durable(self) -> None:
         """steerable_conversations requires durable_background."""
-        with pytest.raises(
-            ValueError, match="steerable_conversations=True requires durable_background"
-        ):
+        with pytest.raises(ValueError, match="steerable_conversations=True requires durable_background"):
             ResponsesServerOptions(
                 steerable_conversations=True,
                 durable_background=False,
@@ -117,9 +115,7 @@ class TestSteeringConfiguration:
 
     def test_steerable_requires_store(self) -> None:
         """steerable_conversations requires store to be enabled."""
-        with pytest.raises(
-            ValueError, match="steerable_conversations=True requires store"
-        ):
+        with pytest.raises(ValueError, match="steerable_conversations=True requires store"):
             ResponsesServerOptions(
                 steerable_conversations=True,
                 store_disabled=True,
