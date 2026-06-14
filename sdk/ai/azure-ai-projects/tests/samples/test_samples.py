@@ -197,7 +197,7 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "datasets",
             samples_to_skip=[
-                "sample_dataset_generation_job_simpleqna_with_prompt_source.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_with_prompt_source.py",  # Specified through AdditionalSampleTestDetail
                 "sample_dataset_generation_job_traces_for_finetuning.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_for_finetuning.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_traces_for_evaluation.py",  # PR #47067: recording not yet available
@@ -240,6 +240,13 @@ class TestSamples(AzureRecordedTestCase):
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
                 },
             ),
+            AdditionalSampleTestDetail(
+                test_id="sample_routines_with_schedule_trigger",
+                sample_filename="sample_routines_with_schedule_trigger.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "300",
+                },
+            ),
         ]
     )
     @pytest.mark.parametrize(
@@ -247,6 +254,7 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "hosted_agents",
             samples_to_skip=[
+                "sample_routines_with_schedule_trigger.py",  # Specify through AdditionalSampleTestDetail
                 "sample_routines_crud.py",  # Skipped due to service serialization issues
                 "sample_routines_with_timer_trigger.py",  # Skipped due to service serialization issues
             ],

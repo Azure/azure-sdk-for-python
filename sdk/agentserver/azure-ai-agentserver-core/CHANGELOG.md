@@ -1,11 +1,12 @@
 # Release History
 
-## 2.0.0b6 (Unreleased)
+## 2.0.0b7 (Unreleased)
 
-### Spec 022 — durable-task primitive redesign
+### Durable-task primitive redesign
 
-The durable-task primitive is reshaped on this release per spec 022
-(`sdk/agentserver/specs/022-durable-task-primitive-redesign/spec.md`).
+The durable-task primitive is reshaped on this release. The
+authoritative behavior contract lives at
+[`docs/task-and-streaming-spec.md`](docs/task-and-streaming-spec.md).
 Highlights:
 
 - **Two decorators** — `@task` (one-shot) and `@multi_turn_task` (chain).
@@ -329,6 +330,13 @@ coordinated PRs:
   with `azure-ai-agentserver-invocations` and
   `azure-ai-agentserver-responses`, which match how the primitives
   are actually consumed in production.
+
+## 2.0.0b6 (2026-06-12)
+
+### Bugs Fixed
+
+- Populated agent metadata when operation IDs are zeroed so agent metadata remains available for telemetry and downstream processing.
+- Suppressed noisy observability/exporter INFO logs by default in tracing setup while preserving DEBUG visibility when explicitly enabled.
 
 ## 2.0.0b5 (2026-05-25)
 

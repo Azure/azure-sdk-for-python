@@ -780,7 +780,9 @@ class _VoiceLiveConnectionManager(
             session = aiohttp.ClientSession()
             try:
                 connection_obj = await session.ws_connect(str(url), headers=headers, **self.__connection_options)
-                self.__connection = VoiceLiveConnection(session, connection_obj)
+                self.__connection = VoiceLiveConnection(
+                    session, cast("aiohttp.ClientWebSocketResponse[Any]", connection_obj)
+                )
                 return self.__connection
             except aiohttp.ClientError as e:
                 await session.close()

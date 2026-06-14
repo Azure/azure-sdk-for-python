@@ -1,0 +1,3 @@
+self-hosted-runner:
+  labels:
+    - 1ES.Pool=azsdk-pool-github-runners

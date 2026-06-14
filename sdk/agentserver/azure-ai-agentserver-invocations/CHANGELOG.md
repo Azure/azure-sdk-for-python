@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b6 (Unreleased)
 
 ### Samples
 
@@ -16,8 +16,14 @@
 
 ### Other Changes
 
-- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b6`
+- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b7`
   (the version that introduces the durable-task primitive).
+
+## 1.0.0b5 (2026-06-12)
+
+### Bugs Fixed
+
+- Fixed exception tracing for streaming responses so errors raised while iterating streaming results are captured correctly and invocation/session logging context is reset after streaming completes.
 
 ## 1.0.0b4 (2026-05-21)
 

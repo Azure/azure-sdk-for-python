@@ -50,7 +50,13 @@ from dotenv import load_dotenv
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import JobStatus, PageOrder
+from azure.ai.projects.models import (
+    EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
+    JobStatus,
+    PageOrder,
+    PromptEvaluatorGenerationJobSource,
+)
 
 load_dotenv()
 
@@ -66,21 +72,21 @@ operation_id = f"rubric-lifecycle-{short}"
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
-# Shared job body used both for the initial create and the idempotency replay.
-job_body = {
-    "model": model_name,
-    "name": "Lifecycle demo",
-    "evaluator_name": evaluator_name,
-    "evaluator_display_name": "Lifecycle demo",
-    "evaluator_description": "Minimal job used to demonstrate the LRO + list/delete lifecycle.",
-    "sources": [
-        {
-            "type": "Prompt",
-            "description": "Inline application overview.",
-            "prompt": "You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
-        }
-    ],
-}
+# Shared job used both for the initial create and the idempotency replay.
+job_body = EvaluatorGenerationJob(
+    inputs=EvaluatorGenerationInputs(
+        model=model_name,
+        evaluator_name=evaluator_name,
+        evaluator_display_name="Lifecycle demo",
+        evaluator_description="Minimal job used to demonstrate the LRO + list/delete lifecycle.",
+        sources=[
+            PromptEvaluatorGenerationJobSource(
+                description="Inline application overview.",
+                prompt="You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
+            ),
+        ],
+    ),
+)
 
 with (
     DefaultAzureCredential() as credential,
