@@ -2,7 +2,44 @@
 
 ## 1.0.0b7 (Unreleased)
 
-_Will be populated in Phase 4 (Documentation) — see `sdk/agentserver/specs/023-responses-021-022-migration.md` step 24._
+### Breaking Changes
+
+- Bumped the `azure-ai-agentserver-core` dependency to `>=2.0.0b7` to
+  pick up the narrow durable-task primitive surface. Internal
+  orchestrator surface changes only; no responses-package public API
+  change.
+
+### Bugs Fixed
+
+- Sequential turns of a `conversation_id` + `steerable_conversations=False`
+  conversation now succeed and extend the chain (matches the
+  `conversation_id` semantics documented in
+  `docs/durable-responses-developer-guide.md` and
+  `docs/responses-durability-spec.md` §11.1); previously every turn
+  after the first incorrectly returned `409 conversation_locked`
+  because the underlying task was `status="completed"` not
+  `suspended`. Concurrent overlap continues to return
+  `409 conversation_locked` as documented.
+
+### Other Changes
+
+- Internal: `DurableResponseOrchestrator` now registers two task
+  primitives per deployment (one-shot for single-turn requests; chain
+  primitive for multi-turn requests) and dispatches per request based
+  on `(store, conversation_id, previous_response_id,
+  steerable_conversations)`. This is observable only as the bug fix
+  above; the perpetual-task lifecycle described in
+  `docs/responses-durability-spec.md` is unchanged from the handler /
+  client perspective.
+- Internal: `ephemeral=False` storage overhead eliminated for
+  single-turn requests. One-shot records are now auto-deleted on
+  terminal exit; only multi-turn chains persist between turns.
+- Internal: the shutdown-mid-handler "leave in_progress for recovery"
+  branch now calls `ctx.exit_for_recovery()` instead of raising
+  `CancelledError`. The previous shape worked for `ephemeral=False`
+  tasks but would have deleted the one-shot `ephemeral=True` record
+  on cancel under the new model — breaking Row 1 Path B (graceful
+  shutdown mid-handler) recovery.
 
 ## 1.0.0b6 (Unreleased)
 

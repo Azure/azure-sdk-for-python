@@ -272,14 +272,24 @@ model") before reading §6.2. The Python implementation uses Model A
 bookkeeping durable task); ports MAY choose Model B (handler inside
 the task body for every row).
 
+Internally, the responses layer picks one of two underlying task
+primitives per request based on the `(store, conversation_id,
+previous_response_id, steerable_conversations)` tuple. Single-turn
+requests use a one-shot primitive (`@task`); multi-turn requests use
+a chain primitive (`@multi_turn_task(steerable=…)`). The choice is
+invisible to handlers (`DurabilityContext` looks the same regardless)
+and to clients (the HTTP/SSE contract is identical). The full table
+is in §6.6.
+
 ### §6.1 — Lifecycle (Row 1)
 
 For Row 1 with `steerable_conversations=true`:
 
 1. **First turn** — `start(task_id, input=params, input_id=response_id_1)`
    creates the task. Task body runs the handler for turn 1.
-2. **Handler returns** — task body suspends via `ctx.suspend(reason="awaiting_next_turn")`,
-   keeping the task alive for the next turn.
+2. **Handler returns** — the task body returns `None` (the framework's
+   implicit-suspend signal for multi-turn primitives), keeping the
+   task alive for the next turn.
 3. **Subsequent turn** — `start(task_id, input=params, input_id=response_id_2,
    if_last_input_id=response_id_1)` resumes the task. The framework's
    input-precondition primitive enforces sequential chain extension
@@ -378,6 +388,39 @@ terminal and signals completion before the body's first await would
 lose the signal — the body would only populate the registry after its
 own initial scheduling tick.
 
+### §6.6 — Primitive selection (per-request dispatch matrix)
+
+The responses layer dispatches each `store=true` request to one of two
+underlying durable-task primitives, based on the request shape and the
+deployment's `steerable_conversations` option. This is a refinement of
+the top-level 4-row matrix in §3 — Rows 1, 2, and 3 (all `store=true`
+rows) split into sub-rows here according to whether the request
+identifies a multi-turn chain.
+
+| `conversation_id` | `previous_response_id` | `steerable_conversations` | Primitive | Rationale |
+|---|---|---|---|---|
+| absent | absent | (any) | one-shot (`@task`) | Single request, no chain — the task_id is unique per request; auto-deleted on terminal exit. |
+| absent | present | `false` | one-shot (`@task`) | Fork-style: each request gets its own task_id (the `fork:` partition), so no chain semantics needed. |
+| absent | present | `true` | multi-turn (`@multi_turn_task(steerable=true)`) | Steerable chain extension: turns share a task_id (the `chain:` partition); the framework suspends between turns and queues mid-turn inputs. |
+| present | (any) | `false` | multi-turn (`@multi_turn_task(steerable=false)`) | Conversation-scoped chain: turns share a task_id (the `conv:` partition); chain suspends between turns. Concurrent overlap returns 409 `conversation_locked` (no queueing). |
+| present | (any) | `true` | multi-turn (`@multi_turn_task(steerable=true)`) | Same conversation-scoped chain, with mid-turn inputs queued instead of rejected. |
+
+The primitive choice MUST be made at request-dispatch time (not at
+deployment-config time) because the same deployment serves both
+single-turn requests (one-shot primitive) and multi-turn requests
+(multi-turn primitive) — the deployment's `steerable_conversations`
+flag only controls the multi-turn primitive's mid-turn-input behaviour.
+
+The choice is invisible to handlers — `DurabilityContext` looks
+identical regardless of which primitive carries the body. The choice
+is invisible to clients — the HTTP/SSE contract on `POST /v1/responses`
+and `GET /responses/{id}` is independent of the underlying primitive.
+
+The task_id derivation (§4.2) is also independent of the primitive
+choice — the `conv:` / `chain:` / `fork:` / `resp:` partition prefix
+in the hash input ensures requests routed to different primitives
+also get distinct task_ids when they should.
+
 ---
 
 ## §7 — Recovery dispatch
@@ -418,9 +461,12 @@ The handler is NOT invoked. The recovered task body:
 4. Returns cleanly. Task → `completed`.
 
 For steerable chains (`steerable_conversations=true`), the body
-suspends via `ctx.suspend(reason="crash_failed" | "non_bg_crash_failed")`
-instead of returning, so the perpetual task stays alive for future
-turns of the chain. For non-steerable chains, returning is correct.
+returns `None` rather than raising an explicit suspend — the framework
+records the implicit-suspend transition for multi-turn primitives
+automatically. The response store's `failed` terminal that step 3
+persisted is the authoritative failure record; the in-process result
+of the body's `return None` is consistent with that. For non-steerable
+chains, returning is correct.
 
 ### §7.3 — The `server_error` payload
 
@@ -708,27 +754,39 @@ Rows 1, 2, or 3 (i.e. any `store=true` row). With steering enabled:
 
 For `store=true` Rows 1/2/3 with `steerable_conversations=False`:
 
-- Each turn that shares the same `previous_response_id` chain key
-  maps to its own `task_id` (the `fork:` / `resp:` partition; §4.2).
-  This makes parallel forks possible (sequential turns also work —
-  each turn is just its own one-shot task).
-- A new turn that arrives while a prior turn for the same chain key
-  is still running maps to the SAME `task_id` only when explicit
-  chain extension is used. Without steering, the underlying task
-  primitive raises `TaskConflictError` on `start()` for an already
-  in-progress task; the framework MUST translate this to HTTP 409
-  with body:
+- Each turn that uses `previous_response_id` (without
+  `conversation_id`) maps to its own `task_id` (the `fork:` partition;
+  §4.2). This makes parallel forks possible (sequential turns also
+  work — each turn is just its own one-shot task).
+- Each turn that uses `conversation_id` maps to a SHARED `task_id`
+  (the `conv:` partition) regardless of `steerable_conversations`.
+  The chain transitions to `suspended` between turns, so sequential
+  turns successfully extend the chain. Only **concurrent overlap**
+  (a new turn arriving while a prior turn's handler is still
+  `in_progress`) raises `TaskConflictError`; the framework MUST
+  translate this to HTTP 409:
 
   ```json
   {
     "error": {
-      "message": "Conversation is locked — task '<task_id>' is <status>",
+      "message": "Conversation is locked — task is in_progress",
       "type": "conflict",
       "code": "conversation_locked",
       "param": null
     }
   }
   ```
+
+  Clarifier: _in progress_ here means the underlying task is
+  `status="in_progress"` (a handler is actively executing). A
+  `suspended` chain between turns of a `conversation_id` +
+  `steerable_conversations=False` deployment is NOT locked — sequential
+  turns extend the chain. Only overlapping turns conflict.
+
+  (Implementation note: `TaskConflictError` carries only
+  `current_status` on this implementation's narrow surface — the
+  human-readable status is included in the error body to give the
+  client a clue about why the conflict fired.)
 
 ### §11.2 — Fork rejection (no branching of a steerable chain)
 
@@ -983,9 +1041,10 @@ await per §5.2.
 ### C-PERPETUAL — Perpetual task
 
 For Row 1 with `steerable_conversations=true`, the durable task body
-MUST suspend (not return) after the handler's terminal, keeping the
-task alive for subsequent turns per §6.1. For Rows 2/3, the
-bookkeeping body MUST race three signals (completion / cancel /
+MUST signal implicit-suspend (in this implementation: `return None`
+from a `@multi_turn_task`-decorated body) after the handler's terminal,
+keeping the task alive for subsequent turns per §6.1. For Rows 2/3,
+the bookkeeping body MUST race three signals (completion / cancel /
 shutdown) per §6.2.
 
 ### C-DISPOSITION — Recovery dispatch

@@ -134,6 +134,14 @@ or the spec — open an issue.
 steering on top of any row above. Recovery composes with steering — see the
 [handler guide's Recovery × Cancellation Composition](handler-implementation-guide.md#recovery--cancellation-composition).
 
+> **`conversation_id` chains**: when a request supplies
+> `conversation_id`, sequential turns extend the chain even when
+> `steerable_conversations=False`. Only **concurrent overlap** (a new
+> turn arriving while a prior turn's handler is still in progress)
+> returns 409 `conversation_locked`. This is independent of the
+> `steerable_conversations` option — that option only controls whether
+> mid-turn inputs are queued (steerable) or rejected (non-steerable).
+
 ### Steerable conversations: no forking
 
 When `steerable_conversations=True`, each turn after the first must reference
