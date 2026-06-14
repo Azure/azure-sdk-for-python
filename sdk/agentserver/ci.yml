@@ -48,3 +48,5 @@ extends:
         safeName: azureaiagentserverghcopilot
       - name: azure-ai-agentserver-optimization
         safeName: azureaiagentserveroptimization
+      - name: azure-ai-agentserver-activity
+        safeName: azureaiagentserveractivity

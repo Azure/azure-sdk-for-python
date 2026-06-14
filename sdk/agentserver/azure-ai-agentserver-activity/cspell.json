@@ -1,0 +1,15 @@
+{
+    "ignoreWords": [
+        "agentserver",
+        "openapi",
+        "paramtype",
+        "rtype",
+        "starlette"
+    ],
+    "ignorePaths": [
+        "*.csv",
+        "*.json",
+        "*.rst",
+        "samples/**"
+    ]
+}

@@ -1,0 +1,83 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+"""Tests for ActivityAgentServerHost routes and endpoint behavior."""
+
+import pytest
+from httpx import ASGITransport, AsyncClient
+from starlette.responses import JSONResponse, Response
+
+from azure.ai.agentserver.activity import ActivityAgentServerHost
+
+
+@pytest.mark.asyncio
+async def test_post_activity_returns_200():
+    async def handle(request) -> Response:  # pylint: disable=unused-argument
+        activity = request.state.activity
+        return JSONResponse({"ok": True, "type": activity.get("type")})
+
+    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/activity/messages",
+            json={"type": "message", "text": "hi"},
+            headers={"Authorization": "Bearer test-token", "x-agent-session-id": "session-123"},
+        )
+
+    assert resp.status_code == 200
+    assert resp.json()["ok"] is True
+    assert "x-agent-activity-id" in resp.headers
+    assert "x-agent-session-id" in resp.headers
+
+
+@pytest.mark.asyncio
+async def test_post_activity_requires_json_object():
+    async def handle(request):  # pylint: disable=unused-argument
+        return None
+
+    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/activity/messages",
+            json=["not", "object"],
+            headers={"Authorization": "Bearer test-token", "x-agent-session-id": "session-123"},
+        )
+
+    assert resp.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_default_non_invoke_flow_returns_202_when_handler_returns_none():
+    async def handle(request):  # pylint: disable=unused-argument
+        return Response(status_code=202)
+
+    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/activity/messages",
+            json={"type": "message", "text": "hello"},
+            headers={"Authorization": "Bearer test-token", "x-agent-session-id": "session-123"},
+        )
+
+    assert resp.status_code == 202
+
+
+@pytest.mark.asyncio
+async def test_invoke_response_path_returns_200_with_body():
+    async def handle(request):  # pylint: disable=unused-argument
+        return JSONResponse({"status": 200, "body": {"message": "approved"}})
+
+    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/activity/messages",
+            json={"type": "invoke", "name": "adaptiveCard/action", "value": {"verb": "approve"}},
+            headers={"Authorization": "Bearer test-token", "x-agent-session-id": "session-123"},
+        )
+
+    assert resp.status_code == 200
+    assert resp.json() == {"status": 200, "body": {"message": "approved"}}
