@@ -120,12 +120,22 @@ class TestQueryAggregateUtilsAsync(unittest.IsolatedAsyncioTestCase):
     # The async client should call the same merge and counting helpers
     # as the sync client, so identical behavior is guaranteed.
     async def test_async_module_reuses_shared_classifier_and_merge_async(self):
-        assert _async_conn.base._merge_query_results is _base._merge_query_results
-        assert _async_conn._count_page_items_from_partial_result is (
-            _frc._count_page_items_from_partial_result
+        # Use behavior checks instead of identity checks so harmless
+        # import-alias refactors do not break this test.
+        sum_query = "SELECT VALUE SUM(c.amount) FROM c WHERE IS_NUMBER(c.amount)"
+        expected_merge = {"Documents": [15]}
+        async_merge_helper = getattr(_async_conn, "base", _base)._merge_query_results
+        assert async_merge_helper({"Documents": [7]}, {"Documents": [8]}, sum_query) == expected_merge
+        assert _base._merge_query_results({"Documents": [7]}, {"Documents": [8]}, sum_query) == expected_merge
+
+        count_query = "SELECT VALUE COUNT(1) > 0 FROM c"
+        partial = {"Documents": [True]}
+        assert _async_conn._count_page_items_from_partial_result(partial, count_query) == 1
+        assert _async_conn._count_page_items_from_partial_result(partial, count_query) == (
+            _frc._count_page_items_from_partial_result(partial, count_query)
         )
-        assert _async_conn._count_page_items_from_partial_result is (
-            _count_page_items_from_partial_result
+        assert _async_conn._count_page_items_from_partial_result(partial, count_query) == (
+            _count_page_items_from_partial_result(partial, count_query)
         )
 
 

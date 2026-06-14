@@ -31,6 +31,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         """Set the inference endpoint env var before each test."""
         self._saved_endpoint = os.environ.get(_INFERENCE_ENDPOINT_ENV_VAR)
         os.environ[_INFERENCE_ENDPOINT_ENV_VAR] = "https://example.com"
+        self._saved_malformed = os.environ.get(_MALFORMED_INPUT_ENV_VAR)
+        os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
 
     def tearDown(self):
         """Restore the inference endpoint env var after each test."""
@@ -38,6 +40,10 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             os.environ[_INFERENCE_ENDPOINT_ENV_VAR] = self._saved_endpoint
         else:
             os.environ.pop(_INFERENCE_ENDPOINT_ENV_VAR, None)
+        if self._saved_malformed is not None:
+            os.environ[_MALFORMED_INPUT_ENV_VAR] = self._saved_malformed
+        else:
+            os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
 
     def _create_mock_connection(self, inference_request_timeout=5):
         """Create a mock cosmos client connection with configurable inference timeout."""

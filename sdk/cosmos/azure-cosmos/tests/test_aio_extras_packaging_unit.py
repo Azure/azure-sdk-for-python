@@ -11,8 +11,6 @@ import pytest
 from packaging.requirements import Requirement
 from packaging.version import Version
 
-from azure.cosmos.aio import CosmosClient  # noqa: F401
-
 
 @pytest.mark.cosmosEmulator
 class TestAioExtrasPackaging(unittest.TestCase):
@@ -55,12 +53,11 @@ class TestAioExtrasPackaging(unittest.TestCase):
         )
 
     def test_azure_cosmos_aio_module_imports(self):
-        # If the async module cannot be imported the file would already
-        # have failed to load at the top, so this is a small explicit
-        # confirmation that the symbol is available.
+        # Keep this import local so metadata validation can still run
+        # and report actionable failures even if async import breaks.
+        from azure.cosmos.aio import CosmosClient  # noqa: F401
         self.assertTrue(callable(CosmosClient))
 
 
 if __name__ == "__main__":
     unittest.main()
-

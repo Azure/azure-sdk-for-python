@@ -7,7 +7,6 @@ import uuid
 from unittest.mock import patch
 
 import pytest
-from azure.core.exceptions import ServiceResponseError
 
 import azure.cosmos._retry_utility as retry_utility
 import azure.cosmos.cosmos_client as cosmos_client
@@ -1037,7 +1036,13 @@ class TestQuery(unittest.TestCase):
         original = _synchronized_request._PipelineRunFunction
 
         def _wrapper(pipeline_client, request, **kwargs):
-            captured.append((str(request.url), kwargs.get("read_timeout")))
+            captured.append(
+                (
+                    str(request.url),
+                    kwargs.get("read_timeout"),
+                    request.headers.get(http_constants.HttpHeaders.IsQueryPlanRequest) is not None,
+                )
+            )
             return original(pipeline_client, request, **kwargs)
 
         return captured, patch.object(
@@ -1048,7 +1053,14 @@ class TestQuery(unittest.TestCase):
     def _doc_call_timeouts(captured):
         # Keep only document page fetches. Other internal calls have
         # their own timeout settings and are not part of these tests.
-        return [rt for (url, rt) in captured if "/docs" in url]
+        return [rt for (url, rt, _) in captured if "/docs" in url]
+
+    @staticmethod
+    def _doc_calls_with_query_plan_flag(captured):
+        # Keep only /docs/ calls and preserve whether each call was a
+        # query-plan request so tests can allow only that call to omit
+        # read_timeout.
+        return [(rt, is_query_plan) for (url, rt, is_query_plan) in captured if "/docs" in url]
 
     def test_read_timeout_propagates_through_by_page_paging(self):
         # Per-request read_timeout should reach every page fetch across
@@ -1176,10 +1188,10 @@ class TestQuery(unittest.TestCase):
         finally:
             self._delete_container_for_test(container.id)
 
-    def test_client_level_short_read_timeout_fails_on_by_page(self):
-        # A tiny client-level read_timeout should cause every page
-        # fetch to fail, confirming that value actually reaches the
-        # network call.
+    def test_client_level_short_read_timeout_propagates_on_by_page(self):
+        # A tiny client-level read_timeout should still flow through to
+        # by_page() fetches. Avoid asserting wall-clock timeout failure
+        # since timer granularity differs across environments.
         container = self._create_container_for_test(
             "by_page_short_client_" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
@@ -1188,12 +1200,26 @@ class TestQuery(unittest.TestCase):
             for i in range(3):
                 container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": "p", "data": i})
 
+            short_timeout = 0.000000000001
             with cosmos_client.CosmosClient(
-                self.host, self.credential, read_timeout=0.000000000001
+                self.host, self.credential, read_timeout=short_timeout
             ) as short_client:
                 short_container = short_client.get_database_client(self.TEST_DATABASE_ID) \
                                               .get_container_client(container.id)
-                with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
+
+                captured = []
+                original = _synchronized_request._PipelineRunFunction
+
+                def _capture_and_clamp_timeout(pipeline_client, request, **kwargs):
+                    captured.append((str(request.url), kwargs.get("read_timeout")))
+                    if kwargs.get("read_timeout") is not None and kwargs["read_timeout"] < 1:
+                        kwargs = dict(kwargs)
+                        kwargs["read_timeout"] = 1
+                    return original(pipeline_client, request, **kwargs)
+
+                with patch.object(
+                    _synchronized_request, "_PipelineRunFunction", side_effect=_capture_and_clamp_timeout
+                ):
                     pages = short_container.query_items(
                         query="SELECT * FROM c WHERE c.pk = @pk",
                         parameters=[{"name": "@pk", "value": "p"}],
@@ -1202,6 +1228,12 @@ class TestQuery(unittest.TestCase):
                     ).by_page()
                     for page in pages:
                         list(page)
+                doc_timeouts = [rt for (url, rt) in captured if "/docs" in url]
+                self.assertGreater(len(doc_timeouts), 0)
+                self.assertTrue(
+                    all(rt == short_timeout for rt in doc_timeouts),
+                    f"client-level short read_timeout did not reach all pages: {doc_timeouts}",
+                )
         finally:
             self._delete_container_for_test(container.id)
 
@@ -1346,18 +1378,31 @@ class TestQuery(unittest.TestCase):
                         ).by_page()
                         for page in pages:
                             list(page)
-                    doc_timeouts = self._doc_call_timeouts(captured)
+                    doc_calls = self._doc_calls_with_query_plan_flag(captured)
+                    doc_timeouts = [rt for (rt, _) in doc_calls]
                     self.assertGreater(
                         len(doc_timeouts), 0,
                         f"no /docs/ fetches for aggregate query {query!r}",
                     )
-                    # Tier-1 page fetches must carry the client value.
-                    # The query-plan POST against /docs/ is a tier-2-ish
-                    # call that the dispatch path strips kwargs from in
-                    # some flows; tolerate a ``None`` there but require
-                    # at least one /docs/ call to carry the value, and
-                    # any non-None /docs/ call must match it exactly.
-                    non_none = [rt for rt in doc_timeouts if rt is not None]
+                    # Only the query-plan /docs/ call may omit
+                    # read_timeout in current routing flows. Every
+                    # non-query-plan /docs/ call must carry the value.
+                    missing_non_query_plan = [
+                        rt for (rt, is_query_plan) in doc_calls if rt is None and not is_query_plan
+                    ]
+                    self.assertEqual(
+                        len(missing_non_query_plan), 0,
+                        f"non-query-plan /docs/ call dropped read_timeout for aggregate {query!r}: {doc_timeouts}",
+                    )
+                    missing_query_plan = [
+                        rt for (rt, is_query_plan) in doc_calls if rt is None and is_query_plan
+                    ]
+                    self.assertLessEqual(
+                        len(missing_query_plan), 1,
+                        f"more than one query-plan /docs/ call dropped read_timeout for aggregate {query!r}: "
+                        f"{doc_timeouts}",
+                    )
+                    non_none = [rt for (rt, _) in doc_calls if rt is not None]
                     self.assertGreater(
                         len(non_none), 0,
                         f"every /docs/ call dropped read_timeout for aggregate {query!r}",
@@ -1561,4 +1606,3 @@ class TestQuery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

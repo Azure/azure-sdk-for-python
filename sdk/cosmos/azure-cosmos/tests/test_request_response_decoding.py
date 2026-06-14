@@ -5,6 +5,7 @@
 shared decode helper, and that a response body with invalid bytes
 still surfaces the right typed exception based on the HTTP status."""
 import asyncio
+import os
 import unittest
 from unittest.mock import MagicMock, patch, AsyncMock
 
@@ -17,6 +18,7 @@ from azure.cosmos.http_constants import ResourceType
 
 _INVALID_UTF8 = b'{"note":"hello \xc3\x28 world"}'
 _VALID_UTF8 = b'{"ok":true}'
+_MALFORMED_INPUT_ENV_VAR = "AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
 
 _FAKE_ENDPOINT = "https://example.documents.azure.com:443/"
 
@@ -160,6 +162,16 @@ class TestRequestWrapsResidualUnicodeDecodeErrorAsDecodeError(unittest.TestCase)
     should be raised as DecodeError, keeping the real wire status and
     the original cause attached."""
 
+    def setUp(self):
+        self._saved_malformed = os.environ.get(_MALFORMED_INPUT_ENV_VAR)
+        os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
+
+    def tearDown(self):
+        if self._saved_malformed is not None:
+            os.environ[_MALFORMED_INPUT_ENV_VAR] = self._saved_malformed
+        else:
+            os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
+
     def test_sync_2xx_with_invalid_utf8_raises_decode_error(self):
         args, mock_response = _build_request_args(status_code=200, body=_INVALID_UTF8)
 
@@ -192,4 +204,3 @@ class TestRequestWrapsResidualUnicodeDecodeErrorAsDecodeError(unittest.TestCase)
 
 if __name__ == "__main__":
     unittest.main()
-

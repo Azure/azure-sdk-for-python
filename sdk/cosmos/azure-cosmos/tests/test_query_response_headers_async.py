@@ -289,7 +289,9 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
             # Collect transient setup objects so they don't show up as growth.
             gc.collect()
-            tracemalloc.start()
+            was_tracing = tracemalloc.is_tracing()
+            if not was_tracing:
+                tracemalloc.start()
             try:
                 snapshot_before = tracemalloc.take_snapshot()
 
@@ -315,7 +317,8 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 top_stats = snapshot_after.compare_to(snapshot_before, "lineno")
                 memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
             finally:
-                tracemalloc.stop()
+                if not was_tracing:
+                    tracemalloc.stop()
 
             # We really paginated and read every item back.
             assert page_count >= 20, f"Expected many pages, got {page_count}."

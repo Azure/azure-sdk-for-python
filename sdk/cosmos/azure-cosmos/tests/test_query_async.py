@@ -8,7 +8,6 @@ from asyncio import gather
 from unittest.mock import patch
 
 import pytest
-from azure.core.exceptions import ServiceResponseError
 
 import azure.cosmos.aio._retry_utility_async as retry_utility
 import azure.cosmos.aio._asynchronous_request as _asynchronous_request
@@ -1131,7 +1130,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
             client_timeout = 22
 
-            async with CosmosClient(self.host, self.masterKey, read_timeout=client_timeout) as ct_client:
+            async with test_config.TestConfig.create_data_client_async(read_timeout=client_timeout) as ct_client:
                 ct_container = ct_client.get_database_client(self.TEST_DATABASE_ID) \
                                         .get_container_client(container_id)
 
@@ -1154,20 +1153,34 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             self._delete_container_for_test(container_id)
 
-    async def test_client_level_short_read_timeout_fails_on_by_page_async(self):
-        # A tiny client-level read_timeout should cause every page
-        # fetch to fail, confirming that value actually reaches the
-        # async network call.
+    async def test_client_level_short_read_timeout_propagates_on_by_page_async(self):
+        # A tiny client-level read_timeout should still flow through to
+        # by_page() fetches. Avoid asserting wall-clock timeout failure
+        # since timer granularity differs across environments.
         container_id = "by_page_short_client_async_" + str(uuid.uuid4())
         container = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             for i in range(3):
                 await container.create_item({"id": f"item_{i}_{uuid.uuid4()}", "pk": "p", "data": i})
 
-            async with CosmosClient(self.host, self.masterKey, read_timeout=0.000000000001) as short_client:
+            short_timeout = 0.000000000001
+            async with test_config.TestConfig.create_data_client_async(read_timeout=short_timeout) as short_client:
                 short_container = short_client.get_database_client(self.TEST_DATABASE_ID) \
                                               .get_container_client(container_id)
-                with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
+
+                captured = []
+                original = _asynchronous_request._PipelineRunFunction
+
+                async def _capture_and_clamp_timeout(pipeline_client, request, **kwargs):
+                    captured.append((str(request.url), kwargs.get("read_timeout")))
+                    if kwargs.get("read_timeout") is not None and kwargs["read_timeout"] < 1:
+                        kwargs = dict(kwargs)
+                        kwargs["read_timeout"] = 1
+                    return await original(pipeline_client, request, **kwargs)
+
+                with patch.object(
+                    _asynchronous_request, "_PipelineRunFunction", side_effect=_capture_and_clamp_timeout
+                ):
                     pages = short_container.query_items(
                         query="SELECT * FROM c WHERE c.pk = @pk",
                         parameters=[{"name": "@pk", "value": "p"}],
@@ -1176,6 +1189,12 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                     ).by_page()
                     async for page in pages:
                         [item async for item in page]
+                doc_timeouts = [rt for (url, rt) in captured if "/docs" in url]
+                self.assertGreater(len(doc_timeouts), 0)
+                self.assertTrue(
+                    all(rt == short_timeout for rt in doc_timeouts),
+                    f"client-level short read_timeout did not reach all pages: {doc_timeouts}",
+                )
         finally:
             self._delete_container_for_test(container_id)
 
@@ -1284,7 +1303,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
             client_timeout = 22
 
-            async with CosmosClient(self.host, self.masterKey, read_timeout=client_timeout) as ct_client:
+            async with test_config.TestConfig.create_data_client_async(read_timeout=client_timeout) as ct_client:
                 ct_container = ct_client.get_database_client(self.TEST_DATABASE_ID) \
                                         .get_container_client(container_id)
 
@@ -1495,4 +1514,3 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

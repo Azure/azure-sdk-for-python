@@ -1,9 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Tests that paging through one response after another keeps working
-when one page has bytes that aren't valid UTF-8 and the user has opted
-in to the permissive decode mode via the env var."""
+"""Tests sequential _Request() decode isolation across multiple responses.
+
+These tests call _Request() repeatedly with different response bodies to ensure
+decode behavior from one call does not poison later calls when malformed UTF-8
+appears. This does not exercise CosmosItemPaged/continuation-token state."""
 import asyncio
 import os
 import unittest
@@ -86,13 +88,14 @@ class _DecoderEnvIsolatedTestCase(unittest.TestCase):
 
 
 class TestSyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
-    """Calls the sync request function once per page, the way an
-    iterator would pull one page at a time."""
+    """Calls the sync request function repeatedly with different bodies."""
 
-    def _drive_pages(self, page_bodies):
-        """Calls the request function once per body and returns the
-        list of results. A fresh args tuple is built each time because
-        the function mutates the request object in place."""
+    def _drive_sequential_requests(self, page_bodies):
+        """Call _Request once per body and return each decoded result.
+
+        A fresh args tuple is built each time because _Request mutates
+        request objects in place.
+        """
         results = []
         for body in page_bodies:
             args = _build_request_args()
@@ -107,14 +110,14 @@ class TestSyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
         """With the env var unset, the bad page should fail right
         away. This is the default behavior."""
         with self.assertRaises(DecodeError):
-            self._drive_pages([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
+            self._drive_sequential_requests([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
 
     def test_replace_mode_iteration_completes_past_corrupt_page(self):
         """With REPLACE set, both pages should decode and parse. The
         bad byte on page 1 becomes a replacement character."""
         os.environ[_MALFORMED_INPUT_ENV_VAR] = "REPLACE"
 
-        results = self._drive_pages([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
+        results = self._drive_sequential_requests([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
 
         self.assertEqual(len(results), 2)
 
@@ -139,7 +142,7 @@ class TestSyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
         instead of being replaced."""
         os.environ[_MALFORMED_INPUT_ENV_VAR] = "IGNORE"
 
-        results = self._drive_pages([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
+        results = self._drive_sequential_requests([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
 
         self.assertEqual(len(results), 2)
         page1_body, _ = results[0]
@@ -156,7 +159,7 @@ class TestSyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
         between calls would show up here."""
         os.environ[_MALFORMED_INPUT_ENV_VAR] = "REPLACE"
 
-        results = self._drive_pages([
+        results = self._drive_sequential_requests([
             _PAGE_WITH_BAD_UTF8_IN_STRING_VALUE,
             _PAGE_VALID_UTF8,
             _PAGE_WITH_BAD_UTF8_IN_STRING_VALUE,
@@ -173,9 +176,9 @@ class TestSyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
 
 
 class TestAsyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
-    """Async version of the paged-iteration checks above."""
+    """Async version of the sequential _Request decode-isolation checks."""
 
-    def _drive_pages(self, page_bodies):
+    def _drive_sequential_requests(self, page_bodies):
         async def _run():
             results = []
             for body in page_bodies:
@@ -190,12 +193,12 @@ class TestAsyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
 
     def test_strict_mode_iteration_aborts_on_corrupt_page(self):
         with self.assertRaises(DecodeError):
-            self._drive_pages([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
+            self._drive_sequential_requests([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
 
     def test_replace_mode_iteration_completes_past_corrupt_page(self):
         os.environ[_MALFORMED_INPUT_ENV_VAR] = "REPLACE"
 
-        results = self._drive_pages([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
+        results = self._drive_sequential_requests([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
 
         self.assertEqual(len(results), 2)
         page1_body, _ = results[0]
@@ -206,7 +209,7 @@ class TestAsyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
     def test_ignore_mode_iteration_completes_past_corrupt_page(self):
         os.environ[_MALFORMED_INPUT_ENV_VAR] = "IGNORE"
 
-        results = self._drive_pages([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
+        results = self._drive_sequential_requests([_PAGE_WITH_BAD_UTF8_IN_STRING_VALUE, _PAGE_VALID_UTF8])
 
         self.assertEqual(len(results), 2)
         page1_body, _ = results[0]
@@ -221,7 +224,7 @@ class TestAsyncPagedIterationWithReplace(_DecoderEnvIsolatedTestCase):
         # patch.dict scopes the env var to this test and restores the prior
         # value when the block exits, even if an assertion below raises.
         with patch.dict(os.environ, {_MALFORMED_INPUT_ENV_VAR: "REPLACE"}):
-            results = self._drive_pages([
+            results = self._drive_sequential_requests([
                 _PAGE_WITH_BAD_UTF8_IN_STRING_VALUE,
                 _PAGE_VALID_UTF8,
                 _PAGE_WITH_BAD_UTF8_IN_STRING_VALUE,
