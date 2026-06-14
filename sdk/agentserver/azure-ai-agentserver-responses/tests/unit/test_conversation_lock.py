@@ -154,7 +154,6 @@ class TestNonBackgroundRecovery:
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.cancel = asyncio.Event()
         ctx.task_id = "non-bg-task-1"
-        ctx.suspend = AsyncMock()
         # Mark as non-background in the responses framework namespace.
         ctx.metadata = _FakeTaskMetadata()
         ctx.metadata(_RESPONSES_NS)[_RESP_BACKGROUND] = False

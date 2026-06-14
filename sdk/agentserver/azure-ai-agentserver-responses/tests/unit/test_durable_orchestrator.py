@@ -159,7 +159,6 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
-        ctx.suspend = AsyncMock()
         ctx.input = {
             "response_id": "resp_123",
             "_record_ref": MagicMock(),
@@ -205,7 +204,6 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
-        ctx.suspend = AsyncMock()
         ctx.input = {
             "response_id": "resp_456",
             "_record_ref": MagicMock(),
@@ -326,7 +324,6 @@ class TestDurableOrchestratorCancellationBridge:
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
-        ctx.suspend = AsyncMock()
         ctx.input = {
             "response_id": "resp_cancel",
             "_record_ref": MagicMock(),
