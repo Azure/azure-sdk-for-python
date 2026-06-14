@@ -317,3 +317,149 @@ class TestDurableOrchestratorCancellationBridge:
         # The cancellation_signal passed to _run_background_non_stream should be set
         call_kwargs = mock_run.call_args[1]
         assert call_kwargs["cancellation_signal"].is_set()
+
+
+# ════════════════════════════════════════════════════════════
+# Spec 023 Phase 1 RED tests — per-request primitive dispatch
+# ════════════════════════════════════════════════════════════
+#
+# Per the spec-021 §7.3 / SOT §6.6 matrix, the responses orchestrator
+# selects between TWO underlying durable-task primitives per request:
+#
+#   | store | conv_id | prev_resp_id | steerable | Primitive  |
+#   |-------|---------|--------------|-----------|------------|
+#   | true  | absent  | absent       | (any)     | one-shot   |
+#   | true  | absent  | present      | False     | one-shot   |
+#   | true  | absent  | present      | True      | multi-turn |
+#   | true  | present | (any)        | False     | multi-turn |
+#   | true  | present | (any)        | True      | multi-turn |
+#
+# These tests target ``DurableResponseOrchestrator._pick_primitive`` and
+# the two-primitive construction. They are RED until Phase 2 lands
+# both primitives.
+
+
+class TestPrimitiveSelectionMatrix:
+    """SOT §6.6 / spec-021 §7.3 — per-request primitive selection."""
+
+    @pytest.mark.parametrize(
+        "conv_id,prev_id,steerable,expected_attr,case_id",
+        [
+            (None, None, False, "_one_shot_task_fn", "no_conv_no_prev_steer_off"),
+            (None, None, True, "_one_shot_task_fn", "no_conv_no_prev_steer_on"),
+            (None, "resp_x", False, "_one_shot_task_fn", "no_conv_prev_steer_off"),
+            (None, "resp_x", True, "_multi_turn_task_fn", "no_conv_prev_steer_on"),
+            ("conv_1", None, False, "_multi_turn_task_fn", "conv_no_prev_steer_off"),
+            ("conv_1", None, True, "_multi_turn_task_fn", "conv_no_prev_steer_on"),
+            ("conv_1", "resp_x", False, "_multi_turn_task_fn", "conv_prev_steer_off"),
+            ("conv_1", "resp_x", True, "_multi_turn_task_fn", "conv_prev_steer_on"),
+        ],
+        ids=lambda v: v if isinstance(v, str) else repr(v),
+    )
+    def test_pick_primitive_matrix(
+        self,
+        conv_id: Optional[str],
+        prev_id: Optional[str],
+        steerable: bool,
+        expected_attr: str,
+        case_id: str,
+    ) -> None:
+        """Every row of the SOT §6.6 matrix routes to the expected primitive.
+
+        Depth assertion per Constitution Principle XI: the returned
+        primitive is the EXACT instance (``is`` comparison) of one of
+        the two registered task fns — not just "a Task was returned".
+        """
+        opts = MagicMock(
+            steerable_conversations=steerable,
+            max_pending=10,
+            default_fetch_history_count=100,
+        )
+        orch = DurableResponseOrchestrator(
+            create_fn=AsyncMock(), provider=MagicMock(), options=opts,
+        )
+
+        # Both primitives must exist (precondition for the matrix).
+        assert hasattr(orch, "_one_shot_task_fn"), (
+            f"{case_id}: orchestrator must register a one-shot primitive."
+        )
+        assert hasattr(orch, "_multi_turn_task_fn"), (
+            f"{case_id}: orchestrator must register a multi-turn primitive."
+        )
+
+        ctx_params = {
+            "response_id": "resp_test",
+            "agent_name": "test-agent",
+            "session_id": "sess-1",
+            "conversation_id": conv_id,
+            "previous_response_id": prev_id,
+        }
+        picked = orch._pick_primitive(ctx_params)
+        expected = getattr(orch, expected_attr)
+        assert picked is expected, (
+            f"{case_id}: pick_primitive routed to wrong primitive. "
+            f"Expected {expected_attr}, got "
+            f"{'_one_shot_task_fn' if picked is orch._one_shot_task_fn else '_multi_turn_task_fn' if picked is orch._multi_turn_task_fn else 'unknown'}."
+        )
+
+
+class TestOrchestratorConstructionValidation:
+    """SOT §6.6 + Constitution Principle V (fail-fast configuration)."""
+
+    def test_orchestrator_registers_both_primitives_on_construction(self) -> None:
+        """Construction MUST register both task fns even if the
+        deployment will only use one of them.
+
+        Depth assertion per Constitution Principle V: the validation
+        runs at __init__ time (not lazily at request time), so a
+        deployment that mis-imports the core wheel fails fast at
+        server startup instead of per-request.
+        """
+        opts = MagicMock(
+            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
+        )
+        orch = DurableResponseOrchestrator(
+            create_fn=AsyncMock(), provider=MagicMock(), options=opts,
+        )
+
+        # Both registrations are present.
+        assert hasattr(orch, "_one_shot_task_fn"), (
+            "Construction must register the one-shot primitive."
+        )
+        assert hasattr(orch, "_multi_turn_task_fn"), (
+            "Construction must register the multi-turn primitive."
+        )
+
+        # Names are distinct and well-formed.
+        one_shot_name = orch._one_shot_task_fn._opts.name
+        multi_turn_name = orch._multi_turn_task_fn._opts.name
+        assert one_shot_name != multi_turn_name, (
+            f"Primitives must have distinct registration names "
+            f"(both got {one_shot_name!r})."
+        )
+        assert "one_shot" in one_shot_name or "oneshot" in one_shot_name, (
+            f"One-shot primitive name should reflect its kind (got {one_shot_name!r})."
+        )
+        assert "multi_turn" in multi_turn_name or "multiturn" in multi_turn_name, (
+            f"Multi-turn primitive name should reflect its kind (got {multi_turn_name!r})."
+        )
+
+        # The multi-turn primitive's steerable flag MUST match the
+        # deployment's steerable_conversations option (per SOT §6.6).
+        assert orch._multi_turn_task_fn._opts.steerable is False, (
+            "Multi-turn primitive's steerable flag must match "
+            "options.steerable_conversations."
+        )
+
+    def test_orchestrator_multi_turn_steerable_flag_propagated(self) -> None:
+        """With ``steerable_conversations=True``, the multi-turn primitive
+        is registered with ``steerable=True``."""
+        opts = MagicMock(
+            steerable_conversations=True, max_pending=10, default_fetch_history_count=100
+        )
+        orch = DurableResponseOrchestrator(
+            create_fn=AsyncMock(), provider=MagicMock(), options=opts,
+        )
+        assert orch._multi_turn_task_fn._opts.steerable is True, (
+            "Steerable flag must propagate from options to multi-turn primitive."
+        )

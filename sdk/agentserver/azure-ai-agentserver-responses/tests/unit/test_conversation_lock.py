@@ -177,3 +177,156 @@ class TestStartupLifecycle:
         # The task should be registered
         names = [name for name, _, _ in _REGISTERED_DESCRIPTORS]
         assert "responses_durable_background" in names
+
+
+# ════════════════════════════════════════════════════════════
+# Spec 023 Phase 1 RED tests — row-5 conversation lock semantics
+# ════════════════════════════════════════════════════════════
+#
+# Per the spec-021 §7.3 / SOT §11.1 contract: when a deployment uses
+# ``steerable_conversations=False`` and a request carries a
+# ``conversation_id``, sequential turns (turn N completes BEFORE turn
+# N+1 arrives) MUST extend the chain rather than return 409
+# ``conversation_locked``. Concurrent overlap (turn N still running
+# when turn N+1 arrives) MUST still return 409.
+#
+# Today (pre-spec-023): EVERY turn after the first incorrectly
+# returns 409 because the underlying ``@task(steerable=False,
+# ephemeral=False)`` registration leaves the task ``status="completed"``
+# after turn 1, and the endpoint handler's ``TaskConflictError → 409``
+# mapping catches the ``completed`` status too.
+#
+# After spec-023 Phase 2 implementation: the orchestrator dispatches
+# ``conv_id + steerable=False`` requests to ``@multi_turn_task(steerable=False)``
+# which transitions to ``suspended`` after each turn (not ``completed``);
+# sequential turns successfully resume the chain.
+#
+# These tests target the orchestrator's primitive-dispatch + start
+# behaviour directly. They are RED until Phase 2 lands.
+
+
+class TestRow5SequentialTurnsExtendChain:
+    """SOT §11.1 / spec-021 §7.3 row 5: ``conversation_id`` +
+    ``steerable_conversations=False`` chains MUST extend on sequential
+    turns; only concurrent overlap returns 409.
+    """
+
+    @pytest.mark.asyncio
+    async def test_conv_id_non_steerable_sequential_turns_extend_chain(self) -> None:
+        """Sequential turns of the same ``conversation_id`` succeed.
+
+        After turn 1 completes, its task is in ``status="suspended"``
+        (not ``completed``). Turn 2 with the same ``conversation_id``
+        resumes the chain — NO ``TaskConflictError`` raised.
+
+        Depth assertion per Constitution Principle XI:
+        - The orchestrator must have a multi-turn primitive registered.
+        - The selector must route ``conv_id`` requests (even with
+          ``steerable_conversations=False``) to the multi-turn primitive.
+        - Turn 2 must NOT raise ``TaskConflictError`` against a
+          ``suspended`` chain.
+        """
+        opts = MagicMock(
+            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
+        )
+        # Orchestrator that has both primitives wired up. ``_pick_primitive``
+        # MUST return the multi-turn primitive when ``conversation_id`` is
+        # present, regardless of ``steerable_conversations``.
+        orch = DurableResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=opts,
+        )
+
+        # Post-Phase-2 the orchestrator carries two task fns.
+        assert hasattr(orch, "_multi_turn_task_fn"), (
+            "Post-spec-023: orchestrator must register a multi-turn primitive "
+            "for chain semantics (Row 5 fix)."
+        )
+        assert hasattr(orch, "_one_shot_task_fn"), (
+            "Post-spec-023: orchestrator must also register a one-shot primitive "
+            "for non-chain requests."
+        )
+
+        ctx_params = {
+            "response_id": "resp_turn1",
+            "agent_name": "test-agent",
+            "session_id": "sess-row5",
+            "conversation_id": "conv-row5",
+            "previous_response_id": None,
+        }
+        # Dispatch must return the multi-turn primitive for conv_id requests,
+        # NOT the one-shot.
+        picked = orch._pick_primitive(ctx_params)
+        assert picked is orch._multi_turn_task_fn, (
+            f"Row 5 dispatch broken: conv_id + steerable=False MUST map to "
+            f"multi-turn primitive (got the {'one-shot' if picked is orch._one_shot_task_fn else 'unknown'})."
+        )
+
+        # Simulate turn 2 of the same chain: ``previous_response_id`` set
+        # to turn 1's response_id. Same conversation_id → same task_id;
+        # since turn 1 has SUSPENDED (not completed), this must not raise
+        # TaskConflictError against ``completed`` status — that was the bug.
+        # We model the suspended-resume scenario by mocking the multi-turn
+        # primitive's ``.start`` to succeed (no TaskConflictError on a
+        # suspended chain).
+        orch._multi_turn_task_fn = MagicMock()
+        orch._multi_turn_task_fn.start = AsyncMock(return_value=MagicMock())
+
+        record = MagicMock()
+        ctx_params_turn2 = {
+            **ctx_params,
+            "response_id": "resp_turn2",
+            "previous_response_id": "resp_turn1",
+        }
+        # Should succeed — multi-turn primitive accepts the resume.
+        await orch.start_durable(record=record, ctx_params=ctx_params_turn2)
+        orch._multi_turn_task_fn.start.assert_called_once()
+        # And no fallback path was taken (no one-shot start).
+        if hasattr(orch, "_one_shot_task_fn"):
+            os_start = getattr(orch._one_shot_task_fn, "start", None)
+            if isinstance(os_start, AsyncMock):
+                os_start.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_conv_id_non_steerable_concurrent_overlap_still_returns_409(self) -> None:
+        """Regression guard for unchanged behaviour: when a concurrent
+        turn arrives while a prior turn is still ``in_progress``, the
+        framework MUST still surface ``TaskConflictError(in_progress)``.
+
+        Depth assertion per Constitution Principle XI: the error's
+        ``current_status`` is ``"in_progress"`` (NOT ``"completed"``),
+        and the orchestrator does NOT silently fall back to a one-shot
+        primitive.
+        """
+        opts = MagicMock(
+            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
+        )
+        orch = DurableResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=opts,
+        )
+
+        # Wire up the multi-turn primitive to raise TaskConflictError
+        # against an ``in_progress`` status (the legitimate concurrent-overlap case).
+        orch._multi_turn_task_fn = MagicMock()
+        orch._multi_turn_task_fn.start = AsyncMock(
+            side_effect=TaskConflictError("durable-resp-row5", "in_progress")
+        )
+
+        record = MagicMock()
+        ctx_params = {
+            "response_id": "resp_concurrent",
+            "agent_name": "test-agent",
+            "session_id": "sess-row5",
+            "conversation_id": "conv-row5",
+            "previous_response_id": None,
+        }
+
+        with pytest.raises(TaskConflictError) as excinfo:
+            await orch.start_durable(record=record, ctx_params=ctx_params)
+        # Depth: status is in_progress (not completed) — the actual concurrent-lock case.
+        assert excinfo.value.current_status == "in_progress", (
+            f"Concurrent overlap MUST be in_progress (not {excinfo.value.current_status!r})."
+        )
