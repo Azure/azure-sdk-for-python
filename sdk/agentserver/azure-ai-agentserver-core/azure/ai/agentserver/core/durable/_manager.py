@@ -1687,46 +1687,80 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     renewal_cancel.set()
                     # (a) Flush metadata (FR-015 auto-flush).
                     await ctx.metadata._flush_all()
-                    # (b) Release the lease: clear ownership claim. The
-                    #     CAS write may fail with eviction — in that
-                    #     case the local cleanup sequence already
-                    #     handled it; just log and proceed.
-                    try:
-                        await self._provider_update_locked(
-                            task_id,
-                            TaskPatchRequest(
-                                lease_owner="",
-                                lease_instance_id="",
-                                lease_duration_seconds=0,
-                            ),
-                        )
-                    except _HostedConflict as exc:
-                        translated = _translate_hosted_conflict(exc, task_id=task_id)
-                        logger.warning(
-                            "exit_for_recovery: lease release for task %s "
-                            "failed with provider conflict %s; the next "
-                            "process startup recovery will reclaim",
-                            task_id,
-                            type(translated).__name__ if translated else "retryable",
-                            exc_info=True,
-                        )
-                    except TransportClassifiedError as exc:
-                        if not _is_evicted(exc):
-                            logger.warning(
-                                "exit_for_recovery: lease release for task "
-                                "%s failed with classification=%s; the next "
-                                "process startup recovery will reclaim",
+                    # (b) Release the lease (lease_duration_seconds=0) so the
+                    #     next process reclaims immediately. SOT §22: force-
+                    #     expire on exit_for_recovery. The renewal loop above
+                    #     was just cancelled but may have raced a PATCH; on
+                    #     ETag conflict re-read and retry up to 5 times so
+                    #     the release actually lands.
+                    _release_attempts = 0
+                    while True:
+                        _release_attempts += 1
+                        try:
+                            await self._provider_update_locked(
                                 task_id,
-                                getattr(exc, "classification", None),
+                                TaskPatchRequest(
+                                    lease_owner=self._lease_owner,
+                                    lease_instance_id=self._instance_id,
+                                    lease_duration_seconds=0,
+                                ),
                             )
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        logger.warning(
-                            "exit_for_recovery: lease release for task %s "
-                            "failed; the next process startup recovery will "
-                            "reclaim",
-                            task_id,
-                            exc_info=True,
-                        )
+                            break
+                        except _HostedConflict as exc:
+                            translated = _translate_hosted_conflict(exc, task_id=task_id)
+                            # Eviction-shape conflicts: someone else already owns it
+                            # (binding_mismatch / not_owner / etc.) → nothing to release.
+                            if translated is not None:
+                                logger.info(
+                                    "exit_for_recovery: lease for task %s already "
+                                    "owned by another instance (%s); no release needed",
+                                    task_id,
+                                    type(translated).__name__,
+                                )
+                                break
+                            # Pure ETag race vs our own renewer — re-read and retry.
+                            if _release_attempts >= 5:
+                                logger.warning(
+                                    "exit_for_recovery: lease release for task %s "
+                                    "still conflicting after %d attempts; the next "
+                                    "process startup recovery will reclaim",
+                                    task_id,
+                                    _release_attempts,
+                                    exc_info=True,
+                                )
+                                break
+                            try:
+                                refreshed = await self._provider_get_tracked(task_id)
+                                if refreshed is not None:
+                                    self._track_etag(task_id, getattr(refreshed, "etag", None))
+                            except Exception:  # pylint: disable=broad-exception-caught
+                                logger.warning(
+                                    "exit_for_recovery: failed to refresh etag "
+                                    "for retry on task %s",
+                                    task_id,
+                                    exc_info=True,
+                                )
+                                break
+                            continue
+                        except TransportClassifiedError as exc:
+                            if not _is_evicted(exc):
+                                logger.warning(
+                                    "exit_for_recovery: lease release for task "
+                                    "%s failed with classification=%s; the next "
+                                    "process startup recovery will reclaim",
+                                    task_id,
+                                    getattr(exc, "classification", None),
+                                )
+                            break
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            logger.warning(
+                                "exit_for_recovery: lease release for task %s "
+                                "failed; the next process startup recovery will "
+                                "reclaim",
+                                task_id,
+                                exc_info=True,
+                            )
+                            break
                     # (c) Do NOT write a terminal record — status MUST
                     #     remain 'in_progress' so the recovery scan picks
                     #     it up next process start.
@@ -2008,6 +2042,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                             except Exception:  # noqa: BLE001
                                 pass
                         current_result_future.add_done_callback(_discard)
+                # Spec 022 FR-053 7-step ordering: step 5 (resolve current's
+                # future) MUST be observable BEFORE step 6 (promote queued
+                # head). Yield so any awaiter of current_result_future is
+                # scheduled before the next handler dispatches.
+                await asyncio.sleep(0)
                 # Spec 016 FR-012 (US5) — legacy one-shot path: queued steerers
                 # see TaskConflictError on terminal failure since the task is done.
                 # Spec 022 FR-013 — multi-turn path: queued steerers PROMOTE
@@ -2306,18 +2345,43 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 exc_info=True,
             )
 
+        # SOT §23.8 item #3 — the turn-end PATCH MUST atomically clear ALL of:
+        #   payload["input"], payload["_steering"]["active_input"],
+        #   payload["_retry_attempt"], and (if input was promoted) the
+        #   attachments["_input"] entry. Splitting any of these into
+        #   multiple PATCHes opens a crash window where the attachment
+        #   exists without its ref (or vice versa).
+        task_info = await self._provider_get_tracked(task_id)
+        if task_info is not None:
+            self._track_etag(task_id, getattr(task_info, "etag", None))
+        steering_patch: dict[str, Any] = {}
+        attachments_patch: dict[str, Any] = {}
+        if task_info is not None and task_info.payload:
+            existing_steering = task_info.payload.get("_steering") or {}
+            if existing_steering:
+                steering_patch = dict(existing_steering)
+                steering_patch["active_input"] = None
+            existing_input_slot = task_info.payload.get("input")
+            if _is_ref(existing_input_slot):
+                attachments_patch[_ref_key(existing_input_slot)] = None
+
+        payload_patch: dict[str, Any] = {
+            "metadata": metadata.to_dict(),
+            "input": None,            # FR-028
+            "_retry_attempt": None,   # FR-030
+            # NO "output" (FR-025), NO "error" (FR-027)
+        }
+        if steering_patch:
+            payload_patch["_steering"] = steering_patch
+
         try:
             await self._terminal_write_locked(
                 task_id,
                 TaskPatchRequest(
                     status="suspended",
                     suspension_reason="run_completion",
-                    payload={
-                        "metadata": metadata.to_dict(),
-                        "input": None,            # FR-028
-                        "_retry_attempt": None,   # FR-030
-                        # NO "output" (FR-025), NO "error" (FR-027)
-                    },
+                    payload=payload_patch,
+                    attachments=attachments_patch or None,
                 ),
             )
         except TaskConflictError:
@@ -2432,20 +2496,40 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 exc_info=True,
             )
 
-        # Step 3 + 4: PATCH to suspended (NOT completed); clear input + _retry_attempt;
-        # NO payload["error"] written; _last_input_id preserved.
+        # Step 3 + 4: PATCH to suspended (NOT completed); clear input + _retry_attempt
+        # + _steering.active_input + promoted _input attachment if any (SOT §23.8
+        # single-PATCH invariant); NO payload["error"] written; _last_input_id preserved.
+        task_info = await self._provider_get_tracked(task_id)
+        if task_info is not None:
+            self._track_etag(task_id, getattr(task_info, "etag", None))
+        steering_patch: dict[str, Any] = {}
+        attachments_patch: dict[str, Any] = {}
+        if task_info is not None and task_info.payload:
+            existing_steering = task_info.payload.get("_steering") or {}
+            if existing_steering:
+                steering_patch = dict(existing_steering)
+                steering_patch["active_input"] = None
+            existing_input_slot = task_info.payload.get("input")
+            if _is_ref(existing_input_slot):
+                attachments_patch[_ref_key(existing_input_slot)] = None
+
+        payload_patch: dict[str, Any] = {
+            "metadata": metadata.to_dict(),
+            "input": None,            # FR-028
+            "_retry_attempt": None,   # FR-030
+            # NO "output" (FR-025), NO "error" (FR-027)
+        }
+        if steering_patch:
+            payload_patch["_steering"] = steering_patch
+
         try:
             await self._terminal_write_locked(
                 task_id,
                 TaskPatchRequest(
                     status="suspended",
                     suspension_reason="run_completion",
-                    payload={
-                        "metadata": metadata.to_dict(),
-                        "input": None,            # FR-028
-                        "_retry_attempt": None,   # FR-030
-                        # NO "output" (FR-025), NO "error" (FR-027)
-                    },
+                    payload=payload_patch,
+                    attachments=attachments_patch or None,
                 ),
             )
         except TaskConflictError:
@@ -2631,7 +2715,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # SOT §11/§20: the framework does not persist payload["output"]
         # nor any "_output" attachment. The Suspended sentinel's ``output``
         # value (if any) is delivered in-process to the result_future only.
-        payload_patch: dict[str, Any] = {"metadata": metadata.to_dict(), "input": None}
+        # SOT §23.8 item #3: suspend PATCH MUST also clear _retry_attempt
+        # so the next turn starts with a fresh retry budget.
+        payload_patch: dict[str, Any] = {
+            "metadata": metadata.to_dict(),
+            "input": None,
+            "_retry_attempt": None,
+        }
         if steering_patch:
             payload_patch["_steering"] = steering_patch
         attachments_patch: dict[str, Any] | None = extra_attachments or None

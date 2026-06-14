@@ -61,13 +61,7 @@ from ._exceptions import (
     TaskFailed,
 )
 from ._metadata import JSONValue, TaskMetadata
-from ._retry import (
-    RetryPolicy,
-    exponential_backoff,
-    fixed_delay,
-    linear_backoff,
-    no_retry,
-)
+from ._retry import RetryPolicy
 from ._run import TaskRun  # Suspended kept internal-only; reach via _run module directly
 
 # Streaming lives in `azure.ai.agentserver.core.streaming` as a peer
@@ -99,10 +93,6 @@ __all__ = [
     "TaskRun",
     # Retry
     "RetryPolicy",
-    "exponential_backoff",
-    "fixed_delay",
-    "linear_backoff",
-    "no_retry",
     # Public exceptions
     "TaskFailed",
     "TaskCancelled",

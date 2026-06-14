@@ -3158,50 +3158,39 @@ When a multi-turn handler ends a turn with `return X`:
 2. payload_patch = {
        'metadata': metadata.to_dict(),  # auto-flush of touched namespaces
        'input': null,                   # consumed input goes away
+       '_retry_attempt': null,          # fresh retry budget for next turn
    }
 3. If task.payload['_steering'] is set:
        steering = dict(task.payload['_steering'])
        steering['active_input'] = null
        payload_patch['_steering'] = steering
-4. # Output is ALWAYS written via the _output attachment (§20, §23.2).
-   # Never inline; never omitted.
+4. # NB: The framework does NOT persist X anywhere on the task record
+   # (§11, §20, C-OUT). The handler's return value is delivered to
+   # the in-process awaiter of TaskRun.result() ONLY. No payload['output']
+   # write, no '_output' attachment.
    attachments_patch = {}
-5. If X is not None:
-       serialized_output = canonical_json(X)
-       if size(serialized_output) > 2 MB:
-           # Output values are no longer persisted — no size check needed
-       payload_patch['output']       = {'__attachment_ref__': {
-                                            'key': '_output',
-                                            'hash': sha256(serialized_output)}}
-       attachments_patch['_output']  = X
-   else:
-       payload_patch['output']       = null
-       attachments_patch['_output']  = null     # delete prior _output (if any)
-6. If task.payload['input'] was a ref (§23.3):
+5. If task.payload['input'] was a ref (§23.3):
        attachments_patch[ref_key(task.payload['input'])] = null
-7. PATCH(task_id, status='suspended', suspension_reason=R,
+6. PATCH(task_id, status='suspended', suspension_reason='run_completion',
         payload=payload_patch, attachments=attachments_patch,
         lease piggyback, if_match=etag)
 ```
 
-Properties this guarantees (vs. the prior inline-and-only-if-non-None design):
+Properties this guarantees:
 
-- **Output is always explicit on suspend.** Whether the handler
-  passes `output=X` or `output=None`, the persisted record
-  unambiguously reflects what the handler decided. A `null`
-  output on the record means "the handler suspended with no
-  output", not "we never wrote because output was None and the
-  field still holds last turn's value." This is what makes
-  `Task.get(task_id).output` correct after suspend regardless of
-  prior turn history.
-- **No payload-budget pressure.** The output never lives in
-  `payload`; it lives only in `attachments["_output"]`. Even a
-  multi-MB suspend output doesn't compete with the 1 MB payload
-  cap that metadata namespaces and framework slots need.
-- **Atomic with the payload.** Single PATCH carries both. There
-  is no "ref written but attachment missing" window, and no
-  "attachment written but ref still points at the old hash"
-  window.
+- **No output persistence.** Whether the handler returns a value or
+  not, nothing about that value lands on the durable record. After
+  suspend the record reflects `status=suspended`, no `output` key.
+  Awaiters of `TaskRun.result()` receive the value in-process before
+  the chain enters its next turn; replay-after-crash returns to the
+  handler with no output replay path.
+- **Atomic input + steering + attachment clears.** Single PATCH
+  carries the `input` clear, the `_steering.active_input` clear, the
+  `_retry_attempt` reset, AND the deletion of the promoted `_input`
+  attachment (when applicable). There is no crash window where the
+  attachment exists without its ref or vice-versa.
+- **`_last_input_id` preserved.** Not touched here so the
+  `if_last_input_id` precondition on the next `start()` still resolves.
 
 ### §54. Recovery + reclaim
 
@@ -3655,10 +3644,10 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   with exactly one key `__attachment_ref__` whose value is a dict
   with both `key` and `hash`.
 - **C-ATT-3.** Promotion thresholds: function input > 200 KiB;
-  steering input > 20 KiB. Output uses NO threshold — every
-  non-null output is always written via the `_output` attachment
-  (§23.2). Measured in canonical-JSON bytes. Framework-reserved
-  attachment keys: `_input`, `_steering_input_<seq>`.
+  steering input > 20 KiB. Outputs are not persisted at all
+  (§11, §20, C-OUT) — there is no `_output` attachment. Measured
+  in canonical-JSON bytes. Framework-reserved attachment keys:
+  `_input`, `_steering_input_<seq>`.
   Worst-case framework attachment usage: 1 + 9 = 10 of 20 slots;
   10 slots remain free.
 - **C-ATT-4.** Per-attachment cap: 2 MB serialized. Per-task
@@ -4192,15 +4181,14 @@ What this single document demonstrates:
 Simpler scenarios drop fields:
 
 - **Small inputs only**: `payload.input` is the raw JSON value;
-  `pending_inputs` is all raw values; only `_output` may appear
-  in `attachments` (output is always-attachment).
-- **Handler returned `None` from a turn that completed normally**:
-  `payload.output` is `null`; `attachments._output` is absent
-  (single co-PATCH clears the slot and deletes the attachment).
+  `pending_inputs` is all raw values; `attachments` is absent
+  (no output is ever persisted; §11/§20/C-OUT).
+- **Handler returned `X` from a turn (multi-turn implicit suspend)**:
+  `payload` has no `output` key; `attachments` has no `_output`
+  entry. The handler's return value is delivered to the in-process
+  awaiter of `TaskRun.result()` only.
 - **Just-after-resume**: `payload.input` holds the new input
-  (inline or ref); `payload.output` is `null`;
-  `attachments._output` is absent (cleared by the resume PATCH —
-  §50, §23.8 item 8).
+  (inline or ref); no `output` key on the record (and never was).
 - **Cold start, no steering**: `_steering` absent; `next_input_seq`
   doesn't appear.
 
