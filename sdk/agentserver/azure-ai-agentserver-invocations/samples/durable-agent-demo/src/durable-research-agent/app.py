@@ -134,17 +134,23 @@ async def handle_invoke(request: Request) -> Response:
     # need to wait for a subscriber before the handler starts emitting.
     await streams.get_or_create(invocation_id)
 
-    # Steering is transparent to callers: for a steerable=True task,
-    # task.start() queues the input on the in-progress task's steering
-    # queue WITHOUT raising. The agent's currently-running turn observes
-    # ctx.cancel.is_set(), winds down at its next checkpoint, and the
-    # framework re-enters the body with the queued input as
+    # Steering is transparent to callers: for a steerable=True chain,
+    # multi_turn_task.start() queues the input on the in-progress chain's
+    # steering queue WITHOUT raising. The agent's currently-running turn
+    # observes ctx.cancel.is_set(), winds down at its next checkpoint, and
+    # the framework re-enters the body with the queued input as
     # ctx.input — at which point the new turn streams its events to
     # the per-turn invocation_id stream reserved above. No status
     # branching is needed here.
+    #
+    # invocation_id is also the per-turn ``input_id`` — the framework
+    # records it as the chain's last-accepted input id (see
+    # ``payload["_last_input_id"]``) and uses it for the multi-turn
+    # ``get_active_run(task_id, input_id)`` match.
     await deep_research.start(
         task_id=task_id,
         input={"topic": topic, "invocation_id": invocation_id},
+        input_id=invocation_id,
     )
 
     return JSONResponse(

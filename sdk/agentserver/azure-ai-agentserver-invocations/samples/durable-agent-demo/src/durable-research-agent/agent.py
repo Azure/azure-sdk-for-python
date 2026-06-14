@@ -37,7 +37,7 @@ from typing import Any, Awaitable, Callable
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 from store import CheckpointStore
@@ -165,7 +165,7 @@ async def _finish_turn(stream: Any, ctx: TaskContext, inv_id: str) -> None:
     _checkpoint_store.delete(inv_id)
 
 
-@task(
+@multi_turn_task(
     name="deep_research",
     steerable=True,
 )
@@ -185,18 +185,21 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
     Steering is transparent: a new POST while a turn is running
     enqueues the input on the framework's steering queue and sets
     ``ctx.cancel``. The handler observes the cancel at the next
-    checkpoint, winds down via ``ctx.suspend(...)`` (which calls
-    :func:`_finish_turn` to clear all per-turn state), and the
-    framework re-enters the body with the new ``ctx.input``. Because
-    state was cleared at suspend, the re-entered handler naturally
-    starts the new topic at phase 0 — no ``is_steered_turn`` check
-    needed in handler code.
+    checkpoint, winds down via a bare ``return`` (which calls
+    :func:`_finish_turn` first to clear all per-turn state), and the
+    framework re-enters the body with the new ``ctx.input`` on the
+    queued steering input. Because state was cleared at suspend, the
+    re-entered handler naturally starts the new topic at phase 0 —
+    no ``is_steered_turn`` check needed in handler code.
 
-    The body returns ``None`` on normal completion (or the
-    :class:`Suspended` sentinel from ``ctx.suspend(...)`` on the
-    wind-down path). Clients read progress + final content from the
-    per-invocation SSE stream, not from the task's terminal output, so
-    there is no return-value payload to construct.
+    The body returns ``None`` on both normal completion AND the
+    wind-down path. Multi-turn ``return X`` is the framework's only
+    end-of-turn signal: the chain transitions to ``suspended`` with
+    the next turn's input queued (or stays suspended awaiting a
+    future ``.start`` / ``.run`` if nothing is queued). Clients read
+    progress + final content from the per-invocation SSE stream, not
+    from the task's terminal output, so there is no return-value
+    payload to construct.
     """
     topic: str = ctx.input["topic"]
     inv_id: str = ctx.input["invocation_id"]
@@ -344,11 +347,11 @@ async def _wind_down(
     """Cooperative wind-down at a phase boundary.
 
     Tears down per-turn resources (stream close + metadata wipe +
-    checkpoint-store clear) via :func:`_finish_turn` BEFORE calling
-    ``ctx.suspend(...)`` so the SSE subscriber observes a clean
-    terminator before the framework reports the turn as suspended,
-    and so the steered re-entry (or any future ``start()``) finds
-    metadata wiped.
+    checkpoint-store clear) via :func:`_finish_turn` BEFORE returning
+    so the SSE subscriber observes a clean terminator before the
+    framework reports the turn as suspended, and so the steered
+    re-entry (or any future ``.start`` / ``.run``) finds metadata
+    wiped.
     """
     if ctx.timeout_exceeded:
         cause = "timeout"
@@ -368,7 +371,7 @@ async def _wind_down(
     })
 
     await _finish_turn(stream, ctx, inv_id)
-    return await ctx.suspend()
+    return None
 
 
 async def _cooldown(

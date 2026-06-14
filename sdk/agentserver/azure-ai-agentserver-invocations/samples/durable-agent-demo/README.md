@@ -1,6 +1,6 @@
 # Durable Research Agent — Demo
 
-A `@task`-decorated long-running research agent that demonstrates two
+A `@multi_turn_task`-decorated long-running research agent that demonstrates two
 platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 
 1. **Long-running tasks run uninterrupted past the platform's sandbox-eviction window.**
@@ -55,9 +55,10 @@ line instead of going silent.
 ## Deploy
 
 ```bash
-# 1. Stage the checked-in @task preview wheels into the docker build context
-#    (build.sh just copies sdk/agentserver/wheels/*.whl into a per-sample
-#    gitignored staging dir — no compilation, no PyPI fetch)
+# 1. Stage the checked-in durable-task preview wheels into the docker
+#    build context (build.sh just copies sdk/agentserver/wheels/*.whl
+#    into a per-sample gitignored staging dir — no compilation, no PyPI
+#    fetch)
 ./build.sh
 
 # 2. Login + deploy
@@ -70,8 +71,9 @@ invocations endpoint. `demo-client.sh` already points at the canonical
 `e2e-tests-westus2` deployment — edit `ENDPOINT=` near the top of
 `demo-client.sh` if you deployed elsewhere.
 
-> The `@task` durable-task primitive is in **private preview** and is
-> not on PyPI. It ships only as the pre-release wheels checked into
+> The durable-task primitive (`@task` / `@multi_turn_task`) is in
+> **private preview** and is not on PyPI. It ships only as the
+> pre-release wheels checked into
 > [`sdk/agentserver/wheels/`](../../../../wheels). See
 > [`sdk/agentserver/wheels/README.md`](../../../../wheels/README.md)
 > for the consumption workflow in your own project.
@@ -238,7 +240,7 @@ window — the framework's lease-renewal cycle keeps the sandbox warm.
 │  │     ttl_seconds=600)                                                │  │
 │  │                                                                     │  │
 │  │  deep_research  (agent.py)                                          │  │
-│  │     @task(steerable=True)   ← no streaming kwarg                    │  │
+│  │     @multi_turn_task(steerable=True)   ← no streaming kwarg         │  │
 │  │     stream = await streams.get_or_create(ctx.input["invocation_id"])│  │
 │  │     seq    = await stream.last_cursor() or 0   ← resume after crash │  │
 │  │     loop 1..NUM_PHASES:                                             │  │
@@ -248,7 +250,8 @@ window — the framework's lease-renewal cycle keeps the sandbox warm.
 │  │        await ctx.metadata.flush()       ← crash-recovery boundary   │  │
 │  │        emit phase_end                                               │  │
 │  │        if ctx.cancel.is_set():                                      │  │
-│  │           emit winding_down → stream.close() → ctx.suspend(...)     │  │
+│  │           emit winding_down → stream.close() → return None          │  │
+│  │           (bare return X is the implicit-suspend signal for chains) │  │
 │  └─────────────────────────────────────────────────────────────────────┘  │
 └───────────────────────────────────────────────────────────────────────────┘
                               ▲          │
@@ -274,8 +277,9 @@ Notable points:
 - The container runs `python app.py` directly. There is **no
   application-level supervisor or auto-restart wrapper** — the platform's
   nanny worker handles container restoration on crash.
-- `task_id == session_id`: one durable task per session. This is what
-  routes a steering POST to the active task instead of starting a new one.
+- `task_id == session_id`: one durable chain (`@multi_turn_task`) per
+  session. This is what routes a steering POST to the active chain
+  instead of starting a new one.
 - The framework's lease-renewal loop talks to the **task-storage API**
   every ~30s (half of the 60s lease). This traffic both (a) refreshes
   the lease so a successor instance won't reclaim the task, and (b)
@@ -294,15 +298,14 @@ Notable points:
 
 The agent emits to the SDK's `streams` registry
 (`azure.ai.agentserver.core.streaming`); the HTTP layer subscribes by
-the same id. There is no streaming kwarg on `@task` — streaming is
-explicitly initiated by the handler.
+the same id. There is no streaming kwarg on `@multi_turn_task` —
+streaming is explicitly initiated by the handler.
 
-**Public surface used here (6 exports):** `streams`, `EventStream`,
-`EventStreamError`, `EventStreamClosedError`, `EventStreamGoneError`,
-`EventStreamNotFoundError`. The SDK ships three backings (live,
-in-memory replay, file-backed replay) which you pick via the
-registry's configurators; concrete backing classes are not in the
-public API.
+**Public surface used here (5 exports):** `streams`, `EventStream`,
+`EventStreamError`, `EventStreamClosedError`, `EventStreamNotFoundError`.
+The SDK ships three backings (live, in-memory replay, file-backed
+replay) which you pick via the registry's configurators; concrete
+backing classes are not in the public API.
 
 **Backing.** `app.py` calls `streams.use_file_backed_replay(...)`
 once at module import. This persists every event to
@@ -389,7 +392,7 @@ durable-agent-demo/
 ├── build.sh                # copies sdk/agentserver/wheels/*.whl into src/.../wheels/ for docker
 ├── infra/                  # Bicep templates
 ├── src/durable-research-agent/
-│   ├── agent.py            # @task deep_research — durability + steering logic
+│   ├── agent.py            # @multi_turn_task deep_research — durability + steering logic
 │   ├── app.py              # InvocationAgentServerHost — minimal HTTP plumbing
 │   ├── agent.yaml          # Foundry agent definition
 │   ├── Dockerfile          # python:3.12-slim → python app.py
@@ -398,7 +401,7 @@ durable-agent-demo/
 └── README.md
 ```
 
-The `@task` private-preview wheels are checked in at
+The durable-task primitive private-preview wheels are checked in at
 [`sdk/agentserver/wheels/`](../../../../wheels) — `./build.sh` just
 copies them into this sample's `wheels/` so the Dockerfile can `COPY`
 them at image-build time. See
