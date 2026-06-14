@@ -262,9 +262,15 @@ dispatch.
 ## §6 — The perpetual conversation-scoped task
 
 For every `store=true` request, the framework MAY engage a durable
-task (Row 1 directly; Rows 2/3 via the bookkeeping pattern). The task
-is **perpetual**: it represents the conversation chain's execution
-loop, not a single response.
+task. The task is **perpetual**: it represents the conversation
+chain's execution loop, not a single response.
+
+Two equivalent architectures both satisfy the perpetual-task contract
+for Rows 2/3 — see §6.4 ("Implementation note: handler execution
+model") before reading §6.2. The Python implementation uses Model A
+(handler outside the task body for Rows 2/3, with a separate
+bookkeeping durable task); ports MAY choose Model B (handler inside
+the task body for every row).
 
 ### §6.1 — Lifecycle (Row 1)
 
@@ -289,6 +295,11 @@ needed; each task is one-shot.
 
 ### §6.2 — Lifecycle (Rows 2/3 — bookkeeping)
 
+> This section describes Model A from §6.4 (the bookkeeping pattern,
+> as used by the Python implementation). Ports using Model B (unified
+> task) handle Rows 2/3 via the same task-body lifecycle as Row 1 and
+> can skip this section.
+
 The handler does NOT run inside the durable task body for Rows 2/3.
 Instead, the handler runs as either an `asyncio.create_task` (Row 2,
 background) or synchronously inside `run_sync` / the live stream
@@ -311,11 +322,8 @@ takes the `disposition="mark-failed"` branch and persists `failed`
 idempotency check skips the overwrite if the response is already
 terminal — see §7.2.)
 
-The completion-event registry MUST be **pre-registered** at
-`start_durable` time, before the bookkeeping task body schedules.
-Without this, a fast handler that completes its terminal and calls
-`complete_bookkeeping_task` before the body's first await would lose
-the signal (race window).
+The completion-event registry's pre-registration rule lives in §6.5
+below.
 
 ### §6.3 — Lifecycle (Row 4)
 
@@ -324,6 +332,51 @@ No durable task. The handler runs inline (foreground) or via
 MAY make a best-effort attempt to persist a `failed` marker for the
 response in the in-memory response store — but this is best-effort
 only and not durable. On SIGKILL there is no recovery.
+
+### §6.4 — Implementation note: handler execution model
+
+The contract above does not specify whether the handler for Rows 2/3
+runs *inside* the bookkeeping task's body or *outside* it (alongside,
+with the bookkeeping task as a separate durable record).
+
+Two equivalent architectures both satisfy the contract:
+
+| Model | Handler execution | Recovery dispatch |
+|---|---|---|
+| **A: Bookkeeping pattern** (current Python implementation) | Row 1 inside task body. Rows 2/3 outside the task body (`asyncio.create_task` for bg, inline for fg). A separate bookkeeping durable task tracks completion. | One task per `store=true` response. The bookkeeping task's body waits on a completion signal; on signal-not-fired (crash), the recovery scanner re-fires it and the `mark-failed` disposition branch runs. |
+| **B: Unified-task pattern** | Handler always runs inside the durable task body, for every `store=true` row. | One task per `store=true` response. On recovery, the body reads `disposition` and either re-invokes the handler (`re-invoke`) or persists `failed` and returns (`mark-failed`). |
+
+Both produce identical user-visible behaviour. They differ in:
+
+- **Code shape**: Model B is simpler — one execution path, no
+  bookkeeping completion-event registry, no race window between
+  "fast handler emits terminal before body's first await" and
+  "completion signal pre-registered".
+- **HTTP request coupling for Row 3 (foreground)**: Model A keeps
+  the handler in the HTTP request's call stack. Model B requires the
+  HTTP request to `await` the task body's completion (supported by
+  the task primitive's `TaskRun.result()` API).
+- **Handler invocation overhead for non-durable rows**: Model A pays
+  no per-handler-invocation task-primitive overhead for Rows 2/3
+  (only the small bookkeeping task overhead). Model B pays the
+  primitive overhead on every handler invocation, including Rows 2/3.
+
+The Python implementation uses Model A for historical reasons (the
+non-durable codepath predates the durability work; bookkeeping was
+the lowest-friction way to add crash-recovery markers to Rows 2/3
+without restructuring handler execution). A port has free choice.
+
+### §6.5 — Bookkeeping pattern — completion-event pre-registration
+
+This subsection is normative for ports that choose Model A above; ports
+choosing Model B can skip it.
+
+The completion-event registry MUST be **pre-registered** at the moment
+the bookkeeping task is created, before the bookkeeping task body
+schedules its first await. Without this, a fast handler that emits its
+terminal and signals completion before the body's first await would
+lose the signal — the body would only populate the registry after its
+own initial scheduling tick.
 
 ---
 
