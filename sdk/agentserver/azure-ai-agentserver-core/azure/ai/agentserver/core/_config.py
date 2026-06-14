@@ -128,9 +128,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
             project_id=os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, ""),
             session_id=os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, ""),
             port=resolve_port(None),
-            appinsights_connection_string=os.environ.get(
-                _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""
-            ),
+            appinsights_connection_string=os.environ.get(_ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""),
             otlp_endpoint=os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, ""),
             sse_keepalive_interval=resolve_sse_keepalive_interval(None),
             ws_ping_interval=resolve_ws_ping_interval(),
@@ -152,9 +150,7 @@ def _parse_int_env(var_name: str) -> Optional[int]:
     try:
         return int(raw)
     except ValueError as exc:
-        raise ValueError(
-            f"Invalid value for {var_name}: {raw!r} (expected an integer)"
-        ) from exc
+        raise ValueError(f"Invalid value for {var_name}: {raw!r} (expected an integer)") from exc
 
 
 def _require_int(name: str, value: object) -> int:
@@ -277,10 +273,7 @@ def resolve_log_level(level: Optional[str]) -> str:
     else:
         normalized = "INFO"
     if normalized not in _VALID_LOG_LEVELS:
-        raise ValueError(
-            f"Invalid log level: {normalized!r} "
-            f"(expected one of {', '.join(_VALID_LOG_LEVELS)})"
-        )
+        raise ValueError(f"Invalid log level: {normalized!r} " f"(expected one of {', '.join(_VALID_LOG_LEVELS)})")
     return normalized
 
 
@@ -354,6 +347,15 @@ def resolve_project_id() -> str:
     return os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, "")
 
 
+def resolve_session_id() -> str:
+    """Resolve the default session ID from the ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+
+    :return: The default session ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, "")
+
+
 def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     """Resolve the SSE keep-alive interval from argument, env var, or default.
 
@@ -409,12 +411,10 @@ def resolve_ws_ping_interval() -> float:
         resolved = float(env_raw)
     except ValueError as exc:
         raise ValueError(
-            f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: "
-            f"{env_raw!r} (expected a non-negative number)"
+            f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: " f"{env_raw!r} (expected a non-negative number)"
         ) from exc
     if math.isnan(resolved) or math.isinf(resolved) or resolved < 0.0:
         raise ValueError(
-            f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: "
-            f"{env_raw!r} (expected a non-negative finite number)"
+            f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: " f"{env_raw!r} (expected a non-negative finite number)"
         )
     return resolved

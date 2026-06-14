@@ -85,6 +85,12 @@ logger = logging.getLogger("azure.ai.agentserver")
 # duplicates across multiple AgentServerHost instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
+# Logger names whose INFO messages are too noisy by default (set to WARNING unless the user requests DEBUG).
+_SUPPRESSED_LOGGERS = (
+    "azure.monitor.opentelemetry.exporter",
+    "azure.core.pipeline.policies.http_logging_policy",
+)
+
 
 def configure_observability(
     *,
@@ -131,14 +137,25 @@ def configure_observability(
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
-    # Suppress the noisy Azure Core HTTP logging policy logger.
-    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+    # Suppress noisy loggers by setting their level to WARNING.
+    # Must be done BEFORE _configure_tracing() — the distro respects
+    # pre-set levels, preventing repetitive "Transmission succeeded" INFO messages.
+    # Preserve visibility when user explicitly requests DEBUG.
+    if logging.getLevelName(resolved_level) > logging.DEBUG:
+        for _noisy in _SUPPRESSED_LOGGERS:
+            logging.getLogger(_noisy).setLevel(logging.WARNING)
 
     # Tracing and OTel export
-    _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
+    _configure_tracing(
+        connection_string=connection_string,
+        enable_sensitive_data=enable_sensitive_data,
+    )
 
 
-def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive_data: bool = False) -> None:
+def _configure_tracing(
+    connection_string: Optional[str] = None,
+    enable_sensitive_data: bool = False,
+) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
     Internal helper called by :func:`configure_observability`.
@@ -165,13 +182,21 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
 
     span_processors = [
         _FoundryEnrichmentSpanProcessor(
-            agent_name=agent_name, agent_version=agent_version,
-            agent_id=agent_id, project_id=project_id,
+            agent_name=agent_name,
+            agent_version=agent_version,
+            agent_id=agent_id,
+            project_id=project_id,
             agent_blueprint_id=agent_blueprint_id,
             agent_tenant_id=agent_tenant_id,
         ),
     ]
-    log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
+    log_record_processors = [  # type: ignore[list-item]
+        _BaggageLogRecordProcessor(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            session_id=_config.resolve_session_id() or None,
+        ),
+    ]
 
     try:
         _setup_distro_export(
@@ -224,10 +249,9 @@ def _setup_distro_export(
         kwargs["azure_monitor_connection_string"] = connection_string
 
     # A365 tracing export — enabled only in hosted environments.
-    if (
-        os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "")
-        and os.environ.get("FOUNDRY_AGENT365_TRACING_ENABLED", "").lower() in ("true", "1")
-    ):
+    if os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "") and os.environ.get(
+        "FOUNDRY_AGENT365_TRACING_ENABLED", ""
+    ).lower() in ("true", "1"):
         kwargs["enable_a365"] = True
         kwargs["a365_use_s2s_endpoint"] = True
         kwargs["a365_enable_observability_exporter"] = True
@@ -267,20 +291,20 @@ class TraceContextMiddleware:
 
         # Build a simple dict of headers for the propagators
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
-        headers = {
-            k.decode("latin-1"): v.decode("latin-1")
-            for k, v in raw_headers
-        }
+        headers = {k.decode("latin-1"): v.decode("latin-1") for k, v in raw_headers}
 
         # Use the global propagator to extract trace context + baggage
         from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+
         ctx = extract(carrier=headers)
 
         # Add x-request-id as baggage for downstream propagation
         x_request_id = headers.get("x-request-id")
         if x_request_id:
             ctx = _otel_baggage.set_baggage(
-                "x_request_id", x_request_id, context=ctx,
+                "x_request_id",
+                x_request_id,
+                context=ctx,
             )
 
         token = _otel_context.attach(ctx)
@@ -396,9 +420,7 @@ def detach_context(token: Any) -> None:
             )
 
 
-async def trace_stream(
-    iterator: AsyncIterable[_Content], span: Any
-) -> AsyncIterator[_Content]:
+async def trace_stream(iterator: AsyncIterable[_Content], span: Any) -> AsyncIterator[_Content]:
     """Wrap a streaming body so the span covers the full transmission.
 
     Yields chunks unchanged.  Ends the span when the iterator is
@@ -510,6 +532,17 @@ class _BaggageLogRecordProcessor:
     for end-to-end correlation.
     """
 
+    def __init__(
+        self,
+        *,
+        agent_name: Optional[str] = None,
+        agent_version: Optional[str] = None,
+        session_id: Optional[str] = None,
+    ) -> None:
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+        self.session_id = session_id
+
     def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
         """Copy baggage entries into the log record's attributes.
 
@@ -517,11 +550,26 @@ class _BaggageLogRecordProcessor:
         :type log_data: any
         """
         try:
+            if not hasattr(log_data, "log_record") or not log_data.log_record:
+                return
+
+            attrs = log_data.log_record.attributes  # type: ignore[assignment]
+
             ctx = _otel_context.get_current()
             entries = _otel_baggage.get_all(context=ctx)
-            if entries and hasattr(log_data, 'log_record') and log_data.log_record:
+            if entries:
                 for key, value in entries.items():
-                    log_data.log_record.attributes[key] = value  # type: ignore[index]
+                    attrs[key] = value  # type: ignore[index]
+
+            if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+            if self.agent_version and _ATTR_GEN_AI_AGENT_VERSION not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+
+            bag_session = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
+            resolved_session = bag_session or self.session_id
+            if resolved_session and _ATTR_SESSION_ID not in attrs:
+                attrs[_ATTR_SESSION_ID] = resolved_session
         except Exception:  # pylint: disable=broad-except
             pass
 

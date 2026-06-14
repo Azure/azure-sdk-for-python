@@ -10,8 +10,8 @@ wheels are checked in — there's nothing to build before you consume them.
 |---|---|---|
 | `azure-ai-agentserver-core` on PyPI (stable) | `pip install azure-ai-agentserver-core` | ❌ No |
 | `azure-ai-agentserver-invocations` on PyPI (stable) | `pip install azure-ai-agentserver-invocations` | ❌ No |
-| `azure-ai-agentserver-core` **2.0.0b6 wheel** in this directory | `azure_ai_agentserver_core-2.0.0b6-py3-none-any.whl` | ✅ Yes |
-| `azure-ai-agentserver-invocations` **1.0.0b5 wheel** in this directory | `azure_ai_agentserver_invocations-1.0.0b5-py3-none-any.whl` | ✅ Yes (matched pair) |
+| `azure-ai-agentserver-core` **2.0.0b7 wheel** in this directory | `azure_ai_agentserver_core-2.0.0b7-py3-none-any.whl` | ✅ Yes |
+| `azure-ai-agentserver-invocations` **1.0.0b6 wheel** in this directory | `azure_ai_agentserver_invocations-1.0.0b6-py3-none-any.whl` | ✅ Yes (matched pair) |
 
 The `azure-ai-agentserver-*` packages are published on PyPI at stable
 versions. **The `@task` durable-task primitive itself is in private
@@ -60,8 +60,8 @@ And in `requirements.txt`, **do not** list `azure-ai-agentserver-*`
 ### Option C — pin in `requirements.txt` for local install
 
 ```
-file:///abs/path/to/sdk/agentserver/wheels/azure_ai_agentserver_core-2.0.0b6-py3-none-any.whl
-file:///abs/path/to/sdk/agentserver/wheels/azure_ai_agentserver_invocations-1.0.0b5-py3-none-any.whl
+file:///abs/path/to/sdk/agentserver/wheels/azure_ai_agentserver_core-2.0.0b7-py3-none-any.whl
+file:///abs/path/to/sdk/agentserver/wheels/azure_ai_agentserver_invocations-1.0.0b6-py3-none-any.whl
 ```
 
 Relative paths work too when `pip` is invoked from the right working

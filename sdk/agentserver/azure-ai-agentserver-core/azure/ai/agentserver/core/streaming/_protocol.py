@@ -37,7 +37,7 @@ class EventStreamNotFoundError(EventStreamError):
     """Raised when any operation references a stream id that is not
     currently a live stream.
 
-    Spec 019 FR-E-001/-002 unified the previously-distinct
+      unified the previously-distinct
     ``EventStreamNotFoundError`` (never registered) and
     ``EventStreamGoneError`` (registered then destroyed) into this
     single error type. Three independent reasons fire this:

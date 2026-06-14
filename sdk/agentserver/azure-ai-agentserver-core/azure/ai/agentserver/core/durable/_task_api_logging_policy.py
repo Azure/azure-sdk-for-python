@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Task-API logging policy for the hosted task-store pipeline.
 
-Per spec 016 FR-031, this policy logs request/response metadata for the
+, this policy logs request/response metadata for the
 ``HostedTaskProvider`` ``azure.core.AsyncPipelineClient`` chain. The
 policy:
 
@@ -16,7 +16,7 @@ policy:
 - Logs status codes and methods at INFO for successful responses, WARNING
   for client errors (4xx), ERROR for server errors (5xx).
 
-Reference: spec.md FR-031, FR-006 (the classifier funnels errors but does
+Reference: spec.md,  (the classifier funnels errors but does
 NOT log them — that's this policy's job).
 """
 
@@ -111,9 +111,7 @@ class TaskApiLoggingPolicy(SansIOHTTPPolicy):
         headers = _redact_headers(http_request.headers, _ALLOWED_REQUEST_HEADERS)
         logger.info("task-store request: %s %s headers=%s", method, url, headers)
 
-    def on_response(
-        self, request: PipelineRequest, response: PipelineResponse
-    ) -> None:
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
         http_response = response.http_response
         status = getattr(http_response, "status_code", 0)
         if status >= 500:
@@ -126,9 +124,7 @@ class TaskApiLoggingPolicy(SansIOHTTPPolicy):
             return
         method = request.http_request.method
         url = str(request.http_request.url)
-        resp_headers = _redact_headers(
-            getattr(http_response, "headers", {}), _ALLOWED_RESPONSE_HEADERS
-        )
+        resp_headers = _redact_headers(getattr(http_response, "headers", {}), _ALLOWED_RESPONSE_HEADERS)
         logger.log(
             level,
             "task-store response: %s %s -> %d headers=%s",

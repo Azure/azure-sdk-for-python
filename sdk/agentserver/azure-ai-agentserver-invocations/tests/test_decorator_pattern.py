@@ -112,9 +112,7 @@ async def test_full_request_flow():
         inv_id = request.path_params["invocation_id"]
         if inv_id in store:
             return Response(content=store[inv_id])
-        return JSONResponse(
-            {"error": {"code": "not_found", "message": "Not found"}}, status_code=404
-        )
+        return JSONResponse({"error": {"code": "not_found", "message": "Not found"}}, status_code=404)
 
     @app.cancel_invocation_handler
     async def cancel_handler(request: Request) -> Response:
@@ -122,9 +120,7 @@ async def test_full_request_flow():
         if inv_id in store:
             del store[inv_id]
             return JSONResponse({"status": "cancelled"})
-        return JSONResponse(
-            {"error": {"code": "not_found", "message": "Not found"}}, status_code=404
-        )
+        return JSONResponse({"error": {"code": "not_found", "message": "Not found"}}, status_code=404)
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:

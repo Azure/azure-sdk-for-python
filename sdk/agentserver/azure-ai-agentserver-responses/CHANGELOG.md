@@ -1,5 +1,9 @@
 # Release History
 
+## 1.0.0b7 (Unreleased)
+
+_Will be populated in Phase 4 (Documentation) — see `sdk/agentserver/specs/023-responses-021-022-migration.md` step 24._
+
 ## 1.0.0b6 (Unreleased)
 
 ### Breaking Changes

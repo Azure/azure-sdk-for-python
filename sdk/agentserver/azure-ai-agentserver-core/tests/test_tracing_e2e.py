@@ -68,6 +68,7 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
 # Warm-up fixture: initialize app and wait for App Insights to be ready
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(scope="module", autouse=True)
 def _warmup_appinsights():
     """Initialize the application and send a warm-up span to App Insights.
@@ -102,9 +103,11 @@ def _warmup_appinsights():
 
     if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
         from azure.identity import AzurePowerShellCredential
+
         credential = AzurePowerShellCredential(tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"])
     else:
         from azure.identity import DefaultAzureCredential
+
         credential = DefaultAzureCredential()
 
     client = LogsQueryClient(credential)
@@ -116,6 +119,7 @@ def _warmup_appinsights():
 # ---------------------------------------------------------------------------
 # Minimal echo app factories using core's AgentServerHost
 # ---------------------------------------------------------------------------
+
 
 def _make_echo_app():
     """Create an AgentServerHost with a POST /echo route.
@@ -212,6 +216,7 @@ def _make_failing_echo_app():
 # ---------------------------------------------------------------------------
 # E2E: Verify spans are ingested into Application Insights
 # ---------------------------------------------------------------------------
+
 
 class TestAppInsightsIngestionE2E:
     """Query Application Insights to confirm spans created inside handlers

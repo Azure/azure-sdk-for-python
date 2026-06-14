@@ -19,8 +19,12 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
     resolve_appinsights_connection_string,
+    resolve_session_id,
 )
-from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
+from azure.ai.agentserver.core._tracing import (
+    _BaggageLogRecordProcessor,
+    _FoundryEnrichmentSpanProcessor,
+)
 
 
 class _CollectorExporter(SpanExporter):
@@ -61,9 +65,7 @@ class TestTracingToggle:
     def test_observability_receives_appinsights_env_var(self) -> None:
         with mock.patch.dict(
             os.environ,
-            {
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
-            },
+            {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
         ):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_observability=mock_configure)
@@ -74,9 +76,7 @@ class TestTracingToggle:
             )
 
     def test_observability_receives_otlp_env_var(self) -> None:
-        with mock.patch.dict(
-            os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}
-        ):
+        with mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_observability=mock_configure)
             mock_configure.assert_called_once()
@@ -97,9 +97,7 @@ class TestTracingToggle:
         """Passing configure_observability=None disables all SDK-managed observability."""
         with mock.patch.dict(
             os.environ,
-            {
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
-            },
+            {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
         ):
             # Should not raise even with App Insights configured
             AgentServerHost(configure_observability=None)
@@ -114,19 +112,14 @@ class TestAppInsightsConnectionString:
     """Tests for resolve_appinsights_connection_string()."""
 
     def test_explicit_wins(self) -> None:
-        assert (
-            resolve_appinsights_connection_string("InstrumentationKey=abc")
-            == "InstrumentationKey=abc"
-        )
+        assert resolve_appinsights_connection_string("InstrumentationKey=abc") == "InstrumentationKey=abc"
 
     def test_env_var(self) -> None:
         with mock.patch.dict(
             os.environ,
             {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=env"},
         ):
-            assert (
-                resolve_appinsights_connection_string(None) == "InstrumentationKey=env"
-            )
+            assert resolve_appinsights_connection_string(None) == "InstrumentationKey=env"
 
     def test_none_when_unset(self) -> None:
         env = os.environ.copy()
@@ -139,9 +132,7 @@ class TestAppInsightsConnectionString:
             os.environ,
             {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=env"},
         ):
-            result = resolve_appinsights_connection_string(
-                "InstrumentationKey=explicit"
-            )
+            result = resolve_appinsights_connection_string("InstrumentationKey=explicit")
             assert result == "InstrumentationKey=explicit"
 
 
@@ -154,27 +145,18 @@ class TestSetupDistroExport:
     """Verify _configure_tracing calls the distro with the right args."""
 
     def test_distro_called_when_conn_str_provided(self) -> None:
-        with mock.patch(
-            "azure.ai.agentserver.core._tracing._setup_distro_export"
-        ) as mock_distro:
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
             from azure.ai.agentserver.core import _tracing
 
-            _tracing._configure_tracing(
-                connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000"
-            )
+            _tracing._configure_tracing(connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000")
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
-            assert (
-                kwargs["connection_string"]
-                == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
-            )
+            assert kwargs["connection_string"] == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
             assert len(kwargs["span_processors"]) >= 1
             assert len(kwargs["log_record_processors"]) >= 1
 
     def test_distro_called_without_conn_str(self) -> None:
-        with mock.patch(
-            "azure.ai.agentserver.core._tracing._setup_distro_export"
-        ) as mock_distro:
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
             from azure.ai.agentserver.core import _tracing
 
             _tracing._configure_tracing(connection_string=None)
@@ -267,8 +249,10 @@ class TestFoundryEnrichmentSpanProcessor:
     def test_blueprint_id_uses_correct_attribute_key(self) -> None:
         """agent_blueprint_id must be emitted under microsoft.a365.agent.blueprint.id."""
         proc = _FoundryEnrichmentSpanProcessor(
-            agent_name="my-agent", agent_version="1.0",
-            agent_id="my-agent:1.0", agent_blueprint_id="bp-abc-123",
+            agent_name="my-agent",
+            agent_version="1.0",
+            agent_id="my-agent:1.0",
+            agent_blueprint_id="bp-abc-123",
         )
         provider, collector = self._create_provider(proc)
         tracer = provider.get_tracer("test")
@@ -415,7 +399,8 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.invocation_id", "inv-abc-123",
+            "azure.ai.agentserver.invocation_id",
+            "inv-abc-123",
         )
         with tracer.start_as_current_span("span", context=ctx):
             pass
@@ -442,7 +427,8 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.invocation_id", "inv-xyz-789",
+            "azure.ai.agentserver.invocation_id",
+            "inv-xyz-789",
         )
         token = _otel_context.attach(ctx)
         try:
@@ -463,7 +449,7 @@ class TestFoundryEnrichmentSpanProcessor:
 
 
 class TestAgentIdentityResolution:
-    """Tests for resolve_agent_name() and resolve_agent_version()."""
+    """Tests for agent identity/session resolution helpers."""
 
     def test_agent_name_from_env(self) -> None:
         with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_NAME": "my-agent"}):
@@ -484,3 +470,80 @@ class TestAgentIdentityResolution:
         env.pop("FOUNDRY_AGENT_VERSION", None)
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
+
+    def test_session_id_from_env(self) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "session-1"}):
+            assert resolve_session_id() == "session-1"
+
+    def test_session_id_default_empty(self) -> None:
+        env = os.environ.copy()
+        env.pop("FOUNDRY_AGENT_SESSION_ID", None)
+        with mock.patch.dict(os.environ, env, clear=True):
+            assert resolve_session_id() == ""
+
+
+class _FakeLogRecord:
+    def __init__(self, attributes):
+        self.attributes = attributes
+
+
+class _FakeLogData:
+    def __init__(self, attributes):
+        self.log_record = _FakeLogRecord(attributes)
+
+
+class TestBaggageLogRecordProcessor:
+    def test_adds_agent_and_fallback_session_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        proc.on_emit(log_data)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["gen_ai.agent.name"] == "agent-a"
+        assert attrs["gen_ai.agent.version"] == "1.2.3"
+        assert attrs["microsoft.session.id"] == "session-fallback-1"
+
+    def test_prefers_baggage_session_id_over_fallback(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id",
+            "session-from-baggage",
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["microsoft.session.id"] == "session-from-baggage"
+
+    def test_does_not_overwrite_existing_log_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        attrs = {
+            "gen_ai.agent.name": "existing-name",
+            "gen_ai.agent.version": "0.0.1",
+            "microsoft.session.id": "existing-session",
+        }
+        log_data = _FakeLogData(attrs)
+
+        proc.on_emit(log_data)
+
+        assert attrs["gen_ai.agent.name"] == "existing-name"
+        assert attrs["gen_ai.agent.version"] == "0.0.1"
+        assert attrs["microsoft.session.id"] == "existing-session"

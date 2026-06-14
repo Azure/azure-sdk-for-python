@@ -1,5 +1,92 @@
 # Release History
 
+## 8.0.0b1 (2026-06-02)
+
+### Features Added
+
+  - Client `BillingManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `BillingManagementClient` added method `send_request`
+  - Added model `PatchPropertiesRenewProperties`
+  - Added model `ReservationPropertyUtilization`
+  - Added model `ReservationPurchaseRequestPropertiesReservedResourceProperties`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AcceptTransferRequest` moved instance variable `product_details` under property `properties` whose type is `AcceptTransferProperties`
+  - Model `BillingSubscription` moved instance variable `auto_renew`, `beneficiary_tenant_id`, `beneficiary`, `billing_frequency`, `billing_profile_id`, `billing_policies`, `billing_profile_display_name`, `billing_profile_name`, `consumption_cost_center`, `customer_id`, `customer_display_name`, `customer_name`, `display_name`, `enrollment_account_id`, `enrollment_account_display_name`, `invoice_section_id`, `invoice_section_display_name`, `invoice_section_name`, `last_month_charges`, `month_to_date_charges`, `next_billing_cycle_details`, `offer_id`, `product_category`, `product_type`, `product_type_id`, `purchase_date`, `quantity`, `reseller`, `renewal_term_details`, `sku_id`, `sku_description`, `system_overrides`, `resource_uri`, `term_duration`, `term_start_date`, `term_end_date`, `provisioning_tenant_id`, `status`, `operation_status`, `provisioning_state`, `subscription_id`, `suspension_reasons`, `suspension_reason_details`, `enrollment_account_start_date` and `subscription_enrollment_account_status` under property `properties` whose type is `BillingSubscriptionProperties`
+  - Model `BillingSubscriptionAlias` moved instance variable `auto_renew`, `beneficiary_tenant_id`, `beneficiary`, `billing_frequency`, `billing_profile_id`, `billing_policies`, `billing_profile_display_name`, `billing_profile_name`, `consumption_cost_center`, `customer_id`, `customer_display_name`, `customer_name`, `display_name`, `enrollment_account_id`, `enrollment_account_display_name`, `invoice_section_id`, `invoice_section_display_name`, `invoice_section_name`, `last_month_charges`, `month_to_date_charges`, `next_billing_cycle_details`, `offer_id`, `product_category`, `product_type`, `product_type_id`, `purchase_date`, `quantity`, `reseller`, `renewal_term_details`, `sku_id`, `sku_description`, `system_overrides`, `resource_uri`, `term_duration`, `term_start_date`, `term_end_date`, `provisioning_tenant_id`, `status`, `operation_status`, `provisioning_state`, `subscription_id`, `suspension_reasons`, `suspension_reason_details`, `enrollment_account_start_date`, `subscription_enrollment_account_status` and `billing_subscription_id` under property `properties` whose type is `BillingSubscriptionAliasProperties`
+  - Model `BillingSubscriptionAliasProperties` moved instance variable `enrollment_account_start_date` and `subscription_enrollment_account_status` under property `enrollment_account_subscription_details` whose type is `EnrollmentAccountSubscriptionDetails`
+  - Model `BillingSubscriptionPatch` moved instance variable `auto_renew`, `beneficiary_tenant_id`, `beneficiary`, `billing_frequency`, `billing_profile_id`, `billing_policies`, `billing_profile_display_name`, `billing_profile_name`, `consumption_cost_center`, `customer_id`, `customer_display_name`, `customer_name`, `display_name`, `enrollment_account_id`, `enrollment_account_display_name`, `invoice_section_id`, `invoice_section_display_name`, `invoice_section_name`, `last_month_charges`, `month_to_date_charges`, `next_billing_cycle_details`, `offer_id`, `product_category`, `product_type`, `product_type_id`, `purchase_date`, `quantity`, `reseller`, `renewal_term_details`, `sku_id`, `sku_description`, `system_overrides`, `resource_uri`, `term_duration`, `term_start_date`, `term_end_date`, `provisioning_tenant_id`, `status`, `operation_status`, `provisioning_state`, `subscription_id`, `suspension_reasons`, `suspension_reason_details`, `enrollment_account_start_date` and `subscription_enrollment_account_status` under property `properties` whose type is `BillingSubscriptionProperties`
+  - Model `BillingSubscriptionProperties` moved instance variable `enrollment_account_start_date` and `subscription_enrollment_account_status` under property `enrollment_account_subscription_details` whose type is `EnrollmentAccountSubscriptionDetails`
+  - Model `InitiateTransferRequest` moved instance variable `recipient_email_id` under property `properties` whose type is `InitiateTransferProperties`
+  - Model `PartnerInitiateTransferRequest` moved instance variable `recipient_email_id` and `reseller_id` under property `properties` whose type is `PartnerInitiateTransferProperties`
+  - Model `PartnerTransferDetails` moved instance variable `expiration_time`, `transfer_status`, `recipient_email_id`, `initiator_customer_type`, `initiator_email_id`, `reseller_id`, `reseller_name`, `canceled_by` and `detailed_transfer_status` under property `properties` whose type is `PartnerTransferProperties`
+  - Model `PaymentMethod` moved instance variable `id_properties_id`, `account_holder_name`, `display_name`, `expiration`, `family`, `last_four_digits`, `logos`, `payment_method_type` and `status` under property `properties` whose type is `PaymentMethodProperties`
+  - Model `RecipientTransferDetails` moved instance variable `expiration_time`, `allowed_product_type`, `transfer_status`, `recipient_email_id`, `initiator_email_id`, `reseller_id`, `reseller_name`, `initiator_customer_type`, `canceled_by`, `detailed_transfer_status`, `customer_tenant_id` and `supported_accounts` under property `properties` whose type is `RecipientTransferProperties`
+  - Model `Reservation` moved instance variable `reserved_resource_type`, `instance_flexibility`, `display_name`, `applied_scopes`, `applied_scope_type`, `archived`, `capabilities`, `quantity`, `provisioning_state`, `effective_date_time`, `benefit_start_time`, `last_updated_date_time`, `expiry_date`, `expiry_date_time`, `review_date_time`, `sku_description`, `extended_status_info`, `billing_plan`, `display_provisioning_state`, `provisioning_sub_state`, `purchase_date`, `purchase_date_time`, `split_properties`, `merge_properties`, `swap_properties`, `applied_scope_properties`, `billing_scope_id`, `renew`, `renew_source`, `renew_destination`, `renew_properties`, `term`, `user_friendly_applied_scope_type`, `user_friendly_renew_state`, `product_code`, `trend` and `aggregates` under property `properties` whose type is `ReservationProperty`
+  - Model `ReservationOrder` moved instance variable `display_name`, `enrollment_id`, `customer_id`, `billing_profile_id`, `billing_account_id`, `request_date_time`, `created_date_time`, `expiry_date`, `expiry_date_time`, `benefit_start_time`, `original_quantity`, `term`, `provisioning_state`, `billing_plan`, `plan_information`, `reservations`, `review_date_time`, `extended_status_info` and `product_code` under property `properties` whose type is `ReservationOrderProperty`
+  - Model `TransferDetails` moved instance variable `expiration_time`, `transfer_status`, `recipient_email_id`, `initiator_email_id`, `canceled_by` and `detailed_transfer_status` under property `properties` whose type is `TransferProperties`
+  - Model `ValidateTransferResponse` moved instance variable `status`, `product_id` and `results` under property `properties` whose type is `ValidateTransferResponseProperties`
+  - Method `AgreementsOperations.list_by_billing_account` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `AssociatedTenantsOperations.list_by_billing_account` changed its parameter `include_revoked`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingAccountsOperations.list` changed its parameter `include_all`/`include_all_without_billing_profiles`/`include_deleted`/`include_pending_agreement`/`include_resellee`/`legal_owner_tid`/`legal_owner_oid`/`expand`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingProfilesOperations.list_by_billing_account` changed its parameter `include_deleted`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingPropertyOperations.get` changed its parameter `include_billing_country`/`include_transition_status` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRequestsOperations.list_by_billing_account` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRequestsOperations.list_by_billing_profile` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRequestsOperations.list_by_customer` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRequestsOperations.list_by_invoice_section` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRequestsOperations.list_by_user` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRoleAssignmentsOperations.begin_resolve_by_billing_account` changed its parameter `resolve_scope_display_names` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRoleAssignmentsOperations.begin_resolve_by_billing_profile` changed its parameter `resolve_scope_display_names` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRoleAssignmentsOperations.begin_resolve_by_customer` changed its parameter `resolve_scope_display_names` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingRoleAssignmentsOperations.begin_resolve_by_invoice_section` changed its parameter `resolve_scope_display_names` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsAliasesOperations.list_by_billing_account` changed its parameter `include_deleted`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsOperations.get_by_billing_profile` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsOperations.list_by_billing_account` changed its parameter `include_deleted`/`include_tenant_subscriptions`/`include_failed`/`expand`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsOperations.list_by_billing_profile` changed its parameter `include_deleted`/`expand`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsOperations.list_by_customer` changed its parameter `include_deleted`/`expand`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsOperations.list_by_customer_at_billing_account` changed its parameter `include_deleted`/`expand`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsOperations.list_by_enrollment_account` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `BillingSubscriptionsOperations.list_by_invoice_section` changed its parameter `include_deleted`/`expand`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `CustomersOperations.list_by_billing_account` changed its parameter `expand`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `CustomersOperations.list_by_billing_profile` changed its parameter `expand`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `DepartmentsOperations.list_by_billing_account` changed its parameter `order_by`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `EnrollmentAccountsOperations.list_by_billing_account` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `EnrollmentAccountsOperations.list_by_department` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `InvoiceSectionsOperations.list_by_billing_profile` changed its parameter `include_deleted`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `InvoicesOperations.begin_download_by_billing_account` changed its parameter `document_name` from `positional_or_keyword` to `keyword_only`
+  - Method `InvoicesOperations.begin_download_by_billing_subscription` changed its parameter `document_name` from `positional_or_keyword` to `keyword_only`
+  - Method `InvoicesOperations.list_by_billing_account` changed its parameter `period_start_date`/`period_end_date`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `InvoicesOperations.list_by_billing_profile` changed its parameter `period_start_date`/`period_end_date`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `InvoicesOperations.list_by_billing_subscription` changed its parameter `period_start_date`/`period_end_date`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductsOperations.list_by_billing_account` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductsOperations.list_by_billing_profile` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductsOperations.list_by_customer` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductsOperations.list_by_invoice_section` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOrdersOperations.get_by_billing_account` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOrdersOperations.list_by_billing_account` changed its parameter `order_by`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsOperations.get_by_reservation_order` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsOperations.list_by_billing_account` changed its parameter `order_by`/`skiptoken`/`refresh_summary`/`selected_state`/`take` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsOperations.list_by_billing_profile` changed its parameter `order_by`/`skiptoken`/`refresh_summary`/`selected_state`/`take` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlanOrdersOperations.get_by_billing_account` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlanOrdersOperations.list_by_billing_account` changed its parameter `order_by`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlansOperations.get_by_billing_account` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SavingsPlansOperations.list_by_billing_account` changed its parameter `order_by`/`skiptoken`/`take`/`selected_state`/`refresh_summary` from `positional_or_keyword` to `keyword_only`
+  - Method `TransactionsOperations.get_transaction_summary_by_invoice` changed its parameter `search` from `positional_or_keyword` to `keyword_only`
+  - Method `TransactionsOperations.list_by_billing_profile` changed its parameter `period_start_date`/`period_end_date`/`type`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `TransactionsOperations.list_by_customer` changed its parameter `period_start_date`/`period_end_date`/`type`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `TransactionsOperations.list_by_invoice` changed its parameter `order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+  - Method `TransactionsOperations.list_by_invoice_section` changed its parameter `period_start_date`/`period_end_date`/`type`/`order_by`/`count`/`search` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ReservationList`/`ReservationOrderList`/`SavingsPlanModelList`/`SavingsPlanOrderModelList` which actually were not used by SDK users
+  - Deleted model `ExternalReference`/`TransferItemQueryParameter` which actually were not used by SDK users
+
 ## 7.0.0 (2024-09-04)
 
 ### Features Added

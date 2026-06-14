@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 """Conformance tests for the :data:`streams` registry.
 
-Asserts FR-013 — 6-method surface, default backing, idempotent
+Asserts  — 6-method surface, default backing, idempotent
 delete, tombstone retention (rule 36a), per-id atomicity (rule 34),
 configurator semantics, and the third-party-impl invariant
-(FR-013e).
+.
 
 See ``streaming.md`` §7 + §13 rules 33-38.
 """
@@ -60,7 +60,7 @@ def _reset_registry():
 
 
 # ----------------------------------------------------------------
-# FR-013 — 6 methods
+#  — 6 methods
 # ----------------------------------------------------------------
 
 
@@ -68,9 +68,7 @@ class TestRegistrySurface:
     def test_three_async_lifecycle_methods(self) -> None:
         for name in ("get", "get_or_create", "delete"):
             method = getattr(streams, name)
-            assert inspect.iscoroutinefunction(method), (
-                f"streams.{name} MUST be async per FR-013"
-            )
+            assert inspect.iscoroutinefunction(method), f"streams.{name} MUST be async per "
 
     def test_three_sync_configurators(self) -> None:
         for name in (
@@ -83,26 +81,23 @@ class TestRegistrySurface:
 
 
 # ----------------------------------------------------------------
-# FR-013a — default backing on module import
+#  — default backing on module import
 # ----------------------------------------------------------------
 
 
 class TestDefaultBacking:
     async def test_default_is_in_memory_live(self) -> None:
-        """FR-013a — module-import default is use_in_memory_live().
+        """— module-import default is use_in_memory_live.
         Verify by constructing a stream and inspecting its (SDK-private)
         concrete type."""
         # Don't override default in this test (fixture sets it)
         s = await streams.get_or_create("default-test")
         # Concrete type SHOULD be BroadcastEventStream
-        assert isinstance(s, BroadcastEventStream), (
-            f"default backing MUST be BroadcastEventStream per FR-013a; "
-            f"got {type(s)}"
-        )
+        assert isinstance(s, BroadcastEventStream), f"default backing MUST be BroadcastEventStream; " f"got {type(s)}"
 
 
 # ----------------------------------------------------------------
-# FR-013b — delete idempotency (rule 35)
+#  — delete idempotency (rule 35)
 # ----------------------------------------------------------------
 
 
@@ -121,7 +116,7 @@ class TestDeleteIdempotency:
 
 
 # ----------------------------------------------------------------
-# FR-013c — every bundled impl has _on_delete
+#  — every bundled impl has _on_delete
 # ----------------------------------------------------------------
 
 
@@ -131,19 +126,15 @@ class TestOnDeleteHookPresent:
         [BroadcastEventStream, ReplayEventStream, FileBackedReplayEventStream],
     )
     def test_concrete_impls_expose_on_delete(self, cls) -> None:
-        """FR-013c / rule 33 — every bundled impl exposes
+        """/ rule 33 — every bundled impl exposes
         ``async def _on_delete(self)`` private hook."""
         method = getattr(cls, "_on_delete", None)
-        assert method is not None, (
-            f"{cls.__name__} MUST expose private _on_delete per FR-013c"
-        )
-        assert inspect.iscoroutinefunction(method), (
-            f"{cls.__name__}._on_delete MUST be async"
-        )
+        assert method is not None, f"{cls.__name__} MUST expose private _on_delete per "
+        assert inspect.iscoroutinefunction(method), f"{cls.__name__}._on_delete MUST be async"
 
 
 # ----------------------------------------------------------------
-# FR-013d — mid-flight configurator switch (rule 37)
+#  — mid-flight configurator switch (rule 37)
 # ----------------------------------------------------------------
 
 
@@ -161,27 +152,23 @@ class TestMidFlightConfigSwitch:
         assert s1_again is s1, "same id MUST return same instance"
         # New id returns new type
         s2 = await streams.get_or_create("mid-flight-2")
-        assert isinstance(s2, BroadcastEventStream), (
-            f"new id after switch MUST use new backing; got {type(s2)}"
-        )
+        assert isinstance(s2, BroadcastEventStream), f"new id after switch MUST use new backing; got {type(s2)}"
 
 
 # ----------------------------------------------------------------
-# Acceptance scenarios (spec US5 #1-5)
+# Acceptance scenarios (spec Subscriber #1-5)
 # ----------------------------------------------------------------
 
 
-class TestUS5AcceptanceScenarios:
+class TestSubscriberAcceptanceScenarios:
     async def test_use_in_memory_replay_then_get_or_create(self) -> None:
-        """US5 #1 — use_in_memory_replay configures Replay impl."""
+        """Subscriber #1 — use_in_memory_replay configures Replay impl."""
         streams.use_in_memory_replay(cursor_fn=lambda e: e["n"], ttl_seconds=600)
         s = await streams.get_or_create("us5-1")
         assert isinstance(s, ReplayEventStream)
 
-    async def test_use_file_backed_replay_then_get_or_create_idempotent(
-        self, tmp_path: Path
-    ) -> None:
-        """US5 #2 — file-backed configurator + idempotent get_or_create."""
+    async def test_use_file_backed_replay_then_get_or_create_idempotent(self, tmp_path: Path) -> None:
+        """Subscriber #2 — file-backed configurator + idempotent get_or_create."""
         streams.use_file_backed_replay(
             storage_dir=tmp_path,
             cursor_fn=lambda e: e["n"],
@@ -189,11 +176,11 @@ class TestUS5AcceptanceScenarios:
         )
         s1 = await streams.get_or_create("resp-abc")
         s2 = await streams.get_or_create("resp-abc")
-        assert s1 is s2, "get_or_create MUST be idempotent per FR-013"
+        assert s1 is s2, "get_or_create MUST be idempotent per "
         assert (tmp_path / "resp-abc.jsonl").exists()
 
     async def test_delete_then_get_raises_gone_not_notfound(self) -> None:
-        """US5 #3 — after delete(id), get(id) raises Gone (not NotFound).
+        """Subscriber #3 — after delete(id), get(id) raises Gone (not NotFound).
         This is the load-bearing tombstone-retention invariant (rule 36a)."""
         s = await streams.get_or_create("us5-3")
         await streams.delete("us5-3")
@@ -201,7 +188,7 @@ class TestUS5AcceptanceScenarios:
             await streams.get("us5-3")
 
     async def test_auto_evicted_id_raises_gone_not_notfound(self) -> None:
-        """US5 #4 — auto-evicted (CLOSED + all expired + had emits)
+        """Subscriber #4 — auto-evicted (CLOSED + all expired + had emits)
         stream's id raises Gone, not NotFound."""
         streams.use_in_memory_replay(cursor_fn=lambda e: e["n"], ttl_seconds=0.1)
         s = await streams.get_or_create("us5-4")
@@ -220,7 +207,7 @@ class TestUS5AcceptanceScenarios:
             await stream.emit({"n": 2})
 
     async def test_get_unregistered_id_raises_notfound(self) -> None:
-        """US5 #5 — get(unregistered) raises NotFound."""
+        """Subscriber #5 — get(unregistered) raises NotFound."""
         with pytest.raises(EventStreamNotFoundError):
             await streams.get("never-registered")
 
@@ -261,21 +248,19 @@ class TestGetOrCreateAtomicity:
     ) -> None:
         """Rule 34 — concurrent callers with same id all receive the
         SAME instance (no split-brain construction)."""
-        results = await asyncio.gather(
-            *[streams.get_or_create("atomicity-test") for _ in range(10)]
-        )
+        results = await asyncio.gather(*[streams.get_or_create("atomicity-test") for _ in range(10)])
         first = results[0]
         for r in results[1:]:
             assert r is first, "concurrent get_or_create MUST be atomic"
 
 
 # ----------------------------------------------------------------
-# FR-013e — third-party-impl invariant
+#  — third-party-impl invariant
 # ----------------------------------------------------------------
 
 
 class TestThirdPartyImplInvariant:
-    """FR-013e — the SDK ``streams`` namespace MUST expose NO public
+    """— the SDK ``streams`` namespace MUST expose NO public
     method that accepts an arbitrary ``EventStream`` instance for
     registration. Third-party impls live in their own peer registry."""
 
@@ -292,8 +277,7 @@ class TestThirdPartyImplInvariant:
             if name.startswith("_"):
                 continue  # private — out of scope
             assert not forbidden_pattern.match(name), (
-                f"streams.{name} would let third-party impls bypass the "
-                f"_on_delete cleanup contract per FR-013e"
+                f"streams.{name} would let third-party impls bypass the " f"_on_delete cleanup contract per "
             )
 
     async def test_third_party_impl_cannot_be_planted_via_public_api(
@@ -317,6 +301,7 @@ class TestThirdPartyImplInvariant:
                 async def _it():
                     if False:
                         yield
+
                 return _it()
 
             async def last_cursor(self):
@@ -337,5 +322,5 @@ class TestThirdPartyImplInvariant:
         ]:
             assert not hasattr(streams, method_name), (
                 f"streams.{method_name} exists — would let third parties "
-                f"plant impls bypassing _on_delete contract per FR-013e"
+                f"plant impls bypassing _on_delete contract per "
             )

@@ -211,7 +211,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         """Non-streaming stored responses are retrievable via GET after completion.
 
         For background non-stream responses, visibility is deferred until
-        ``response.created`` is processed (FR-001: response not accessible
+        ``response.created`` is processed (: response not accessible
         before the handler emits ``response.created``).
 
         :returns: True if this execution can be retrieved via GET.
@@ -219,7 +219,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         """
         if not self.mode_flags.store:
             return False
-        # FR-001: bg non-stream responses are not visible until response.created.
+        #: bg non-stream responses are not visible until response.created.
         if self.mode_flags.background and not self.mode_flags.stream:
             return self.response_created_signal.is_set()
         return True

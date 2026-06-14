@@ -105,9 +105,7 @@ class _PlatformHeaderMiddleware:
         async def _send_with_header(message: MutableMapping[str, Any]) -> None:
             if message["type"] == "http.response.start":
                 headers = list(message.get("headers", []))
-                headers.append(
-                    (b"x-platform-server", self._get_server_version().encode())
-                )
+                headers.append((b"x-platform-server", self._get_server_version().encode()))
                 message = {**message, "headers": headers}
             await send(message)
 
@@ -195,7 +193,7 @@ class AgentServerHost(Starlette):
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
-        # (Spec 014) Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
+        #  Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
         # SIGTERM signal handler — before Hypercorn's graceful drain
         # begins. Used by responses to set ``_shutdown_requested`` early so
         # foreground handlers' disconnect-poll loop sees the shutdown
@@ -208,9 +206,7 @@ class AgentServerHost(Starlette):
         # Protocol packages call register_server_version() to add their
         # own portion; the middleware joins them at response time.
         self._server_version_segments: list[str] = []
-        self.register_server_version(
-            build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
-        )
+        self.register_server_version(build_server_version("azure-ai-agentserver-core", _CORE_VERSION))
 
         # Resolved configuration (accessible as self.config)
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
@@ -232,15 +228,11 @@ class AgentServerHost(Starlette):
                 logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
 
         # Access logging ---------------------------------------------------
-        self._access_log: Optional[logging.Logger] = (
-            logger if access_log is _SENTINEL_ACCESS_LOG else access_log
-        )
+        self._access_log: Optional[logging.Logger] = logger if access_log is _SENTINEL_ACCESS_LOG else access_log
         self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
 
         # Timeouts ---------------------------------------------------------
-        self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
-            graceful_shutdown_timeout
-        )
+        self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(graceful_shutdown_timeout)
 
         # Build lifespan context manager
         @contextlib.asynccontextmanager
@@ -302,7 +294,7 @@ class AgentServerHost(Starlette):
                 self._graceful_shutdown_timeout,
             )
 
-            # (Spec 014) Run on_shutdown FIRST so the responses layer's
+            #  Run on_shutdown FIRST so the responses layer's
             # ``handle_shutdown`` can set ``_shutdown_requested`` and signal
             # cancellation BEFORE the TaskManager waits its grace period.
             # Without this, Row 3 (foreground) handlers can race against
@@ -366,6 +358,7 @@ class AgentServerHost(Starlette):
         # (e.g. by MAF / agent-framework) are children of the caller's trace.
         # We do NOT create a SERVER span ourselves — we only propagate context.
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
+
         self.add_middleware(TraceContextMiddleware)
 
     # ------------------------------------------------------------------
@@ -428,7 +421,7 @@ class AgentServerHost(Starlette):
     def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None:
         """Register a synchronous callback to run on SIGTERM signal receipt.
 
-        (Spec 014) Callbacks run from inside the SIGTERM signal handler,
+         Callbacks run from inside the SIGTERM signal handler,
         BEFORE Hypercorn begins its graceful drain. Use this to
         set asyncio events that long-running request handlers observe via
         their cancellation-polling loops, so they can return before
@@ -504,7 +497,7 @@ class AgentServerHost(Starlette):
         async def _serve_with_shutdown_trigger() -> None:
             """Wrap hypercorn.serve with a custom shutdown_trigger.
 
-            (Spec 014) When Hypercorn's default ``shutdown_trigger=None``
+             When Hypercorn's default ``shutdown_trigger=None``
             is used, Hypercorn registers its own SIGTERM/SIGINT handler
             via ``loop.add_signal_handler`` and our ``signal.signal``
             handler is overridden. We register our own

@@ -28,9 +28,20 @@ class LeaseInfo:
     :type expires_at: str
     :param expiry_count: Number of times ownership changed via expiry.
     :type expiry_count: int
+    :param heartbeat_at: ISO 8601 wall-time of the most recent lease
+        write (acquisition, renewal, or force-expire). Provider-stamped;
+        the framework never writes this. See SOT §22.1 LSE-W-10.
+    :type heartbeat_at: str
     """
 
-    __slots__ = ("owner", "instance_id", "generation", "expires_at", "expiry_count")
+    __slots__ = (
+        "owner",
+        "instance_id",
+        "generation",
+        "expires_at",
+        "expiry_count",
+        "heartbeat_at",
+    )
 
     def __init__(
         self,
@@ -39,18 +50,20 @@ class LeaseInfo:
         generation: int,
         expires_at: str,
         expiry_count: int = 0,
+        heartbeat_at: str = "",
     ) -> None:
         self.owner = owner
         self.instance_id = instance_id
         self.generation = generation
         self.expires_at = expires_at
         self.expiry_count = expiry_count
+        self.heartbeat_at = heartbeat_at
 
     def __repr__(self) -> str:
         return (
             f"LeaseInfo(owner={self.owner!r}, instance_id={self.instance_id!r}, "
             f"generation={self.generation!r}, expires_at={self.expires_at!r}, "
-            f"expiry_count={self.expiry_count!r})"
+            f"expiry_count={self.expiry_count!r}, heartbeat_at={self.heartbeat_at!r})"
         )
 
     def __eq__(self, other: object) -> bool:
@@ -62,53 +75,57 @@ class LeaseInfo:
             and self.generation == other.generation
             and self.expires_at == other.expires_at
             and self.expiry_count == other.expiry_count
+            and self.heartbeat_at == other.heartbeat_at
         )
 
 
 class TaskInfo:  # pylint: disable=too-many-instance-attributes
     """Internal representation of a task record from the store.
 
-    :param id: Unique task identifier.
-    :type id: str
-    :param agent_name: Agent scope.
-    :type agent_name: str
-    :param session_id: Session scope.
-    :type session_id: str
-    :param status: Current task status.
-    :type status: TaskStatus
-    :param title: Human-readable title.
-    :type title: str | None
-    :param description: Optional description.
-    :type description: str | None
-    :param lease: Active lease details, or ``None``.
-    :type lease: LeaseInfo | None
-    :param payload: Arbitrary JSON payload (input, metadata, output buckets).
-    :type payload: dict[str, Any] | None
-    :param tags: Key-value tags.
-    :type tags: dict[str, str] | None
-    :param error: Structured error details on failure.
-    :type error: dict[str, Any] | None
-    :param suspension_reason: Reason for suspension.
-    :type suspension_reason: str | None
-    :param etag: Optimistic concurrency token.
-    :type etag: str
-    :param created_at: ISO 8601 creation timestamp.
-    :type created_at: str
-    :param updated_at: ISO 8601 last-update timestamp.
-    :type updated_at: str
-    :param started_at: ISO 8601 timestamp of first ``in_progress`` transition.
-    :type started_at: str | None
-    :param completed_at: ISO 8601 timestamp of ``completed`` transition.
-    :type completed_at: str | None
-    :param source: Source/initiator metadata (free-form key/value).
-    :type source: dict[str, Any] | None
-    :param attachments: Optional companion store (spec 018) for
-        per-input payloads larger than the framework's inline-payload
-        thresholds. Maximum 20 entries, each ≤ 2 MB. Keys starting with
-        ``_`` are reserved for the framework (``_input``,
-        ``_steering_input_<seq>``). See
-        ``sdk/agentserver/specs/task-attachments.md``.
-    :type attachments: dict[str, Any] | None
+        :param id: Unique task identifier.
+        :type id: str
+        :param agent_name: Agent scope.
+        :type agent_name: str
+        :param session_id: Session scope.
+        :type session_id: str
+        :param status: Current task status.
+        :type status: TaskStatus
+        :param title: Human-readable title.
+        :type title: str | None
+        :param description: Optional description.
+        :type description: str | None
+        :param lease: Active lease details, or ``None``.
+        :type lease: LeaseInfo | None
+        :param payload: Arbitrary JSON payload (input, metadata, output buckets).
+        :type payload: dict[str, Any] | None
+        :param tags: Key-value tags.
+        :type tags: dict[str, str] | None
+        :param error: Structured error details on failure.
+        :type error: dict[str, Any] | None
+        :param suspension_reason: Reason for suspension.
+        :type suspension_reason: str | None
+        :param etag: Optimistic concurrency token.
+        :type etag: str
+        :param created_at: ISO 8601 creation timestamp.
+        :type created_at: str
+        :param updated_at: ISO 8601 last-update timestamp.
+        :type updated_at: str
+        :param started_at: ISO 8601 timestamp of first ``in_progress`` transition.
+            Set once when the task first enters ``in_progress`` and never updated
+            thereafter — lease re-acquisition, recovery scanner takeover, and
+            suspend/resume cycles do NOT reset this timestamp.
+        :type started_at: str | None
+        :param completed_at: ISO 8601 timestamp of ``completed`` transition.
+        :type completed_at: str | None
+        :param source: Source/initiator metadata (free-form key/value).
+        :type source: dict[str, Any] | None
+    :param attachments: Optional companion store  for
+            per-input payloads larger than the framework's inline-payload
+            thresholds. Maximum 20 entries, each ≤ 2 MB. Keys starting with
+            ``_`` are reserved for the framework (``_input``,
+            ``_steering_input_<seq>``). See
+            `the SOT spec`.
+        :type attachments: dict[str, Any] | None
     """
 
     __slots__ = (
@@ -192,6 +209,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
                 generation=lease_data.get("generation", 0),
                 expires_at=lease_data.get("expires_at", ""),
                 expiry_count=lease_data.get("expiry_count", 0),
+                heartbeat_at=lease_data.get("heartbeat_at", ""),
             )
             if lease_data
             else None
@@ -241,6 +259,7 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
                 "generation": self.lease.generation,
                 "expires_at": self.lease.expires_at,
                 "expiry_count": self.lease.expiry_count,
+                "heartbeat_at": self.lease.heartbeat_at,
             }
         else:
             result["lease"] = None
@@ -267,33 +286,33 @@ class TaskInfo:  # pylint: disable=too-many-instance-attributes
 class TaskCreateRequest:  # pylint: disable=too-many-instance-attributes
     """Request body for creating a task.
 
-    :param agent_name: Agent scope.
-    :type agent_name: str
-    :param session_id: Session scope.
-    :type session_id: str
-    :param status: Initial status (``"pending"`` or ``"in_progress"``).
-    :type status: TaskStatus
-    :param id: Optional client-supplied task ID.
-    :type id: str | None
-    :param title: Human-readable title.
-    :type title: str | None
-    :param description: Optional description.
-    :type description: str | None
-    :param payload: Initial payload (input bucket).
-    :type payload: dict[str, Any] | None
-    :param tags: Initial tags.
-    :type tags: dict[str, str] | None
-    :param lease_owner: Required when ``status`` is ``"in_progress"``.
-    :type lease_owner: str | None
-    :param lease_instance_id: Required when ``status`` is ``"in_progress"``.
-    :type lease_instance_id: str | None
-    :param lease_duration_seconds: Lease TTL. Required with lease params.
-    :type lease_duration_seconds: int | None
-    :param attachments: Optional initial attachments map (spec 018).
-        Each value must be ≤ 2 MB; total entries ≤ 20. Keys starting
-        with ``_`` are reserved for the framework. See
-        ``sdk/agentserver/specs/task-attachments.md``.
-    :type attachments: dict[str, Any] | None
+        :param agent_name: Agent scope.
+        :type agent_name: str
+        :param session_id: Session scope.
+        :type session_id: str
+        :param status: Initial status (``"pending"`` or ``"in_progress"``).
+        :type status: TaskStatus
+        :param id: Optional client-supplied task ID.
+        :type id: str | None
+        :param title: Human-readable title.
+        :type title: str | None
+        :param description: Optional description.
+        :type description: str | None
+        :param payload: Initial payload (input bucket).
+        :type payload: dict[str, Any] | None
+        :param tags: Initial tags.
+        :type tags: dict[str, str] | None
+        :param lease_owner: Required when ``status`` is ``"in_progress"``.
+        :type lease_owner: str | None
+        :param lease_instance_id: Required when ``status`` is ``"in_progress"``.
+        :type lease_instance_id: str | None
+        :param lease_duration_seconds: Lease TTL. Required with lease params.
+        :type lease_duration_seconds: int | None
+    :param attachments: Optional initial attachments map.
+            Each value must be ≤ 2 MB; total entries ≤ 20. Keys starting
+            with ``_`` are reserved for the framework. See
+            `the SOT spec`.
+        :type attachments: dict[str, Any] | None
     """
 
     __slots__ = (
@@ -346,32 +365,39 @@ class TaskCreateRequest:  # pylint: disable=too-many-instance-attributes
 class TaskPatchRequest:
     """Request body for patching a task.
 
-    Only non-``None`` fields are included in the PATCH payload.
+        Only non-``None`` fields are included in the PATCH payload.
 
-    :param status: New status.
-    :type status: TaskStatus | None
-    :param payload: Payload patch (shallow-merge semantics).
-    :type payload: dict[str, Any] | None
-    :param tags: Tags patch (null-as-delete merge).
-    :type tags: dict[str, str] | None
-    :param error: Structured error (on failure).
-    :type error: dict[str, Any] | None
-    :param suspension_reason: Reason for suspension.
-    :type suspension_reason: str | None
-    :param lease_owner: Lease owner for transitions.
-    :type lease_owner: str | None
-    :param lease_instance_id: Lease instance for transitions.
-    :type lease_instance_id: str | None
-    :param lease_duration_seconds: Lease TTL override.
-    :type lease_duration_seconds: int | None
-    :param if_match: ETag for optimistic concurrency.
-    :type if_match: str | None
-    :param attachments: Attachments patch (spec 018). Same null-as-
-        delete semantics as ``tags``: keys with a non-``None`` value are
-        upserted; keys with value ``None`` are deleted; keys absent
-        from the dict are unchanged. ``None`` for the field itself
-        means "no attachments changes in this PATCH".
-    :type attachments: dict[str, Any] | None
+        :param status: New status.
+        :type status: TaskStatus | None
+        :param payload: Payload patch (shallow-merge semantics).
+        :type payload: dict[str, Any] | None
+        :param tags: Tags patch (null-as-delete merge).
+        :type tags: dict[str, str] | None
+        :param error: Structured error (on failure).
+        :type error: dict[str, Any] | None
+        :param suspension_reason: Reason for suspension.
+        :type suspension_reason: str | None
+        :param lease_owner: Lease owner for transitions.
+        :type lease_owner: str | None
+        :param lease_instance_id: Lease instance for transitions.
+        :type lease_instance_id: str | None
+        :param lease_duration_seconds: Lease TTL override.
+        :type lease_duration_seconds: int | None
+        :param if_match: ETag for optimistic concurrency.
+        :type if_match: str | None
+    :param attachments: Attachments patch. Same null-as-
+            delete semantics as ``tags``: keys with a non-``None`` value are
+            upserted; keys with value ``None`` are deleted; keys absent
+            from the dict are unchanged. ``None`` for the field itself
+            means "no attachments changes in this PATCH".
+        :type attachments: dict[str, Any] | None
+        :param clear_attachments: When ``True``, wipe ALL attachments on
+            the task. The hosted provider serializes this as the wire form
+            ``"attachments": null`` (the service's "clear all" gesture
+            per §23.10); the local provider clears the dict directly.
+            Mutually exclusive with ``attachments={...}`` in the same
+            request — combination is rejected as ``invalid_request``.
+        :type clear_attachments: bool
     """
 
     __slots__ = (
@@ -385,6 +411,7 @@ class TaskPatchRequest:
         "lease_duration_seconds",
         "if_match",
         "attachments",
+        "clear_attachments",
     )
 
     def __init__(
@@ -399,6 +426,7 @@ class TaskPatchRequest:
         lease_duration_seconds: int | None = None,
         if_match: str | None = None,
         attachments: dict[str, Any] | None = None,
+        clear_attachments: bool = False,
     ) -> None:
         self.status = status
         self.payload = payload
@@ -410,3 +438,4 @@ class TaskPatchRequest:
         self.lease_duration_seconds = lease_duration_seconds
         self.if_match = if_match
         self.attachments = attachments
+        self.clear_attachments = clear_attachments

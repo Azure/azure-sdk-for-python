@@ -222,13 +222,15 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
 
     def emit_added(
         self,
-        output: str
-        | list[
-            generated_models.InputTextContentParam
-            | generated_models.InputImageContentParamAutoParam
-            | generated_models.InputFileContentParam
-        ]
-        | None = None,
+        output: (
+            str
+            | list[
+                generated_models.InputTextContentParam
+                | generated_models.InputImageContentParamAutoParam
+                | generated_models.InputFileContentParam
+            ]
+            | None
+        ) = None,
     ) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this function-call output.
 
@@ -249,13 +251,15 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
 
     def emit_done(
         self,
-        output: str
-        | list[
-            generated_models.InputTextContentParam
-            | generated_models.InputImageContentParamAutoParam
-            | generated_models.InputFileContentParam
-        ]
-        | None = None,
+        output: (
+            str
+            | list[
+                generated_models.InputTextContentParam
+                | generated_models.InputImageContentParamAutoParam
+                | generated_models.InputFileContentParam
+            ]
+            | None
+        ) = None,
     ) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this function-call output.
 

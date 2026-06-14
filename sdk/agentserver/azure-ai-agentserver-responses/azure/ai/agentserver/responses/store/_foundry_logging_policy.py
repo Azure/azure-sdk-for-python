@@ -99,8 +99,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
         has_chat_isolation_key = CHAT_ISOLATION_KEY in http_request.headers
 
         logger.debug(
-            "Foundry storage %s %s starting "
-            "(x-ms-client-request-id=%s, traceparent=%s)",
+            "Foundry storage %s %s starting " "(x-ms-client-request-id=%s, traceparent=%s)",
             method,
             url,
             client_request_id,
@@ -113,8 +112,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
         except Exception:
             elapsed_ms = (time.monotonic() - start) * 1000
             logger.error(
-                "Foundry storage %s %s transport failure after %.1fms "
-                "(x-ms-client-request-id=%s, traceparent=%s)",
+                "Foundry storage %s %s transport failure after %.1fms " "(x-ms-client-request-id=%s, traceparent=%s)",
                 method,
                 url,
                 elapsed_ms,

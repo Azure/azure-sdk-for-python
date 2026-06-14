@@ -37,10 +37,10 @@ _FOUNDRY_TOOLBOX_SERVER_KEY = "foundry-toolbox"
 _FOUNDRY_SCOPE = "https://ai.azure.com/.default"
 
 
-
 # ---------------------------------------------------------------------------
 # Discovery — read mcp.json and build server config dicts
 # ---------------------------------------------------------------------------
+
 
 def discover_mcp_servers(
     project_root: pathlib.Path,
@@ -109,6 +109,7 @@ def discover_mcp_servers(
 # Auth helpers
 # ---------------------------------------------------------------------------
 
+
 def refresh_mcp_auth(servers: Dict[str, Any], credential: Any) -> None:
     """Refresh ``Authorization`` headers on MCP servers that opted in to auto-auth.
 
@@ -128,6 +129,7 @@ def refresh_mcp_auth(servers: Dict[str, Any], credential: Any) -> None:
 # Tool name sanitisation
 # ---------------------------------------------------------------------------
 
+
 def _sanitize_tool_name(name: str) -> str:
     """Make a tool name safe for the Copilot SDK / LLM function-call API.
 
@@ -146,6 +148,7 @@ def _sanitize_tool_name(name: str) -> str:
 # ---------------------------------------------------------------------------
 # MCP Bridge — HTTP JSON-RPC client for Foundry toolbox endpoints
 # ---------------------------------------------------------------------------
+
 
 class McpBridge:
     """HTTP-based MCP client that connects to a Foundry toolbox MCP endpoint.
@@ -191,7 +194,10 @@ class McpBridge:
         has_auth = "Authorization" in self._headers
         logger.info(
             "MCP initialize: endpoint=%r (len=%d) auth_method=%s has_auth=%s",
-            self._endpoint, len(self._endpoint), auth_method, has_auth,
+            self._endpoint,
+            len(self._endpoint),
+            auth_method,
+            has_auth,
         )
 
         resp = await self._client.post(
@@ -215,7 +221,8 @@ class McpBridge:
         diag = {k: resp.headers[k] for k in diag_keys if k in resp.headers}
         logger.info(
             "MCP initialize response: status=%d diagnostics=%s",
-            resp.status_code, diag,
+            resp.status_code,
+            diag,
         )
         resp.raise_for_status()
         data = resp.json()
@@ -250,10 +257,12 @@ class McpBridge:
         diag_keys = ("x-ms-request-id", "x-ms-client-request-id", "x-request-id", "apim-request-id")
         diag = {k: resp.headers[k] for k in diag_keys if k in resp.headers}
         logger.info(
-            "MCP tools/list response: status=%d auth_method=%s has_auth=%s "
-            "session_id=%s diagnostics=%s",
-            resp.status_code, auth_method, has_auth,
-            self._session_id, diag,
+            "MCP tools/list response: status=%d auth_method=%s has_auth=%s " "session_id=%s diagnostics=%s",
+            resp.status_code,
+            auth_method,
+            has_auth,
+            self._session_id,
+            diag,
         )
         resp.raise_for_status()
         data = resp.json()
@@ -311,14 +320,11 @@ class McpBridge:
 # Result formatting
 # ---------------------------------------------------------------------------
 
+
 def _format_tool_result(result: Dict[str, Any]) -> str:
     """Extract text from an MCP ``tools/call`` result."""
     content = result.get("content", [])
-    texts = [
-        c.get("text", "")
-        for c in content
-        if isinstance(c, dict) and c.get("type") == "text"
-    ]
+    texts = [c.get("text", "") for c in content if isinstance(c, dict) and c.get("type") == "text"]
     base_text = "\n".join(t for t in texts if t).strip()
 
     # Append citation metadata when present (Azure AI Search pattern)
@@ -357,17 +363,20 @@ def _extract_citations(result: Dict[str, Any]) -> List[Dict[str, Any]]:
     for doc in docs:
         if not isinstance(doc, dict):
             continue
-        citations.append({
-            "title": doc.get("title") or doc.get("id") or "source",
-            "url": doc.get("url"),
-            "score": doc.get("score"),
-        })
+        citations.append(
+            {
+                "title": doc.get("title") or doc.get("id") or "source",
+                "url": doc.get("url"),
+                "score": doc.get("score"),
+            }
+        )
     return citations
 
 
 # ---------------------------------------------------------------------------
 # Copilot SDK Tool wrappers
 # ---------------------------------------------------------------------------
+
 
 def _make_copilot_tools(bridge: McpBridge, mcp_tools: List[Dict[str, Any]]) -> List[Tool]:
     """Convert MCP tool definitions into Copilot SDK ``Tool`` objects.
@@ -411,12 +420,14 @@ def _make_copilot_tools(bridge: McpBridge, mcp_tools: List[Dict[str, Any]]) -> L
 
             return async_handler
 
-        tools.append(Tool(
-            name=sdk_name,
-            description=desc,
-            parameters=schema,
-            handler=_make_handler(mcp_name),
-        ))
+        tools.append(
+            Tool(
+                name=sdk_name,
+                description=desc,
+                parameters=schema,
+                handler=_make_handler(mcp_name),
+            )
+        )
 
     return tools
 
@@ -424,6 +435,7 @@ def _make_copilot_tools(bridge: McpBridge, mcp_tools: List[Dict[str, Any]]) -> L
 # ---------------------------------------------------------------------------
 # High-level: connect to toolbox and return SDK tools
 # ---------------------------------------------------------------------------
+
 
 async def connect_toolbox(
     endpoint: str,
@@ -468,8 +480,7 @@ async def connect_toolbox(
         "Toolbox '%s' connected: %d tools discovered (%s)",
         display,
         len(sdk_tools),
-        ", ".join(t.name for t in sdk_tools[:10])
-        + ("..." if len(sdk_tools) > 10 else ""),
+        ", ".join(t.name for t in sdk_tools[:10]) + ("..." if len(sdk_tools) > 10 else ""),
     )
 
     return bridge, sdk_tools

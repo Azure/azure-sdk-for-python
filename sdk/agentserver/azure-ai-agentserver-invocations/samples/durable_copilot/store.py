@@ -32,9 +32,7 @@ class FileStore:
     def save(self, key: str, data: dict[str, Any]) -> None:
         """Atomically write *data* as JSON — temp file + rename."""
         target = self._base / f"{key}.json"
-        fd, tmp_path = tempfile.mkstemp(
-            dir=str(self._base), suffix=".tmp", prefix=f"{key}_"
-        )
+        fd, tmp_path = tempfile.mkstemp(dir=str(self._base), suffix=".tmp", prefix=f"{key}_")
         try:
             with open(fd, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)

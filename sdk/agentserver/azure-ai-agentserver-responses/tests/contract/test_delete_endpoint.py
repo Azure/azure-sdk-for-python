@@ -247,7 +247,7 @@ def _make_blocking_sync_response_handler(started_gate: EventGate, release_gate: 
 
 
 def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
-    """FR-024 — Non-background in-flight responses are not findable → DELETE 404."""
+    """— Non-background in-flight responses are not findable → DELETE 404."""
     started_gate = EventGate()
     release_gate = threading.Event()
     handler = _make_blocking_sync_response_handler(started_gate, release_gate)
@@ -404,7 +404,7 @@ def test_delete__deletes_stored_cancelled_response() -> None:
 
 
 def test_delete__second_delete_returns_404() -> None:
-    """FR-024 — Deletion is permanent; a second DELETE on an already-deleted ID returns 404."""
+    """— Deletion is permanent; a second DELETE on an already-deleted ID returns 404."""
     client = _build_client()
 
     create_response = client.post(
@@ -426,9 +426,9 @@ def test_delete__second_delete_returns_404() -> None:
 
     # Second DELETE – response is gone, must return 404
     second_delete = client.delete(f"/responses/{response_id}")
-    assert second_delete.status_code == 404, (
-        "Second DELETE on an already-deleted response must return 404 (response no longer exists)"
-    )
+    assert (
+        second_delete.status_code == 404
+    ), "Second DELETE on an already-deleted response must return 404 (response no longer exists)"
     payload = second_delete.json()
     assert payload["error"].get("type") == "invalid_request_error"
     assert payload["error"].get("code") == "invalid_request_error"
@@ -471,6 +471,6 @@ def test_delete__deletes_completed_background_response() -> None:
     payload = delete.json()
     assert payload["id"] == response_id
     assert payload["deleted"] is True
-    assert payload.get("object") == "response", (
-        f"DELETE result must have object='response', got: {payload.get('object')}"
-    )
+    assert (
+        payload.get("object") == "response"
+    ), f"DELETE result must have object='response', got: {payload.get('object')}"

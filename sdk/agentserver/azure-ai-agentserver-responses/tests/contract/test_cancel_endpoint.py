@@ -192,9 +192,9 @@ def _assert_error(
     if expected_message is not None:
         assert payload["error"].get("message") == expected_message
     if expected_code is not None:
-        assert payload["error"].get("code") == expected_code, (
-            f"Expected error.code={expected_code!r}, got {payload['error'].get('code')!r}"
-        )
+        assert (
+            payload["error"].get("code") == expected_code
+        ), f"Expected error.code={expected_code!r}, got {payload['error'].get('code')!r}"
 
 
 def test_cancel__cancels_background_response_and_clears_output() -> None:
@@ -348,9 +348,9 @@ async def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> N
         # The generator should have been cancelled by Hypercorn's
         # CancelledError propagation. The handler either saw cancellation_signal
         # or was killed by CancelledError before reaching the check.
-        assert not handler_completed.is_set(), (
-            "Handler should NOT have completed all 500 chunks — disconnect should stop it"
-        )
+        assert (
+            not handler_completed.is_set()
+        ), "Handler should NOT have completed all 500 chunks — disconnect should stop it"
 
 
 @pytest.mark.asyncio

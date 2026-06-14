@@ -79,9 +79,7 @@ async def test_post_invocations_uses_env_var():
             return Response(content=b"ok")
 
         transport = ASGITransport(app=app)
-        async with AsyncClient(
-            transport=transport, base_url="http://testserver"
-        ) as client:
+        async with AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations", content=b"test")
     assert resp.headers["x-agent-session-id"] == "env-session"
 

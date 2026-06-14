@@ -56,9 +56,7 @@ def _missing_env_reason() -> str | None:
 _SKIP_REASON = _missing_env_reason()
 
 
-_SAMPLES_DIR = (
-    Path(__file__).resolve().parent.parent.parent / "samples"
-)
+_SAMPLES_DIR = Path(__file__).resolve().parent.parent.parent / "samples"
 
 
 def _harness(tmp_path: Path, *, num_phases: int = 2) -> CrashHarness:
@@ -68,9 +66,7 @@ def _harness(tmp_path: Path, *, num_phases: int = 2) -> CrashHarness:
     live test completes in <60 s.
     """
     env_extras = {
-        "PYTHONPATH": (
-            f"{_SAMPLES_DIR}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
-        ).rstrip(os.pathsep),
+        "PYTHONPATH": (f"{_SAMPLES_DIR}{os.pathsep}{os.environ.get('PYTHONPATH', '')}").rstrip(os.pathsep),
         "HOME": str(tmp_path / "home"),
         "AGENTSERVER_STREAMS_DIR": str(tmp_path / "streams"),
         "NUM_PHASES": str(num_phases),
@@ -104,7 +100,7 @@ def _parse_sse_payloads(line_iter):
     for line in line_iter:
         if line.startswith("data:"):
             try:
-                yield json.loads(line[len("data:"):].strip())
+                yield json.loads(line[len("data:") :].strip())
             except json.JSONDecodeError:
                 continue
 
@@ -148,9 +144,7 @@ async def test_post_sse_streams_tokens_with_monotonic_sequence(tmp_path: Path) -
         assert saw_token, f"never saw any token events; seqs={seqs}"
         assert saw_run_complete, f"never saw run_complete; seqs={seqs}"
         assert seqs == sorted(seqs), f"sequence_numbers out of order: {seqs}"
-        assert seqs == list(range(seqs[0], seqs[-1] + 1)), (
-            f"gap in sequence_numbers: {seqs}"
-        )
+        assert seqs == list(range(seqs[0], seqs[-1] + 1)), f"gap in sequence_numbers: {seqs}"
 
 
 @pytest.mark.skipif(_SKIP_REASON is not None, reason=_SKIP_REASON or "")
@@ -165,9 +159,7 @@ async def test_get_sse_with_last_event_id_skips_seen_events(tmp_path: Path) -> N
             headers={"Content-Type": "application/json"},
         )
         assert post.status_code in (200, 202)
-        inv_id = post.json().get("invocation_id") or post.headers.get(
-            "x-agent-invocation-id"
-        )
+        inv_id = post.json().get("invocation_id") or post.headers.get("x-agent-invocation-id")
         assert inv_id
 
         # First GET — read enough events to capture some sequence numbers.
@@ -182,7 +174,7 @@ async def test_get_sse_with_last_event_id_skips_seen_events(tmp_path: Path) -> N
             async for line in resp.aiter_lines():
                 if line.startswith("data:"):
                     try:
-                        payload = json.loads(line[len("data:"):].strip())
+                        payload = json.loads(line[len("data:") :].strip())
                     except json.JSONDecodeError:
                         continue
                     seq = payload.get("sequence_number")
@@ -206,7 +198,7 @@ async def test_get_sse_with_last_event_id_skips_seen_events(tmp_path: Path) -> N
             async for line in resp.aiter_lines():
                 if line.startswith("data:"):
                     try:
-                        payload = json.loads(line[len("data:"):].strip())
+                        payload = json.loads(line[len("data:") :].strip())
                     except json.JSONDecodeError:
                         continue
                     seq = payload.get("sequence_number")
@@ -216,9 +208,7 @@ async def test_get_sse_with_last_event_id_skips_seen_events(tmp_path: Path) -> N
                         break
         # All observed events must be strictly after skip_cursor.
         for s in second_seqs:
-            assert s > skip_cursor, (
-                f"event with seq={s} survived ?last_event_id={skip_cursor}"
-            )
+            assert s > skip_cursor, f"event with seq={s} survived ?last_event_id={skip_cursor}"
 
 
 @pytest.mark.skipif(_SKIP_REASON is not None, reason=_SKIP_REASON or "")
@@ -240,9 +230,7 @@ async def test_crash_recovery_preserves_monotonic_sequence(tmp_path: Path) -> No
             headers={"Content-Type": "application/json"},
         )
         assert post.status_code in (200, 202)
-        inv_id = post.json().get("invocation_id") or post.headers.get(
-            "x-agent-invocation-id"
-        )
+        inv_id = post.json().get("invocation_id") or post.headers.get("x-agent-invocation-id")
         assert inv_id
 
         # Watch the stream until we see at least one phase_end (so
@@ -260,7 +248,7 @@ async def test_crash_recovery_preserves_monotonic_sequence(tmp_path: Path) -> No
             async for line in resp.aiter_lines():
                 if line.startswith("data:"):
                     try:
-                        payload = json.loads(line[len("data:"):].strip())
+                        payload = json.loads(line[len("data:") :].strip())
                     except json.JSONDecodeError:
                         continue
                     seq = payload.get("sequence_number")
@@ -272,12 +260,8 @@ async def test_crash_recovery_preserves_monotonic_sequence(tmp_path: Path) -> No
                         # sequence-number gap interesting, then break.
                         if len(pre_crash_seqs) >= 6:
                             break
-        assert saw_phase_end, (
-            f"never saw phase_end before crash budget exhausted: {pre_crash_seqs}"
-        )
-        assert len(pre_crash_seqs) >= 3, (
-            f"didn't see enough events before crash: {pre_crash_seqs}"
-        )
+        assert saw_phase_end, f"never saw phase_end before crash budget exhausted: {pre_crash_seqs}"
+        assert len(pre_crash_seqs) >= 3, f"didn't see enough events before crash: {pre_crash_seqs}"
         last_pre = pre_crash_seqs[-1]
 
         # SIGKILL + restart same tmp_path: state survives, handler
@@ -299,7 +283,7 @@ async def test_crash_recovery_preserves_monotonic_sequence(tmp_path: Path) -> No
             async for line in resp.aiter_lines():
                 if line.startswith("data:"):
                     try:
-                        payload = json.loads(line[len("data:"):].strip())
+                        payload = json.loads(line[len("data:") :].strip())
                     except json.JSONDecodeError:
                         continue
                     seq = payload.get("sequence_number")
@@ -311,23 +295,17 @@ async def test_crash_recovery_preserves_monotonic_sequence(tmp_path: Path) -> No
                     if t in ("run_complete", "done", "superseded"):
                         break
 
-        assert saw_recovered, (
-            "post-restart stream never carried a type=recovered marker"
-        )
+        assert saw_recovered, "post-restart stream never carried a type=recovered marker"
         # The post-restart stream replays everything from disk, then
         # live-tails the new events. The crash boundary is wherever
         # the largest pre-crash seq sits. Every seq > last_pre must
         # come from the post-crash lifetime and must be strictly
         # greater than last_pre.
         post_only = [s for s in post_crash_seqs if s > last_pre]
-        assert post_only, (
-            f"no post-crash events after last_pre={last_pre}; "
-            f"post_crash_seqs={post_crash_seqs}"
-        )
+        assert post_only, f"no post-crash events after last_pre={last_pre}; " f"post_crash_seqs={post_crash_seqs}"
         assert post_only == sorted(post_only)
         assert post_only[0] == last_pre + 1, (
-            f"sequence gap at crash boundary: last_pre={last_pre} "
-            f"first_post_crash={post_only[0]}"
+            f"sequence gap at crash boundary: last_pre={last_pre} " f"first_post_crash={post_only[0]}"
         )
     finally:
         await harness.close()

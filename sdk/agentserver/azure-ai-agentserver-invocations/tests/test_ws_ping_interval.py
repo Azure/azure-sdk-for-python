@@ -22,6 +22,7 @@ _ENV_NAME = "WS_KEEPALIVE_INTERVAL"
 # Default / accepted values (env-driven)
 # ---------------------------------------------------------------------------
 
+
 def test_ws_ping_interval_default_is_disabled(monkeypatch):
     """Default ping interval is 0 (disabled) when the env var is not set."""
     monkeypatch.delenv(_ENV_NAME, raising=False)
@@ -63,6 +64,7 @@ def test_ws_ping_interval_empty_env_uses_default(monkeypatch):
 # Rejected values (validation surfaces at AgentConfig.from_env)
 # ---------------------------------------------------------------------------
 
+
 def test_ws_ping_interval_negative_rejected(monkeypatch):
     """Negative env-var values are programming errors."""
     monkeypatch.setenv(_ENV_NAME, "-1")
@@ -80,6 +82,7 @@ def test_ws_ping_interval_non_numeric_rejected(monkeypatch):
 # ---------------------------------------------------------------------------
 # Hypercorn config wiring (delegated to core's _build_hypercorn_config)
 # ---------------------------------------------------------------------------
+
 
 def test_ws_ping_interval_propagates_to_hypercorn_config(monkeypatch):
     """The configured interval lands on the Hypercorn server config."""
@@ -109,6 +112,7 @@ def test_ws_ping_interval_default_wires_none_into_hypercorn(monkeypatch):
 # ---------------------------------------------------------------------------
 # Property surface
 # ---------------------------------------------------------------------------
+
 
 def test_ws_ping_interval_property_is_read_only(monkeypatch):
     """``ws_ping_interval`` is exposed only as a property (no setter)."""

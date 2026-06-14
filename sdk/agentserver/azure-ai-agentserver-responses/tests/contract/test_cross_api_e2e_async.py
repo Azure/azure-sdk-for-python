@@ -498,9 +498,9 @@ class TestC2StreamStoredAsync:
 
             # Cancel non-bg in-flight → 404 (not yet stored, S7)
             cancel_resp = await client.post(f"/responses/{response_id}/cancel")
-            assert cancel_resp.status_code == 404, (
-                "S7: non-background in-flight cancel must return 404 (not yet stored)"
-            )
+            assert (
+                cancel_resp.status_code == 404
+            ), "S7: non-background in-flight cancel must return 404 (not yet stored)"
 
             handler.release.set()
             await asyncio.wait_for(post_task, timeout=5.0)
@@ -678,15 +678,15 @@ class TestC4BgStreamStoredAsync:
             # Find terminal events
             terminal_types = {"response.completed", "response.failed", "response.incomplete"}
             terminal_events = [e for e in events if e["type"] in terminal_types]
-            assert len(terminal_events) == 1, (
-                f"Expected exactly one terminal event, got: {[e['type'] for e in terminal_events]}"
-            )
+            assert (
+                len(terminal_events) == 1
+            ), f"Expected exactly one terminal event, got: {[e['type'] for e in terminal_events]}"
 
             terminal = terminal_events[0]
             # B26: cancelled responses emit response.failed
-            assert terminal["type"] == "response.failed", (
-                f"Expected response.failed for cancel per B26, got: {terminal['type']}"
-            )
+            assert (
+                terminal["type"] == "response.failed"
+            ), f"Expected response.failed for cancel per B26, got: {terminal['type']}"
             # B11: status inside is "cancelled"
             assert terminal["data"]["response"].get("status") == "cancelled"
             # B11: output cleared

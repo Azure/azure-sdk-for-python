@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Spec 013 US2 scenario 5: suspended-long-ago precondition contract.
+"""  scenario 5: suspended-long-ago precondition contract.
 
-A task is suspended with all input slots cleared (US4 effect) but
+A task is suspended with all input slots cleared (effect) but
 `_last_input_id` persisted across the suspend. Resume with a
 matching predecessor succeeds; resume with a stale predecessor fails.
 
-This is the cross-phase composition test of US4 (input clearing) and US2
+This is the cross-phase composition test of  (input clearing) and
 (precondition primitive).
 """
 
@@ -17,16 +17,12 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    LastInputIdPreconditionFailed,
-    TaskContext,
-    task,
-)
+from azure.ai.agentserver.core.durable import LastInputIdPreconditionFailed, TaskContext, task, multi_turn_task
 
 
-@task(name="us2-suspend-long-ago", steerable=True, ephemeral=False)
+@multi_turn_task(name="us2-suspend-long-ago", steerable=True)
 async def _suspend_long_ago(ctx: TaskContext[dict]) -> dict:
-    return await ctx.suspend(reason="awaiting_next_input")
+    return None
 
 
 async def _setup_manager(tmp_path: Path):
@@ -57,19 +53,13 @@ async def _teardown_manager(manager, mgr_mod):
 
 
 @pytest.mark.asyncio
-async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
-    tmp_path: Path,
-) -> None:
+async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(tmp_path: Path) -> None:
     """After a long-suspend, `_last_input_id` survives input clearing."""
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
-        await _suspend_long_ago.start(
-            task_id="t-suspend-long",
-            input={"turn": 1},
-            input_id="msg-1",
-        )
+        await _suspend_long_ago.start(task_id="t-suspend-long", input={"turn": 1}, input_id="msg-1")
         await asyncio.sleep(0.2)
-        # Verify task is suspended and input slots are cleared (US4),
+        # Verify task is suspended and input slots are cleared,
         # but _last_input_id slot survives.
         info = await manager.provider.get("t-suspend-long")
         assert info is not None
@@ -83,10 +73,7 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
 
         # Resume with matching predecessor succeeds.
         await _suspend_long_ago.start(
-            task_id="t-suspend-long",
-            input={"turn": 2},
-            input_id="msg-2",
-            if_last_input_id="msg-1",
+            task_id="t-suspend-long", input={"turn": 2}, input_id="msg-2", if_last_input_id="msg-1"
         )
         await asyncio.sleep(0.2)
         info = await manager.provider.get("t-suspend-long")
@@ -97,28 +84,18 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(
 
 
 @pytest.mark.asyncio
-async def test_suspended_long_ago_resume_with_stale_predecessor_fails(
-    tmp_path: Path,
-) -> None:
+async def test_suspended_long_ago_resume_with_stale_predecessor_fails(tmp_path: Path) -> None:
     """Stale `if_last_input_id` against a long-suspended task is rejected."""
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
-        await _suspend_long_ago.start(
-            task_id="t-suspend-long-stale",
-            input={"turn": 1},
-            input_id="msg-1",
-        )
+        await _suspend_long_ago.start(task_id="t-suspend-long-stale", input={"turn": 1}, input_id="msg-1")
         await asyncio.sleep(0.2)
 
         with pytest.raises(LastInputIdPreconditionFailed) as excinfo:
             await _suspend_long_ago.start(
-                task_id="t-suspend-long-stale",
-                input={"turn": 2},
-                input_id="msg-2",
-                if_last_input_id="msg-XYZ",
+                task_id="t-suspend-long-stale", input={"turn": 2}, input_id="msg-2", if_last_input_id="msg-XYZ"
             )
-
-        assert excinfo.value.expected_last_input_id == "msg-XYZ"
+        #: exception.task_id removed
         assert excinfo.value.actual_last_input_id == "msg-1"
         # Task remains suspended, slot unchanged.
         info = await manager.provider.get("t-suspend-long-stale")

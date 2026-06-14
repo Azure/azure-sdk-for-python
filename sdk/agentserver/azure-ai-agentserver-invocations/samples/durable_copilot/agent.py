@@ -3,9 +3,7 @@
 Wraps the **GitHub Copilot SDK** in a steerable durable task and bridges
 its session-event stream into the invocations transport.
 
-This sample closes the five implementation gaps tracked by spec 015
-FR-011 (relative to the earlier `gh-copilot`-experimental version of
-this sample):
+The handler delivers five key behaviors:
 
 1. ``streaming=True`` is wired into both ``create_session`` and
    ``resume_session``, so the SDK emits incremental
@@ -52,7 +50,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 from .store import FileStore
@@ -74,7 +72,7 @@ async def _open_session(client: Any, session_id: str, entry_mode: str) -> Any:
 
     On ``"fresh"`` we use ``create_session``; on ``"resumed"`` or
     ``"recovered"`` we use ``resume_session`` (the SDK's reattach API).
-    Both paths set ``streaming=True`` — this is FR-011 gap 1.
+    Both paths set ``streaming=True``.
 
     If ``resume_session`` raises "Session not found" (the upstream
     Copilot CLI was not given enough time to persist the session
@@ -116,7 +114,7 @@ async def _open_session(client: Any, session_id: str, entry_mode: str) -> Any:
 
 
 async def _last_user_message_matches(session: Any, message: str) -> bool:
-    """FR-011 gap 4 — upstream-history dedup.
+    """upstream-history dedup.
 
     Read the session's persisted event log; the user-turn was already
     sent if the most recent ``UserMessageData`` event's content equals
@@ -143,7 +141,7 @@ async def _last_user_message_matches(session: Any, message: str) -> bool:
 
 
 async def _recovered_assistant_text(session: Any) -> str:
-    """FR-011 gap 5 — recovery replay snapshot.
+    """recovery replay snapshot.
 
     On crash-recovery, read whatever assistant content the previous
     lifetime had already accumulated for the current turn from the
@@ -186,7 +184,7 @@ async def _recovered_assistant_text(session: Any) -> str:
 # --------------------------------------------------------------------------
 
 
-@task(name="copilot_session", steerable=True)
+@multi_turn_task(name="copilot_session", steerable=True)
 async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Run one Copilot conversation turn with steering + crash resilience."""
 
@@ -216,7 +214,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     async with CopilotClient() as client:
         session = await _open_session(client, session_id, ctx.entry_mode)
 
-        # ── FR-011 gap 5 — recovery replay ─────────────────────────
+        # ── recovery replay ─────────────────────────
         # On recovery, replay whatever the previous lifetime had already
         # streamed to the consumer, reading from the upstream session log.
         if ctx.entry_mode == "recovered":
@@ -236,9 +234,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
 
         # ── Phase 1: Pre-entry cancel (rapid-fire steering) ────────
         if ctx.cancel.is_set():
-            logger.info(
-                "Skipping steered=%s — cancel pre-set", ctx.is_steered_turn
-            )
+            logger.info("Skipping steered=%s — cancel pre-set", ctx.is_steered_turn)
             # Still send so the message is preserved in upstream history —
             # but go through dedup so we don't double-send on recovery.
             if not await _last_user_message_matches(session, message):
@@ -252,18 +248,15 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     "message_preserved": True,
                 },
             )
-            return await ctx.suspend(reason="steered")
-
-        # ── FR-011 gap 4 — upstream-history dedup ──────────────────
+            return None
+        # ── upstream-history dedup ──────────────────
         # Send the message only if the upstream session does not already
         # have it as the most recent user message.
         already_sent = await _last_user_message_matches(session, message)
         if not already_sent:
             await session.send(message)
         else:
-            logger.info(
-                "Skipping session.send — upstream history already has this turn"
-            )
+            logger.info("Skipping session.send — upstream history already has this turn")
 
         # ── Phase 2: Stream the Copilot turn, checking cancel ──────
         reply_parts: list[str] = []
@@ -271,25 +264,21 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         loop = asyncio.get_event_loop()
 
         def on_event(event: Any) -> None:
-            """SDK callback — emit deltas live, signal on idle (FR-011 gaps 2 + 3)."""
+            """SDK callback — emit deltas live, signal on idle."""
             data = event.data
             if isinstance(data, AssistantMessageDeltaData):
                 delta = getattr(data, "delta_content", "") or ""
                 reply_parts.append(delta)
-                # FR-011 gap 2 — emit delta as it arrives.
-                loop.create_task(
-                    _stream_and_persist(stream, invocation_id, delta, reply_parts)
-                )
+                # emit delta as it arrives.
+                loop.create_task(_stream_and_persist(stream, invocation_id, delta, reply_parts))
             elif isinstance(data, AssistantMessageData):
                 # Fallback for SDK builds that emit only the assembled message.
                 if not reply_parts:
                     content = getattr(data, "content", "") or ""
                     reply_parts.append(content)
-                    loop.create_task(
-                        _stream_and_persist(stream, invocation_id, content, reply_parts)
-                    )
+                    loop.create_task(_stream_and_persist(stream, invocation_id, content, reply_parts))
             elif isinstance(data, SessionIdleData):
-                # FR-011 gap 3 — emit session_idle to consumers and unblock us.
+                # emit session_idle to consumers and unblock us.
                 loop.create_task(stream.emit({"type": "session_idle"}))
                 idle_event.set()
 
@@ -333,8 +322,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 "output": output,
             },
         )
-        return await ctx.suspend(reason="steered")
-
+        return None
     if ctx.cancel.is_set():
         invocation_store.save(
             invocation_id,
@@ -344,10 +332,9 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 "output": output,
             },
         )
-        return await ctx.suspend(reason="steered")
-
+        return None
     invocation_store.save(invocation_id, {"status": "completed", "output": output})
-    return await ctx.suspend(reason="awaiting_user_input", output=output)
+    return output
 
 
 async def _stream_and_persist(

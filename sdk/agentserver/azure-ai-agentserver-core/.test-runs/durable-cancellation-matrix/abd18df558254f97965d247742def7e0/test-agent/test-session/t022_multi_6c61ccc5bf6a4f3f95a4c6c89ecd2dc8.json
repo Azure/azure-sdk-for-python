@@ -1,0 +1,42 @@
+{
+  "object": "task",
+  "id": "t022_multi_6c61ccc5bf6a4f3f95a4c6c89ecd2dc8",
+  "agent_name": "test-agent",
+  "session_id": "test-session",
+  "status": "in_progress",
+  "title": "t022_queued_cancel_59265a70b2094d3bb41ad772d5392323:t022_mul",
+  "lease": {
+    "owner": "test-agent|session:test-session",
+    "instance_id": "worker-2992285-e4d7a53e-1781370497",
+    "generation": 0,
+    "expires_at": "2026-06-13T17:09:17.469567+00:00",
+    "expiry_count": 0,
+    "heartbeat_at": "2026-06-13T17:08:17.469554+00:00"
+  },
+  "payload": {
+    "input": "active",
+    "metadata": {},
+    "_turn_started_at": "2026-06-13T17:08:17.467447Z",
+    "_last_input_id": "i3",
+    "_steering": {
+      "pending_inputs": [
+        "A",
+        "B"
+      ],
+      "cancel_requested": true
+    }
+  },
+  "tags": {
+    "_task_name": "t022_queued_cancel_59265a70b2094d3bb41ad772d5392323"
+  },
+  "source": {
+    "type": "agentserver.task",
+    "name": "t022_queued_cancel_59265a70b2094d3bb41ad772d5392323",
+    "server_version": "azure-ai-agentserver-core/2.0.0b6 (python/3.12)"
+  },
+  "etag": "local-ae48971d8b4fed05",
+  "created_at": "2026-06-13T17:08:17.467507+00:00",
+  "updated_at": "2026-06-13T17:08:17.469554+00:00",
+  "started_at": "2026-06-13T17:08:17.467507+00:00",
+  "completed_at": null
+}

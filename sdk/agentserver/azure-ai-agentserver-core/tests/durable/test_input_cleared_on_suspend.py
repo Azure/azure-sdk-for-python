@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Tests for US4 input clearing on suspend (T-024).
+"""Tests for  input clearing on suspend (T-024).
 
-Spec 013 US4 scenarios 1, 2: when a steerable task transitions to suspended,
+  scenarios 1, 2: when a steerable task transitions to suspended,
 the framework clears the three input-bearing slots — ``payload["input"]``,
 ``_steering["active_input"]``, and ``_steering["previous_input"]`` — while
 preserving ``_steering`` mechanism state and ``metadata``.
@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import TaskContext, task
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 
 
 async def _setup_manager(tmp_path: Path):
@@ -51,9 +51,9 @@ async def test_suspend_clears_payload_input(tmp_path: Path) -> None:
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
 
-        @task(name="suspending", steerable=True, ephemeral=False)
+        @multi_turn_task(name="suspending", steerable=True)
         async def suspending(ctx: TaskContext[dict]) -> None:
-            return await ctx.suspend(reason="testing-us4")
+            return None
 
         await suspending.start(task_id="t-input-cleared", input={"msg": "secret-user-content"})
         info = None
@@ -65,8 +65,7 @@ async def test_suspend_clears_payload_input(tmp_path: Path) -> None:
         assert info is not None
         assert info.status == "suspended"
         assert info.payload.get("input") is None, (
-            f"Expected payload['input'] to be cleared after suspend, got: "
-            f"{info.payload.get('input')!r}"
+            f"Expected payload['input'] to be cleared after suspend, got: " f"{info.payload.get('input')!r}"
         )
     finally:
         await _teardown_manager(manager, mgr_mod)
@@ -78,11 +77,11 @@ async def test_suspend_preserves_metadata(tmp_path: Path) -> None:
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
 
-        @task(name="meta", steerable=True, ephemeral=False)
+        @multi_turn_task(name="meta", steerable=True)
         async def with_metadata(ctx: TaskContext[dict]) -> None:
             ctx.metadata["dev_key"] = "dev_value"
             await ctx.metadata.flush()
-            return await ctx.suspend(reason="testing-us4")
+            return None
 
         await with_metadata.start(task_id="t-meta-survives", input={"msg": "hi"})
         info = None

@@ -19,6 +19,7 @@ from conftest import _make_echo_ws_app
 # Binary frames
 # ---------------------------------------------------------------------------
 
+
 def test_ws_binary_frame_round_trip():
     """Binary frames round-trip without corruption (parity with test_binary_payload)."""
     app = InvocationAgentServerHost()
@@ -38,6 +39,7 @@ def test_ws_binary_frame_round_trip():
 # ---------------------------------------------------------------------------
 # Text frames — unicode and large payloads
 # ---------------------------------------------------------------------------
+
 
 def test_ws_unicode_text_round_trip():
     """Unicode text frames are preserved (parity with test_unicode_payload)."""
@@ -63,6 +65,7 @@ def test_ws_large_text_frame_round_trip():
 # ---------------------------------------------------------------------------
 # JSON frames (``send_json`` / ``receive_json``)
 # ---------------------------------------------------------------------------
+
 
 def test_ws_json_frame_round_trip():
     """``send_json`` / ``receive_json`` round-trip JSON payloads."""

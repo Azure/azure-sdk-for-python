@@ -25,7 +25,7 @@ There is **no auto-flush loop**. Flushes are explicit:
 The CORE primitive does NOT enforce namespace-name conventions.
 Wrapper layers (e.g., responses) may reject ``_*`` names in their
 :class:`DurabilityContext` facade — that is wrapper-layer policy
-(Spec 015 FR-005).
+.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ logger = logging.getLogger("azure.ai.agentserver.durable")
 # Sentinel to distinguish "not set" from None
 _NOT_SET = object()
 
-# Type alias for the per-namespace flush callback (Spec 015 FR-003).
+# Type alias for the per-namespace flush callback.
 # The framework supplies a callback that knows how to persist data for
 # a given namespace into the underlying task payload.
 NamespaceFlushCallback = Callable[[Optional[str], dict[str, Any]], Awaitable[None]]
@@ -83,24 +83,29 @@ class TaskMetadata(collections.abc.MutableMapping):
         else:
             self._registry = _registry
 
-    # -- Namespace callable protocol (Spec 015 FR-003/FR-004) -------------- #
+    # -- Namespace callable protocol  --------------
 
     def __call__(self, name: Optional[str] = None) -> "TaskMetadata":
         """Return a namespace facade.
 
-        ``meta()`` returns the default namespace; ``meta("custom")``
-        returns the named-namespace facade (auto-vivified). The
-        primitive does NOT enforce conventions on ``name`` — wrapper
-        layers may reject ``_*`` names (Spec 015 FR-005).
+                ``meta()`` returns the default namespace; ``meta("custom")``
+                returns the named-namespace facade (auto-vivified).
+        : namespace names with a leading underscore are reserved
+                for the framework and raise :class:`ValueError`.
 
-        :param name: Namespace name. ``None`` returns the default
-            namespace; a string returns the named namespace.
-        :type name: str | None
-        :return: A namespace facade.
-        :rtype: TaskMetadata
+                :param name: Namespace name. ``None`` returns the default
+                    namespace; a string returns the named namespace.
+                :type name: str | None
+                :return: A namespace facade.
+                :rtype: TaskMetadata
+                :raises ValueError: If ``name`` starts with an underscore.
         """
         if name is None:
             return self._registry[None]
+        if name.startswith("_"):
+            raise ValueError(
+                f"Namespace names with a leading underscore are reserved for " f"the framework: got {name!r}"
+            )
         if name in self._registry:
             return self._registry[name]
         # Auto-vivify a new namespace; share the registry and inherit
@@ -122,7 +127,7 @@ class TaskMetadata(collections.abc.MutableMapping):
     ) -> "TaskMetadata":
         """Construct a fresh :class:`TaskMetadata` from a recovered payload.
 
-        Decodes the per-namespace persistence layout (Spec 015 FR-003):
+        Decodes the per-namespace persistence layout:
 
         * ``payload["metadata"]`` → default namespace.
         * ``payload["metadata:<name>"]`` → named namespace ``<name>``.
@@ -145,7 +150,7 @@ class TaskMetadata(collections.abc.MutableMapping):
         for key, value in payload.items():
             if not isinstance(key, str) or not key.startswith("metadata:"):
                 continue
-            name = key[len("metadata:"):]
+            name = key[len("metadata:") :]
             if not name or not isinstance(value, dict):
                 continue
             # Auto-vivify and seed
@@ -195,10 +200,7 @@ class TaskMetadata(collections.abc.MutableMapping):
             raise TypeError(f"Delta must be numeric, got {type(delta).__name__}")
         current = self._data.get(key, 0)
         if not isinstance(current, (int, float)):
-            raise TypeError(
-                f"Cannot increment non-numeric value at key {key!r}: "
-                f"{type(current).__name__}"
-            )
+            raise TypeError(f"Cannot increment non-numeric value at key {key!r}: " f"{type(current).__name__}")
         self._data[key] = current + delta
         self._mark_dirty()
 
@@ -219,10 +221,7 @@ class TaskMetadata(collections.abc.MutableMapping):
         elif isinstance(current, list):
             current.append(value)
         else:
-            raise TypeError(
-                f"Cannot append to non-list value at key {key!r}: "
-                f"{type(current).__name__}"
-            )
+            raise TypeError(f"Cannot append to non-list value at key {key!r}: " f"{type(current).__name__}")
         self._mark_dirty()
 
     def to_dict(self) -> dict[str, Any]:
@@ -292,7 +291,7 @@ class TaskMetadata(collections.abc.MutableMapping):
         await self._do_flush_one()
 
     async def _flush_all(self) -> None:
-        """Spec 019 FR-D-005 — framework-internal: flush every dirty
+        """— framework-internal: flush every dirty
         namespace (default + all named).
 
         Called by the framework at lifecycle boundaries (suspend,
@@ -322,3 +321,32 @@ class TaskMetadata(collections.abc.MutableMapping):
                 self._namespace_name,
                 exc_info=True,
             )
+
+
+# =========================================================================
+#  — JSONValue recursive type alias
+# =========================================================================
+#
+# Public type alias exported via durable.__init__. TaskMetadata values
+# SHOULD be JSON-serializable; this alias documents the value space.
+
+from typing import Union, List, Dict
+
+try:
+    from typing import TypeAlias  # Python 3.10+
+except ImportError:  # pragma: no cover
+    from typing_extensions import TypeAlias  # type: ignore[assignment]
+
+# Recursive JSON type alias. Forward refs allow self-recursion.
+# Use ForwardRef-via-string for the recursive arms so this type-checks
+# on all Python versions, and the test's ForwardRef-detection logic
+# resolves the recursion to the same alias.
+JSONValue: TypeAlias = Union[
+    str,
+    int,
+    float,
+    bool,
+    None,
+    List["JSONValue"],
+    Dict[str, "JSONValue"],
+]

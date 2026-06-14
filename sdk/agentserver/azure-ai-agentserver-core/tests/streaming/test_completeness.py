@@ -5,9 +5,9 @@
 
 Asserts SC-006 (six public exports), SC-006a (no streaming kwarg on
 ``@task``), SC-006b (3 concrete classes SDK-private). Also asserts
-the exception class hierarchy per FR-006.
+the exception class hierarchy.
 
-See spec.md FR-001 + SC-006 + SC-006a + SC-006b.
+See spec.md  + SC-006 + SC-006a + SC-006b.
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ _EXPECTED_PUBLIC_EXPORTS = {
     "EventStreamNotFoundError",
 }
 
-# Spec 019 FR-E-001: EventStreamGoneError removed from public surface.
+#: EventStreamGoneError removed from public surface.
 # Every former-Gone raise site now raises EventStreamNotFoundError.
 _RETIRED_EXPORTS = {
     "EventStreamGoneError",
@@ -40,15 +40,15 @@ _SDK_PRIVATE_CONCRETE_CLASSES = {
 
 
 class TestPublicSurface:
-    """SC-006 — public ``__all__`` is exactly five entries (spec 019 FR-E-001
+    """SC-006 — public ``__all__`` is exactly five entries (
     removed ``EventStreamGoneError``)."""
 
     def test_all_shape(self) -> None:
         from azure.ai.agentserver.core import streaming
 
         assert set(streaming.__all__) == _EXPECTED_PUBLIC_EXPORTS, (
-            f"streaming.__all__ should be exactly the entries per FR-001 + "
-            f"SC-006 (spec 019 dropped EventStreamGoneError); "
+            f"streaming.__all__ should be exactly the entries per  + "
+            f"SC-006 (dropped EventStreamGoneError); "
             f"got {set(streaming.__all__)}"
         )
         # __all__ should be a list (Python convention)
@@ -58,49 +58,41 @@ class TestPublicSurface:
             assert hasattr(streaming, name), f"{name} listed in __all__ but absent"
 
     def test_retired_exports_absent(self) -> None:
-        """Spec 019 FR-E-001 — EventStreamGoneError MUST NOT be in __all__."""
+        """— EventStreamGoneError MUST NOT be in __all__."""
         from azure.ai.agentserver.core import streaming
 
         leaked = _RETIRED_EXPORTS & set(streaming.__all__)
-        assert not leaked, (
-            f"streaming.__all__ still exports retired symbols (spec 019 "
-            f"FR-E-001): {sorted(leaked)}"
-        )
+        assert not leaked, f"streaming.__all__ still exports retired symbols (" f"): {sorted(leaked)}"
 
     def test_retired_exports_unimportable(self) -> None:
-        """Spec 019 FR-E-001 — ``from ... import EventStreamGoneError`` raises ImportError."""
+        """— ``... import EventStreamGoneError`` raises ImportError."""
         import importlib
 
         mod = importlib.import_module("azure.ai.agentserver.core.streaming")
         for name in _RETIRED_EXPORTS:
             assert not hasattr(mod, name), (
-                f"{name} should not be importable from "
-                f"azure.ai.agentserver.core.streaming (spec 019 FR-E-001)"
+                f"{name} should not be importable from " f"azure.ai.agentserver.core.streaming "
             )
 
     def test_streams_singleton_is_async_lifecycle(self) -> None:
         from azure.ai.agentserver.core.streaming import streams
 
-        # Three async lifecycle methods per FR-013
+        # Three async lifecycle methods per
         for name in ("get", "get_or_create", "delete"):
             method = getattr(streams, name)
-            assert inspect.iscoroutinefunction(method), (
-                f"streams.{name} MUST be async per FR-013"
-            )
+            assert inspect.iscoroutinefunction(method), f"streams.{name} MUST be async per "
 
     def test_streams_configurators_are_sync(self) -> None:
         from azure.ai.agentserver.core.streaming import streams
 
-        # Three sync configurators per FR-013
+        # Three sync configurators per
         for name in (
             "use_in_memory_live",
             "use_in_memory_replay",
             "use_file_backed_replay",
         ):
             method = getattr(streams, name)
-            assert not inspect.iscoroutinefunction(method), (
-                f"streams.{name} MUST be sync per FR-013"
-            )
+            assert not inspect.iscoroutinefunction(method), f"streams.{name} MUST be sync per "
 
 
 class TestSDKPrivateConcreteClasses:
@@ -112,13 +104,10 @@ class TestSDKPrivateConcreteClasses:
         from azure.ai.agentserver.core import streaming
 
         # Must not appear in __all__
-        assert class_name not in streaming.__all__, (
-            f"{class_name} MUST NOT be in public __all__ per SC-006b"
-        )
+        assert class_name not in streaming.__all__, f"{class_name} MUST NOT be in public __all__ per SC-006b"
         # Must not be a top-level attribute either (defensive)
         assert not hasattr(streaming, class_name) or class_name == "EventStream", (
-            f"{class_name} MUST NOT be a public attribute of "
-            f"azure.ai.agentserver.core.streaming per SC-006b"
+            f"{class_name} MUST NOT be a public attribute of " f"azure.ai.agentserver.core.streaming per SC-006b"
         )
 
     @pytest.mark.parametrize("class_name", sorted(_SDK_PRIVATE_CONCRETE_CLASSES))
@@ -134,7 +123,7 @@ class TestSDKPrivateConcreteClasses:
 
 
 class TestExceptionHierarchy:
-    """FR-006 — four exception types, common base."""
+    """— four exception types, common base."""
 
     def test_base_class_is_exception(self) -> None:
         from azure.ai.agentserver.core.streaming import EventStreamError
@@ -152,66 +141,52 @@ class TestExceptionHierarchy:
             EventStreamClosedError,
             EventStreamNotFoundError,
         ):
-            assert issubclass(sub, EventStreamError), (
-                f"{sub.__name__} MUST inherit from EventStreamError per FR-006"
-            )
+            assert issubclass(sub, EventStreamError), f"{sub.__name__} MUST inherit from EventStreamError per "
 
 
 class TestOldSurfaceAbsent:
-    """Old ``StreamHandler`` surface has been deleted (spec 017 FR-014)."""
+    """Old ``StreamHandler`` surface has been deleted."""
 
     def test_old_stream_module_is_gone(self) -> None:
-        """``_stream.py`` is deleted per FR-014."""
+        """``_stream.py`` is deleted."""
         with pytest.raises(ImportError):
             importlib.import_module("azure.ai.agentserver.core.durable._stream")
 
-    @pytest.mark.parametrize(
-        "name", ["StreamHandler", "QueueStreamHandler", "StreamHandlerFactory"]
-    )
+    @pytest.mark.parametrize("name", ["StreamHandler", "QueueStreamHandler", "StreamHandlerFactory"])
     def test_old_symbols_not_in_durable_public_surface(self, name: str) -> None:
         from azure.ai.agentserver.core import durable
 
-        assert not hasattr(durable, name), (
-            f"{name} MUST be removed from durable subpackage per FR-014"
-        )
+        assert not hasattr(durable, name), f"{name} MUST be removed from durable subpackage per "
         assert name not in durable.__all__
 
 
 class TestAtSignTaskHasNoStreamingKwarg:
     """SC-006a — ``@task`` decorator + ``TaskContext`` carry no
-    streaming-related public attribute (spec 017 FR-015)."""
+    streaming-related public attribute."""
 
     def test_at_sign_task_signature_has_no_streaming_kwarg(self) -> None:
         from azure.ai.agentserver.core.durable._decorator import task
 
         sig = inspect.signature(task)
         offenders = [
-            p.name
-            for p in sig.parameters.values()
-            if "stream" in p.name.lower() or "factory" in p.name.lower()
+            p.name for p in sig.parameters.values() if "stream" in p.name.lower() or "factory" in p.name.lower()
         ]
-        assert offenders == [], (
-            f"@task MUST have NO streaming-related kwarg per SC-006a; "
-            f"got: {offenders}"
-        )
+        assert offenders == [], f"@task MUST have NO streaming-related kwarg per SC-006a; " f"got: {offenders}"
 
     def test_task_context_has_no_stream_method(self) -> None:
         from azure.ai.agentserver.core.durable import TaskContext
 
-        assert not hasattr(TaskContext, "stream"), (
-            "TaskContext MUST NOT have a stream() method per SC-006a"
-        )
+        assert not hasattr(TaskContext, "stream"), "TaskContext MUST NOT have a stream() method per SC-006a"
         # Also no _stream_handler slot
         if hasattr(TaskContext, "__slots__"):
             assert "_stream_handler" not in TaskContext.__slots__
 
     def test_task_run_is_not_async_iterable(self) -> None:
-        """``async for chunk in run`` is removed (FR-014). Subscribers use
+        """``async for chunk in run`` is removed. Subscribers use
         ``await streams.get(invocation_id).subscribe()`` instead."""
         from azure.ai.agentserver.core.durable import TaskRun
 
         assert not hasattr(TaskRun, "__aiter__"), (
-            "TaskRun MUST NOT be async-iterable per FR-014; "
-            "consumers use streams.get(invocation_id).subscribe() instead"
+            "TaskRun MUST NOT be async-iterable; " "consumers use streams.get(invocation_id).subscribe() instead"
         )
         assert not hasattr(TaskRun, "__anext__")

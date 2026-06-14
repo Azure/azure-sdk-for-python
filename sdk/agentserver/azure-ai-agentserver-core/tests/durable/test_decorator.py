@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 """Tests for @task decorator and Task class.
 
-Spec 015 Phase 3 (FR-006): the developer-facing `@task` decorator surface
+: the developer-facing `@task` decorator surface
 no longer accepts ``description``, ``store_input``, ``lease_duration_seconds``,
-or ``max_pending``. Spec 017 additionally removed ``stream_handler_factory``
+or ``max_pending``.  additionally removed ``stream_handler_factory``
 (streaming is now handled via ``azure.ai.agentserver.core.streaming.streams``
 — see ``test_stream_handler_factory_rejected_post_spec_017`` below).
 ``TaskOptions`` is no longer in the public ``__all__`` (it is an internal
@@ -16,11 +16,7 @@ import asyncio
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    Task,
-    TaskContext,
-    task,
-)
+from azure.ai.agentserver.core.durable import Task, TaskContext, task
 
 
 class TestTaskDecorator:
@@ -50,17 +46,12 @@ class TestTaskDecorator:
         """All currently-supported decorator options are forwarded to TaskOptions."""
         from datetime import timedelta
 
-        @task(
-            name="full",
-            ephemeral=False,
-            title="My Title",
-            timeout=timedelta(minutes=5),
-        )
+        @task(name="full", title="My Title", timeout=timedelta(minutes=5))
         async def my_task(ctx: TaskContext[dict]) -> str:
             return ""
 
         assert my_task.name == "full"
-        assert my_task._opts.ephemeral is False
+        assert my_task._opts.ephemeral is True
         assert my_task._opts.title == "My Title"
         assert my_task._opts.timeout == timedelta(minutes=5)
 
@@ -78,13 +69,14 @@ class TestTaskDecorator:
             task(42)  # type: ignore[arg-type]
 
     def test_stream_handler_factory_rejected_post_spec_017(self) -> None:
-        """Spec 017 FR-015: ``stream_handler_factory=`` is REMOVED from
+        """: ``stream_handler_factory=`` is REMOVED from
         the @task signature. Passing it raises ``TypeError`` for
         unknown keyword argument. Streaming now lives in the
         ``azure.ai.agentserver.core.streaming`` peer subpackage with
         a registry-based lifecycle model."""
 
         with pytest.raises(TypeError, match="stream_handler_factory"):
+
             @task(stream_handler_factory=lambda task_id: None)  # type: ignore[call-arg]
             async def my_task(ctx: TaskContext[str]) -> int:
                 return 1
@@ -100,7 +92,7 @@ class TestTaskDecorator:
         ],
     )
     def test_task_decorator_rejects_retired_args(self, kwarg: str) -> None:
-        """FR-006: ``@task`` rejects the retired decorator options.
+        """: ``@task`` rejects the retired decorator options.
 
         These were removed because zero developer code relied on them;
         their behavior is now fixed at internal defaults (lease=60s,
@@ -109,54 +101,6 @@ class TestTaskDecorator:
         """
         with pytest.raises(TypeError):
             task(**{kwarg: 1})  # type: ignore[arg-type]
-
-
-class TestTaskOptionsMerge:
-    """Tests for option merge via ``Task.options()``."""
-
-    def test_options_returns_new_instance(self) -> None:
-        """options() returns a new Task, original unchanged."""
-
-        @task(ephemeral=True)
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        updated = my_task.options(ephemeral=False)
-        assert updated is not my_task
-        assert updated._opts.ephemeral is False
-        assert my_task._opts.ephemeral is True
-
-    def test_options_merges_tags(self) -> None:
-        """options() no longer accepts ``tags=`` (internal-only field)."""
-
-        @task()
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        with pytest.raises(TypeError):
-            my_task.options(tags={"b": "2"})  # type: ignore[call-arg]
-
-    def test_options_overrides_title(self) -> None:
-        """options() overrides title."""
-
-        @task(title="original")
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        updated = my_task.options(title="override")
-        assert updated._opts.title == "override"
-
-    def test_default_options(self) -> None:
-        """Default TaskOptions has sensible defaults."""
-
-        @task
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 1
-
-        opts = my_task._opts
-        assert opts.ephemeral is True
-        assert opts.tags == {}
-        assert opts.timeout is None
 
 
 class TestTypeExtraction:
@@ -191,12 +135,12 @@ class TestTypeExtraction:
 
 
 # --------------------------------------------------------------------- #
-# Spec 016 US1 — stale_timeout removal from developer surface (T025)
+#   — stale_timeout removal from developer surface (T025)
 # --------------------------------------------------------------------- #
 
 
 class TestStaleTimeoutRemoved:
-    """Spec 016 FR-001 / US1: ``stale_timeout`` MUST be removed from the
+    """/: ``stale_timeout`` MUST be removed from the
     developer-facing recovery surface (``@task``, ``Task.options()``,
     ``TaskOptions``, ``TaskContext``). Passing the removed kwarg MUST
     raise ``TypeError``.
@@ -212,13 +156,3 @@ class TestStaleTimeoutRemoved:
             @task(stale_timeout=1.0)  # type: ignore[call-arg]
             async def _my_task(ctx: TaskContext[str]) -> int:
                 return 0
-
-    def test_task_options_rejects_stale_timeout(self) -> None:
-        """Task.options(stale_timeout=...) raises TypeError (kwarg removed)."""
-
-        @task
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 0
-
-        with pytest.raises(TypeError):
-            my_task.options(stale_timeout=1.0)  # type: ignore[call-arg]

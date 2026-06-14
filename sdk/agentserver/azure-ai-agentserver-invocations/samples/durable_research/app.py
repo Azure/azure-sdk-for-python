@@ -19,7 +19,7 @@ protocol with the FULL pattern matrix:
 - ``POST /invocations/{id}/cancel`` — operator cancel of the
   per-session task (steering is automatic via re-POSTing instead).
 
-Streaming wiring (spec 017):
+Streaming wiring ():
 
 - ``streams.use_file_backed_replay(...)`` is called once at module
   import (app startup) per streaming.md §7.8. The file-backed
@@ -88,9 +88,7 @@ logger = logging.getLogger(__name__)
 # ``ttl_seconds=600`` bounds disk usage: once a stream is closed and
 # all its events have aged out, the registry destroys it and removes
 # the file.
-_STREAM_DIR = Path(
-    os.environ.get("AGENTSERVER_STREAMS_DIR", str(Path.home() / ".durable-tasks" / "_streams"))
-)
+_STREAM_DIR = Path(os.environ.get("AGENTSERVER_STREAMS_DIR", str(Path.home() / ".durable-tasks" / "_streams")))
 _STREAM_DIR.mkdir(parents=True, exist_ok=True)
 
 streams.use_file_backed_replay(
@@ -106,7 +104,10 @@ app = InvocationAgentServerHost()
 
 
 async def _sse_from_stream(
-    stream: EventStream, invocation_id: str, *, skip_after: int | None = None,
+    stream: EventStream,
+    invocation_id: str,
+    *,
+    skip_after: int | None = None,
 ) -> AsyncGenerator[bytes, None]:
     """Render a stream's events as SSE-formatted bytes.
 
@@ -213,7 +214,7 @@ async def handle_get(request: Request) -> Response:
     Without the SSE accept header: returns the task's current
     snapshot from ``deep_research.get(task_id)``.
 
-    HTTP mapping (from spec 017 streaming.md §exceptions table):
+    HTTP mapping (from  streaming.md §exceptions table):
       - 404 if the invocation id was never seen
         (``EventStreamNotFoundError``).
       - 410 if the stream was destroyed via TTL eviction or explicit
@@ -232,14 +233,12 @@ async def handle_get(request: Request) -> Response:
             stream = await streams.get(invocation_id)
         except EventStreamNotFoundError:
             return JSONResponse(
-                {"status": "not_found",
-                 "message": "No stream for this invocation id."},
+                {"status": "not_found", "message": "No stream for this invocation id."},
                 status_code=404,
             )
         except EventStreamNotFoundError:
             return JSONResponse(
-                {"status": "gone",
-                 "message": "Stream for this invocation id has been destroyed."},
+                {"status": "gone", "message": "Stream for this invocation id has been destroyed."},
                 status_code=410,
             )
 
@@ -252,7 +251,12 @@ async def handle_get(request: Request) -> Response:
     # JSON-snapshot path (polling clients).
     session_id: str = request.state.session_id
     task_id = f"research-{session_id}"
-    info: Any = await deep_research.get(task_id)  # type: ignore[attr-defined]
+    # Task.get + TaskSnapshot removed. Use the
+    # provider directly for read-only inspection (returns TaskInfo).
+    from azure.ai.agentserver.core.durable._manager import get_task_manager
+
+    mgr = get_task_manager()
+    info: Any = await mgr.provider.get(task_id)
     if info is None:
         return JSONResponse({"error": "Task not found"}, status_code=404)
     return JSONResponse(
@@ -280,14 +284,10 @@ async def handle_cancel(request: Request) -> Response:
 
     run = await deep_research.get_active_run(task_id)  # type: ignore[attr-defined]
     if run is None:
-        return JSONResponse(
-            {"status": "not_found", "message": "No active task to cancel."}
-        )
+        return JSONResponse({"status": "not_found", "message": "No active task to cancel."})
 
     await run.cancel()
-    return JSONResponse(
-        {"status": "cancelled", "message": "Task cancellation requested."}
-    )
+    return JSONResponse({"status": "cancelled", "message": "Task cancellation requested."})
 
 
 if __name__ == "__main__":

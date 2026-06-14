@@ -1,10 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for handler-driven persistence (US1).
+"""Protocol conformance tests for handler-driven persistence.
 
-Verifies FR-001 (no persistence before handler runs),
-FR-002 (bg=true: Create at response.created, Update at terminal),
-FR-003 (bg=false: single Create at terminal state).
+Verifies  (no persistence before handler runs),
+ (bg=true: Create at response.created, Update at terminal),
+ (bg=false: single Create at terminal state).
 
 Python port of HandlerDrivenPersistenceTests.
 
@@ -155,7 +155,7 @@ async def _wait_for_background_completion(client: _AsyncAsgiClient, response_id:
 def _make_delaying_handler():
     """Handler that signals when started, then waits for a gate before yielding any events.
 
-    Used to test FR-001: no persistence before handler runs.
+    Used to test: no persistence before handler runs.
     """
     started = asyncio.Event()
     gate = asyncio.Event()
@@ -198,14 +198,14 @@ def _make_simple_handler():
 # ════════════════════════════════════════════════════════════
 # T015: bg+stream — provider NOT called until response.created
 #
-# FR-001: No persistence before handler emits response.created.
+#: No persistence before handler emits response.created.
 # Verifies that GET returns 404 before response.created is emitted.
 # ════════════════════════════════════════════════════════════
 
 
 @pytest.mark.asyncio
 async def test_bg_stream_not_persisted_until_response_created() -> None:
-    """T015/FR-001 — bg+stream: response not accessible before response.created."""
+    """T015/ — bg+stream: response not accessible before response.created."""
     handler = _make_delaying_handler()
     client = _build_client(handler)
     response_id = IdGenerator.new_response_id()
@@ -227,9 +227,9 @@ async def test_bg_stream_not_persisted_until_response_created() -> None:
 
         # GET before response.created — should NOT be accessible yet
         get_resp = await client.get(f"/responses/{response_id}")
-        assert get_resp.status_code == 404, (
-            f"FR-001: response should not be persisted before response.created, got status {get_resp.status_code}"
-        )
+        assert (
+            get_resp.status_code == 404
+        ), f": response should not be persisted before response.created, got status {get_resp.status_code}"
 
         # Release handler → response.created will be yielded
         handler.gate.set()
@@ -250,7 +250,7 @@ async def test_bg_stream_not_persisted_until_response_created() -> None:
 
 @pytest.mark.asyncio
 async def test_bg_nostream_not_persisted_until_response_created() -> None:
-    """T016/FR-001 — bg+nostream: response not accessible before response.created."""
+    """T016/ — bg+nostream: response not accessible before response.created."""
     handler = _make_delaying_handler()
     client = _build_client(handler)
     response_id = IdGenerator.new_response_id()
@@ -271,9 +271,9 @@ async def test_bg_nostream_not_persisted_until_response_created() -> None:
 
         # GET before response.created — should NOT be accessible
         get_resp = await client.get(f"/responses/{response_id}")
-        assert get_resp.status_code == 404, (
-            f"FR-001: response should not be persisted before response.created, got status {get_resp.status_code}"
-        )
+        assert (
+            get_resp.status_code == 404
+        ), f": response should not be persisted before response.created, got status {get_resp.status_code}"
 
         # Release handler
         handler.gate.set()
@@ -290,7 +290,7 @@ async def test_bg_nostream_not_persisted_until_response_created() -> None:
 # ════════════════════════════════════════════════════════════
 # T017: bg=true — exactly 1 Create + 1 Update
 #
-# FR-002: bg mode persists Create at response.created, Update at terminal.
+#: bg mode persists Create at response.created, Update at terminal.
 # We verify via GET that the response is accessible during in-progress
 # and that after completion the status is updated.
 # ════════════════════════════════════════════════════════════
@@ -298,7 +298,7 @@ async def test_bg_nostream_not_persisted_until_response_created() -> None:
 
 @pytest.mark.asyncio
 async def test_bg_mode_response_accessible_during_and_after_handler() -> None:
-    """T017/FR-002 — bg mode: response accessible at in_progress and completed."""
+    """T017/ — bg mode: response accessible at in_progress and completed."""
     started = asyncio.Event()
     release = asyncio.Event()
 
@@ -368,13 +368,13 @@ async def test_bg_mode_response_accessible_during_and_after_handler() -> None:
 # ════════════════════════════════════════════════════════════
 # T018: bg=false — single Create at terminal (no mid-flight GET)
 #
-# FR-003: non-bg mode does a single Create at terminal. Not accessible mid-flight.
+#: non-bg mode does a single Create at terminal. Not accessible mid-flight.
 # ════════════════════════════════════════════════════════════
 
 
 @pytest.mark.asyncio
 async def test_non_bg_not_accessible_until_terminal() -> None:
-    """T018/FR-003 — non-bg: response only accessible after terminal state."""
+    """T018/ — non-bg: response only accessible after terminal state."""
     started = asyncio.Event()
     release = asyncio.Event()
 
@@ -414,9 +414,9 @@ async def test_non_bg_not_accessible_until_terminal() -> None:
 
         # During non-bg handler execution — response should NOT be accessible
         get_mid = await client.get(f"/responses/{response_id}")
-        assert get_mid.status_code == 404, (
-            f"FR-003: non-bg response should not be accessible mid-flight, got {get_mid.status_code}"
-        )
+        assert (
+            get_mid.status_code == 404
+        ), f": non-bg response should not be accessible mid-flight, got {get_mid.status_code}"
 
         release.set()
         post_resp = await asyncio.wait_for(post_task, timeout=5.0)

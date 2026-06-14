@@ -9,10 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    TaskContext,
-    task,
-)
+from azure.ai.agentserver.core.durable import TaskContext, task, multi_turn_task
 from azure.ai.agentserver.core.durable._exceptions import TaskConflictError
 
 
@@ -20,12 +17,8 @@ class TestLifecycle:
     """Verify .run()/.start() lifecycle automation."""
 
     async def _setup_manager(self, tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager,
-        )
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -51,9 +44,7 @@ class TestLifecycle:
 
     def _create_stale_task(self, tmp_path, task_id, status="in_progress"):
         """Write a stale task file directly to simulate a crashed task."""
-        from azure.ai.agentserver.core.durable._models import (
-            TaskCreateRequest,
-        )
+        from azure.ai.agentserver.core.durable._models import TaskCreateRequest
         import asyncio
 
         async def _create(provider):
@@ -72,9 +63,7 @@ class TestLifecycle:
 
     def _backdate_task(self, tmp_path, task_id):
         """Set updated_at far in the past."""
-        task_file = (
-            Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
-        )
+        task_file = Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
         if task_file.exists():
             data = json.loads(task_file.read_text())
             data["updated_at"] = "2020-01-01T00:00:00+00:00"
@@ -93,7 +82,7 @@ class TestLifecycle:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             result = await my_task.run(task_id="lc-fresh-1", input="data")
-            assert result.output == "result"
+            assert result == "result"
             assert observed_mode == ["fresh"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -123,7 +112,7 @@ class TestLifecycle:
                 )
             )
             result = await my_task.run(task_id="lc-pending-1", input="new-data")
-            assert result.output == "started"
+            assert result == "started"
             assert observed_mode == ["fresh"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -133,19 +122,19 @@ class TestLifecycle:
         """run() on suspended task → resumes with new input, entry_mode='resumed'."""
         observed: list[tuple[str, str]] = []
 
-        @task(title="lifecycle-resume", ephemeral=False)
+        @multi_turn_task(title="lifecycle-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
-            return await ctx.suspend(output="waiting")
+            return "waiting"
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             result1 = await my_task.run(task_id="lc-resume-1", input="turn-1")
-            assert result1.is_suspended
+            #: result is raw output (Suspended wrapper removed)
             assert observed[-1] == ("fresh", "turn-1")
 
             result2 = await my_task.run(task_id="lc-resume-1", input="turn-2")
-            assert result2.is_suspended
+            #: result is raw output (Suspended wrapper removed)
             assert observed[-1] == ("resumed", "turn-2")
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -154,9 +143,9 @@ class TestLifecycle:
     async def test_run_in_progress_not_stale_raises(self, tmp_path) -> None:
         """run() on in_progress (live elsewhere) task → TaskConflictError.
 
-        Spec 016 FR-004 (US3): live-elsewhere is signalled by a foreign
-        ``lease_owner`` (different agent or session). This test seeds
-        such a record to exercise the conflict shape per Invariant 1.
+        : live-elsewhere is signalled by a foreign
+                ``lease_owner`` (different agent or session). This test seeds
+                such a record to exercise the conflict shape per Invariant 1.
         """
 
         @task(title="lifecycle-conflict")
@@ -182,7 +171,7 @@ class TestLifecycle:
             )
             with pytest.raises(TaskConflictError) as exc_info:
                 await my_task.run(task_id="lc-conflict-1", input="data")
-            assert exc_info.value.task_id == "lc-conflict-1"
+            #: exception.task_id removed
             assert exc_info.value.current_status == "in_progress"
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -213,11 +202,8 @@ class TestLifecycle:
             )
             self._backdate_task(tmp_path, "lc-stale-1")
 
-            result = await my_task.run(
-                task_id="lc-stale-1",
-                input="new",
-            )
-            assert result.output == "recovered"
+            result = await my_task.run(task_id="lc-stale-1", input="new")
+            assert result == "recovered"
             assert observed_mode == ["recovered"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -265,11 +251,11 @@ class TestLifecycle:
             # Fresh start via .start()
             handle = await my_task.start(task_id="lc-start-1", input="data")
             result = await handle.result()
-            assert result.output == "started"
+            assert result == "started"
             assert observed_mode == ["fresh"]
 
             # Conflict: create in_progress task owned by another agent
-            # and try .start() — should raise TaskConflictError per FR-004a.
+            # and try.start — should raise TaskConflictError.
             from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
             await manager.provider.create(
@@ -303,26 +289,26 @@ class TestLifecycle:
             # Direct-await the TaskRun handle.
             handle = await my_task.start(task_id="awaitable-1", input="hello")
             result = await handle  # ← exercising __await__
-            assert result.output == "echo: hello"
+            assert result == "echo: hello"
 
             # And confirm the explicit .result() path still works identically.
             handle2 = await my_task.start(task_id="awaitable-2", input="world")
             result_via_method = await handle2.result()
-            assert result_via_method.output == "echo: world"
+            assert result_via_method == "echo: world"
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
     @pytest.mark.asyncio
     async def test_stale_timeout_kwarg_removed_spec_016(self, tmp_path) -> None:
-        """Spec 016 FR-001 / US1: stale_timeout removed from developer surface.
+        """/: stale_timeout removed from developer surface.
 
         Replaces the prior `test_stale_timeout_parameter` test (which
         exercised the per-task `stale_timeout` kwarg behavior). After
-        spec 016 the kwarg is gone — passing it raises TypeError. The
+         the kwarg is gone — passing it raises TypeError. The
         recovery decision is framework-managed (no developer knob).
 
         For deterministic in-test recovery triggering during the
-        transitional Phase-4 cohort of spec 016 (Phase 6 replaces this
+        transitional Phase-4 cohort of  (Phase 6 replaces this
         mechanism entirely), tests monkey-patch
         ``_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS`` directly. The
         backdated `updated_at` pattern used elsewhere in this suite
@@ -355,40 +341,35 @@ class TestLifecycle:
 
             # Backdated record (2020) is far past the framework's default
             # 300s threshold → recovery is triggered.
-            result = await my_task.run(
-                task_id="lc-timeout-1",
-                input="new",
-            )
-            assert result.output == "ok"
+            result = await my_task.run(task_id="lc-timeout-1", input="new")
+            assert result == "ok"
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
 
 # --------------------------------------------------------------------- #
-# Spec 016 US3 — 3-layer recovery + periodic scan (T043..T046)
+#   — 3-layer recovery + periodic scan (T043..T046)
 # --------------------------------------------------------------------- #
 
 
-class TestSpec016ThreeLayerRecovery:
-    """Spec 016 FR-002 / FR-005 / FR-009 / SC-003 / SC-004 / SC-005.
+class TestRecoveryThreeLayerRecovery:
+    """/  /  / SC-003 / SC-004 / SC-005.
 
-    Three internal recovery layers share a single reclaim helper
-    (FR-002):
-    - Layer 1: hardened startup scan (always runs at TaskManager.startup).
-    - Layer 2: periodic background scan, monkey-patchable via
-      ``_PERIODIC_RECOVERY_INTERVAL_SECONDS`` (FR-009 test hook).
-    - Layer 3: inline reclaim on scheduling primitives
-      (.run / .start / get_active_run) when they observe a dead-lease
-      in-progress record.
+        Three internal recovery layers share a single reclaim helper
+    :
+        - Layer 1: hardened startup scan (always runs at TaskManager.startup).
+        - Layer 2: periodic background scan, monkey-patchable via
+          ``_PERIODIC_RECOVERY_INTERVAL_SECONDS`` (test hook).
+        - Layer 3: inline reclaim on scheduling primitives
+          (.run / .start / get_active_run) when they observe a dead-lease
+          in-progress record.
 
-    The lease is "dead" per FR-004 when ownership belongs to a previous
-    lifetime AND no live in-memory entry tracks it.
+        The lease is "dead" per  when ownership belongs to a previous
+        lifetime AND no live in-memory entry tracks it.
     """
 
     async def _setup_manager(self, tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
         from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -414,15 +395,15 @@ class TestSpec016ThreeLayerRecovery:
 
     @pytest.mark.asyncio
     async def test_get_active_run_resurrects_dead_lease_orphan(self, tmp_path) -> None:
-        """T043 / SC-003 / FR-005: ``get_active_run()`` on an in-progress
-        record with a dead lease returns a usable TaskRun bound to a
-        new lifetime that re-enters with ``entry_mode == "recovered"``.
+        """``get_active_run`` on an in-progress record with a dead lease
+        returns a usable TaskRun bound to a new lifetime that re-enters
+        with ``entry_mode == "recovered"``.
         """
         from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
         observed: list[str] = []
 
-        @task(name="t043_resurrect", ephemeral=False)
+        @task(name="t043_resurrect")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return "resumed-ok"
@@ -454,17 +435,17 @@ class TestSpec016ThreeLayerRecovery:
             run = await my_task.get_active_run("t043-orphan")
             assert run is not None
             result = await asyncio.wait_for(run.result(), timeout=5.0)
-            assert result.output == "resumed-ok"
+            assert result == "resumed-ok"
             assert observed == ["recovered"]
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
     @pytest.mark.asyncio
     async def test_get_active_run_returns_none_for_terminal(self, tmp_path) -> None:
-        """T043 / FR-005 / SC-003: terminal records return None."""
+        """Terminal records return None."""
         from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
-        @task(name="t043_terminal", ephemeral=False)
+        @task(name="t043_terminal")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "ok"
 
@@ -486,10 +467,8 @@ class TestSpec016ThreeLayerRecovery:
             await self._teardown_manager(manager, mgr_mod)
 
     @pytest.mark.asyncio
-    async def test_periodic_scan_reclaims_orphan_within_interval(
-        self, tmp_path, monkeypatch
-    ) -> None:
-        """T045 / FR-002 Layer 2 / FR-009 / SC-004: using the FR-009
+    async def test_periodic_scan_reclaims_orphan_within_interval(self, tmp_path, monkeypatch) -> None:
+        """T045 /  Layer 2 /  / SC-004: using the
         interval-override constant, a post-startup orphan is reclaimed
         within the test override (~0.05s) without any user-space
         scheduling call.
@@ -499,13 +478,11 @@ class TestSpec016ThreeLayerRecovery:
 
         # Set the interval BEFORE startup so the periodic scan task spawns
         # with the test value (monkeypatch.setattr is read at spawn time).
-        monkeypatch.setattr(
-            mgr_module, "_PERIODIC_RECOVERY_INTERVAL_SECONDS", 0.05
-        )
+        monkeypatch.setattr(mgr_module, "_PERIODIC_RECOVERY_INTERVAL_SECONDS", 0.05)
 
         recovered: list[str] = []
 
-        @task(name="t045_periodic", ephemeral=False)
+        @multi_turn_task(name="t045_periodic")
         async def my_task(ctx: TaskContext[str]) -> str:
             recovered.append(ctx.entry_mode)
             return "ok"
@@ -551,9 +528,8 @@ class TestSpec016ThreeLayerRecovery:
 
         # Just seed a normal record + an in_progress orphan. The startup
         # scan runs in _setup_manager; if it raises, the test fails.
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider,
-        )
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+
         provider = LocalFileTaskProvider(base_dir=Path(str(tmp_path)))
         await provider.create(
             TaskCreateRequest(
@@ -564,6 +540,8 @@ class TestSpec016ThreeLayerRecovery:
                 title="orphan",
                 payload={},
                 lease_owner="some-previous-lifetime",
+                lease_instance_id="some-previous-instance",
+                lease_duration_seconds=60,
             )
         )
 

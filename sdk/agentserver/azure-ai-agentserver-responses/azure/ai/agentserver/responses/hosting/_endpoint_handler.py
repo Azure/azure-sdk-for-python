@@ -588,9 +588,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(
                     exc.response_body,
                     status_code=500,
-                    headers=_apply_error_source_headers(
-                        _hdrs, ERROR_SOURCE_PLATFORM, format_error_detail(exc)
-                    ),
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_PLATFORM, format_error_detail(exc)),
                 )
             return _error_response(exc, _hdrs)
         except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -856,9 +854,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return JSONResponse(
                 err_body,
                 status_code=500,
-                headers=_apply_error_source_headers(
-                    self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
-                ),
+                headers=_apply_error_source_headers(self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM),
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
@@ -1269,7 +1265,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if not _RuntimeState.check_chat_isolation(record.chat_isolation_key, _isolation.chat_key):
             return _not_found(response_id, _hdrs)
 
-        # store=false responses are not deletable (FR-014)
+        # store=false responses are not deletable
         if not record.mode_flags.store:
             return _not_found(response_id, _hdrs)
 
