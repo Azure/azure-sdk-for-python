@@ -110,12 +110,11 @@ def my_acceptor(request, context):
 ## Configuration Matrix
 
 Recovery semantics depend on three request flags and one server option. The
-table below is a quick orientation. The **normative** specification — the
-exact behaviour you can rely on per row, per cancellation path, and per
-stream/poll mode — lives in
-[`sdk/agentserver/specs/durability-contract.md`](../../specs/durability-contract.md).
-That document is the source of truth; this section summarises it for
-developer ergonomics.
+table below is a quick orientation. For the **normative** specification — the
+exact behaviour you can rely on per row, per termination path, and per
+stream/poll mode — see
+[`responses-durability-spec.md`](responses-durability-spec.md). That document
+is the source of truth; this section summarises it for developer ergonomics.
 
 | `store` | `background` | `durable_background` | Summary |
 |---|---|---|---|
@@ -124,11 +123,12 @@ developer ergonomics.
 | `true` | `false` (foreground) | any | **Failed marker.** Response is marked `failed` with `code=server_error`. Handler is NOT re-invoked (the client's HTTP connection is already dead). Persisted events remain queryable. |
 | `false` | any | any | **Best-effort failed marker** during shutdown grace period only. No persistence. Recovery does not apply. |
 
-Each row × cancellation path cell (Path A = client cancel, Path B = graceful
-shutdown, Path C = SIGKILL crash) is covered by a dedicated conformance test
-in `tests/e2e/durability_contract/`. If something behaves differently from
-what the contract doc claims, that's a bug in either the implementation or
-the doc — open an issue.
+Each row × termination-path cell — Path A (handler completes within grace),
+Path B (grace exhausted, in-process marker fires), Path C (crash or Path-B
+failure, next-lifetime recovery fires) — is covered by a dedicated
+conformance test in `tests/e2e/durability_contract/`. If something behaves
+differently from what the spec says, that's a bug in either the implementation
+or the spec — open an issue.
 
 `steerable_conversations=True` composes orthogonally: it enables multi-turn
 steering on top of any row above. Recovery composes with steering — see the
@@ -170,17 +170,17 @@ restarts. For local development:
 
 - **Durable task store**: use `LocalDurableProvider` (writes JSON under a chosen
   filesystem path). The default in-memory provider does not survive a restart.
-- **Response store**: use `FileResponseStore(storage_dir=…)` — added in this
-  release. The default `MemoryResponseStore` does not survive a restart, so a
-  recovered handler would always see an empty store and false-positive on the
-  "fresh attempt" path. Use the file store when you want to exercise the
-  idempotent `response.created` swallow on recovery.
-- **Stream event store**: use `FileStreamProvider` (already existed). Same
-  rationale.
+- **Response store**: use `FileResponseStore(storage_dir=…)`. The default
+  in-memory provider does not survive a restart, so a recovered handler would
+  always see an empty store and false-positive on the "fresh attempt" path.
+  Use the file store when you want to exercise the idempotent
+  `response.created` swallow on recovery.
+- **Stream event store**: use `FileStreamProvider`. Same rationale.
 
-All three providers accept a `tmp_path`-style directory. Wire them against the
-same root for a consistent local crash-recovery setup. For production, your
-deployment hosts these stores externally — typically via the Foundry providers.
+All three providers accept a directory path. Wire them against the same root
+for a consistent local crash-recovery setup. For production, your deployment
+hosts these stores externally — typically via the Foundry providers, which are
+auto-configured when `FOUNDRY_PROJECT_ENDPOINT` is set.
 
 ## DurabilityContext API
 
@@ -217,11 +217,12 @@ print(f"{durability.pending_inputs} turns waiting")
 
 ### Conversation chain identity
 
-`ResponseContext.conversation_chain_id: str` (added in this release) exposes
-the framework-computed conversation chain identifier. It's the same value the
-framework uses internally to partition durable tasks. Handlers that wrap a
-stateful upstream framework (Claude SDK, Copilot SDK, LangGraph, …) can use
-this as their upstream session id without allocating their own UUIDs:
+`ResponseContext.conversation_chain_id: str` exposes the framework-computed
+conversation chain identifier — the stable id every turn in a multi-turn
+conversation shares (and the same value the framework uses internally to
+partition durable tasks). Handlers that wrap a stateful upstream framework
+(Claude SDK, Copilot SDK, LangGraph, …) can use this as their upstream session
+id without allocating their own UUIDs:
 
 ```python
 session = await upstream_client.create_or_resume_session(
@@ -323,7 +324,7 @@ GET /responses/{id}?stream=true&starting_after=42
 This returns only events with `sequence_number > 42`.
 
 The post-recovery part of this guarantee is normative per
-[`durability-contract.md`](../../specs/durability-contract.md): for
+[`responses-durability-spec.md`](responses-durability-spec.md): for
 `(store=true, background=true, durable_background=True, stream=true)` —
 the row that supports handler re-invoke — a client reconnecting AFTER a
 crash receives the events the recovered handler emits, framed by the
@@ -371,24 +372,24 @@ When `background=false` (foreground streaming):
 
 ## Layered Concerns
 
-This guide and the handler guide together implement three layered
-concerns:
+This guide and the handler guide together describe three layered concerns
+that compose to give you durable response handlers:
 
 - **The durable background runtime** provides the runtime primitives
   (`DurabilityContext`, task store wiring, `entry_mode`, steerable
   conversation orchestration).
-- **The cancellation policy** provides the `CancellationReason`
-  enum and the pre-entry / mid-stream / post-stream cancellation rules
+- **The cancellation contract** provides the `CancellationReason`
+  enum and the pre-entry / mid-stream / post-stream rules
   (no `cancelled` from steering or shutdown, no `incomplete` from
   framework, framework-set `failed` for naive-not-handled cancellation).
-- **The recovery contract** (this work) provides the multi-attempt
+- **The recovery contract** provides the multi-attempt
   reconciliation pattern: resumption response, snapshot reset on
   `response.in_progress`, watermark-guarded side effects, naive
   fallback.
 
 The three compose cleanly: the runtime surfaces the recovery hooks, the
-cancellation policy is what recovered handlers must honour, and the
-recovery guidance prescribes how the recovered attempt produces coherent
+cancellation contract is what recovered handlers must honour, and the
+recovery contract prescribes how the recovered attempt produces coherent
 output.
 
 ## Best Practices
@@ -410,9 +411,9 @@ output.
 4. **Keep metadata small.** Watermarks, session IDs, checkpoint references.
    Never bulk data.
 
-5. **Honour the cancellation policy.** Recovery doesn't change the
-   cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation).
-   Phase 1 / Phase 2 / Phase 3 cancellation logic still applies to recovered
+5. **Honour the cancellation contract.** Recovery doesn't change the
+   cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation):
+   the same pre-entry / mid-stream / shutdown rules apply on recovered
    entries.
 
 6. **Don't store secrets in metadata.** The task store persists it.

@@ -511,7 +511,9 @@ order. This prevents protocol violations at development time.
 ```python
 class ResponseContext:
     response_id: str                        # Library-generated response ID
-    is_shutdown_requested: bool             # True when host is shutting down
+    conversation_chain_id: str              # Stable identity for the multi-turn chain (see Durability)
+    cancellation_reason: CancellationReason | None  # Why cancellation_signal fired (see Cancellation)
+    durability: DurabilityContext           # Recovery awareness (see Durability)
     request: CreateResponse | None          # Parsed request model
     client_headers: dict[str, str]          # x-client-* headers from request (keys lowercase)
     query_parameters: dict[str, str]        # Query parameters from the HTTP request
@@ -1021,18 +1023,6 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 6. **`return` in an async generator is a bare statement** — you cannot
    `return value`. Use `yield` for events, then `return` to exit.
 
-### Backward Compatibility
-
-The `context.is_shutdown_requested` property still works:
-
-```python
-if cancellation_signal.is_set() and context.is_shutdown_requested:
-    # Same as: context.cancellation_reason == CancellationReason.SHUTTING_DOWN
-    ...
-```
-
-Prefer `context.cancellation_reason` for new code — it covers all three cases.
-
 ---
 
 ## Error Handling
@@ -1214,15 +1204,16 @@ to disable nginx buffering.
 The framework re-invokes your handler when the server crashes mid-response
 (if `durable_background=True` and the request had `store=true, background=true`).
 What that re-invocation gives you, what you have to do to take advantage of it,
-and how clients reconcile a multi-attempt stream is the **Recovery Contract**.
+and how clients reconcile a multi-attempt stream is the **recovery contract**.
 
-The normative version of the Recovery Contract — every row × cancellation-path
-cell, the exact handler-visible signals on recovery, and the framework's
-persistence guarantees — lives in
-[`sdk/agentserver/specs/durability-contract.md`](../../specs/durability-contract.md).
-That document is the source of truth; this section is the developer-facing
-how-to plus worked examples. The conformance suite at
-`tests/e2e/durability_contract/` exercises every cell.
+The deeper "how does this all fit together" view — the four-row dispatch matrix,
+the three termination paths (handler completes within grace, grace exhausted,
+crash), the exact persistence guarantees the framework makes, and the full
+conformance items — is in
+[`responses-durability-spec.md`](responses-durability-spec.md). That document is
+language-agnostic and intentionally exhaustive; this section is the developer
+how-to with worked Python examples. The conformance suite at
+`tests/e2e/durability_contract/` exercises every cell of the matrix.
 
 You can opt out of all of this and your response will still be correct (just
 duplicative). You opt in when you want the recovered attempt to pick up where
@@ -1234,7 +1225,7 @@ Three layers, each owning a specific slice of state:
 
 | Layer | Owns | On crash recovery, surfaces / provides |
 |---|---|---|
-| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library writes the persisted response *object* exactly twice per response across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts emit `response.created` again but the framework dedups the write (idempotent persistence keyed on `response_id`). It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `entry_mode = "recovered"`, `is_recovery`, `retry_attempt`. Replays persisted events to reconnecting clients. Reconstructs the in-memory handler context (`record`, `parsed`, `context`, cancellation signal) from the durable task input — the handler sees the same `response_id` it had on the first attempt. |
+| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library writes the persisted response *object* exactly twice per response across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts emit `response.created` again but the framework dedups the write (idempotent persistence keyed on `response_id`). It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `entry_mode = "recovered"`, `is_recovery`, `retry_attempt`. Replays persisted events to reconnecting clients. Rebuilds your `ResponseContext` transparently — the handler sees the same `response_id` it had on the first attempt. |
 | **Handler** (your code) | The "what was safely committed" decision, plus side-effect watermarks in `durability.metadata`. | Decides the resumption point. Constructs the **resumption response**. Emits a fresh `response.in_progress` carrying it. Continues producing new output items. |
 | **Upstream framework** (Claude SDK, Copilot SDK, LangGraph, your own LLM client) | The conversational / graph / agent state that has to outlive a process death. | Has its own resume facility (session ID, checkpoint store) that you call from the handler. |
 
@@ -1267,11 +1258,11 @@ is the naive fallback (see below).
 
 - Persists every SSE event in order. No reordering, no deduplication of stream events.
 - Persists the response *object* exactly twice per response_id across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal writes are deduplicated by the framework (idempotent persistence keyed on `response_id`); the handler does not need to branch.
-- Reconstructs the in-memory handler context (`record`, `parsed`, `context`, cancellation signal, runtime-state registration) from the durable task input on any cross-process recovery. The recovered handler sees the same `response_id` it had on the first attempt — id generation is a fresh-entry-only concern.
+- Rebuilds your `ResponseContext` transparently on any cross-process recovery — the recovered handler sees the same `response_id`, the same `request`, the same `conversation_chain_id`, and the same cancellation signal it had on the first attempt. Id generation is a fresh-entry-only concern.
 - Surfaces `entry_mode`, `retry_attempt`, `is_recovery` via `context.durability` (see [DurabilityContext API](durable-responses-developer-guide.md#durabilitycontext-api)). The library does NOT expose a snapshot of the prior attempt — handler must consult its upstream framework for resumption state.
 - Treats any `response.in_progress` event after the first one as a snapshot reset.
 - Replays persisted events to reconnecting clients on `starting_after=`. The reset `in_progress` is part of the replay; clients use it as the reconciliation signal.
-- **Translates the "return on shutdown" handler pattern into the right durable-task recovery behavior.** When your handler returns without emitting a terminal event AND the framework is in graceful shutdown (`cancellation_signal` is set due to SHUTTING_DOWN), the responses package detects this and signals the underlying durable-task primitive to leave the task `in_progress` so the next process lifetime re-invokes your handler with `entry_mode="recovered"`. You simply write `return` in your handler on shutdown — the framework handles the convention; you do not need to raise `CancelledError` yourself or know the durable-task primitive's internals.
+- **Translates the "return on shutdown" handler pattern into the correct recovery behaviour.** When your handler returns without emitting a terminal event AND the framework is in graceful shutdown (`cancellation_signal` is set with `cancellation_reason == SHUTTING_DOWN`), the responses package detects this and leaves the response `in_progress` so the next process lifetime re-invokes your handler with `entry_mode="recovered"`. You simply write `return` in your handler on shutdown — the framework handles the convention; you do not need to raise `CancelledError` yourself.
 - For `background=false` responses: marks the response `failed` on crash and does NOT re-invoke the handler.
 - For `store=false` responses: best-effort `failed` marker during shutdown grace period; no recovery.
 
@@ -1316,8 +1307,10 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 
     yield stream.emit_created()  # same call on fresh and recovered; framework dedups
 
-    # Cancellation policy composes with recovery:
-    # Phase 1 pre-entry cancel still applies — only emit completed on STEERED.
+    # The cancellation contract still applies on recovered entry. If the
+    # signal is pre-set (steering, client cancel, or shutdown), only emit
+    # `completed` for STEERED — other reasons just return and let the
+    # framework decide the terminal status.
     if cancellation_signal.is_set():
         if context.cancellation_reason == CancellationReason.STEERED:
             yield stream.emit_completed()
@@ -1331,8 +1324,9 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
     async for event in _produce_new_output(stream, durability, request, cancellation_signal):
         yield event
 
-    # Phase 3 cancellation: on shutdown mid-work, return without terminal
-    # so the framework re-invokes us again on the next restart.
+    # On graceful shutdown mid-work, return without terminal — the framework
+    # leaves the response `in_progress` and re-invokes us on the next
+    # process restart.
     if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
         return
 
@@ -1393,8 +1387,7 @@ the current turn's input AND that prior turn completed normally, the
 "last user message in history equals current input" heuristic incorrectly
 skips. Rare in practice for human-driven conversations; if your domain has
 machine-generated identical-input replays, fall back to the watermark pattern
-below, or have the framework provide stable per-turn identity (see the
-`conversation_chain_id` follow-up in spec 013).
+below.
 
 ### Watermark Pattern (fallback when upstream exposes no persisted history)
 
@@ -1495,13 +1488,13 @@ for what's safely committed.
 
 ### Recovery × Cancellation Composition
 
-The cancellation policy from the [Cancellation](#cancellation) section composes
+The cancellation contract from the [Cancellation](#cancellation) section composes
 with recovery cleanly:
 
 - **Recovered entry + cancellation_signal pre-set**: same as fresh entry —
   only `STEERED` emits `completed`; others return.
 - **Recovered entry + cancellation_signal fires mid-stream**: same as fresh
-  entry's Phase 2 — break the loop, then check `SHUTTING_DOWN` for
+  entry — break the loop, then check `SHUTTING_DOWN` for
   return-without-terminal; otherwise close builders and `emit_completed`.
 - **Crash during recovery itself** (`retry_attempt > 1`): same code path; each
   attempt queries upstream for its current state, computes a (possibly
