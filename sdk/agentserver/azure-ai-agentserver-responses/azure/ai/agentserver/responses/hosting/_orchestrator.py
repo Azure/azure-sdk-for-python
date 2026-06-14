@@ -2976,24 +2976,24 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 record=record,
                 ctx_params=ctx_params,
             )
-            if not freshly_started and self._runtime_options.steerable_conversations:
-                # Input was queued on already-active steerable task.
-                # Signal the record that it should return a "queued" response
-                # instead of waiting for handler execution.
+            if not freshly_started:
+                # Input was queued on already-active multi-turn steerable
+                # chain. The downstream `start_durable` already detected
+                # this via the TaskRun's queued-cancel callback. Signal
+                # the record that it should return a "queued" envelope
+                # via the acceptance hook instead of waiting for handler
+                # execution.
                 record.input_queued = True  # type: ignore[attr-defined]
                 record.response_created_signal.set()
         except TaskConflictError:
-            # Conversation already locked — propagate so routing layer
-            # can return HTTP 409 (steerable) or fallback (non-steerable).
-            if self._runtime_options.steerable_conversations:
-                raise
-            # Non-steerable: shouldn't happen (distinct task IDs per fork),
-            # but fall back gracefully just in case.
-            logger.warning(
-                "Unexpected TaskConflictError for non-steerable response %s; falling back",
-                ctx.response_id,
-            )
-            record.execution_task = asyncio.create_task(fallback_runner())
+            # Spec 023 — concurrent conflict on a shared task_id (Row 5
+            # concurrent overlap for `conv_id + steerable=False`, or the
+            # legacy steerable-chain in-progress conflict). Propagate so
+            # the endpoint handler maps it to HTTP 409 `conversation_locked`.
+            # All shared-task-id rows (5, 6, 7) hit this path; the only
+            # rows that DON'T are the one-shot rows (1-4) which use
+            # unique task_ids per request and shouldn't conflict.
+            raise
         except LastInputIdPreconditionFailed:
             # (Spec 013 US2) Steerable conversations enforce sequential
             # `previous_response_id`. Propagate so the endpoint layer

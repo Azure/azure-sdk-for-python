@@ -58,59 +58,85 @@ class TestEntryModeMapping:
 
 
 class TestDurableOrchestratorTaskCreation:
-    """Tests that the task function is created with correct parameters."""
+    """Tests that the task functions are created with correct parameters.
 
-    def test_orchestrator_creates_task_with_correct_name(self) -> None:
+    Spec 023 — the orchestrator now registers TWO primitives:
+    ``_one_shot_task_fn`` (`@task`) and ``_multi_turn_task_fn``
+    (`@multi_turn_task(steerable=…)`). The legacy single
+    ``task_fn`` property is preserved as an alias for ``_one_shot_task_fn``
+    so older introspection tests keep working.
+    """
+
+    def test_orchestrator_creates_one_shot_with_correct_name(self) -> None:
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=MagicMock(steerable_conversations=False, max_pending=10),
         )
-        assert orch.task_fn is not None
-        assert orch.task_fn._opts.name == "responses_durable_background"
+        assert orch._one_shot_task_fn is not None
+        assert orch._one_shot_task_fn._opts.name == "responses_durable_one_shot"
+        # The legacy ``task_fn`` alias points at the one-shot primitive
+        # so existing recovery-registration introspection still works.
+        assert orch.task_fn is orch._one_shot_task_fn
 
-    def test_orchestrator_steerable_option_passes_through(self) -> None:
+    def test_orchestrator_creates_multi_turn_with_correct_name(self) -> None:
+        orch = DurableResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=MagicMock(steerable_conversations=False, max_pending=10),
+        )
+        assert orch._multi_turn_task_fn is not None
+        assert orch._multi_turn_task_fn._opts.name == "responses_durable_multi_turn"
+
+    def test_orchestrator_steerable_option_propagates_to_multi_turn(self) -> None:
+        """``steerable_conversations`` now lives on the multi-turn primitive
+        (one-shot can never be steerable — ``@task`` rejects the kwarg)."""
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=MagicMock(steerable_conversations=True),
         )
-        assert orch.task_fn._opts.steerable is True
+        assert orch._multi_turn_task_fn._opts.steerable is True
         # Per spec 015 FR-006, ``max_pending`` is no longer carried on
         # TaskOptions — server-side back-pressure lives at a different layer.
-        assert not hasattr(orch.task_fn._opts, "max_pending")
+        assert not hasattr(orch._multi_turn_task_fn._opts, "max_pending")
 
-    def test_orchestrator_non_steerable_by_default(self) -> None:
+    def test_orchestrator_multi_turn_non_steerable_by_default(self) -> None:
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=MagicMock(steerable_conversations=False, max_pending=10),
         )
-        assert orch.task_fn._opts.steerable is False
+        assert orch._multi_turn_task_fn._opts.steerable is False
 
-    def test_task_is_non_ephemeral(self) -> None:
-        """Task lives for conversation lifetime (not deleted on completion)."""
+    def test_one_shot_is_ephemeral(self) -> None:
+        """One-shot primitives are ALWAYS ephemeral (the record is auto-
+        deleted on terminal exit). Multi-turn chains persist between
+        turns. The migration eliminated the prior ``ephemeral=False``
+        storage overhead for the non-multi-turn rows."""
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=MagicMock(steerable_conversations=False, max_pending=10),
         )
-        assert orch.task_fn._opts.ephemeral is False
+        assert orch._one_shot_task_fn._opts.ephemeral is True
+        # Multi-turn chains are NEVER ephemeral (must persist between turns).
+        assert orch._multi_turn_task_fn._opts.ephemeral is False
 
     def test_task_input_is_not_stored_via_decorator_option(self) -> None:
         """Per spec 015 FR-006: ``store_input`` option is removed from @task.
 
         Storage is automatic. This test asserts the option is no longer
         passed (or accepted) by the orchestrator's task descriptor.
+        Applies to both primitives.
         """
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=MagicMock(steerable_conversations=False, max_pending=10),
         )
-        # The TaskOptions dataclass no longer carries store_input — accessing
-        # the attribute should raise (or the orchestrator must not pass it).
-        assert not hasattr(orch.task_fn._opts, "store_input")
+        assert not hasattr(orch._one_shot_task_fn._opts, "store_input")
+        assert not hasattr(orch._multi_turn_task_fn._opts, "store_input")
 
 
 class TestDurableOrchestratorExecuteInTask:
@@ -203,8 +229,11 @@ class TestDurableOrchestratorExecuteInTask:
         assert dc.pending_inputs == 2
 
     @pytest.mark.asyncio
-    async def test_steerable_suspends_after_completion(self) -> None:
-        """In steerable mode, task suspends after handler completes."""
+    async def test_steerable_returns_none_for_implicit_suspend(self) -> None:
+        """Spec 023 — multi-turn task bodies signal implicit-suspend
+        via bare ``return None``. The framework records the suspend
+        transition automatically for ``@multi_turn_task`` bodies; no
+        explicit ``ctx.suspend(reason=...)`` call is required."""
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
@@ -219,7 +248,6 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
-        ctx.suspend = AsyncMock()
         ctx.input = {
             "response_id": "resp_789",
             "_record_ref": MagicMock(),
@@ -233,14 +261,18 @@ class TestDurableOrchestratorExecuteInTask:
             "azure.ai.agentserver.responses.hosting._orchestrator._run_background_non_stream",
             new_callable=AsyncMock,
         ):
-            await orch._execute_in_task(ctx)
+            result = await orch._execute_in_task(ctx)
 
-        ctx.suspend.assert_called_once()
-        assert "next_turn" in ctx.suspend.call_args[1].get("reason", "")
+        # Implicit-suspend: body returns None (no ctx.suspend(reason=...) call).
+        assert result is None
 
     @pytest.mark.asyncio
-    async def test_non_steerable_does_not_suspend(self) -> None:
-        """In non-steerable mode, task completes (no suspend)."""
+    async def test_non_steerable_returns_none_too(self) -> None:
+        """In non-steerable mode the body also returns None — under the
+        new model the difference between non-steerable and steerable is
+        determined by which primitive the orchestrator routes to
+        (``@task`` vs ``@multi_turn_task(steerable=False)``), not by an
+        explicit suspend call inside the body."""
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
@@ -255,7 +287,6 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
         ctx.task_id = "test-task-id"
-        ctx.suspend = AsyncMock()
         ctx.input = {
             "response_id": "resp_000",
             "_record_ref": MagicMock(),
@@ -269,9 +300,9 @@ class TestDurableOrchestratorExecuteInTask:
             "azure.ai.agentserver.responses.hosting._orchestrator._run_background_non_stream",
             new_callable=AsyncMock,
         ):
-            await orch._execute_in_task(ctx)
+            result = await orch._execute_in_task(ctx)
 
-        ctx.suspend.assert_not_called()
+        assert result is None
 
 
 class TestDurableOrchestratorCancellationBridge:

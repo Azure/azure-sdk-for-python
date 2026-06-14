@@ -802,13 +802,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
             return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
         except LastInputIdPreconditionFailed as exc:
-            # (Spec 013 US2) Steerable conversations enforce sequential
-            # `previous_response_id` (no forks). Surface as a succinct
-            # client-facing error.
+            # Spec 023 — under the spec-022 narrow surface, only
+            # ``actual_last_input_id`` is carried (``expected_last_input_id``
+            # / ``task_id`` are no longer part of the public exception API).
+            # Steerable conversations enforce sequential `previous_response_id`
+            # (no forks). Surface as a succinct client-facing error.
             logger.info(
-                "Conversation fork rejected for %s: expected previous=%r, actual=%r",
+                "Conversation fork rejected for %s: actual_last_input_id=%r",
                 ctx.response_id,
-                exc.expected_last_input_id,
                 exc.actual_last_input_id,
             )
             err_body = {
@@ -825,15 +826,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             }
             return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
         except TaskConflictError as exc:
+            # Spec 023 — under the spec-022 narrow surface, TaskConflictError
+            # carries only ``current_status``; the task_id is not part of
+            # the public exception API. The endpoint already knows the
+            # response_id (logged separately); the chain identity is not
+            # exposed to the client error body.
             logger.info(
-                "Conversation lock conflict for %s: task %s is %s",
+                "Conversation lock conflict for %s: task is %s",
                 ctx.response_id,
-                exc.task_id,
                 exc.current_status,
             )
             err_body = {
                 "error": {
-                    "message": f"Conversation is locked — task '{exc.task_id}' is {exc.current_status}",
+                    "message": f"Conversation is locked — task is {exc.current_status}",
                     "type": "conflict",
                     "code": "conversation_locked",
                     "param": None,

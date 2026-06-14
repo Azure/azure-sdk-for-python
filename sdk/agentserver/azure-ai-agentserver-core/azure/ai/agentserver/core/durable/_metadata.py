@@ -90,22 +90,24 @@ class TaskMetadata(collections.abc.MutableMapping):
 
                 ``meta()`` returns the default namespace; ``meta("custom")``
                 returns the named-namespace facade (auto-vivified).
-        : namespace names with a leading underscore are reserved
-                for the framework and raise :class:`ValueError`.
+
+        The core primitive does NOT enforce namespace-name conventions
+        (e.g. the leading-underscore reservation). That is a wrapper-
+        layer concern — handler-facing wrappers like the responses
+        package's :class:`DurabilityContext` reject ``_*`` names so
+        handlers can't collide with framework-reserved namespaces such
+        as ``_responses``. Framework-layered code (the responses
+        orchestrator itself) reaches reserved namespaces directly via
+        this API.
 
                 :param name: Namespace name. ``None`` returns the default
                     namespace; a string returns the named namespace.
                 :type name: str | None
                 :return: A namespace facade.
                 :rtype: TaskMetadata
-                :raises ValueError: If ``name`` starts with an underscore.
         """
         if name is None:
             return self._registry[None]
-        if name.startswith("_"):
-            raise ValueError(
-                f"Namespace names with a leading underscore are reserved for " f"the framework: got {name!r}"
-            )
         if name in self._registry:
             return self._registry[name]
         # Auto-vivify a new namespace; share the registry and inherit

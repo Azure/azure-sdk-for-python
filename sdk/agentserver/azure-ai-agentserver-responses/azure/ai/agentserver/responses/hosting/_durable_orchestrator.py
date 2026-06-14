@@ -22,9 +22,11 @@ import logging
 from typing import TYPE_CHECKING, Any, Callable
 
 from azure.ai.agentserver.core.durable import (
+    MultiTurnTask,
     Task,
     TaskContext,
     TaskConflictError,
+    multi_turn_task,
     task,
 )
 
@@ -332,42 +334,131 @@ class DurableResponseOrchestrator:
         # function and does not need this reference.
         self._parent_orchestrator = parent_orchestrator
 
-        # Create the internal task function
-        self._task_fn: Task[dict[str, Any], None] = self._create_task_fn()
+        # Spec 023 — per-request primitive dispatch (SOT §6.6).
+        # Two task primitives are registered per deployment; ``_pick_primitive``
+        # selects per request based on (conversation_id, previous_response_id,
+        # steerable_conversations).
+        #
+        # Per Constitution Principle V (fail-fast), both registrations happen
+        # at __init__ time. If the core wheel does not expose both ``@task``
+        # and ``@multi_turn_task`` symbols, the failure surfaces at server
+        # startup instead of per-request.
+        one_shot, multi_turn = self._create_task_fns()
+        self._one_shot_task_fn: Task[dict[str, Any], None] = one_shot
+        self._multi_turn_task_fn: MultiTurnTask[dict[str, Any], None] = multi_turn
 
     @property
     def task_fn(self) -> Task[dict[str, Any], None]:
-        """The underlying durable task descriptor."""
-        return self._task_fn
+        """Deprecated single-task accessor — use ``_one_shot_task_fn`` /
+        ``_multi_turn_task_fn`` or the ``_pick_primitive`` dispatch instead.
 
-    def _create_task_fn(self) -> Task[dict[str, Any], None]:
-        """Create the @task-decorated function that wraps _run_background_non_stream."""
+        Kept for backward-compatible introspection by existing unit tests
+        that pre-date the spec 023 per-request dispatch refactor; returns
+        the one-shot primitive (the registration with the
+        ``"responses_durable_background"`` legacy name).
+        """
+        return self._one_shot_task_fn
+
+    def _create_task_fns(
+        self,
+    ) -> tuple[
+        Task[dict[str, Any], None],
+        MultiTurnTask[dict[str, Any], None],
+    ]:
+        """Register both task primitives this orchestrator dispatches between.
+
+        Returns a tuple ``(one_shot, multi_turn)``:
+
+        - ``one_shot`` is a ``@task``-decorated function used for single-turn
+          requests (no ``conversation_id``, no ``previous_response_id`` in
+          steerable mode). Auto-deleted on terminal exit (one-shot
+          primitives are always ephemeral).
+        - ``multi_turn`` is a ``@multi_turn_task``-decorated function used
+          for multi-turn / chain requests. Suspends between turns (chain
+          persists in ``status="suspended"`` until the next turn arrives).
+          Its ``steerable=`` flag matches ``options.steerable_conversations``.
+
+        The task body in both cases delegates to ``_execute_in_task`` —
+        the routing branches inside the body handle the disposition / row
+        dispatch.
+        """
         orchestrator = self
 
-        @task(
-            name="responses_durable_background",
-            steerable=self._options.steerable_conversations,
-            ephemeral=False,  # Task lives for conversation lifetime
-        )
-        async def _durable_response_task(ctx: TaskContext[dict[str, Any]]) -> None:
-            """Task body: executes the response pipeline with durability context.
+        # ── One-shot primitive ──────────────────────────────────────────
+        # Used for rows where the request has neither a conversation_id
+        # nor a steerable previous_response_id (SOT §6.6 rows 1-2 / 3).
+        # Also used for the Row 2/3 bookkeeping pattern, where the
+        # bookkeeping body's only job is to hold the lease while the
+        # external handler runs; on terminal exit the record is deleted
+        # (eliminating the prior ephemeral=False storage overhead).
+        @task(name="responses_durable_one_shot")
+        async def _one_shot_response_task(
+            ctx: TaskContext[dict[str, Any]],
+        ) -> None:
+            """One-shot task body — runs the response pipeline once and returns.
 
-            On fresh entry: runs the full pipeline via _run_background_non_stream.
-            On recovery: re-runs the pipeline (handler is re-invoked from scratch).
-            After completion: suspends awaiting the next turn (steerable mode)
-            by returning the ``Suspended`` sentinel from ``_execute_in_task``
-            UNCHANGED. Returning the sentinel directly is required for the
-            framework to transition the task to ``suspended`` status — any
-            wrapping that discards the return value (e.g. ``await
-            _execute_in_task(ctx)`` with no ``return``) causes the framework
-            to treat the body as a normal completion and writes
-            ``status="completed"``, which prevents subsequent turns from
-            chaining onto the same task_id (the task is terminal and
-            ``start()`` either conflicts or fails the precondition).
+            On terminal exit, the durable record is deleted (one-shot
+            primitives are always ephemeral). Recovery branches that need
+            to mark the response failed do so via the response store
+            (which is the authoritative failure record per SOT §7.2)
+            and return ``None``; the deleted bookkeeping record is fine
+            because the failure marker lives in the response store.
             """
             return await orchestrator._execute_in_task(ctx)  # noqa: RET504
 
-        return _durable_response_task
+        # ── Multi-turn primitive ────────────────────────────────────────
+        # Used for rows where the request has a conversation_id OR a
+        # steerable previous_response_id (SOT §6.6 rows 4-7). The chain
+        # transitions to ``status="suspended"`` between turns; the next
+        # turn's start() resumes the same task. The steerable= flag
+        # gates whether mid-turn input is queued (steerable=True) or
+        # rejected with TaskConflictError(in_progress) (steerable=False).
+        @multi_turn_task(
+            name="responses_durable_multi_turn",
+            steerable=self._options.steerable_conversations,
+        )
+        async def _multi_turn_response_task(
+            ctx: TaskContext[dict[str, Any]],
+        ) -> None:
+            """Multi-turn task body — runs one turn of the chain.
+
+            Returning ``None`` is the implicit-suspend signal — the
+            framework transitions the chain to ``status="suspended"`` so
+            the next turn can resume the same task. Recovery branches
+            that need to mark the response failed do so via the response
+            store and ``return None`` (a normal end-of-turn signal that
+            keeps the chain alive for subsequent turns).
+            """
+            return await orchestrator._execute_in_task(ctx)  # noqa: RET504
+
+        return _one_shot_response_task, _multi_turn_response_task
+
+    def _pick_primitive(
+        self,
+        ctx_params: dict[str, Any],
+    ) -> "Task[dict[str, Any], None] | MultiTurnTask[dict[str, Any], None]":
+        """Select the underlying durable-task primitive for this request.
+
+        Implements the SOT §6.6 / spec-021 §7.3 matrix:
+
+        - ``conversation_id`` present → multi-turn primitive (chain
+          semantics regardless of ``steerable_conversations``).
+        - ``previous_response_id`` present AND
+          ``steerable_conversations=True`` → multi-turn primitive
+          (steerable chain extension).
+        - Otherwise → one-shot primitive (no chain semantics needed).
+
+        :param ctx_params: The orchestrator's combined params dict.
+        :returns: One of ``self._one_shot_task_fn`` /
+            ``self._multi_turn_task_fn``.
+        """
+        conv_id = ctx_params.get("conversation_id")
+        prev_id = ctx_params.get("previous_response_id")
+        if conv_id is not None:
+            return self._multi_turn_task_fn
+        if prev_id is not None and self._options.steerable_conversations:
+            return self._multi_turn_task_fn
+        return self._one_shot_task_fn
 
     async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> None:
         """Execute the response pipeline inside the task body.
@@ -446,9 +537,12 @@ class DurableResponseOrchestrator:
                 response_id,
             )
             await self._persist_crash_failed(response_id, params)
-            if self._options.steerable_conversations:
-                return await ctx.suspend(reason="crash_failed")
-            return
+            # Spec 023: implicit-suspend via bare ``return None`` (the
+            # framework records the suspend transition automatically for
+            # multi_turn_task bodies). The response store's ``failed``
+            # terminal that we just persisted is the authoritative failure
+            # record per SOT §7.2.
+            return None
 
         # Backward-compat: the pre-disposition non-background recovery branch.
         # Tasks created before the disposition key existed default to
@@ -460,9 +554,8 @@ class DurableResponseOrchestrator:
                 response_id,
             )
             await self._persist_crash_failed(response_id, params)
-            if self._options.steerable_conversations:
-                return await ctx.suspend(reason="non_bg_crash_failed")
-            return
+            # Spec 023: implicit-suspend via bare ``return None`` (see above).
+            return None
 
         # (Spec 014 FR-003 / FR-004) Fresh-entry bookkeeping mode. The
         # handler is running externally (Row 2: asyncio.create_task in
@@ -607,16 +700,27 @@ class DurableResponseOrchestrator:
                     runtime_options=self._options,
                 )
 
-            # (Spec 014 FR-005a — close divergence 4)
-            # If the handler returned without emitting a terminal event AND
-            # graceful shutdown is in progress, raise CancelledError so the
-            # core durable-task primitive's cooperative-cancel branch
-            # (_manager.py:1241-1268) leaves the task `status="in_progress"`
-            # for next-lifetime recovery. Without this, _handle_success runs
-            # (_manager.py:1200-1208), marks the task `completed`, and the
-            # recovery scanner skips it. See
-            # `azure-ai-agentserver-core/docs/durable-task-guide.md`
-            # § Graceful Shutdown (`ctx.shutdown`).
+            # Spec 023 — If the handler returned without emitting a
+            # terminal event AND graceful shutdown is in progress,
+            # explicitly signal the framework to leave the task
+            # ``status="in_progress"`` for next-lifetime recovery.
+            #
+            # We use ``ctx.exit_for_recovery()`` (the framework's
+            # graceful-shutdown primitive) rather than raising
+            # ``CancelledError`` because:
+            # - For multi-turn primitives both work, but
+            #   ``exit_for_recovery`` is the documented public API.
+            # - For one-shot (ephemeral) primitives, ``CancelledError``
+            #   triggers the cancel-delete branch in the core manager
+            #   — the record gets DELETED, and the recovery scanner
+            #   finds nothing. ``exit_for_recovery`` releases the lease
+            #   without deleting, so the recovery scanner can re-fire
+            #   the task on the next process startup.
+            #
+            # Without this distinction, Row 1 Path B (graceful shutdown
+            # mid-handler with grace exhausted) silently loses the
+            # response because the one-shot ephemeral record is deleted
+            # on cancel.
             if (
                 ctx.shutdown.is_set()
                 and record is not None
@@ -624,11 +728,11 @@ class DurableResponseOrchestrator:
             ):
                 logger.info(
                     "Response %s handler returned during shutdown without "
-                    "terminal; raising CancelledError so task stays "
-                    "in_progress for next-lifetime recovery (FR-005a).",
+                    "terminal; calling ctx.exit_for_recovery() so task stays "
+                    "in_progress for next-lifetime recovery.",
                     response_id,
                 )
-                raise asyncio.CancelledError()
+                return await ctx.exit_for_recovery()
         finally:
             if cancel_bridge is not None and not cancel_bridge.done():
                 cancel_bridge.cancel()
@@ -639,9 +743,15 @@ class DurableResponseOrchestrator:
             # accept path, so dropping unconditionally is safe.
             _RUNTIME_REFS.pop(response_id, None)
 
-        # Suspend — task stays alive for next turn in steerable mode
-        if self._options.steerable_conversations:
-            return await ctx.suspend(reason="awaiting_next_turn")
+        # Spec 023: implicit-suspend via bare ``return None``. For
+        # multi_turn_task bodies the framework records the suspend
+        # transition automatically; for one-shot @task bodies the
+        # framework marks the task ``completed`` and deletes the record
+        # (ephemeral). The per-request primitive dispatch in
+        # ``start_durable`` picks the correct primitive so the lifecycle
+        # transition matches the row's expected behaviour without any
+        # explicit ``ctx.suspend(reason=...)`` call here.
+        return None
 
     async def start_durable(
         self,
@@ -669,50 +779,65 @@ class DurableResponseOrchestrator:
             steerable=self._options.steerable_conversations,
         )
 
-        try:
-            # (Spec 013 US1(c)) Split ctx_params into in-memory refs and
-            # JSON-serializable persisted params. The durable task input only
-            # contains the persisted subset; the refs live in the process-
-            # local cache and are looked up by response_id in the task body.
-            response_id = ctx_params["response_id"]
-            refs, persisted = _split_runtime_refs(ctx_params)
-            _RUNTIME_REFS[response_id] = refs
+        # Spec 023 — per-request primitive dispatch (SOT §6.6).
+        # Selects between the one-shot ``@task`` primitive (auto-deleted
+        # on terminal exit; no chain semantics) and the multi-turn
+        # ``@multi_turn_task`` primitive (suspends between turns; chain
+        # semantics) based on the request's conversation_id /
+        # previous_response_id / steerable_conversations tuple.
+        picked_primitive = self._pick_primitive(ctx_params)
+        is_multi_turn = picked_primitive is self._multi_turn_task_fn
 
-            start_kwargs: dict[str, Any] = {
-                "task_id": task_id,
-                "input": persisted,
-            }
-            # Steerable conversations: per-turn input_id provides
-            # idempotency on the response_id. The ``if_last_input_id``
-            # precondition is the chain-extension primitive and applies
-            # ONLY when the caller is using ``previous_response_id``-style
-            # explicit chaining (where the caller declares which prior
-            # turn this one extends). For ``conversation``-style grouping
-            # the task_id derivation already collapses every turn in the
-            # same conversation onto a single task_id; sequential
-            # delivery is enforced via TaskConflictError (queued for
-            # steering) or the steerable input queue — there is no chain
-            # to enforce so we skip the precondition.
-            #
-            # Mapping to FR-***/SC-021 in spec 013.
-            if self._options.steerable_conversations:
-                if response_id is not None:
-                    start_kwargs["input_id"] = response_id
-                previous_response_id = ctx_params.get("previous_response_id")
-                if previous_response_id is not None:
-                    start_kwargs["if_last_input_id"] = previous_response_id
-            task_run = await self._task_fn.start(**start_kwargs)
-            # Store the task run reference on the record for observability
-            record.durable_task_run = task_run  # type: ignore[attr-defined]
-            return True  # Freshly started
-        except TaskConflictError:
-            # Task already running (e.g. steerable conversation in progress)
-            # This is expected for steerable mode — the input is queued
-            logger.debug(
-                "Task %s already active — input queued for steering",
-                task_id,
-            )
-            return False  # Input queued on existing task
+        # (Spec 013 US1(c)) Split ctx_params into in-memory refs and
+        # JSON-serializable persisted params. The durable task input only
+        # contains the persisted subset; the refs live in the process-
+        # local cache and are looked up by response_id in the task body.
+        response_id = ctx_params["response_id"]
+        refs, persisted = _split_runtime_refs(ctx_params)
+        _RUNTIME_REFS[response_id] = refs
+
+        start_kwargs: dict[str, Any] = {
+            "task_id": task_id,
+            "input": persisted,
+        }
+        # Multi-turn chain primitives carry per-turn ``input_id`` for
+        # idempotency on response_id, and ``if_last_input_id`` for the
+        # chain-extension precondition (forks rejected as
+        # ``LastInputIdPreconditionFailed``). One-shot primitives need
+        # neither — they have no chain to extend; the task_id IS the
+        # identifier and the request fork model produces a distinct
+        # task_id per request.
+        if is_multi_turn:
+            if response_id is not None:
+                start_kwargs["input_id"] = response_id
+            previous_response_id = ctx_params.get("previous_response_id")
+            if previous_response_id is not None:
+                start_kwargs["if_last_input_id"] = previous_response_id
+
+        # ``TaskConflictError`` from the underlying primitive ALWAYS signals
+        # a real conflict (concurrent overlap on a multi-turn-non-steerable
+        # chain, OR a duplicate task_id collision). It propagates up to the
+        # endpoint handler which maps it to HTTP 409 ``conversation_locked``.
+        # Under the new model the steerable-input-queuing case does NOT
+        # raise TaskConflictError — ``MultiTurnTask(steerable=True).start()``
+        # auto-queues against an in-flight chain and returns a TaskRun
+        # whose ``_queued_cancel_callback`` is set (the public-surface
+        # detection signal). See the queued-vs-fresh check below.
+        task_run = await picked_primitive.start(**start_kwargs)
+        # Store the task run reference on the record for observability
+        record.durable_task_run = task_run  # type: ignore[attr-defined]
+
+        # Detect "queued steering input" via the TaskRun's queued-cancel
+        # callback. The framework installs this callback ONLY when the
+        # returned handle represents a queued (not-yet-promoted) input on
+        # a steerable chain — i.e. the caller's request landed mid-turn
+        # and is awaiting drain. Returning False here signals the caller
+        # to dispatch the acceptance hook and return a ``status="queued"``
+        # response envelope to the HTTP caller.
+        # NOTE: this reads a private TaskRun attribute. If the core ever
+        # adds a public ``is_queued`` property, switch to that.
+        is_queued = getattr(task_run, "_queued_cancel_callback", None) is not None
+        return not is_queued  # True = freshly started, False = queued
 
     async def _run_bookkeeping_body(
         self,

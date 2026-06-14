@@ -49,17 +49,29 @@ class TestConflictHandling:
     """TaskConflictError from .start() → HTTP 409."""
 
     @pytest.mark.asyncio
-    async def test_task_conflict_raises_on_start(self) -> None:
-        """When task is already in_progress, start_durable raises TaskConflictError."""
+    async def test_task_conflict_propagates_from_start_durable(self) -> None:
+        """Spec 023 — ``start_durable`` PROPAGATES TaskConflictError from
+        the underlying primitive (was: swallowed before the migration).
+
+        Under the new per-request dispatch model, TaskConflictError ALWAYS
+        signals a real conflict (concurrent overlap on a shared-task_id
+        chain) and warrants HTTP 409 conversation_locked. The "queued for
+        steering" case is handled inside the framework's
+        ``MultiTurnTask(steerable=True).start()`` without raising TCE.
+        """
+        opts = MagicMock(
+            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
+        )
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
-            options=MagicMock(steerable_conversations=False, max_pending=10),
+            options=opts,
         )
 
-        # Mock the task_fn.start to raise TaskConflictError
-        orch._task_fn = MagicMock()
-        orch._task_fn.start = AsyncMock(
+        # Force dispatch to the multi-turn primitive (so the test exercises
+        # the shared-task_id conflict path) by passing conversation_id.
+        orch._multi_turn_task_fn = MagicMock()
+        orch._multi_turn_task_fn.start = AsyncMock(
             side_effect=TaskConflictError("task-123", "in_progress")
         )
 
@@ -68,39 +80,44 @@ class TestConflictHandling:
             "response_id": "resp_conflict",
             "agent_name": "test-agent",
             "session_id": "sess-1",
-            "partition_key": "conv-1",
+            "conversation_id": "conv-1",  # forces multi-turn dispatch
+            "previous_response_id": None,
         }
 
-        # start_durable should NOT raise — it logs and handles gracefully
-        # (The 409 is raised at the routing/orchestrator level, not here)
-        await orch.start_durable(record=record, ctx_params=ctx_params)
+        with pytest.raises(TaskConflictError) as excinfo:
+            await orch.start_durable(record=record, ctx_params=ctx_params)
+        assert excinfo.value.current_status == "in_progress"
 
     @pytest.mark.asyncio
-    async def test_conflict_error_contains_task_id(self) -> None:
-        """TaskConflictError carries the conflicting task_id."""
+    async def test_conflict_error_contains_current_status(self) -> None:
+        """Under the spec-022 narrow surface, ``TaskConflictError`` carries
+        only ``current_status`` (no ``task_id`` attribute)."""
         err = TaskConflictError("resp-abc:conv-xyz", "in_progress")
-        assert err.task_id == "resp-abc:conv-xyz"
+        # Legacy positional form (task_id, current_status) is still accepted,
+        # but only current_status is recorded.
         assert err.current_status == "in_progress"
         assert "already in_progress" in str(err)
+        # Verify the task_id attribute is NOT present (the public surface
+        # was narrowed by spec 022).
+        assert not hasattr(err, "task_id")
 
     @pytest.mark.asyncio
-    async def test_orchestrator_run_background_conflict_returns_409_shape(self) -> None:
-        """When _start_durable_background catches TaskConflictError from steerable=False,
-        it should fall back to asyncio.create_task (not raise to HTTP layer).
-
-        The 409 behavior is for steerable=True conversations where parallel
-        requests to the same conversation are rejected. For non-steerable,
-        each request gets its own task_id (parallel forks).
-        """
-        # This test validates that the fallback path works
+    async def test_one_shot_dispatch_propagates_conflict_too(self) -> None:
+        """One-shot primitive collision (rare — distinct task_ids per
+        request usually prevent it) also propagates TaskConflictError so
+        the endpoint handler can return HTTP 409 rather than silently
+        falling back."""
+        opts = MagicMock(
+            steerable_conversations=False, max_pending=10, default_fetch_history_count=100
+        )
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
-            options=MagicMock(steerable_conversations=False, max_pending=10),
+            options=opts,
         )
 
-        orch._task_fn = MagicMock()
-        orch._task_fn.start = AsyncMock(
+        orch._one_shot_task_fn = MagicMock()
+        orch._one_shot_task_fn.start = AsyncMock(
             side_effect=TaskConflictError("task-dup", "in_progress")
         )
 
@@ -109,11 +126,12 @@ class TestConflictHandling:
             "response_id": "resp_dup",
             "agent_name": "test-agent",
             "session_id": "sess-1",
-            "partition_key": "conv-1",
+            "conversation_id": None,
+            "previous_response_id": None,
         }
 
-        # Should not raise
-        await orch.start_durable(record=record, ctx_params=ctx_params)
+        with pytest.raises(TaskConflictError):
+            await orch.start_durable(record=record, ctx_params=ctx_params)
 
 
 class TestNonBackgroundRecovery:
@@ -164,8 +182,12 @@ class TestStartupLifecycle:
     """Startup triggers stale task recovery."""
 
     def test_task_fn_registered_for_recovery(self) -> None:
-        """The internal @task function is registered in the global registry
-        so that startup recovery can find and re-enter it."""
+        """The internal @task functions are registered in the global registry
+        so that startup recovery can find and re-enter them.
+
+        Spec 023: there are now TWO registrations (one-shot + multi-turn);
+        both must be present so recovery can dispatch to the right primitive.
+        """
         from azure.ai.agentserver.core.durable._decorator import _REGISTERED_DESCRIPTORS
 
         orch = DurableResponseOrchestrator(
@@ -174,9 +196,10 @@ class TestStartupLifecycle:
             options=MagicMock(steerable_conversations=False, max_pending=10),
         )
 
-        # The task should be registered
+        # Both tasks should be registered
         names = [name for name, _, _ in _REGISTERED_DESCRIPTORS]
-        assert "responses_durable_background" in names
+        assert "responses_durable_one_shot" in names
+        assert "responses_durable_multi_turn" in names
 
 
 # ════════════════════════════════════════════════════════════

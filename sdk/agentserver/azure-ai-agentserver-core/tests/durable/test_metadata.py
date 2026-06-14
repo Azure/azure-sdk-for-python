@@ -398,6 +398,34 @@ class TestTaskMetadataNamedNamespaces:
         offenders = [name for name in forbidden if name in source]
         assert not offenders, f"_metadata.py must not mention retired auto-flush symbols: " f"{offenders}"
 
+    def test_underscore_namespace_not_enforced_by_primitive(self) -> None:
+        """The CORE primitive MUST NOT reject namespace names with a
+        leading underscore — that is a wrapper-layer concern.
+
+        The handler-facing wrapper layers (e.g. the responses package's
+        :class:`DurabilityContext`) reject ``_*`` names so handler code
+        cannot collide with framework-reserved namespaces such as
+        ``_responses``. Framework-layered code (the responses
+        orchestrator) reaches those reserved namespaces through this
+        primitive API directly. If the primitive enforced the rule,
+        framework-layered code would be unable to use its own reserved
+        namespaces — a regression that breaks the responses
+        orchestrator's ``_responses`` namespace access.
+
+        Pinned by ``test_contract_completeness.py`` § Phase 5
+        named-namespace clauses (see test_metadata.py line ~245).
+        """
+        meta = TaskMetadata()
+        # Underscore-prefixed namespaces must be accessible from the
+        # primitive (no ValueError).
+        framework_ns = meta("_responses")
+        framework_ns["disposition"] = "mark-failed"
+        assert framework_ns["disposition"] == "mark-failed"
+        # The namespace persists in the registry and is reachable again.
+        assert meta("_responses") is framework_ns
+        # The default namespace remains independent (no leakage).
+        assert "disposition" not in meta
+
 
 class TestTaskMetadataRecoveryDurability:
     """Phase 5 T036 — named-namespace persistence survives crash/recovery.
