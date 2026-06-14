@@ -24,7 +24,6 @@ from ._attachments import (
     _FUNCTION_INPUT_KEY,
     _INPUT_THRESHOLD_BYTES,
     _MAX_ATTACHMENT_SIZE_BYTES,
-    _OUTPUT_KEY,
     _is_ref,
     _make_ref,
     _read_input_value,
@@ -156,60 +155,6 @@ def _parse_turn_started_at(value: Any) -> float | None:
         return dt.timestamp()
     except (ValueError, TypeError):
         return None
-
-
-def _legacy_output_terminal_patch(
-    *,
-    task_id: str,
-    metadata_dict: dict[str, Any],
-    output: Any,
-    extra_payload: dict[str, Any] | None = None,
-    extra_attachments: dict[str, Any] | None = None,
-) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Spec 019 FR-C-005/-006/-007 — build the (payload_patch,
-    attachments_patch) pair for a terminal write whose output is
-    persisted via the ``_output`` attachment.
-
-    Rules:
-
-    - Output is ALWAYS attachment-backed when non-null (no inline
-      threshold; FR-C-005 / SC-8b). ``payload["output"]`` carries a
-      ref, ``attachments["_output"]`` carries the serialized value.
-    - Output ``None`` writes explicit ``null`` to ``payload["output"]``
-      AND deletes any existing ``_output`` attachment in the same
-      PATCH (FR-C-007 / SC-10).
-    - Output > 2 MB raises :class:`OutputTooLarge` BEFORE the PATCH
-      is constructed (FR-C-006 / SC-9). The framework does the
-      pre-check here so the developer-facing exception is raised at
-      the suspend/complete site, not buried in the provider layer.
-
-    Returns ``(payload_patch, attachments_patch)``. The
-    ``attachments_patch`` is never None — it always carries the
-    ``_output`` key (either the value or ``None`` for delete).
-
-    :raises OutputTooLarge: when the serialized output exceeds 2 MB.
-    """
-    payload_patch: dict[str, Any] = dict(extra_payload or {})
-    payload_patch["metadata"] = metadata_dict
-
-    attachments_patch: dict[str, Any] = dict(extra_attachments or {})
-
-    if output is None:
-        payload_patch["output"] = None
-        attachments_patch[_OUTPUT_KEY] = None
-        return payload_patch, attachments_patch
-
-    serialized = _serialize_input(output)
-    size = _serialized_size_bytes(serialized)
-    if size > _MAX_ATTACHMENT_SIZE_BYTES:
-        raise OutputTooLarge(
-            task_id=task_id,
-            size_bytes=size,
-            max_bytes=_MAX_ATTACHMENT_SIZE_BYTES,
-        )
-    payload_patch["output"] = _make_ref(_OUTPUT_KEY, serialized)
-    attachments_patch[_OUTPUT_KEY] = serialized
-    return payload_patch, attachments_patch
 
 
 def _resolve_queued_steerers_on_terminal(
@@ -1276,14 +1221,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         if entry_mode != "recovered":
             turn_start_payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
 
-        # Spec 019 FR-C-004 / SC-7 / C-OUT-4 — every suspended →
-        # in_progress transition MUST clear the prior turn's output.
-        # Recovery (entry_mode == "recovered") does NOT re-stamp turn-
-        # start AND does NOT clear output — it's a continuation of the
-        # SAME turn, not a new one.
-        resume_clears_output = entry_mode != "recovered" and task_info.status == "suspended"
-        if resume_clears_output:
-            turn_start_payload["output"] = None
+        # Spec 022 / SOT §11/§20: the framework does not write
+        # payload["output"] at any point. No clear is needed on resume.
         # Decide whether this PATCH is actually necessary, and whether
         # the status field belongs in it.
         #
@@ -1314,11 +1253,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         else:
             # PATCH returns the full updated TaskInfo -- no follow-up
             # GET needed. (Saves one network round-trip per call.)
-            # When this is a resume of a suspended task, the same PATCH
-            # also deletes any prior _output attachment.
-            attachments_for_resume: dict[str, Any] | None = None
-            if resume_clears_output:
-                attachments_for_resume = {_OUTPUT_KEY: None}
             updated_info = await self._provider_update_locked(
                 task_id,
                 TaskPatchRequest(
@@ -1327,7 +1261,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     lease_instance_id=self._instance_id,
                     lease_duration_seconds=lease_duration,
                     payload=turn_start_payload if turn_start_payload else None,
-                    attachments=attachments_for_resume,
                 ),
             )
             if updated_info is None:
@@ -2200,13 +2133,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         # that pumps stored output into the in-memory result_futures.
 
         payload["_steering"] = steering
-        # Spec 019 FR-C-004 / C-OUT-5 — drain Phase 1 MUST clear the
-        # prior turn's output in the same co-PATCH so the resumed-by-
-        # drain turn never inherits stale output. Always set explicit
-        # null + delete the _output attachment regardless of whether
-        # one existed (delete-of-absent-key is a no-op on both providers).
-        payload["output"] = None
-        attachments_patch[_OUTPUT_KEY] = None
+        # SOT §11/§20: the framework does not write payload["output"];
+        # no clear is needed at the drain transition.
 
         try:
             etag = getattr(task_info, "etag", None) or None
@@ -2456,65 +2384,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 opts=opts,
             )
 
-        if opts.ephemeral:
-            # Delete immediately — no intermediate PATCH
-            try:
-                await self._provider.delete(task_id, force=True)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to delete ephemeral task %s", task_id, exc_info=True)
-        else:
-            # Spec 019 FR-C-005 — output is ALWAYS persisted via the
-            # _output attachment (never inline in payload). FR-C-006
-            # caps it at 2 MB serialized; over-cap raises OutputTooLarge
-            # BEFORE the PATCH lands.
-            payload_patch, attachments_patch = _legacy_output_terminal_patch(
-                task_id=task_id,
-                metadata_dict=metadata.to_dict(),
-                output=result,
-            )
-
-            # Spec 019 FR-A-008 — terminal write follows RE-READ-AND-DECIDE
-            # uniformly for both steerable and non-steerable tasks. The
-            # pre-019 steerable path returned False on 412 so the outer
-            # drain loop would re-check for steers; with the spec-019
-            # rule, queued steerers learn via TaskConflictError(completed)
-            # per the C-STR-6 cross-process steering-after-terminate
-            # contract, and the terminal write proceeds uniformly.
-            try:
-                await self._terminal_write_locked(
-                    task_id,
-                    TaskPatchRequest(
-                        status="completed",
-                        payload=payload_patch,
-                        attachments=attachments_patch,
-                    ),
-                )
-            except TaskConflictError:
-                # 412 RE-READ decided ABANDON.
-                raise
-            except _AttachmentTooLarge as exc:
-                # FR-D-004 — translate to OutputTooLarge for the developer.
-                raise _remap_attachment_error(exc) from exc
-            except _HostedConflict as exc:
-                translated = _translate_hosted_conflict(exc, task_id=task_id)
-                if translated is None:
-                    if exc._code == "lease_ownership_changed":
-                        raise TaskConflictError(task_id, "in_progress") from exc
-                    raise EtagConflict(task_id) from exc
-                raise translated from exc
-            except TransportClassifiedError as exc:
-                if _is_evicted(exc):
-                    logger.warning(
-                        "Eviction (binding_mismatch) on terminal write for "
-                        "task %s (session=%s) — suppressing terminal write, "
-                        "signalling awaiters with TaskConflictError",
-                        task_id,
-                        self._config.session_id or "local",
-                    )
-                    raise TaskConflictError(task_id, "in_progress") from exc
-                raise
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to complete task %s", task_id, exc_info=True)
+        # One-shot tasks are always ephemeral — delete on terminal exit.
+        try:
+            await self._provider.delete(task_id, force=True)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning("Failed to delete ephemeral task %s", task_id, exc_info=True)
 
         logger.info("Task %s completed successfully", task_id)
         return True
@@ -2670,76 +2544,31 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             )
             return
 
-        if opts.ephemeral:
-            try:
-                await self._provider.delete(task_id, force=True)
-            except _HostedConflict as hosted_exc:
-                translated = _translate_hosted_conflict(hosted_exc, task_id=task_id)
-                if translated is None:
-                    raise TaskConflictError(task_id, "in_progress") from hosted_exc
-                raise translated from hosted_exc
-            except TransportClassifiedError as transport_exc:
-                if _is_evicted(transport_exc):
-                    logger.warning(
-                        "Eviction (binding_mismatch) on failed-task delete for "
-                        "task %s (session=%s) — suppressing delete, signalling "
-                        "awaiters with TaskConflictError",
-                        task_id,
-                        self._config.session_id or "local",
-                    )
-                    raise TaskConflictError(task_id, "in_progress") from transport_exc
-                raise
-            except Exception:  # pylint: disable=broad-exception-caught
+        # One-shot tasks are always ephemeral — delete on terminal failure.
+        try:
+            await self._provider.delete(task_id, force=True)
+        except _HostedConflict as hosted_exc:
+            translated = _translate_hosted_conflict(hosted_exc, task_id=task_id)
+            if translated is None:
+                raise TaskConflictError(task_id, "in_progress") from hosted_exc
+            raise translated from hosted_exc
+        except TransportClassifiedError as transport_exc:
+            if _is_evicted(transport_exc):
                 logger.warning(
-                    "Failed to delete failed ephemeral task %s",
+                    "Eviction (binding_mismatch) on failed-task delete for "
+                    "task %s (session=%s) — suppressing delete, signalling "
+                    "awaiters with TaskConflictError",
                     task_id,
-                    exc_info=True,
+                    self._config.session_id or "local",
                 )
-        else:
-            try:
-                # Spec 019 FR-A-008 — failure terminal write follows
-                # RE-READ-AND-DECIDE policy on 412.
-                # Spec 019 C-OUT-6 / US-C2.C2.3 — _handle_failure MUST
-                # clear payload['output'] + _output attachment so the
-                # failure-terminal record never carries a stale
-                # prior-success output.
-                await self._terminal_write_locked(
-                    task_id,
-                    TaskPatchRequest(
-                        status="completed",
-                        error=error_dict,
-                        payload={"metadata": metadata.to_dict(), "output": None},
-                        attachments={_OUTPUT_KEY: None},
-                    ),
-                )
-            except TaskConflictError:
-                # 412 RE-READ decided ABANDON; propagate as the
-                # eviction-shape exception for awaiters.
-                raise
-            except _HostedConflict as hosted_exc:
-                translated = _translate_hosted_conflict(hosted_exc, task_id=task_id)
-                if translated is None:
-                    if hosted_exc._code == "lease_ownership_changed":
-                        raise TaskConflictError(task_id, "in_progress") from hosted_exc
-                    raise EtagConflict(task_id) from hosted_exc
-                raise translated from hosted_exc
-            except TransportClassifiedError as transport_exc:
-                if _is_evicted(transport_exc):
-                    logger.warning(
-                        "Eviction (binding_mismatch) on terminal failure write "
-                        "for task %s (session=%s) — suppressing terminal write, "
-                        "signalling awaiters with TaskConflictError",
-                        task_id,
-                        self._config.session_id or "local",
-                    )
-                    raise TaskConflictError(task_id, "in_progress") from transport_exc
-                raise
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Failed to record error for task %s",
-                    task_id,
-                    exc_info=True,
-                )
+                raise TaskConflictError(task_id, "in_progress") from transport_exc
+            raise
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning(
+                "Failed to delete failed ephemeral task %s",
+                task_id,
+                exc_info=True,
+            )
 
         logger.error("Task %s failed: %s", task_id, exc)
 
@@ -2799,28 +2628,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             if _is_ref(existing_input_slot):
                 extra_attachments[_ref_key(existing_input_slot)] = None
 
-        # Spec 019 FR-C-005/-007 / US-C4 — output is ALWAYS written
-        # to attachments['_output'] (never inline). When None, both
-        # payload['output'] and attachments['_output'] are explicitly
-        # set to None (clearing any prior turn's output).
-        extra_payload: dict[str, Any] = {"input": None}
+        # SOT §11/§20: the framework does not persist payload["output"]
+        # nor any "_output" attachment. The Suspended sentinel's ``output``
+        # value (if any) is delivered in-process to the result_future only.
+        payload_patch: dict[str, Any] = {"metadata": metadata.to_dict(), "input": None}
         if steering_patch:
-            extra_payload["_steering"] = steering_patch
-
-        try:
-            payload_patch, attachments_patch = _legacy_output_terminal_patch(
-                task_id=task_id,
-                metadata_dict=metadata.to_dict(),
-                output=output,
-                extra_payload=extra_payload,
-                extra_attachments=extra_attachments,
-            )
-        except OutputTooLarge:
-            # FR-C-006 / SC-9 — output too large, raised pre-PATCH.
-            # Surface to the suspend()'s caller via the result_future
-            # mechanism. The handler's `return await ctx.suspend(...)`
-            # propagates this up.
-            raise
+            payload_patch["_steering"] = steering_patch
+        attachments_patch: dict[str, Any] | None = extra_attachments or None
 
         try:
             # Spec 019 FR-A-008 — suspend terminal write follows
