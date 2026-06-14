@@ -49,9 +49,7 @@ def _missing_copilot_reason() -> str | None:
 _SKIP_REASON = _missing_copilot_reason()
 
 
-_SAMPLES_DIR = (
-    Path(__file__).resolve().parent.parent.parent / "samples"
-)
+_SAMPLES_DIR = Path(__file__).resolve().parent.parent.parent / "samples"
 
 
 def _harness(tmp_path: Path) -> CrashHarness:
@@ -63,9 +61,7 @@ def _harness(tmp_path: Path) -> CrashHarness:
     test.
     """
     env_extras = {
-        "PYTHONPATH": (
-            f"{_SAMPLES_DIR}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
-        ).rstrip(os.pathsep),
+        "PYTHONPATH": (f"{_SAMPLES_DIR}{os.pathsep}{os.environ.get('PYTHONPATH', '')}").rstrip(os.pathsep),
         # Do NOT override HOME — the Copilot CLI needs to find its auth
         # config under the real user's $HOME. We accept a per-test bleed
         # in ~/.durable-sessions/copilot-invocations; each test uses a
@@ -89,16 +85,12 @@ async def test_sample_starts_and_responds_to_invocation(tmp_path: Path) -> None:
             json={"message": "Reply with exactly the word PONG."},
             headers={"Content-Type": "application/json"},
         )
-        assert resp.status_code in (200, 202), (
-            f"unexpected status {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code in (200, 202), f"unexpected status {resp.status_code}: {resp.text}"
         body = resp.json()
         # InvocationAgentServerHost stamps invocation_id on either the
         # response header or the body; both shapes are acceptable for
         # this smoke test.
-        inv_id = body.get("invocation_id") or resp.headers.get(
-            "x-agent-invocation-id"
-        )
+        inv_id = body.get("invocation_id") or resp.headers.get("x-agent-invocation-id")
         assert inv_id, f"no invocation_id surfaced: body={body} headers={dict(resp.headers)}"
 
 
@@ -107,7 +99,7 @@ async def test_sample_starts_and_responds_to_invocation(tmp_path: Path) -> None:
 async def test_sse_stream_emits_text_deltas(tmp_path: Path) -> None:
     """POST with ``Accept: text/event-stream`` streams text_delta events.
 
-    Validates FR-011 gaps 1 (streaming=True wired) + 2 (delta forwarded)
+    Validates  gaps 1 (streaming=True wired) + 2 (delta forwarded)
     end-to-end against a real Copilot session.
     """
     async with _harness(tmp_path) as harness:
@@ -129,7 +121,7 @@ async def test_sse_stream_emits_text_deltas(tmp_path: Path) -> None:
                 if not line.startswith("data:"):
                     continue
                 try:
-                    payload = json.loads(line[len("data:"):].strip())
+                    payload = json.loads(line[len("data:") :].strip())
                 except json.JSONDecodeError:
                     continue
                 t = payload.get("type")
@@ -145,17 +137,11 @@ async def test_sse_stream_emits_text_deltas(tmp_path: Path) -> None:
                 if saw_text_delta and saw_session_idle:
                     break
                 # Also break on idle alone — if no deltas arrived by
-                # idle, none will (FR-011 gap 2 regression).
+                # idle, none will (gap 2 regression).
                 if saw_session_idle:
                     break
-            assert saw_text_delta, (
-                f"no text_delta event in stream — FR-011 gap 2 regression? "
-                f"types_seen={seen_types}"
-            )
-            assert saw_session_idle, (
-                f"no session_idle event — FR-011 gap 3 regression? "
-                f"types_seen={seen_types}"
-            )
+            assert saw_text_delta, f"no text_delta event in stream —  gap 2 regression? " f"types_seen={seen_types}"
+            assert saw_session_idle, f"no session_idle event —  gap 3 regression? " f"types_seen={seen_types}"
 
 
 @pytest.mark.skipif(_SKIP_REASON is not None, reason=_SKIP_REASON or "")
@@ -170,9 +156,7 @@ async def test_poll_after_completion_returns_snapshot(tmp_path: Path) -> None:
             timeout=120.0,
         )
         assert resp.status_code in (200, 202)
-        inv_id = resp.json().get("invocation_id") or resp.headers.get(
-            "x-agent-invocation-id"
-        )
+        inv_id = resp.json().get("invocation_id") or resp.headers.get("x-agent-invocation-id")
         assert inv_id
 
         # Poll until status is no longer "queued"/"running"/"streaming".
@@ -188,6 +172,8 @@ async def test_poll_after_completion_returns_snapshot(tmp_path: Path) -> None:
                 break
             await asyncio.sleep(1.0)
         assert snapshot is not None, "never got a snapshot"
-        assert snapshot.get("status") in ("completed", "superseded", "cancelled"), (
-            f"task never reached terminal status: {snapshot}"
-        )
+        assert snapshot.get("status") in (
+            "completed",
+            "superseded",
+            "cancelled",
+        ), f"task never reached terminal status: {snapshot}"

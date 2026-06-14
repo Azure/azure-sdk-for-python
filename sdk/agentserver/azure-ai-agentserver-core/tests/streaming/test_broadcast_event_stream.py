@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Conformance tests for :class:`BroadcastEventStream`.
 
-Asserts FR-008 — multicast + no buffer + live-only. No cursor_fn,
+Asserts  — multicast + no buffer + live-only. No cursor_fn,
 no ttl_seconds, no subscribe(after=...), no CLOSED→GONE auto-
 transition. See ``streaming.md`` §5.1.
 """
@@ -24,13 +24,13 @@ pytestmark = pytest.mark.asyncio(loop_scope="function")
 
 class TestConstructorShape:
     def test_no_constructor_args(self) -> None:
-        """FR-008 — no cursor_fn, no ttl_seconds, no serializer."""
+        """— no cursor_fn, no ttl_seconds, no serializer."""
         sig = inspect.signature(BroadcastEventStream)
         # Only self, no other parameters
         params = list(sig.parameters.values())
         assert all(
             p.name in ("self", "args", "kwargs") for p in params
-        ), f"BroadcastEventStream() takes NO args per FR-008; got {params}"
+        ), f"BroadcastEventStream takes NO args; got {params}"
 
     def test_construct_with_no_args(self) -> None:
         s = BroadcastEventStream()
@@ -41,7 +41,7 @@ class TestConstructorShape:
 
 class TestNoBufferLiveOnly:
     async def test_subscriber_attached_after_emit_sees_nothing(self) -> None:
-        """FR-008 — subscribers see ONLY events emitted after they attach.
+        """— subscribers see ONLY events emitted after they attach.
         No buffer means late attachers miss everything."""
         s = BroadcastEventStream()
         await s.emit({"n": 1})  # before any subscriber
@@ -58,9 +58,7 @@ class TestNoBufferLiveOnly:
         await asyncio.sleep(0.01)
         await s.emit({"n": 3}, close=True)
         await task
-        assert results == [3], (
-            f"Broadcast subscriber MUST see only post-attach events; got {results}"
-        )
+        assert results == [3], f"Broadcast subscriber MUST see only post-attach events; got {results}"
 
     async def test_multiple_concurrent_subscribers(self) -> None:
         """Multicast — multiple concurrent subscribers each see same
@@ -87,14 +85,14 @@ class TestNoBufferLiveOnly:
 
 class TestNoCursorNoTTL:
     async def test_subscribe_after_silently_ignored(self) -> None:
-        """FR-011a — Broadcast NEVER honours `after`; silently ignored."""
+        """— Broadcast NEVER honours `after`; silently ignored."""
         s = BroadcastEventStream()
         # Must not raise
         it = s.subscribe(after=99)
         assert hasattr(it, "__aiter__")
 
     async def test_last_cursor_returns_none_on_active(self) -> None:
-        """FR-007b — Broadcast.last_cursor() returns None on ACTIVE."""
+        """— Broadcast.last_cursor returns None on ACTIVE."""
         s = BroadcastEventStream()
         assert await s.last_cursor() is None
         await s.emit({"x": 1})
@@ -103,7 +101,7 @@ class TestNoCursorNoTTL:
         assert await s.last_cursor() is None
 
     async def test_last_cursor_raises_on_gone(self) -> None:
-        """FR-007b — Broadcast.last_cursor() on GONE raises."""
+        """— Broadcast.last_cursor on GONE raises."""
         s = BroadcastEventStream()
         await s._on_delete()
         with pytest.raises(EventStreamNotFoundError):
@@ -114,7 +112,7 @@ class TestNoAutoTransition:
     async def test_closed_broadcast_stays_closed_does_not_become_gone(
         self,
     ) -> None:
-        """FR-008 — Broadcast has NO CLOSED→GONE auto-transition
+        """— Broadcast has NO CLOSED→GONE auto-transition
         (nothing evicts because there's no buffer)."""
         s = BroadcastEventStream()
         await s.emit({"x": 1})
@@ -167,12 +165,12 @@ class TestSubscriberCleanup:
 
 
 # ----------------------------------------------------------------
-# Spec 019 — Broadcast NEVER auto-tombstones (FR-E-008 / SC-18)
+#  — Broadcast NEVER auto-tombstones (/ SC-18)
 # ----------------------------------------------------------------
 
 
-class TestSpec019BroadcastNoAutoTombstone:
-    """FR-E-008 / SC-18 — Broadcast streams have no TTL machinery; only
+class TestTaskStreamsBroadcastNoAutoTombstone:
+    """/ SC-18 — Broadcast streams have no TTL machinery; only
     explicit ``delete(id)`` tombstones. Closed broadcast: ``subscribe()``
     yields an empty iterator that terminates immediately.
 
@@ -186,13 +184,13 @@ class TestSpec019BroadcastNoAutoTombstone:
         explicit ``delete(id)`` tombstones.
         """
         streams.use_in_memory_live()
-        stream = await streams.get_or_create("t-spec019-broadcast-no-auto")
+        stream = await streams.get_or_create("t--broadcast-no-auto")
         await stream.emit({"n": 1})
         await stream.close()
         # Sleep — broadcast must NOT auto-tombstone.
         await asyncio.sleep(0.2)
         # Still resolvable from the registry.
-        same = await streams.get("t-spec019-broadcast-no-auto")
+        same = await streams.get("t--broadcast-no-auto")
         assert same is stream
 
         # subscribe() on closed broadcast yields an empty iterator that
@@ -200,12 +198,9 @@ class TestSpec019BroadcastNoAutoTombstone:
         items: list = []
         async for ev in stream.subscribe():
             items.append(ev)
-        assert items == [], (
-            f"closed broadcast subscribe must yield empty iterator; "
-            f"got {items}"
-        )
+        assert items == [], f"closed broadcast subscribe must yield empty iterator; " f"got {items}"
 
         # Explicit delete tombstones.
-        await streams.delete("t-spec019-broadcast-no-auto")
+        await streams.delete("t--broadcast-no-auto")
         with pytest.raises(EventStreamNotFoundError):
-            await streams.get("t-spec019-broadcast-no-auto")
+            await streams.get("t--broadcast-no-auto")

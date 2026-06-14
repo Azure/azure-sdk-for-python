@@ -21,6 +21,7 @@ from conftest import _make_echo_ws_app
 # Route registration
 # ---------------------------------------------------------------------------
 
+
 def test_ws_route_is_registered_when_handler_is_set():
     """The /invocations_ws route is registered lazily on @ws_handler."""
     app = _make_echo_ws_app()
@@ -53,6 +54,7 @@ def test_readiness_still_works_with_ws_registered():
 # Coexistence with HTTP /invocations
 # ---------------------------------------------------------------------------
 
+
 def test_http_and_ws_share_same_host():
     """Both transports work on the same app — single session, single process."""
     app = InvocationAgentServerHost()
@@ -83,6 +85,7 @@ def test_http_and_ws_share_same_host():
 # ---------------------------------------------------------------------------
 # Mismatched URLs (parity with test_unknown_route_returns_404)
 # ---------------------------------------------------------------------------
+
 
 def test_ws_upgrade_on_http_path_fails():
     """A WS upgrade to ``/invocations`` (the HTTP route) is rejected."""

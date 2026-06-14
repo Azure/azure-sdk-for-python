@@ -96,6 +96,7 @@ async def poll_invocation(request: Request) -> Response:
     # Task.get + TaskSnapshot removed. Use the
     # provider directly for read-only inspection (returns TaskInfo).
     from azure.ai.agentserver.core.durable._manager import get_task_manager
+
     mgr = get_task_manager()
     info = await mgr.provider.get(task_id)
     if info is None:
@@ -103,9 +104,7 @@ async def poll_invocation(request: Request) -> Response:
 
     payload = info.payload or {}
     if payload.get("invocation_id") != invocation_id:
-        return JSONResponse(
-            {"error": "Invocation not found for this session"}, status_code=404
-        )
+        return JSONResponse({"error": "Invocation not found for this session"}, status_code=404)
 
     return JSONResponse(
         {

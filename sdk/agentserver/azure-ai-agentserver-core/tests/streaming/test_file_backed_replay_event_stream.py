@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Conformance tests for :class:`FileBackedReplayEventStream`.
 
-Asserts FR-010 / FR-010a / FR-010b + rules 26-32 (file-backed
+Asserts  /  /  + rules 26-32 (file-backed
 specific). Per ``streaming.md`` Constitution Principle X exit
 checklist, crash-recovery tests use real signals via
 ``_crash_harness`` (not mocked) — but for Phase 1's intra-process
@@ -43,9 +43,7 @@ class TestPersistBeforeFanout:
         """Rule 26 — emit() returns only after payload is durably
         persisted; subscribers receive payload only after persistence."""
         p = tmp_path / "fb-pbf.jsonl"
-        s = FileBackedReplayEventStream(
-            path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600
-        )
+        s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)
         await s.emit({"n": 1, "msg": "first"})
         # File MUST contain the record now
         assert p.exists()
@@ -150,9 +148,7 @@ class TestDeterministicRecovery:
         assert results == [1]
         await s2._on_delete()
 
-    async def test_rehydrate_terminal_plus_all_expired_is_gone(
-        self, tmp_path: Path
-    ) -> None:
+    async def test_rehydrate_terminal_plus_all_expired_is_gone(self, tmp_path: Path) -> None:
         """Rule 28 — terminal + no surviving records + ever had records →
         constructor returns GONE-state instance."""
         p = tmp_path / "fb-rehydrate-gone.jsonl"
@@ -175,9 +171,7 @@ class TestDeterministicRecovery:
 
 
 class TestCorruptionHandling:
-    async def test_trailing_partial_record_silently_discarded(
-        self, tmp_path: Path
-    ) -> None:
+    async def test_trailing_partial_record_silently_discarded(self, tmp_path: Path) -> None:
         """Rule 29 (a) — trailing partial (last line lacks \\n or fails
         to decode and is the LAST line) → silent discard."""
         p = tmp_path / "fb-partial.jsonl"
@@ -194,9 +188,7 @@ class TestCorruptionHandling:
         assert s._highest_cursor == 1
         await s._on_delete()
 
-    async def test_mid_file_malformed_raises_at_construction(
-        self, tmp_path: Path
-    ) -> None:
+    async def test_mid_file_malformed_raises_at_construction(self, tmp_path: Path) -> None:
         """Rule 29 (b) — mid-file decode failure → RuntimeError at
         construction (NOT EventStreamError — no instance was constructed)."""
         p = tmp_path / "fb-malformed.jsonl"
@@ -214,24 +206,18 @@ class TestCorruptionHandling:
 
 
 class TestTTLPurgesDisk:
-    async def test_ttl_eviction_removes_from_buffer(
-        self, tmp_path: Path
-    ) -> None:
+    async def test_ttl_eviction_removes_from_buffer(self, tmp_path: Path) -> None:
         """Rule 30 — TTL eviction removes expired records from the
         in-memory buffer (disk compaction is lazy)."""
         p = tmp_path / "fb-ttl.jsonl"
-        s = FileBackedReplayEventStream(
-            path=p, cursor_fn=lambda e: e["n"], ttl_seconds=0.2
-        )
+        s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=0.2)
         await s.emit({"n": 1})
         await asyncio.sleep(0.3)
         # Trigger eviction via next op — _evict_expired runs as part
         # of emit(); after this call the buffer should hold only n=2.
         await s.emit({"n": 2})
         # event 1 should have been evicted from buffer
-        assert len(s._buffer) == 1, (
-            f"event 1 should be evicted; buffer has {len(s._buffer)} entries"
-        )
+        assert len(s._buffer) == 1, f"event 1 should be evicted; buffer has {len(s._buffer)} entries"
         assert s._buffer[0].payload == {"n": 2}
         await s._on_delete()
 
@@ -262,9 +248,7 @@ class TestSingleWriterPerPath:
         not hasattr(os, "fork"),
         reason="fcntl-based lock detection requires POSIX",
     )
-    async def test_second_constructor_same_path_raises_runtime_error(
-        self, tmp_path: Path
-    ) -> None:
+    async def test_second_constructor_same_path_raises_runtime_error(self, tmp_path: Path) -> None:
         """Rule 32 — second constructor on same path raises RuntimeError
         (NOT EventStreamError — no instance was constructed)."""
         p = tmp_path / "fb-lock.jsonl"
@@ -282,9 +266,7 @@ class TestSingleWriterPerPath:
 
 
 class TestAtomicEmitCloseFileBacked:
-    async def test_emit_close_true_writes_both_records_atomically(
-        self, tmp_path: Path
-    ) -> None:
+    async def test_emit_close_true_writes_both_records_atomically(self, tmp_path: Path) -> None:
         """Rule 14 — emit(close=True) on file-backed writes payload +
         terminal marker in a single fsync."""
         p = tmp_path / "fb-atom.jsonl"
@@ -299,12 +281,12 @@ class TestAtomicEmitCloseFileBacked:
 
 
 # ----------------------------------------------------------------
-# Spec 019 — Close-clock tombstone deletes file (FR-E-009 / SC-19)
+#  — Close-clock tombstone deletes file (/ SC-19)
 # ----------------------------------------------------------------
 
 
-class TestSpec019FileBackedCloseClock:
-    """FR-E-009 / SC-19 — File-backed replay stream: TTL-driven
+class TestTaskStreamsFileBackedCloseClock:
+    """/ SC-19 — File-backed replay stream: TTL-driven
     tombstone deletes the on-disk JSONL file BEFORE installing the
     registry tombstone.
 
@@ -314,30 +296,29 @@ class TestSpec019FileBackedCloseClock:
 
     @pytest.mark.asyncio
     async def test_file_deleted_when_close_clock_elapses(self, tmp_path: Path) -> None:
-        """SC-19 / FR-E-009 — emit + close + advance time past
+        """SC-19 /  — emit + close + advance time past
         ``close_time + ttl_seconds`` → JSONL file removed from disk
         AND ``streams.get(id)`` raises ``EventStreamNotFoundError``.
         """
         from azure.ai.agentserver.core.streaming import streams
 
         streams.use_file_backed_replay(storage_dir=str(tmp_path), ttl_seconds=0.1)
-        stream = await streams.get_or_create("t-spec019-fbr-tombstone")
+        stream = await streams.get_or_create("t--fbr-tombstone")
         await stream.emit({"n": 1})
         await stream.close()
-        file_path = Path(tmp_path) / "t-spec019-fbr-tombstone.jsonl"
+        file_path = Path(tmp_path) / "t--fbr-tombstone.jsonl"
         # File still exists pre-tombstone.
         assert file_path.exists(), (
-            f"file-backed stream's file should exist before close-clock "
-            f"elapses; expected {file_path}"
+            f"file-backed stream's file should exist before close-clock " f"elapses; expected {file_path}"
         )
         # Wait past the close-clock deadline.
         await asyncio.sleep(0.2)
         with pytest.raises(EventStreamNotFoundError):
-            await streams.get("t-spec019-fbr-tombstone")
-        # And the file is removed (FR-E-009: file cleanup BEFORE
+            await streams.get("t--fbr-tombstone")
+        # And the file is removed (: file cleanup BEFORE
         # registry tombstone).
         assert not file_path.exists(), (
-            f"FR-E-009 / SC-19 — file-backed stream's JSONL file "
+            f" / SC-19 — file-backed stream's JSONL file "
             f"MUST be deleted when the close-clock tombstone fires; "
             f"{file_path} still exists."
         )

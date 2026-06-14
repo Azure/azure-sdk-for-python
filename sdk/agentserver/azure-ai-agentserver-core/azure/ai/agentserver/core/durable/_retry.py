@@ -60,7 +60,7 @@ class RetryPolicy:
         jitter: bool | float = True,
         _linear: bool = False,
     ) -> None:
-        # Spec 022 FR-073: accept both timedelta and float (seconds) for
+        #: accept both timedelta and float (seconds) for
         # initial_delay / max_delay. Store as the type provided so
         # ``policy.initial_delay == 1.0`` works for float callers and
         # ``.total_seconds()`` works for timedelta callers.
@@ -70,26 +70,21 @@ class RetryPolicy:
         if _seconds(initial_delay) < 0:
             raise ValueError(f"initial_delay must be >= 0, got {initial_delay}")
         if backoff_coefficient < 1.0:
-            raise ValueError(
-                f"backoff_coefficient must be >= 1.0, got {backoff_coefficient}"
-            )
+            raise ValueError(f"backoff_coefficient must be >= 1.0, got {backoff_coefficient}")
         if _seconds(max_delay) < _seconds(initial_delay):
-            raise ValueError(
-                f"max_delay ({max_delay}) must be >= initial_delay ({initial_delay})"
-            )
+            raise ValueError(f"max_delay ({max_delay}) must be >= initial_delay ({initial_delay})")
         if max_attempts < 1:
             raise ValueError(f"max_attempts must be >= 1, got {max_attempts}")
         if retry_on is not None:
             # Accept a bare class as a single-element tuple — Pythonic.
             if isinstance(retry_on, type) and issubclass(retry_on, BaseException):
                 retry_on = (retry_on,)
+            elif isinstance(retry_on, type):
+                # Non-Exception class (e.g., str) passed directly — reject.
+                raise TypeError(f"retry_on entries must be Exception subclasses, got {retry_on!r}")
             for exc_type in retry_on:
-                if not isinstance(exc_type, type) or not issubclass(
-                    exc_type, Exception
-                ):
-                    raise TypeError(
-                        f"retry_on entries must be Exception subclasses, got {exc_type!r}"
-                    )
+                if not isinstance(exc_type, type) or not issubclass(exc_type, Exception):
+                    raise TypeError(f"retry_on entries must be Exception subclasses, got {exc_type!r}")
 
         self.initial_delay = initial_delay
         self.backoff_coefficient = backoff_coefficient
@@ -112,11 +107,7 @@ class RetryPolicy:
             if isinstance(self.initial_delay, timedelta)
             else float(self.initial_delay)
         )
-        max_seconds = (
-            self.max_delay.total_seconds()
-            if isinstance(self.max_delay, timedelta)
-            else float(self.max_delay)
-        )
+        max_seconds = self.max_delay.total_seconds() if isinstance(self.max_delay, timedelta) else float(self.max_delay)
         if self._linear:
             raw = base_seconds * (attempt + 1)
         else:
@@ -284,10 +275,11 @@ class RetryPolicy:
 
 
 # =========================================================================
-# Spec 022 — module-level convenience wrappers around the preset
-# classmethods (FR-073 documents these as `exponential_backoff(...)` etc.
+#  — module-level convenience wrappers around the preset
+# classmethods (documents these as `exponential_backoff` etc.
 # with explicit kwargs).
 # =========================================================================
+
 
 def exponential_backoff(
     *,
@@ -299,15 +291,15 @@ def exponential_backoff(
 ) -> RetryPolicy:
     """Module-level wrapper for :meth:`RetryPolicy.exponential_backoff`.
 
-    Spec 022 FR-073: preset factories enumerate their kwargs explicitly.
+    : preset factories enumerate their kwargs explicitly.
 
-    :keyword initial_delay: Initial delay before the first retry.
-    :keyword backoff_coefficient: Multiplier applied per attempt.
-    :keyword max_delay: Cap on the per-attempt delay.
-    :keyword max_attempts: Total attempts including the first try.
-    :keyword jitter: When True, add ±15% jitter per attempt.
-    :return: A configured :class:`RetryPolicy`.
-    :rtype: RetryPolicy
+        :keyword initial_delay: Initial delay before the first retry.
+        :keyword backoff_coefficient: Multiplier applied per attempt.
+        :keyword max_delay: Cap on the per-attempt delay.
+        :keyword max_attempts: Total attempts including the first try.
+        :keyword jitter: When True, add ±15% jitter per attempt.
+        :return: A configured :class:`RetryPolicy`.
+        :rtype: RetryPolicy
     """
     return RetryPolicy.exponential_backoff(
         initial_delay=initial_delay,

@@ -6,11 +6,11 @@
 Provides identity, typed input, mutable metadata, cancellation signals,
 and the ``suspend()`` method for pausing execution.
 
-Spec 016 (US6/US8) introduces the cancel-cause boolean surface
+  introduces the cancel-cause boolean surface
 (``timeout_exceeded``, ``cancel_requested``, ``pending_input_count``,
 ``is_steered_turn``) and the ``exit_for_recovery()`` graceful-shutdown
 shape. The legacy fields ``was_steered`` / ``pending_inputs`` /
-``steering_generation`` are removed (FR-019/FR-020/FR-021).
+``steering_generation`` are removed.
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ class _Suspended:
 
 
 class _ExitForRecovery:
-    """Spec 016 FR-027 (US8): internal sentinel returned by
+    """: internal sentinel returned by
     :meth:`TaskContext.exit_for_recovery` to signal the framework to
     flush metadata, release the lease, and leave the stored status
     as ``in_progress``.
@@ -94,7 +94,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
 
     __slots__ = (
         "task_id",
-        "input_id",  # spec 022 FR-005 / FR-047
+        "input_id",  #   /
         "_session_id",
         "input",
         "metadata",
@@ -104,12 +104,12 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         "shutdown",
         "_suspend_callback",
         "entry_mode",
-        # Spec 016 FR-016..FR-021 (US6) public cancel-cause / steering surface.
+        # ..  public cancel-cause / steering surface.
         "timeout_exceeded",
         "cancel_requested",
         "is_steered_turn",
         # Internal callable for the live pending_input_count property
-        # (FR-019). The framework sets this when constructing the
+        # . The framework sets this when constructing the
         # TaskContext; the property reads it on each access so the
         # count reflects the current backlog including inputs queued
         # mid-handler.
@@ -133,7 +133,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         input_id: str | None = None,
     ) -> None:
         self.task_id = task_id
-        # Spec 022 FR-005 / FR-047: input_id is part of the public TaskContext
+        #   /: input_id is part of the public TaskContext
         # surface. Defaults to task_id (one-shot 1:1 invariant).
         self.input_id = input_id if input_id is not None else task_id
         self._session_id = session_id
@@ -145,7 +145,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         self.shutdown = shutdown or asyncio.Event()
         self._suspend_callback: Any = None
         self.entry_mode: EntryMode = entry_mode
-        # Spec 016 FR-016..FR-021: public surface fields. Defaults are
+        # ..: public surface fields. Defaults are
         # framework-controlled at construction; framework setters update
         # them in place. No public setters.
         self.timeout_exceeded: bool = False
@@ -155,7 +155,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
 
     @property
     def pending_input_count(self) -> int:
-        """Spec 016 FR-019 (US6): live count of queued steering inputs.
+        """: live count of queued steering inputs.
 
         Reflects the current backlog including inputs queued mid-handler.
         Reads as ``0`` for non-steerable tasks (where the provider
@@ -190,37 +190,37 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         return Suspended(reason=reason, output=output)
 
     async def exit_for_recovery(self) -> Any:
-        """Spec 016 FR-027 (US8): graceful-shutdown shape.
+        """: graceful-shutdown shape.
 
-        Callable ONLY when ``ctx.shutdown.is_set() == True``. Calling it
-        outside shutdown raises ``RuntimeError`` at the call site
-        (visible in user-code tracebacks; the task ends in ``failed``).
+                Callable ONLY when ``ctx.shutdown.is_set() == True``. Calling it
+                outside shutdown raises ``RuntimeError`` at the call site
+                (visible in user-code tracebacks; the task ends in ``failed``).
 
-        When called during shutdown, the framework:
+                When called during shutdown, the framework:
 
-        1. Flushes ``ctx.metadata`` (FR-015 auto-flush invariant).
-        2. Releases the lease on the persisted record.
-        3. Leaves the stored ``status`` as ``in_progress`` (NOT
-           transitions to ``suspended``).
-        4. Signals in-process awaiters with the standard cooperative-
-           cancel ``TaskCancelled`` result.
-        5. Preserves any queued steering inputs in the persisted state
-           (FR-028).
+                1. Flushes ``ctx.metadata`` (auto-flush invariant).
+                2. Releases the lease on the persisted record.
+                3. Leaves the stored ``status`` as ``in_progress`` (NOT
+                   transitions to ``suspended``).
+                4. Signals in-process awaiters with the standard cooperative-
+                   cancel ``TaskCancelled`` result.
+                5. Preserves any queued steering inputs in the persisted state
+        .
 
-        The recovery scan on the next process startup re-enters the
-        handler with ``ctx.entry_mode == "recovered"``.
+                The recovery scan on the next process startup re-enters the
+                handler with ``ctx.entry_mode == "recovered"``.
 
-        Use as ``return await ctx.exit_for_recovery()``.
+                Use as ``return await ctx.exit_for_recovery()``.
 
-        :return: The :class:`_ExitForRecovery` sentinel.
-        :rtype: Any
-        :raises RuntimeError: If called outside ``ctx.shutdown.is_set() == True``.
+                :return: The :class:`_ExitForRecovery` sentinel.
+                :rtype: Any
+                :raises RuntimeError: If called outside ``ctx.shutdown.is_set() == True``.
         """
         if not self.shutdown.is_set():
             raise RuntimeError(
                 "ctx.exit_for_recovery() may only be called when "
                 "ctx.shutdown.is_set() is true. The misuse-as-failed "
                 "semantic exists so operator logs surface accidental "
-                "calls loudly (spec 016 FR-027)."
+                "calls loudly."
             )
         return _ExitForRecovery()

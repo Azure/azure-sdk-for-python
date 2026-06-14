@@ -1,25 +1,25 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Spec 016 US2 / SC-002 — split-brain eviction sweep.
+"""  / SC-002 — split-brain eviction sweep.
 
-Verifies the FR-006 / FR-007 / FR-008 contract for orphan-sandbox
+Verifies the  /  /  contract for orphan-sandbox
 rejection (HTTP 409 + body ``$.error.code == "binding_mismatch"``):
 the classifier translates the rejection to ``evicted`` and the
 framework runs the canonical local-cleanup sequence at every store-
 write site:
 
-- lease-renewal loop (FR-007): on eviction, stop renewing immediately,
+- lease-renewal loop: on eviction, stop renewing immediately,
   signal local cleanup via the renewal-cancel callback. Local
   execution is cancelled; the terminal write is suppressed.
-- terminal-write paths (FR-007): on eviction during
+- terminal-write paths: on eviction during
   ``_handle_success`` / ``_handle_failure`` / ``_handle_suspend``,
   suppress the terminal write and surface ``TaskConflictError`` to
   awaiters.
-- input-enqueue (FR-006, T038a): on eviction during the input
+- input-enqueue (, T038a): on eviction during the input
   enqueue store-write, the steerer's future raises
   ``TaskConflictError``; the queued input is NOT persisted.
-- scheduling primitives (FR-008): on eviction at ``.run()`` /
+- scheduling primitives: on eviction at ``.run`` /
   ``.start()``, raise ``TaskConflictError(current_status="in_progress")``
   — observably identical to the live-elsewhere case per Invariant 1.
 
@@ -29,7 +29,7 @@ Test fixture: :class:`tests.durable.conftest.BindingMismatchProvider`
 wraps a delegate :class:`LocalFileTaskProvider` and selectively raises
 ``TransportClassifiedError(classification="evicted")`` on configured
 ``(op, task_id)`` pairs — the same exception the real hosted client
-raises after the FR-006 classifier maps the HTTP 409 response.
+raises after the  classifier maps the HTTP 409 response.
 """
 from __future__ import annotations
 
@@ -38,17 +38,11 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    TaskConflictError,
-    TaskContext,
-    task,
-    multi_turn_task)
+from azure.ai.agentserver.core.durable import TaskConflictError, TaskContext, task, multi_turn_task
 from azure.ai.agentserver.core.durable._client import TransportClassifiedError
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
-from azure.ai.agentserver.core.durable._models import (
-    TaskCreateRequest,
-    TaskPatchRequest)
+from azure.ai.agentserver.core.durable._models import TaskCreateRequest, TaskPatchRequest
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 
 from .conftest import BindingMismatchProvider
@@ -78,11 +72,12 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
 
 
 # --------------------------------------------------------------------- #
-# T033 / T034 — startup scan rejection (FR-007)
+# T033 / T034 — startup scan rejection
 # --------------------------------------------------------------------- #
 
 
@@ -99,6 +94,7 @@ def test_binding_mismatch_stub_raises_classified_error(stubbable_provider_factor
     async def _run() -> None:
         with pytest.raises(TransportClassifiedError) as excinfo:
             from azure.ai.agentserver.core.durable._models import TaskPatchRequest
+
             await stub.update("t-x", TaskPatchRequest(status="completed"))
         assert excinfo.value.classification == "evicted"
         assert excinfo.value.status == 409
@@ -107,9 +103,8 @@ def test_binding_mismatch_stub_raises_classified_error(stubbable_provider_factor
 
 
 @pytest.mark.asyncio
-async def test_startup_scan_skips_evicted_records_without_raising(
-    stubbable_provider_factory) -> None:
-    """T034 / FR-007: startup scan tolerates per-record eviction —
+async def test_startup_scan_skips_evicted_records_without_raising(stubbable_provider_factory) -> None:
+    """T034 /: startup scan tolerates per-record eviction —
     skips the record with WARNING log, never retries, never aborts the
     scan loop.
 
@@ -129,7 +124,8 @@ async def test_startup_scan_skips_evicted_records_without_raising(
             session_id="test-session",
             status="in_progress",
             title="healthy",
-            payload={})
+            payload={},
+        )
     )
     await stub.create(
         TaskCreateRequest(
@@ -138,7 +134,8 @@ async def test_startup_scan_skips_evicted_records_without_raising(
             session_id="test-session",
             status="in_progress",
             title="evicted",
-            payload={})
+            payload={},
+        )
     )
     stub.reject_on("update", task_id="t-evicted")
 
@@ -152,17 +149,16 @@ async def test_startup_scan_skips_evicted_records_without_raising(
 
 
 # --------------------------------------------------------------------- #
-# T035 / FR-007 — lease-renewal eviction path
+# T035 /  — lease-renewal eviction path
 # --------------------------------------------------------------------- #
 
 
 @pytest.mark.asyncio
-async def test_lease_renewal_eviction_cancels_local_execution(
-    stubbable_provider_factory) -> None:
-    """T035 / FR-007: when lease_renewal_loop's PATCH is rejected with
+async def test_lease_renewal_eviction_cancels_local_execution(stubbable_provider_factory) -> None:
+    """T035 /: when lease_renewal_loop's PATCH is rejected with
     binding_mismatch, the framework cancels local execution via the
     on_cancel_callback. Verified via the lease_renewal_loop directly
-    so we exercise the FR-007 wiring without depending on the full
+    so we exercise the  wiring without depending on the full
     _execute_task_loop path.
     """
     from azure.ai.agentserver.core.durable._lease import lease_renewal_loop
@@ -197,14 +193,13 @@ async def test_lease_renewal_eviction_cancels_local_execution(
 
 
 # --------------------------------------------------------------------- #
-# T036 / T037 / FR-008 — scheduling-primitive Invariant 1 outcomes
+# T036 / T037 /  — scheduling-primitive Invariant 1 outcomes
 # --------------------------------------------------------------------- #
 
 
 @pytest.mark.asyncio
-async def test_run_against_evicted_raises_taskconflict(
-    stubbable_provider_factory) -> None:
-    """T036 / FR-008 / SC-006: ``.run()`` against an in-progress record
+async def test_run_against_evicted_raises_taskconflict(stubbable_provider_factory) -> None:
+    """T036 /  / SC-006: ``.run`` against an in-progress record
     whose store-write path is evicted MUST raise
     ``TaskConflictError(current_status="in_progress")`` — the SAME
     shape as the live-non-steerable case per Invariant 1. No new
@@ -237,7 +232,8 @@ async def test_run_against_evicted_raises_taskconflict(
                 session_id="test-session",
                 status="in_progress",
                 title="evict-run",
-                payload={})
+                payload={},
+            )
         )
         # Backdate to past the legacy threshold so the in_progress path
         # would normally reclaim; the create+update being rejected forces
@@ -260,8 +256,7 @@ async def test_run_against_evicted_raises_taskconflict(
 
 
 @pytest.mark.asyncio
-async def test_split_brain_handler_executes_exactly_once(
-    stubbable_provider_factory) -> None:
+async def test_split_brain_handler_executes_exactly_once(stubbable_provider_factory) -> None:
     """SC-002 / T038: two TaskManagers against the same session id;
     one side's writes are evicted via binding_mismatch. The handler
     MUST execute exactly once across both instances; exactly one
@@ -315,14 +310,13 @@ async def test_split_brain_handler_executes_exactly_once(
 
 
 # --------------------------------------------------------------------- #
-# T038a / FR-006 — input-enqueue eviction (every store-write site)
+# T038a /  — input-enqueue eviction (every store-write site)
 # --------------------------------------------------------------------- #
 
 
 @pytest.mark.asyncio
-async def test_input_enqueue_eviction_classified_as_evicted(
-    stubbable_provider_factory) -> None:
-    """T038a / FR-006: every store-write site, INCLUDING input enqueue,
+async def test_input_enqueue_eviction_classified_as_evicted(stubbable_provider_factory) -> None:
+    """T038a /: every store-write site, INCLUDING input enqueue,
     funnels through the classifier and treats binding_mismatch as
     ``evicted`` (not ``conflict``). The steerer's future receives
     TaskConflictError; the queued input is NOT persisted (the enqueue
@@ -359,7 +353,8 @@ async def test_input_enqueue_eviction_classified_as_evicted(
                         "pending_inputs": [],
                         "drain_in_progress": False,
                     }
-                })
+                },
+            )
         )
         # Configure the stub to evict any update (the enqueue is a PATCH).
         stub.reject_on("update", task_id="t-eq")
@@ -381,9 +376,7 @@ async def test_input_enqueue_eviction_classified_as_evicted(
 
 @pytest.mark.parametrize("steerable", [False, True])
 @pytest.mark.asyncio
-async def test_invariant_1_eviction_column(
-    stubbable_provider_factory, steerable: bool
-) -> None:
+async def test_invariant_1_eviction_column(stubbable_provider_factory, steerable: bool) -> None:
     """SC-006 partial / Invariant 1: the dead-evicted column produces
     the same TaskConflictError (for .run/.start) regardless of
     steerable. Operator logs are the only differentiator from
@@ -412,9 +405,8 @@ async def test_invariant_1_eviction_column(
                 session_id="test-session",
                 status="in_progress",
                 title="inv1",
-                payload={"_steering": {"generation": 0, "pending_inputs": []}}
-                if steerable
-                else {})
+                payload={"_steering": {"generation": 0, "pending_inputs": []}} if steerable else {},
+            )
         )
         stub.reject_on("create", task_id="t-inv1")
         stub.reject_on("update", task_id="t-inv1")

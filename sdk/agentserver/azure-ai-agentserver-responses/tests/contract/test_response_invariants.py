@@ -416,12 +416,12 @@ def test_response_error__shape_has_only_code_and_message() -> None:
     assert "code" in error, f"error must have 'code' field, got: {list(error.keys())}"
     assert "message" in error, f"error must have 'message' field, got: {list(error.keys())}"
     # ResponseError shape: must NOT have type or param (those are for request errors)
-    assert "type" not in error, (
-        f"error must NOT have 'type' field (that is for request errors), got: {list(error.keys())}"
-    )
-    assert "param" not in error, (
-        f"error must NOT have 'param' field (that is for request errors), got: {list(error.keys())}"
-    )
+    assert (
+        "type" not in error
+    ), f"error must NOT have 'type' field (that is for request errors), got: {list(error.keys())}"
+    assert (
+        "param" not in error
+    ), f"error must NOT have 'param' field (that is for request errors), got: {list(error.keys())}"
 
 
 # ══════════════════════════════════════════════════════════
@@ -601,9 +601,9 @@ def test_output_item__response_id_stamped_on_item() -> None:
     assert payload["status"] == "completed"
     assert len(payload.get("output", [])) == 1
     item = payload["output"][0]
-    assert item.get("response_id") == payload["id"], (
-        f"B20: response_id on output item must match parent Response id, got: {item!r}"
-    )
+    assert (
+        item.get("response_id") == payload["id"]
+    ), f"B20: response_id on output item must match parent Response id, got: {item!r}"
 
 
 def test_output_item__agent_reference_stamped_on_item() -> None:
@@ -668,9 +668,9 @@ def test_output_item__agent_reference_stamped_on_item() -> None:
     # B21: agent_reference is also stamped on individual output items
     assert len(payload.get("output", [])) == 1
     item = payload["output"][0]
-    assert item.get("agent_reference") is not None, (
-        f"B21: agent_reference must be stamped on output items, got: {item!r}"
-    )
+    assert (
+        item.get("agent_reference") is not None
+    ), f"B21: agent_reference must be stamped on output items, got: {item!r}"
     assert item["agent_reference"].get("name") == "my-agent"
     assert item["agent_reference"].get("version") == "v2"
 
@@ -810,9 +810,9 @@ def test_output__cleared_for_cancelled_response() -> None:
     get_response = client.get(f"/responses/{response_id}")
     assert get_response.status_code == 200
     payload = get_response.json()
-    assert payload.get("output") == [], (
-        f"output must be cleared (empty []) for cancelled responses, got: {payload.get('output')}"
-    )
+    assert (
+        payload.get("output") == []
+    ), f"output must be cleared (empty []) for cancelled responses, got: {payload.get('output')}"
 
 
 # ══════════════════════════════════════════════════════════
@@ -878,9 +878,9 @@ def test_streaming_queued_status_honoured_in_created_event() -> None:
 
     created = [e for e in events if e["type"] == "response.created"]
     assert created, "Expected response.created event"
-    assert created[0]["data"]["response"]["status"] == "queued", (
-        f"Expected queued status on response.created, got {created[0]['data']['response']['status']!r}"
-    )
+    assert (
+        created[0]["data"]["response"]["status"] == "queued"
+    ), f"Expected queued status on response.created, got {created[0]['data']['response']['status']!r}"
 
 
 def test_background_queued_status_honoured_in_post_response() -> None:
@@ -914,9 +914,9 @@ def test_background_queued_status_honoured_in_post_response() -> None:
     assert response.status_code == 200
     payload = response.json()
     # Initial status must be queued (from the response.created event the handler emits)
-    assert payload["status"] == "queued", (
-        f"Expected queued status on background POST response, got {payload['status']!r}"
-    )
+    assert (
+        payload["status"] == "queued"
+    ), f"Expected queued status on background POST response, got {payload['status']!r}"
 
 
 def test_background_queued_status_eventually_completes() -> None:

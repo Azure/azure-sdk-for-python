@@ -65,9 +65,7 @@ class RequestIdMiddleware:
             if message["type"] == "http.response.start":
                 # Filter any existing x-request-id to avoid duplicates, then add ours.
                 headers = [
-                    (name, value)
-                    for name, value in message.get("headers", [])
-                    if name.lower() != b"x-request-id"
+                    (name, value) for name, value in message.get("headers", []) if name.lower() != b"x-request-id"
                 ]
                 headers.append((b"x-request-id", request_id.encode()))
                 message = {**message, "headers": headers}

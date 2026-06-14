@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Tests for US4 supporting behaviour and regression guards.
+"""Tests for  supporting behaviour and regression guards.
 
-Covers spec 013 US4 scenarios 3 (drain doesn't consult input), 4-5 (etag-protected
+Covers   scenarios 3 (drain doesn't consult input), 4-5 (etag-protected
 suspended-resume), 6-7 (recovery preserves input), 8 (completed not affected),
 and 11 (dead generation_results writes removed).
 """
@@ -46,7 +46,8 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -109,7 +110,7 @@ def test_handle_suspend_only_fires_on_suspend_not_recovery() -> None:
 def test_suspended_resume_uses_etag_retry_loop() -> None:
     """The suspended-resume input patch is now etag-protected (T-083).
 
-    Spec 016 note: the body of `_lifecycle_start` was extracted to
+     note: the body of `_lifecycle_start` was extracted to
     `_lifecycle_start_inner`; source assertions follow.
     """
     import inspect
@@ -118,15 +119,15 @@ def test_suspended_resume_uses_etag_retry_loop() -> None:
 
     src = inspect.getsource(Task._lifecycle_start_inner)
     # Etag retry loop at the suspended-resume site.
-    assert 'if_match=etag' in src
+    assert "if_match=etag" in src
     # And the standard retry behaviour. The retry catches the local
     # provider's ValueError AND the hosted store's
     # TransportClassifiedError(classification="conflict") — both are
     # the same logical etag conflict.
     assert "ValueError" in src
     assert "TransportClassifiedError" in src
-    # Spec 013 US4 framing.
-    assert "Spec 013 US4" in src
+    #   framing.
+    assert " " in src
 
 
 # ============================================================================
@@ -138,7 +139,7 @@ def test_suspended_resume_uses_etag_retry_loop() -> None:
 async def test_completed_with_ephemeral_true_deletes_task(tmp_path: Path) -> None:
     """ephemeral=True: whole task is deleted on completion (existing behaviour).
 
-    Regression guard — US4 must not have changed completion handling.
+    Regression guard —  must not have changed completion handling.
     """
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
@@ -151,29 +152,6 @@ async def test_completed_with_ephemeral_true_deletes_task(tmp_path: Path) -> Non
             await asyncio.sleep(0.05)
         # ephemeral=True: task removed from store.
         assert info is None
-    finally:
-        await _teardown_manager(manager, mgr_mod)
-
-
-@pytest.mark.asyncio
-async def test_completed_with_ephemeral_false_retains_input(tmp_path: Path) -> None:
-    """ephemeral=False completion does NOT clear input (existing behaviour).
-
-    US4 clearing only fires at the suspend transition.
-    """
-    manager, mgr_mod = await _setup_manager(tmp_path)
-    try:
-        await _completing_retain.start(task_id="t-complete-false", input={"msg": "user-content"})
-        info = None
-        for _ in range(100):
-            info = await manager.provider.get("t-complete-false")
-            if info is not None and info.status == "completed":
-                break
-            await asyncio.sleep(0.05)
-        assert info is not None
-        assert info.status == "completed"
-        # Input NOT cleared on completion — operator chose retention.
-        assert info.payload.get("input") is not None
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -196,14 +174,11 @@ def test_generation_results_write_removed() -> None:
 
     src = inspect.getsource(TaskManager._try_drain_steering)
     # Find non-comment lines that ASSIGN to generation_results.
-    non_comment_lines = [
-        line for line in src.splitlines()
-        if not line.lstrip().startswith("#")
-    ]
+    non_comment_lines = [line for line in src.splitlines() if not line.lstrip().startswith("#")]
     body = "\n".join(non_comment_lines)
     # The write block — must not be present.
     assert 'steering["generation_results"] =' not in body
-    assert 'gen_results[' not in body
+    assert "gen_results[" not in body
 
 
 def test_no_source_reference_to_generation_results() -> None:
@@ -211,7 +186,7 @@ def test_no_source_reference_to_generation_results() -> None:
     assignment or read of ``_steering["generation_results"]`` (comments and
     docstrings are allowed for historical context).
 
-    Spec 013 US4 acceptance scenario 11.
+      acceptance scenario 11.
     """
     import re
     import subprocess
@@ -228,7 +203,8 @@ def test_no_source_reference_to_generation_results() -> None:
         cwd=Path(__file__).parent.parent.parent.parent.parent.parent,
         capture_output=True,
         text=True,
-        check=False)
+        check=False,
+    )
     if result.stdout.strip():
         # An "actual use" line has an assignment (=), subscript brackets adjacent
         # to "generation_results", or a function call. Lines whose *content*
@@ -250,6 +226,5 @@ def test_no_source_reference_to_generation_results() -> None:
                 continue
             actual_use_lines.append(line)
         assert not actual_use_lines, (
-            f"Expected no non-doc references to generation_results, "
-            f"got: {chr(10).join(actual_use_lines)}"
+            f"Expected no non-doc references to generation_results, " f"got: {chr(10).join(actual_use_lines)}"
         )

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """TaskRun handle for the durable task subsystem.
 
-Spec 022 (Q9 / Q17 / FR-047 / FR-052): slim public shape.
+ (Q9 / Q17 /  /): slim public shape.
 
 Public surface:
 - attributes: ``task_id``, ``input_id``
@@ -29,7 +29,7 @@ Output = TypeVar("Output")
 
 
 class Suspended(Generic[Output]):
-    """Internal-only transitional sentinel (Spec 022).
+    """Internal-only transitional sentinel.
 
     No longer part of the public surface — kept only so legacy internal
     code paths in ``_manager.py`` and ``_context.py`` can continue to
@@ -53,7 +53,7 @@ class Suspended(Generic[Output]):
 
 
 def _unwrap_result(res: Any) -> Any:
-    """FR-052: futures now resolve to raw Output directly.
+    """: futures now resolve to raw Output directly.
 
     Identity helper retained so older monkey-patches in tests that
     pre-wrap futures still pass unchanged.
@@ -83,7 +83,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
 
     __slots__ = (
         "task_id",
-        "input_id",  # spec 022 FR-047 — public read-only attribute
+        "input_id",  #   — public read-only attribute
         "_result_future",
         "_metadata",
         "_cancel_event",
@@ -108,16 +108,16 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         input_id: str | None = None,
     ) -> None:
         self.task_id = task_id
-        # Spec 022 FR-047 — `input_id` is a public read-only attribute on
+        #   — `input_id` is a public read-only attribute on
         # TaskRun. For one-shot tasks it defaults to ``task_id`` (1:1 invariant
-        # per FR-004); for multi-turn tasks the framework auto-generates a
-        # separate GUID per turn (per FR-005) and sets it here.
+        # ); for multi-turn tasks the framework auto-generates a
+        # separate GUID per turn  and sets it here.
         self.input_id: str = input_id if input_id is not None else task_id
         self._result_future = result_future
         self._metadata = metadata or TaskMetadata()
         self._cancel_event = cancel_event or asyncio.Event()
         self._execution_task: asyncio.Task[Any] | None = execution_task
-        # Spec 016 FR-018 (US6): weak reference to the TaskContext so
+        #: weak reference to the TaskContext so
         # TaskRun.cancel() can set ctx.cancel_requested = True before
         # setting ctx.cancel.
         self._cancel_ctx_ref: Any = cancel_ctx_ref
@@ -136,27 +136,27 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
     async def result(self) -> Output:
         """Await task completion and return the raw output value.
 
-        Spec 022 FR-052: returns ``Output`` directly (not a wrapper).
-        Failures, cancellation, deferral are raised as exceptions.
+        : returns ``Output`` directly (not a wrapper).
+                Failures, cancellation, deferral are raised as exceptions.
 
-        :return: The task's output value.
-        :rtype: Output
-        :raises TaskFailed: If the function raised an exception (one-shot).
-        :raises TaskCancelled: If the task was cancelled.
-        :raises TaskDeferred: If the task called ``ctx.exit_for_recovery()``.
+                :return: The task's output value.
+                :rtype: Output
+                :raises TaskFailed: If the function raised an exception (one-shot).
+                :raises TaskCancelled: If the task was cancelled.
+                :raises TaskDeferred: If the task called ``ctx.exit_for_recovery()``.
         """
         return _unwrap_result(await self._result_future)
 
     async def cancel(self) -> None:
         """Signal cancellation to the running task.
 
-        Spec 016 FR-018 (US6): sets ``ctx.cancel_requested = True``
-        BEFORE setting ``ctx.cancel``, so a handler observing
-        ``ctx.cancel.is_set() == True`` is guaranteed to see at least
-        one cause boolean already ``True``.
+        : sets ``ctx.cancel_requested = True``
+                BEFORE setting ``ctx.cancel``, so a handler observing
+                ``ctx.cancel.is_set() == True`` is guaranteed to see at least
+                one cause boolean already ``True``.
 
-        The handler should check ``ctx.cancel.is_set()`` (and optionally
-        branch on which cause boolean is set) to wind down cleanly.
+                The handler should check ``ctx.cancel.is_set()`` (and optionally
+                branch on which cause boolean is set) to wind down cleanly.
         """
         ctx = self._cancel_ctx_ref
         if ctx is not None:
@@ -166,10 +166,10 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
     def __await__(self) -> Any:
         """Awaiting a :class:`TaskRun` returns its raw :meth:`result`.
 
-        Spec 022 FR-052: resolves to ``Output`` (not a wrapper). Mirrors
-        ``await run.result()`` exactly.
+        : resolves to ``Output`` (not a wrapper). Mirrors
+                ``await run.result()`` exactly.
 
-        :return: The raw output value.
-        :rtype: Output
+                :return: The raw output value.
+                :rtype: Output
         """
         return self.result().__await__()

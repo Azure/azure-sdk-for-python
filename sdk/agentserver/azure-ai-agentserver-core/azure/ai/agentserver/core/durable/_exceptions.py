@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Exception types for the durable task subsystem.
 
-Spec 022 reshape (FR-074..077): public exceptions no longer carry
+ reshape: public exceptions no longer carry
 ``task_id`` (caller has it via the run handle / call site). Constructors
 ACCEPT legacy ``task_id`` positional args for back-compat during the
 transition, but discard them (the attribute is never set).
@@ -16,12 +16,12 @@ import inspect
 class TaskFailed(Exception):
     """Raised when a durable task function raises an unhandled exception.
 
-    Spec 022 FR-075: only ``error`` is carried. ``task_id`` is no longer
-    on the exception (caller has it from the run handle).
+    : only ``error`` is carried. ``task_id`` is no longer
+        on the exception (caller has it from the run handle).
 
-    :keyword error: Structured error details (matches one of TaskErrorDict
-        or TaskExhaustedRetriesErrorDict).
-    :paramtype error: dict[str, Any]
+        :keyword error: Structured error details (matches one of TaskErrorDict
+            or TaskExhaustedRetriesErrorDict).
+        :paramtype error: dict[str, Any]
     """
 
     error: "TaskErrorDict | TaskExhaustedRetriesErrorDict"
@@ -40,16 +40,16 @@ class TaskFailed(Exception):
         super().__init__(error.get("message", "Task failed"))
 
 
-# Spec 022 FR-075: visible signature is `error` only.
+#: visible signature is `error` only.
 TaskFailed.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
     parameters=[inspect.Parameter("error", inspect.Parameter.KEYWORD_ONLY)]
 )
 
 
 class TaskCancelled(Exception):
-    """Raised when a durable task is cancelled (spec 022 FR-077: bare)."""
+    """Raised when a durable task is cancelled (: bare)."""
 
-    # NO __slots__ + NO instance state — spec 022 FR-077 requires no fields.
+    # NO __slots__ + NO instance state —   requires no fields.
     # __str__ is hardcoded; legacy positional task_id is accepted and discarded.
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -59,12 +59,12 @@ class TaskCancelled(Exception):
         return "Task was cancelled"
 
 
-# Override inspect signature to show empty parameter list per FR-077.
+# Override inspect signature to show empty parameter list.
 TaskCancelled.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
 
 
 class TaskNotFound(Exception):
-    """Internal-only — not exported from public surface per spec 022 FR-074."""
+    """Internal-only — not exported from public surface."""
 
     def __init__(self, task_id: str | None = None) -> None:
         self.task_id = task_id
@@ -74,10 +74,10 @@ class TaskNotFound(Exception):
 class TaskConflictError(RuntimeError):
     """Raised when a task lifecycle conflict cannot be resolved.
 
-    Spec 022 FR-075: only ``current_status`` is carried.
+    : only ``current_status`` is carried.
 
-    :keyword current_status: The task's current status.
-    :paramtype current_status: str
+        :keyword current_status: The task's current status.
+        :paramtype current_status: str
     """
 
     __slots__ = ("current_status",)
@@ -95,7 +95,7 @@ class TaskConflictError(RuntimeError):
         super().__init__(f"Task is already {current_status}")
 
 
-# Spec 022 FR-075: visible signature is current_status only.
+#: visible signature is current_status only.
 TaskConflictError.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
     parameters=[inspect.Parameter("current_status", inspect.Parameter.KEYWORD_ONLY)]
 )
@@ -113,7 +113,7 @@ class EtagConflict(RuntimeError):
 
 
 class SteeringQueueFull(RuntimeError):
-    """Raised when the steering pending-input queue is at capacity (spec 022 FR-077: bare)."""
+    """Raised when the steering pending-input queue is at capacity (: bare)."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__("Steering queue is full")
@@ -123,7 +123,7 @@ SteeringQueueFull.__signature__ = inspect.Signature(parameters=[])  # type: igno
 
 
 class TaskPreconditionFailed(RuntimeError):
-    """Internal-only base — not exported per spec 022 FR-074."""
+    """Internal-only base — not exported."""
 
     __slots__ = ("task_id",)
 
@@ -135,7 +135,7 @@ class TaskPreconditionFailed(RuntimeError):
 class LastInputIdPreconditionFailed(TaskPreconditionFailed):
     """Raised when ``Task.start``'s ``if_last_input_id`` precondition is not met.
 
-    Spec 022 FR-076: only ``actual_last_input_id`` is carried.
+    : only ``actual_last_input_id`` is carried.
     """
 
     __slots__ = ("actual_last_input_id",)
@@ -159,13 +159,10 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
                 actual_last_input_id = args[2]
         self.actual_last_input_id = actual_last_input_id
         # IMPORTANT: do NOT call super().__init__ — the parent
-        # TaskPreconditionFailed sets ``self.task_id``, which spec 022
-        # FR-077 forbids on public exceptions. Initialise via the
+        # TaskPreconditionFailed sets ``self.task_id``, which
+        #  forbids on public exceptions. Initialise via the
         # RuntimeError base directly.
-        msg = (
-            f"if_last_input_id precondition failed: "
-            f"actual last_input_id={actual_last_input_id!r}"
-        )
+        msg = f"if_last_input_id precondition failed: " f"actual last_input_id={actual_last_input_id!r}"
         RuntimeError.__init__(self, msg)
 
 
@@ -175,7 +172,7 @@ LastInputIdPreconditionFailed.__signature__ = inspect.Signature(  # type: ignore
 
 
 class InputTooLarge(ValueError):
-    """Raised when an input's serialized size exceeds the per-input cap (spec 022 FR-077: bare)."""
+    """Raised when an input's serialized size exceeds the per-input cap (: bare)."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__("Input exceeds the per-input cap")
@@ -184,10 +181,10 @@ class InputTooLarge(ValueError):
 InputTooLarge.__signature__ = inspect.Signature(parameters=[])  # type: ignore[attr-defined]
 
 
-# Spec 022 FR-074: OutputTooLarge is REMOVED from public surface. The
+#: OutputTooLarge is REMOVED from public surface. The
 # class is kept as internal-only (no longer in __init__'s __all__).
 class OutputTooLarge(ValueError):
-    """Internal-only — not exported per spec 022 FR-074. Kept for legacy raise sites."""
+    """Internal-only — not exported. Kept for legacy raise sites."""
 
     __slots__ = ("task_id", "size_bytes", "max_bytes")
 
@@ -196,13 +193,12 @@ class OutputTooLarge(ValueError):
         self.size_bytes = size_bytes
         self.max_bytes = max_bytes
         super().__init__(
-            f"Output for task {task_id!r} exceeds the per-output cap: "
-            f"{size_bytes} bytes > {max_bytes} byte cap."
+            f"Output for task {task_id!r} exceeds the per-output cap: " f"{size_bytes} bytes > {max_bytes} byte cap."
         )
 
 
 class _AttachmentTooLarge(ValueError):
-    """Spec 019 FR-D-002 — provider-internal cap-violation signal."""
+    """— provider-internal cap-violation signal."""
 
     __slots__ = ("task_id", "attachment_key", "size_bytes", "max_bytes")
 
@@ -224,7 +220,7 @@ class _AttachmentTooLarge(ValueError):
 
 
 class _AttachmentLimitExceeded(ValueError):
-    """Spec 019 FR-D-003 — provider-internal per-task attachment-count cap violation."""
+    """— provider-internal per-task attachment-count cap violation."""
 
     __slots__ = ("task_id", "current_count", "max_count")
 
@@ -232,10 +228,7 @@ class _AttachmentLimitExceeded(ValueError):
         self.task_id = task_id
         self.current_count = current_count
         self.max_count = max_count
-        super().__init__(
-            f"Task {task_id!r} already has {current_count} attachments; "
-            f"per-task cap is {max_count}."
-        )
+        super().__init__(f"Task {task_id!r} already has {current_count} attachments; " f"per-task cap is {max_count}.")
 
 
 # Backward-compatible aliases for any in-tree caller that still imports
@@ -245,7 +238,7 @@ AttachmentLimitExceeded = _AttachmentLimitExceeded
 
 
 # =========================================================================
-# Spec 022 — additions to the exception taxonomy
+#  — additions to the exception taxonomy
 # =========================================================================
 
 try:
@@ -255,11 +248,11 @@ except ImportError:  # pragma: no cover
 
 
 class TaskDeferred(Exception):
-    """Raised when handler called ``ctx.exit_for_recovery()`` (spec 022 FR-039).
+    """Raised when handler called ``ctx.exit_for_recovery``.
 
     Semantically DISTINCT from :class:`TaskCancelled` — the task stays
     ``in_progress`` and recovery re-invokes the handler in a future
-    lifetime. Bare exception per FR-077.
+    lifetime. Bare exception.
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -270,7 +263,7 @@ TaskDeferred.__signature__ = inspect.Signature(parameters=[])  # type: ignore[at
 
 
 class TaskErrorDict(TypedDict):
-    """Shape of :attr:`TaskFailed.error` for a normal handler-raise failure (spec 022 FR-071)."""
+    """Shape of:attr:`TaskFailed.error` for a normal handler-raise failure."""
 
     type: str
     message: str
@@ -278,11 +271,10 @@ class TaskErrorDict(TypedDict):
 
 
 class TaskExhaustedRetriesErrorDict(TypedDict):
-    """Shape of :attr:`TaskFailed.error` when the retry budget was exhausted (spec 022 FR-071)."""
+    """Shape of:attr:`TaskFailed.error` when the retry budget was exhausted."""
 
     type: Literal["exhausted_retries"]
     attempts: int
     last_error: str
     last_error_type: str
     traceback: str
-

@@ -1,10 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""RED-first retry conformance tests for spec 022.
+"""RED-first retry conformance tests.
 
-Covers FR-041, FR-042, FR-043, and SC-012. These tests target the
-spec-022 public surface and are expected to fail until the redesigned
+Covers,,, and SC-012. These tests target the
+redesigned public surface and are expected to fail until the redesigned
 one-shot / multi-turn retry lifecycle is implemented.
 """
 
@@ -39,16 +39,14 @@ def _unique(prefix: str) -> str:
 
 def _fast_retry(max_attempts: int) -> RetryPolicy:
     return RetryPolicy(
-        max_attempts=max_attempts,
-        initial_delay=timedelta(milliseconds=1),
-        backoff_coefficient=1.0,
-        jitter=False)
+        max_attempts=max_attempts, initial_delay=timedelta(milliseconds=1), backoff_coefficient=1.0, jitter=False
+    )
 
 
 def _multi_turn_task(**kwargs: Any) -> Any:
     durable = importlib.import_module("azure.ai.agentserver.core.durable")
     decorator = getattr(durable, "multi_turn_task", None)
-    assert decorator is not None, "Spec 022 requires public multi_turn_task"
+    assert decorator is not None, " requires public multi_turn_task"
     return decorator(**kwargs)
 
 
@@ -70,7 +68,8 @@ async def _setup_manager(provider_wrapper: Any | None = None) -> tuple[Any, Any,
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -84,12 +83,7 @@ async def _teardown_manager(manager: Any, mgr_mod: Any, store_dir: Path) -> None
     shutil.rmtree(store_dir, ignore_errors=True)
 
 
-async def _wait_for_record(
-    manager: Any,
-    task_id: str,
-    *,
-    status: str | None = None,
-    timeout: float = 5.0) -> Any:
+async def _wait_for_record(manager: Any, task_id: str, *, status: str | None = None, timeout: float = 5.0) -> Any:
     loop = asyncio.get_running_loop()
     deadline = loop.time() + timeout
     last_record = None
@@ -115,12 +109,8 @@ async def _wait_for_deleted(manager: Any, task_id: str, *, timeout: float = 5.0)
 
 
 async def _seed_stale_task(
-    manager: Any,
-    store_dir: Path,
-    *,
-    task_id: str,
-    retry_attempt: int,
-    input_value: Any) -> None:
+    manager: Any, store_dir: Path, *, task_id: str, retry_attempt: int, input_value: Any
+) -> None:
     from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
     await manager.provider.create(
@@ -130,7 +120,8 @@ async def _seed_stale_task(
             session_id="test-session",
             status="in_progress",
             title="retry-v2-stale",
-            payload={"input": input_value, "_retry_attempt": retry_attempt})
+            payload={"input": input_value, "_retry_attempt": retry_attempt},
+        )
     )
     task_file = store_dir / "test-agent" / "test-session" / f"{task_id}.json"
     data = json.loads(task_file.read_text())
@@ -152,15 +143,11 @@ def _patch_payload(patch: Any) -> dict[str, Any]:
 
 
 def _captured_updates(provider: Any, task_id: str) -> list[Any]:
-    return [
-        call[1]
-        for call in getattr(provider, "update_calls", [])
-        if call[0] == task_id
-    ]
+    return [call[1] for call in getattr(provider, "update_calls", []) if call[0] == task_id]
 
 
 class TestPerHandlerRetryBudget:
-    """FR-041 — RetryPolicy is per-handler-invocation."""
+    """— RetryPolicy is per-handler-invocation."""
 
     @pytest.mark.asyncio
     async def test_retry_policy_per_attempt(self) -> None:
@@ -214,12 +201,7 @@ class TestPerHandlerRetryBudget:
 
         manager, mgr_mod, _, store_dir = await _setup_manager()
         try:
-            await _seed_stale_task(
-                manager,
-                store_dir,
-                task_id=task_id,
-                retry_attempt=1,
-                input_value="same-attempt")
+            await _seed_stale_task(manager, store_dir, task_id=task_id, retry_attempt=1, input_value="same-attempt")
             run = await recovered.start(task_id=task_id, input="ignored")
             assert await asyncio.wait_for(run.result(), timeout=5.0) == "recovered@1"
             assert observed == [1]
@@ -248,7 +230,7 @@ class TestPerHandlerRetryBudget:
 
 
 class TestOneShotPostExhaustion:
-    """FR-042 — One-shot post-retry-exhaustion: record deleted + TaskFailed."""
+    """— One-shot post-retry-exhaustion: record deleted + TaskFailed."""
 
     @pytest.mark.asyncio
     async def test_one_shot_exhausted_deletes_record(self) -> None:
@@ -287,7 +269,7 @@ class TestOneShotPostExhaustion:
 
 
 class TestMultiTurnPostExhaustion:
-    """FR-043 — Multi-turn post-retry-exhaustion: suspended + TaskFailed; subsequent turns fresh."""
+    """— Multi-turn post-retry-exhaustion: suspended + TaskFailed; subsequent turns fresh."""
 
     @pytest.mark.asyncio
     async def test_multi_turn_exhausted_chain_alive(self) -> None:

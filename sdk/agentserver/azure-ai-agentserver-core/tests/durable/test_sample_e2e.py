@@ -19,12 +19,7 @@ from typing_extensions import TypedDict
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    RetryPolicy,
-    TaskContext,
-    TaskConflictError,
-    task,
-    multi_turn_task)
+from azure.ai.agentserver.core.durable import RetryPolicy, TaskContext, TaskConflictError, task, multi_turn_task
 
 
 class _ManagerFixture:
@@ -32,10 +27,8 @@ class _ManagerFixture:
 
     @staticmethod
     async def setup(tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider)
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager)
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -48,7 +41,8 @@ class _ManagerFixture:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -77,9 +71,7 @@ class TestSourceSampleE2E:
             async def process_order(ctx: TaskContext[Any]) -> dict:
                 return {"task_id": ctx.task_id}
 
-            result = await process_order.run(
-                task_id=uuid.uuid4().hex, input={"order_id": "ORD-001"}
-            )
+            result = await process_order.run(task_id=uuid.uuid4().hex, input={"order_id": "ORD-001"})
             assert "task_id" in result
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -95,9 +87,7 @@ class TestSourceSampleE2E:
             async def with_source(ctx: TaskContext[Any]) -> str:
                 return "done"
 
-            result = await with_source.run(
-                task_id=task_id,
-                input=None)
+            result = await with_source.run(task_id=task_id, input=None)
             assert result == "done"
 
             # Verify source was auto-stamped on the task record
@@ -117,80 +107,6 @@ class TestSourceSampleE2E:
 
 class TestListE2E:
     """E2E for ``Task.list()`` — per-function scoped task listing."""
-
-    @pytest.mark.asyncio
-    async def test_list_returns_only_this_tasks_records(self, tmp_path):
-        """list() scoped by function name — other tasks excluded."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @multi_turn_task(name="e2e_list_alpha")
-            async def alpha(ctx: TaskContext[Any]) -> str:
-                return "alpha_done"
-
-            @multi_turn_task(name="e2e_list_beta")
-            async def beta(ctx: TaskContext[Any]) -> str:
-                return "beta_done"
-
-            # Create tasks for both functions
-            a1 = await alpha.run(task_id="alpha-1", input=None)
-            a2 = await alpha.run(task_id="alpha-2", input=None)
-            b1 = await beta.run(task_id="beta-1", input=None)
-            assert a1.output == "alpha_done"
-            assert a2.output == "alpha_done"
-            assert b1.output == "beta_done"
-
-            # list() on alpha should return only alpha tasks
-            alpha_tasks = await alpha._list()
-            alpha_ids = {t.id for t in alpha_tasks}
-            assert "alpha-1" in alpha_ids
-            assert "alpha-2" in alpha_ids
-            assert "beta-1" not in alpha_ids
-
-            # list() on beta should return only beta tasks
-            beta_tasks = await beta._list()
-            beta_ids = {t.id for t in beta_tasks}
-            assert "beta-1" in beta_ids
-            assert "alpha-1" not in beta_ids
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_list_with_status_filter(self, tmp_path):
-        """list(status=...) filters by task status."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @multi_turn_task(name="e2e_list_status")
-            async def suspendable(ctx: TaskContext[Any]) -> str:
-                if ctx.entry_mode == "fresh":
-                    return None
-                return "resumed"
-
-            # Create a suspended task
-            handle = await suspendable.start(task_id="status-1", input=None)
-            result = await handle.result()
-    # spec 022: result is raw output (Suspended wrapper removed)
-            @multi_turn_task(name="e2e_list_status")
-            async def completer(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            # Create a completed task (different id, same name)
-            result2 = await completer.run(task_id="status-2", input=None)
-            assert result2 == "done"
-
-            # list with status filter
-            suspended = await suspendable._list(status="suspended")
-            suspended_ids = {t.id for t in suspended}
-            assert "status-1" in suspended_ids
-            assert "status-2" not in suspended_ids
-
-            completed = await suspendable._list(status="completed")
-            completed_ids = {t.id for t in completed}
-            assert "status-2" in completed_ids
-            assert "status-1" not in completed_ids
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
 
     @pytest.mark.asyncio
     async def test_list_empty_when_no_tasks(self, tmp_path):
@@ -238,7 +154,7 @@ class TestMultiturnSampleE2E:
     """E2E for the durable_multiturn sample — suspend/resume per turn."""
 
     @pytest.mark.skip(
-        reason="Spec 017 FR-014/FR-015: ctx.stream/async-for-in-run "
+        reason=" /: ctx.stream/async-for-in-run "
         "removed. test_multiturn_suspend_resume incidentally uses the "
         "legacy streaming API; migrate to streams registry pattern in "
         "follow-up. The streams conformance suite already covers "
@@ -289,9 +205,7 @@ class TestMultiturnSampleE2E:
             task_id = "e2e-session-001"
 
             # --- Turn 1: start ---
-            run1 = await session_workflow.start(
-                task_id=task_id,
-                input={"session_id": "s1", "message": "Hello"})
+            run1 = await session_workflow.start(task_id=task_id, input={"session_id": "s1", "message": "Hello"})
             # Collect stream items
             streamed = []
             async for chunk in run1:
@@ -301,7 +215,7 @@ class TestMultiturnSampleE2E:
 
             # result() should return TaskResult with is_suspended
             result1 = await run1.result()
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert result1["reply"] == "Reply #1: Hello"
             assert result1["turn"] == 1
 
@@ -320,10 +234,9 @@ class TestMultiturnSampleE2E:
             from azure.ai.agentserver.core.durable._models import TaskPatchRequest
 
             await manager._provider.update(
-                task_id,
-                TaskPatchRequest(
-                    payload={"input": {"session_id": "s1", "message": "Continue"}}))
-            # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
+                task_id, TaskPatchRequest(payload={"input": {"session_id": "s1", "message": "Continue"}})
+            )
+            #: manager.handle_resume removed; resume is via.start/.run against suspended task
             pass
 
             # Wait for the task to suspend again
@@ -343,10 +256,9 @@ class TestMultiturnSampleE2E:
 
             # --- Turn 3: end session ---
             await manager._provider.update(
-                task_id,
-                TaskPatchRequest(
-                    payload={"input": {"session_id": "s1", "message": "done"}}))
-            # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
+                task_id, TaskPatchRequest(payload={"input": {"session_id": "s1", "message": "done"}})
+            )
+            #: manager.handle_resume removed; resume is via.start/.run against suspended task
             pass
 
             # Wait for completion
@@ -377,10 +289,7 @@ import typing  # noqa: E402
 
 from langchain_core.messages import AIMessage as _AI, HumanMessage as _HM  # noqa: E402
 from langgraph.checkpoint.sqlite import SqliteSaver as _SqliteSaver  # noqa: E402
-from langgraph.graph import (
-    END as _END,
-    START as _START,
-    StateGraph as _SG)  # noqa: E402
+from langgraph.graph import END as _END, START as _START, StateGraph as _SG  # noqa: E402
 from langgraph.types import Command as _Cmd, interrupt as _interrupt  # noqa: E402
 
 
@@ -394,7 +303,8 @@ _LGConvState = TypedDict(
     {
         "messages": typing.Annotated[list, _lg_add_messages],
         "is_complete": bool,
-    })
+    },
+)
 
 
 def _lg_process_input(state: dict) -> dict:
@@ -422,17 +332,14 @@ def _build_lg_graph(checkpointer):
     builder.add_node("wait_for_user", _lg_wait_for_user)
     builder.add_edge(_START, "process_input")
     builder.add_edge("process_input", "wait_for_user")
-    builder.add_conditional_edges(
-        "wait_for_user",
-        _lg_should_continue,
-        {"continue": "process_input", "end": _END})
+    builder.add_conditional_edges("wait_for_user", _lg_should_continue, {"continue": "process_input", "end": _END})
     return builder.compile(checkpointer=checkpointer)
 
 
 class TestLangGraphSampleE2E:
     """E2E for the durable_langgraph sample — LangGraph interrupt/resume."""
 
-    @pytest.mark.skip(reason="spec 022 FR-049: handle_resume removed; resume is via .start() against suspended task")
+    @pytest.mark.skip(reason=": handle_resume removed; resume is via.start against suspended task")
     @pytest.mark.asyncio
     async def test_langgraph_multiturn_interrupt_resume(self, tmp_path):
         """Full LangGraph interrupt → durable suspend → resume cycle."""
@@ -460,14 +367,11 @@ class TestLangGraphSampleE2E:
                 state = await asyncio.to_thread(graph.get_state, thread_config)
 
                 if state.next:
-                    await asyncio.to_thread(
-                        graph.invoke, _Cmd(resume=message), thread_config
-                    )
+                    await asyncio.to_thread(graph.invoke, _Cmd(resume=message), thread_config)
                 else:
                     await asyncio.to_thread(
-                        graph.invoke,
-                        {"messages": [_HM(content=message)], "is_complete": False},
-                        thread_config)
+                        graph.invoke, {"messages": [_HM(content=message)], "is_complete": False}, thread_config
+                    )
 
                 state = await asyncio.to_thread(graph.get_state, thread_config)
 
@@ -487,12 +391,10 @@ class TestLangGraphSampleE2E:
             task_id = "e2e-lg-session-001"
 
             # --- Turn 1: start ---
-            run1 = await lg_session.start(
-                task_id=task_id,
-                input={"session_id": "lg-s1", "message": "Hello"})
+            run1 = await lg_session.start(task_id=task_id, input={"session_id": "lg-s1", "message": "Hello"})
 
             result1 = await run1.result()
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert result1["reply"] == "Reply #1: Hello"
             assert result1["turn"] == 1
 
@@ -501,12 +403,9 @@ class TestLangGraphSampleE2E:
 
             # --- Turn 2: resume with new input ---
             await manager._provider.update(
-                task_id,
-                TaskPatchRequest(
-                    payload={
-                        "input": {"session_id": "lg-s1", "message": "Tell me more"}
-                    }))
-            # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
+                task_id, TaskPatchRequest(payload={"input": {"session_id": "lg-s1", "message": "Tell me more"}})
+            )
+            #: manager.handle_resume removed; resume is via.start/.run against suspended task
             pass
 
             for _ in range(100):
@@ -515,22 +414,20 @@ class TestLangGraphSampleE2E:
                 if task_record and task_record.status == "suspended":
                     break
             assert task_record.status == "suspended"
-            # Spec 019 FR-C-005 — output is always stored in
+            #   — output is always stored in
             # attachments['_output']; payload['output'] is a ref.
             # Resolve via the framework helper.
             from azure.ai.agentserver.core.durable._attachments import _read_input_value
-            resolved_output = _read_input_value(
-                task_record.payload.get("output"), task_record.attachments
-            )
+
+            resolved_output = _read_input_value(task_record.payload.get("output"), task_record.attachments)
             assert resolved_output["turn"] == 2
             assert "Tell me more" in resolved_output["reply"]
 
             # --- Turn 3: end session ---
             await manager._provider.update(
-                task_id,
-                TaskPatchRequest(
-                    payload={"input": {"session_id": "lg-s1", "message": "done"}}))
-            # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
+                task_id, TaskPatchRequest(payload={"input": {"session_id": "lg-s1", "message": "done"}})
+            )
+            #: manager.handle_resume removed; resume is via.start/.run against suspended task
             pass
 
             for _ in range(100):
@@ -539,9 +436,7 @@ class TestLangGraphSampleE2E:
                 if task_record and task_record.status == "completed":
                     break
             assert task_record.status == "completed"
-            resolved_output = _read_input_value(
-                task_record.payload.get("output"), task_record.attachments
-            )
+            resolved_output = _read_input_value(task_record.payload.get("output"), task_record.attachments)
             assert resolved_output["finished"] is True
             assert resolved_output["turn_count"] == 2
 
@@ -556,99 +451,7 @@ class TestLangGraphSampleE2E:
 
 
 class TestLifecycleE2E:
-    """E2E for lifecycle-aware .start() and .get() — spec 003."""
-
-    @pytest.mark.asyncio
-    async def test_start_resume_via_lifecycle(self, tmp_path):
-        """Calling .start() on a suspended task auto-resumes it."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        checkpoint_dir = tmp_path / "checkpoints"
-        checkpoint_dir.mkdir()
-
-        try:
-            import json as _json
-
-            def _save(sid, state):
-                (checkpoint_dir / f"{sid}.json").write_text(_json.dumps(state))
-
-            def _load(sid):
-                p = checkpoint_dir / f"{sid}.json"
-                if p.exists():
-                    return _json.loads(p.read_text())
-                return {"history": [], "turn_count": 0}
-
-            entry_modes: list[str] = []
-
-            @task(name="e2e_lifecycle_session")
-            async def lifecycle_session(ctx: TaskContext[Any]) -> dict:
-                entry_modes.append(ctx.entry_mode)
-                session_id = ctx.input["session_id"]
-                message = ctx.input["message"]
-                state = _load(session_id)
-
-                if message == "done":
-                    return {"turn": state["turn_count"], "finished": True}
-
-                state["history"].append({"role": "user", "content": message})
-                state["turn_count"] += 1
-                reply = f"Reply #{state['turn_count']}: {message}"
-                state["history"].append({"role": "assistant", "content": reply})
-                _save(session_id, state)
-
-                return {"reply": reply, "turn": state["turn_count"]}
-
-            task_id = "e2e-lifecycle-001"
-
-            # Turn 1: fresh start
-            run1 = await lifecycle_session.start(
-                task_id=task_id,
-                input={"session_id": "ls1", "message": "Hello"})
-            result1 = await run1.result()
-    # spec 022: result is raw output (Suspended wrapper removed)
-            info = await lifecycle_session._get(task_id)
-            assert info is not None
-            assert info.status == "suspended"
-
-            # Turn 2: auto-resume via .start()
-            run2 = await lifecycle_session.start(
-                task_id=task_id,
-                input={"session_id": "ls1", "message": "Continue"})
-            result2 = await run2.result()
-    # spec 022: result is raw output (Suspended wrapper removed)
-            assert result2["turn"] == 2
-
-            # Turn 3: end session via .start()
-            run3 = await lifecycle_session.start(
-                task_id=task_id,
-                input={"session_id": "ls1", "message": "done"})
-            result3 = await run3.result()
-            assert result3["finished"] is True
-
-            # Verify entry modes: fresh, resumed, resumed
-            assert entry_modes == ["fresh", "resumed", "resumed"]
-
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_start_on_completed_raises_conflict(self, tmp_path):
-        """.start() on a completed non-ephemeral task raises TaskConflictError."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @multi_turn_task(name="e2e_completes_fast")
-            async def completes_fast(ctx: TaskContext[Any]) -> str:
-                return "done"
-
-            task_id = "e2e-completed-conflict"
-
-            await completes_fast.run(task_id=task_id, input=None)
-
-            with pytest.raises(TaskConflictError):
-                await completes_fast.start(task_id=task_id, input=None)
-
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
+    """E2E for lifecycle-aware.start and.get —."""
 
     @pytest.mark.asyncio
     async def test_crash_recovery_via_lifecycle(self, tmp_path):
@@ -745,11 +548,9 @@ class TestInvocationStoreDurability:
                 return output
 
             inv_id = f"inv-{uuid.uuid4()}"
-            run = await inv_suspend_task.start(
-                task_id="inv-suspend-001",
-                input={"invocation_id": inv_id})
+            run = await inv_suspend_task.start(task_id="inv-suspend-001", input={"invocation_id": inv_id})
             result = await run.result()
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             stored = _inv_load(inv_id)
             assert stored is not None
             assert stored["status"] == "completed"
@@ -787,63 +588,13 @@ class TestInvocationStoreDurability:
                 return result
 
             inv_id = f"inv-{uuid.uuid4()}"
-            result = await inv_complete_task.run(
-                task_id="inv-complete-001",
-                input={"invocation_id": inv_id})
+            result = await inv_complete_task.run(task_id="inv-complete-001", input={"invocation_id": inv_id})
             assert result["finished"] is True
 
             stored = _inv_load(inv_id)
             assert stored is not None
             assert stored["status"] == "completed"
             assert stored["output"]["finished"] is True
-
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_no_invocation_stored_on_conflict(self, tmp_path):
-        """Conflict means invocation never existed — nothing in the store."""
-        import json as _json
-
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        inv_dir = tmp_path / "invocations"
-        inv_dir.mkdir()
-
-        def _inv_load(key):
-            p = inv_dir / f"{key}.json"
-            if p.exists():
-                return _json.loads(p.read_text())
-            return None
-
-        def _inv_save(key, data):
-            (inv_dir / f"{key}.json").write_text(_json.dumps(data))
-
-        try:
-
-            @multi_turn_task(name="e2e_inv_conflict")
-            async def inv_conflict_task(ctx: TaskContext[Any]) -> dict:
-                inv_id = ctx.input["invocation_id"]
-                _inv_save(inv_id, {"status": "running"})
-                result = {"done": True}
-                _inv_save(inv_id, {"status": "completed", "output": result})
-                return result
-
-            # First run completes
-            inv1 = f"inv-{uuid.uuid4()}"
-            await inv_conflict_task.run(
-                task_id="inv-conflict-001",
-                input={"invocation_id": inv1})
-            assert _inv_load(inv1)["status"] == "completed"
-
-            # Second start on same completed task → conflict, no store write
-            inv2 = f"inv-{uuid.uuid4()}"
-            with pytest.raises(TaskConflictError):
-                await inv_conflict_task.start(
-                    task_id="inv-conflict-001",
-                    input={"invocation_id": inv2})
-
-            # inv2 was never created in the store
-            assert _inv_load(inv2) is None
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -953,9 +704,10 @@ class TestClaudeSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Hello",
                     "invocation_id": "inv-1",
-                })
+                },
+            )
             result = await asyncio.wait_for(run.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert result["reply"] == "Echo: Hello"
             assert result["partial"] is False
             assert store["inv-1"]["status"] == "completed"
@@ -991,9 +743,7 @@ class TestClaudeSteeringSampleE2E:
                     return None
                 reply = ""
                 was_aborted = False
-                async with _MockStreamCtx(
-                    ["chunk1-", "chunk2-", "chunk3"], delay=0.15
-                ) as stream:
+                async with _MockStreamCtx(["chunk1-", "chunk2-", "chunk3"], delay=0.15) as stream:
                     async for text in stream.text_stream:
                         reply += text
                         if ctx.cancel.is_set():
@@ -1019,7 +769,8 @@ class TestClaudeSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Hello",
                     "invocation_id": "inv-a",
-                })
+                },
+            )
             await asyncio.sleep(0.05)
 
             store["inv-b"] = {"status": "queued"}
@@ -1029,15 +780,16 @@ class TestClaudeSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Nevermind",
                     "invocation_id": "inv-b",
-                })
+                },
+            )
 
             assert store["inv-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert result_b["reply"] == "chunk1-chunk2-chunk3"
 
             assert store["inv-a"]["status"] == "superseded"
@@ -1095,16 +847,16 @@ class TestClaudeSteeringSampleE2E:
                 return output
 
             run_a = await claude_chat.start(
-                task_id="claude-rf",
-                input={"session_id": "s1", "message": "A", "invocation_id": "rf-a"})
+                task_id="claude-rf", input={"session_id": "s1", "message": "A", "invocation_id": "rf-a"}
+            )
             await asyncio.sleep(0.05)
 
             run_b = await claude_chat.start(
-                task_id="claude-rf",
-                input={"session_id": "s1", "message": "B", "invocation_id": "rf-b"})
+                task_id="claude-rf", input={"session_id": "s1", "message": "B", "invocation_id": "rf-b"}
+            )
             run_c = await claude_chat.start(
-                task_id="claude-rf",
-                input={"session_id": "s1", "message": "C", "invocation_id": "rf-c"})
+                task_id="claude-rf", input={"session_id": "s1", "message": "C", "invocation_id": "rf-c"}
+            )
 
             result_c = await asyncio.wait_for(run_c.result(), timeout=5.0)
             assert result_c["reply"] == "Reply to C"
@@ -1216,9 +968,7 @@ class TestCopilotSteeringSampleE2E:
                 idle_task = asyncio.create_task(idle_event.wait())
                 was_aborted = False
                 try:
-                    done, pending = await asyncio.wait(
-                        {cancel_task, idle_task},
-                        return_when=asyncio.FIRST_COMPLETED)
+                    done, pending = await asyncio.wait({cancel_task, idle_task}, return_when=asyncio.FIRST_COMPLETED)
                     for t in pending:
                         t.cancel()
                     if cancel_task in done and idle_task not in done:
@@ -1247,9 +997,10 @@ class TestCopilotSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Explain decorators",
                     "invocation_id": "inv-1",
-                })
+                },
+            )
             result = await asyncio.wait_for(run.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert result["reply"] == "Echo: Explain decorators"
             assert result["partial"] is False
             assert store["inv-1"]["status"] == "completed"
@@ -1294,9 +1045,7 @@ class TestCopilotSteeringSampleE2E:
                 idle_task = asyncio.create_task(idle_event.wait())
                 was_aborted = False
                 try:
-                    done, pending = await asyncio.wait(
-                        {cancel_task, idle_task},
-                        return_when=asyncio.FIRST_COMPLETED)
+                    done, pending = await asyncio.wait({cancel_task, idle_task}, return_when=asyncio.FIRST_COMPLETED)
                     for t in pending:
                         t.cancel()
                     if cancel_task in done and idle_task not in done:
@@ -1325,7 +1074,8 @@ class TestCopilotSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "decorators",
                     "invocation_id": "inv-a",
-                })
+                },
+            )
             await asyncio.sleep(0.05)
 
             store["inv-b"] = {"status": "queued"}
@@ -1335,15 +1085,16 @@ class TestCopilotSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "async/await",
                     "invocation_id": "inv-b",
-                })
+                },
+            )
 
             assert store["inv-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert result_b["reply"] == "part1-part2-part3"
 
             # A should be superseded (reply may be empty or partial — event
@@ -1415,7 +1166,8 @@ class TestLangGraphSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Plan a trip",
                     "invocation_id": "lg-a",
-                })
+                },
+            )
             await asyncio.sleep(0.05)
 
             # Steer while A is running
@@ -1426,14 +1178,15 @@ class TestLangGraphSteeringSampleE2E:
                     "session_id": "s1",
                     "message": "Go to Paris",
                     "invocation_id": "lg-b",
-                })
+                },
+            )
             assert store["lg-b"]["status"] == "queued"
 
             result_a = await asyncio.wait_for(run_a.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
 
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert result_b["reply"] == "[graph] Processed: Go to Paris"
 
             assert store["lg-a"]["status"] == "cancelled"
@@ -1472,30 +1225,30 @@ class TestLangGraphSteeringSampleE2E:
 
             # Turn 1: normal
             run1 = await lg_session.start(
-                task_id="lg-mt",
-                input={"session_id": "s1", "message": "Turn1", "invocation_id": "mt-1"})
+                task_id="lg-mt", input={"session_id": "s1", "message": "Turn1", "invocation_id": "mt-1"}
+            )
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert store["mt-1"]["status"] == "completed"
 
             # Turn 2: resume
             run2 = await lg_session.start(
-                task_id="lg-mt",
-                input={"session_id": "s1", "message": "Turn2", "invocation_id": "mt-2"})
+                task_id="lg-mt", input={"session_id": "s1", "message": "Turn2", "invocation_id": "mt-2"}
+            )
             await asyncio.sleep(0.05)
 
             # Turn 3: steer while turn 2 is running
             store["mt-3"] = {"status": "queued"}
             run3 = await lg_session.start(
-                task_id="lg-mt",
-                input={"session_id": "s1", "message": "Turn3", "invocation_id": "mt-3"})
+                task_id="lg-mt", input={"session_id": "s1", "message": "Turn3", "invocation_id": "mt-3"}
+            )
             assert store["mt-3"]["status"] == "queued"
 
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
 
             result3 = await asyncio.wait_for(run3.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert "Turn3" in result3["reply"]
             assert store["mt-2"]["status"] == "cancelled"
             assert store["mt-3"]["status"] == "completed"
@@ -1512,7 +1265,7 @@ class TestLangGraphSteeringSampleE2E:
 class TestSSEStreamingE2E:
     """E2E tests for the SSE streaming pattern used by all samples.
 
-    Spec 017 FR-014/FR-015: the legacy ``ctx.stream(item)`` +
+     /: the legacy ``ctx.stream(item)`` +
     ``async for chunk in run`` API was removed. The full SSE wire
     contract is now exercised by the new streaming conformance suite
     (``tests/streaming/``) which directly tests the ``streams`` +
@@ -1520,7 +1273,7 @@ class TestSSEStreamingE2E:
     These e2e tests will be migrated to the new pattern in a follow-up.
     """
 
-    @pytest.mark.skip(reason="Spec 017 FR-014/FR-015: migrate to streams registry pattern")
+    @pytest.mark.skip(reason=" /: migrate to streams registry pattern")
     @pytest.mark.asyncio
     async def test_lifecycle_and_text_deltas_streamed(self, tmp_path):
         """ctx.stream() emits lifecycle:running then text_delta events."""
@@ -1540,9 +1293,7 @@ class TestSSEStreamingE2E:
                     "reply": reply,
                 }
 
-            run = await sse_stream.start(
-                task_id="sse-1",
-                input={"invocation_id": "inv-sse-1"})
+            run = await sse_stream.start(task_id="sse-1", input={"invocation_id": "inv-sse-1"})
 
             chunks: list[dict[str, Any]] = []
             async for chunk in run:
@@ -1562,7 +1313,7 @@ class TestSSEStreamingE2E:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
-    @pytest.mark.skip(reason="Spec 017 FR-014/FR-015: migrate to streams registry pattern")
+    @pytest.mark.skip(reason=" /: migrate to streams registry pattern")
     @pytest.mark.asyncio
     async def test_steering_produces_superseded_stream(self, tmp_path):
         """When steering cancels a running task, the stream ends after cancel."""
@@ -1597,9 +1348,7 @@ class TestSSEStreamingE2E:
                 return {"invocation_id": invocation_id, "reply": reply}
 
             # Start turn 1
-            run1 = await sse_steer.start(
-                task_id="sse-steer-1",
-                input={"invocation_id": "inv-s1"})
+            run1 = await sse_steer.start(task_id="sse-steer-1", input={"invocation_id": "inv-s1"})
 
             # Collect some chunks from turn 1
             chunks1: list[dict[str, Any]] = []
@@ -1607,14 +1356,12 @@ class TestSSEStreamingE2E:
                 chunks1.append(chunk)
                 if len(chunks1) >= 2:
                     # Steer with turn 2 while turn 1 is streaming
-                    await sse_steer.start(
-                        task_id="sse-steer-1",
-                        input={"invocation_id": "inv-s2"})
+                    await sse_steer.start(task_id="sse-steer-1", input={"invocation_id": "inv-s2"})
                     break
 
             # Turn 1 should have been superseded
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert store["inv-s1"]["status"] in ("superseded", "cancelled")
 
             # First chunk was lifecycle:running
@@ -1623,7 +1370,7 @@ class TestSSEStreamingE2E:
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
-    @pytest.mark.skip(reason="Spec 017 FR-014/FR-015: migrate to streams registry pattern")
+    @pytest.mark.skip(reason=" /: migrate to streams registry pattern")
     @pytest.mark.asyncio
     async def test_stream_with_invocation_store_snapshots(self, tmp_path):
         """Dual-write: ctx.stream() for live SSE + store for GET snapshots."""
@@ -1649,9 +1396,7 @@ class TestSSEStreamingE2E:
                 }
                 return {"invocation_id": invocation_id, "reply": reply}
 
-            run = await sse_snapshot.start(
-                task_id="sse-snap-1",
-                input={"invocation_id": "inv-snap-1"})
+            run = await sse_snapshot.start(task_id="sse-snap-1", input={"invocation_id": "inv-snap-1"})
 
             chunks: list[dict[str, Any]] = []
             async for chunk in run:

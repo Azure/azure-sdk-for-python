@@ -171,18 +171,18 @@ def _deserialize_input(value: Any, input_type: type[Any]) -> Any:
 
 
 def _in_progress_was_abandoned_legacy(task_updated_at: str, threshold: float) -> bool:
-    """Transitional helper for the Phase-4 cohort of spec 016.
+    """Transitional helper for the Phase-4 cohort of.
 
-    Replaces the public ``_is_stale`` helper that was removed by FR-001
-    (spec 016 US1 / T031). This intentionally non-stale-named function
-    holds the in-process recovery decision until Phase 6 of spec 016
-    lands the proper FR-002 / FR-004 lease-based reclaim path
+    Replaces the public ``_is_stale`` helper that was removed by
+    (/ T031). This intentionally non-stale-named function
+    holds the in-process recovery decision until Phase 6 of
+    lands the proper  /  lease-based reclaim path
     (``_lease_is_dead`` + ``_reclaim_one``) that supersedes this entire
     code path.
 
     The function MUST NOT be imported from outside ``_decorator.py`` —
     it is a transitional implementation detail with a planned
-    deprecation in the same PR (Phase 6 of spec 016).
+    deprecation in the same PR (Phase 6 of).
 
     :param task_updated_at: ISO 8601 timestamp of the task's last update.
     :type task_updated_at: str
@@ -204,21 +204,21 @@ def _in_progress_was_abandoned_legacy(task_updated_at: str, threshold: float) ->
     return (now - updated).total_seconds() > threshold
 
 
-# Spec 016 transitional internal constant (FR-001).
+#  transitional internal constant.
 #
 # Replaces the per-task ``stale_timeout`` developer-facing knob that
-# was removed in Phase 4 of spec 016 (US1, T028-T032). Tests that
+# was removed in Phase 4 of  (, T028-T032). Tests that
 # previously passed ``stale_timeout=0.1`` to deterministically trigger
 # the recovered code path now monkeypatch this module-level constant
-# instead. Phase 6 of spec 016 (US3, T053-T058) replaces both this
+# instead. Phase 6 of  (, T053-T058) replaces both this
 # constant AND the entire ``_in_progress_was_abandoned_legacy`` code
-# path with the proper FR-002 / FR-004 framework-managed reclaim
+# path with the proper  /  framework-managed reclaim
 # (``_reclaim_one`` + ``_lease_is_dead``) — at which point this
 # constant becomes dead code and is removed.
 _LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS: float = 300.0
 
 
-# Spec 015 Phase 5 (FR-004) — framework-reserved payload slot for the
+#   — framework-reserved payload slot for the
 # input-precondition primitive. Storage layout: top-level
 # ``payload["_last_input_id"]: str`` (the ``_`` prefix is the framework-
 # reserved convention; flat layout replaces the prior nested
@@ -228,13 +228,13 @@ _LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS: float = 300.0
 # :meth:`Task.start`.
 _LAST_INPUT_ID_PAYLOAD_KEY = "_last_input_id"
 
-# Spec 015 Phase 3 (FR-006) — these were previously developer-visible
+#   — these were previously developer-visible
 # @task kwargs (lease_duration_seconds, max_pending) but had no real
 # end-user knob value. Demoted to module-level internal constants. If a
 # future need arises to tune them per-task, re-introduce a Sec-Privileged
 # API rather than restoring the public surface.
 _DEFAULT_LEASE_SECONDS = 60
-# Spec 018 (task-attachments) §3.3 — the steering queue is hard-capped
+#  (task-attachments) §3.3 — the steering queue is hard-capped
 # at 9 entries. This reserves at most 10 of the 20 attachment slots for
 # framework use (9 steering + 1 function input); the other 10 remain
 # free for future features. Replaces the prior 10-cap.
@@ -335,7 +335,7 @@ def _build_framework_extras(input_id: str | None) -> dict[str, Any] | None:
 class TaskOptions:  # pylint: disable=too-many-instance-attributes
     """Internal task options bag.
 
-    *Internal*: not part of the public ``durable`` surface as of Spec 015 Phase 3.
+    *Internal*: not part of the public ``durable`` surface as of.
     Constructed by the ``@task`` decorator (and ``Task.options()``) from a small
     public kwarg set: ``name``, ``title``, ``tags``, ``timeout``, ``ephemeral``,
     ``retry``, ``steerable``, .
@@ -363,7 +363,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         "ephemeral",
         "retry",
         "steerable",
-        "_is_multi_turn",  # spec 022 — True when wrapped by @multi_turn_task
+        "_is_multi_turn",  #  — True when wrapped by @multi_turn_task
     )
 
     def __init__(
@@ -422,7 +422,7 @@ class Task(Generic[Input, Output]):
         self.name = opts.name
         # Register for recovery — manager picks these up at startup
         _REGISTERED_DESCRIPTORS.append((opts.name, fn, opts))
-        # Spec 022 — if a TaskManager is already initialised (decorators
+        #  — if a TaskManager is already initialised (decorators
         # declared after startup, e.g. in tests), eagerly push into its
         # resume tables so _recover_stale_tasks / get_active_run can pick
         # up the multi-turn opts (_is_multi_turn).
@@ -540,10 +540,11 @@ class Task(Generic[Input, Output]):
             last input id.
         :raises TypeError: If ``if_last_input_id`` is supplied without ``input_id``.
         """
-        # Spec 022 FR-067: one-shot Task.start/.run — task_id is OPTIONAL,
+        #: one-shot Task.start/.run — task_id is OPTIONAL,
         # auto-generated as a GUID when not supplied.
         if task_id is None:
             import uuid as _uuid  # pylint: disable=import-outside-toplevel
+
             task_id = _uuid.uuid4().hex
         _validate_task_id(task_id)
         if if_last_input_id is not None and input_id is None:
@@ -617,10 +618,11 @@ class Task(Generic[Input, Output]):
             last input id.
         :raises TypeError: If ``if_last_input_id`` is supplied without ``input_id``.
         """
-        # Spec 022 FR-067: one-shot Task.start/.run — task_id is OPTIONAL,
+        #: one-shot Task.start/.run — task_id is OPTIONAL,
         # auto-generated as a GUID when not supplied.
         if task_id is None:
             import uuid as _uuid  # pylint: disable=import-outside-toplevel
+
             task_id = _uuid.uuid4().hex
         _validate_task_id(task_id)
         if if_last_input_id is not None and input_id is None:
@@ -638,7 +640,7 @@ class Task(Generic[Input, Output]):
         """Return the full persisted task information (internal).
 
         .. note::
-            *Internal* as of Spec 015 Phase 3 — public consumers should use
+            *Internal* as of  — public consumers should use
             ``manager.provider.get(task_id)`` directly.
 
         Works for any task state — running, suspended, completed, etc.
@@ -659,30 +661,30 @@ class Task(Generic[Input, Output]):
     async def get_active_run(self, task_id: str) -> TaskRun[Output] | None:
         """Return a TaskRun handle for an active (in-progress) task.
 
-        Spec 016 FR-005 (US3 / US4): consults the store, not only
-        in-memory state. If the record is in-progress with a dead
-        lease, performs inline reclaim as a hidden side effect and
-        returns a usable :class:`TaskRun` bound to the new lifetime.
-        Terminal records return ``None``. Eviction returns ``None``.
+        : consults the store, not only
+                in-memory state. If the record is in-progress with a dead
+                lease, performs inline reclaim as a hidden side effect and
+                returns a usable :class:`TaskRun` bound to the new lifetime.
+                Terminal records return ``None``. Eviction returns ``None``.
 
-        Enables late-join consumers to iterate a running task's stream
-        without being the original caller of ``start()``/``run()``,
-        AND covers the orphan-resurrection case where the previous
-        lifetime crashed without notice.
+                Enables late-join consumers to iterate a running task's stream
+                without being the original caller of ``start()``/``run()``,
+                AND covers the orphan-resurrection case where the previous
+                lifetime crashed without notice.
 
-        :param task_id: The task identifier.
-        :type task_id: str
-        :return: A TaskRun bound to the active task's stream handler,
-            or ``None`` if not active / terminal / evicted.
-        :rtype: TaskRun[Output] | None
+                :param task_id: The task identifier.
+                :type task_id: str
+                :return: A TaskRun bound to the active task's stream handler,
+                    or ``None`` if not active / terminal / evicted.
+                :rtype: TaskRun[Output] | None
 
-        Example::
+                Example::
 
-            # In another coroutine or request handler:
-            run = await my_task.get_active_run("task-123")
-            if run is not None:
-                async for chunk in run:
-                    print(chunk, end="")
+                    # In another coroutine or request handler:
+                    run = await my_task.get_active_run("task-123")
+                    if run is not None:
+                        async for chunk in run:
+                            print(chunk, end="")
         """
         from ._manager import (  # pylint: disable=import-outside-toplevel
             get_task_manager,
@@ -691,7 +693,7 @@ class Task(Generic[Input, Output]):
         manager = get_task_manager()
         return await manager.get_active_run(task_id)
 
-    # Spec 022 FR-017: Task.get() is removed. TaskSnapshot is gone.
+    #: Task.get is removed. TaskSnapshot is gone.
     # Use manager.provider.get(task_id) directly for read-only inspection
     # (returns TaskInfo, not a Snapshot wrapper).
 
@@ -704,7 +706,7 @@ class Task(Generic[Input, Output]):
         """List tasks created by this durable task function (internal).
 
         .. note::
-            *Internal* as of Spec 015 Phase 3 — public consumers should use
+            *Internal* as of  — public consumers should use
             ``manager.list_tasks(fn_name=...)`` directly.
 
         Automatically scoped to this function's ``name`` via the
@@ -743,22 +745,22 @@ class Task(Generic[Input, Output]):
     ) -> None:
         """Append a steering input to the task's pending queue.
 
-        :param manager: The task manager instance.
-        :type manager: Any
-        :keyword task_id: Target task identifier.
-        :paramtype task_id: str
-        :keyword input_val: The new steering input value.
-        :paramtype input_val: Any
-        :keyword existing: The previously-fetched task record (used for the
-            first etag attempt; later attempts re-fetch internally).
-        :paramtype existing: Any
-        :keyword input_id: (Spec 013 US2) When set, the new input's identity.
-            Used to advance ``payload["_last_input_id"]``
-            atomically with the queue append.
-        :paramtype input_id: str | None
-        :keyword if_last_input_id: (Spec 013 US2) When set, the precondition
-            value re-checked on each etag-conflict retry.
-        :paramtype if_last_input_id: str | None
+                :param manager: The task manager instance.
+                :type manager: Any
+                :keyword task_id: Target task identifier.
+                :paramtype task_id: str
+                :keyword input_val: The new steering input value.
+                :paramtype input_val: Any
+                :keyword existing: The previously-fetched task record (used for the
+                    first etag attempt; later attempts re-fetch internally).
+                :paramtype existing: Any
+        :keyword input_id:  When set, the new input's identity.
+                    Used to advance ``payload["_last_input_id"]``
+                    atomically with the queue append.
+                :paramtype input_id: str | None
+        :keyword if_last_input_id:  When set, the precondition
+                    value re-checked on each etag-conflict retry.
+                :paramtype if_last_input_id: str | None
         """
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             SteeringQueueFull,
@@ -779,7 +781,7 @@ class Task(Generic[Input, Output]):
             if task_info is None:
                 raise RuntimeError(f"Task {task_id!r} disappeared during steering append")
 
-            # (Spec 013 US2) Re-check the input precondition on each retry to
+            #  Re-check the input precondition on each retry to
             # catch a concurrent steer that may have advanced `last_input_id`
             # since we last looked.
             if _attempt > 0:
@@ -797,7 +799,7 @@ class Task(Generic[Input, Output]):
             if len(pending) >= _DEFAULT_MAX_PENDING_STEERING:
                 raise SteeringQueueFull(task_id, _DEFAULT_MAX_PENDING_STEERING)
 
-            # Spec 018 — route through the promotion helper. Small steering
+            #  — route through the promotion helper. Small steering
             # inputs (≤ 20 KiB serialized) stay as raw values in
             # ``pending_inputs``; larger ones are written to
             # ``attachments["_steering_input_<seq>"]`` with a ref slot in
@@ -825,15 +827,15 @@ class Task(Generic[Input, Output]):
             pending.append(queue_entry)
             steering["pending_inputs"] = pending
             steering["cancel_requested"] = True
-            # Spec 016 FR-021 + gap-list §FR-021-internal (US6): the
+            #   SOT: the
             # internal _steering["generation"] payload field is removed
             # alongside the public ctx.steering_generation surface.
             payload["_steering"] = steering
 
-            # (Spec 013 US2 / Spec 015 FR-004) When the caller opted in via
+            #  When the caller opted in via
             # input_id, advance the framework-managed last_input_id slot
             # atomically with the queue append. The slot is a top-level
-            # `_`-prefixed payload key (Spec 015: flat layout).
+            # `_`-prefixed payload key (: flat layout).
             if input_id is not None:
                 payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
 
@@ -912,31 +914,31 @@ class Task(Generic[Input, Output]):
     ) -> TaskRun[Output]:
         """Resolve lifecycle state and start/resume/recover accordingly.
 
-        Title, tags, retry, stream handler, and stale timeout are all sourced
-        from ``self._opts`` (the decorator-time configuration). This is
-        deliberate: those settings must survive the crash boundary, and the
-        framework can only rely on the registered decorator's view of the task
-        on recovery.
+                Title, tags, retry, stream handler, and stale timeout are all sourced
+                from ``self._opts`` (the decorator-time configuration). This is
+                deliberate: those settings must survive the crash boundary, and the
+                framework can only rely on the registered decorator's view of the task
+                on recovery.
 
-        :keyword task_id: The task identifier.
-        :paramtype task_id: str
-        :keyword input: Typed input value.
-        :paramtype input: Input
-        :keyword input_id: (Spec 013 US2) When set, the new input's identity
-            recorded in the framework-reserved
-            ``payload["_last_input_id"]`` slot.
-        :paramtype input_id: str | None
-        :keyword if_last_input_id: (Spec 013 US2) Precondition value checked
-            against the stored ``last_input_id`` before any accept path.
-        :paramtype if_last_input_id: str | None
-        :return: A handle to the running task.
-        :rtype: TaskRun[Output]
+                :keyword task_id: The task identifier.
+                :paramtype task_id: str
+                :keyword input: Typed input value.
+                :paramtype input: Input
+        :keyword input_id:  When set, the new input's identity
+                    recorded in the framework-reserved
+                    ``payload["_last_input_id"]`` slot.
+                :paramtype input_id: str | None
+        :keyword if_last_input_id:  Precondition value checked
+                    against the stored ``last_input_id`` before any accept path.
+                :paramtype if_last_input_id: str | None
+                :return: A handle to the running task.
+                :rtype: TaskRun[Output]
         """
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskConflictError,
         )
 
-        # Spec 016 FR-008 (US2): orphan-sandbox eviction at scheduling
+        #: orphan-sandbox eviction at scheduling
         # entry points MUST surface as TaskConflictError(current_status=
         # "in_progress") — the same shape as the live-elsewhere case
         # per Invariant 1. Operator-facing WARNING logs (in _manager.py
@@ -971,7 +973,7 @@ class Task(Generic[Input, Output]):
     ) -> TaskRun[Output]:
         """Inner body of :meth:`_lifecycle_start`. See that method for docs.
 
-        Split out so the outer wrapper can convert spec 016 FR-008 evictions
+        Split out so the outer wrapper can convert   evictions
         to ``TaskConflictError`` without indenting the entire body.
 
         :keyword task_id: Stable task identifier (same as outer method).
@@ -999,7 +1001,7 @@ class Task(Generic[Input, Output]):
 
         resolved_retry = self._opts.retry
 
-        # (Spec 013 US2) Pre-acceptance check: if the caller supplied an
+        #  Pre-acceptance check: if the caller supplied an
         # ``if_last_input_id`` precondition, verify the stored last input id
         # matches before proceeding to any accept path. The actual advance
         # (storing ``input_id`` into ``payload["_last_input_id"]``) is bundled
@@ -1044,10 +1046,10 @@ class Task(Generic[Input, Output]):
 
         if existing.status == "suspended":
             # Resume — patch input onto task, then start.
-            # (Spec 013 US4) Etag-protected retry loop so concurrent
+            #  Etag-protected retry loop so concurrent
             # suspended-resume POSTs race safely instead of silently
             # overwriting each other.
-            # (Spec 013 US2) On the same atomic patch, advance the
+            #  On the same atomic patch, advance the
             # framework's `payload["_last_input_id"]` slot when the caller
             # opted in via `input_id`. The precondition check already ran
             # at the top of `_lifecycle_start` against the read existing.
@@ -1061,7 +1063,7 @@ class Task(Generic[Input, Output]):
                 TaskPatchRequest,
             )
 
-            # Spec 018 — promotion: route the resume input through the
+            #  — promotion: route the resume input through the
             # same helper as the create path. Inline stays raw in payload;
             # > 200 KiB spills into ``attachments["_input"]`` with a ref
             # in payload. Single PATCH carries both.
@@ -1080,14 +1082,14 @@ class Task(Generic[Input, Output]):
             for _attempt in range(max_resume_retries):
                 etag = getattr(current_info, "etag", None) or None
                 # Build the resume patch: input + (optionally) advance the
-                # framework-managed last_input_id slot (Spec 015 flat layout).
+                # framework-managed last_input_id slot (flat layout).
                 resume_payload: dict[str, Any] = {"input": input_value}
                 if input_id is not None:
                     resume_payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
                 try:
                     # PATCH returns the updated TaskInfo -- capture it
                     # to skip the post-patch refetch below.
-                    # Spec 019 FR-A-001 / FR-A-006 — route through the
+                    #   /  — route through the
                     # manager's per-task write queue so the etag cache
                     # is refreshed from the response (otherwise the
                     # subsequent _start_existing_task PATCH would carry
@@ -1159,13 +1161,13 @@ class Task(Generic[Input, Output]):
             )
 
         if existing.status == "in_progress":
-            # Spec 016 FR-002 Layer 3 + FR-004 (US3): consult the lease
+            #   Layer 3 +: consult the lease
             # state to decide recovery vs. conflict. The legacy
             # _LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS wall-clock
             # heuristic over updated_at is replaced by the proper
             # lease-state determination via _lease_is_dead. If the
             # lease is dead, inline-reclaim via _reclaim_one and
-            # re-enter as recovered (FR-002 Layer 3); if alive,
+            # re-enter as recovered (Layer 3); if alive,
             # either queue the steering input or raise TaskConflictError.
             from ._manager import (  # pylint: disable=import-outside-toplevel
                 _lease_is_dead,
@@ -1179,10 +1181,10 @@ class Task(Generic[Input, Output]):
             )
 
             if lease_dead:
-                # Inline reclaim per FR-002 layer (c). On race-lost /
+                # Inline reclaim per  layer (c). On race-lost /
                 # eviction the TransportClassifiedError propagates and
                 # the outer _lifecycle_start wrapper converts it to
-                # TaskConflictError (FR-008 Invariant 1 shape).
+                # TaskConflictError (Invariant 1 shape).
                 try:
                     await manager._reclaim_one(existing)  # pylint: disable=protected-access
                 except _HostedConflict as exc:
@@ -1269,9 +1271,7 @@ def task(
     name: str | None = None,
     title: str | None = None,
     timeout: timedelta | None = None,
-    ephemeral: bool = True,
     retry: RetryPolicy | None = None,
-    steerable: bool = False,
 ) -> Any:
     """Turn an async function into a crash-resilient durable task.
 
@@ -1280,7 +1280,7 @@ def task(
         @task
         async def my_task(ctx: TaskContext[MyInput]) -> MyOutput: ...
 
-        @task(name="custom-name", ephemeral=False)
+        @task(name="custom-name")
         async def my_task(ctx: TaskContext[MyInput]) -> MyOutput: ...
 
     :param fn: The async function to decorate (when used without parens).
@@ -1298,14 +1298,16 @@ def task(
         force-stop the handler. See the developer guide §4 Timeout for
         the full mechanic (including the crash-mid-turn budget-preserving
         recovery semantics).
-    :keyword ephemeral: Delete task on terminal exit (default True).
     :keyword retry: Default retry policy for this task. Recovery-safe: applied
         by the framework on every entry, including crash recovery.
-    :keyword steerable: Whether this task accepts steering inputs. When True,
-        calling ``start()`` on an ``in_progress`` task queues the input and
-        signals cancel instead of raising ``TaskConflictError``. Default False.
     :return: A ``Task[Input, Output]`` wrapper.
     :rtype: Any
+
+    .. note::
+       ``@task`` is always one-shot and always ephemeral — the persisted
+       record is deleted on terminal exit. Use ``@multi_turn_task`` for
+       steerable chains; passing ``ephemeral=`` or ``steerable=`` to
+       ``@task`` raises ``TypeError`` at decoration time.
     """
 
     def _wrap(
@@ -1321,9 +1323,9 @@ def task(
             title=title,
             tags={},
             timeout=timeout,
-            ephemeral=ephemeral,
+            ephemeral=True,
             retry=retry,
-            steerable=steerable,
+            steerable=False,
         )
 
         result = Task(
@@ -1340,21 +1342,21 @@ def task(
 
 
 # =========================================================================
-# Spec 022 — Phase 2: class split + identifier supply + handler-sig validation
+#  — Phase 2: class split + identifier supply + handler-sig validation
 # =========================================================================
 #
-# Per spec 022 FR-001 / FR-002 / FR-003 / FR-051 / FR-069 / FR-073.
+# /  /  /  /  /.
 #
-# - `MultiTurnTask` is a DISTINCT public class from `Task` (FR-069 — not a
+# - `MultiTurnTask` is a DISTINCT public class from `Task` (— not a
 #   subclass; type checker enforces "no .delete() on one-shot").
 # - `@multi_turn_task(steerable=...)` decorator returns MultiTurnTask.
-# - Both decorators validate kwargs at decoration time (FR-051) and accept
-#   only static-string `title` (FR-001 / FR-002).
-# - Handler signature validation per FR-003.
+# - Both decorators validate kwargs at decoration time  and accept
+#   only static-string `title`.
+# - Handler signature validation.
 
 
 def _validate_title(title: object) -> None:
-    """FR-001 / FR-002 — title must be `str | None`. Callable form REMOVED."""
+    """/  — title must be `str | None`. Callable form REMOVED."""
     if title is not None and not isinstance(title, str):
         raise TypeError(
             f"@task / @multi_turn_task `title=` must be `str | None`; "
@@ -1363,7 +1365,7 @@ def _validate_title(title: object) -> None:
 
 
 def _validate_handler_signature(func: Callable[..., Any], decorator_name: str) -> None:
-    """FR-003 — handler must be `async def fn(ctx: TaskContext[Input]) -> Output`."""
+    """— handler must be `async def fn(ctx: TaskContext[Input]) -> Output`."""
     if not asyncio.iscoroutinefunction(func):
         raise TypeError(
             f"@{decorator_name} requires an `async def` (async function) handler, "
@@ -1388,7 +1390,7 @@ def _validate_handler_signature(func: Callable[..., Any], decorator_name: str) -
             f"{func.__qualname__!r}"
         )
     if first.name != "ctx":
-        # Spec 022 FR-003: first parameter MUST be named ``ctx``.
+        #: first parameter MUST be named ``ctx``.
         raise TypeError(
             f"@{decorator_name} handler first argument must be named `ctx` "
             f"(found {first.name!r} in {func.__qualname__!r})"
@@ -1432,17 +1434,13 @@ def _validate_task_kwargs(**kwargs: Any) -> None:
 
 
 def _validate_multi_turn_task_kwargs(**kwargs: Any) -> None:
-    """FR-051 — @multi_turn_task allow-list."""
+    """— @multi_turn_task allow-list."""
     unknown = set(kwargs) - _ALLOWED_MULTI_TURN_TASK_KWARGS
     if unknown:
         if "ephemeral" in unknown:
-            raise TypeError(
-                "@multi_turn_task does not accept `ephemeral=` (chains are never ephemeral)"
-            )
+            raise TypeError("@multi_turn_task does not accept `ephemeral=` (chains are never ephemeral)")
         if "tags" in unknown:
-            raise TypeError(
-                "@multi_turn_task does not accept `tags=` (tags surface is not part of spec 022)"
-            )
+            raise TypeError("@multi_turn_task does not accept `tags=` (tags surface is not part of)")
         raise TypeError(
             f"@multi_turn_task got unexpected kwargs: {sorted(unknown)}. "
             f"Allowed: {sorted(_ALLOWED_MULTI_TURN_TASK_KWARGS)}"
@@ -1450,9 +1448,9 @@ def _validate_multi_turn_task_kwargs(**kwargs: Any) -> None:
 
 
 class MultiTurnTask(Generic[Input, Output]):
-    """A decorated multi-turn durable task chain (spec 022 FR-002 / FR-069).
+    """A decorated multi-turn durable task chain.
 
-    Distinct public class from :class:`Task` — NOT a subclass per FR-069.
+    Distinct public class:class:`Task` — NOT a subclass.
     The type checker enforces "no ``.delete()`` on one-shot" and
     "multi-turn ``get_active_run`` takes both ``task_id`` AND ``input_id``"
     statically.
@@ -1552,7 +1550,9 @@ class MultiTurnTask(Generic[Input, Output]):
         )
 
     async def get_active_run(
-        self, task_id: str, input_id: str,
+        self,
+        task_id: str,
+        input_id: str,
     ) -> "TaskRun[Output] | None":
         """Multi-turn variant of ``get_active_run`` — REQUIRES ``input_id``.
 
@@ -1575,15 +1575,15 @@ class MultiTurnTask(Generic[Input, Output]):
         return run
 
     async def delete(self, task_id: str) -> None:
-        """Force-delete the chain record + any queued inputs (spec 022 FR-024).
+        """Force-delete the chain record + any queued inputs.
 
-        Per spec 022 FR-024, removes the chain record and all queued
-        steerers; resolves active + queued callers' ``.result()`` futures
-        with :class:`TaskCancelled`. Idempotent (no-op when the chain is
-        already gone).
+        , removes the chain record and all queued
+                steerers; resolves active + queued callers' ``.result()`` futures
+                with :class:`TaskCancelled`. Idempotent (no-op when the chain is
+                already gone).
 
-        :param task_id: The chain task_id to delete.
-        :type task_id: str
+                :param task_id: The chain task_id to delete.
+                :type task_id: str
         """
         from ._manager import get_task_manager  # pylint: disable=import-outside-toplevel
         from ._exceptions import TaskCancelled  # pylint: disable=import-outside-toplevel
@@ -1617,10 +1617,11 @@ class MultiTurnTask(Generic[Input, Output]):
                 queued_fut.set_exception(TaskCancelled())
 
         # 3. Force-delete the record (idempotent — only swallow the
-        # "already-gone" classes per FR-024).
+        # "already-gone" classes).
         provider = getattr(mgr, "_provider", None)
         if provider is not None:
             from ._exceptions_internal import TaskNotFound  # pylint: disable=import-outside-toplevel
+
             try:
                 await provider.delete(task_id, force=True)
             except TaskNotFound:
@@ -1657,30 +1658,30 @@ def multi_turn_task(
     steerable: bool = False,
     **_extra_kwargs: Any,
 ) -> Any:
-    """Decorator producing a multi-turn durable chain (spec 022 FR-002).
+    """Decorator producing a multi-turn durable chain.
 
-    Multi-turn chains accept inputs across many turns against the same
-    ``task_id``. The handler's ``return X`` is the implicit-suspend
-    signal — there is no ``ctx.suspend()`` (per FR-008). The chain stays
-    alive across handler raises (per FR-010).
+        Multi-turn chains accept inputs across many turns against the same
+        ``task_id``. The handler's ``return X`` is the implicit-suspend
+        signal — there is no ``ctx.suspend``. The chain stays
+        alive across handler raises.
 
-    :keyword name: Stable chain-identity anchor.
-    :keyword title: Static human-readable string. Callable-factory form is
-        not supported (FR-001 / FR-002).
-    :keyword timeout: Per-turn cooperative timeout.
-    :keyword retry: Default retry policy.
-    :keyword steerable: When True, ``start()`` against an in-flight chain
-        queues the new input instead of raising ``TaskConflictError``.
-    :return: A :class:`MultiTurnTask` instance (distinct public class from
-        :class:`Task` per FR-069).
+        :keyword name: Stable chain-identity anchor.
+        :keyword title: Static human-readable string. Callable-factory form is
+            not supported.
+        :keyword timeout: Per-turn cooperative timeout.
+        :keyword retry: Default retry policy.
+        :keyword steerable: When True, ``start()`` against an in-flight chain
+            queues the new input instead of raising ``TaskConflictError``.
+        :return: A :class:`MultiTurnTask` instance (distinct public class from
+    :class:`Task`).
     """
-    # FR-051 — reject unknown kwargs at decoration time
+    #  — reject unknown kwargs at decoration time
     _validate_multi_turn_task_kwargs(**_extra_kwargs)
-    # FR-001 / FR-002 — title must be str | None
+    #  /  — title must be str | None
     _validate_title(title)
 
     def _wrap(func: Callable[..., Any]) -> MultiTurnTask[Any, Any]:
-        # FR-003 — handler-signature validation
+        #  — handler-signature validation
         _validate_handler_signature(func, "multi_turn_task")
 
         input_type, output_type = _extract_generic_args(func)
@@ -1693,7 +1694,7 @@ def multi_turn_task(
             ephemeral=False,  # multi-turn chains are NEVER ephemeral
             retry=retry,
             steerable=steerable,
-            _is_multi_turn=True,  # spec 022 — signals new raise/persistence semantics
+            _is_multi_turn=True,  #  — signals new raise/persistence semantics
         )
 
         return MultiTurnTask(
@@ -1708,9 +1709,9 @@ def multi_turn_task(
     return _wrap
 
 
-# Re-export the `task` decorator with spec 022 validation overlay.
+# Re-export the `task` decorator with  validation overlay.
 # Wraps the legacy `task` so existing callers keep working while NEW callers
-# get FR-051 / FR-001 / FR-002 / FR-003 enforcement.
+# get  /  /  /  enforcement.
 _legacy_task = task
 
 
@@ -1751,7 +1752,6 @@ def task(  # type: ignore[no-redef]  # noqa: F811
             title=title,
             timeout=timeout,
             retry=retry,
-            ephemeral=True,
         )(func)
 
     if fn is not None:

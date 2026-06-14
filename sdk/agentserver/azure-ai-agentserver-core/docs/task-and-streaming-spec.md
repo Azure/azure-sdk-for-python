@@ -2246,7 +2246,7 @@ consumers attach via `streams.get(id).subscribe(after=...)`.
 The two surfaces are decoupled because a stream may span multiple
 task turns, multiple functions writing to the same id, or a
 non-`@task` producer. Coupling stream iteration to `TaskRun`
-would re-couple lifetime in ways spec 017 explicitly broke. Other-
+would re-couple lifetime in ways the SOT intentionally avoids. Other-
 language implementers MUST NOT add task-handle iteration as
 "syntactic sugar" — it would re-introduce the very coupling we
 removed. If a developer wants a single `await run` plus an
@@ -3106,7 +3106,7 @@ Phase 2 — Handler re-entry (in-memory only):
 Phase 3 — "Drain end" PATCH (after handler re-entered):
  18. steering['drain_in_progress'] = False
  19. payload['_steering']          = steering
- 20. payload['_retry_attempt']     = 0     # FR-001: drain resets retry budget durably
+ 20. payload['_retry_attempt']     = 0     # Drain resets retry budget durably
  21. PATCH(task_id, payload=payload, lease piggyback)
      (No attachments touched in Phase 3.)
 

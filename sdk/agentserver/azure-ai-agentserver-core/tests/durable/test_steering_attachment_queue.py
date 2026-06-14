@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT license.
-"""Spec 018 — Steering-input queue redesign end-to-end (Phase 4).
+""" — Steering-input queue redesign end-to-end (Phase 4).
 
 Verifies:
 
@@ -30,13 +30,11 @@ from azure.ai.agentserver.core.durable._attachments import (
     _STEERING_QUEUE_CAP,
     _STEERING_THRESHOLD_BYTES,
     _is_ref,
-    _ref_key)
+    _ref_key,
+)
 from azure.ai.agentserver.core.durable._exceptions import SteeringQueueFull
-from azure.ai.agentserver.core.durable._local_provider import (
-    LocalFileTaskProvider)
-from azure.ai.agentserver.core.durable._manager import (
-    TaskManager,
-    set_task_manager)
+from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+from azure.ai.agentserver.core.durable._manager import TaskManager, set_task_manager
 from azure.ai.agentserver.core.durable._models import TaskPatchRequest
 
 
@@ -49,7 +47,8 @@ def _config_stub(session_id: str = "s018-steer-session"):
             "session_id": session_id,
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
 
 
 @pytest_asyncio.fixture
@@ -58,9 +57,8 @@ async def manager_local(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
     config = _config_stub()
     mgr = TaskManager(
-        config=config,
-        provider=LocalFileTaskProvider(base_dir=tmp_path / "tasks"),
-        shutdown_event=asyncio.Event())
+        config=config, provider=LocalFileTaskProvider(base_dir=tmp_path / "tasks"), shutdown_event=asyncio.Event()
+    )
     set_task_manager(mgr)
     await mgr.startup()
     try:
@@ -104,9 +102,7 @@ async def test_small_steering_input_stays_inline(manager_local: TaskManager) -> 
     assert not _is_ref(pending[0])
     # No steering attachment because below threshold.
     if info.attachments:
-        assert not any(
-            k.startswith(_STEERING_INPUT_KEY_PREFIX) for k in info.attachments
-        )
+        assert not any(k.startswith(_STEERING_INPUT_KEY_PREFIX) for k in info.attachments)
 
     proceed.set()
     # Cancel both runs to clean up.
@@ -157,8 +153,7 @@ async def test_large_steering_input_promoted(manager_local: TaskManager) -> None
 
 
 @pytest.mark.asyncio
-async def test_drain_does_not_renumber_existing_attachments(
-    manager_local: TaskManager) -> None:
+async def test_drain_does_not_renumber_existing_attachments(manager_local: TaskManager) -> None:
     """The user's concern: dequeue MUST NOT trigger re-upload / re-keying.
 
     After appending A and B (both promoted) and draining A, B's
@@ -219,7 +214,9 @@ async def test_drain_does_not_renumber_existing_attachments(
     # Let B's turn complete too.
     drain_signal.set()
     await asyncio.sleep(0.5)
-    await run.cancel()
+    # Explicit delete so the manager shutdown does not block waiting for
+    # the in-flight handler to drain its blocking event.
+    await runner.delete("t-monotonic-1")
 
 
 # --------------------------------------------------------------------------- #
@@ -227,7 +224,7 @@ async def test_drain_does_not_renumber_existing_attachments(
 # --------------------------------------------------------------------------- #
 
 
-@pytest.mark.skip(reason="spec 022 FR-077: SteeringQueueFull is bare exception (no max_pending)")
+@pytest.mark.skip(reason=": SteeringQueueFull is bare exception (no max_pending)")
 @pytest.mark.asyncio
 async def test_steering_queue_9_cap(manager_local: TaskManager) -> None:
     """SC-7: 9th append succeeds; 10th raises SteeringQueueFull(9)."""
@@ -251,7 +248,7 @@ async def test_steering_queue_9_cap(manager_local: TaskManager) -> None:
     # 10th raises.
     with pytest.raises(SteeringQueueFull) as excinfo:
         await runner.start(task_id="t-9cap-1", input={"steer": 999})
-    # spec 022 FR-077: exception.task_id removed
+    #: exception.task_id removed
     assert excinfo.value.max_pending == _STEERING_QUEUE_CAP
 
     block.set()
@@ -290,9 +287,7 @@ async def test_drain_co_deletes_attachment(manager_local: TaskManager) -> None:
     info_pre = await manager_local.provider.get("t-drain-1")
     assert info_pre is not None
     assert info_pre.attachments is not None
-    steering_keys_pre = [
-        k for k in info_pre.attachments if k.startswith(_STEERING_INPUT_KEY_PREFIX)
-    ]
+    steering_keys_pre = [k for k in info_pre.attachments if k.startswith(_STEERING_INPUT_KEY_PREFIX)]
     assert len(steering_keys_pre) == 1
 
     # Trigger drain.
@@ -302,12 +297,8 @@ async def test_drain_co_deletes_attachment(manager_local: TaskManager) -> None:
     # Post-drain: the steering attachment is gone.
     info_post = await manager_local.provider.get("t-drain-1")
     assert info_post is not None
-    steering_keys_post = [
-        k for k in (info_post.attachments or {}) if k.startswith(_STEERING_INPUT_KEY_PREFIX)
-    ]
-    assert steering_keys_post == [], (
-        f"Steering attachments should be empty after drain; got {steering_keys_post}"
-    )
+    steering_keys_post = [k for k in (info_post.attachments or {}) if k.startswith(_STEERING_INPUT_KEY_PREFIX)]
+    assert steering_keys_post == [], f"Steering attachments should be empty after drain; got {steering_keys_post}"
 
     drain_signal.set()
     await run.cancel()
@@ -319,15 +310,12 @@ async def test_drain_co_deletes_attachment(manager_local: TaskManager) -> None:
 
 
 @pytest.mark.asyncio
-async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(
-    manager_local: TaskManager) -> None:
+async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(manager_local: TaskManager) -> None:
     """SC-12: orphaned _steering_input_* attachments are cleaned up on recovery."""
 
     # Manually plant a task in the local provider with an orphaned
     # steering attachment (a key whose ref is NOT in pending_inputs).
-    from azure.ai.agentserver.core.durable._models import (
-        LeaseInfo,
-        TaskCreateRequest)
+    from azure.ai.agentserver.core.durable._models import LeaseInfo, TaskCreateRequest
 
     create = TaskCreateRequest(
         agent_name="s018-steer-agent",
@@ -350,7 +338,8 @@ async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(
             "_steering_input_0": "orphan-A",  # not referenced
             "_steering_input_1": "orphan-B",  # not referenced
             "_input": "real input",  # NOT a steering key — must be preserved
-        })
+        },
+    )
     await manager_local.provider.create(create)
 
     # Invoke the cleanup directly (it would normally fire from
@@ -374,8 +363,7 @@ async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(
 
 
 @pytest.mark.asyncio
-async def test_steering_append_oversized_raises_input_too_large(
-    manager_local: TaskManager) -> None:
+async def test_steering_append_oversized_raises_input_too_large(manager_local: TaskManager) -> None:
     """Parity with function input: steering input > 2 MB raises InputTooLarge.
 
     Gap-fill: previously only the function-input path was tested for the
@@ -384,8 +372,7 @@ async def test_steering_append_oversized_raises_input_too_large(
     test (``test_resolve_raises_inputtoolarge_when_over_cap``) verified
     it. This pins the behavior end-to-end through ``_append_steering_input``.
     """
-    from azure.ai.agentserver.core.durable._attachments import (
-        _MAX_ATTACHMENT_SIZE_BYTES)
+    from azure.ai.agentserver.core.durable._attachments import _MAX_ATTACHMENT_SIZE_BYTES
     from azure.ai.agentserver.core.durable._exceptions import InputTooLarge
 
     started = asyncio.Event()
@@ -403,15 +390,14 @@ async def test_steering_append_oversized_raises_input_too_large(
     huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 200)
     with pytest.raises(InputTooLarge) as excinfo:
         await runner.start(task_id="t-steer-oversize-1", input=huge)
-    # spec 022 FR-077: exception.task_id removed
+    #: exception.task_id removed
 
     block.set()
     await run.cancel()
 
 
 @pytest.mark.asyncio
-async def test_drain_inline_entry_leaves_attachments_untouched(
-    manager_local: TaskManager) -> None:
+async def test_drain_inline_entry_leaves_attachments_untouched(manager_local: TaskManager) -> None:
     """Symmetric to test_drain_co_deletes_attachment: a drain of an inline
     queue entry MUST NOT issue an attachments delete.
 
@@ -473,8 +459,7 @@ async def test_drain_inline_entry_leaves_attachments_untouched(
 
 
 @pytest.mark.asyncio
-async def test_post_drain_new_append_gets_next_seq_not_zero(
-    manager_local: TaskManager) -> None:
+async def test_post_drain_new_append_gets_next_seq_not_zero(manager_local: TaskManager) -> None:
     """Monotonic invariant tighter: next_input_seq survives drains.
 
     Plant a task with ``next_input_seq=5``, empty pending queue, NO
@@ -522,7 +507,8 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(
                 },
             },
             tags={"task_name": "t-seq-mono-plant"},
-            source={"name": "t-seq-mono-plant", "type": "agentserver.task"})
+            source={"name": "t-seq-mono-plant", "type": "agentserver.task"},
+        )
     )
 
     # Start the in-process tracking so subsequent .start() append-paths

@@ -182,8 +182,10 @@ def _configure_tracing(
 
     span_processors = [
         _FoundryEnrichmentSpanProcessor(
-            agent_name=agent_name, agent_version=agent_version,
-            agent_id=agent_id, project_id=project_id,
+            agent_name=agent_name,
+            agent_version=agent_version,
+            agent_id=agent_id,
+            project_id=project_id,
             agent_blueprint_id=agent_blueprint_id,
             agent_tenant_id=agent_tenant_id,
         ),
@@ -247,10 +249,9 @@ def _setup_distro_export(
         kwargs["azure_monitor_connection_string"] = connection_string
 
     # A365 tracing export — enabled only in hosted environments.
-    if (
-        os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "")
-        and os.environ.get("FOUNDRY_AGENT365_TRACING_ENABLED", "").lower() in ("true", "1")
-    ):
+    if os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "") and os.environ.get(
+        "FOUNDRY_AGENT365_TRACING_ENABLED", ""
+    ).lower() in ("true", "1"):
         kwargs["enable_a365"] = True
         kwargs["a365_use_s2s_endpoint"] = True
         kwargs["a365_enable_observability_exporter"] = True
@@ -290,20 +291,20 @@ class TraceContextMiddleware:
 
         # Build a simple dict of headers for the propagators
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
-        headers = {
-            k.decode("latin-1"): v.decode("latin-1")
-            for k, v in raw_headers
-        }
+        headers = {k.decode("latin-1"): v.decode("latin-1") for k, v in raw_headers}
 
         # Use the global propagator to extract trace context + baggage
         from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+
         ctx = extract(carrier=headers)
 
         # Add x-request-id as baggage for downstream propagation
         x_request_id = headers.get("x-request-id")
         if x_request_id:
             ctx = _otel_baggage.set_baggage(
-                "x_request_id", x_request_id, context=ctx,
+                "x_request_id",
+                x_request_id,
+                context=ctx,
             )
 
         token = _otel_context.attach(ctx)
@@ -419,9 +420,7 @@ def detach_context(token: Any) -> None:
             )
 
 
-async def trace_stream(
-    iterator: AsyncIterable[_Content], span: Any
-) -> AsyncIterator[_Content]:
+async def trace_stream(iterator: AsyncIterable[_Content], span: Any) -> AsyncIterator[_Content]:
     """Wrap a streaming body so the span covers the full transmission.
 
     Yields chunks unchanged.  Ends the span when the iterator is

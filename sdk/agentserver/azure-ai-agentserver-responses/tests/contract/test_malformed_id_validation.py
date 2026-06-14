@@ -141,9 +141,9 @@ class TestMalformedPreviousResponseId:
         # If the server returns 400, it must NOT be the format-validation shape.
         if r.status_code == 400:
             error = r.json().get("error", {})
-            assert error.get("code") != "invalid_parameters", (
-                "Valid-format previous_response_id was rejected by format validation"
-            )
-            assert "Malformed" not in error.get("message", ""), (
-                "Valid-format previous_response_id was rejected with Malformed message"
-            )
+            assert (
+                error.get("code") != "invalid_parameters"
+            ), "Valid-format previous_response_id was rejected by format validation"
+            assert "Malformed" not in error.get(
+                "message", ""
+            ), "Valid-format previous_response_id was rejected with Malformed message"

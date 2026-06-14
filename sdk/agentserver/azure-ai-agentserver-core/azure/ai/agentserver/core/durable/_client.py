@@ -9,14 +9,14 @@ chain. Bearer tokens are obtained lazily by ``AsyncBearerTokenCredentialPolicy``
 call-site code never assembles ``Authorization`` headers directly.
 
 **`ContentDecodePolicy` is intentionally excluded** from the policy
-chain (spec 016 FR-030). The responses-storage gzip lesson: that policy
+chain. The responses-storage gzip lesson: that policy
 eagerly deserializes every body as JSON in middleware and crashes on
 gzip / non-UTF-8 / gateway-HTML payloads before call-site code can
 handle the response. Body parsing here happens at the call site with
-defensive error handling (FR-033).
+defensive error handling.
 
 Every store-write call site funnels through :func:`_classify_store_write_error`
-(spec 016 FR-006 / FR-032) so the manager can react uniformly to
+ so the manager can react uniformly to
 transient / evicted / conflict / permanent outcomes without re-deriving
 the classification per-site.
 """
@@ -67,7 +67,7 @@ _BODY_PREFIX_LIMIT = 256  # truncation length for classified error bodies
 
 
 # --------------------------------------------------------------------- #
-# Classifier (spec 016 FR-006)
+# Classifier
 # --------------------------------------------------------------------- #
 
 
@@ -79,7 +79,7 @@ class TransportClassifiedError(Exception):
 
     Carries enough metadata for operator triage without exposing
     bearer tokens or full response bodies. ``classification`` carries
-    the FR-006 outcome label so callers can branch consistently.
+    the  outcome label so callers can branch consistently.
     """
 
     def __init__(
@@ -101,7 +101,7 @@ class TransportClassifiedError(Exception):
 def _classify_store_write_error(  # pylint: disable=too-many-return-statements
     status_code: int, body: bytes | None
 ) -> ClassifiedOutcome:
-    """Classify a non-success task-store response per spec 016 FR-006.
+    """Classify a non-success task-store response.
 
     Returns one of ``"transient"`` (retry), ``"evicted"`` (orphan-sandbox
     eviction; local cleanup sequence), ``"conflict"`` (etag mismatch or
@@ -180,7 +180,7 @@ def _maybe_decompress(body: bytes | None, headers: Any) -> bytes | None:
     """Decompress ``body`` if the response declares ``Content-Encoding: gzip``.
 
     Since ``ContentDecodePolicy`` is intentionally absent from the
-    pipeline (FR-030), each call site is responsible for honoring
+    pipeline, each call site is responsible for honoring
     ``Content-Encoding``. Returns ``body`` unchanged for other encodings
     so the caller's defensive JSON-parse can produce a useful error.
 
@@ -216,19 +216,19 @@ def _parse_json_body(
 ) -> Any:
     """Defensively decode a JSON body from the response.
 
-    Spec 016 FR-033: catches ``UnicodeDecodeError``, ``json.JSONDecodeError``,
-    ``azure.core.exceptions.DecodeError`` and raises
-    :class:`TransportClassifiedError` carrying the classification, the
-    request id (if any), and a truncated body prefix.
+    : catches ``UnicodeDecodeError``, ``json.JSONDecodeError``,
+        ``azure.core.exceptions.DecodeError`` and raises
+        :class:`TransportClassifiedError` carrying the classification, the
+        request id (if any), and a truncated body prefix.
 
-    :param response: The pipeline response object.
-    :type response: Any
-    :keyword method: HTTP method of the originating request (for error context).
-    :paramtype method: str
-    :keyword url: Request URL (for error context).
-    :paramtype url: str
-    :return: The parsed JSON value on success.
-    :rtype: Any
+        :param response: The pipeline response object.
+        :type response: Any
+        :keyword method: HTTP method of the originating request (for error context).
+        :paramtype method: str
+        :keyword url: Request URL (for error context).
+        :paramtype url: str
+        :return: The parsed JSON value on success.
+        :rtype: Any
     """
     status = getattr(response, "status_code", 0)
     headers = getattr(response, "headers", {}) or {}
@@ -271,7 +271,7 @@ def _parse_json_body(
 
 
 def _raise_hosted_conflict_for_response(response: Any) -> None:
-    """Spec 020 / §39.1 — translate service error codes to ``_HostedConflict``.
+    """SOT §39.1 — translate service error codes to ``_HostedConflict``.
 
     The hosted task service emits distinct ``code`` strings inside its JSON
     error envelope for each failure cause (``task_immutable``,
@@ -341,10 +341,10 @@ def _raise_classified(
     """Inspect a response and raise :class:`TransportClassifiedError`.
 
     Replaces the legacy ``response.raise_for_status()`` call sites
-    (spec 016 FR-032) so every non-success response funnels through
-    the FR-006 classifier and carries the canonical outcome label.
+     so every non-success response funnels through
+    the  classifier and carries the canonical outcome label.
 
-    Spec 020 additionally checks for the service's distinct error
+     additionally checks for the service's distinct error
     codes before the generic classification — when one matches, an
     internal ``_HostedConflict`` is raised instead (see §39.1).
 
@@ -355,7 +355,7 @@ def _raise_classified(
     :keyword url: Request URL (for error context).
     :paramtype url: str
     """
-    # Spec 020: check for service-coded errors first. If matched,
+    #: check for service-coded errors first. If matched,
     # _HostedConflict is raised and we never reach the generic
     # classifier below.
     _raise_hosted_conflict_for_response(response)
@@ -385,7 +385,7 @@ def _raise_classified(
 def _build_default_policies(
     credential: AsyncTokenCredential,
 ) -> list[Any]:
-    """Construct the canonical policy chain per spec 016 FR-030.
+    """Construct the canonical policy chain.
 
     Order: RequestIdPolicy, HeadersPolicy, UserAgentPolicy,
     AsyncRetryPolicy (retry on 5xx / 408 / 429 only — NEVER on 409),
@@ -405,7 +405,7 @@ def _build_default_policies(
         HeadersPolicy(base_headers={"Foundry-Features": "Routines=V1Preview"}),
         UserAgentPolicy(base_user_agent=_USER_AGENT),
         # Retry on 5xx and the standard transient HTTP statuses; 409
-        # is explicitly NOT in retry_on_status_codes (FR-030) because
+        # is explicitly NOT in retry_on_status_codes  because
         # 409 carries application semantics (conflict / binding_mismatch)
         # that retry would silently mask.
         AsyncRetryPolicy(
@@ -423,7 +423,7 @@ class HostedTaskProvider:
     """HTTP-backed provider for the Foundry Task Storage API.
 
     Built on :class:`azure.core.AsyncPipelineClient` with the standard
-    policy chain (spec 016 FR-029..FR-034). ``ContentDecodePolicy`` is
+    policy chain. ``ContentDecodePolicy`` is
     explicitly excluded; body parsing happens at the call site with
     defensive error handling.
 
@@ -434,7 +434,7 @@ class HostedTaskProvider:
         :class:`azure.identity.aio.DefaultAzureCredential`).
     :type credential: AsyncTokenCredential
     :keyword transport: Optional :class:`AsyncHttpTransport` override
-        (used by tests for fake-transport injection per spec 016
+        (used by tests for fake-transport injection per
         Conformance Test Map row 14).
     :paramtype transport: AsyncHttpTransport | None
     """
@@ -518,7 +518,7 @@ class HostedTaskProvider:
         if request.source is not None:
             body["source"] = request.source
         if request.attachments is not None:
-            # Spec 018 — enforce per-attachment 2 MB and per-task 20-entry
+            #  — enforce per-attachment 2 MB and per-task 20-entry
             # caps client-side before the HTTP call. Create cannot
             # delete anything (no null values meaningful here), so
             # count is the number of entries.
@@ -609,7 +609,7 @@ class HostedTaskProvider:
         if getattr(patch, "clear_attachments", False):
             body["attachments"] = None
         if patch.attachments is not None:
-            # Spec 018 — enforce per-attachment 2 MB cap on every
+            #  — enforce per-attachment 2 MB cap on every
             # non-null value in the patch. (We don't enforce the
             # per-task 20-entry cap here because we don't have the
             # current attachment count without a GET; callers that

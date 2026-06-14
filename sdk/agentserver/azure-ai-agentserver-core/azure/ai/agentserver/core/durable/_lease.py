@@ -29,36 +29,36 @@ logger = logging.getLogger("azure.ai.agentserver.durable")
 def derive_lease_owner(agent_name: str, session_id: str) -> str:
     """Derive a stable lease owner string from the agent name and session ID.
 
-    Spec 016 FR-004a (US3): the lease owner string MUST be derived from
-    BOTH the agent name (from ``FOUNDRY_AGENT_NAME``) AND the session
-    identifier — not from the session ID alone. Two different agents
-    that happen to share a session ID (a misconfiguration or a future
-    multi-agent platform topology) would otherwise collide on lease
-    ownership and step on each other's tasks. The platform's
-    ``binding_mismatch`` protection (FR-006) covers split-brain on the
-    same agent+session but is silent on this orthogonal case.
+    : the lease owner string MUST be derived from
+        BOTH the agent name (from ``FOUNDRY_AGENT_NAME``) AND the session
+        identifier — not from the session ID alone. Two different agents
+        that happen to share a session ID (a misconfiguration or a future
+        multi-agent platform topology) would otherwise collide on lease
+        ownership and step on each other's tasks. The platform's
+        ``binding_mismatch`` protection  covers split-brain on the
+        same agent+session but is silent on this orthogonal case.
 
-    The owner is stable across process restarts within the same
-    ``(agent_name, session_id)`` pair, enabling dual-identity lease
-    reclamation.
+        The owner is stable across process restarts within the same
+        ``(agent_name, session_id)`` pair, enabling dual-identity lease
+        reclamation.
 
-    On-the-wire format: ``"{agent_name}|session:{session_id}"``. Both
-    components are recoverable from the string by splitting on the
-    first ``"|"``; the format is chosen for operator readability in
-    logs.
+        On-the-wire format: ``"{agent_name}|session:{session_id}"``. Both
+        components are recoverable from the string by splitting on the
+        first ``"|"``; the format is chosen for operator readability in
+        logs.
 
-    :param agent_name: The agent name (resolved from
-        ``FOUNDRY_AGENT_NAME``). Falls back to ``"unknown-agent"`` when
-        the env var is unset — the caller decides whether to do the
-        fallback or pass ``"unknown-agent"`` directly. The fallback
-        string matches the rest of the framework's agent-name
-        conventions so traces, logs, and lease ownership agree.
-    :type agent_name: str
-    :param session_id: The agent session identifier.
-    :type session_id: str
-    :return: A lease owner string containing both components in a
-        stable, parseable format.
-    :rtype: str
+        :param agent_name: The agent name (resolved from
+            ``FOUNDRY_AGENT_NAME``). Falls back to ``"unknown-agent"`` when
+            the env var is unset — the caller decides whether to do the
+            fallback or pass ``"unknown-agent"`` directly. The fallback
+            string matches the rest of the framework's agent-name
+            conventions so traces, logs, and lease ownership agree.
+        :type agent_name: str
+        :param session_id: The agent session identifier.
+        :type session_id: str
+        :return: A lease owner string containing both components in a
+            stable, parseable format.
+        :rtype: str
     """
     safe_agent = agent_name or "unknown-agent"
     return f"{safe_agent}|session:{session_id}"
@@ -92,49 +92,49 @@ async def lease_renewal_loop(
 ) -> None:
     """Run a background lease renewal loop at half the lease duration.
 
-    Renews the lease by PATCHing the task with the same owner/instance.
-    On ``on_failure_count`` consecutive failures, signals the optional
-    ``on_cancel_callback`` event to give the task function a chance to
-    checkpoint.
+        Renews the lease by PATCHing the task with the same owner/instance.
+        On ``on_failure_count`` consecutive failures, signals the optional
+        ``on_cancel_callback`` event to give the task function a chance to
+        checkpoint.
 
-    The loop exits when ``cancel_event`` is set or the task is cancelled.
+        The loop exits when ``cancel_event`` is set or the task is cancelled.
 
-    :param provider: The storage provider.
-    :type provider: TaskProvider
-    :param task_id: The task to renew.
-    :type task_id: str
-    :keyword lease_owner: The stable lease owner.
-    :paramtype lease_owner: str
-    :keyword lease_instance_id: The ephemeral instance ID.
-    :paramtype lease_instance_id: str
-    :keyword lease_duration_seconds: The lease TTL in seconds.
-    :paramtype lease_duration_seconds: int
-    :keyword cancel_event: Event that stops the loop when set.
-    :paramtype cancel_event: asyncio.Event
-    :keyword on_failure_count: Consecutive failures before signalling cancel.
-    :paramtype on_failure_count: int
-    :keyword on_cancel_callback: Event to signal on repeated renewal failure.
-    :paramtype on_cancel_callback: asyncio.Event | None
-    :keyword steering_poll_callback: Async callback invoked each renewal to poll
-        for steering inputs. Called after successful lease renewal.
-    :paramtype steering_poll_callback: Callable[[], Awaitable[None]] | None
-    :keyword last_refresh_provider: Optional ``() -> float`` callable
-        returning the ``asyncio.get_event_loop().time()`` value at the
-        most-recent lease refresh (heartbeat OR side-effect refresh
-        from a payload PATCH that piggybacked lease ownership via
-        ``TaskManager._lease_ext_kwargs``). When provided, the loop
-        skips the heartbeat for any tick whose due-time has been
-        pushed past by a more-recent refresh, avoiding a redundant
-        network round-trip. ``None`` preserves the legacy fixed-tick
-        behaviour for tests.
-    :paramtype last_refresh_provider: Callable[[], float] | None
-    :keyword update_via_queue: Spec 019 FR-A-006 — optional callable
-        through which the heartbeat PATCH MUST be issued so that it
-        acquires the per-task write lock (and is etag-aware). When
-        supplied, the loop uses this instead of ``provider.update``.
-        When ``None``, falls back to the raw provider call (used by
-        tests that don't construct a TaskManager).
-    :paramtype update_via_queue: Callable[[str, TaskPatchRequest], Awaitable[Any]] | None
+        :param provider: The storage provider.
+        :type provider: TaskProvider
+        :param task_id: The task to renew.
+        :type task_id: str
+        :keyword lease_owner: The stable lease owner.
+        :paramtype lease_owner: str
+        :keyword lease_instance_id: The ephemeral instance ID.
+        :paramtype lease_instance_id: str
+        :keyword lease_duration_seconds: The lease TTL in seconds.
+        :paramtype lease_duration_seconds: int
+        :keyword cancel_event: Event that stops the loop when set.
+        :paramtype cancel_event: asyncio.Event
+        :keyword on_failure_count: Consecutive failures before signalling cancel.
+        :paramtype on_failure_count: int
+        :keyword on_cancel_callback: Event to signal on repeated renewal failure.
+        :paramtype on_cancel_callback: asyncio.Event | None
+        :keyword steering_poll_callback: Async callback invoked each renewal to poll
+            for steering inputs. Called after successful lease renewal.
+        :paramtype steering_poll_callback: Callable[[], Awaitable[None]] | None
+        :keyword last_refresh_provider: Optional ``() -> float`` callable
+            returning the ``asyncio.get_event_loop().time()`` value at the
+            most-recent lease refresh (heartbeat OR side-effect refresh
+            from a payload PATCH that piggybacked lease ownership via
+            ``TaskManager._lease_ext_kwargs``). When provided, the loop
+            skips the heartbeat for any tick whose due-time has been
+            pushed past by a more-recent refresh, avoiding a redundant
+            network round-trip. ``None`` preserves the legacy fixed-tick
+            behaviour for tests.
+        :paramtype last_refresh_provider: Callable[[], float] | None
+    :keyword update_via_queue:   — optional callable
+            through which the heartbeat PATCH MUST be issued so that it
+            acquires the per-task write lock (and is etag-aware). When
+            supplied, the loop uses this instead of ``provider.update``.
+            When ``None``, falls back to the raw provider call (used by
+            tests that don't construct a TaskManager).
+        :paramtype update_via_queue: Callable[[str, TaskPatchRequest], Awaitable[Any]] | None
     """
     interval = max(1, lease_duration_seconds // 2)
     consecutive_failures = 0
@@ -221,7 +221,7 @@ async def lease_renewal_loop(
                 break
         except TransportClassifiedError as exc:
             if getattr(exc, "classification", None) == "evicted" and on_cancel_callback is not None:
-                # Spec 016 FR-007: orphan-sandbox eviction at the lease-renewal
+                #: orphan-sandbox eviction at the lease-renewal
                 # site. Stop renewing immediately; signal the local cleanup
                 # callback so _manager.py can cancel the local execution,
                 # suppress any pending terminal write, and signal awaiters

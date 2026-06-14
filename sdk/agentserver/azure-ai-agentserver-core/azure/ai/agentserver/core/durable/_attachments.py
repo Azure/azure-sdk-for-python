@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Task attachments support (spec 018).
+"""Task attachments support.
 
 Helpers for the input-promotion mechanism that lets the durable
 primitive support per-input payloads up to 2 MB by spilling oversized
 inputs into ``task.attachments`` (decoupled from the shared 1 MB
-``task.payload`` budget). See ``sdk/agentserver/specs/task-attachments.md``
-for the authoritative wire contract and ``specs/018-task-attachments/``
+``task.payload`` budget). See `the SOT spec`
+for the authoritative wire contract and `the SOT spec`
 for the speckit-flow spec.
 
 This module exports:
@@ -58,7 +58,7 @@ _FUNCTION_INPUT_KEY = "_input"
 #: counter from ``payload["_steering"]["next_input_seq"]``.
 _STEERING_INPUT_KEY_PREFIX = "_steering_input_"
 
-#: Spec 019 FR-C-005 — framework-reserved attachment key for the
+#:   — framework-reserved attachment key for the
 #: per-turn output value. Output is ALWAYS stored via this attachment
 #: (no inline threshold) so it never consumes payload budget.
 _OUTPUT_KEY = "_output"
@@ -331,22 +331,22 @@ def _validate_attachment_size(
 ) -> None:
     """Raise :class:`_AttachmentTooLarge` if *value* exceeds the per-attachment cap.
 
-    Skip if value is ``None`` (representing a delete in a PATCH).
+        Skip if value is ``None`` (representing a delete in a PATCH).
 
-    Spec 019 FR-D-002/-004: this raises the framework-internal
-    ``_AttachmentTooLarge``. Callers above the provider layer
-    (framework write paths) catch it and re-raise via
-    :func:`_remap_attachment_error` as the developer-facing
-    ``InputTooLarge`` / ``OutputTooLarge`` based on the
-    attachment-key prefix.
+    : this raises the framework-internal
+        ``_AttachmentTooLarge``. Callers above the provider layer
+        (framework write paths) catch it and re-raise via
+        :func:`_remap_attachment_error` as the developer-facing
+        ``InputTooLarge`` / ``OutputTooLarge`` based on the
+        attachment-key prefix.
 
-    :param task_id: Task identifier for error context.
-    :type task_id: str
-    :param attachment_key: Attachment key for error context.
-    :type attachment_key: str
-    :param value: The JSON-compatible attachment value.
-    :type value: Any
-    :raises _AttachmentTooLarge: If the serialized form exceeds the cap.
+        :param task_id: Task identifier for error context.
+        :type task_id: str
+        :param attachment_key: Attachment key for error context.
+        :type attachment_key: str
+        :param value: The JSON-compatible attachment value.
+        :type value: Any
+        :raises _AttachmentTooLarge: If the serialized form exceeds the cap.
     """
     if value is None:
         return  # null = delete; no size to enforce
@@ -367,7 +367,7 @@ def _validate_attachment_count(
 ) -> None:
     """Raise :class:`_AttachmentLimitExceeded` if adding *additions* exceeds the per-task cap.
 
-    Spec 019 FR-D-003 — internal-only exception; framework treats
+      — internal-only exception; framework treats
     propagation as a bug (the framework's own reserved usage is at
     most 11 of 20 slots) and converts to ``RuntimeError`` at the boundary.
 
@@ -389,7 +389,7 @@ def _validate_attachment_count(
 
 
 def _remap_attachment_error(exc: "_AttachmentTooLarge") -> ValueError:
-    """Spec 019 FR-D-004 — translate the internal ``_AttachmentTooLarge``
+    """— translate the internal ``_AttachmentTooLarge``
     raised against a framework-reserved attachment key into the
     developer-facing exception.
 
@@ -410,13 +410,9 @@ def _remap_attachment_error(exc: "_AttachmentTooLarge") -> ValueError:
     size_bytes = getattr(exc, "size_bytes", 0)
     max_bytes = getattr(exc, "max_bytes", _MAX_ATTACHMENT_SIZE_BYTES)
     if key == _FUNCTION_INPUT_KEY or key.startswith(_STEERING_INPUT_KEY_PREFIX):
-        return InputTooLarge(
-            task_id=task_id, size_bytes=size_bytes, max_bytes=max_bytes
-        )
+        return InputTooLarge(task_id=task_id, size_bytes=size_bytes, max_bytes=max_bytes)
     if key == _OUTPUT_KEY:
-        return OutputTooLarge(
-            task_id=task_id, size_bytes=size_bytes, max_bytes=max_bytes
-        )
+        return OutputTooLarge(task_id=task_id, size_bytes=size_bytes, max_bytes=max_bytes)
     return RuntimeError(
         f"Framework bug: _AttachmentTooLarge raised for unknown "
         f"framework-reserved attachment key {key!r} on task {task_id!r}: "

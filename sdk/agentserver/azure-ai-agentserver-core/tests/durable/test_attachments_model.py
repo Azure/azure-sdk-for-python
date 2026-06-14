@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT license.
-"""Spec 018 — Task Attachments: model + helper unit tests (Phase 2)."""
+""" — Task Attachments: model + helper unit tests (Phase 2)."""
 
 from __future__ import annotations
 
@@ -24,15 +24,10 @@ from azure.ai.agentserver.core.durable._attachments import (
     _resolve_input_storage,
     _serialized_size_bytes,
     _validate_attachment_count,
-    _validate_attachment_size)
-from azure.ai.agentserver.core.durable._exceptions import (
-    AttachmentLimitExceeded,
-    AttachmentTooLarge,
-    InputTooLarge)
-from azure.ai.agentserver.core.durable._models import (
-    TaskCreateRequest,
-    TaskInfo,
-    TaskPatchRequest)
+    _validate_attachment_size,
+)
+from azure.ai.agentserver.core.durable._exceptions import AttachmentLimitExceeded, AttachmentTooLarge, InputTooLarge
+from azure.ai.agentserver.core.durable._models import TaskCreateRequest, TaskInfo, TaskPatchRequest
 
 
 # --------------------------------------------------------------------------- #
@@ -73,7 +68,7 @@ def test_hash_format():
     assert h.startswith("sha256:")
     # 64 hex chars after the prefix
     assert len(h) == len("sha256:") + 64
-    assert all(c in "0123456789abcdef" for c in h[len("sha256:"):])
+    assert all(c in "0123456789abcdef" for c in h[len("sha256:") :])
 
 
 # --------------------------------------------------------------------------- #
@@ -109,7 +104,8 @@ def test_is_ref_positive():
         {"__attachment_ref__": {"key": "k"}},  # missing hash
         {"__attachment_ref__": {"hash": "h"}},  # missing key
         {"__attachment_ref__": {"key": "k", "hash": "h"}, "extra": 1},  # > 1 top-level key
-    ])
+    ],
+)
 def test_is_ref_negative(non_ref):
     assert _is_ref(non_ref) is False
 
@@ -128,10 +124,8 @@ def test_ref_key_and_hash_accessors():
 
 def test_resolve_inline_small_value():
     mode, value = _resolve_input_storage(
-        "small",
-        threshold_bytes=_INPUT_THRESHOLD_BYTES,
-        key_for_attachment=_FUNCTION_INPUT_KEY,
-        task_id="t1")
+        "small", threshold_bytes=_INPUT_THRESHOLD_BYTES, key_for_attachment=_FUNCTION_INPUT_KEY, task_id="t1"
+    )
     assert mode == "inline"
     assert value == "small"
 
@@ -139,10 +133,8 @@ def test_resolve_inline_small_value():
 def test_resolve_attachment_when_over_threshold():
     big = "x" * 300_000  # ~300 KB > 200 KiB
     mode, value = _resolve_input_storage(
-        big,
-        threshold_bytes=_INPUT_THRESHOLD_BYTES,
-        key_for_attachment=_FUNCTION_INPUT_KEY,
-        task_id="t1")
+        big, threshold_bytes=_INPUT_THRESHOLD_BYTES, key_for_attachment=_FUNCTION_INPUT_KEY, task_id="t1"
+    )
     assert mode == "attachment"
     assert _is_ref(value)
     assert _ref_key(value) == _FUNCTION_INPUT_KEY
@@ -157,34 +149,28 @@ def test_resolve_steering_threshold_boundary():
     just_under = "x" * (_STEERING_THRESHOLD_BYTES - 2)
     assert _serialized_size_bytes(just_under) == _STEERING_THRESHOLD_BYTES
     mode_at, _ = _resolve_input_storage(
-        just_under,
-        threshold_bytes=_STEERING_THRESHOLD_BYTES,
-        key_for_attachment="_steering_input_0",
-        task_id="t")
+        just_under, threshold_bytes=_STEERING_THRESHOLD_BYTES, key_for_attachment="_steering_input_0", task_id="t"
+    )
     assert mode_at == "inline"
 
     # 1 byte over the threshold → promoted.
     over = "x" * (_STEERING_THRESHOLD_BYTES - 1)  # encoded length = threshold + 1
     assert _serialized_size_bytes(over) > _STEERING_THRESHOLD_BYTES
     mode_over, value_over = _resolve_input_storage(
-        over,
-        threshold_bytes=_STEERING_THRESHOLD_BYTES,
-        key_for_attachment="_steering_input_1",
-        task_id="t")
+        over, threshold_bytes=_STEERING_THRESHOLD_BYTES, key_for_attachment="_steering_input_1", task_id="t"
+    )
     assert mode_over == "attachment"
     assert _ref_key(value_over) == "_steering_input_1"
 
 
-@pytest.mark.skip(reason="spec 022 FR-077: InputTooLarge is bare exception (no size_bytes/max_bytes)")
+@pytest.mark.skip(reason=": InputTooLarge is bare exception (no size_bytes/max_bytes)")
 def test_resolve_raises_inputtoolarge_when_over_cap():
     huge = "y" * (_MAX_ATTACHMENT_SIZE_BYTES + 10)
     with pytest.raises(InputTooLarge) as excinfo:
         _resolve_input_storage(
-            huge,
-            threshold_bytes=_INPUT_THRESHOLD_BYTES,
-            key_for_attachment="_input",
-            task_id="t-huge")
-    # spec 022 FR-077: exception.task_id removed
+            huge, threshold_bytes=_INPUT_THRESHOLD_BYTES, key_for_attachment="_input", task_id="t-huge"
+        )
+    #: exception.task_id removed
     assert excinfo.value.max_bytes == _MAX_ATTACHMENT_SIZE_BYTES
     assert excinfo.value.size_bytes > _MAX_ATTACHMENT_SIZE_BYTES
 
@@ -236,7 +222,7 @@ def test_validate_attachment_size_raises_over_cap():
     huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 5)
     with pytest.raises(AttachmentTooLarge) as excinfo:
         _validate_attachment_size("task-x", "att-k", huge)
-    # spec 022 FR-077: exception.task_id removed
+    #: exception.task_id removed
     assert excinfo.value.attachment_key == "att-k"
 
 
@@ -251,7 +237,7 @@ def test_validate_attachment_count_at_cap_passes():
 def test_validate_attachment_count_over_cap_raises():
     with pytest.raises(AttachmentLimitExceeded) as excinfo:
         _validate_attachment_count("t-y", current_count=20, additions=1)
-    # spec 022 FR-077: exception.task_id removed
+    #: exception.task_id removed
     assert excinfo.value.current_count == 20
     assert excinfo.value.max_count == _MAX_ATTACHMENTS
 
@@ -268,7 +254,8 @@ def test_taskinfo_attachments_round_trip():
         session_id="s",
         status="in_progress",
         payload={"input": "hello"},
-        attachments={"_input": {"big": "value"}})
+        attachments={"_input": {"big": "value"}},
+    )
     d = info.to_dict()
     assert d["attachments"] == {"_input": {"big": "value"}}
     info2 = TaskInfo.from_dict(d)
@@ -277,29 +264,19 @@ def test_taskinfo_attachments_round_trip():
 
 def test_taskinfo_attachments_absent_when_none():
     info = TaskInfo(
-        id="t1",
-        agent_name="a",
-        session_id="s",
-        status="pending",
-        payload={"input": "hello"},
-        attachments=None)
+        id="t1", agent_name="a", session_id="s", status="pending", payload={"input": "hello"}, attachments=None
+    )
     d = info.to_dict()
     assert "attachments" not in d
 
 
 def test_taskcreaterequest_carries_attachments():
-    req = TaskCreateRequest(
-        agent_name="a",
-        session_id="s",
-        id="t1",
-        title="t",
-        attachments={"_input": {"foo": "bar"}})
+    req = TaskCreateRequest(agent_name="a", session_id="s", id="t1", title="t", attachments={"_input": {"foo": "bar"}})
     assert req.attachments == {"_input": {"foo": "bar"}}
 
 
 def test_taskpatchrequest_carries_attachments_including_null():
-    req = TaskPatchRequest(
-        attachments={"_input": None, "_steering_input_3": {"v": 1}})
+    req = TaskPatchRequest(attachments={"_input": None, "_steering_input_3": {"v": 1}})
     assert req.attachments == {"_input": None, "_steering_input_3": {"v": 1}}
 
 
@@ -311,8 +288,7 @@ def test_taskpatchrequest_carries_attachments_including_null():
 import asyncio
 from pathlib import Path
 
-from azure.ai.agentserver.core.durable._local_provider import (
-    LocalFileTaskProvider)
+from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 
 
 @pytest.fixture
@@ -328,7 +304,8 @@ def test_local_create_with_attachments(local_provider: LocalFileTaskProvider):
                 session_id="s",
                 id="t-attach-1",
                 title="x",
-                attachments={"_input": {"k": "v"}, "_steering_input_0": "hello"})
+                attachments={"_input": {"k": "v"}, "_steering_input_0": "hello"},
+            )
         )
         assert info.attachments == {"_input": {"k": "v"}, "_steering_input_0": "hello"}
         # Re-read from disk to confirm persistence.
@@ -347,7 +324,8 @@ def test_local_patch_attachments_null_is_delete(local_provider):
                 session_id="s",
                 id="t-attach-2",
                 title="x",
-                attachments={"_input": "value-A", "_steering_input_0": "value-B"})
+                attachments={"_input": "value-A", "_steering_input_0": "value-B"},
+            )
         )
         # PATCH: null deletes one, new value adds another
         await local_provider.update(
@@ -358,7 +336,8 @@ def test_local_patch_attachments_null_is_delete(local_provider):
                     "_steering_input_1": "value-C",  # add
                     "_steering_input_0": "value-B-updated",  # update
                 }
-            ))
+            ),
+        )
         info = await local_provider.get("t-attach-2")
         assert info is not None
         assert info.attachments == {
@@ -374,12 +353,7 @@ def test_local_create_oversize_raises(local_provider):
         huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 5)
         with pytest.raises(AttachmentTooLarge):
             await local_provider.create(
-                TaskCreateRequest(
-                    agent_name="a",
-                    session_id="s",
-                    id="t-oversize",
-                    title="x",
-                    attachments={"k": huge})
+                TaskCreateRequest(agent_name="a", session_id="s", id="t-oversize", title="x", attachments={"k": huge})
             )
 
     asyncio.run(_go())
@@ -390,12 +364,7 @@ def test_local_create_over_count_raises(local_provider):
         too_many = {f"k{i}": str(i) for i in range(_MAX_ATTACHMENTS + 1)}
         with pytest.raises(AttachmentLimitExceeded):
             await local_provider.create(
-                TaskCreateRequest(
-                    agent_name="a",
-                    session_id="s",
-                    id="t-overcount",
-                    title="x",
-                    attachments=too_many)
+                TaskCreateRequest(agent_name="a", session_id="s", id="t-overcount", title="x", attachments=too_many)
             )
 
     asyncio.run(_go())
@@ -407,11 +376,8 @@ def test_local_patch_attachments_unchanged_when_field_absent(local_provider):
     async def _go():
         await local_provider.create(
             TaskCreateRequest(
-                agent_name="a",
-                session_id="s",
-                id="t-untouched",
-                title="x",
-                attachments={"_input": "stays-put"})
+                agent_name="a", session_id="s", id="t-untouched", title="x", attachments={"_input": "stays-put"}
+            )
         )
         await local_provider.update(
             "t-untouched",
@@ -441,23 +407,13 @@ def test_local_patch_attachments_over_count_cap_raises(local_provider):
         # Pre-populate a task with 19 attachments.
         existing = {f"k{i}": str(i) for i in range(19)}
         await local_provider.create(
-            TaskCreateRequest(
-                agent_name="a",
-                session_id="s",
-                id="t-patch-cap-1",
-                title="x",
-                attachments=existing)
+            TaskCreateRequest(agent_name="a", session_id="s", id="t-patch-cap-1", title="x", attachments=existing)
         )
         # PATCH adding 2 more would push us to 21 → must raise.
         with pytest.raises(AttachmentLimitExceeded):
-            await local_provider.update(
-                "t-patch-cap-1",
-                TaskPatchRequest(
-                    attachments={"new-a": "1", "new-b": "2"}))
+            await local_provider.update("t-patch-cap-1", TaskPatchRequest(attachments={"new-a": "1", "new-b": "2"}))
         # PATCH that adds exactly 1 (to reach 20) MUST succeed.
-        await local_provider.update(
-            "t-patch-cap-1",
-            TaskPatchRequest(attachments={"new-c": "3"}))
+        await local_provider.update("t-patch-cap-1", TaskPatchRequest(attachments={"new-c": "3"}))
         info = await local_provider.get("t-patch-cap-1")
         assert info is not None
         assert len(info.attachments) == 20
@@ -474,18 +430,10 @@ def test_local_patch_attachments_delete_makes_room_for_add(local_provider):
     async def _go():
         existing = {f"k{i}": str(i) for i in range(20)}  # at the cap
         await local_provider.create(
-            TaskCreateRequest(
-                agent_name="a",
-                session_id="s",
-                id="t-patch-swap",
-                title="x",
-                attachments=existing)
+            TaskCreateRequest(agent_name="a", session_id="s", id="t-patch-swap", title="x", attachments=existing)
         )
         # PATCH: delete one, add one. Projected count is still 20.
-        await local_provider.update(
-            "t-patch-swap",
-            TaskPatchRequest(
-                attachments={"k0": None, "k-new": "value"}))
+        await local_provider.update("t-patch-swap", TaskPatchRequest(attachments={"k0": None, "k-new": "value"}))
         info = await local_provider.get("t-patch-swap")
         assert info is not None
         assert len(info.attachments) == 20
@@ -499,17 +447,9 @@ def test_local_patch_attachments_oversize_value_raises(local_provider):
     """PATCH path MUST validate per-value size cap (not just CREATE)."""
 
     async def _go():
-        await local_provider.create(
-            TaskCreateRequest(
-                agent_name="a",
-                session_id="s",
-                id="t-patch-oversize",
-                title="x")
-        )
+        await local_provider.create(TaskCreateRequest(agent_name="a", session_id="s", id="t-patch-oversize", title="x"))
         huge = "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 5)
         with pytest.raises(AttachmentTooLarge):
-            await local_provider.update(
-                "t-patch-oversize",
-                TaskPatchRequest(attachments={"big": huge}))
+            await local_provider.update("t-patch-oversize", TaskPatchRequest(attachments={"big": huge}))
 
     asyncio.run(_go())

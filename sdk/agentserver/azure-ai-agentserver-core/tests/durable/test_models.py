@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Tests for data models and exceptions.
 
-Spec 015 Phase 3 (FR-006): ``TaskSuspended`` is deleted entirely — the
+: ``TaskSuspended`` is deleted entirely — the
 suspension lifecycle does not raise into developer code; ``Suspended`` is
 the return-shape sentinel from ``ctx.suspend()`` and ``TaskRun.is_suspended``
 is the inspection surface.
@@ -11,14 +11,8 @@ is the inspection surface.
 
 import pytest
 
-from azure.ai.agentserver.core.durable._models import (
-    TaskCreateRequest,
-    TaskInfo,
-    TaskPatchRequest)
-from azure.ai.agentserver.core.durable._exceptions import (
-    TaskCancelled,
-    TaskFailed,
-    TaskNotFound)
+from azure.ai.agentserver.core.durable._models import TaskCreateRequest, TaskInfo, TaskPatchRequest
+from azure.ai.agentserver.core.durable._exceptions import TaskCancelled, TaskFailed, TaskNotFound
 
 
 class TestTaskStatus:
@@ -36,26 +30,18 @@ class TestTaskCreateRequest:
 
     def test_minimal(self) -> None:
         """Minimal request has required fields."""
-        req = TaskCreateRequest(
-            agent_name="agent",
-            session_id="test-session",
-            status="pending",
-            payload={})
+        req = TaskCreateRequest(agent_name="agent", session_id="test-session", status="pending", payload={})
         assert req.agent_name == "agent"
         assert req.status == "pending"
 
     def test_default_status(self) -> None:
         """Default status is 'pending'."""
-        req = TaskCreateRequest(
-            agent_name="agent",
-            session_id="test-session")
+        req = TaskCreateRequest(agent_name="agent", session_id="test-session")
         assert req.status == "pending"
 
     def test_optional_fields_default_none(self) -> None:
         """Optional fields default to None."""
-        req = TaskCreateRequest(
-            agent_name="agent",
-            session_id="test-session")
+        req = TaskCreateRequest(agent_name="agent", session_id="test-session")
         assert req.lease_owner is None
         assert req.lease_instance_id is None
         assert req.lease_duration_seconds is None
@@ -85,21 +71,21 @@ class TestExceptions:
     def test_task_failed_message(self) -> None:
         """TaskFailed stores task_id and error."""
         exc = TaskFailed("task-1", error={"message": "boom", "type": "ValueError"})
-    # spec 022 FR-077: exception.task_id removed
+        #: exception.task_id removed
         assert "boom" in str(exc)
         assert exc.error["type"] == "ValueError"
 
-    @pytest.mark.skip(reason="spec 022 FR-077: TaskCancelled is bare; str() is fixed")
+    @pytest.mark.skip(reason=": TaskCancelled is bare; str is fixed")
     def test_task_cancelled(self) -> None:
         """TaskCancelled stores task_id."""
         exc = TaskCancelled("task-3")
-    # spec 022 FR-077: exception.task_id removed
+        #: exception.task_id removed
         assert "task-3" in str(exc)
 
     def test_task_not_found(self) -> None:
         """TaskNotFound stores task_id."""
         exc = TaskNotFound("task-123")
-    # spec 022 FR-077: exception.task_id removed
+        #: exception.task_id removed
         assert "task-123" in str(exc)
 
     def test_exception_hierarchy(self) -> None:
@@ -109,11 +95,11 @@ class TestExceptions:
         assert issubclass(TaskNotFound, Exception)
 
     def test_task_suspended_class_deleted(self) -> None:
-        """FR-006: ``TaskSuspended`` is removed entirely from the exceptions module."""
+        """: ``TaskSuspended`` is removed entirely from the exceptions module."""
         from azure.ai.agentserver.core.durable import _exceptions
 
         assert not hasattr(_exceptions, "TaskSuspended"), (
-            "TaskSuspended was deleted in Spec 015 Phase 3 — suspension is a "
+            "TaskSuspended was deleted in  — suspension is a "
             "return-shape sentinel, not an exception. Use Suspended or "
             "TaskRun.is_suspended instead."
         )

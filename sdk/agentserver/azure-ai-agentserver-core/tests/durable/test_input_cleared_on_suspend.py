@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Tests for US4 input clearing on suspend (T-024).
+"""Tests for  input clearing on suspend (T-024).
 
-Spec 013 US4 scenarios 1, 2: when a steerable task transitions to suspended,
+  scenarios 1, 2: when a steerable task transitions to suspended,
 the framework clears the three input-bearing slots — ``payload["input"]``,
 ``_steering["active_input"]``, and ``_steering["previous_input"]`` — while
 preserving ``_steering`` mechanism state and ``metadata``.
@@ -32,7 +32,8 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -64,8 +65,7 @@ async def test_suspend_clears_payload_input(tmp_path: Path) -> None:
         assert info is not None
         assert info.status == "suspended"
         assert info.payload.get("input") is None, (
-            f"Expected payload['input'] to be cleared after suspend, got: "
-            f"{info.payload.get('input')!r}"
+            f"Expected payload['input'] to be cleared after suspend, got: " f"{info.payload.get('input')!r}"
         )
     finally:
         await _teardown_manager(manager, mgr_mod)

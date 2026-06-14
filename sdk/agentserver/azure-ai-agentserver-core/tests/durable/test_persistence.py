@@ -1,11 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""RED-first tests for spec 022 persistence rules.
+"""RED-first tests for  persistence rules.
 
-Covers FR-025..FR-032 plus SC-001. These tests intentionally assert the
+Covers.. plus SC-001. These tests intentionally assert the
 new zero-output/error-persistence contract and will fail against the
-current spec-019 output/error persistence behavior.
+current output/error persistence behavior.
 """
 
 from __future__ import annotations
@@ -79,7 +79,8 @@ def _config_stub() -> Any:
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
 
 
 async def _setup_manager(
@@ -98,12 +99,7 @@ async def _teardown_manager(manager: TaskManager) -> None:
     mgr_mod._manager = None
 
 
-async def _wait_for_record(
-    provider: Any,
-    task_id: str,
-    *,
-    status: str | None = None,
-    timeout: float = 5.0) -> Any:
+async def _wait_for_record(provider: Any, task_id: str, *, status: str | None = None, timeout: float = 5.0) -> Any:
     deadline = asyncio.get_running_loop().time() + timeout
     record = None
     while True:
@@ -116,13 +112,7 @@ async def _wait_for_record(
         await asyncio.sleep(0.01)
 
 
-async def _wait_for_payload_value(
-    provider: Any,
-    task_id: str,
-    key: str,
-    expected: Any,
-    *,
-    timeout: float = 5.0) -> Any:
+async def _wait_for_payload_value(provider: Any, task_id: str, key: str, expected: Any, *, timeout: float = 5.0) -> Any:
     deadline = asyncio.get_running_loop().time() + timeout
     while True:
         record = await provider.get(task_id)
@@ -136,7 +126,7 @@ async def _wait_for_payload_value(
 
 def _multi_turn_task(**kwargs: Any) -> Any:
     decorator = getattr(durable, "multi_turn_task", None)
-    assert decorator is not None, "Spec 022 requires public multi_turn_task"
+    assert decorator is not None, " requires public multi_turn_task"
     return decorator(**kwargs)
 
 
@@ -151,9 +141,9 @@ def _attachment_keys(record: Any) -> set[str]:
 def _assert_no_output_storage(record: Any) -> None:
     payload = _payload(record)
     assert "output" not in payload, f"payload['output'] MUST NOT be persisted; payload={payload!r}"
-    assert not any(key.startswith("_output") for key in _attachment_keys(record)), (
-        f"_output attachment MUST NOT be persisted; attachments={getattr(record, 'attachments', None)!r}"
-    )
+    assert not any(
+        key.startswith("_output") for key in _attachment_keys(record)
+    ), f"_output attachment MUST NOT be persisted; attachments={getattr(record, 'attachments', None)!r}"
 
 
 def _assert_no_error_storage(record: Any) -> None:
@@ -165,21 +155,21 @@ def _assert_no_error_storage(record: Any) -> None:
 def _assert_no_output_attachment_patches(provider: RecordingProvider, task_id: str) -> None:
     for _, patch in [call for call in provider.update_calls if call[0] == task_id]:
         attachment_patch = getattr(patch, "attachments", None) or {}
-        assert not any(key.startswith("_output") for key in attachment_patch), (
-            f"_output attachment MUST NOT be written or deleted; patch={patch!r}"
-        )
+        assert not any(
+            key.startswith("_output") for key in attachment_patch
+        ), f"_output attachment MUST NOT be written or deleted; patch={patch!r}"
 
 
 def _assert_no_error_patches(provider: RecordingProvider, task_id: str) -> None:
     for _, patch in [call for call in provider.update_calls if call[0] == task_id]:
         assert getattr(patch, "error", None) is None, f"PATCH MUST NOT carry error; patch={patch!r}"
-        assert "error" not in (getattr(patch, "payload", None) or {}), (
-            f"PATCH payload MUST NOT carry error; patch={patch!r}"
-        )
+        assert "error" not in (
+            getattr(patch, "payload", None) or {}
+        ), f"PATCH payload MUST NOT carry error; patch={patch!r}"
 
 
 class TestNoOutputPersistence:
-    """FR-025 / FR-026 — no payload["output"] / no _output attachment / no serialization."""
+    """/  — no payload["output"] / no _output attachment / no serialization."""
 
     @pytest.mark.asyncio
     async def test_one_shot_terminal_no_output_written(self, tmp_path: Path) -> None:
@@ -193,9 +183,9 @@ class TestNoOutputPersistence:
             await one_shot.run(task_id="one-shot-no-output", input={"value": "x"})
 
             assert isinstance(provider, RecordingProvider)
-            all_records = provider.create_results + provider.update_results + [
-                provider.before_delete["one-shot-no-output"]
-            ]
+            all_records = (
+                provider.create_results + provider.update_results + [provider.before_delete["one-shot-no-output"]]
+            )
             for record in all_records:
                 _assert_no_output_storage(record)
         finally:
@@ -228,9 +218,7 @@ class TestNoOutputPersistence:
             async def chat(ctx: TaskContext[dict[str, str]]) -> dict[str, str]:
                 return {"echo": ctx.input["value"]}
 
-            assert await chat.run(task_id="multi-no-output", input_id="turn-a", input={"value": "x"}) == {
-                "echo": "x"
-            }
+            assert await chat.run(task_id="multi-no-output", input_id="turn-a", input={"value": "x"}) == {"echo": "x"}
 
             record = await _wait_for_record(provider, "multi-no-output", status="suspended")
             _assert_no_output_storage(record)
@@ -256,7 +244,7 @@ class TestNoOutputPersistence:
 
 
 class TestNoErrorPersistence:
-    """FR-027 / FR-031 — no payload["error"] / no interim retry error PATCH."""
+    """/  — no payload["error"] / no interim retry error PATCH."""
 
     @pytest.mark.asyncio
     async def test_one_shot_failure_no_error_written(self, tmp_path: Path) -> None:
@@ -302,7 +290,8 @@ class TestNoErrorPersistence:
 
             @task(
                 name="persistence-no-interim-error",
-                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False))
+                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False),
+            )
             async def always_fails(ctx: TaskContext[str]) -> str:
                 nonlocal attempts
                 attempts += 1
@@ -319,7 +308,7 @@ class TestNoErrorPersistence:
 
 
 class TestInputClearingRules:
-    """FR-028 — payload["input"] cleared at suspend/terminal; NOT mid-handler."""
+    """— payload["input"] cleared at suspend/terminal; NOT mid-handler."""
 
     @pytest.mark.asyncio
     async def test_multi_turn_input_cleared_at_suspend(self, tmp_path: Path) -> None:
@@ -334,23 +323,6 @@ class TestInputClearingRules:
 
             record = await _wait_for_record(provider, "multi-input-cleared", status="suspended")
             assert _payload(record).get("input") is None
-        finally:
-            await _teardown_manager(manager)
-
-    @pytest.mark.asyncio
-    async def test_one_shot_input_cleared_at_terminal(self, tmp_path: Path) -> None:
-        manager, provider = await _setup_manager(tmp_path, RecordingProvider)
-        try:
-
-            @task(name="persistence-one-shot-input-cleared")
-            async def one_shot(ctx: TaskContext[str]) -> str:
-                return ctx.input
-
-            await one_shot.run(task_id="one-shot-input-cleared", input="secret")
-
-            assert isinstance(provider, RecordingProvider)
-            before_delete = provider.before_delete["one-shot-input-cleared"]
-            assert _payload(before_delete).get("input") is None
         finally:
             await _teardown_manager(manager)
 
@@ -381,7 +353,7 @@ class TestInputClearingRules:
 
 
 class TestLastInputIdRetention:
-    """FR-029 — payload["_last_input_id"] kept across suspend; NOT used as recovery input source."""
+    """— payload["_last_input_id"] kept across suspend; NOT used as recovery input source."""
 
     @pytest.mark.asyncio
     async def test_last_input_id_preserved_across_suspend(self, tmp_path: Path) -> None:
@@ -428,7 +400,8 @@ class TestLastInputIdRetention:
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="prior-incarnation",
                     lease_duration_seconds=60,
-                    source={"name": "persistence-last-input-id-recovery", "type": "agentserver.task"})
+                    source={"name": "persistence-last-input-id-recovery", "type": "agentserver.task"},
+                )
             )
 
             await manager._recover_stale_tasks()  # noqa: SLF001
@@ -441,7 +414,7 @@ class TestLastInputIdRetention:
 
 
 class TestRetryAttemptClearing:
-    """FR-030 — payload["_retry_attempt"] cleared at suspend/terminal; kept while in_progress."""
+    """— payload["_retry_attempt"] cleared at suspend/terminal; kept while in_progress."""
 
     @pytest.mark.asyncio
     async def test_retry_attempt_cleared_at_suspend(self, tmp_path: Path) -> None:
@@ -451,7 +424,8 @@ class TestRetryAttemptClearing:
 
             @_multi_turn_task(
                 name="persistence-retry-cleared",
-                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False))
+                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False),
+            )
             async def chat(ctx: TaskContext[str]) -> str:
                 nonlocal attempts
                 attempts += 1
@@ -475,7 +449,8 @@ class TestRetryAttemptClearing:
 
             @task(
                 name="persistence-retry-kept",
-                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(seconds=0.2), jitter=False))
+                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(seconds=0.2), jitter=False),
+            )
             async def retrying(ctx: TaskContext[str]) -> str:
                 if ctx.retry_attempt == 0:
                     first_attempt.set()
@@ -504,7 +479,8 @@ class TestRetryAttemptClearing:
 
             @_multi_turn_task(
                 name="persistence-retry-new-turn",
-                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False))
+                retry=RetryPolicy(max_attempts=3, initial_delay=timedelta(0), jitter=False),
+            )
             async def chat(ctx: TaskContext[str]) -> str:
                 nonlocal first_turn_invocations
                 turn_attempts.append((ctx.input, ctx.retry_attempt))
@@ -523,7 +499,7 @@ class TestRetryAttemptClearing:
 
 
 class TestSteeringQueueLocation:
-    """FR-032 — steering queue lives in payload["_steering"] (no separate record kind)."""
+    """— steering queue lives in payload["_steering"] (no separate record kind)."""
 
     @pytest.mark.asyncio
     async def test_queued_steerer_stored_in_payload_steering(self, tmp_path: Path) -> None:

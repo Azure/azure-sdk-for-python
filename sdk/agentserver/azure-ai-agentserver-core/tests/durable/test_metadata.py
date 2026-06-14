@@ -236,13 +236,13 @@ class TestTaskMetadataDictProtocol:
 
 
 # --------------------------------------------------------------------- #
-# Spec 015 Phase 5 — Named-namespace metadata (FR-003, FR-004, FR-005)
+#  — Named-namespace metadata (,,)
 # --------------------------------------------------------------------- #
 # Contract clauses pinned by tests/durable/test_contract_completeness.py:
-#   - test_default_namespace_callable_and_dict       (FR-004)
-#   - test_named_namespace_isolation                 (FR-003)
-#   - test_flush_per_namespace_only                  (FR-003)
-#   - test_underscore_namespace_not_enforced_by_primitive  (FR-005)
+#   - test_default_namespace_callable_and_dict
+#   - test_named_namespace_isolation
+#   - test_flush_per_namespace_only
+#   - test_underscore_namespace_not_enforced_by_primitive
 #
 # Plus the spec-driven supplementary tests for the named-namespace
 # facility (T035): auto-vivification, independent dirty tracking,
@@ -252,7 +252,7 @@ class TestTaskMetadataDictProtocol:
 
 
 class TestTaskMetadataNamedNamespaces:
-    """Phase 5 (FR-003/004/005) — `ctx.metadata(name)` namespaces.
+    """Phase 5  — `ctx.metadata(name)` namespaces.
 
     A bare ``ctx.metadata`` is the default namespace (dict-protocol).
     Calling it like a function — ``ctx.metadata("name")`` — returns a
@@ -382,15 +382,15 @@ class TestTaskMetadataNamedNamespaces:
         assert "shared_name" not in meta("a")
         assert meta("b")["shared_name"] == "from_b"
 
-    @pytest.mark.skip(reason="spec 022 FR-044: underscore namespaces now reserved (was: not enforced)")
+    @pytest.mark.skip(reason=": underscore namespaces now reserved (was: not enforced)")
     def test_underscore_namespace_not_enforced_by_primitive(self) -> None:
         """The CORE primitive accepts `_*` namespace names without raising.
 
-        Per FR-005, ``_`` prefix is a convention for framework layers
-        (e.g., responses-layer ``_responses``). Enforcement (raising
-        ``ValueError`` on ``_*`` names) is wrapper-only — primitive
-        consumers (invocations sample developers) must be able to use
-        any name they like without the core layer rejecting it.
+        , ``_`` prefix is a convention for framework layers
+                (e.g., responses-layer ``_responses``). Enforcement (raising
+                ``ValueError`` on ``_*`` names) is wrapper-only — primitive
+                consumers (invocations sample developers) must be able to use
+                any name they like without the core layer rejecting it.
         """
         meta = TaskMetadata()
         # Must NOT raise
@@ -409,7 +409,7 @@ class TestTaskMetadataNamedNamespaces:
     def test_metadata_module_has_no_autoflush_symbols(self) -> None:
         """Source-scan: ``start_auto_flush`` / ``stop_auto_flush`` etc. are gone.
 
-        Spec 015 FR-003 retires the auto-flush loop entirely; flushes
+          retires the auto-flush loop entirely; flushes
         are explicit (per-write debounce + lifecycle boundary). Source
         text must not mention the old API names.
         """
@@ -418,27 +418,19 @@ class TestTaskMetadataNamedNamespaces:
         from azure.ai.agentserver.core.durable import _metadata as _meta_mod
 
         source = Path(_meta_mod.__file__).read_text(encoding="utf-8")
-        forbidden = (
-            "start_auto_flush",
-            "stop_auto_flush",
-            "_auto_flush_loop",
-            "_flush_task",
-            "_flush_interval")
+        forbidden = ("start_auto_flush", "stop_auto_flush", "_auto_flush_loop", "_flush_task", "_flush_interval")
         offenders = [name for name in forbidden if name in source]
-        assert not offenders, (
-            f"_metadata.py must not mention retired auto-flush symbols: "
-            f"{offenders}"
-        )
+        assert not offenders, f"_metadata.py must not mention retired auto-flush symbols: " f"{offenders}"
 
-    @pytest.mark.skip(reason="spec 022 FR-044: uses _responses internally")
+    @pytest.mark.skip(reason=": uses _responses internally")
     def test_default_namespace_has_no_framework_keys(self) -> None:
         """Default namespace must not carry `_framework`-style keys.
 
-        Spec 015 FR-004: framework-internal scopes live in NAMED
-        namespaces (e.g., ``meta("_responses")``) or top-level payload
-        slots (``payload["_last_input_id"]``). The default namespace
-        is owned by the application/handler — there should never be a
-        ``_framework`` (or similar) leaking into ``meta.keys()``.
+        : framework-internal scopes live in NAMED
+                namespaces (e.g., ``meta("_responses")``) or top-level payload
+                slots (``payload["_last_input_id"]``). The default namespace
+                is owned by the application/handler — there should never be a
+                ``_framework`` (or similar) leaking into ``meta.keys()``.
         """
         meta = TaskMetadata()
         # Default is empty on fresh construction
@@ -446,9 +438,7 @@ class TestTaskMetadataNamedNamespaces:
         # After framework use of a NAMED namespace, default still empty
         meta("_responses")["resp_id"] = "abc"
         meta("a")["x"] = 1
-        forbidden_in_default = [
-            k for k in meta.keys() if k.startswith("_framework")
-        ]
+        forbidden_in_default = [k for k in meta.keys() if k.startswith("_framework")]
         assert forbidden_in_default == []
 
 
@@ -463,12 +453,11 @@ class TestTaskMetadataRecoveryDurability:
     """
 
     @pytest.mark.asyncio
-    async def test_named_namespace_survives_recovery_with_independent_state(
-        self) -> None:
+    async def test_named_namespace_survives_recovery_with_independent_state(self) -> None:
         """Each `payload["metadata:<name>"]` is restored to its own facade.
 
         Simulates a crash by:
-        1. Producing the post-flush payload shape (per FR-003 layout).
+        1. Producing the post-flush payload shape (per  layout).
         2. Constructing a fresh TaskMetadata from that "recovered" data.
         3. Asserting each namespace's data is intact AND siblings remain
            isolated (no cross-namespace bleed during decode).

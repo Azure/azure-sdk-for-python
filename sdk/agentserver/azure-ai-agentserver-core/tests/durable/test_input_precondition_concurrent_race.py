@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Spec 013 US2 — concurrent-race precondition test (T-033).
+"""  — concurrent-race precondition test (T-033).
 
 Two concurrent `start()` calls with the same `if_last_input_id` race on the
 input-precondition primitive. Exactly one wins; the other re-checks against
@@ -15,11 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    LastInputIdPreconditionFailed,
-    TaskContext,
-    task,
-    multi_turn_task)
+from azure.ai.agentserver.core.durable import LastInputIdPreconditionFailed, TaskContext, task, multi_turn_task
 
 
 @multi_turn_task(name="us2-race-steerable", steerable=True)
@@ -41,7 +37,8 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -59,10 +56,7 @@ async def test_concurrent_resume_with_same_predecessor_one_wins(tmp_path: Path) 
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
         # Establish a chain at last_input_id="msg-1" by suspending after turn 1.
-        await _race_steerable.start(
-            task_id="t-race",
-            input={"turn": 1},
-            input_id="msg-1")
+        await _race_steerable.start(task_id="t-race", input={"turn": 1}, input_id="msg-1")
         await asyncio.sleep(0.2)
 
         # Race: two concurrent resume calls each claiming if_last_input_id="msg-1"
@@ -70,17 +64,13 @@ async def test_concurrent_resume_with_same_predecessor_one_wins(tmp_path: Path) 
         async def _attempt(new_id: str) -> str:
             try:
                 await _race_steerable.start(
-                    task_id="t-race",
-                    input={"turn": new_id},
-                    input_id=new_id,
-                    if_last_input_id="msg-1")
+                    task_id="t-race", input={"turn": new_id}, input_id=new_id, if_last_input_id="msg-1"
+                )
                 return "ok"
             except LastInputIdPreconditionFailed:
                 return "rejected"
 
-        results = await asyncio.gather(
-            _attempt("msg-2a"),
-            _attempt("msg-2b"))
+        results = await asyncio.gather(_attempt("msg-2a"), _attempt("msg-2b"))
 
         # One should succeed, the other rejected.
         oks = [r for r in results if r == "ok"]

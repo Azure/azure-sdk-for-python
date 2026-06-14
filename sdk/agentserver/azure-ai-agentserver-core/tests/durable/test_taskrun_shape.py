@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Spec 022 TaskRun public shape coverage."""
+""" TaskRun public shape coverage."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from azure.ai.agentserver.core.durable import TaskMetadata, TaskRun
 
 
 class TestTaskRunPublicShape:
-    """FR-047 — TaskRun exposes exactly: task_id, input_id, metadata, result(), cancel(), __await__."""
+    """— TaskRun exposes exactly: task_id, input_id, metadata, result, cancel, __await__."""
 
     def test_taskrun_attributes(self) -> None:
         slots = set(getattr(TaskRun, "__slots__", ()))
@@ -39,7 +39,7 @@ class TestTaskRunPublicShape:
 
 
 class TestTaskRunRemovedMembers:
-    """FR-048 — TaskRun does NOT expose status, delete, refresh, lease_expiry_count."""
+    """— TaskRun does NOT expose status, delete, refresh, lease_expiry_count."""
 
     def test_taskrun_no_status(self) -> None:
         assert not hasattr(TaskRun, "status")
@@ -55,7 +55,7 @@ class TestTaskRunRemovedMembers:
 
 
 class TestTaskRunInternalSlotsAbsent:
-    """FR-048 — internal slots not present."""
+    """— internal slots not present."""
 
     def test_taskrun_no_internal_provider_slot(self) -> None:
         assert "_provider" not in getattr(TaskRun, "__slots__", ())

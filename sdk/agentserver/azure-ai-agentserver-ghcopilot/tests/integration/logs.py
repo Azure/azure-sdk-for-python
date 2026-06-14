@@ -31,9 +31,12 @@ FOUNDRY_FEATURES = "HostedAgents=V1Preview"
 
 def get_agent_version(endpoint: str, name: str, token: str) -> str:
     url = f"{endpoint}/agents/{name}?api-version={API_VERSION}"
-    req = urllib.request.Request(url, headers={
-        "Authorization": f"Bearer {token}",
-    })
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Bearer {token}",
+        },
+    )
     try:
         resp = urllib.request.urlopen(req)
         data = json.loads(resp.read())
@@ -48,15 +51,16 @@ def get_agent_version(endpoint: str, name: str, token: str) -> str:
 
 
 def stream_logs(endpoint: str, name: str, version: str, session_id: str, token: str):
-    url = (
-        f"{endpoint}/agents/{name}/versions/{version}"
-        f"/sessions/{session_id}:logstream?api-version={API_VERSION}"
+    url = f"{endpoint}/agents/{name}/versions/{version}" f"/sessions/{session_id}:logstream?api-version={API_VERSION}"
+    req = urllib.request.Request(
+        url,
+        method="GET",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "text/event-stream",
+            "Foundry-Features": FOUNDRY_FEATURES,
+        },
     )
-    req = urllib.request.Request(url, method="GET", headers={
-        "Authorization": f"Bearer {token}",
-        "Accept": "text/event-stream",
-        "Foundry-Features": FOUNDRY_FEATURES,
-    })
 
     print(f"\nStreaming console logs for {name} v{version} session {session_id}")
     print("Press Ctrl-C to stop.\n")
@@ -105,6 +109,7 @@ def main():
         if env_path.exists():
             try:
                 from dotenv import load_dotenv
+
                 load_dotenv(env_path)
             except ImportError:
                 pass

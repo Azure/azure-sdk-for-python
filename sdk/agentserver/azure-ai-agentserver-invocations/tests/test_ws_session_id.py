@@ -19,6 +19,7 @@ from conftest import _make_echo_ws_app, _records_with_ws_extras
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _session_ids_from_records(records):
     """Pull ``azure.ai.agentserver.invocations_ws.session_id`` from each structured close-event record."""
     return [getattr(r, "azure.ai.agentserver.invocations_ws.session_id") for r in _records_with_ws_extras(records)]
@@ -27,6 +28,7 @@ def _session_ids_from_records(records):
 # ---------------------------------------------------------------------------
 # Session ID is a server-generated UUID
 # ---------------------------------------------------------------------------
+
 
 def test_ws_session_id_is_uuid(caplog):
     """The per-connection session ID is a valid UUID string."""

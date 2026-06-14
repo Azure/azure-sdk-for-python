@@ -106,9 +106,7 @@ def _get_client() -> Any:
     if _openai_client is not None:
         return _openai_client
     if not _endpoint:
-        raise EnvironmentError(
-            "FOUNDRY_PROJECT_ENDPOINT is required to run the deep-research sample."
-        )
+        raise EnvironmentError("FOUNDRY_PROJECT_ENDPOINT is required to run the deep-research sample.")
     from azure.ai.projects.aio import (  # pylint: disable=import-outside-toplevel
         AIProjectClient,
     )
@@ -125,11 +123,13 @@ def _get_client() -> Any:
         from azure.identity.aio import (  # pylint: disable=import-outside-toplevel
             AzureCliCredential,
         )
+
         credential: Any = AzureCliCredential()
     else:
         from azure.identity.aio import (  # pylint: disable=import-outside-toplevel
             DefaultAzureCredential,
         )
+
         credential = DefaultAzureCredential()
 
     project = AIProjectClient(endpoint=_endpoint, credential=credential)
@@ -164,26 +164,32 @@ PHASE_TITLES = [
 ]
 
 _SUB_CALL_ROLES = [
-    ("research",
-     "Conduct an in-depth investigation of the assigned aspect. Include "
-     "specific findings, examples, and references where you can. Aim for "
-     "substantive, multi-paragraph content."),
-    ("critique",
-     "Critically evaluate the research above. Identify weak claims, gaps, "
-     "competing interpretations, and quality concerns. Be specific."),
-    ("refine",
-     "Revise the original research, incorporating the critique. Strengthen "
-     "weak claims, address gaps, and clarify uncertainty. Produce a "
-     "tightened, more rigorous version."),
-    ("synthesize",
-     "Distill the refined material into 2-3 paragraphs of key takeaways "
-     "suitable for someone briefing a decision-maker on this phase."),
+    (
+        "research",
+        "Conduct an in-depth investigation of the assigned aspect. Include "
+        "specific findings, examples, and references where you can. Aim for "
+        "substantive, multi-paragraph content.",
+    ),
+    (
+        "critique",
+        "Critically evaluate the research above. Identify weak claims, gaps, "
+        "competing interpretations, and quality concerns. Be specific.",
+    ),
+    (
+        "refine",
+        "Revise the original research, incorporating the critique. Strengthen "
+        "weak claims, address gaps, and clarify uncertainty. Produce a "
+        "tightened, more rigorous version.",
+    ),
+    (
+        "synthesize",
+        "Distill the refined material into 2-3 paragraphs of key takeaways "
+        "suitable for someone briefing a decision-maker on this phase.",
+    ),
 ]
 
 NUM_PHASES = max(1, int(os.environ.get("NUM_PHASES", str(len(PHASE_TITLES)))))
-CALLS_PER_PHASE = max(
-    1, min(len(_SUB_CALL_ROLES), int(os.environ.get("CALLS_PER_PHASE", "4")))
-)
+CALLS_PER_PHASE = max(1, min(len(_SUB_CALL_ROLES), int(os.environ.get("CALLS_PER_PHASE", "4"))))
 TARGET_OUTPUT_TOKENS = int(os.environ.get("TARGET_OUTPUT_TOKENS", "1500"))
 INTRA_PHASE_COOLDOWN_SEC = float(os.environ.get("INTRA_PHASE_COOLDOWN_SEC", "10"))
 INTER_PHASE_COOLDOWN_SEC = float(os.environ.get("INTER_PHASE_COOLDOWN_SEC", "20"))
@@ -267,13 +273,15 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
         completed: int = ctx.metadata.get("completed_phases", 0)
 
         if ctx.entry_mode == "recovered" and completed > 0:
-            await emit({
-                "type": "recovered",
-                "completed_phases": completed,
-                "total_phases": NUM_PHASES,
-                "server_time_utc": _now_iso(),
-                "server_uptime_sec": _server_uptime_sec(),
-            })
+            await emit(
+                {
+                    "type": "recovered",
+                    "completed_phases": completed,
+                    "total_phases": NUM_PHASES,
+                    "server_time_utc": _now_iso(),
+                    "server_uptime_sec": _server_uptime_sec(),
+                }
+            )
 
         for phase_idx in range(completed, NUM_PHASES):
             if ctx.cancel.is_set():
@@ -282,14 +290,16 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
             phase_started_mono = time.monotonic()
             title = _phase_title(phase_idx)
 
-            await emit({
-                "type": "phase_start",
-                "phase": phase_idx + 1,
-                "total": NUM_PHASES,
-                "title": title,
-                "server_time_utc": _now_iso(),
-                "server_uptime_sec": _server_uptime_sec(),
-            })
+            await emit(
+                {
+                    "type": "phase_start",
+                    "phase": phase_idx + 1,
+                    "total": NUM_PHASES,
+                    "title": title,
+                    "server_time_utc": _now_iso(),
+                    "server_uptime_sec": _server_uptime_sec(),
+                }
+            )
 
             await _run_phase(emit, ctx, inv_id, phase_idx, topic, title)
 
@@ -301,22 +311,26 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
             await ctx.metadata.flush()
 
             phase_duration = round(time.monotonic() - phase_started_mono, 1)
-            await emit({
-                "type": "phase_end",
-                "phase": phase_idx + 1,
-                "total": NUM_PHASES,
-                "title": title,
-                "server_time_utc": _now_iso(),
-                "server_uptime_sec": _server_uptime_sec(),
-                "duration_sec": phase_duration,
-            })
+            await emit(
+                {
+                    "type": "phase_end",
+                    "phase": phase_idx + 1,
+                    "total": NUM_PHASES,
+                    "title": title,
+                    "server_time_utc": _now_iso(),
+                    "server_uptime_sec": _server_uptime_sec(),
+                    "duration_sec": phase_duration,
+                }
+            )
 
             if ctx.cancel.is_set():
                 return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
 
             if phase_idx + 1 < NUM_PHASES and INTER_PHASE_COOLDOWN_SEC > 0:
                 await _cooldown(
-                    emit, ctx, INTER_PHASE_COOLDOWN_SEC,
+                    emit,
+                    ctx,
+                    INTER_PHASE_COOLDOWN_SEC,
                     stage="inter_phase",
                     phase=phase_idx + 2,
                     total=NUM_PHASES,
@@ -324,12 +338,14 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
                 if ctx.cancel.is_set():
                     return await _wind_down(emit, stream, ctx, inv_id, phase_idx + 1)
 
-        await emit({
-            "type": "run_complete",
-            "server_time_utc": _now_iso(),
-            "server_uptime_sec": _server_uptime_sec(),
-            "phases_completed": NUM_PHASES,
-        })
+        await emit(
+            {
+                "type": "run_complete",
+                "server_time_utc": _now_iso(),
+                "server_uptime_sec": _server_uptime_sec(),
+                "phases_completed": NUM_PHASES,
+            }
+        )
         # Normal completion: close stream + wipe watermarks + clear
         # checkpoint entry. Skipped on crash (the handler exits via an
         # exception and the orchestrator's leave_stream_open_for_recovery
@@ -349,15 +365,17 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
         # true crashes.
         logger.exception("deep_research task failed; emitting terminal SSE frame")
         try:
-            await emit({
-                "type": "run_failed",
-                "error": {
-                    "type": type(exc).__name__,
-                    "message": str(exc)[:2000],
-                },
-                "server_time_utc": _now_iso(),
-                "server_uptime_sec": _server_uptime_sec(),
-            })
+            await emit(
+                {
+                    "type": "run_failed",
+                    "error": {
+                        "type": type(exc).__name__,
+                        "message": str(exc)[:2000],
+                    },
+                    "server_time_utc": _now_iso(),
+                    "server_uptime_sec": _server_uptime_sec(),
+                }
+            )
             await _finish_turn(stream, ctx, inv_id)
         except Exception:  # pylint: disable=broad-except
             # If terminal-frame emission itself fails (e.g. stream is
@@ -369,20 +387,27 @@ async def deep_research(ctx: TaskContext[dict]) -> None:
 
 # --- Helpers ---------------------------------------------------------------
 
+
 async def _emit_run_start(emit: EmitFn, ctx: TaskContext, *, topic: str) -> None:
-    await emit({
-        "type": "run_start",
-        "topic": topic,
-        "entry_mode": ctx.entry_mode,
-        "total_phases": NUM_PHASES,
-        "calls_per_phase": CALLS_PER_PHASE,
-        "server_time_utc": _now_iso(),
-        "server_uptime_sec": _server_uptime_sec(),
-    })
+    await emit(
+        {
+            "type": "run_start",
+            "topic": topic,
+            "entry_mode": ctx.entry_mode,
+            "total_phases": NUM_PHASES,
+            "calls_per_phase": CALLS_PER_PHASE,
+            "server_time_utc": _now_iso(),
+            "server_uptime_sec": _server_uptime_sec(),
+        }
+    )
 
 
 async def _wind_down(
-    emit: EmitFn, stream, ctx: TaskContext, inv_id: str, completed_phases: int,
+    emit: EmitFn,
+    stream,
+    ctx: TaskContext,
+    inv_id: str,
+    completed_phases: int,
 ):
     """Cooperative wind-down at a phase boundary.
 
@@ -400,15 +425,17 @@ async def _wind_down(
     else:
         cause = "steering"
 
-    await emit({
-        "type": "winding_down",
-        "cause": cause,
-        "completed_phases": completed_phases,
-        "total_phases": NUM_PHASES,
-        "pending_steering_inputs": ctx.pending_input_count,
-        "server_time_utc": _now_iso(),
-        "server_uptime_sec": _server_uptime_sec(),
-    })
+    await emit(
+        {
+            "type": "winding_down",
+            "cause": cause,
+            "completed_phases": completed_phases,
+            "total_phases": NUM_PHASES,
+            "pending_steering_inputs": ctx.pending_input_count,
+            "server_time_utc": _now_iso(),
+            "server_uptime_sec": _server_uptime_sec(),
+        }
+    )
 
     await _finish_turn(stream, ctx, inv_id)
     # multi-turn `return` is the implicit-suspend signal.
@@ -482,36 +509,40 @@ async def _run_phase(
         instructions = (
             "You are a research analyst working on the topic: '" + topic + "'.\n"
             "Current phase: '" + phase_title + "'.\n"
-            "Your role in this sub-step: " + role_name + ".\n\n"
-            + role_prompt
+            "Your role in this sub-step: " + role_name + ".\n\n" + role_prompt
         )
         if current_text:
             user_input = (
-                "Topic: " + topic + "\nPhase: " + phase_title + "\n\n"
-                "Previous sub-step output:\n" + current_text
+                "Topic: " + topic + "\nPhase: " + phase_title + "\n\n" "Previous sub-step output:\n" + current_text
             )
         else:
             user_input = "Topic: " + topic + "\nPhase: " + phase_title
 
-        await emit({
-            "type": "subcall_start",
-            "role": role_name,
-            "index": sub_idx + 1,
-            "of": CALLS_PER_PHASE,
-            "server_time_utc": _now_iso(),
-        })
-
-        sub_text = await _stream_llm(
-            emit, instructions=instructions, user_input=user_input,
+        await emit(
+            {
+                "type": "subcall_start",
+                "role": role_name,
+                "index": sub_idx + 1,
+                "of": CALLS_PER_PHASE,
+                "server_time_utc": _now_iso(),
+            }
         )
 
-        await emit({
-            "type": "subcall_end",
-            "role": role_name,
-            "index": sub_idx + 1,
-            "of": CALLS_PER_PHASE,
-            "server_time_utc": _now_iso(),
-        })
+        sub_text = await _stream_llm(
+            emit,
+            instructions=instructions,
+            user_input=user_input,
+        )
+
+        await emit(
+            {
+                "type": "subcall_end",
+                "role": role_name,
+                "index": sub_idx + 1,
+                "of": CALLS_PER_PHASE,
+                "server_time_utc": _now_iso(),
+            }
+        )
 
         current_text = sub_text
 
@@ -521,7 +552,9 @@ async def _run_phase(
 
         if sub_idx + 1 < CALLS_PER_PHASE and INTRA_PHASE_COOLDOWN_SEC > 0:
             await _cooldown(
-                emit, ctx, INTRA_PHASE_COOLDOWN_SEC,
+                emit,
+                ctx,
+                INTRA_PHASE_COOLDOWN_SEC,
                 stage="intra_phase",
                 phase=phase_idx + 1,
                 total=NUM_PHASES,

@@ -30,10 +30,7 @@ class TestResolveGracefulShutdownTimeout:
         assert resolve_graceful_shutdown_timeout(10) == 10
 
     def test_default(self) -> None:
-        assert (
-            resolve_graceful_shutdown_timeout(None)
-            == _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
-        )
+        assert resolve_graceful_shutdown_timeout(None) == _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
 
     def test_non_int_explicit_raises(self) -> None:
         with pytest.raises(ValueError, match="expected an integer"):
@@ -200,10 +197,7 @@ async def test_failing_shutdown_is_logged(caplog: pytest.LogCaptureFixture) -> N
         await agent(scope, receive, send)
 
     # The error should be logged
-    assert any(
-        "on_shutdown" in r.message.lower() or "error" in r.message.lower()
-        for r in caplog.records
-    )
+    assert any("on_shutdown" in r.message.lower() or "error" in r.message.lower() for r in caplog.records)
     # Server should still complete shutdown
     assert any(m["type"] == "lifespan.shutdown.complete" for m in sent_messages)
 
@@ -242,10 +236,7 @@ async def test_slow_shutdown_cancelled_with_warning(
     with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
         await agent(scope, receive, send)
 
-    assert any(
-        "did not complete" in r.message.lower() or "timeout" in r.message.lower()
-        for r in caplog.records
-    )
+    assert any("did not complete" in r.message.lower() or "timeout" in r.message.lower() for r in caplog.records)
     assert any(m["type"] == "lifespan.shutdown.complete" for m in sent_messages)
 
 
@@ -329,7 +320,7 @@ async def test_zero_timeout_skips_shutdown_handler() -> None:
 class TestSigtermHandler:
     """Tests for the shutdown-trigger handler installed by run().
 
-    Spec 014 note: ``AgentServerHost.run()`` registers signal handlers
+     note: ``AgentServerHost.run`` registers signal handlers
     via ``loop.add_signal_handler(SIG, _on_signal)`` rather than
     ``signal.signal(SIG, ...)``. The handler:
 
@@ -344,8 +335,8 @@ class TestSigtermHandler:
 
     def test_run_installs_signal_handler_via_event_loop(self) -> None:
         """run() registers signal handlers via loop.add_signal_handler
-        (spec 014). We verify by intercepting asyncio.get_event_loop
-        with a stub whose add_signal_handler captures registrations.
+        . We verify by intercepting asyncio.get_event_loop
+                with a stub whose add_signal_handler captures registrations.
         """
         agent = AgentServerHost(graceful_shutdown_timeout=5)
         captured_handlers: list[tuple[Any, Any]] = []
@@ -375,23 +366,21 @@ class TestSigtermHandler:
         # SIGBREAK may or may not be on this platform.
         registered_sigs = [sig for sig, _ in captured_handlers]
         assert signal.SIGTERM in registered_sigs, (
-            f"Spec 014: AgentServerHost.run() MUST register a SIGTERM "
+            f": AgentServerHost.run MUST register a SIGTERM "
             f"handler via loop.add_signal_handler. Registered: "
             f"{[getattr(s, 'name', s) for s in registered_sigs]}"
         )
         # Every registered handler MUST be callable (the lambda /
         # _on_signal closure).
         for sig, callback in captured_handlers:
-            assert callable(callback), (
-                f"Registered signal handler for {sig} is not callable: {callback!r}"
-            )
+            assert callable(callback), f"Registered signal handler for {sig} is not callable: {callback!r}"
 
     def test_signal_handler_fires_pre_shutdown_callbacks(self) -> None:
         """The installed signal handler invokes every registered
         pre-shutdown callback BEFORE setting the signal event (so
         callbacks fire before Hypercorn begins draining).
 
-        Spec 014 contract: ``register_pre_shutdown_callback`` callbacks
+         contract: ``register_pre_shutdown_callback`` callbacks
         run synchronously inside the signal handler.
         """
         agent = AgentServerHost(graceful_shutdown_timeout=5)
@@ -420,14 +409,9 @@ class TestSigtermHandler:
 
         # Now invoke the captured signal handler — it should fire all
         # registered pre-shutdown callbacks in registration order.
-        assert "fn" in captured_handler, (
-            "No SIGTERM handler was captured during run()"
-        )
+        assert "fn" in captured_handler, "No SIGTERM handler was captured during run()"
         captured_handler["fn"]()
-        assert fired == ["cb-1", "cb-2"], (
-            f"Pre-shutdown callbacks did not fire in registration order. "
-            f"Got: {fired}"
-        )
+        assert fired == ["cb-1", "cb-2"], f"Pre-shutdown callbacks did not fire in registration order. " f"Got: {fired}"
 
     def test_signal_handler_isolates_callback_exceptions(self) -> None:
         """A raising pre-shutdown callback MUST NOT prevent later
@@ -469,6 +453,4 @@ class TestSigtermHandler:
         # Invoke the handler — bad_callback raises, but good_callback
         # must still fire.
         captured_handler["fn"]()
-        assert fired == ["bad-before-raise", "good-after-bad"], (
-            f"Callback exception isolation broken: got {fired}"
-        )
+        assert fired == ["bad-before-raise", "good-after-bad"], f"Callback exception isolation broken: got {fired}"

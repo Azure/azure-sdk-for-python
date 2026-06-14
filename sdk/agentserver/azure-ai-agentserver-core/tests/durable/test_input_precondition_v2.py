@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Spec 022 input-precondition v2 coverage."""
+""" input-precondition v2 coverage."""
 
 from __future__ import annotations
 
@@ -12,9 +12,7 @@ from typing import Any
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    LastInputIdPreconditionFailed,
-    TaskContext)
+from azure.ai.agentserver.core.durable import LastInputIdPreconditionFailed, TaskContext
 
 
 def _multi_turn_task(*args: Any, **kwargs: Any) -> Any:
@@ -37,7 +35,8 @@ async def _setup_manager(tmp_path: Path, *, startup: bool = True) -> tuple[Any, 
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     if startup:
@@ -66,7 +65,8 @@ async def _seed_recoverable_record(provider: Any, *, task_id: str, task_name: st
             source={"name": task_name, "type": "agentserver.task"},
             lease_owner=derive_lease_owner("test-agent", "test-session"),
             lease_instance_id="previous-instance",
-            lease_duration_seconds=60)
+            lease_duration_seconds=60,
+        )
     )
     past = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=10)).isoformat()
     created.lease.expires_at = past
@@ -74,7 +74,7 @@ async def _seed_recoverable_record(provider: Any, *, task_id: str, task_name: st
 
 
 class TestLastInputIdRetention:
-    """FR-029 — _last_input_id preserved across suspend cycles."""
+    """— _last_input_id preserved across suspend cycles."""
 
     @pytest.mark.asyncio
     async def test_last_input_id_kept_across_suspend(self, tmp_path: Path) -> None:
@@ -98,7 +98,7 @@ class TestLastInputIdRetention:
 
 
 class TestIfLastInputIdPrecondition:
-    """FR-076 — LastInputIdPreconditionFailed carries only actual_last_input_id."""
+    """— LastInputIdPreconditionFailed carries only actual_last_input_id."""
 
     @pytest.mark.asyncio
     async def test_precondition_mismatch_raises_LastInputIdPreconditionFailed(self, tmp_path: Path) -> None:
@@ -110,11 +110,7 @@ class TestIfLastInputIdPrecondition:
         try:
             assert await handler.run(task_id="fr076-mismatch", input="one", input_id="a") == "one"
             with pytest.raises(LastInputIdPreconditionFailed) as excinfo:
-                await handler.run(
-                    task_id="fr076-mismatch",
-                    input="two",
-                    input_id="c",
-                    if_last_input_id="b")
+                await handler.run(task_id="fr076-mismatch", input="two", input_id="c", if_last_input_id="b")
             assert excinfo.value.actual_last_input_id == "a"
         finally:
             await _teardown_manager(manager, mgr_mod)
@@ -129,11 +125,7 @@ class TestIfLastInputIdPrecondition:
         try:
             assert await handler.run(task_id="fr076-no-expected", input="one", input_id="a") == "one"
             with pytest.raises(LastInputIdPreconditionFailed) as excinfo:
-                await handler.run(
-                    task_id="fr076-no-expected",
-                    input="two",
-                    input_id="c",
-                    if_last_input_id="b")
+                await handler.run(task_id="fr076-no-expected", input="two", input_id="c", if_last_input_id="b")
             assert excinfo.value.actual_last_input_id == "a"
             assert not hasattr(excinfo.value, "expected_last_input_id")
         finally:
@@ -148,10 +140,7 @@ class TestIfLastInputIdPrecondition:
         manager, mgr_mod, _ = await _setup_manager(tmp_path)
         try:
             assert await handler.run(task_id="fr076-match", input="one", input_id="a") == "one"
-            assert (
-                await handler.run(task_id="fr076-match", input="two", input_id="b", if_last_input_id="a")
-                == "two"
-            )
+            assert await handler.run(task_id="fr076-match", input="two", input_id="b", if_last_input_id="a") == "two"
         finally:
             await _teardown_manager(manager, mgr_mod)
 
@@ -170,7 +159,7 @@ class TestIfLastInputIdPrecondition:
 
 
 class TestLastInputIdNotRecoveryInputSource:
-    """FR-029 negative rule — _last_input_id is NOT the recovery input source."""
+    """negative rule — _last_input_id is NOT the recovery input source."""
 
     @pytest.mark.asyncio
     async def test_recovery_uses_payload_input_not_last_input_id(self, tmp_path: Path) -> None:
@@ -183,10 +172,8 @@ class TestLastInputIdNotRecoveryInputSource:
 
         manager, mgr_mod, provider = await _setup_manager(tmp_path, startup=False)
         await _seed_recoverable_record(
-            provider,
-            task_id="fr029-recovery",
-            task_name="fr029-recovery-input-source",
-            input_value="b")
+            provider, task_id="fr029-recovery", task_name="fr029-recovery-input-source", input_value="b"
+        )
         try:
             await manager.startup()
             for _ in range(40):

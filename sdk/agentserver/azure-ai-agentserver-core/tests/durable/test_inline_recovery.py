@@ -1,21 +1,21 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""RED-first tests for spec 022 inline-recovery semantics.
+"""RED-first tests for  inline-recovery semantics.
 
-Covers FR-033, FR-034, FR-035, FR-064 of spec 022 plus SC-004 and SC-015.
+Covers,,,  of  plus SC-004 and SC-015.
 
 Key invariants verified here:
 - Crash recovery always re-invokes the handler with the **persisted**
-  ``payload["input"]`` (FR-033). The recovery input source is NEVER
-  ``_last_input_id`` (FR-029 negative rule).
+  ``payload["input"]``. The recovery input source is NEVER
+  ``_last_input_id`` (negative rule).
 - A new ``.start()`` / ``.run()`` against an in-progress task with an
   expired lease MUST: acquire the lease via CAS, re-invoke with the
   persisted input (``entry_mode="recovered"``), and evaluate the
-  caller's new input through the standard non-crash path (FR-034).
-- Observational identity between crash and non-crash flows (FR-035).
+  caller's new input through the standard non-crash path.
+- Observational identity between crash and non-crash flows.
 
-These tests fail RED until spec 022 lands.
+These tests fail RED until  lands.
 """
 
 from __future__ import annotations
@@ -35,7 +35,9 @@ try:
         multi_turn_task,  # type: ignore[attr-defined]
         TaskConflictError,
         TaskContext,
-        SteeringQueueFull)
+        SteeringQueueFull,
+    )
+
     _NEW_SURFACE_AVAILABLE = True
 except ImportError:
     _NEW_SURFACE_AVAILABLE = False
@@ -60,6 +62,7 @@ async def _auto_manager(tmp_path):
 async def _setup(tmp_path: Path) -> tuple[Any, Any]:
     """Boot a minimal local provider + manager."""
     from azure.ai.agentserver.core.durable._manager import TaskManager, set_task_manager
+
     provider = LocalFileTaskProvider(base_dir=tmp_path)
     config = type(
         "C",
@@ -71,7 +74,8 @@ async def _setup(tmp_path: Path) -> tuple[Any, Any]:
             "lease_renewal_interval_seconds": 30,
             "owner_instance_id": "inst-1",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(provider=provider, config=config)
     set_task_manager(manager)
     await manager.startup()
@@ -80,6 +84,7 @@ async def _setup(tmp_path: Path) -> tuple[Any, Any]:
 
 async def _teardown(manager: Any) -> None:
     from azure.ai.agentserver.core.durable._manager import set_task_manager
+
     try:
         await manager.shutdown()
     except Exception:  # noqa: BLE001
@@ -88,11 +93,9 @@ async def _teardown(manager: Any) -> None:
 
 
 class TestCrashRecoveryUsesPersistedInput:
-    """FR-033 — recovery always re-invokes with persisted payload["input"]."""
+    """— recovery always re-invokes with persisted payload["input"]."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="FR-033: requires multi_turn_task (RED until Phase 2-6 lands)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason=": requires multi_turn_task (RED until Phase 2-6 lands)")
     async def test_scanner_recovery_uses_persisted_input(self, tmp_path: Path) -> None:
         """Scanner-reclaimed handler runs with persisted payload['input']."""
         observed_inputs: list[Any] = []
@@ -111,20 +114,15 @@ class TestCrashRecoveryUsesPersistedInput:
         # observed input is "X" — not None, not stale, not the caller's new value).
         await asyncio.sleep(0.1)
         assert observed_inputs[0] == "X", (
-            f"FR-033: recovery MUST re-invoke handler with persisted "
-            f"payload['input'] (got: {observed_inputs[0]!r})"
+            f": recovery MUST re-invoke handler with persisted " f"payload['input'] (got: {observed_inputs[0]!r})"
         )
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="FR-033: requires multi_turn_task (RED)")
-    async def test_inline_recovery_uses_persisted_input_not_callers_new(
-        self, tmp_path: Path
-    ) -> None:
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason=": requires multi_turn_task (RED)")
+    async def test_inline_recovery_uses_persisted_input_not_callers_new(self, tmp_path: Path) -> None:
         """Inline-recovery from .start() uses persisted X, not caller's new Y.
 
-        Per FR-034: caller's new Y flows through the standard non-crash path
-        (rejected for one-shot/non-steerable; queued for steerable).
+        : caller's new Y flows through the standard non-crash path
+                (rejected for one-shot/non-steerable; queued for steerable).
         """
         observed_inputs: list[Any] = []
 
@@ -140,19 +138,16 @@ class TestCrashRecoveryUsesPersistedInput:
         run_y = await handler.start(task_id="t2", input="Y")
         await asyncio.sleep(0.1)
         # Recovered handler should have seen "X" (persisted), not "Y" (caller's new).
-        assert "X" in observed_inputs, (
-            "FR-034: recovered handler MUST be invoked with persisted input X"
-        )
+        assert "X" in observed_inputs, ": recovered handler MUST be invoked with persisted input X"
 
 
 class TestInlineRecoveryAlgorithm:
-    """FR-034 — .start() against expired-lease in-progress record."""
+    """—.start against expired-lease in-progress record."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="FR-034: requires multi_turn_task (RED)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason=": requires multi_turn_task (RED)")
     async def test_inline_recovery_one_shot_rejects_new_input(self, tmp_path: Path) -> None:
         """One-shot inline-recovery: caller's new input gets TaskConflictError."""
+
         @task(name="one_shot_recovery")  # type: ignore[misc]
         async def handler(ctx: "TaskContext[str]") -> str:
             return ctx.input
@@ -163,13 +158,10 @@ class TestInlineRecoveryAlgorithm:
         with pytest.raises(TaskConflictError):
             await handler.start(task_id="t3", input="Y")
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="FR-034: requires multi_turn_task (RED)")
-    async def test_inline_recovery_multi_turn_non_steerable_rejects(
-        self, tmp_path: Path
-    ) -> None:
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason=": requires multi_turn_task (RED)")
+    async def test_inline_recovery_multi_turn_non_steerable_rejects(self, tmp_path: Path) -> None:
         """Non-steerable multi-turn: same as one-shot — TaskConflictError."""
+
         @multi_turn_task(name="non_steerable_recovery", steerable=False)  # type: ignore[misc]
         async def handler(ctx: "TaskContext[str]") -> str:
             return ctx.input
@@ -178,9 +170,7 @@ class TestInlineRecoveryAlgorithm:
         with pytest.raises(TaskConflictError):
             await handler.start(task_id="t4", input="Y")
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="FR-034: requires multi_turn_task (RED)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason=": requires multi_turn_task (RED)")
     async def test_inline_recovery_steerable_queues_new_input(self, tmp_path: Path) -> None:
         """Steerable multi-turn: caller's new input is queued."""
         observed_inputs: list[Any] = []
@@ -200,9 +190,7 @@ class TestInlineRecoveryAlgorithm:
         assert "X" in observed_inputs
         assert "Y" in observed_inputs
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="FR-034: requires multi_turn_task (RED)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason=": requires multi_turn_task (RED)")
     async def test_inline_recovery_acquires_lease_via_cas(self, tmp_path: Path) -> None:
         """CAS-based lease acquisition prevents races with the original owner."""
         # Detailed CAS race testing requires deep manager hooks; this test
@@ -212,14 +200,10 @@ class TestInlineRecoveryAlgorithm:
 
 
 class TestObservationalIdentity:
-    """FR-035 — crash and non-crash flows observationally identical."""
+    """— crash and non-crash flows observationally identical."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="FR-035: requires multi_turn_task (RED)")
-    async def test_crash_then_recover_indistinguishable_from_continuous(
-        self, tmp_path: Path
-    ) -> None:
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason=": requires multi_turn_task (RED)")
+    async def test_crash_then_recover_indistinguishable_from_continuous(self, tmp_path: Path) -> None:
         """Two scenarios (continuous vs crash-recover) produce same observable outcome."""
         # Scenario A: handler runs to completion without interruption.
         # Scenario B: handler crashes mid-way; recovery re-invokes; completes.
@@ -242,52 +226,37 @@ class TestObservationalIdentity:
         results_b.append(out_b)
 
         assert results_a == results_b, (
-            f"FR-035: observational identity violated; "
-            f"continuous={results_a}, crash-recover={results_b}"
+            f": observational identity violated; " f"continuous={results_a}, crash-recover={results_b}"
         )
 
 
 class TestSC004CrashRecovery:
     """SC-004 — across the 4 recovery scenarios."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="SC-004: requires multi_turn_task (RED)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_one_shot_fresh(self, tmp_path: Path) -> None:
         """One-shot fresh handler — crash recovery re-invokes."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="SC-004: requires multi_turn_task (RED)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_multi_turn_fresh(self, tmp_path: Path) -> None:
         """Multi-turn first turn — crash recovery re-invokes."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="SC-004: requires multi_turn_task (RED)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason="SC-004: requires multi_turn_task (RED)")
     async def test_recovery_scenario_multi_turn_resumed_turn(self, tmp_path: Path) -> None:
         """Multi-turn resumed turn — crash recovery preserves prior metadata."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="SC-004: requires multi_turn_task (RED)")
-    async def test_recovery_scenario_steerable_with_queued_inputs(
-        self, tmp_path: Path
-    ) -> None:
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason="SC-004: requires multi_turn_task (RED)")
+    async def test_recovery_scenario_steerable_with_queued_inputs(self, tmp_path: Path) -> None:
         """Steerable multi-turn with queued inputs — queue persists across crash."""
 
 
 class TestSC015InlineRecoveryAlgo:
     """SC-015 — both observable behaviors match the non-crash case."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="SC-015: requires multi_turn_task (RED)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason="SC-015: requires multi_turn_task (RED)")
     async def test_steerable_inline_recovery_matches_non_crash(self, tmp_path: Path) -> None:
         """Steerable: inline-recovery + new-input-queued matches non-crash flow."""
 
-    @pytest.mark.skipif(
-        not _NEW_SURFACE_AVAILABLE,
-        reason="SC-015: requires multi_turn_task (RED)")
+    @pytest.mark.skipif(not _NEW_SURFACE_AVAILABLE, reason="SC-015: requires multi_turn_task (RED)")
     async def test_non_steerable_inline_recovery_matches_non_crash(self, tmp_path: Path) -> None:
         """Non-steerable: inline-recovery + caller's new-input-rejected matches non-crash flow."""

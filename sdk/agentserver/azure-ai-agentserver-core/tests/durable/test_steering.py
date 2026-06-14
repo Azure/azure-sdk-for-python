@@ -16,7 +16,8 @@ from azure.ai.agentserver.core.durable import (
     EntryMode,
     SteeringQueueFull,
     TaskConflictError,
-    multi_turn_task)
+    multi_turn_task,
+)
 from azure.ai.agentserver.core.durable._exceptions import EtagConflict
 
 
@@ -24,10 +25,8 @@ class TestSteering:
     """Core steering functionality: append, drain, short-circuit."""
 
     async def _setup_manager(self, tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider)
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager)
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
@@ -39,7 +38,8 @@ class TestSteering:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -50,7 +50,7 @@ class TestSteering:
         mgr_mod._manager = None
 
     # ------------------------------------------------------------------
-    # US1: Basic steering
+    #: Basic steering
     # ------------------------------------------------------------------
 
     @pytest.mark.asyncio
@@ -79,7 +79,7 @@ class TestSteering:
             run2 = await chat.start(task_id="t1", input={"msg": "B"})
 
             # run2 should be a TaskRun (ack), not raise TaskConflictError
-    # spec 022 FR-077: exception.task_id removed
+            #: exception.task_id removed
             # Verify queue has the input
             task_info = await manager.provider.get("t1")
             steering = task_info.payload.get("_steering", {})
@@ -88,11 +88,11 @@ class TestSteering:
 
             # run1 should be superseded (A was cancelled)
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
 
             # run2 should complete (B runs after drain)
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-            assert True  # spec 022: result2 is raw Output (completion implicit)
+            assert True  #: result2 is raw Output (completion implicit)
             assert result2 == {"msg": "B"}
 
         finally:
@@ -125,13 +125,12 @@ class TestSteering:
     async def test_steering_queue_full(self, tmp_path):
         """start() raises SteeringQueueFull when queue is at capacity.
 
-        Spec 015 Phase 3 FR-006: the per-task ``max_pending`` knob was
-        demoted; the framework-wide default
-        ``_DEFAULT_MAX_PENDING_STEERING`` (10) applies. This test fills the
-        queue at that default to verify the exception still surfaces.
+        : the per-task ``max_pending`` knob was
+                demoted; the framework-wide default
+                ``_DEFAULT_MAX_PENDING_STEERING`` (10) applies. This test fills the
+                queue at that default to verify the exception still surfaces.
         """
-        from azure.ai.agentserver.core.durable._decorator import (
-            _DEFAULT_MAX_PENDING_STEERING)
+        from azure.ai.agentserver.core.durable._decorator import _DEFAULT_MAX_PENDING_STEERING
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
@@ -152,7 +151,7 @@ class TestSteering:
             with pytest.raises(SteeringQueueFull):
                 await chat.start(task_id="t1", input={"msg": "overflow"})
 
-            # spec 022 FR-077: SteeringQueueFull is bare exception (no max_pending)
+            #: SteeringQueueFull is bare exception (no max_pending)
 
             gate.set()
             await asyncio.wait_for(run1.result(), timeout=5.0)
@@ -187,18 +186,18 @@ class TestSteering:
 
             # run1 should be superseded
             result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
 
             # run2 should complete
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-            assert True  # spec 022: result2 is raw Output (completion implicit)
+            assert True  #: result2 is raw Output (completion implicit)
             assert result2 == {"msg": "B"}
 
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
     # ------------------------------------------------------------------
-    # US2: Rapid-fire short-circuit
+    #: Rapid-fire short-circuit
     # ------------------------------------------------------------------
 
     @pytest.mark.asyncio
@@ -227,15 +226,15 @@ class TestSteering:
 
             # D should be the one that completes
             result_d = await asyncio.wait_for(run_d.result(), timeout=5.0)
-            assert True  # spec 022: result_d is raw Output (completion implicit)
+            assert True  #: result_d is raw Output (completion implicit)
             assert result_d == {"msg": "D"}
 
             # B and C should be superseded
             result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
 
             result_c = await asyncio.wait_for(run_c.result(), timeout=5.0)
-    # spec 022: result is raw output (Suspended wrapper removed)
+        #: result is raw output (Suspended wrapper removed)
 
         finally:
             await self._teardown_manager(manager, mgr_mod)
@@ -262,7 +261,7 @@ class TestSteering:
             run_c = await chat.start(task_id="t1", input={"msg": "C"})
 
             result_c = await asyncio.wait_for(run_c.result(), timeout=5.0)
-            assert True  # spec 022: result_c is raw Output (completion implicit)
+            assert True  #: result_c is raw Output (completion implicit)
 
             # A: cancel set by steering signal
             # B: cancel pre-set (C still queued)
@@ -276,12 +275,12 @@ class TestSteering:
             await self._teardown_manager(manager, mgr_mod)
 
     # ------------------------------------------------------------------
-    # US3: Context enrichment
+    #: Context enrichment
     # ------------------------------------------------------------------
 
     @pytest.mark.asyncio
     async def test_steered_context_fields(self, tmp_path):
-        """Spec 016 FR-020 (US6): steered generation has is_steered_turn=True.
+        """: steered generation has is_steered_turn=True.
         The legacy was_steered / steering_generation fields are removed."""
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
@@ -310,7 +309,7 @@ class TestSteering:
             run2 = await chat.start(task_id="t1", input={"msg": "B"})
 
             result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
-            assert True  # spec 022: result2 is raw Output (completion implicit)
+            assert True  #: result2 is raw Output (completion implicit)
 
             # First entry: fresh, not steered
             assert contexts[0]["entry_mode"] == "fresh"
@@ -327,7 +326,7 @@ class TestSteering:
 
     @pytest.mark.asyncio
     async def test_entry_mode_steered(self, tmp_path):
-        """Spec 016 FR-020 (US6): steered generations enter with
+        """: steered generations enter with
         entry_mode='resumed' and is_steered_turn=True."""
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
@@ -360,17 +359,17 @@ class TestSteering:
             await self._teardown_manager(manager, mgr_mod)
 
     # ------------------------------------------------------------------
-    # TaskResult.is_superseded — REMOVED per spec 022 FR-018 (whole wrapper deleted)
+    # TaskResult.is_superseded — REMOVED per   (whole wrapper deleted)
     # ------------------------------------------------------------------
 
-    # Spec 022 FR-018: TaskResult class is fully deleted; tests for its
+    #: TaskResult class is fully deleted; tests for its
     # legacy is_superseded property are no longer applicable.
 
     # ------------------------------------------------------------------
     # Options passthrough
     # ------------------------------------------------------------------
 
-    @pytest.mark.skip(reason="spec 022: Task.options() removed from public surface")
+    @pytest.mark.skip(reason=": Task.options removed from public surface")
     @pytest.mark.asyncio
     async def test_steerable_via_options(self, tmp_path):
         """steerable can be set via .options()."""
@@ -392,7 +391,7 @@ class TestSteering:
 
             # This should work because steerable=True via options
             run2 = await steerable_chat.start(task_id="t1", input={"msg": "B"})
-    # spec 022 FR-077: exception.task_id removed
+            #: exception.task_id removed
             gate.set()
             await asyncio.wait_for(run2.result(), timeout=5.0)
 
@@ -402,7 +401,7 @@ class TestSteering:
     # ------------------------------------------------------------------
     # TaskOptions validation
     # ------------------------------------------------------------------
-    # Spec 015 Phase 3 FR-006: ``max_pending`` is no longer a configurable
+    #: ``max_pending`` is no longer a configurable
     # kwarg on ``@task``; the framework default applies. The previous
     # ``test_max_pending_validation`` (which asserted ``max_pending=0`` raised
     # at decoration time) has been removed because the kwarg itself is gone —
@@ -416,58 +415,35 @@ class TestSteering:
     async def test_etag_conflict_exception(self):
         """EtagConflict has task_id attribute."""
         exc = EtagConflict("t1", "test message")
-    # spec 022 FR-077: exception.task_id removed
+        #: exception.task_id removed
         assert "test message" in str(exc)
 
     @pytest.mark.asyncio
-    @pytest.mark.skip(reason="spec 022 FR-077: SteeringQueueFull is bare (no max_pending)")
+    @pytest.mark.skip(reason=": SteeringQueueFull is bare (no max_pending)")
     async def test_steering_queue_full_exception(self):
         """SteeringQueueFull has task_id and max_pending attributes."""
         exc = SteeringQueueFull("t1", 10)
-    # spec 022 FR-077: exception.task_id removed
+        #: exception.task_id removed
         assert exc.max_pending == 10
         assert "10" in str(exc)
 
     # ------------------------------------------------------------------
     # Steering with function that completes (not suspends)
     # ------------------------------------------------------------------
-
-    @pytest.mark.asyncio
-    async def test_steering_function_ignores_cancel_completes(self, tmp_path):
-        """If function ignores cancel and returns, steering still works via drain."""
-        manager, mgr_mod = await self._setup_manager(tmp_path)
-        try:
-            call_count = 0
-
-            @multi_turn_task(name="chat", steerable=True)
-            async def chat(ctx: TaskContext[dict]) -> dict:
-                nonlocal call_count
-                call_count += 1
-                # Intentionally ignores ctx.cancel
-                return {"msg": ctx.input.get("msg", "?")}
-
-            run1 = await chat.start(task_id="t1", input={"msg": "A"})
-
-            # Wait for A to complete
-            result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
-            assert True  # spec 022: result1 is raw Output (completion implicit)
-
-            # For non-ephemeral completed tasks, steerable or not, raises conflict
-            with pytest.raises(TaskConflictError):
-                await chat.start(task_id="t1", input={"msg": "B"})
-
-        finally:
-            await self._teardown_manager(manager, mgr_mod)
+    # (Removed: test_steering_function_ignores_cancel_completes asserted
+    # the pre-redesign semantics where @task could be steerable and a
+    # completing multi-turn handler raised TaskConflictError on the next
+    # .start. Under the current spec @task is never steerable and
+    # @multi_turn_task return-X is implicit suspend; the next .start is
+    # the next turn's input, not a conflict.)
 
 
 class TestSteeringRecovery:
     """Crash recovery for steerable tasks."""
 
     async def _setup_manager(self, tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider)
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager)
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
@@ -479,7 +455,8 @@ class TestSteeringRecovery:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -492,16 +469,15 @@ class TestSteeringRecovery:
     @pytest.mark.asyncio
     async def test_recovery_with_drain_in_progress(self, tmp_path, monkeypatch):
         """Recovery after crash mid-drain uses active_input from steering state."""
-        # Spec 016 transitional: force immediate recovery via the legacy
-        # threshold constant. Phase 6 of spec 016 replaces this with
-        # lease-based reclaim (FR-002 / FR-004).
+        #  transitional: force immediate recovery via the legacy
+        # threshold constant. Phase 6 of  replaces this with
+        # lease-based reclaim.
         import azure.ai.agentserver.core.durable._decorator as _dec
+
         monkeypatch.setattr(_dec, "_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS", 0.0)
 
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider)
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager)
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
@@ -513,7 +489,8 @@ class TestSteeringRecovery:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
 
         # Phase 1: Create a task and simulate crash mid-drain
         manager = TaskManager(config=config, provider=provider)
@@ -573,26 +550,24 @@ class TestSteeringRecovery:
 
     @pytest.mark.asyncio
     @pytest.mark.skip(
-        reason="Spec 016 FR-011: behaviorally the recovered turn 1 caller now "
+        reason=": behaviorally the recovered turn 1 caller now "
         "sees the natural suspend outcome (not the eventual Z output). The "
         "framework drain still processes Y→Z but timing-dependent on the "
         "test setup; full coverage of recovered-mid-drain semantics moves "
-        "to the Phase 8 conformance-gap-list deliverable."
+        "to the Phase 8 conformance-SOT deliverable."
     )
     async def test_recovery_with_pending_inputs(self, tmp_path, monkeypatch):
         """Recovery with pending inputs drains them after function completes."""
-        # Spec 016 transitional: force immediate recovery via the legacy
-        # threshold constant. Phase 6 of spec 016 replaces this with
-        # lease-based reclaim (FR-002 / FR-004).
+        #  transitional: force immediate recovery via the legacy
+        # threshold constant. Phase 6 of  replaces this with
+        # lease-based reclaim.
         import azure.ai.agentserver.core.durable._decorator as _dec
+
         monkeypatch.setattr(_dec, "_LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS", 0.0)
 
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider)
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager)
-        from azure.ai.agentserver.core.durable._models import (
-            TaskPatchRequest)
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+        from azure.ai.agentserver.core.durable._models import TaskPatchRequest
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
         provider = LocalFileTaskProvider(Path(str(tmp_path)))
@@ -604,7 +579,8 @@ class TestSteeringRecovery:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
 
         # Phase 1: Create a task normally, then simulate crash with pending
         manager = TaskManager(config=config, provider=provider)
@@ -638,7 +614,9 @@ class TestSteeringRecovery:
                         "cancel_requested": True,
                         "drain_in_progress": False,
                     },
-                }))
+                },
+            ),
+        )
 
         # Phase 2: New manager recovers the task
         manager2 = TaskManager(config=config, provider=provider)
@@ -657,31 +635,29 @@ class TestSteeringRecovery:
         run2 = await chat.start(task_id="t2", input={"msg": "recover"})
         result = await asyncio.wait_for(run2.result(), timeout=5.0)
 
-        # Spec 016 FR-011 (US5): the .start() caller is the first-turn caller.
+        #   (Subscriber): the.start caller is the first-turn caller.
         # The recovered handler runs with input X (pending[0]) and suspends
         # because cancel is set (pending Y, Z remain). The caller sees the
         # natural multi-turn suspend outcome — NOT the eventual Z output
         # (that was the legacy superseded-result semantic).
-        # spec 022: result is raw output (Suspended wrapper removed)
+        #: result is raw output (Suspended wrapper removed)
         _ = result  # consumed; structural shape verified by chain inputs
         # The framework still drains through Y → Z; verify the handler did
         # eventually see Z even though the .start() caller only observed turn-1.
         deadline = asyncio.get_event_loop().time() + 2.0
         while "Z" not in inputs_seen and asyncio.get_event_loop().time() < deadline:
             await asyncio.sleep(0.05)
-        assert "Z" in inputs_seen, (
-            f"Recovery should drain through X → Y → Z; observed {inputs_seen}"
-        )
+        assert "Z" in inputs_seen, f"Recovery should drain through X → Y → Z; observed {inputs_seen}"
 
         await manager2.shutdown()
         mgr_mod._manager = None
 
 
-class TestContextFieldsSpec015:
-    """Spec 015 Phase 3 surface contract for steering-related TaskContext fields."""
+class TestContextFieldsContract:
+    """surface contract for steering-related TaskContext fields."""
 
     def test_task_context_previous_input_removed(self) -> None:
-        """FR-006: ``ctx.previous_input`` is removed from TaskContext.
+        """: ``ctx.previous_input`` is removed from TaskContext.
 
         The field, the storage population, and the steering-payload mirror
         are all retired. Developers needing the prior input snapshot must
@@ -690,20 +666,18 @@ class TestContextFieldsSpec015:
         from azure.ai.agentserver.core.durable._context import TaskContext
 
         assert "previous_input" not in TaskContext.__slots__, (
-            "previous_input must not be a TaskContext slot after Spec 015 "
-            "Phase 3 (FR-006)."
+            "previous_input must not be a TaskContext slot after  " "Phase 3."
         )
 
     def test_task_context_steering_generation_field_present(self) -> None:
-        """Spec 016 FR-021 (US6): ctx.steering_generation is removed
+        """: ctx.steering_generation is removed
         from the public surface. The internal _steering['generation']
-        payload field is also deleted per gap-list §FR-021-internal."""
+        payload field is also deleted per SOT."""
         from azure.ai.agentserver.core.durable._context import TaskContext
 
         assert "steering_generation" not in TaskContext.__slots__, (
-            "Spec 016 FR-021: ctx.steering_generation MUST be removed "
-            "from the TaskContext slots."
+            ": ctx.steering_generation MUST be removed " "from the TaskContext slots."
         )
-        assert "generation" not in TaskContext.__slots__, (
-            "Old field name 'generation' must be removed (no deprecation alias)."
-        )
+        assert (
+            "generation" not in TaskContext.__slots__
+        ), "Old field name 'generation' must be removed (no deprecation alias)."

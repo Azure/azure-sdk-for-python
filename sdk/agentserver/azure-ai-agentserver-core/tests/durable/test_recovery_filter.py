@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Spec 019 Area B — Recovery scan source_type filter (FR-B-001, SC-4).
+""" Area B — Recovery scan source_type filter (, SC-4).
 
 Verifies that the framework's cold-start AND periodic recovery scans
 pass ``source_type=_SOURCE_TYPE`` to ``provider.list(...)`` so that
@@ -35,7 +35,8 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
 
 
 @pytest.fixture
@@ -46,7 +47,7 @@ def captured_local(tmp_path: Path, capturing_provider_factory):
 
 @pytest.mark.asyncio
 async def test_recovery_scan_passes_source_type(captured_local) -> None:
-    """FR-B-001 / C-FLT-1 — the recovery scan's ``provider.list`` call
+    """/ C-FLT-1 — the recovery scan's ``provider.list`` call
     MUST include ``source_type=<framework constant>``.
 
     Asserted by inspecting the captured ``list`` call kwargs from
@@ -58,22 +59,16 @@ async def test_recovery_scan_passes_source_type(captured_local) -> None:
     try:
         # Cold-start recovery happens during startup; the list call
         # is now captured.
-        assert captured_local.list_calls, (
-            "expected at least one provider.list call during cold-start "
-            "recovery"
-        )
+        assert captured_local.list_calls, "expected at least one provider.list call during cold-start " "recovery"
         # Find recovery-scan list calls (status='in_progress').
-        scan_calls = [
-            c for c in captured_local.list_calls if c.get("status") == "in_progress"
-        ]
+        scan_calls = [c for c in captured_local.list_calls if c.get("status") == "in_progress"]
         assert scan_calls, (
-            "expected at least one recovery-scan list call with "
-            "status='in_progress' during cold-start recovery"
+            "expected at least one recovery-scan list call with " "status='in_progress' during cold-start recovery"
         )
         for call in scan_calls:
             assert call.get("source_type") == "agentserver.task", (
                 f"recovery-scan list call did not include "
-                f"source_type='agentserver.task'; FR-B-001 / C-FLT-1 "
+                f"source_type='agentserver.task';  / C-FLT-1 "
                 f"require the framework to scope the scan to its own "
                 f"records. Got kwargs: {call}"
             )
@@ -84,7 +79,7 @@ async def test_recovery_scan_passes_source_type(captured_local) -> None:
 
 @pytest.mark.asyncio
 async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> None:
-    """SC-4 / FR-B-001 — a foreign-typed task with matching (agent,
+    """SC-4 /  — a foreign-typed task with matching (agent,
     session, lease_owner) MUST NOT be picked up by the recovery
     scan.
 
@@ -95,14 +90,12 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
     Both have expired leases. After cold-start, the framework MUST
     have reclaimed only the framework-owned record.
     """
+
     @multi_turn_task(name="reclaim_target")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "recovered"
 
-    past = (
-        datetime.datetime.now(datetime.timezone.utc)
-        - datetime.timedelta(minutes=10)
-    ).isoformat()
+    past = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=10)).isoformat()
 
     # Framework-owned record.
     await captured_local.create(
@@ -117,7 +110,8 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
             source={"name": "reclaim_target", "type": "agentserver.task"},
             lease_owner="test-agent|session:test-session",
             lease_instance_id="prev-instance",
-            lease_duration_seconds=60)
+            lease_duration_seconds=60,
+        )
     )
     foreign_record = await captured_local.create(
         TaskCreateRequest(
@@ -131,7 +125,8 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
             source={"name": "third_party_task", "type": "third_party.runner"},
             lease_owner="test-agent|session:test-session",
             lease_instance_id="prev-instance",
-            lease_duration_seconds=60)
+            lease_duration_seconds=60,
+        )
     )
     # Backdate both leases.
     for tid in ("t-ours", "t-foreign"):
@@ -146,12 +141,10 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
     try:
         # The foreign-typed record MUST NOT have been touched by any
         # reclaim PATCH issued during startup recovery.
-        touched_foreign = [
-            call for call in captured_local.update_calls if call[0] == "t-foreign"
-        ]
+        touched_foreign = [call for call in captured_local.update_calls if call[0] == "t-foreign"]
         assert not touched_foreign, (
             f"recovery scan picked up a foreign-typed task with "
-            f"source.type='third_party.runner'; FR-B-001 / C-FLT-1 "
+            f"source.type='third_party.runner';  / C-FLT-1 "
             f"require the scan to filter by source_type. Touched: "
             f"{touched_foreign}"
         )
@@ -164,7 +157,7 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
             f"foreign-typed task's lease_instance_id changed from "
             f"'prev-instance' to {snap.lease.instance_id!r}; the "
             f"framework should never touch foreign-typed records "
-            f"(FR-B-001)."
+            f"."
         )
     finally:
         await manager.shutdown()

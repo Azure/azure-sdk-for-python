@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for sentinel removal (US1, US2).
+"""Protocol conformance tests for sentinel removal.
 
 Validates that no SSE stream contains ``data: [DONE]`` under any scenario.
 Validates: B26 — Terminal SSE events (no [DONE] sentinel).
@@ -93,7 +93,7 @@ def _wait_for_terminal(client: TestClient, response_id: str) -> None:
 
 
 # ════════════════════════════════════════════════════════════
-# US1: Live streams must not contain [DONE] sentinel
+#: Live streams must not contain [DONE] sentinel
 # ════════════════════════════════════════════════════════════
 
 
@@ -138,7 +138,7 @@ def test_live_stream_incomplete_no_done_sentinel() -> None:
 
 
 # ════════════════════════════════════════════════════════════
-# US2: Replay streams must not contain [DONE] sentinel
+#: Replay streams must not contain [DONE] sentinel
 # ════════════════════════════════════════════════════════════
 
 

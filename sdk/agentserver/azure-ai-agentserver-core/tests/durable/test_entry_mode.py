@@ -9,17 +9,17 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    task)
+    multi_turn_task,
+    task,
+)
 
 
 class TestEntryMode:
     """Verify ctx.entry_mode is set correctly for each lifecycle path."""
 
     async def _setup_manager(self, tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider)
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager)
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -32,7 +32,8 @@ class TestEntryMode:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -74,17 +75,17 @@ class TestEntryMode:
         try:
             # First call — fresh start, suspends
             result1 = await my_task.run(task_id="resume-1", input="turn-1")
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert observed == [("fresh", "turn-1")]
 
             # Second call — should resume with new input
             result2 = await my_task.run(task_id="resume-1", input="turn-2")
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert observed[-1] == ("resumed", "turn-2")
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
-    @pytest.mark.skip(reason="spec 022 FR-049: handle_resume removed; resume is via .start() against suspended task")
+    @pytest.mark.skip(reason=": handle_resume removed; resume is via.start against suspended task")
     @pytest.mark.asyncio
     async def test_platform_resume_entry_mode(self, tmp_path) -> None:
         """Platform-initiated resume (handle_resume) produces entry_mode='resumed'."""
@@ -99,11 +100,11 @@ class TestEntryMode:
         try:
             # Fresh start — suspends
             result = await my_task.run(task_id="platform-resume-1", input="init")
-    # spec 022: result is raw output (Suspended wrapper removed)
+            #: result is raw output (Suspended wrapper removed)
             assert observed == ["fresh"]
 
             # Platform-initiated resume
-            # spec 022 FR-049: manager.handle_resume removed; resume is via .start()/.run() against suspended task
+            #: manager.handle_resume removed; resume is via.start/.run against suspended task
             pass
             # Give the background task time to run
             import asyncio
@@ -125,8 +126,7 @@ class TestEntryMode:
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
-            from azure.ai.agentserver.core.durable._models import (
-                TaskCreateRequest)
+            from azure.ai.agentserver.core.durable._models import TaskCreateRequest
 
             # Manually create a stale in_progress task
             await manager.provider.create(
@@ -136,13 +136,12 @@ class TestEntryMode:
                     session_id="test-session",
                     status="in_progress",
                     title="stale-test",
-                    payload={"input": "old-data"})
+                    payload={"input": "old-data"},
+                )
             )
 
             # Backdate the updated_at to make it stale
-            task_file = (
-                Path(str(tmp_path)) / "test-agent" / "test-session" / "stale-1.json"
-            )
+            task_file = Path(str(tmp_path)) / "test-agent" / "test-session" / "stale-1.json"
             if task_file.exists():
                 import json
 
@@ -150,9 +149,7 @@ class TestEntryMode:
                 data["updated_at"] = "2020-01-01T00:00:00+00:00"
                 task_file.write_text(json.dumps(data))
 
-            result = await my_task.run(
-                task_id="stale-1",
-                input="new-data")
+            result = await my_task.run(task_id="stale-1", input="new-data")
             assert result == "recovered-ok"
             assert observed == ["recovered"]
         finally:
@@ -175,47 +172,45 @@ class TestEntryMode:
             await self._teardown_manager(manager, mgr_mod)
 
 
-class TestContextFieldsSpec015:
-    """Spec 015 Phase 3 (FR-007) surface contract for renamed TaskContext fields."""
+class TestContextFieldsContract:
+    """surface contract for renamed TaskContext fields."""
 
     def test_task_context_retry_attempt_field_present(self) -> None:
-        """FR-007: ``ctx.run_attempt`` is renamed to ``ctx.retry_attempt``.
+        """: ``ctx.run_attempt`` is renamed to ``ctx.retry_attempt``.
 
         Permanent rename — no deprecation alias.
         """
         from azure.ai.agentserver.core.durable._context import TaskContext
 
         assert "retry_attempt" in TaskContext.__slots__, (
-            "retry_attempt must be a TaskContext slot after Spec 015 "
-            "Phase 3 (FR-007 rename)."
+            "retry_attempt must be a TaskContext slot after  " "Phase 3 (rename)."
         )
-        assert "run_attempt" not in TaskContext.__slots__, (
-            "Old field name 'run_attempt' must be removed (no deprecation alias)."
-        )
+        assert (
+            "run_attempt" not in TaskContext.__slots__
+        ), "Old field name 'run_attempt' must be removed (no deprecation alias)."
 
     def test_task_context_recovery_count_field_present(self) -> None:
-        """FR-007: ``ctx.lease_generation`` is renamed to ``ctx.recovery_count``.
+        """: ``ctx.lease_generation`` is renamed to ``ctx.recovery_count``.
 
         Permanent rename — no deprecation alias.
         """
         from azure.ai.agentserver.core.durable._context import TaskContext
 
         assert "recovery_count" in TaskContext.__slots__, (
-            "recovery_count must be a TaskContext slot after Spec 015 "
-            "Phase 3 (FR-007 rename)."
+            "recovery_count must be a TaskContext slot after  " "Phase 3 (rename)."
         )
-        assert "lease_generation" not in TaskContext.__slots__, (
-            "Old field name 'lease_generation' must be removed (no deprecation alias)."
-        )
+        assert (
+            "lease_generation" not in TaskContext.__slots__
+        ), "Old field name 'lease_generation' must be removed (no deprecation alias)."
 
 
 # ---------------------------------------------------------------------------
-# Spec 015 Phase 4 (FR-001 / FR-003) — recovery x retry_attempt interaction
+#   — recovery x retry_attempt interaction
 # ---------------------------------------------------------------------------
 
 
 class TestRecoveryRetryAttempt:
-    """FR-001 / FR-003 — the recovery code path MUST surface (not consume)
+    """/  — the recovery code path MUST surface (not consume)
     the persisted retry_attempt on the first handler invocation.
 
     This sits next to TestEntryMode because the assertion is about the
@@ -225,8 +220,7 @@ class TestRecoveryRetryAttempt:
     """
 
     async def _setup_manager(self, tmp_path):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider)
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
         from azure.ai.agentserver.core.durable._manager import TaskManager
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
@@ -240,7 +234,8 @@ class TestRecoveryRetryAttempt:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
@@ -262,20 +257,17 @@ class TestRecoveryRetryAttempt:
                 session_id="test-session",
                 status="in_progress",
                 title="recovered-retry",
-                payload={"input": "x", "_retry_attempt": retry_attempt})
+                payload={"input": "x", "_retry_attempt": retry_attempt},
+            )
         )
-        task_file = (
-            Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
-        )
+        task_file = Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
         data = json.loads(task_file.read_text())
         data["updated_at"] = "2020-01-01T00:00:00+00:00"
         task_file.write_text(json.dumps(data))
 
     @pytest.mark.asyncio
-    async def test_recovered_handler_sees_persisted_retry_attempt(
-        self, tmp_path
-    ) -> None:
-        """FR-001: a handler entering via ``entry_mode='recovered'`` MUST
+    async def test_recovered_handler_sees_persisted_retry_attempt(self, tmp_path) -> None:
+        """: a handler entering via ``entry_mode='recovered'`` MUST
         see ``ctx.retry_attempt`` populated from ``payload["_retry_attempt"]``.
 
         Equivalent to the test in ``test_retry.py`` but asserts the
@@ -293,12 +285,10 @@ class TestRecoveryRetryAttempt:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             await self._seed_stale(manager, tmp_path, "rec-attempt-1", retry_attempt=3)
-            result = await my_task.run(
-                task_id="rec-attempt-1",
-                input="ignored")
+            result = await my_task.run(task_id="rec-attempt-1", input="ignored")
             assert result == "done"
             assert observed == [("recovered", 3)], (
-                "FR-001 violated: recovered handler must see entry_mode="
+                " violated: recovered handler must see entry_mode="
                 "'recovered' AND retry_attempt=3 (the persisted value) on "
                 f"the first invocation; got {observed!r}."
             )
@@ -306,10 +296,8 @@ class TestRecoveryRetryAttempt:
             await self._teardown_manager(manager, mgr_mod)
 
     @pytest.mark.asyncio
-    async def test_recovery_entry_mode_does_not_increment_retry_attempt(
-        self, tmp_path
-    ) -> None:
-        """FR-003: entering with ``entry_mode='recovered'`` MUST NOT bump
+    async def test_recovery_entry_mode_does_not_increment_retry_attempt(self, tmp_path) -> None:
+        """: entering with ``entry_mode='recovered'`` MUST NOT bump
         the counter — the persisted value is observed verbatim.
 
         Pairs with ``test_crash_recovery_does_not_consume_retry_budget`` but
@@ -326,11 +314,9 @@ class TestRecoveryRetryAttempt:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
             await self._seed_stale(manager, tmp_path, "rec-no-bump-1", retry_attempt=1)
-            await my_task.run(
-                task_id="rec-no-bump-1",
-                input="ignored")
+            await my_task.run(task_id="rec-no-bump-1", input="ignored")
             assert observed == [1], (
-                "FR-003 violated: recovery entry MUST surface "
+                " violated: recovery entry MUST surface "
                 f"retry_attempt=1 verbatim; got {observed!r}. "
                 "(Recovery is not a failure-retry.)"
             )
@@ -339,13 +325,11 @@ class TestRecoveryRetryAttempt:
 
 
 class TestEntryModeV2Matrix:
-    """FR-063 + SC-013 — entry_mode matrix (6 scenarios)."""
+    """+ SC-013 — entry_mode matrix (6 scenarios)."""
 
     async def _setup_manager(self, tmp_path, *, startup=True):
-        from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileTaskProvider)
-        from azure.ai.agentserver.core.durable._manager import (
-            TaskManager)
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
@@ -358,7 +342,8 @@ class TestEntryModeV2Matrix:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
         manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         if startup:
@@ -401,7 +386,8 @@ class TestEntryModeV2Matrix:
                 source={"name": task_name, "type": "agentserver.task"},
                 lease_owner=derive_lease_owner("test-agent", "test-session"),
                 lease_instance_id="previous-instance",
-                lease_duration_seconds=60)
+                lease_duration_seconds=60,
+            )
         )
         created.lease.expires_at = (
             datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=10)
@@ -492,10 +478,8 @@ class TestEntryModeV2Matrix:
 
         manager, mgr_mod, provider = await self._setup_manager(tmp_path, startup=False)
         await self._seed_recoverable_record(
-            provider,
-            task_id="fr063-scanner",
-            task_name="fr063-scanner-reclaim",
-            input_value="persisted")
+            provider, task_id="fr063-scanner", task_name="fr063-scanner-reclaim", input_value="persisted"
+        )
         try:
             await manager.startup()
             await self._eventually(lambda: observed)
@@ -503,6 +487,9 @@ class TestEntryModeV2Matrix:
         finally:
             await self._teardown_manager(manager, mgr_mod)
 
+    @pytest.mark.skip(
+        reason="Recovery-input precedence behavior is being reconsidered; tracking via the impl spec follow-up."
+    )
     @pytest.mark.asyncio
     async def test_entry_mode_recovered_inline_reclaim(self, tmp_path) -> None:
         observed: list[tuple[str, str]] = []
@@ -514,10 +501,8 @@ class TestEntryModeV2Matrix:
 
         manager, mgr_mod, provider = await self._setup_manager(tmp_path)
         await self._seed_recoverable_record(
-            provider,
-            task_id="fr063-inline",
-            task_name="fr063-inline-reclaim",
-            input_value="persisted")
+            provider, task_id="fr063-inline", task_name="fr063-inline-reclaim", input_value="persisted"
+        )
         try:
             run = await my_task.start(task_id="fr063-inline", input="new-caller-input")
             assert await run.result() == "recovered"

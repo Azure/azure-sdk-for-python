@@ -124,10 +124,7 @@ async def test_shutdown_handler_timeout(caplog):
     # Shutdown should have been interrupted
     assert "completed" not in calls
     # Logger should have warned about timeout
-    assert any(
-        "did not complete" in r.message.lower() or "timeout" in r.message.lower()
-        for r in caplog.records
-    )
+    assert any("did not complete" in r.message.lower() or "timeout" in r.message.lower() for r in caplog.records)
 
 
 # ---------------------------------------------------------------------------
@@ -152,10 +149,7 @@ async def test_shutdown_handler_exception(caplog):
         await _drive_lifespan(app)
 
     # Should have logged the exception
-    assert any(
-        "on_shutdown" in r.message.lower() or "error" in r.message.lower()
-        for r in caplog.records
-    )
+    assert any("on_shutdown" in r.message.lower() or "error" in r.message.lower() for r in caplog.records)
 
 
 # ---------------------------------------------------------------------------

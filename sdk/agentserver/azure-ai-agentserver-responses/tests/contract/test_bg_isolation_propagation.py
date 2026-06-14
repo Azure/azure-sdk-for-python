@@ -29,6 +29,7 @@ from tests._helpers import poll_until
 
 # ─── Recording provider ───────────────────────────────────
 
+
 class _RecordingProvider:
     """Wraps InMemoryResponseProvider and records isolation kwargs on every call."""
 
@@ -86,12 +87,11 @@ class _RecordingProvider:
         *,
         isolation: Any = None,
     ) -> list[str]:
-        return await self._inner.get_history_item_ids(
-            previous_response_id, conversation_id, limit, isolation=isolation
-        )
+        return await self._inner.get_history_item_ids(previous_response_id, conversation_id, limit, isolation=isolation)
 
 
 # ─── Handler ──────────────────────────────────────────────
+
 
 def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
     """Handler that emits created → completed."""
@@ -105,6 +105,7 @@ def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any
 
 
 # ─── Helpers ──────────────────────────────────────────────
+
 
 def _build_client(provider: _RecordingProvider) -> TestClient:
     app = ResponsesAgentServerHost(store=provider)
@@ -135,6 +136,7 @@ def _wait_for_terminal(client: TestClient, response_id: str, headers: dict[str, 
 
 # ─── Tests ────────────────────────────────────────────────
 
+
 class TestBgNonStreamIsolationPropagation:
     """Verify that isolation keys reach update_response during bg non-stream finalization."""
 
@@ -157,7 +159,7 @@ class TestBgNonStreamIsolationPropagation:
 
         _wait_for_terminal(client, response_id, headers=headers)
 
-        # FR-003: create_response at response.created time should have isolation
+        #: create_response at response.created time should have isolation
         assert len(provider.create_calls) >= 1
         create_iso = provider.create_calls[0]
         assert isinstance(create_iso, IsolationContext)

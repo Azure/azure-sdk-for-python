@@ -300,17 +300,17 @@ def test_streaming_conversation_stamped_on_all_lifecycle_events() -> None:
 
     lifecycle_types = {"response.created", "response.in_progress", "response.completed"}
     lifecycle_events = [e for e in events if e["type"] in lifecycle_types]
-    assert len(lifecycle_events) >= 3, (
-        f"Expected at least 3 lifecycle events, got {[e['type'] for e in lifecycle_events]}"
-    )
+    assert (
+        len(lifecycle_events) >= 3
+    ), f"Expected at least 3 lifecycle events, got {[e['type'] for e in lifecycle_events]}"
 
     for evt in lifecycle_events:
         conv = evt["data"]["response"].get("conversation")
         assert conv is not None, f"conversation must be stamped on {evt['type']}"
         conv_id = conv.get("id") if isinstance(conv, dict) else conv
-        assert conv_id == "conv_all_events", (
-            f"Expected conversation.id='conv_all_events' on {evt['type']}, got {conv_id!r}"
-        )
+        assert (
+            conv_id == "conv_all_events"
+        ), f"Expected conversation.id='conv_all_events' on {evt['type']}, got {conv_id!r}"
 
 
 def test_background_with_conversation_string_round_trips_in_response() -> None:

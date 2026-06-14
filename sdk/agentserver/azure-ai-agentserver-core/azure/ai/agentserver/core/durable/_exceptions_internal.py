@@ -13,7 +13,7 @@ developer surface.
 The translation from these internal types → developer-facing types
 is documented in ``docs/task-and-streaming-spec.md`` §39.1.
 
-Spec 022 FR-074: ``TaskNotFound`` and ``TaskPreconditionFailed``
+: ``TaskNotFound`` and ``TaskPreconditionFailed``
 live here as internal-only re-exports (the classes themselves are
 defined in ``_exceptions.py`` for now, but the canonical import
 path for in-tree callers is this module).

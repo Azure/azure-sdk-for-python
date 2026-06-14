@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Spec 022 T-1.9 — active-run attachment for one-shot and multi-turn tasks."""
+""" T-1.9 — active-run attachment for one-shot and multi-turn tasks."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ def _unique(prefix: str) -> str:
 def _multi_turn_task(**kwargs: Any) -> Any:
     durable = importlib.import_module("azure.ai.agentserver.core.durable")
     decorator = getattr(durable, "multi_turn_task", None)
-    assert decorator is not None, "Spec 022 requires public multi_turn_task"
+    assert decorator is not None, " requires public multi_turn_task"
     return decorator(**kwargs)
 
 
@@ -58,7 +58,8 @@ class _ManagerFixture:
                 "session_id": "test-session",
                 "agent_version": "1.0.0",
                 "is_hosted": False,
-            })()
+            },
+        )()
         manager = TaskManager(config=config, provider=provider, shutdown_grace_seconds=0.1)
         mgr_mod._manager = manager  # noqa: SLF001
         await manager.startup()
@@ -73,7 +74,7 @@ class _ManagerFixture:
 
 
 class TestOneShotGetActiveRun:
-    """FR-022 — task.get_active_run(task_id) — in-process / reclaimable inline only."""
+    """— task.get_active_run(task_id) — in-process / reclaimable inline only."""
 
     @pytest.mark.asyncio
     async def test_get_active_run_returns_None_for_nonexistent(self):
@@ -133,7 +134,7 @@ class TestOneShotGetActiveRun:
 
 
 class TestMultiTurnGetActiveRun:
-    """FR-023 — multi_turn_task.get_active_run(task_id, input_id) — exact match required."""
+    """— multi_turn_task.get_active_run(task_id, input_id) — exact match required."""
 
     @pytest.mark.asyncio
     async def test_get_active_run_signature_requires_both_args(self):

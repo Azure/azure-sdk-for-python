@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Spec 022 metadata facade and lifecycle auto-flush coverage."""
+""" metadata facade and lifecycle auto-flush coverage."""
 
 from __future__ import annotations
 
@@ -12,13 +12,7 @@ from typing import Any
 
 import pytest
 
-from azure.ai.agentserver.core.durable import (
-    RetryPolicy,
-    TaskCancelled,
-    TaskContext,
-    TaskFailed,
-    TaskMetadata,
-    task)
+from azure.ai.agentserver.core.durable import RetryPolicy, TaskCancelled, TaskContext, TaskFailed, TaskMetadata, task
 
 
 def _multi_turn_task(*args: Any, **kwargs: Any) -> Any:
@@ -43,7 +37,8 @@ async def _setup_manager(tmp_path: Path, provider_factory: Any | None = None) ->
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -69,7 +64,7 @@ def _assert_metadata_patch(provider: Any, task_id: str, expected: dict[str, Any]
 
 
 class TestTaskMetadataDunders:
-    """FR-044 — TaskMetadata exposes standard mapping protocol."""
+    """— TaskMetadata exposes standard mapping protocol."""
 
     def test_getitem(self) -> None:
         meta = TaskMetadata({"k": "v"})
@@ -101,7 +96,7 @@ class TestTaskMetadataDunders:
 
 
 class TestTaskMetadataNamespace:
-    """FR-044 — ctx.metadata(namespace) returns sub-facade; reserved _ prefix raises."""
+    """— ctx.metadata(namespace) returns sub-facade; reserved _ prefix raises."""
 
     def test_namespace_callable_returns_subfacade(self) -> None:
         meta = TaskMetadata()
@@ -120,7 +115,7 @@ class TestTaskMetadataNamespace:
 
 
 class TestAutoFlushLifecycle:
-    """FR-045 — auto-flush at suspend/success/cancel/retry-exhausted boundaries."""
+    """— auto-flush at suspend/success/cancel/retry-exhausted boundaries."""
 
     @pytest.mark.asyncio
     async def test_metadata_flushed_at_suspend(self, tmp_path: Path, capturing_provider_factory: Any) -> None:
@@ -171,8 +166,8 @@ class TestAutoFlushLifecycle:
     @pytest.mark.asyncio
     async def test_metadata_flushed_at_retry_exhausted(self, tmp_path: Path, capturing_provider_factory: Any) -> None:
         @_multi_turn_task(
-            name="fr045-flush-retry-exhausted",
-            retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2))
+            name="fr045-flush-retry-exhausted", retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2)
+        )
         async def handler(ctx: TaskContext[str]) -> str:
             ctx.metadata["boundary"] = f"retry-{ctx.retry_attempt}"
             raise RuntimeError("boom")
@@ -188,7 +183,7 @@ class TestAutoFlushLifecycle:
 
 
 class TestAutoFlushLoadBearingOnRaise:
-    """FR-045 + SC-011 — multi-turn raise auto-flush is load-bearing for next turn."""
+    """+ SC-011 — multi-turn raise auto-flush is load-bearing for next turn."""
 
     @pytest.mark.asyncio
     async def test_metadata_visible_to_next_turn_after_raise(self, tmp_path: Path) -> None:
@@ -237,9 +232,7 @@ class TestAutoFlushLoadBearingOnRaise:
     async def test_metadata_visible_after_retry_exhausted(self, tmp_path: Path) -> None:
         observed: list[str | None] = []
 
-        @_multi_turn_task(
-            name="fr045-retry-visible",
-            retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2))
+        @_multi_turn_task(name="fr045-retry-visible", retry=RetryPolicy.fixed_delay(delay=timedelta(0), max_attempts=2))
         async def handler(ctx: TaskContext[str]) -> str:
             if ctx.input == "fail":
                 ctx.metadata["retry_marker"] = f"attempt-{ctx.retry_attempt}"
@@ -258,7 +251,7 @@ class TestAutoFlushLoadBearingOnRaise:
 
 
 class TestOneShotMetadataInvocationLocal:
-    """FR-046 — one-shot metadata has no cross-invocation visibility (record deleted)."""
+    """— one-shot metadata has no cross-invocation visibility (record deleted)."""
 
     @pytest.mark.asyncio
     async def test_one_shot_metadata_gone_after_terminal(self, tmp_path: Path) -> None:

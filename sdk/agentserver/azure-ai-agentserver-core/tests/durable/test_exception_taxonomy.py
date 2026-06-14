@@ -1,9 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""RED-first tests for spec 022 durable exception taxonomy.
+"""RED-first tests for  durable exception taxonomy.
 
-These tests encode FR-070, FR-071, FR-074, FR-075, FR-076, FR-077,
+These tests encode,,,,,,
 and SC-017. They intentionally import new public names inside tests so
 collection can succeed before the implementation lands.
 """
@@ -27,7 +27,8 @@ PUBLIC_EXCEPTION_NAMES = (
     "TaskConflictError",
     "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
-    "InputTooLarge")
+    "InputTooLarge",
+)
 
 
 def _durable_module() -> Any:
@@ -69,7 +70,7 @@ def _instance_field_names(exc: BaseException) -> set[str]:
     for cls in type(exc).__mro__:
         slots = getattr(cls, "__slots__", ())
         if isinstance(slots, str):
-            slot_names = (slots)
+            slot_names = slots
         else:
             slot_names = slots
         for name in slot_names:
@@ -95,7 +96,8 @@ async def _setup_manager(tmp_path: Path) -> tuple[Any, Any]:
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -108,7 +110,7 @@ async def _teardown_manager(manager: Any, mgr_mod: Any) -> None:
 
 
 class TestPublicExceptionExports:
-    """FR-074, FR-077, SC-017 — exception public-surface."""
+    """,, SC-017 — exception public-surface."""
 
     def test_7_public_exceptions_exported(self):
         all_names = set(getattr(_durable_module(), "__all__", ()))
@@ -139,7 +141,7 @@ class TestPublicExceptionExports:
 
 
 class TestExceptionShapes:
-    """FR-077 — bare-vs-fielded rule. No exception carries task_id."""
+    """— bare-vs-fielded rule. No exception carries task_id."""
 
     def test_TaskCancelled_bare_no_fields(self):
         TaskCancelled = _public_symbol("TaskCancelled")
@@ -188,9 +190,7 @@ class TestExceptionShapes:
 
     def test_LastInputIdPreconditionFailed_carries_actual_only(self):
         LastInputIdPreconditionFailed = _public_symbol("LastInputIdPreconditionFailed")
-        assert _signature_parameter_names(LastInputIdPreconditionFailed) == [
-            "actual_last_input_id"
-        ]
+        assert _signature_parameter_names(LastInputIdPreconditionFailed) == ["actual_last_input_id"]
         exc = LastInputIdPreconditionFailed(actual_last_input_id="input-2")
         assert exc.actual_last_input_id == "input-2"
         assert not hasattr(exc, "expected_last_input_id")
@@ -199,15 +199,11 @@ class TestExceptionShapes:
 
     def test_no_public_exception_has_task_id_attribute(self):
         factories = {
-            "TaskFailed": lambda cls: cls(
-                error={"type": "X", "message": "y", "traceback": "z"}
-            ),
+            "TaskFailed": lambda cls: cls(error={"type": "X", "message": "y", "traceback": "z"}),
             "TaskCancelled": lambda cls: cls(),
             "TaskDeferred": lambda cls: cls(),
             "TaskConflictError": lambda cls: cls(current_status="in_progress"),
-            "LastInputIdPreconditionFailed": lambda cls: cls(
-                actual_last_input_id="input-2"
-            ),
+            "LastInputIdPreconditionFailed": lambda cls: cls(actual_last_input_id="input-2"),
             "SteeringQueueFull": lambda cls: cls(),
             "InputTooLarge": lambda cls: cls(),
         }
@@ -217,7 +213,7 @@ class TestExceptionShapes:
 
 
 class TestTypedDicts:
-    """FR-071 — TaskErrorDict + TaskExhaustedRetriesErrorDict TypedDicts."""
+    """— TaskErrorDict + TaskExhaustedRetriesErrorDict TypedDicts."""
 
     def test_TaskErrorDict_in_public_surface(self):
         from azure.ai.agentserver.core.durable import TaskErrorDict
@@ -235,10 +231,7 @@ class TestTypedDicts:
     def test_TaskExhaustedRetriesErrorDict_in_public_surface(self):
         from azure.ai.agentserver.core.durable import TaskExhaustedRetriesErrorDict
 
-        assert (
-            TaskExhaustedRetriesErrorDict.__name__
-            == "TaskExhaustedRetriesErrorDict"
-        )
+        assert TaskExhaustedRetriesErrorDict.__name__ == "TaskExhaustedRetriesErrorDict"
 
     def test_TaskExhaustedRetriesErrorDict_field_shape(self):
         TaskExhaustedRetriesErrorDict = _public_symbol("TaskExhaustedRetriesErrorDict")
@@ -250,7 +243,7 @@ class TestTypedDicts:
             "last_error_type",
             "traceback",
         }
-        assert get_args(hints["type"]) == ("exhausted_retries")
+        assert get_args(hints["type"]) == ("exhausted_retries",)
         assert hints["attempts"] is int
         assert hints["last_error"] is str
         assert hints["last_error_type"] is str
@@ -269,7 +262,7 @@ class TestTypedDicts:
 
 
 class TestJSONValueAlias:
-    """FR-070 — JSONValue recursive type alias exported."""
+    """— JSONValue recursive type alias exported."""
 
     def test_JSONValue_in_public_surface(self):
         from azure.ai.agentserver.core.durable import JSONValue
@@ -282,21 +275,11 @@ class TestJSONValueAlias:
         assert {str, int, float, bool, type(None)}.issubset(args)
 
         list_branch = next(
-            (
-                arg
-                for arg in args
-                if get_origin(arg) is list
-                or getattr(arg, "__origin__", None) is list
-            ),
-            None)
+            (arg for arg in args if get_origin(arg) is list or getattr(arg, "__origin__", None) is list), None
+        )
         dict_branch = next(
-            (
-                arg
-                for arg in args
-                if get_origin(arg) is dict
-                or getattr(arg, "__origin__", None) is dict
-            ),
-            None)
+            (arg for arg in args if get_origin(arg) is dict or getattr(arg, "__origin__", None) is dict), None
+        )
         assert list_branch is not None
         assert dict_branch is not None
 
@@ -317,7 +300,7 @@ def _is_json_value_recursive_arg(arg: Any, alias: Any) -> bool:
 
 
 class TestTaskFailedCauseInvariant:
-    """FR-075 — TaskFailed.__cause__ is None for handler-raised exceptions."""
+    """— TaskFailed.__cause__ is None for handler-raised exceptions."""
 
     @pytest.mark.asyncio
     async def test_TaskFailed_cause_is_none(self, tmp_path: Path):

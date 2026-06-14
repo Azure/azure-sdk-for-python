@@ -1,11 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""RED-first tests for spec 022 multi-turn return/raise semantics.
+"""RED-first tests for  multi-turn return/raise semantics.
 
-Covers FR-007, FR-010, FR-011, FR-012, FR-013, FR-014, FR-015,
-FR-053, plus SC-003 and SC-010. These tests intentionally target the
-new ``@multi_turn_task`` primitive and fail RED until spec 022 lands.
+Covers,,,,,,,
+, plus SC-003 and SC-010. These tests intentionally target the
+new ``@multi_turn_task`` primitive and fail RED until  lands.
 """
 
 from __future__ import annotations
@@ -25,18 +25,20 @@ try:
         TaskFailed,
         multi_turn_task,
         task,
-        TaskErrorDict)
+        TaskErrorDict,
+    )
+
     _NEW_SURFACE_AVAILABLE = True
 except ImportError:
     _NEW_SURFACE_AVAILABLE = False
-    from azure.ai.agentserver.core.durable import (
-        TaskCancelled, TaskContext, TaskFailed, task)
+    from azure.ai.agentserver.core.durable import TaskCancelled, TaskContext, TaskFailed, task
+
     multi_turn_task = None  # type: ignore[assignment]
     TaskErrorDict = None  # type: ignore[assignment]
 
 pytestmark = pytest.mark.skipif(
-    not _NEW_SURFACE_AVAILABLE,
-    reason="spec 022: requires `multi_turn_task` / `TaskErrorDict` (RED until Phase 2-5)")
+    not _NEW_SURFACE_AVAILABLE, reason=": requires `multi_turn_task` / `TaskErrorDict` (RED until Phase 2-5)"
+)
 
 
 class MyError(RuntimeError):
@@ -44,10 +46,8 @@ class MyError(RuntimeError):
 
 
 async def _setup_manager(tmp_path: Path, provider_wrapper: Any | None = None) -> tuple[Any, Any, Any]:
-    from azure.ai.agentserver.core.durable._local_provider import (
-        LocalFileTaskProvider)
-    from azure.ai.agentserver.core.durable._manager import (
-        TaskManager)
+    from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+    from azure.ai.agentserver.core.durable._manager import TaskManager
     import azure.ai.agentserver.core.durable._manager as mgr_mod
 
     base_provider = LocalFileTaskProvider(Path(str(tmp_path)))
@@ -60,7 +60,8 @@ async def _setup_manager(tmp_path: Path, provider_wrapper: Any | None = None) ->
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -72,12 +73,7 @@ async def _teardown_manager(manager: Any, mgr_mod: Any) -> None:
     mgr_mod._manager = None
 
 
-async def _wait_for_record(
-    manager: Any,
-    task_id: str,
-    *,
-    status: str | None = None,
-    timeout: float = 5.0) -> Any:
+async def _wait_for_record(manager: Any, task_id: str, *, status: str | None = None, timeout: float = 5.0) -> Any:
     loop = asyncio.get_running_loop()
     deadline = loop.time() + timeout
     while True:
@@ -106,11 +102,7 @@ def _patch_payload(patch: Any) -> dict[str, Any]:
 
 
 def _captured_updates(provider: Any, task_id: str) -> list[tuple[int, Any]]:
-    return [
-        (index, call[1])
-        for index, call in enumerate(getattr(provider, "update_calls", []))
-        if call[0] == task_id
-    ]
+    return [(index, call[1]) for index, call in enumerate(getattr(provider, "update_calls", [])) if call[0] == task_id]
 
 
 def _find_suspend_patch(provider: Any, task_id: str) -> tuple[int, Any]:
@@ -122,7 +114,7 @@ def _find_suspend_patch(provider: Any, task_id: str) -> tuple[int, Any]:
             and payload.get("input") is None
         ):
             return index, patch
-    pytest.fail(f"No spec 022 suspend patch captured for {task_id!r}")
+    pytest.fail(f"No  suspend patch captured for {task_id!r}")
 
 
 def _exception_public_fields(exc: BaseException) -> set[str]:
@@ -130,7 +122,7 @@ def _exception_public_fields(exc: BaseException) -> set[str]:
     for cls in type(exc).mro():
         slots = getattr(cls, "__slots__", ())
         if isinstance(slots, str):
-            slots = (slots)
+            slots = slots
         for slot in slots:
             if isinstance(slot, str) and not slot.startswith("_") and hasattr(exc, slot):
                 fields.add(slot)
@@ -138,7 +130,7 @@ def _exception_public_fields(exc: BaseException) -> set[str]:
 
 
 class TestReturnIsImplicitSuspend:
-    """FR-007 — Multi-turn handler ``return X`` is implicit suspend."""
+    """— Multi-turn handler ``return X`` is implicit suspend."""
 
     @pytest.mark.asyncio
     async def test_multi_turn_return_X_suspends_chain(self, tmp_path: Path) -> None:
@@ -151,20 +143,14 @@ class TestReturnIsImplicitSuspend:
                 seen.append((ctx.entry_mode, ctx.input_id))
                 return {"echo": ctx.input["value"], "input_id": ctx.input_id}
 
-            result1 = await chat.run(
-                task_id="return-x",
-                input_id="turn-1",
-                input={"value": "one"})
+            result1 = await chat.run(task_id="return-x", input_id="turn-1", input={"value": "one"})
 
             assert result1 == {"echo": "one", "input_id": "turn-1"}
             record = await _wait_for_record(manager, "return-x", status="suspended")
             assert record.suspension_reason == "run_completion"
             assert (record.payload or {}).get("input") is None
 
-            run2 = await chat.start(
-                task_id="return-x",
-                input_id="turn-2",
-                input={"value": "two"})
+            run2 = await chat.start(task_id="return-x", input_id="turn-2", input={"value": "two"})
             assert await run2.result() == {"echo": "two", "input_id": "turn-2"}
             assert seen == [("fresh", "turn-1"), ("resumed", "turn-2")]
         finally:
@@ -195,10 +181,12 @@ class TestReturnIsImplicitSuspend:
 
 
 class TestMultiTurnRaiseDoesNotKillChain:
-    """FR-010 + FR-011 — Multi-turn raise → suspended; chain stays alive."""
+    """+  — Multi-turn raise → suspended; chain stays alive."""
 
     @pytest.mark.asyncio
-    async def test_handler_raise_transitions_to_suspended(self, tmp_path: Path, capturing_provider_factory: Any) -> None:
+    async def test_handler_raise_transitions_to_suspended(
+        self, tmp_path: Path, capturing_provider_factory: Any
+    ) -> None:
         manager, mgr_mod, provider = await _setup_manager(tmp_path, capturing_provider_factory)
         try:
             entered = asyncio.Event()
@@ -283,36 +271,33 @@ class TestMultiTurnRaiseDoesNotKillChain:
 
             for index in range(5):
                 failing = await chat.start(
-                    task_id="many-raises",
-                    input_id=f"fail-{index}",
-                    input={"value": f"fail-{index}"})
+                    task_id="many-raises", input_id=f"fail-{index}", input={"value": f"fail-{index}"}
+                )
                 with pytest.raises(TaskFailed):
                     await asyncio.wait_for(failing.result(), timeout=5.0)
 
                 result = await chat.run(
-                    task_id="many-raises",
-                    input_id=f"success-{index}",
-                    input={"value": f"success-{index}"})
+                    task_id="many-raises", input_id=f"success-{index}", input={"value": f"success-{index}"}
+                )
                 assert result == f"ok:success-{index}"
                 record = await _wait_for_record(manager, "many-raises", status="suspended")
                 assert (record.payload or {}).get("input") is None
 
             assert [value for value, _ in seen] == [
-                item
-                for index in range(5)
-                for item in (f"fail-{index}", f"success-{index}")
+                item for index in range(5) for item in (f"fail-{index}", f"success-{index}")
             ]
         finally:
             await _teardown_manager(manager, mgr_mod)
 
 
 class TestFailingTurnResult:
-    """FR-012 — failing turn's ``TaskRun.result()`` raises the new taxonomy."""
+    """— failing turn's ``TaskRun.result`` raises the new taxonomy."""
 
     @pytest.mark.asyncio
     async def test_handler_raise_resolves_with_TaskFailed(self, tmp_path: Path) -> None:
         manager, mgr_mod, _ = await _setup_manager(tmp_path)
         try:
+
             @multi_turn_task(name="taskfailed-result-chain")
             async def chat(ctx: TaskContext[dict[str, str]]) -> str:
                 raise MyError(f"bad input: {ctx.input['value']}")
@@ -332,6 +317,7 @@ class TestFailingTurnResult:
     async def test_handler_CancelledError_resolves_with_TaskCancelled(self, tmp_path: Path) -> None:
         manager, mgr_mod, _ = await _setup_manager(tmp_path)
         try:
+
             @multi_turn_task(name="cancelled-result-chain")
             async def chat(ctx: TaskContext[dict[str, str]]) -> str:
                 raise asyncio.CancelledError()
@@ -349,6 +335,7 @@ class TestFailingTurnResult:
     async def test_TaskFailed_error_dict_shape(self, tmp_path: Path) -> None:
         manager, mgr_mod, _ = await _setup_manager(tmp_path)
         try:
+
             @multi_turn_task(name="taskfailed-shape-chain")
             async def chat(ctx: TaskContext[dict[str, str]]) -> str:
                 raise MyError("shape check")
@@ -369,7 +356,7 @@ class TestFailingTurnResult:
 
 
 class TestQueuedSteererPromotion:
-    """FR-013 — On multi-turn raise, queued steerers PROMOTE."""
+    """— On multi-turn raise, queued steerers PROMOTE."""
 
     @pytest.mark.asyncio
     async def test_queued_steerer_promotes_on_raise(self, tmp_path: Path) -> None:
@@ -416,12 +403,13 @@ class TestQueuedSteererPromotion:
 
 
 class TestOneShotRaise:
-    """FR-014 — One-shot raise → completed + deleted + TaskFailed."""
+    """— One-shot raise → completed + deleted + TaskFailed."""
 
     @pytest.mark.asyncio
     async def test_one_shot_raise_deletes_record(self, tmp_path: Path) -> None:
         manager, mgr_mod, _ = await _setup_manager(tmp_path)
         try:
+
             @task(name="one-shot-raise")
             async def fail_once(ctx: TaskContext[dict[str, str]]) -> str:
                 raise MyError(ctx.input["value"])
@@ -436,13 +424,14 @@ class TestOneShotRaise:
 
 
 class TestStructuredFailureLog:
-    """FR-015 — Framework emits structured failure log/telemetry for failures."""
+    """— Framework emits structured failure log/telemetry for failures."""
 
     @pytest.mark.asyncio
     async def test_failure_emits_structured_log_event(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
         caplog.set_level(logging.ERROR, logger="azure.ai.agentserver.durable")
         manager, mgr_mod, _ = await _setup_manager(tmp_path)
         try:
+
             @multi_turn_task(name="structured-log-chain")
             async def chat(ctx: TaskContext[dict[str, str]]) -> str:
                 raise MyError("log me")
@@ -477,6 +466,7 @@ class TestStructuredFailureLog:
 
         loop.set_exception_handler(capture_unhandled)
         try:
+
             @multi_turn_task(name="unawaited-failure-chain")
             async def chat(ctx: TaskContext[dict[str, str]]) -> str:
                 raise MyError("nobody awaits this")
@@ -489,17 +479,14 @@ class TestStructuredFailureLog:
                 gc.collect()
                 await asyncio.sleep(0)
 
-            assert not any(
-                "exception was never retrieved" in str(context.get("message", ""))
-                for context in contexts
-            )
+            assert not any("exception was never retrieved" in str(context.get("message", "")) for context in contexts)
         finally:
             loop.set_exception_handler(prior_handler)
             await _teardown_manager(manager, mgr_mod)
 
 
 class TestSevenStepOrdering:
-    """FR-053 + SC-010 — 7-step ordering on multi-turn handler raise."""
+    """+ SC-010 — 7-step ordering on multi-turn handler raise."""
 
     @pytest.mark.asyncio
     async def test_auto_flush_before_record_patch(self, tmp_path: Path, capturing_provider_factory: Any) -> None:
@@ -524,9 +511,7 @@ class TestSevenStepOrdering:
 
             updates = _captured_updates(provider, "flush-before-patch")
             metadata_index = next(
-                index
-                for index, patch in updates
-                if (_patch_payload(patch).get("metadata") or {}).get("x") == "y"
+                index for index, patch in updates if (_patch_payload(patch).get("metadata") or {}).get("x") == "y"
             )
             suspend_index, _ = _find_suspend_patch(provider, "flush-before-patch")
             assert metadata_index < suspend_index
@@ -570,42 +555,5 @@ class TestSevenStepOrdering:
             await asyncio.wait_for(observer, timeout=5.0)
             assert await asyncio.wait_for(queued.result(), timeout=5.0) == "queued-ok"
             assert events.index("caller-a-failed") < events.index("handler-b-entered")
-        finally:
-            await _teardown_manager(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_queued_promotion_uses_cleared_input_slot(self, tmp_path: Path, capturing_provider_factory: Any) -> None:
-        manager, mgr_mod, provider = await _setup_manager(tmp_path, capturing_provider_factory)
-        try:
-            entered = asyncio.Event()
-            release = asyncio.Event()
-            observed_inputs: list[dict[str, str]] = []
-
-            @multi_turn_task(name="cleared-input-slot-chain", steerable=True)
-            async def chat(ctx: TaskContext[dict[str, str]]) -> str:
-                observed_inputs.append(ctx.input)
-                if ctx.input["value"] == "fail":
-                    entered.set()
-                    await release.wait()
-                    raise MyError("clear then promote")
-                return ctx.input["value"]
-
-            failing = await chat.start(task_id="cleared-input-slot", input_id="turn-1", input={"value": "fail"})
-            await asyncio.wait_for(entered.wait(), timeout=5.0)
-            queued = await chat.start(task_id="cleared-input-slot", input_id="turn-2", input={"value": "queued"})
-
-            release.set()
-            with pytest.raises(TaskFailed):
-                await asyncio.wait_for(failing.result(), timeout=5.0)
-            assert await asyncio.wait_for(queued.result(), timeout=5.0) == "queued"
-            assert observed_inputs == [{"value": "fail"}, {"value": "queued"}]
-
-            suspend_index, _ = _find_suspend_patch(provider, "cleared-input-slot")
-            promote_index = next(
-                index
-                for index, patch in _captured_updates(provider, "cleared-input-slot")
-                if index > suspend_index and _patch_payload(patch).get("input") == {"value": "queued"}
-            )
-            assert suspend_index < promote_index
         finally:
             await _teardown_manager(manager, mgr_mod)

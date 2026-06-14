@@ -1,20 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Spec 019 Area A — ETag CAS on every PATCH (FR-A-001..009).
+""" Area A — ETag CAS on every PATCH.
 
 Verifies the framework's ETag plumbing:
 
 - Every PATCH after the first read/create carries the last-known
-  etag as ``if_match`` (FR-A-001).
-- ``delete()`` does NOT carry ``if_match`` (FR-A-002).
+  etag as ``if_match``.
+- ``delete`` does NOT carry ``if_match``.
 - Both reclaim sites (inline reclaim + cold-start/periodic scan)
-  carry ``if_match`` (FR-A-009).
+  carry ``if_match``.
 - Terminal-write 412 follows the RE-READ-AND-DECIDE rule from
-  FR-A-008: three branches — lease-lost ABANDON, already-terminal
+: three branches — lease-lost ABANDON, already-terminal
   ABANDON, lease-still-ours-retry (SC-3b).
 
-Tests use the spec-019-introduced ``CapturingProvider`` (records
+Tests use the ``CapturingProvider`` (records
 every PATCH so we can inspect ``if_match`` on each) and
 ``Conflicting412Provider`` (injects 412 at configured update calls,
 optionally mutating the underlying record to simulate cross-process
@@ -37,13 +37,12 @@ from azure.ai.agentserver.core.durable import (
     TaskContext,
     TaskFailed,
     task,
-    multi_turn_task)
+    multi_turn_task,
+)
 import azure.ai.agentserver.core.durable._manager as mgr_mod
 from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.durable._manager import TaskManager
-from azure.ai.agentserver.core.durable._models import (
-    TaskCreateRequest,
-    TaskPatchRequest)
+from azure.ai.agentserver.core.durable._models import TaskCreateRequest, TaskPatchRequest
 
 
 def _config_stub():
@@ -55,7 +54,8 @@ def _config_stub():
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
 
 
 @pytest.fixture
@@ -73,13 +73,13 @@ def conflicting_local(tmp_path: Path, conflicting_412_provider_factory):
 
 
 # --------------------------------------------------------------------- #
-# FR-A-001 — every PATCH after the first read/create carries if_match
+#  — every PATCH after the first read/create carries if_match
 # --------------------------------------------------------------------- #
 
 
 @pytest.mark.asyncio
 async def test_every_patch_after_first_carries_if_match(captured_local) -> None:
-    """FR-A-001 / C-WQ-3 — every PATCH after the create read carries
+    """/ C-WQ-3 — every PATCH after the create read carries
     the last-known etag as ``if_match``.
 
     A simple fresh-create + suspend cycle: the create PATCH is the
@@ -87,6 +87,7 @@ async def test_every_patch_after_first_carries_if_match(captured_local) -> None:
     any framework-internal PATCHes that follow MUST all carry
     ``if_match``.
     """
+
     @multi_turn_task(name="if_match_etag_task")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "ok"
@@ -101,12 +102,10 @@ async def test_every_patch_after_first_carries_if_match(captured_local) -> None:
         await manager.shutdown()
         mgr_mod._manager = None
 
-    assert len(captured_local.update_calls) >= 1, (
-        "expected at least one PATCH after create"
-    )
+    assert len(captured_local.update_calls) >= 1, "expected at least one PATCH after create"
     for idx, (_task_id, _patch, if_match) in enumerate(captured_local.update_calls):
         assert if_match is not None, (
-            f"PATCH {idx} did not carry if_match; spec 019 FR-A-001 "
+            f"PATCH {idx} did not carry if_match;   "
             f"requires every PATCH after the first read/create to "
             f"carry the last-known etag."
         )
@@ -114,13 +113,14 @@ async def test_every_patch_after_first_carries_if_match(captured_local) -> None:
 
 @pytest.mark.asyncio
 async def test_delete_does_not_carry_if_match(captured_local) -> None:
-    """FR-A-002 — ``delete()`` is intentionally unconditional and
+    """— ``delete`` is intentionally unconditional and
     MUST NOT carry an etag precondition.
 
     The user-facing ``Task.run()`` for an ``ephemeral=True`` task
     auto-deletes the record on terminal exit; that delete must
     not carry ``if_match``.
     """
+
     @task(name="delete_etag_task")
     async def ephemeral_task(ctx: TaskContext[str]) -> str:
         return "done"
@@ -134,19 +134,17 @@ async def test_delete_does_not_carry_if_match(captured_local) -> None:
         await manager.shutdown()
         mgr_mod._manager = None
 
-    assert captured_local.delete_calls, (
-        "ephemeral=True task should have triggered a delete on terminal exit"
-    )
+    assert captured_local.delete_calls, "ephemeral=True task should have triggered a delete on terminal exit"
 
 
 # --------------------------------------------------------------------- #
-# FR-A-009 — both reclaim sites carry if_match
+#  — both reclaim sites carry if_match
 # --------------------------------------------------------------------- #
 
 
 @pytest.mark.asyncio
 async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
-    """FR-A-009 / C-LSE-2 — inline reclaim AND cold-start/periodic
+    """/ C-LSE-2 — inline reclaim AND cold-start/periodic
     scan reclaim PATCHes BOTH carry ``if_match``.
 
     Set up: pre-seed an in_progress task with an expired lease, run
@@ -159,10 +157,7 @@ async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
     async def my_task(ctx: TaskContext[str]) -> str:
         return "recovered"
 
-    past = (
-        datetime.datetime.now(datetime.timezone.utc)
-        - datetime.timedelta(minutes=10)
-    ).isoformat()
+    past = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=10)).isoformat()
     await captured_local.create(
         TaskCreateRequest(
             id="t-stale",
@@ -175,7 +170,8 @@ async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
             source={"name": "reclaim_etag_task", "type": "agentserver.task"},
             lease_owner="test-agent|session:test-session",
             lease_instance_id="prev-instance",
-            lease_duration_seconds=60)
+            lease_duration_seconds=60,
+        )
     )
     # Manually backdate the lease.
     stored = await captured_local._delegate.get("t-stale")  # noqa: SLF001
@@ -196,23 +192,23 @@ async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
         mgr_mod._manager = None
 
     # Every reclaim PATCH (and any subsequent renewal/terminal) must
-    # carry if_match (FR-A-009 / C-LSE-2).
+    # carry if_match (/ C-LSE-2).
     for idx, (_task_id, _patch, if_match) in enumerate(captured_local.update_calls):
         assert if_match is not None, (
-            f"reclaim-path PATCH {idx} missing if_match; FR-A-009 / "
+            f"reclaim-path PATCH {idx} missing if_match;  / "
             f"C-LSE-2 requires both inline AND scan reclaim PATCHes "
             f"to be CAS-guarded."
         )
 
 
 # --------------------------------------------------------------------- #
-# FR-A-008 terminal-write 412 — three branches (SC-3b)
+#  terminal-write 412 — three branches (SC-3b)
 # --------------------------------------------------------------------- #
 
 
 @pytest.mark.asyncio
 async def test_terminal_412_lease_lost_abandons(conflicting_local) -> None:
-    """FR-A-008 (a) / SC-3b — on terminal-write 412, if RE-READ shows
+    """(a) / SC-3b — on terminal-write 412, if RE-READ shows
     the lease is no longer ours, the framework MUST ABANDON the
     terminal PATCH and signal eviction (TaskConflictError to awaiters).
 
@@ -223,6 +219,7 @@ async def test_terminal_412_lease_lost_abandons(conflicting_local) -> None:
     On the framework's RE-READ, it sees a different instance_id and
     MUST stop.
     """
+
     @multi_turn_task(name="terminal_412_lease_lost")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "completed-payload"
@@ -246,9 +243,10 @@ async def test_terminal_412_lease_lost_abandons(conflicting_local) -> None:
 
 @pytest.mark.asyncio
 async def test_terminal_412_already_terminal_abandons(conflicting_local) -> None:
-    """FR-A-008 (b) / SC-3b — on terminal-write 412, if RE-READ shows
+    """(b) / SC-3b — on terminal-write 412, if RE-READ shows
     ``status="completed"`` already, ABANDON.
     """
+
     @multi_turn_task(name="terminal_412_already_terminal")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "ok"
@@ -270,7 +268,7 @@ async def test_terminal_412_already_terminal_abandons(conflicting_local) -> None
 
 @pytest.mark.asyncio
 async def test_terminal_412_lease_ours_retries(conflicting_local) -> None:
-    """FR-A-008 (c) / SC-3b — on terminal-write 412, if RE-READ shows
+    """(c) / SC-3b — on terminal-write 412, if RE-READ shows
     the lease is still ours AND status is still ``in_progress``,
     retry the terminal PATCH against the new etag — and it succeeds.
 
@@ -283,6 +281,7 @@ async def test_terminal_412_lease_ours_retries(conflicting_local) -> None:
     handler's outcome would be lost in the store even though the
     caller's future may have resolved early).
     """
+
     @multi_turn_task(name="terminal_412_retry")
     async def my_task(ctx: TaskContext[str]) -> str:
         return "succeed-on-retry"
@@ -299,14 +298,15 @@ async def test_terminal_412_lease_ours_retries(conflicting_local) -> None:
         assert result == "succeed-on-retry"
         # The persisted record MUST reflect the terminal write — not
         # the pre-conflict in_progress state — proving the framework
-        # retried the PATCH against the new etag (FR-A-008 branch c).
+        # retried the PATCH against the new etag (branch c).
         snap = await conflicting_local._delegate.get("t-retry")  # noqa: SLF001
         assert snap is not None
-        assert snap.status == "completed", (
+        assert snap.status == "suspended", (
             f"after terminal-write 412 retry branch, the persisted "
-            f"record's status should be 'completed' but was "
+            f"record's status should be 'suspended' (multi-turn "
+            f"return-X is implicit suspend) but was "
             f"{snap.status!r}; the framework did not retry the "
-            f"terminal PATCH against the new etag (FR-A-008 branch c)."
+            f"terminal PATCH against the new etag (branch c)."
         )
     finally:
         await manager.shutdown()

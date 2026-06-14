@@ -234,9 +234,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
 
         # ── Phase 1: Pre-entry cancel (rapid-fire steering) ────────
         if ctx.cancel.is_set():
-            logger.info(
-                "Skipping steered=%s — cancel pre-set", ctx.is_steered_turn
-            )
+            logger.info("Skipping steered=%s — cancel pre-set", ctx.is_steered_turn)
             # Still send so the message is preserved in upstream history —
             # but go through dedup so we don't double-send on recovery.
             if not await _last_user_message_matches(session, message):
@@ -258,9 +256,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         if not already_sent:
             await session.send(message)
         else:
-            logger.info(
-                "Skipping session.send — upstream history already has this turn"
-            )
+            logger.info("Skipping session.send — upstream history already has this turn")
 
         # ── Phase 2: Stream the Copilot turn, checking cancel ──────
         reply_parts: list[str] = []
@@ -274,17 +270,13 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 delta = getattr(data, "delta_content", "") or ""
                 reply_parts.append(delta)
                 # emit delta as it arrives.
-                loop.create_task(
-                    _stream_and_persist(stream, invocation_id, delta, reply_parts)
-                )
+                loop.create_task(_stream_and_persist(stream, invocation_id, delta, reply_parts))
             elif isinstance(data, AssistantMessageData):
                 # Fallback for SDK builds that emit only the assembled message.
                 if not reply_parts:
                     content = getattr(data, "content", "") or ""
                     reply_parts.append(content)
-                    loop.create_task(
-                        _stream_and_persist(stream, invocation_id, content, reply_parts)
-                    )
+                    loop.create_task(_stream_and_persist(stream, invocation_id, content, reply_parts))
             elif isinstance(data, SessionIdleData):
                 # emit session_idle to consumers and unblock us.
                 loop.create_task(stream.emit({"type": "session_idle"}))
@@ -343,6 +335,8 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         return None
     invocation_store.save(invocation_id, {"status": "completed", "output": output})
     return output
+
+
 async def _stream_and_persist(
     stream: Any,
     invocation_id: str,

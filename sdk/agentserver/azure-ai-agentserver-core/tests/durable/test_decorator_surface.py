@@ -1,9 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""RED-first tests for spec 022 durable decorator public surface.
+"""RED-first tests for  durable decorator public surface.
 
-Covers FR-001, FR-002, FR-003, FR-004, FR-005, FR-051, FR-069, FR-073,
+Covers,,,,,,,,
 SC-016, and SC-018.
 """
 
@@ -17,25 +17,21 @@ from uuid import UUID
 import pytest
 
 # Defer multi_turn_task / MultiTurnTask import: these symbols are part of
-# spec 022's public surface and don't exist yet (RED until Phase 2-5).
+# 's public surface and don't exist yet (RED until Phase 2-5).
 try:
-    from azure.ai.agentserver.core.durable import (
-        task,
-        multi_turn_task,
-        Task,
-        MultiTurnTask,
-        RetryPolicy,
-        TaskContext)
+    from azure.ai.agentserver.core.durable import task, multi_turn_task, Task, MultiTurnTask, RetryPolicy, TaskContext
+
     _NEW_SURFACE_AVAILABLE = True
 except ImportError:
     _NEW_SURFACE_AVAILABLE = False
     from azure.ai.agentserver.core.durable import task, Task, RetryPolicy, TaskContext
+
     multi_turn_task = None  # type: ignore[assignment]
     MultiTurnTask = None  # type: ignore[assignment]
 
 pytestmark = pytest.mark.skipif(
-    not _NEW_SURFACE_AVAILABLE,
-    reason="spec 022: requires `multi_turn_task` / `MultiTurnTask` (RED until Phase 2)")
+    not _NEW_SURFACE_AVAILABLE, reason=": requires `multi_turn_task` / `MultiTurnTask` (RED until Phase 2)"
+)
 
 
 async def _setup_manager(tmp_path: Path):
@@ -53,7 +49,8 @@ async def _setup_manager(tmp_path: Path):
             "session_id": "test-session",
             "agent_version": "1.0.0",
             "is_hosted": False,
-        })()
+        },
+    )()
     manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
@@ -66,7 +63,7 @@ async def _teardown_manager(manager, mgr_mod) -> None:
 
 
 class TestDecoratorSignatures:
-    """FR-001 / FR-002 — decorator signatures, kwarg matrix, title-static-only, class split."""
+    """/  — decorator signatures, kwarg matrix, title-static-only, class split."""
 
     def test_task_returns_Task_class(self) -> None:
         """@task returns Task[I, O], not MultiTurnTask."""
@@ -92,7 +89,7 @@ class TestDecoratorSignatures:
         """@task rejects steerable= at decoration time."""
         with pytest.raises(TypeError):
 
-            @multi_turn_task(name="surface-task-steerable", steerable=True)  # type: ignore[call-arg]
+            @task(name="surface-task-steerable", steerable=True)  # type: ignore[call-arg]
             async def fn(ctx: TaskContext[int]) -> int:
                 return ctx.input
 
@@ -100,7 +97,7 @@ class TestDecoratorSignatures:
         """@task rejects ephemeral= at decoration time."""
         with pytest.raises(TypeError):
 
-            @multi_turn_task(name="surface-task-ephemeral")  # type: ignore[call-arg]
+            @task(name="surface-task-ephemeral", ephemeral=False)  # type: ignore[call-arg]
             async def fn(ctx: TaskContext[int]) -> int:
                 return ctx.input
 
@@ -196,7 +193,7 @@ class TestDecoratorSignatures:
 
 
 class TestHandlerSignatureValidation:
-    """FR-003 — handler signature validation at decoration time."""
+    """— handler signature validation at decoration time."""
 
     def test_sync_handler_rejected(self) -> None:
         """Decorators require async def handlers."""
@@ -233,7 +230,7 @@ class TestHandlerSignatureValidation:
 
 
 class TestIdentifierSupply:
-    """FR-004 / FR-005 — identifier supply rules + if_last_input_id kwarg acceptance."""
+    """/  — identifier supply rules + if_last_input_id kwarg acceptance."""
 
     @pytest.mark.asyncio
     async def test_one_shot_auto_gen_task_id(self, tmp_path: Path) -> None:
@@ -263,7 +260,7 @@ class TestIdentifierSupply:
         manager, mgr_mod = await _setup_manager(tmp_path)
         try:
             run = await task_fn.start(input="payload", task_id="t1")
-    # spec 022 FR-077: exception.task_id removed
+            #: exception.task_id removed
             assert run.input_id == "t1"
             await run.result()
         finally:
@@ -291,7 +288,7 @@ class TestIdentifierSupply:
         manager, mgr_mod = await _setup_manager(tmp_path)
         try:
             run = await task_fn.start(input="payload", task_id="precondition-one-shot", if_last_input_id=None)
-    # spec 022 FR-077: exception.task_id removed
+            #: exception.task_id removed
             await run.result()
         finally:
             await _teardown_manager(manager, mgr_mod)
@@ -307,14 +304,14 @@ class TestIdentifierSupply:
         manager, mgr_mod = await _setup_manager(tmp_path)
         try:
             run = await task_fn.start(task_id="chain-1", input="payload", if_last_input_id=None)
-    # spec 022 FR-077: exception.task_id removed
+            #: exception.task_id removed
             await run.result()
         finally:
             await _teardown_manager(manager, mgr_mod)
 
 
 class TestClassSplitTypeSafety:
-    """FR-069 + SC-016 — Task and MultiTurnTask are distinct public classes."""
+    """+ SC-016 — Task and MultiTurnTask are distinct public classes."""
 
     def test_Task_and_MultiTurnTask_distinct_classes(self) -> None:
         """Task and MultiTurnTask are not aliases or subclasses."""
@@ -354,7 +351,7 @@ class TestClassSplitTypeSafety:
 
 
 class TestRetryPolicyShape:
-    """FR-073 — RetryPolicy is regular class with __slots__ + correct field names."""
+    """— RetryPolicy is regular class with __slots__ + correct field names."""
 
     def test_RetryPolicy_uses_slots(self) -> None:
         """RetryPolicy uses __slots__ and is not a dataclass."""
@@ -363,14 +360,10 @@ class TestRetryPolicyShape:
         assert not is_dataclass(RetryPolicy)
 
     def test_RetryPolicy_field_names(self) -> None:
-        """RetryPolicy constructor and public attrs use spec 022 field names."""
+        """RetryPolicy constructor and public attrs use  field names."""
         policy = RetryPolicy(
-            max_attempts=3,
-            initial_delay=1.0,
-            max_delay=10.0,
-            backoff_coefficient=2.0,
-            jitter=0.1,
-            retry_on=None)
+            max_attempts=3, initial_delay=1.0, max_delay=10.0, backoff_coefficient=2.0, jitter=0.1, retry_on=None
+        )
 
         assert policy.max_attempts == 3
         assert policy.initial_delay == 1.0
@@ -384,7 +377,7 @@ class TestRetryPolicyShape:
         policy.max_delay = 20.0
         policy.backoff_coefficient = 1.5
         policy.jitter = 0.2
-        policy.retry_on = (ValueError)
+        policy.retry_on = ValueError
 
         assert policy.max_attempts == 4
         assert policy.initial_delay == 2.0
@@ -395,11 +388,7 @@ class TestRetryPolicyShape:
 
     def test_RetryPolicy_preset_factories(self) -> None:
         """Preset factories are module-level callables with explicit signatures."""
-        from azure.ai.agentserver.core.durable._retry import (
-            exponential_backoff,
-            fixed_delay,
-            linear_backoff,
-            no_retry)
+        from azure.ai.agentserver.core.durable._retry import exponential_backoff, fixed_delay, linear_backoff, no_retry
 
         for factory in (exponential_backoff, fixed_delay, linear_backoff, no_retry):
             signature = inspect.signature(factory)
