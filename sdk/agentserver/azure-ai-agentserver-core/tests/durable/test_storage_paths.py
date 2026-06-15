@@ -1,21 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Spec 024 Phase 3a RED tests for the unified storage paths.
+"""Tests for the unified storage paths module.
 
-These tests verify the new public ``azure.ai.agentserver.core.storage_paths``
-module and the cross-package storage-root rename: ``~/.durable-tasks/`` →
-``~/.durable/tasks/`` (with ``AGENTSERVER_DURABLE_ROOT`` as the single env
-var override).
-
-Test-file rationale (Principle XII §4 non-duplication): no existing test
-file covers default-path-resolution for the durable task store. The
-storage-paths helper is also a NEW public module that warrants its own
-test file. Existing tests that monkeypatch ``AGENTSERVER_DURABLE_TASKS_PATH``
-will be updated in the impl commit to use ``AGENTSERVER_DURABLE_ROOT``.
-
-EXPECTED: RED at this commit; GREEN after the Phase 3a implementation
-commit lands. See ``sdk/agentserver/specs/024-responses-redesign.md``
-Phase 3a steps 16a-16e.
+Covers the public ``azure.ai.agentserver.core.storage_paths`` module:
+default resolution to ``~/.durable/{tasks,streams,responses}/``, the
+``AGENTSERVER_DURABLE_ROOT`` env-var override, rejection of unknown
+subdir kinds, and the operator override
+``AGENTSERVER_TASKS_BACKEND=local|hosted`` consumed by
+``TaskManager._create_provider``.
 """
 
 from __future__ import annotations
@@ -35,7 +27,7 @@ def test_storage_paths_module_is_public(monkeypatch) -> None:
 
     # Module must be importable without leading underscore.
     assert hasattr(storage_paths, "resolve_durable_subdir"), (
-        "spec 024 Phase 3a: storage_paths.resolve_durable_subdir must be exported"
+        "storage_paths.resolve_durable_subdir must be exported"
     )
 
 
@@ -82,13 +74,13 @@ def test_resolve_durable_subdir_rejects_unknown_kind() -> None:
     except (ValueError, TypeError):
         return
     raise AssertionError(
-        "spec 024 Phase 3a: resolve_durable_subdir must reject unknown subdir kinds"
+        "resolve_durable_subdir must reject unknown subdir kinds"
     )
 
 
 def test_legacy_env_vars_no_longer_consulted(monkeypatch, tmp_path) -> None:
     """Setting the legacy ``AGENTSERVER_DURABLE_TASKS_PATH`` / ``AGENTSERVER_STREAM_STORE_PATH``
-    must NOT affect path resolution after Phase 3a — the legacy vars are deleted.
+    must NOT affect path resolution — the legacy vars are deleted.
     """
     monkeypatch.delenv("AGENTSERVER_DURABLE_ROOT", raising=False)
     monkeypatch.setenv("AGENTSERVER_DURABLE_TASKS_PATH", str(tmp_path / "legacy_tasks"))
@@ -137,15 +129,106 @@ def test_tasks_default_path_used_by_local_provider(monkeypatch, tmp_path) -> Non
     ]
     for pat in forbidden_env_reads:
         assert pat not in src, (
-            f"spec 024 Phase 3a: _manager.py must not read the legacy "
+            f"_manager.py must not read the legacy "
             f"AGENTSERVER_DURABLE_TASKS_PATH env var. Found '{pat}' in source. "
             f"Use storage_paths.resolve_durable_subdir('tasks') instead."
         )
     assert '"/.durable-tasks"' not in src and "'/.durable-tasks'" not in src, (
-        "spec 024 Phase 3a: _manager.py must not USE the legacy "
+        "_manager.py must not USE the legacy "
         "'.durable-tasks' path string. Use storage_paths.resolve_durable_subdir('tasks')."
     )
     assert '".durable-tasks"' not in src and "'.durable-tasks'" not in src, (
-        "spec 024 Phase 3a: _manager.py must not USE the legacy "
+        "_manager.py must not USE the legacy "
         "'.durable-tasks' path string."
     )
+
+# ────────────────────────────────────────────────────────────────────
+# AGENTSERVER_TASKS_BACKEND operator override
+# ────────────────────────────────────────────────────────────────────
+
+
+def test_tasks_backend_local_forces_local_provider_in_hosted(monkeypatch, tmp_path) -> None:
+    """AGENTSERVER_TASKS_BACKEND=local forces LocalFileTaskProvider even when
+    config.is_hosted is True.
+
+    Allows local repro / debugging of hosted-only scenarios on a workstation
+    without standing up the hosted task API, and lets hosted operators opt
+    out of the task-storage API in favour of on-disk persistence.
+    """
+    from unittest.mock import MagicMock
+
+    from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+    from azure.ai.agentserver.core.durable._manager import TaskManager
+
+    monkeypatch.setenv("AGENTSERVER_TASKS_BACKEND", "local")
+    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+
+    config = MagicMock()
+    config.is_hosted = True
+    config.project_endpoint = "https://fake.example/projects/fake"
+
+    provider = TaskManager._create_provider(config)
+    assert isinstance(provider, LocalFileTaskProvider), (
+        f"Expected LocalFileTaskProvider with backend override, got {type(provider).__name__}"
+    )
+
+
+def test_tasks_backend_hosted_forces_hosted_provider_in_local(monkeypatch, tmp_path) -> None:
+    """AGENTSERVER_TASKS_BACKEND=hosted forces HostedTaskProvider even when
+    config.is_hosted is False.
+
+    Enables the inverse override — testing the hosted code path against a
+    fake task API from a local environment.
+    """
+    from unittest.mock import MagicMock
+
+    from azure.ai.agentserver.core.durable._client import HostedTaskProvider
+    from azure.ai.agentserver.core.durable._manager import TaskManager
+
+    monkeypatch.setenv("AGENTSERVER_TASKS_BACKEND", "hosted")
+    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+
+    config = MagicMock()
+    config.is_hosted = False
+    config.project_endpoint = "https://fake.example/projects/fake"
+
+    provider = TaskManager._create_provider(config)
+    assert isinstance(provider, HostedTaskProvider), (
+        f"Expected HostedTaskProvider with backend override, got {type(provider).__name__}"
+    )
+
+
+def test_tasks_backend_invalid_value_raises(monkeypatch, tmp_path) -> None:
+    """Unknown AGENTSERVER_TASKS_BACKEND values must raise at provider-create."""
+    import pytest as _pytest
+    from unittest.mock import MagicMock
+
+    from azure.ai.agentserver.core.durable._manager import TaskManager
+
+    monkeypatch.setenv("AGENTSERVER_TASKS_BACKEND", "wat")
+    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+
+    config = MagicMock()
+    config.is_hosted = False
+    config.project_endpoint = "https://fake.example/projects/fake"
+
+    with _pytest.raises(ValueError, match="AGENTSERVER_TASKS_BACKEND"):
+        TaskManager._create_provider(config)
+
+
+def test_tasks_backend_unset_uses_is_hosted_detection(monkeypatch, tmp_path) -> None:
+    """No AGENTSERVER_TASKS_BACKEND override → fall back to config.is_hosted."""
+    from unittest.mock import MagicMock
+
+    from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+    from azure.ai.agentserver.core.durable._manager import TaskManager
+
+    monkeypatch.delenv("AGENTSERVER_TASKS_BACKEND", raising=False)
+    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+
+    config = MagicMock()
+    config.is_hosted = False
+    config.project_endpoint = "https://fake.example/projects/fake"
+
+    provider = TaskManager._create_provider(config)
+    assert isinstance(provider, LocalFileTaskProvider)

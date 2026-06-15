@@ -5,7 +5,7 @@
 
 Stores tasks as JSON files under
 ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/{agent_name}/{session_id}/``
-(spec 024 Phase 3a unified storage layout) for local development with
+(unified storage layout) for local development with
 full lifecycle parity.
 """
 

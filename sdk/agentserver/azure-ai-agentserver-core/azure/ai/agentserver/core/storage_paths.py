@@ -19,7 +19,7 @@ all three subdirectories — there is intentionally no per-subdir override.
 Operators wanting per-subdir paths should symlink the desired locations
 into the root.
 
-Spec 024 Phase 3a (work item #7) replaces the pre-Phase-3a per-subsystem
+replaces the pre-migration per-subsystem
 env vars:
 
   - ``AGENTSERVER_DURABLE_TASKS_PATH`` (was: ``~/.durable-tasks/``)
