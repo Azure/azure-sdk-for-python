@@ -1,0 +1,81 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "number": 42,
+        "title": "Add retry logic to uploader",
+        "state": "MERGED",
+        "url": "https://github.com/octo/example/pull/42",
+        "createdAt": "2024-05-01T10:00:00Z",
+        "mergedAt": "2024-05-03T12:00:00Z",
+        "closedAt": "2024-05-03T12:00:00Z",
+        "additions": 120,
+        "deletions": 8,
+        "author": {
+          "login": "alice"
+        },
+        "reviewThreads": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "THREADS_P2"
+          },
+          "nodes": [
+            {
+              "isResolved": false,
+              "isOutdated": false,
+              "path": "src/uploader.py",
+              "line": 80,
+              "originalLine": 80,
+              "startLine": null,
+              "originalStartLine": null,
+              "comments": {
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "endCursor": null
+                },
+                "nodes": [
+                  {
+                    "databaseId": 1010,
+                    "author": null,
+                    "authorAssociation": "NONE",
+                    "body": "nit: rename variable for clarity.",
+                    "createdAt": "2024-05-02T11:00:00Z",
+                    "url": "https://github.com/octo/example/pull/42#discussion_r1010",
+                    "diffHunk": "@@ -78,3 +78,4 @@\n+    x = compute()"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "reviews": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": null
+          },
+          "nodes": []
+        },
+        "commits": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "COMMITS_P2"
+          },
+          "nodes": [
+            {
+              "commit": {
+                "oid": "bbb222",
+                "committedDate": "2024-05-02T15:00:00Z",
+                "changedFilesIfAvailable": 1
+              }
+            }
+          ]
+        }
+      }
+    },
+    "rateLimit": {
+      "remaining": 4989,
+      "resetAt": "2024-05-03T13:00:00Z",
+      "cost": 1
+    }
+  }
+}
