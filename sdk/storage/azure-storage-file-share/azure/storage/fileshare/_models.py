@@ -405,7 +405,6 @@ class ShareNfsSettings(_BackCompatMixin):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-
     _attribute_map = {
         "encryption_in_transit": {"key": "EncryptionInTransit", "type": "NfsEncryptionInTransit"},
     }
