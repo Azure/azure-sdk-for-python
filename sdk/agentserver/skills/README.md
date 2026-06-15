@@ -1,6 +1,6 @@
 # Agentserver standalone skills
 
-Three "AI-coding-agent skill" files — standalone, portable, copy-into-
+Four "AI-coding-agent skill" files — standalone, portable, copy-into-
 your-project artifacts that give a coding agent (GitHub Copilot, etc.)
 enough context to use each primitive correctly.
 
@@ -8,7 +8,14 @@ enough context to use each primitive correctly.
 |-------|-----------------|-------------------|
 | [`durable-task-skill.md`](durable-task-skill.md) | The `@task` durable primitive — crash-resilient long-running handlers, lease + recovery, steering, multi-turn | `azure-ai-agentserver-core` |
 | [`streaming-skill.md`](streaming-skill.md) | The `streams` registry — producer/subscriber fan-out, replay backings, durable streaming, `Last-Event-ID` reconnect | `azure-ai-agentserver-core` |
+| [`invocations-skill.md`](invocations-skill.md) | The `InvocationAgentServerHost` — free-form invocations protocol HTTP + WebSocket host, long-running + polling, multi-turn via `agent_session_id` | `azure-ai-agentserver-invocations` |
 | [`responses-skill.md`](responses-skill.md) | The `ResponsesAgentServerHost` — OpenAI Responses API host, builder events, durable + steerable conversations | `azure-ai-agentserver-responses` |
+
+The two **host** skills (invocations, responses) are alternatives —
+pick the one whose wire protocol matches your client. The two **core**
+skills (durable-task, streaming) are usually composed *with* whichever
+host you pick, to add crash recovery and producer/subscriber streaming
+respectively.
 
 ## Why standalone
 
