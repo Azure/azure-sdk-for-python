@@ -83,7 +83,7 @@ class apistub(Check):
             action="store_true",
             help=(
                 "Install dev requirements and apiview dependencies before running. "
-                "Skipped by default for faster local iteration, but always enabled when --isolate is used."
+                "Skipped by default for faster local iteration."
             ),
         )
         p.set_defaults(func=self.run)
@@ -115,7 +115,7 @@ class apistub(Check):
             )
             logger.info(f"Processing {package_name} for apistub check")
 
-            install_deps = getattr(args, "install_deps", False) or getattr(args, "isolate", False)
+            install_deps = getattr(args, "install_deps", False)
 
             if install_deps:
                 # install dependencies

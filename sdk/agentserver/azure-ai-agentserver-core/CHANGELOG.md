@@ -1,5 +1,12 @@
 # Release History
 
+## 2.0.0b6 (2026-06-12)
+
+### Bugs Fixed
+
+- Populated agent metadata when operation IDs are zeroed so agent metadata remains available for telemetry and downstream processing.
+- Suppressed noisy observability/exporter INFO logs by default in tracing setup while preserving DEBUG visibility when explicitly enabled.
+
 ## 2.0.0b5 (2026-05-25)
 
 ### Bugs Fixed

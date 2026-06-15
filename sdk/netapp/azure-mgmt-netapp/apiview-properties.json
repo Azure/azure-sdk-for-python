@@ -211,6 +211,7 @@
         "azure.mgmt.netapp.models.CifsChangeNotifyState": "Microsoft.NetApp.CifsChangeNotifyState",
         "azure.mgmt.netapp.models.GlobalFileLockingState": "Microsoft.NetApp.GlobalFileLockingState",
         "azure.mgmt.netapp.models.EnableWriteBackState": "Microsoft.NetApp.EnableWriteBackState",
+        "azure.mgmt.netapp.models.CacheFileAccessLogs": "Microsoft.NetApp.CacheFileAccessLogs",
         "azure.mgmt.netapp.models.RegionStorageToNetworkProximity": "Microsoft.NetApp.RegionStorageToNetworkProximity",
         "azure.mgmt.netapp.models.ActiveDirectoryStatus": "Microsoft.NetApp.ActiveDirectoryStatus",
         "azure.mgmt.netapp.models.KeySource": "Microsoft.NetApp.KeySource",
@@ -471,5 +472,6 @@
         "azure.mgmt.netapp.aio.operations.NetAppResourceUsagesOperations.list": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.list",
         "azure.mgmt.netapp.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get",
         "azure.mgmt.netapp.aio.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get"
-    }
+    },
+    "CrossLanguageVersion": "f7c8760c77ab"
 }
