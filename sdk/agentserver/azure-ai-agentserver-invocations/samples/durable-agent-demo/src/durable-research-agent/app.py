@@ -233,9 +233,11 @@ async def handle_cancel(request: Request) -> Response:
     per-turn stream before suspending.
     """
     invocation_id = request.state.invocation_id
-    session_id = (
-        getattr(request.state, "session_id", None) or app.config.session_id
-    )
+    # The framework resolves session_id from the platform env var
+    # ``FOUNDRY_AGENT_SESSION_ID`` (or a caller-supplied
+    # ``agent_session_id`` query param override) and stamps it on
+    # ``request.state.session_id``. No local fallback needed.
+    session_id = request.state.session_id
     task_id = session_id  # one task per session — match POST handler
     logger.info("CANCEL handler: invocation_id=%r task_id=%r", invocation_id, task_id)
 
