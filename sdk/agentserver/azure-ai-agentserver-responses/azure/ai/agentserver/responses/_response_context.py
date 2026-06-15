@@ -177,6 +177,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         query_parameters: dict[str, str] | None = None,
         isolation: IsolationContext | None = None,
         prefetched_history_ids: list[str] | None = None,
+        steerable: bool = False,
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -199,6 +200,14 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._input_items_unresolved_cache: Sequence[Item] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
         self._prefetched_history_ids: list[str] | None = prefetched_history_ids
+        # (Spec 024 Phase 5 — Proposal #11 audit fix) Stash the
+        # deployment's ``steerable_conversations`` option so
+        # ``conversation_chain_id`` returns the correct partition key
+        # for non-steerable chains. Pre-audit this always passed
+        # ``steerable=True`` to ``derive_chain_id``, producing the
+        # wrong chain id for ``previous_response_id``-based requests
+        # under ``steerable_conversations=False``.
+        self._steerable: bool = steerable
 
         # (Spec 024 Phase 5 — Proposal #6/#10/#13) Flattened recovery +
         # steering classifiers. Defaults represent a fresh non-recovered
@@ -248,10 +257,11 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         durable side store and looking it up on recovery is sufficient to
         re-attach to the prior session.
 
-        Note: this property assumes ``steerable_conversations=True`` semantics
-        (sequential chains share an id). For ``steerable_conversations=False``
-        each response forks into its own chain — in that mode every turn
-        receives a distinct chain id equal to its ``response_id``.
+        The chain id derivation matches the deployment's
+        ``steerable_conversations`` option: for steerable chains,
+        sequential turns share the same chain id; for non-steerable
+        chains every turn forks into its own chain id (equal to its
+        ``response_id``).
 
         :rtype: str
         """
@@ -262,7 +272,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
             conversation_id=self.conversation_id,
             previous_response_id=self._previous_response_id,
             response_id=self.response_id,
-            steerable=True,
+            steerable=self._steerable,
         )
 
     async def exit_for_recovery(self) -> "_CoreExitForRecovery":

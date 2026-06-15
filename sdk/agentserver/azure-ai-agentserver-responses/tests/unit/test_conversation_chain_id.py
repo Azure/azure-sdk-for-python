@@ -22,12 +22,20 @@ def _make_context(
     response_id: str,
     previous_response_id: str | None = None,
     conversation_id: str | None = None,
+    steerable: bool = True,
 ) -> ResponseContext:
+    """Default ``steerable=True`` so the steerable-chain tests below
+    exercise the sequential-chain semantics (previous_response_id →
+    chain id). Spec 013 US3 chain_id behaviour is steerable-by-default
+    in this test module; the non-steerable case is covered separately
+    by ``test_derive_chain_id_non_steerable_uses_response_id``.
+    """
     return ResponseContext(
         response_id=response_id,
         mode_flags=ResponseModeFlags(stream=False, background=False, store=True),
         previous_response_id=previous_response_id,
         conversation_id=conversation_id,
+        steerable=steerable,
     )
 
 
@@ -103,6 +111,23 @@ def test_derive_chain_id_non_steerable_uses_response_id() -> None:
         steerable=False,
     )
     assert chain == "fork-resp"
+
+
+def test_chain_id_non_steerable_uses_response_id_via_property() -> None:
+    """(Spec 024 Phase 5 audit fix) Non-steerable ResponseContext returns
+    its own ``response_id`` for ``conversation_chain_id`` — even when
+    ``previous_response_id`` is set. This matches SOT §4.1: under
+    ``steerable_conversations=False`` each fork chains to itself.
+    Pre-audit the property always passed ``steerable=True`` which
+    produced the wrong chain id for non-steerable + previous_response_id
+    requests.
+    """
+    ctx = _make_context(
+        response_id="fork-resp",
+        previous_response_id="parent-resp",
+        steerable=False,
+    )
+    assert ctx.conversation_chain_id == "fork-resp"
 
 
 def test_task_id_remains_stable_after_chain_extraction() -> None:

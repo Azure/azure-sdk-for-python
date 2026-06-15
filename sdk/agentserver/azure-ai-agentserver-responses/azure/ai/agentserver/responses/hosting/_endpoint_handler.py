@@ -521,6 +521,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 chat_key=ctx.chat_isolation_key,
             ),
             prefetched_history_ids=ctx.prefetched_history_ids,
+            steerable=self._runtime_options.steerable_conversations,
         )
         # (Spec 024 Phase 5 — Proposal #11) Alias the execution-context
         # cancellation_signal with the handler-facing ``context.cancel``

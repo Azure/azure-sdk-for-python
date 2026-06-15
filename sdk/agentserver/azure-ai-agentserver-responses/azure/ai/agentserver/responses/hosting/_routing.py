@@ -216,7 +216,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         app = ResponsesAgentServerHost()
 
         @app.response_handler
-        def my_handler(request, context, cancellation_signal):
+        async def my_handler(request, context):
             yield event
 
         app.run()

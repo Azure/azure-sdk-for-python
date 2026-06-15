@@ -43,7 +43,7 @@ Streaming model (live deltas + recovery replay):
   the rare case the SDK emits the final message without any prior
   deltas.
 - On crash recovery, when the handler re-enters with
-  ``entry_mode == "recovered"``, it first reads the upstream session's
+  ``context.is_recovery == True``, it first reads the upstream session's
   persisted assistant content for the current user turn via
   ``session.get_messages()`` and emits the accumulated text as a single
   ``output_text.delta`` event. The recovered client therefore sees:

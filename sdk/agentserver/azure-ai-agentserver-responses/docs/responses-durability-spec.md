@@ -838,9 +838,9 @@ The framework MUST guarantee:
 - **`is_steered_turn=True` for queued turns** — the second-and-later
   turns of a chain (any turn invoked by drain rather than by initial
   start) MUST observe `context.is_steered_turn == True`.
-- **`pending_inputs` is post-this** — the count of inputs queued
+- **`pending_input_count` is post-this** — the count of inputs queued
   *after* the currently-being-invoked one. A handler observing
-  `pending_inputs == 0` is the most recent queued turn.
+  `pending_input_count == 0` is the most recent queued turn.
 
 ### §11.5 — Steering × recovery
 
@@ -928,11 +928,11 @@ HTTP   ──► POST /v1/responses { stream: true, store, background } ──�
        
        (next lifetime — recovery scanner re-fires task)
        primitive: task lease expired → re-fire task body
-       framework: task body entered with ctx.entry_mode == "recovered"
+       framework: task body entered with context.is_recovery=True
        framework: read _responses.disposition → "re-invoke"
        framework: build recovery + steering context (flat fields on the response context)(context.is_recovery=True, retry_attempt=1, ...)
        framework: reconstruct ResponseExecution, ResponseContext from serialized params
-       framework: re-invoke handler with durability_ctx
+       framework: re-invoke handler with flat-field assignment on context
        handler:   is_recovery == True
        handler:   query upstream framework for resumption state
        handler:   build resumption_response = ResponseObject(output=[...committed_items])
@@ -1142,7 +1142,7 @@ envelope.
 For `steerable_conversations=true`, queued turns MUST drain in FIFO
 order, with no concurrent handler executions for the same chain
 (§11.4). Drained turns MUST observe `is_steered_turn=True`.
-`pending_inputs` MUST count post-this queued turns.
+`pending_input_count` MUST count post-this queued turns.
 
 ### C-COMPOSE — Composition guards
 
@@ -1197,12 +1197,12 @@ T=5   process restarts; lease scanner sees "durable-resp-AB12..."
       with status="in_progress" and expired lease
 
 T=6   primitive: re-fire task body with ctx.context.is_recovery=True
-                                       ctx.retry_attempt=1
+                                       # context.is_recovery=True (retry_attempt removed)
       framework: read _responses.disposition → "re-invoke"
       framework: build recovery + steering context (flat fields on the response context)(context.is_recovery=True,
-                                         retry_attempt=1,
+                                         # (retry_attempt deleted per Proposal #12)
                                          is_steered_turn=False,
-                                         pending_inputs=0,
+                                         pending_input_count=0,
                                          metadata=ctx.metadata)
       framework: reconstruct (ResponseExecution, ResponseContext)
                  from serialized params
