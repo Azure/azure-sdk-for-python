@@ -503,6 +503,13 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
 
         raw_session_id = request.query_params.get("agent_session_id", "")
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
+        # Mirror :meth:`_invoke_endpoint` (lines 411-416): make
+        # ``session_id`` available on ``request.state`` so cancel /
+        # get-invocation handlers can resolve their per-session
+        # durable task without relying on the framework's
+        # ``app.config.session_id`` (which is the platform-injected
+        # service-instance session, NOT the per-request agent session).
+        request.state.session_id = session_id
 
         _ensure_log_filter()
         inv_token = _invocation_id_var.set(invocation_id)
