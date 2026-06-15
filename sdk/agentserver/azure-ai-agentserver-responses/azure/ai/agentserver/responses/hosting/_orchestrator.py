@@ -1580,12 +1580,64 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # needs the registration.
         if ctx.store and (ctx.background or ctx.stream):
             await self._register_bg_execution(ctx, state, first_normalized)
-            # §3.3: If Phase 1 create failed, abort with standalone error event
-            # (same shape as B8 pre-creation errors) — no response.created is yielded.
+            # Phase 1 (start) persistence failure splits two ways by
+            # request shape:
+            #
+            # 1. Non-bg streaming (Row 3 stream=true): emit the standard
+            #    response.created → response.failed sequence so the SSE
+            #    contract (B27 first-event invariant) is respected. The
+            #    response.failed envelope carries the storage_error code
+            #    so the GET fallback path can synthesise the same shape.
+            #
+            # 2. Bg+stream (Row 1/2 stream=true): emit a standalone error
+            #    event (no response.created). The HTTP request has not
+            #    yet returned the queued response object, so swallowing
+            #    the failure into a response.failed terminal would
+            #    promise persistence the storage layer never delivered.
+            #    Clients see the error event and stop; subsequent GETs
+            #    return 404.
             if state.bg_record is not None and state.bg_record.persistence_failed:
                 state.captured_error = state.bg_record.persistence_exception or RuntimeError("Phase 1 create failed")
-                # Evict the in-memory record so GET/replay cannot observe an
-                # in-progress response when §3.3 requires no response.created.
+                if not ctx.background:
+                    # Non-bg streaming: emit response.created → response.failed.
+                    storage_error_response = _build_failed_response(
+                        ctx.response_id,
+                        ctx.agent_reference,
+                        ctx.model,
+                        created_at=ctx.context.created_at if ctx.context else None,
+                        error_code="storage_error",
+                        error_message=_STORAGE_ERROR_MESSAGE,
+                    )
+                    _wire_stream = await streams.get_or_create(ctx.response_id)
+                    await self._safe_emit(_wire_stream, first_normalized)
+                    yield first_normalized
+                    failed_event = {
+                        "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+                        "response": storage_error_response.as_dict(),
+                    }
+                    failed_coerced = _coerce_handler_event(failed_event)
+                    failed_normalized = _apply_stream_event_defaults(
+                        failed_coerced,
+                        response_id=ctx.response_id,
+                        agent_reference=ctx.agent_reference,
+                        model=ctx.model,
+                        sequence_number=state.next_seq,
+                        agent_session_id=ctx.agent_session_id,
+                        conversation_id=ctx.conversation_id,
+                    )
+                    state.next_seq += 1
+                    await self._safe_emit(_wire_stream, failed_normalized)
+                    yield failed_normalized
+                    # Keep the in-memory record so GET can serve the
+                    # storage_error snapshot (the underlying durable
+                    # store rejected the create, but the in-memory
+                    # runtime state preserves the failed envelope so
+                    # subsequent GETs return 200 + status=failed).
+                    if state.bg_record is not None:
+                        state.bg_record.set_response_snapshot(storage_error_response)
+                        state.bg_record.status = "failed"  # type: ignore[assignment]
+                    return
+                # Bg+stream: standalone error event (no response.created).
                 await self._runtime_state.try_evict(ctx.response_id)
                 error_event = construct_event_model(
                     {
@@ -1596,12 +1648,6 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         "sequence_number": 0,
                     }
                 )
-                # Emit the storage_error event to the per-response stream so
-                # the live wire iterator on the durable streaming path
-                # receives it. ``_register_bg_execution`` deliberately did
-                # NOT emit ``response.created`` when persistence_failed is
-                # True, so this is the only event the wire will see for the
-                # failed phase-1 create.
                 _err_stream = await streams.get_or_create(ctx.response_id)
                 await self._safe_emit(_err_stream, error_event)
                 yield error_event
