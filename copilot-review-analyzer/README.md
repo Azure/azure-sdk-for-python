@@ -142,6 +142,85 @@ straight into your Copilot review prompt. The same per-gap findings and addendum
 surfaced by `analyzer report` (table / markdown / json), so any report view shows what was
 missed and how to fix the prompt.
 
+## Metrics & classification
+
+This section defines every term that shows up in a report so the numbers are unambiguous.
+
+### How comments are classified
+
+Each PR review comment is processed in two stages:
+
+1. **Attribution (deterministic, no LLM).** Every comment's author is labelled
+   `author_kind`:
+   - **`copilot`** — login matches one of the configured `copilot_logins` (matched
+     case-insensitively after stripping a trailing `[bot]`).
+   - **`other_bot`** — any other login ending in `[bot]`, or a missing/empty author.
+   - **`human`** — everything else.
+
+2. **LLM judge (only with `--use-llm`).** Every *human* comment is judged **from the
+   visible diff hunk alone** and gets:
+   - **`is_substantive`** — `true` if it identifies a real code-quality issue (bug,
+     security, performance, design/API, or missing test). Style nitpicks, typos, praise,
+     questions, and social chatter are **not** substantive.
+   - **`diff_detectable`** — `true` if a competent automated reviewer could plausibly
+     raise the issue from the diff alone, without external context. The judge is
+     deliberately conservative: anything relying on outside knowledge is `false`.
+   - **`category`** — exactly one of `bug`, `security`, `perf`, `design`, `test-gap`,
+     `docs`, `nit`, `style`, `question`, `social`. The first five are the "substantive"
+     categories.
+   - **`confidence`** — the judge's self-rated certainty, `0.0`–`1.0`.
+   - **`rationale`** — a one-sentence justification.
+
+   Without `--use-llm`, a stub judge marks every human comment substantive — useful for
+   plumbing, but not meaningful for the metrics below.
+
+### Confidence buckets
+
+Comments are partitioned by `confidence` against the configured `confidence_threshold`:
+
+- **judged** — confidence present and `>= threshold` (the only comments that count toward
+  metrics and gaps).
+- **unjudged** — confidence is NULL (the model could not classify it).
+- **low-confidence** — confidence present but `< threshold`.
+
+If the unjudged fraction exceeds `max_unjudged_ratio`, the whole run is marked failed so a
+half-judged run can't skew the headline numbers.
+
+### Overlap and gaps
+
+- **`copilot_overlap`** — set on a human comment when its file + line range intersects a
+  Copilot comment's range (same `path`, same coordinate space, within `line_fuzz` lines).
+  NULL when the human comment has no comparable line range.
+- **gap** — a *judged, confident, substantive, diff-detectable* human comment that was
+  **not** overlapped by any Copilot comment. In short: something a human caught at a line
+  Copilot reviewed (or could have) but Copilot missed. This is the central unit the tool
+  tracks.
+- **`acted_on`** — best-effort precision proxy for Copilot comments: `true` if a commit
+  *after* the comment touched the file it pointed at, `false` if not, NULL when path data
+  is unavailable (or the PR is too large to fetch cheaply).
+
+### Per-run counters
+
+- **`substantive_human_count`** — judged, confident human comments with `is_substantive = 1`.
+- **`copilot_comment_count`** — all Copilot comments in the run.
+- **`gap_count`** — number of gaps (definition above).
+- **`judged_human_count` / `unjudged_human_count` / `low_confidence_human_count`** — the
+  confidence-bucket sizes for human comments.
+
+### Headline metrics
+
+Any metric whose denominator is `0` is reported as NULL rather than `0`.
+
+| Metric | Definition |
+| --- | --- |
+| **`miss_rate`** | `gaps / substantive-and-diff-detectable judged human comments` — of the issues Copilot *could* have caught, the fraction it missed. **Lower is better.** |
+| **`copilot_overlap_rate`** | `overlapped substantive human / substantive human` — fraction of substantive human findings Copilot also commented on. **Higher is better.** |
+| **`human_burden_per_pr`** | `substantive human comments / PR count` — average substantive human review effort per PR. |
+| **`copilot_acted_on_rate`** | `acted-on Copilot comments / Copilot comments with known path data` — precision proxy; NULL until `acted_on` data exists. |
+
+Use `analyzer trend --metric miss_rate` (or any metric name above) to watch these move
+across runs.
+
 ## Configuration
 
 Copy `config.yaml` and adjust `repos`, `copilot_logins`, `model`, sampling, and the
