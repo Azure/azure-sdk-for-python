@@ -72,16 +72,32 @@ Highlights:
   The framework no longer projects success/failure
   state into the record's payload.
 - `ephemeral=` decorator kwarg — one-shot is always ephemeral;
-  multi-turn never is. Transitionally emits a `DeprecationWarning`;
-  will be hard-rejected per the Phase 5 final-cleanup follow-up PR.
+  multi-turn never is. Transitionally emits a `DeprecationWarning`.
 - `steerable=` on `@task` — same transitional warning.
 - `ctx.suspend` — removed from the multi-turn contract.
-  Method body remains during the transition window for legacy callers;
-  marked as a Phase 5 final-cleanup follow-up (see
-  the SOT spec §B3).
+  Method body remains during the transition window for legacy callers.
 
 
 ### Features Added
+
+- **Unified local-development storage layout via
+  `azure.ai.agentserver.core.storage_paths`.** New public module
+  exposing `resolve_durable_root()` and `resolve_durable_subdir(kind)`
+  for the layout
+  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/{tasks,streams,responses}/`.
+  A single `AGENTSERVER_DURABLE_ROOT` env-var replaces the previous
+  per-subsystem path overrides; the per-subsystem env vars are gone.
+  Hosted environments are unaffected — the local-dev layout exists
+  to keep the development loop self-contained without external
+  dependencies.
+
+- **`AGENTSERVER_TASKS_BACKEND` operator override.** Setting this
+  env var to `local` or `hosted` forces the task provider regardless
+  of `AgentConfig.is_hosted` autodetection. Useful for debugging
+  hosted-only scenarios on a local workstation without standing up
+  the hosted task API, or for hosted environments where operators
+  want to opt out of the task-storage API in favour of on-disk
+  persistence. Unknown values raise `ValueError` at provider-create.
 
 - **Public read API: `Task.get(task_id) -> TaskSnapshot | None`** —
   read-only introspection for any non-deleted task in any status
