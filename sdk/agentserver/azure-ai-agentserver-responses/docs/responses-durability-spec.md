@@ -95,8 +95,8 @@ separation is normative.
 | # | `store` | `background` | `durable_background` | Behaviour |
 |---|---|---|---|---|
 | 1 | true | true  | true  | **Full durability.** Handler runs inside the durable task body. Recovery re-invokes the handler. |
-| 2 | true | true  | false | **Bookkeeping-only durability.** Handler runs as a plain background coroutine. A bookkeeping durable task tracks "did the handler reach terminal in this process lifetime?" — if the process dies before signal, recovery marks the response `failed` (no re-invoke). |
-| 3 | true | false | (any) | **Bookkeeping-only durability.** Same shape as Row 2: foreground handler runs inline; bookkeeping task ensures the response is marked `failed` on crash. |
+| 2 | true | true  | false | **Crash-failed durability.** Handler runs inside the durable task body; disposition is `mark-failed`. If the process dies before terminal, recovery marks the response `failed` (no re-invoke). |
+| 3 | true | false | (any) | **Crash-failed durability.** Same shape as Row 2: handler runs inside the durable task body (HTTP request awaits via `TaskRun.result()`); recovery marks the response `failed` on crash. |
 | 4 | false | (any) | (any) | **No durability.** Best-effort failed marker during graceful shutdown. No persistence. No recovery. |
 
 `stream` is orthogonal: it collapses out of the row keys. Each row × `stream`
@@ -116,9 +116,9 @@ deliver per the table below:
 
 | Path | Trigger | Row 1 (`durable_bg`) | Rows 2/3 (`store`, no `durable_bg`) | Row 4 (no store) |
 |---|---|---|---|---|
-| **A** | Handler returns within grace | Persist terminal; bookkeeping no-op | Persist terminal; signal bookkeeping complete | Persist terminal (best-effort) |
-| **B** | Grace exhausted (graceful shutdown) | Task left `in_progress`; handler stops; **next lifetime re-invokes** | Bookkeeping body proactively persists `failed` (server_error, shutdown_reason=grace_exhausted) | Best-effort in-process `failed` marker |
-| **C** | SIGKILL or Path-B failure | Next-lifetime recovery scanner re-fires task → handler re-invoked with `entry_mode="recovered"` | Next-lifetime recovery scanner re-fires bookkeeping task → marks response `failed` (server_error, shutdown_reason=crash_recovery) | No recovery applies (no persistence) |
+| **A** | Handler returns within grace | Persist terminal; task body returns | Persist terminal; task body returns | Persist terminal (best-effort) |
+| **B** | Grace exhausted (graceful shutdown) | Task left `in_progress`; handler stops; **next lifetime re-invokes** | Task body persists `failed` (server_error, shutdown_reason=grace_exhausted) | Best-effort in-process `failed` marker |
+| **C** | SIGKILL or Path-B failure | Next-lifetime recovery scanner re-fires task → handler re-invoked with `context.is_recovery=True` | Next-lifetime recovery scanner re-fires task → marks response `failed` (server_error, shutdown_reason=crash_recovery) | No recovery applies (no persistence) |
 
 The framework MUST implement Path B and Path C as independent fallbacks
 for each other (Path C is a complete fallback for Path B). A Path-B
@@ -146,10 +146,10 @@ body so the recovered handler's events flow to both the live subject
 and the persisted event log; recovered events appear in the same
 stream after `starting_after=` reconnect.
 
-For Rows 2/3 × `stream=true`, the bookkeeping task does not produce
-events — only the live handler does. On crash, the bookkeeping
-task's `failed` marker is the only post-crash artifact; clients reading
-the persisted stream see whatever events landed before the crash plus
+For Rows 2/3 × `stream=true`, the handler runs inside the task body;
+on crash, the task body's `mark-failed` recovery branch persists the
+`failed` marker as the only post-crash artifact. Clients reading the
+persisted stream see whatever events landed before the crash plus
 no further events.
 
 ---
@@ -261,27 +261,31 @@ dispatch.
 
 ## §6 — The perpetual conversation-scoped task
 
-For every `store=true` request, the framework MAY engage a durable
+For every `store=true` request, the framework engages a durable
 task. The task is **perpetual**: it represents the conversation
 chain's execution loop, not a single response.
 
-Two equivalent architectures both satisfy the perpetual-task contract
-for Rows 2/3 — see §6.4 ("Implementation note: handler execution
-model") before reading §6.2. The Python implementation uses Model A
-(handler outside the task body for Rows 2/3, with a separate
-bookkeeping durable task); ports MAY choose Model B (handler inside
-the task body for every row).
+**One architecture — unified handler-in-task-body.** The handler
+ALWAYS runs inside the durable task body, for every `store=true`
+row. The pre-spec-024 "bookkeeping pattern" (where the handler ran
+outside the body for Rows 2/3 and a separate task waited for a
+completion signal) has been deleted. Recovery behaviour is selected
+by the `disposition` written into framework metadata on the first
+entry: `re-invoke` means the recovery scanner re-fires the handler;
+`mark-failed` means the recovery scanner persists `failed` and
+returns without re-invoking.
 
 Internally, the responses layer picks one of two underlying task
 primitives per request based on the `(store, conversation_id,
 previous_response_id, steerable_conversations)` tuple. Single-turn
-requests use a one-shot primitive (`@task`); multi-turn requests use
-a chain primitive (`@multi_turn_task(steerable=…)`). The choice is
-invisible to handlers (`DurabilityContext` looks the same regardless)
+requests use a one-shot primitive; multi-turn requests use a chain
+primitive. The choice is invisible to handlers (the flat recovery +
+steering surface — `is_recovery`, `is_steered_turn`,
+`pending_input_count`, `durable_metadata` — looks the same regardless)
 and to clients (the HTTP/SSE contract is identical). The full table
-is in §6.6.
+is in §6.4.
 
-### §6.1 — Lifecycle (Row 1)
+### §6.1 — Lifecycle (Row 1 — `durable_background=true`, bg+store)
 
 For Row 1 with `steerable_conversations=true`:
 
@@ -296,99 +300,41 @@ For Row 1 with `steerable_conversations=true`:
    (see §11.2). Task body runs the handler for turn 2.
 4. **Crash mid-handler** — task stays `in_progress` until the
    recovery scanner re-fires it. The recovered entry runs the handler
-   again with `entry_mode="recovered"`.
+   again with `context.is_recovery=true`. Disposition is `re-invoke`.
 
 For Row 1 with `steerable_conversations=false`, each turn (whether
 forked or sequential) maps to a distinct `task_id` (the `fork:` /
 `resp:` partition disambiguates), so no suspend-and-resume loop is
 needed; each task is one-shot.
 
-### §6.2 — Lifecycle (Rows 2/3 — bookkeeping)
+### §6.2 — Lifecycle (Rows 2/3 — `durable_background=false` and foreground+store)
 
-> This section describes Model A from §6.4 (the bookkeeping pattern,
-> as used by the Python implementation). Ports using Model B (unified
-> task) handle Rows 2/3 via the same task-body lifecycle as Row 1 and
-> can skip this section.
+Same shape as §6.1: the handler runs inside the durable task body.
+The only differences are:
 
-The handler does NOT run inside the durable task body for Rows 2/3.
-Instead, the handler runs as either an `asyncio.create_task` (Row 2,
-background) or synchronously inside `run_sync` / the live stream
-runner (Row 3, foreground). The durable task is a separate
-**bookkeeping** task whose body's only job is to wait for one of
-three signals:
+1. **Disposition is `mark-failed`** — written to framework metadata on
+   first entry, so recovery does NOT re-invoke the handler.
+2. **HTTP request coupling** — for Row 3 (foreground), the HTTP
+   request awaits the task body's terminal via the framework's
+   `TaskRun.result()` API. For Row 2 (background, non-durable
+   recovery), the HTTP request returns immediately after the
+   `response.created` event is observed.
+3. **Crash mid-handler** — task stays `in_progress`. The recovery
+   scanner re-fires it; the recovered entry takes the `mark-failed`
+   branch and persists `failed` (server_error,
+   shutdown_reason=crash_recovery) idempotently. (The idempotency
+   check skips the overwrite if the response is already terminal —
+   see §7.2.) The handler is NOT re-invoked.
 
-1. **Completion signal** — set by the orchestrator once the handler
-   reaches terminal and the response store write has landed; body
-   returns cleanly, task → `completed`.
-2. **`ctx.cancel`** — proactively persist `failed` (server_error,
-   shutdown_reason=crash_recovery) then return. Task → `completed`.
-3. **`ctx.shutdown`** — proactively persist `failed` (server_error,
-   shutdown_reason=grace_exhausted) then return. Task → `completed`.
+### §6.3 — Lifecycle (Row 4 — `store=false`)
 
-On a SIGKILL before any signal fires, the bookkeeping task stays
-`in_progress`. The recovery scanner re-fires it; the recovered entry
-takes the `disposition="mark-failed"` branch and persists `failed`
-(server_error, shutdown_reason=crash_recovery) idempotently. (The
-idempotency check skips the overwrite if the response is already
-terminal — see §7.2.)
+No durable task. The handler runs inline (foreground) or via a
+detached background task (background). The graceful-shutdown path
+MAY make a best-effort attempt to persist a `failed` marker in
+whatever transient response store is in use — but this is
+best-effort only and not durable. On SIGKILL there is no recovery.
 
-The completion-event registry's pre-registration rule lives in §6.5
-below.
-
-### §6.3 — Lifecycle (Row 4)
-
-No durable task. The handler runs inline (foreground) or via
-`asyncio.create_task` (background). The graceful-shutdown path
-MAY make a best-effort attempt to persist a `failed` marker for the
-response in the in-memory response store — but this is best-effort
-only and not durable. On SIGKILL there is no recovery.
-
-### §6.4 — Implementation note: handler execution model
-
-The contract above does not specify whether the handler for Rows 2/3
-runs *inside* the bookkeeping task's body or *outside* it (alongside,
-with the bookkeeping task as a separate durable record).
-
-Two equivalent architectures both satisfy the contract:
-
-| Model | Handler execution | Recovery dispatch |
-|---|---|---|
-| **A: Bookkeeping pattern** (current Python implementation) | Row 1 inside task body. Rows 2/3 outside the task body (`asyncio.create_task` for bg, inline for fg). A separate bookkeeping durable task tracks completion. | One task per `store=true` response. The bookkeeping task's body waits on a completion signal; on signal-not-fired (crash), the recovery scanner re-fires it and the `mark-failed` disposition branch runs. |
-| **B: Unified-task pattern** | Handler always runs inside the durable task body, for every `store=true` row. | One task per `store=true` response. On recovery, the body reads `disposition` and either re-invokes the handler (`re-invoke`) or persists `failed` and returns (`mark-failed`). |
-
-Both produce identical user-visible behaviour. They differ in:
-
-- **Code shape**: Model B is simpler — one execution path, no
-  bookkeeping completion-event registry, no race window between
-  "fast handler emits terminal before body's first await" and
-  "completion signal pre-registered".
-- **HTTP request coupling for Row 3 (foreground)**: Model A keeps
-  the handler in the HTTP request's call stack. Model B requires the
-  HTTP request to `await` the task body's completion (supported by
-  the task primitive's `TaskRun.result()` API).
-- **Handler invocation overhead for non-durable rows**: Model A pays
-  no per-handler-invocation task-primitive overhead for Rows 2/3
-  (only the small bookkeeping task overhead). Model B pays the
-  primitive overhead on every handler invocation, including Rows 2/3.
-
-The Python implementation uses Model A for historical reasons (the
-non-durable codepath predates the durability work; bookkeeping was
-the lowest-friction way to add crash-recovery markers to Rows 2/3
-without restructuring handler execution). A port has free choice.
-
-### §6.5 — Bookkeeping pattern — completion-event pre-registration
-
-This subsection is normative for ports that choose Model A above; ports
-choosing Model B can skip it.
-
-The completion-event registry MUST be **pre-registered** at the moment
-the bookkeeping task is created, before the bookkeeping task body
-schedules its first await. Without this, a fast handler that emits its
-terminal and signals completion before the body's first await would
-lose the signal — the body would only populate the registry after its
-own initial scheduling tick.
-
-### §6.6 — Primitive selection (per-request dispatch matrix)
+### §6.4 — Primitive selection (per-request dispatch matrix)
 
 The responses layer dispatches each `store=true` request to one of two
 underlying durable-task primitives, based on the request shape and the
@@ -411,7 +357,7 @@ single-turn requests (one-shot primitive) and multi-turn requests
 (multi-turn primitive) — the deployment's `steerable_conversations`
 flag only controls the multi-turn primitive's mid-turn-input behaviour.
 
-The choice is invisible to handlers — `DurabilityContext` looks
+The choice is invisible to handlers — `recovery + steering context (flat fields on the response context)` looks
 identical regardless of which primitive carries the body. The choice
 is invisible to clients — the HTTP/SSE contract on `POST /v1/responses`
 and `GET /responses/{id}` is independent of the underlying primitive.
@@ -430,35 +376,34 @@ The recovered entry of any durable task body inspects the
 
 ### §7.1 — `disposition == "re-invoke"` (Row 1)
 
-The handler is invoked again with `context.durability.entry_mode == "recovered"`,
-`context.durability.is_recovery == True`, and
-`context.durability.retry_attempt > 0`. The handler is responsible for
-building a resumption response and emitting a reset
-`response.in_progress` event (§8). The framework does NOT re-execute
-the handler from a checkpoint; it re-invokes the whole handler body.
+The handler is invoked again with `context.is_recovery == True`. The
+handler is responsible for building a resumption response and emitting
+a reset `response.in_progress` event (§8). The framework does NOT
+re-execute the handler from a checkpoint; it re-invokes the whole
+handler body.
 
-The handler-facing `DurabilityContext.metadata` carries whatever
+The handler-facing `context.durable_metadata` carries whatever
 watermarks the previous attempt persisted (the framework auto-flushes
 the metadata namespaces it owns at lifecycle boundaries — start /
 suspend / complete / fail / cancel / terminate — so values written
 and forgotten are still visible after a clean recovery; the fence for
 at-most-once side-effect patterns is the handler's explicit
-`metadata.flush()` call).
+`durable_metadata.flush()` call).
 
 ### §7.2 — `disposition == "mark-failed"` (Rows 2, 3)
 
-The handler is NOT invoked. The recovered task body:
+On recovery, the task body:
 
 1. Looks up the response in the response store.
 2. If the response is already terminal (`completed`, `failed`,
    `cancelled`, `incomplete`), returns without overwriting — the
    crash happened after terminal persistence and before the
-   bookkeeping signal could fire.
+   task body could complete.
 3. Otherwise, persists a `failed` response with
    `error.code="server_error"`,
    `error.additionalInfo.shutdown_reason="crash_recovery"`,
    `output=[]`.
-4. Returns cleanly. Task → `completed`.
+4. Returns cleanly. Task → `completed`. The handler is NOT invoked.
 
 For steerable chains (`steerable_conversations=true`), the body
 returns `None` rather than raising an explicit suspend — the framework
@@ -504,45 +449,48 @@ exact shape:
 
 ## §8 — The recovery contract (handler-side)
 
-The handler receives recovery state via `context.durability`:
+The handler receives recovery + steering state via flat fields on
+the response context:
 
 | Property | Type | Meaning |
 |---|---|---|
-| `entry_mode` | `"fresh"` \| `"recovered"` | How this invocation was entered. |
-| `is_recovery` | `bool` | Convenience: `entry_mode == "recovered"`. |
-| `retry_attempt` | `int` | Durable retry counter, 0 for fresh, ≥1 for recovered. |
-| `was_steered` | `bool` | True if this invocation was triggered by a steering input. |
-| `pending_inputs` | `int` | Number of queued steering inputs after this one. |
-| `metadata` | mutable mapping + callable | Developer checkpoint store (see §8.1). |
+| `is_recovery` | `Bool` | True when this invocation is a re-entry after a crash; False on every other entry (including new turns in a multi-turn chain). |
+| `is_steered_turn` | `Bool` | True only on the drain re-entry that follows steering pressure — set when the queued steering input is being executed as its own turn. NOT set on the cancelled current turn that produced the steering pressure. |
+| `pending_input_count` | `Int` | Number of queued steering inputs visible to the handler (live count — decreases as the framework drains the queue). |
+| `durable_metadata` | Mapping + Callable | Developer checkpoint store; see §8.1. Typed via the public `DurableMetadataNamespace` Protocol. |
 
-`DurabilityContext` is present whenever `store=true`. For `store=false`
-(Row 4) it MAY be `None`.
+These fields are always present on the response context. For
+`store=true` rows the framework populates them from the underlying
+durable task primitive; for `store=false` (Row 4) the fields
+default to a fresh, non-recovered, non-steered shape with an
+in-memory metadata backing (writes succeed at runtime but evaporate
+on restart).
 
-### §8.1 — `metadata` semantics
+### §8.1 — `durable_metadata` semantics
 
-- **Default namespace** — `context.durability.metadata["key"] = value`.
-- **Named namespace** — `context.durability.metadata("name")["key"] = value`.
+- **Default namespace** — `context.durable_metadata["key"] = value`.
+- **Named namespace** — `context.durable_metadata("name")["key"] = value`.
 - **Reserved prefix** — keys and namespace names starting with `_` MUST
   raise `ValueError` from the handler-facing wrapper.
 - **Persistence** — writes are durable within the namespace's dirty
-  buffer. `await context.durability.metadata.flush()` (or the
+  buffer. `await context.durable_metadata.flush()` (or the
   namespace's `flush()`) is the at-most-once fence for side effects.
   The framework auto-flushes at lifecycle boundaries (start, suspend,
   complete, fail, cancel, terminate); a handler that never flushes
   still sees its writes on a clean recovery — the fence is only for
   side effects you cannot afford to repeat.
-- **Size discipline** — metadata is a small key-value store for
-  *references and watermarks*, not a checkpoint *store*. Bulk
+- **Size discipline** — `durable_metadata` is a small key-value store
+  for *references and watermarks*, not a checkpoint *store*. Bulk
   application state belongs in the handler's own upstream framework
-  (LLM-SDK session JSONL, checkpoint DB, files on disk). Implementations
-  MAY enforce a size cap on the durable task payload.
+  (LLM-SDK session JSONL, checkpoint DB, files on disk).
+  Implementations MAY enforce a size cap on the durable task payload.
 
 ### §8.2 — The recovery model
 
 The recovery contract has three actors:
 
 1. **Framework** — re-invokes the handler with
-   `context.durability.is_recovery == True`. Persists every SSE event
+   `context.is_recovery == True`. Persists every SSE event
    in order (no dedup). Persists the response envelope exactly once at
    the first attempt's `response.created` and exactly once at the
    first attempt that reaches a terminal event — duplicate creates
@@ -678,28 +626,65 @@ process it identically.
 ## §10 — Cancellation
 
 A handler running inside the durable task body observes cancellation
-via `context.cancellation_signal` (an `asyncio.Event`-shaped surface)
-and `context.cancellation_reason` (a `CancellationReason` enum-shaped
-value). Both are populated by the framework's cancel bridge from
-underlying task primitives:
+via a **composing-cause** surface — separate Events and Booleans for
+each independent cancel cause:
 
-| Trigger | `cancellation_reason` |
-|---|---|
-| New turn arrives while handler is running (steering, `steerable_conversations=true`) | `STEERED` |
-| Client `POST /responses/{id}/cancel` | `CLIENT_CANCELLED` |
-| Graceful shutdown (`SIGTERM`) | `SHUTTING_DOWN` |
-| No cancellation has occurred | `None` |
+- **`context.cancel: Event`** — set whenever ANY cancel cause fires.
+  This is the wake-up signal the handler awaits.
+- **`context.shutdown: Event`** — set when the server is shutting
+  down (e.g. SIGTERM). Independent of `cancel` — when shutdown fires,
+  `cancel` is also set so handlers awaiting either Event wake.
+- **`context.client_cancelled: Bool`** — set when the cancellation
+  cause is explicit client cancellation. Two paths converge here:
+  the `POST /v1/responses/{id}/cancel` HTTP endpoint AND non-background
+  POST disconnect (a non-bg POST whose client drops the connection
+  mid-stream is treated as cancellation; see behaviour-contract Rule
+  B17).
+- **Steering pressure has no cause flag.** When a new turn arrives
+  for a steerable chain while the current handler is running, only
+  `context.cancel` is set — neither `client_cancelled` nor
+  `shutdown` flips. Handlers that need to distinguish steering
+  specifically infer it by elimination
+  (`cancel.is_set() and not client_cancelled and not shutdown.is_set()`).
+  Most handlers do not need this distinction and just wind down
+  on any cancel.
+
+Cause matrix:
+
+| Trigger | `context.cancel` | `context.shutdown` | `context.client_cancelled` |
+|---|---|---|---|
+| Steering (new turn queued) | set | not set | False |
+| Client `POST /responses/{id}/cancel` | set | not set | True |
+| Non-bg POST disconnect | set | not set | True |
+| Graceful shutdown (`SIGTERM`) | set | set | False |
+| Composing: client cancel + concurrent shutdown | set | set | True |
+| No cancellation has occurred | not set | not set | False |
+
+**Recovery exit primitive.** Handlers MAY call
+`return await context.exit_for_recovery()` to opt into the
+graceful-shutdown re-entry path explicitly. The framework recognises
+the returned sentinel value as "leave this response `in_progress`
+so the next-lifetime recovery scanner can resume it". For
+`durable_background=True` responses (Row 1) the handler is
+re-invoked on the next process startup; for `durable_background=False`
+responses (Rows 2/3) the next-lifetime mark-failed disposition
+persists a `failed` terminal. Handlers MUST propagate the sentinel
+via `return`; discarding it (e.g. assigning to a variable and
+returning `None`) defeats the recovery contract and the task is
+marked completed instead.
 
 The cancellation contract for the handler:
 
 - **Default pattern** (90% of handlers) — break out of the handler's
-  loop, emit `response.completed` with the current partial output.
-  The framework overrides this to `cancelled` for `CLIENT_CANCELLED`
-  (terminal cancel) and to "leave in_progress for re-entry on
-  shutdown" for `SHUTTING_DOWN` (cooperative cancel). For `STEERED`,
-  the handler's `completed` terminal is correct — the steered-out
-  turn really did complete with whatever output it managed to emit
-  before the steer.
+  loop on `cancel.is_set()`, emit `response.completed` with the
+  current partial output. The framework overrides this to
+  `cancelled` when `context.client_cancelled` is True (terminal
+  cancel) and to "leave `in_progress` for re-entry" when
+  `context.shutdown` is set on a `durable_background=True` Row 1
+  response (cooperative cancel). For steering pressure (no cause
+  flag), the handler's `completed` terminal is correct — the
+  steered-out turn really did complete with whatever output it
+  managed to emit before the steer.
 - **Hard rule** — every async-generator handler MUST emit
   `response.created` before any early return; framework forces
   `failed` if it does not. Every handler MUST emit a terminal event
@@ -707,14 +692,16 @@ The cancellation contract for the handler:
   `failed`. `return` in an async generator stops the generator; it
   cannot return a value (Python syntax constraint; equivalent rules
   apply in any host language that distinguishes generator-return from
-  value-return).
-- **No `cancelled` from steering or shutdown** — the handler MUST NOT
-  emit `response.cancelled` for `STEERED` or `SHUTTING_DOWN`; that
-  terminal is reserved for `CLIENT_CANCELLED`.
-- **Cooperation model** — `STEERED` and `CLIENT_CANCELLED` wait
-  indefinitely for the handler to honour the signal. `SHUTTING_DOWN`
-  has a bounded grace window; if the handler does not return within
-  the window, the framework moves to Path B / Path C handling.
+  value-return). Use `return await context.exit_for_recovery()` from
+  a coroutine handler when you need to defer to recovery without
+  emitting a terminal.
+- **No `cancelled` from steering or shutdown** — the handler MUST
+  NOT emit `response.cancelled` for steering pressure or shutdown;
+  that terminal is reserved for `context.client_cancelled=True`.
+- **Cooperation model** — steering pressure and client cancel wait
+  indefinitely for the handler to honour the signal. Shutdown has a
+  bounded grace window; if the handler does not return within the
+  window, the framework moves to Path B / Path C handling.
 
 ### §10.1 — Cancellation × recovery composition
 
@@ -722,9 +709,9 @@ Recovery composes with cancellation as follows:
 
 | Pre-crash trigger | Recovery behaviour |
 |---|---|
-| `STEERED` (steering during recovery) | Recovered entry sees `cancellation_signal` set with `cancellation_reason=STEERED`. Handler honours the signal as in the fresh case. |
-| `CLIENT_CANCELLED` (cancel during recovery) | Same shape. Handler honours the signal; framework finalises with `cancelled` terminal. |
-| `SHUTTING_DOWN` (shutdown during recovery) | If the handler returns without emitting a terminal, the framework raises `CancelledError` so the underlying task primitive's cooperative-cancel branch leaves the task `in_progress` for the next lifetime. |
+| Steering pressure (during recovery) | Recovered entry sees `context.cancel.is_set()` with no cause flag. Handler honours the signal as in the fresh case. |
+| Client cancel (during recovery) | Recovered entry sees `context.cancel.is_set()` and `context.client_cancelled=True`. Handler honours the signal; framework finalises with `cancelled` terminal. |
+| Shutdown (during recovery) | If the handler returns without emitting a terminal AND `context.shutdown.is_set()`, the framework leaves the task `in_progress` for the next lifetime. Equivalent to a handler that explicitly does `return await context.exit_for_recovery()`. |
 
 The cancellation surface is unchanged across fresh and recovered
 entries — handlers do not need a separate branch for "I'm in
@@ -745,10 +732,10 @@ Rows 1, 2, or 3 (i.e. any `store=true` row). With steering enabled:
   response (status `"queued"`) produced by the acceptance hook
   (§11.3).
 - When the queued turn moves to the front of the queue, the
-  framework signals the running handler via `cancellation_signal`
-  with `cancellation_reason=STEERED`. Once the running handler
+  framework signals the running handler via ``context.cancel` Event`
+  with `steering pressure (context.cancel set, no cause flag)`. Once the running handler
   reaches terminal, the framework drains the queue and the queued
-  turn's handler is invoked with `was_steered=True`.
+  turn's handler is invoked with `is_steered_turn=True`.
 
 ### §11.1 — `steerable_conversations=False` semantics
 
@@ -848,9 +835,9 @@ The framework MUST guarantee:
 - **Sequential delivery within a chain** — for `steerable_conversations=true`,
   queued turns drain in FIFO order; no two handlers for the same
   chain ever execute concurrently.
-- **`was_steered=True` for queued turns** — the second-and-later
+- **`is_steered_turn=True` for queued turns** — the second-and-later
   turns of a chain (any turn invoked by drain rather than by initial
-  start) MUST observe `context.durability.was_steered == True`.
+  start) MUST observe `context.is_steered_turn == True`.
 - **`pending_inputs` is post-this** — the count of inputs queued
   *after* the currently-being-invoked one. A handler observing
   `pending_inputs == 0` is the most recent queued turn.
@@ -861,7 +848,7 @@ If the process crashes mid-steering-drain, the recovered entry is
 given the mid-drain input as its `context.input` (or equivalent —
 the primitive's race-recovery contract supplies the in-flight input).
 Handler honours it as a normal turn invocation. The cancellation
-signal is set with `cancellation_reason=STEERED` if the prior turn's
+signal is set with `steering pressure (context.cancel set, no cause flag)` if the prior turn's
 handler was already cancelled at crash time.
 
 ---
@@ -901,7 +888,7 @@ HTTP   ──► POST /v1/responses { input: "...", previous_response_id: resp_1
        (turn 1's handler honours the steer, emits terminal, returns)
        framework: persist terminal for resp_1
        primitive: drain queue → invoke handler again for resp_2
-                  with was_steered=True
+                  with is_steered_turn=True
        handler:   emit response.created (response_id=resp_2)
        framework: persist response envelope → response store
        ...
@@ -943,7 +930,7 @@ HTTP   ──► POST /v1/responses { stream: true, store, background } ──�
        primitive: task lease expired → re-fire task body
        framework: task body entered with ctx.entry_mode == "recovered"
        framework: read _responses.disposition → "re-invoke"
-       framework: build DurabilityContext(entry_mode="recovered", retry_attempt=1, ...)
+       framework: build recovery + steering context (flat fields on the response context)(context.is_recovery=True, retry_attempt=1, ...)
        framework: reconstruct ResponseExecution, ResponseContext from serialized params
        framework: re-invoke handler with durability_ctx
        handler:   is_recovery == True
@@ -973,20 +960,18 @@ HTTP   ──► GET /v1/responses/resp_1?stream=true&starting_after=4 ───
        (turn 1, fresh)
 HTTP   ──► POST /v1/responses { stream: false, store, background } ───────┐
                                                                           │
-       framework: ALSO start bookkeeping task with disposition="mark-failed"│
-                  (pre-register completion event)                          │
-       framework: asyncio.create_task(_shielded_runner)                   │
-       handler:   ... runs in plain background task ...                   │
-       handler:   emit response.created                                   │
-       framework: persist response envelope                               │
+       framework: start durable task with disposition="mark-failed"        │
+       framework: task body invokes handler (handler runs INSIDE the body) │
+       handler:   emit response.created                                    │
+       framework: persist response envelope                                │
                                                                           │
        HTTP    ◄── 200 { id: resp_1, status: in_progress, ... }            │
        
        ════════════ SIGKILL ════════════
        
-       (next lifetime — recovery scanner re-fires bookkeeping task)
-       primitive: task lease expired → re-fire bookkeeping task body
-       framework: task body entered with ctx.entry_mode == "recovered"
+       (next lifetime — recovery scanner re-fires the task)
+       primitive: task lease expired → re-fire task body
+       framework: task body entered with context.is_recovery=True
        framework: read _responses.disposition → "mark-failed"
        framework: lookup response in store: status="in_progress"
        framework: persist failed terminal:
@@ -1044,8 +1029,9 @@ For Row 1 with `steerable_conversations=true`, the durable task body
 MUST signal implicit-suspend (in this implementation: `return None`
 from a `@multi_turn_task`-decorated body) after the handler's terminal,
 keeping the task alive for subsequent turns per §6.1. For Rows 2/3,
-the bookkeeping body MUST race three signals (completion / cancel /
-shutdown) per §6.2.
+the task body invokes the handler directly; on graceful shutdown
+without explicit `exit_for_recovery`, the body persists the
+`shutdown_reason=grace_exhausted` failed terminal before returning.
 
 ### C-DISPOSITION — Recovery dispatch
 
@@ -1061,12 +1047,15 @@ Every framework-emitted shutdown/crash marker MUST conform to the
 shape in §7.3 — `type=code="server_error"`, structured
 `additionalInfo.shutdown_reason`, `output=[]`.
 
-### C-DURABILITY-CTX — `DurabilityContext`
+### C-DURABILITY-CTX — Flat recovery + steering surface on `context`
 
-The handler MUST observe `context.durability` with the properties
-listed in §8. `metadata.flush()` MUST act as a durable-write fence;
-the framework MUST also auto-flush at lifecycle boundaries (§8.1).
-Handler keys/namespaces starting with `_` MUST raise `ValueError`.
+The handler MUST observe the flat recovery + steering fields on the
+response context: `is_recovery: bool`, `is_steered_turn: bool`,
+`pending_input_count: int`, `durable_metadata: DurableMetadataNamespace`
+(see §8). `durable_metadata.flush()` MUST act as a durable-write
+fence; the framework MUST also auto-flush at lifecycle boundaries
+(§8.1). Handler keys/namespaces starting with `_` MUST raise
+`ValueError`.
 
 ### C-RECOVERY-MODEL — Three-actor recovery contract
 
@@ -1113,7 +1102,7 @@ its internal counter past the highest pre-existing index per §9.6.
 
 ### C-CANCEL — Cancellation surface
 
-`context.cancellation_signal` and `context.cancellation_reason` MUST
+`context.cancel` and `context cancellation cause (composing — see §10)` MUST
 be populated per §10. The cancellation policy (no `cancelled` from
 steering or shutdown; framework forces `failed` for missing terminal;
 cooperation model) MUST be enforced per §10.
@@ -1152,7 +1141,7 @@ envelope.
 
 For `steerable_conversations=true`, queued turns MUST drain in FIFO
 order, with no concurrent handler executions for the same chain
-(§11.4). Drained turns MUST observe `was_steered=True`.
+(§11.4). Drained turns MUST observe `is_steered_turn=True`.
 `pending_inputs` MUST count post-this queued turns.
 
 ### C-COMPOSE — Composition guards
@@ -1207,12 +1196,12 @@ T=4   ═══════ SIGKILL ═══════
 T=5   process restarts; lease scanner sees "durable-resp-AB12..."
       with status="in_progress" and expired lease
 
-T=6   primitive: re-fire task body with ctx.entry_mode="recovered"
+T=6   primitive: re-fire task body with ctx.context.is_recovery=True
                                        ctx.retry_attempt=1
       framework: read _responses.disposition → "re-invoke"
-      framework: build DurabilityContext(entry_mode="recovered",
+      framework: build recovery + steering context (flat fields on the response context)(context.is_recovery=True,
                                          retry_attempt=1,
-                                         was_steered=False,
+                                         is_steered_turn=False,
                                          pending_inputs=0,
                                          metadata=ctx.metadata)
       framework: reconstruct (ResponseExecution, ResponseContext)
@@ -1324,7 +1313,8 @@ Holds the ordered SSE event log per `response_id`. Operations:
 Local-dev implementations (`FileStreamProvider`) MUST persist events
 to disk in the order they are appended. Production implementations
 MUST give the same ordering guarantee. TTL-based replay cleanup
-(`replay_event_ttl_seconds`) is allowed.
+(framework-internal, defaults to at least 10 minutes per Rule B35)
+is allowed.
 
 A reset event (§9.3) is a `response.in_progress` event with
 `sequence_number > N` where N is the previous `response.in_progress`
@@ -1351,18 +1341,20 @@ combination at startup or document the no-op fall-through clearly.
 
 ### §17.3 — `steerable_conversations=true` × `durable_background=false`
 
-This combination is supported. The bookkeeping task (Row 2) still
-provides the conversation lock and the acceptance hook; the handler
-just runs as a plain background coroutine instead of inside the task
-body. Crash recovery for the handler's response is `mark-failed` per
-Row 2 / §7.2.
+This combination is supported (composition guard relaxed in spec 024
+Phase 4). The Row 2 task still provides the conversation lock and the
+acceptance hook; the handler runs inside the task body just like
+Row 1. The only difference from Row 1 is the recovery disposition —
+`mark-failed` instead of `re-invoke`. The crash-recovery branch
+persists `failed` per §7.2 instead of re-invoking the handler.
 
 ### §17.4 — `background=false` + steerable
 
-This is Row 3. The handler runs synchronously (foreground). A new
-turn arriving mid-handler still goes through the queue / lock /
-acceptance hook per §11. The bookkeeping task does its Row-3 job.
-(Note: `background=false` + steering means the original HTTP caller's
+This is Row 3. The handler runs inside the durable task body; the
+HTTP request awaits the task body's terminal via the framework's
+`TaskRun.result()` API. A new turn arriving mid-handler still goes
+through the queue / lock / acceptance hook per §11. (Note:
+`background=false` + steering means the original HTTP caller's
 connection is open while the handler runs to completion; a steered
 turn arriving from a different client connection gets queued.)
 
