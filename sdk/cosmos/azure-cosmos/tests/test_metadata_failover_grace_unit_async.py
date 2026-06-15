@@ -163,6 +163,71 @@ class TestMetadataFailoverGraceUnitAsync(unittest.IsolatedAsyncioTestCase):
             else:
                 os.environ[env] = prev
 
+    async def test_grace_timeout_surfaces_original_clean_cause(self):
+        env = _Constants.METADATA_FAILOVER_GRACE_SECONDS
+        prev = os.environ.get(env)
+        os.environ[env] = "0.02"
+        state = {"n": 0}
+
+        async def mock(function, *args, **kwargs):
+            state["n"] += 1
+            if state["n"] == 1:
+                raise asyncio.CancelledError()
+            await asyncio.sleep(1.0)
+            return ({"ok": True}, {})
+
+        _retry_utility_async.ExecuteFunctionAsync = mock
+        try:
+            with self.assertRaises(asyncio.CancelledError) as ctx:
+                await _retry_utility_async.ExecuteAsync(
+                    _FakeClient(), _FakeGEM(["A", "B"]), _noop,
+                    _make_request(ResourceType.Collection))
+            # Original cancellation is surfaced cleanly (no misleading cause chain).
+            self.assertIsNone(ctx.exception.__cause__)
+            self.assertEqual(state["n"], 2)
+        finally:
+            if prev is None:
+                os.environ.pop(env, None)
+            else:
+                os.environ[env] = prev
+
+    async def test_grace_timeout_failing_detached_attempt_is_observed(self):
+        # When the grace window expires and the detached attempt later raises, the
+        # detached task's exception must be observed (no "Task exception was never
+        # retrieved").
+        loop = asyncio.get_running_loop()
+        unhandled = []
+        loop.set_exception_handler(lambda _loop, ctx: unhandled.append(ctx))
+        env = _Constants.METADATA_FAILOVER_GRACE_SECONDS
+        prev = os.environ.get(env)
+        os.environ[env] = "0.02"
+        state = {"n": 0}
+
+        async def mock(function, *args, **kwargs):
+            state["n"] += 1
+            if state["n"] == 1:
+                raise asyncio.CancelledError()
+            await asyncio.sleep(0.1)
+            raise ValueError("region B also failed")
+
+        _retry_utility_async.ExecuteFunctionAsync = mock
+        try:
+            with self.assertRaises(asyncio.CancelledError):
+                await _retry_utility_async.ExecuteAsync(
+                    _FakeClient(), _FakeGEM(["A", "B"]), _noop,
+                    _make_request(ResourceType.Collection))
+            # Let the detached attempt run to its failure so the observer fires.
+            await asyncio.sleep(0.3)
+            never_retrieved = [c for c in unhandled
+                               if "never retrieved" in str(c.get("message", "")).lower()]
+            self.assertEqual(never_retrieved, [])
+        finally:
+            loop.set_exception_handler(None)
+            if prev is None:
+                os.environ.pop(env, None)
+            else:
+                os.environ[env] = prev
+
 
 if __name__ == "__main__":
     unittest.main()

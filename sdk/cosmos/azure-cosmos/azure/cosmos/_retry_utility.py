@@ -328,6 +328,10 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             if not succeeded:
                 # Surface the original caller cancellation; the detached attempt (if any)
                 # keeps running in the background to warm caches for subsequent callers.
+                if _grace_exc is not None:
+                    logger.debug(
+                        "Metadata cross-region failover grace attempt failed before the "
+                        "caller cancellation was surfaced: %r", _grace_exc)
                 raise
 
             if not client.last_response_headers:

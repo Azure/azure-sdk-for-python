@@ -57,6 +57,24 @@ from .._cosmos_http_logging_policy import _log_diagnostics_error
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 # cspell:ignore ppaf, ppcb
 
+
+def _observe_detached_grace_task(task: "asyncio.Task") -> None:
+    """Retrieve a detached grace task's result/exception so it is marked observed.
+
+    When the metadata cross-region failover grace window expires, the shielded
+    attempt keeps running detached. Retrieving its eventual exception here prevents
+    asyncio from logging "Task exception was never retrieved" for that background task.
+
+    :param asyncio.Task task: the detached grace task.
+    """
+    if task.cancelled():
+        return
+    try:
+        task.exception()
+    except asyncio.CancelledError:
+        pass
+
+
 # args [0] is the request object
 # args [1] is the connection policy
 # args [2] is the pipeline client
@@ -332,15 +350,29 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             if not timeout_failover_retry_policy.ShouldRetry(e):
                 raise
             last_error = e
+            # Run the cross-region attempt as an explicit task so that, if the grace
+            # window expires, the still-running detached task can be observed (its
+            # eventual exception retrieved) instead of raising an "exception was never
+            # retrieved" warning. The shield keeps the caller's cancellation from
+            # tearing down the detached task.
+            grace_task = asyncio.ensure_future(
+                ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs))
             try:
                 grace_result = await asyncio.wait_for(
-                    asyncio.shield(
-                        ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)),
-                    timeout=grace_seconds)
-            except BaseException:  # pylint: disable=broad-except
-                # Grace window expired or the cross-region attempt failed. Surface the
-                # original caller cancellation; the shielded attempt (if still running)
-                # continues in the background to warm caches for subsequent callers.
+                    asyncio.shield(grace_task), timeout=grace_seconds)
+            except BaseException as grace_exc:  # pylint: disable=broad-except
+                # Grace window expired or the cross-region attempt failed. Make sure the
+                # detached attempt's eventual result/exception is observed, then surface
+                # the original caller cancellation. The detached attempt (if still
+                # running) continues in the background to warm caches for subsequent
+                # callers.
+                if grace_task.done():
+                    _observe_detached_grace_task(grace_task)
+                else:
+                    grace_task.add_done_callback(_observe_detached_grace_task)
+                logger.debug(
+                    "Metadata cross-region failover grace attempt did not complete "
+                    "before the caller cancellation was surfaced: %r", grace_exc)
                 raise e from None
 
             if not client.last_response_headers:

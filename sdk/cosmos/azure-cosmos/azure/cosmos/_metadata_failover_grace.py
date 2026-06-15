@@ -24,6 +24,7 @@ from typing import Any, Callable, Optional, Sequence, Tuple
 
 from ._constants import _Constants
 from .documents import _OperationType
+from ._request_object import RequestObject
 from .http_constants import ResourceType
 
 logger = logging.getLogger("azure.cosmos._metadata_failover_grace")
@@ -73,6 +74,8 @@ def is_metadata_failover_candidate(args: Sequence[Any]) -> bool:
     if not args:
         return False
     request = args[0]
+    if not isinstance(request, RequestObject):
+        return False
     resource_type = getattr(request, "resource_type", None)
     operation_type = getattr(request, "operation_type", None)
     if resource_type != ResourceType.Collection:
@@ -89,10 +92,20 @@ def run_grace_attempt_sync(
     """Run a single cross-region metadata attempt detached from caller cancellation.
 
     The attempt executes on a daemon thread bounded by ``grace_seconds`` so that the
-    caller's cancellation cannot preempt the cross-region failover decision. If the
-    grace window expires the thread is left running in the background (its retry-policy
-    side-effects still benefit subsequent callers) and the caller surfaces the original
-    cancellation.
+    caller's cancellation cannot preempt the cross-region failover decision. The
+    attempt performs exactly one request against the next preferred region (the
+    request was routed synchronously by the caller before this is invoked); it does
+    not re-enter the retry loop. If the grace window expires the thread is left
+    running in the background (its single in-flight request completes and its
+    retry-policy side-effects still benefit subsequent callers) and the caller
+    surfaces the original cancellation.
+
+    .. note::
+        On grace expiry the abandoned daemon thread may still be reading the shared
+        :class:`~azure.cosmos._request_object.RequestObject` while it completes its
+        single in-flight send. Callers must not mutate or reuse that request object
+        after the cancellation is surfaced; in practice the request belongs to the
+        failed operation and is discarded once it raises.
 
     :param attempt: zero-arg callable performing exactly one cross-region attempt.
     :type attempt: Callable
